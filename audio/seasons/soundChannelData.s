@@ -1,3 +1,4 @@
+
 sounddeStart:
 
 sounddeChannel0:
@@ -401,7 +402,7 @@ sound88Channel2:
 	cmdf8 $16
 	note fs3 $0f
 	cmdf8 $00
-	wait1 $02
+	rest $02
 	env $1 $00
 	vol $1
 	cmdf8 $0f
@@ -2089,7 +2090,7 @@ musice6b87:
 	note g5  $0f
 	note e5  $05
 	note c5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note c5  $03
 	vol $6
@@ -2103,7 +2104,7 @@ musice6b87:
 	note fs5 $0f
 	note ds5 $05
 	note b4  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $03
 	vol $6
@@ -2114,14 +2115,14 @@ musice6b87:
 	note fs5 $0a
 	note ds5 $0a
 	note b4  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $03
 	vol $6
 	note g5  $0f
 	note e5  $05
 	note c5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note c5  $03
 	vol $6
@@ -2132,42 +2133,42 @@ musice6b87:
 	note g5  $0a
 	note e5  $0a
 	note c5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note c5  $03
 	vol $6
 	note b4  $05
 	note c5  $05
 	note cs5 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note cs5 $03
 	vol $6
 	note cs5 $05
 	note ds5 $05
 	note e5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note e5  $03
 	vol $6
 	note ds5 $05
 	note e5  $05
 	note f5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note f5  $03
 	vol $6
 	note e5  $05
 	note f5  $05
 	note fs5 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note fs5 $03
 	vol $6
 	note g5  $0f
 	note e5  $05
 	note c5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note c5  $03
 	vol $6
@@ -2178,14 +2179,14 @@ musice6b87:
 	note g5  $0a
 	note e5  $0a
 	note c5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note c5  $03
 	vol $6
 	note fs5 $0f
 	note ds5 $05
 	note b4  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $03
 	vol $6
@@ -2196,23 +2197,23 @@ musice6b87:
 	note fs5 $0a
 	note ds5 $0a
 	note b4  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $03
 	vol $6
 	note g5  $0a
 	note e5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note e5  $05
-	wait1 $12
+	rest $12
 	vol $6
 	note a5  $0a
 	note fs5 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note fs5 $05
-	wait1 $12
+	rest $12
 	vol $6
 	note as5 $05
 	note g5  $05
@@ -2233,7 +2234,7 @@ musice6b87:
 	note a5  $0f
 	note fs5 $05
 	note d5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note d5  $03
 	vol $6
@@ -2247,7 +2248,7 @@ musice6b87:
 	note gs5 $0f
 	note f5  $05
 	note cs5 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note cs5 $03
 	vol $6
@@ -2261,7 +2262,7 @@ musice6b87:
 	note a5  $0f
 	note fs5 $05
 	note d5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note d5  $03
 	vol $6
@@ -2269,42 +2270,42 @@ musice6b87:
 	note fs5 $0a
 	note a5  $0a
 	note fs5 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note fs5 $03
 	vol $6
 	note gs5 $05
 	note f5  $05
 	note cs5 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note cs5 $03
 	vol $6
 	note a5  $05
 	note fs5 $05
 	note d5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note d5  $03
 	vol $6
 	note as5 $05
 	note g5  $05
 	note ds5 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note ds5 $03
 	vol $6
 	note b5  $05
 	note gs5 $05
 	note e5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note e5  $03
 	vol $6
 	note a5  $0f
 	note fs5 $05
 	note d5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note d5  $03
 	vol $6
@@ -2312,24 +2313,24 @@ musice6b87:
 	note cs6 $05
 	note d6  $05
 	note e6  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note e6  $03
 	vol $6
 	note d6  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note d6  $03
 	vol $6
 	note cs6 $0f
 	note gs5 $05
 	note f5  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note f5  $03
 	vol $6
 	note cs5 $16
-	wait1 $03
+	rest $03
 	note cs6 $02
 	vol $3
 	note cs6 $03
@@ -2339,64 +2340,64 @@ musice6b87:
 	note cs6 $05
 	note d6  $05
 	note ds6 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note ds6 $03
 	vol $6
 	note ds6 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note ds6 $05
-	wait1 $12
+	rest $12
 	vol $6
 	note e6  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note e6  $03
 	vol $6
 	note e6  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note e6  $05
-	wait1 $12
+	rest $12
 	vol $6
 	note gs6 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note gs6 $03
 	vol $6
 	note g6  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note g6  $03
 	vol $6
 	note fs6 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note fs6 $03
 	vol $6
 	note f6  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note f6  $03
 	vol $6
 	note e6  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note e6  $03
 	vol $6
 	note ds6 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note ds6 $03
 	vol $6
 	note d6  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note d6  $03
 	vol $6
 	note cs6 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note cs6 $03
 	goto musice6b87
@@ -2407,49 +2408,49 @@ sound2cChannel0:
 musice6da3:
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $0f
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $0f
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $0f
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note g4  $05
 	vol $3
 	note ds4 $05
@@ -2479,57 +2480,57 @@ musice6da3:
 	note d4  $05
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $0f
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $0f
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $3
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $1
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $6
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	vol $3
 	note ds4 $05
-	wait1 $05
+	rest $05
 	vol $1
 	note ds4 $05
-	wait1 $05
+	rest $05
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	note e4  $05
 	vol $3
 	note e4  $05
@@ -2559,49 +2560,49 @@ musice6da3:
 	note g4  $05
 	vol $6
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $0f
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $0f
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $0f
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note a4  $05
 	vol $3
 	note f4  $05
@@ -2631,50 +2632,50 @@ musice6da3:
 	note e4  $05
 	vol $6
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $0f
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $0f
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note fs4 $05
-	wait1 $05
+	rest $05
 	vol $3
 	note fs4 $05
-	wait1 $05
+	rest $05
 	vol $6
 	note fs4 $05
-	wait1 $05
+	rest $05
 	note g4  $05
-	wait1 $05
+	rest $05
 	note g4  $05
-	wait1 $05
+	rest $05
 	vol $3
 	note g4  $05
-	wait1 $05
+	rest $05
 	vol $6
 	note g4  $05
 	note e4  $05
@@ -2900,7 +2901,7 @@ musice6fb8:
 	note cs3 $05
 	duty $0f
 	note cs3 $05
-	wait1 $14
+	rest $14
 	duty $0e
 	note c3  $05
 	duty $0f
@@ -2909,7 +2910,7 @@ musice6fb8:
 	note c3  $05
 	duty $0f
 	note c3  $05
-	wait1 $14
+	rest $14
 	duty $0e
 	note ds3 $05
 	duty $0f
@@ -2918,7 +2919,7 @@ musice6fb8:
 	note ds3 $05
 	duty $0f
 	note ds3 $05
-	wait1 $14
+	rest $14
 	duty $0e
 	note e3  $05
 	duty $0f
@@ -2927,7 +2928,7 @@ musice6fb8:
 	note e3  $05
 	duty $0f
 	note e3  $05
-	wait1 $14
+	rest $14
 	duty $0e
 	note ds3 $05
 	note d3  $05
@@ -3118,7 +3119,7 @@ musice6fb8:
 	note ds3 $05
 	duty $0f
 	note ds3 $05
-	wait1 $14
+	rest $14
 	duty $0e
 	note e3  $05
 	duty $0f
@@ -3127,7 +3128,7 @@ musice6fb8:
 	note e3  $05
 	duty $0f
 	note e3  $05
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note e3  $05
 	duty $0f
@@ -3575,54 +3576,54 @@ musice753a:
 	vol $6
 	note ds5 $12
 	note d5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note d5  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note cs5 $12
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c5  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note ds5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $03
 	vol $6
 	note ds5 $06
 	note d5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note d5  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note cs5 $03
-	wait1 $03
+	rest $03
 	vol $6
 	note cs5 $03
-	wait1 $03
+	rest $03
 	vol $6
 	note cs5 $06
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c5  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note e5  $12
 	note ds5 $06
@@ -3641,7 +3642,7 @@ musice753a:
 	note ds4 $06
 	vol $6
 	note e5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $03
 	vol $6
@@ -3654,10 +3655,10 @@ musice753a:
 	note as4 $06
 	vol $6
 	note d5  $03
-	wait1 $03
+	rest $03
 	vol $6
 	note d5  $03
-	wait1 $03
+	rest $03
 	vol $6
 	note d5  $06
 	note cs5 $06
@@ -3670,10 +3671,10 @@ musice753a:
 	note b4  $04
 	vol $6
 	note d5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note as5 $06
 	note a5  $30
@@ -4814,21 +4815,21 @@ sound06Channel1:
 	note g4  $02
 	vol $3
 	note f4  $01
-	wait1 $01
+	rest $01
 	duty $01
 	vol $6
 	note b4  $04
-	wait1 $01
+	rest $01
 	vol $3
 	note b4  $03
 	vol $6
 	note b4  $04
-	wait1 $01
+	rest $01
 	vol $3
 	note b4  $03
 	vol $6
 	note c5  $04
-	wait1 $01
+	rest $01
 	vol $3
 	note c5  $03
 	vol $6
@@ -4911,15 +4912,15 @@ sound06Channel1:
 	note ds6 $04
 	note e6  $04
 	note fs6 $27
-	wait1 $01
+	rest $01
 	vibrato $01
 	env $0 $00
 	vol $3
 	note fs6 $04
-	wait1 $01
+	rest $01
 	vol $2
 	note fs6 $04
-	wait1 $01
+	rest $01
 	vol $1
 	note fs6 $04
 	cmdff
@@ -4960,7 +4961,7 @@ sound06Channel0:
 	note d4  $02
 	vol $2
 	note b3  $01
-	wait1 $01
+	rest $01
 	duty $01
 	vol $4
 	note d3  $0c
@@ -5047,13 +5048,13 @@ sound06Channel0:
 	note b4  $04
 	note cs5 $04
 	note ds5 $28
-	wait1 $01
+	rest $01
 	vol $3
 	note ds5 $03
-	wait1 $01
+	rest $01
 	vol $2
 	note ds5 $03
-	wait1 $01
+	rest $01
 	vol $1
 	note ds5 $03
 	cmdff
@@ -5138,22 +5139,22 @@ musice8007:
 	note b5  $0b
 	note c6  $0b
 	note b5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note b5  $06
 	vol $7
 	note g5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note g5  $06
 	vol $7
 	note e5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note e5  $06
 	vol $7
 	note g5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note g5  $06
 	vol $7
@@ -5162,22 +5163,22 @@ musice8007:
 	note a5  $0b
 	note as5 $0b
 	note a5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note a5  $06
 	vol $6
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f5  $06
 	vol $6
 	note d5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note d5  $06
 	vol $6
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f5  $06
 	vol $7
@@ -5186,22 +5187,22 @@ musice8007:
 	note b5  $0b
 	note c6  $0b
 	note b5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note b5  $06
 	vol $7
 	note g5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note g5  $06
 	vol $7
 	note e5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note e5  $06
 	vol $7
 	note g5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note g5  $06
 	vol $7
@@ -5210,22 +5211,22 @@ musice8007:
 	note a5  $0b
 	note as5 $0b
 	note a5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note a5  $06
 	vol $6
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f5  $06
 	vol $6
 	note d5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note d5  $06
 	vol $6
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f5  $06
 	vol $6
@@ -5237,22 +5238,22 @@ musice8007:
 	note gs5 $0b
 	vol $6
 	note g5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note g5  $06
 	vol $6
 	note ds5 $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note ds5 $06
 	vol $6
 	note c5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note c5  $06
 	vol $6
 	note g5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note g5  $06
 	vol $6
@@ -5262,52 +5263,52 @@ musice8007:
 	note g5  $0b
 	vol $5
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $2
 	note f5  $06
 	vol $6
 	note d5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note d5  $06
 	vol $6
 	note as4 $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note as4 $06
 	vol $6
 	note d5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note d5  $06
 	vol $6
 	note c5  $42
 	vol $6
 	note a4  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note a4  $06
 	vol $6
 	note c5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note c5  $06
 	vol $6
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f5  $06
 	vol $8
 	note g5  $58
 	vol $5
 	note g6  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note g6  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note g6  $03
-	wait1 $1b
+	rest $1b
 	goto musice8007
 	cmdff
 
@@ -5319,159 +5320,159 @@ musice812e:
 	note g5  $0b
 	note a5  $0b
 	note g5  $03
-	wait1 $03
+	rest $03
 	note g5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note g5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note e5  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note e5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note e5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note b4  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note b4  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note b4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note g4  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note g4  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note g4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note f5  $0b
 	note g5  $0b
 	note f5  $0b
 	note g5  $0b
 	note f5  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note f5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note f5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note d5  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note d5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note d5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note as4 $03
-	wait1 $03
+	rest $03
 	vol $4
 	note as4 $05
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $03
-	wait1 $05
+	rest $05
 	vol $6
 	note f4  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note f4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note g5  $0b
 	note a5  $0b
 	note g5  $0b
 	note a5  $0b
 	note g5  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note g5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note g5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note e5  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note e5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note e5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note b4  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note b4  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note b4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note g4  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note g4  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note g4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note f5  $0b
 	note g5  $0b
 	note f5  $0b
 	note g5  $0b
 	note f5  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note f5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note f5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note d5  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note d5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note d5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note as4 $03
-	wait1 $03
+	rest $03
 	vol $5
 	note as4 $05
-	wait1 $03
+	rest $03
 	vol $4
 	note as4 $03
-	wait1 $05
+	rest $05
 	vol $6
 	note f4  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note f4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $03
-	wait1 $05
+	rest $05
 	vol $7
 	note ds5 $0b
 	vol $6
@@ -5479,164 +5480,164 @@ musice812e:
 	note ds5 $0b
 	note f5  $0b
 	note ds5 $03
-	wait1 $03
+	rest $03
 	vol $5
 	note ds5 $05
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $03
-	wait1 $05
+	rest $05
 	vol $6
 	note c5  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note c5  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note gs4 $03
-	wait1 $03
+	rest $03
 	vol $5
 	note gs4 $05
-	wait1 $03
+	rest $03
 	vol $4
 	note gs4 $03
-	wait1 $05
+	rest $05
 	vol $6
 	note ds4 $03
-	wait1 $03
+	rest $03
 	vol $5
 	note ds4 $05
-	wait1 $03
+	rest $03
 	vol $4
 	note ds4 $03
-	wait1 $05
+	rest $05
 	vol $6
 	note d5  $0b
 	note ds5 $0b
 	note d5  $0b
 	note ds5 $0b
 	note d5  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note d5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note d5  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note as4 $03
-	wait1 $03
+	rest $03
 	vol $5
 	note as4 $05
-	wait1 $03
+	rest $03
 	vol $4
 	note as4 $03
-	wait1 $05
+	rest $05
 	vol $6
 	note f4  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note f4  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note f4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note d4  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note d4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note ds4 $0b
 	note d4  $0b
 	vol $6
 	note c4  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note c4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note ds4 $03
-	wait1 $03
+	rest $03
 	vol $5
 	note ds4 $05
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $03
-	wait1 $05
+	rest $05
 	vol $6
 	note f4  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note f4  $05
-	wait1 $03
+	rest $03
 	vol $5
 	note f4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note a4  $03
-	wait1 $03
+	rest $03
 	vol $6
 	note a4  $05
-	wait1 $03
+	rest $03
 	vol $5
 	note a4  $03
-	wait1 $05
+	rest $05
 	vol $6
 	note c5  $03
-	wait1 $03
+	rest $03
 	vol $5
 	note c5  $05
-	wait1 $03
+	rest $03
 	vol $4
 	note c5  $03
-	wait1 $05
+	rest $05
 	vol $7
 	note b4  $0b
-	wait1 $03
+	rest $03
 	vol $6
 	note b4  $03
-	wait1 $05
+	rest $05
 	vol $5
 	note b4  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note b4  $05
-	wait1 $0b
+	rest $0b
 	vol $6
 	note c5  $0b
-	wait1 $03
+	rest $03
 	vol $5
 	note c5  $03
-	wait1 $05
+	rest $05
 	vol $4
 	note c5  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note c5  $05
-	wait1 $0b
+	rest $0b
 	vol $6
 	note d5  $07
-	wait1 $04
+	rest $04
 	vol $4
 	note d5  $03
-	wait1 $03
+	rest $03
 	vol $4
 	note d5  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $03
-	wait1 $10
+	rest $10
 	goto musice812e
 	cmdff
 
@@ -5659,7 +5660,7 @@ musice8357:
 	note e5  $0b
 	vol $3
 	note e5  $16
-	wait1 $21
+	rest $21
 	vol $6
 	note as3 $0b
 	vol $3
@@ -5676,7 +5677,7 @@ musice8357:
 	note d5  $0b
 	vol $3
 	note d5  $16
-	wait1 $21
+	rest $21
 	vol $6
 	note c4  $0b
 	vol $3
@@ -5693,7 +5694,7 @@ musice8357:
 	note e5  $0b
 	vol $3
 	note e5  $16
-	wait1 $21
+	rest $21
 	vol $6
 	note as3 $0b
 	vol $3
@@ -5710,7 +5711,7 @@ musice8357:
 	note d5  $0b
 	vol $3
 	note d5  $16
-	wait1 $21
+	rest $21
 	vol $6
 	note gs3 $0b
 	vol $3
@@ -5727,7 +5728,7 @@ musice8357:
 	note c5  $0b
 	vol $3
 	note c5  $16
-	wait1 $21
+	rest $21
 	vol $6
 	note g3  $0b
 	vol $3
@@ -5744,7 +5745,7 @@ musice8357:
 	note as4 $0b
 	vol $3
 	note as4 $16
-	wait1 $21
+	rest $21
 	vol $6
 	note f3  $0b
 	vol $3
@@ -5761,7 +5762,7 @@ musice8357:
 	note a4  $0b
 	vol $3
 	note a4  $16
-	wait1 $21
+	rest $21
 	vol $6
 	note g3  $0b
 	vol $3
@@ -5799,7 +5800,7 @@ sound01Channel1:
 	note as4 $18
 	vol $2
 	note as4 $14
-	wait1 $10
+	rest $10
 	env $0 $02
 	vol $8
 	note as4 $09
@@ -6138,7 +6139,7 @@ sound01Channel0:
 	note d4  $18
 	vol $2
 	note d4  $14
-	wait1 $10
+	rest $10
 	vol $8
 	env $0 $02
 	note d4  $09
@@ -6285,86 +6286,86 @@ musice8765:
 	env $0 $00
 	vol $6
 	note as5 $06
-	wait1 $06
+	rest $06
 	note as5 $03
-	wait1 $03
+	rest $03
 	note c6  $03
-	wait1 $03
+	rest $03
 	note d6  $03
-	wait1 $03
+	rest $03
 	note ds6 $03
-	wait1 $03
+	rest $03
 	env $0 $07
 	note f6  $48
 	env $0 $00
 	note cs6 $03
-	wait1 $03
+	rest $03
 	note fs6 $03
-	wait1 $03
+	rest $03
 	note gs6 $03
-	wait1 $03
+	rest $03
 	note as6 $03
-	wait1 $03
+	rest $03
 	env $0 $07
 	note cs7 $54
 	env $0 $00
 	note cs6 $03
-	wait1 $03
+	rest $03
 	note ds6 $03
-	wait1 $03
+	rest $03
 	note f6  $06
-	wait1 $06
+	rest $06
 	note cs6 $06
-	wait1 $06
+	rest $06
 	env $0 $07
 	note gs5 $3c
 	env $0 $00
 	note ds6 $02
-	wait1 $04
+	rest $04
 	note f6  $02
-	wait1 $04
+	rest $04
 	note fs6 $02
-	wait1 $0a
+	rest $0a
 	note ds6 $02
-	wait1 $04
+	rest $04
 	note f6  $02
-	wait1 $04
+	rest $04
 	env $0 $04
 	note fs6 $3c
 	env $0 $00
 	note cs6 $02
-	wait1 $04
+	rest $04
 	note ds6 $02
-	wait1 $04
+	rest $04
 	note f6  $02
-	wait1 $0a
+	rest $0a
 	note cs6 $02
-	wait1 $04
+	rest $04
 	note ds6 $02
-	wait1 $04
+	rest $04
 	env $0 $04
 	note f6  $3c
 	env $0 $00
 	note c6  $02
-	wait1 $04
+	rest $04
 	note d6  $02
-	wait1 $04
+	rest $04
 	note e6  $02
-	wait1 $0a
+	rest $0a
 	note e6  $02
-	wait1 $04
+	rest $04
 	note f6  $02
-	wait1 $04
+	rest $04
 	note g6  $02
-	wait1 $04
+	rest $04
 	note a6  $02
-	wait1 $04
+	rest $04
 	note as6 $02
-	wait1 $04
+	rest $04
 	note c7  $02
-	wait1 $04
+	rest $04
 	note a6  $06
-	wait1 $06
+	rest $06
 	vol $8
 	note ds4 $03
 	vol $2
@@ -6393,7 +6394,7 @@ musice8765:
 	note ds4 $0a
 	vol $1
 	note ds4 $0a
-	wait1 $20
+	rest $20
 	vol $8
 	note ds4 $03
 	vol $2
@@ -6422,13 +6423,13 @@ musice8765:
 	note ds4 $0a
 	vol $1
 	note ds4 $0a
-	wait1 $14
+	rest $14
 	goto musice8765
 	cmdff
 
 sound00Channel4:
 sound01Channel4:
-	wait1 $24
+	rest $24
 	duty $0e
 	note as2 $05
 	duty $0f
@@ -6441,7 +6442,7 @@ sound01Channel4:
 	note as2 $0c
 	duty $0f
 	note as2 $12
-	wait1 $36
+	rest $36
 	duty $0e
 	note gs2 $05
 	duty $0f
@@ -6454,7 +6455,7 @@ sound01Channel4:
 	note gs2 $0c
 	duty $0f
 	note gs2 $12
-	wait1 $36
+	rest $36
 	duty $0e
 	note fs2 $05
 	duty $0f
@@ -6467,7 +6468,7 @@ sound01Channel4:
 	note fs2 $0c
 	duty $0f
 	note fs2 $12
-	wait1 $5a
+	rest $5a
 	duty $0e
 	note f2  $0c
 	duty $0e
@@ -6481,64 +6482,64 @@ sound01Channel4:
 musice88cd:
 	duty $01
 	note as4 $06
-	wait1 $12
+	rest $12
 	note f4  $1e
-	wait1 $0c
+	rest $0c
 	note as4 $04
-	wait1 $02
+	rest $02
 	note as4 $06
 	note c5  $03
-	wait1 $03
+	rest $03
 	note d5  $03
-	wait1 $03
+	rest $03
 	note ds5 $03
-	wait1 $03
+	rest $03
 	note f5  $2a
-	wait1 $12
+	rest $12
 	note f5  $09
-	wait1 $03
+	rest $03
 	note f5  $0c
 	note fs5 $03
-	wait1 $03
+	rest $03
 	note gs5 $03
-	wait1 $03
+	rest $03
 	note as5 $2a
-	wait1 $12
+	rest $12
 	note as5 $09
-	wait1 $03
+	rest $03
 	note as5 $0c
 	note gs5 $03
-	wait1 $03
+	rest $03
 	note fs5 $03
-	wait1 $03
+	rest $03
 	note gs5 $06
-	wait1 $0c
+	rest $0c
 	note fs5 $06
 	note f5  $24
-	wait1 $0c
+	rest $0c
 	note f5  $18
 	note ds5 $0c
-	wait1 $06
+	rest $06
 	note f5  $06
 	note fs5 $24
-	wait1 $0c
+	rest $0c
 	note f5  $0c
 	note ds5 $0c
 	note cs5 $0c
-	wait1 $06
+	rest $06
 	note ds5 $06
 	note f5  $24
-	wait1 $0c
+	rest $0c
 	note ds5 $0c
 	note cs5 $0c
 	note c5  $0c
-	wait1 $06
+	rest $06
 	note d5  $06
 	note e5  $24
-	wait1 $0c
+	rest $0c
 	note g5  $18
 	note f5  $08
-	wait1 $b8
+	rest $b8
 	goto musice88cd
 	cmdff
 
@@ -6578,23 +6579,23 @@ sound2dChannel1:
 	vol $b
 	env $0 $01
 	note as3 $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note a3  $12
 	env $0 $02
 	note gs3 $12
-	wait1 $0c
+	rest $0c
 	note b3  $06
 	note b3  $06
 	note b3  $06
 	env $0 $01
 	note as3 $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note a3  $12
 	env $0 $02
 	note gs3 $12
-	wait1 $0c
+	rest $0c
 musice89a4:
 	note cs4 $06
 	note cs4 $06
@@ -6602,12 +6603,12 @@ musice89a4:
 	env $0 $01
 	vol $a
 	note c4  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note b3  $12
 	env $0 $02
 	note as3 $12
-	wait1 $0c
+	rest $0c
 	note cs4 $06
 	note cs4 $06
 	note cs4 $06
@@ -6615,12 +6616,12 @@ musice89a4:
 	env $0 $01
 	vol $a
 	note c4  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note b3  $12
 	env $0 $02
 	note as3 $12
-	wait1 $0c
+	rest $0c
 	env $0 $00
 	duty $01
 	vol $5
@@ -6640,12 +6641,12 @@ musice89a4:
 	env $0 $01
 	vol $a
 	note d4  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note cs4 $12
 	env $0 $02
 	note c4  $12
-	wait1 $0c
+	rest $0c
 	note ds4 $06
 	note ds4 $06
 	note ds4 $06
@@ -6653,12 +6654,12 @@ musice89a4:
 	env $0 $01
 	vol $a
 	note d4  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note cs4 $12
 	env $0 $02
 	note c4  $12
-	wait1 $0c
+	rest $0c
 	note f4  $06
 	note f4  $06
 	note f4  $06
@@ -6666,12 +6667,12 @@ musice89a4:
 	env $0 $01
 	vol $a
 	note e4  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note ds4 $12
 	env $0 $02
 	note d4  $12
-	wait1 $0c
+	rest $0c
 	note f4  $06
 	note f4  $06
 	note f4  $06
@@ -6679,12 +6680,12 @@ musice89a4:
 	env $0 $01
 	vol $a
 	note e4  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note ds4 $12
 	env $0 $02
 	note d4  $12
-	wait1 $6c
+	rest $6c
 	env $0 $00
 	duty $02
 	note g6  $03
@@ -6717,12 +6718,12 @@ musice89a4:
 	note b3  $06
 	env $0 $01
 	note as3 $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note a3  $12
 	env $0 $02
 	note gs3 $12
-	wait1 $0c
+	rest $0c
 	note b3  $06
 	note b3  $06
 	note b3  $06
@@ -6730,12 +6731,12 @@ musice89a4:
 	env $0 $01
 	vol $a
 	note as3 $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note a3  $12
 	env $0 $02
 	note gs3 $12
-	wait1 $0c
+	rest $0c
 	goto musice89a4
 	cmdff
 
@@ -6772,12 +6773,12 @@ sound2dChannel0:
 	env $0 $01
 	vol $8
 	note ds3 $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note d3  $12
 	env $0 $02
 	note cs3 $12
-	wait1 $0c
+	rest $0c
 	env $0 $02
 	note e3  $06
 	note e3  $06
@@ -6785,12 +6786,12 @@ sound2dChannel0:
 	vol $9
 	env $0 $01
 	note ds3 $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note d3  $12
 	env $0 $02
 	note cs3 $12
-	wait1 $0c
+	rest $0c
 musice8b07:
 	note fs3 $06
 	note fs3 $06
@@ -6798,12 +6799,12 @@ musice8b07:
 	vol $9
 	env $0 $01
 	note f3  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note e3  $12
 	env $0 $02
 	note ds3 $12
-	wait1 $0c
+	rest $0c
 	note fs3 $06
 	note fs3 $06
 	note fs3 $06
@@ -6811,12 +6812,12 @@ musice8b07:
 	env $0 $01
 	vol $8
 	note f3  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note e3  $12
 	env $0 $02
 	note ds3 $12
-	wait1 $0c
+	rest $0c
 	env $0 $00
 	duty $02
 	vol $9
@@ -6836,12 +6837,12 @@ musice8b07:
 	env $0 $01
 	vol $9
 	note g3  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note fs3 $12
 	env $0 $02
 	note f3  $12
-	wait1 $0c
+	rest $0c
 	note gs3 $06
 	note gs3 $06
 	note gs3 $06
@@ -6849,12 +6850,12 @@ musice8b07:
 	env $0 $01
 	vol $8
 	note g3  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note fs3 $12
 	env $0 $02
 	note f3  $12
-	wait1 $0c
+	rest $0c
 	note as3 $06
 	note as3 $06
 	note as3 $06
@@ -6862,12 +6863,12 @@ musice8b07:
 	env $0 $01
 	vol $8
 	note a3  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note gs3 $12
 	env $0 $02
 	note g3  $12
-	wait1 $0c
+	rest $0c
 	note as3 $06
 	note as3 $06
 	note as3 $06
@@ -6875,12 +6876,12 @@ musice8b07:
 	env $0 $01
 	vol $8
 	note a3  $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note gs3 $12
 	env $0 $02
 	note g3  $12
-	wait1 $6c
+	rest $6c
 	env $0 $00
 	duty $02
 	note d6  $03
@@ -6914,12 +6915,12 @@ musice8b07:
 	env $0 $01
 	vol $8
 	note ds3 $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note d3  $12
 	env $0 $02
 	note cs3 $12
-	wait1 $0c
+	rest $0c
 	note e3  $06
 	note e3  $06
 	note e3  $06
@@ -6927,19 +6928,19 @@ musice8b07:
 	env $0 $01
 	vol $8
 	note ds3 $06
-	wait1 $18
+	rest $18
 	env $0 $04
 	note d3  $12
 	env $0 $02
 	note cs3 $12
-	wait1 $0c
+	rest $0c
 	env $0 $04
 	goto musice8b07
 	cmdff
 
 sound2dChannel4:
 	duty $12
-	wait1 $30
+	rest $30
 	note b2  $06
 	note fs2 $06
 	note b2  $06
@@ -7078,7 +7079,7 @@ musice8c54:
 	note f2  $06
 	note f1  $06
 	note f2  $06
-	wait1 $90
+	rest $90
 	note b2  $06
 	note fs2 $06
 	note b2  $06
@@ -7115,577 +7116,577 @@ musice8c54:
 	cmdff
 
 sound2dChannel6:
-	wait1 $30
+	rest $30
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $1c $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $9
 	note $28 $01
 	vol $1
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 musice8e09:
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $6
 	note $28 $01
 	vol $1
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $6
 	note $28 $01
 	vol $1
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $6
 	note $28 $01
 	vol $1
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $6
 	note $28 $01
 	vol $1
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $6
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $c
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $d
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $9
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $9
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $4
 	note $26 $04
-	wait1 $02
+	rest $02
 	note $26 $09
-	wait1 $03
+	rest $03
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $4
 	note $26 $04
-	wait1 $02
+	rest $02
 	note $26 $04
-	wait1 $02
+	rest $02
 	note $26 $04
-	wait1 $02
+	rest $02
 	note $26 $04
-	wait1 $02
+	rest $02
 	vol $7
 	note $28 $01
 	vol $5
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $9
 	note $28 $01
 	vol $5
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $5
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $d
 	note $28 $01
 	vol $5
 	note $27 $03
-	wait1 $32
+	rest $32
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note $52 $04
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $08
-	wait1 $03
+	rest $03
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $7
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	vol $8
 	note $28 $01
 	vol $2
 	note $27 $03
-	wait1 $02
+	rest $02
 	goto musice8e09
 	cmdff
 
@@ -7695,187 +7696,187 @@ sound09Channel1:
 musice9127:
 	vol $8
 	note e6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note e6  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note e6  $09
 	vol $8
 	note b5  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b5  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note b5  $09
-	wait1 $24
+	rest $24
 	vol $8
 	note e6  $04
-	wait1 $05
+	rest $05
 	note fs6 $04
-	wait1 $05
+	rest $05
 	note gs6 $04
-	wait1 $05
+	rest $05
 	note a6  $04
-	wait1 $05
+	rest $05
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b6  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $1
 	note b6  $09
-	wait1 $3b
+	rest $3b
 	vol $8
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b6  $05
 	vol $8
 	note c7  $09
 	note d7  $09
 	note e7  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note e7  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note e7  $09
-	wait1 $04
+	rest $04
 	vol $1
 	note e7  $09
-	wait1 $3b
+	rest $3b
 	vol $8
 	note e7  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note e7  $05
 	vol $8
 	note d7  $09
 	note c7  $09
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b6  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $1
 	note b6  $09
-	wait1 $3b
+	rest $3b
 	vol $8
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b6  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note b6  $09
 	vol $8
 	note a6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note a6  $05
 	vol $8
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b6  $05
 	vol $8
 	note c7  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note c7  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note c7  $09
-	wait1 $04
+	rest $04
 	vol $1
 	note c7  $09
-	wait1 $17
+	rest $17
 	vol $8
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b6  $05
 	vol $8
 	note a6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note a6  $05
 	vol $8
 	note g6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note g6  $05
 	vol $8
 	note a6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note a6  $05
 	vol $8
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b6  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note b6  $09
-	wait1 $24
+	rest $24
 	vol $8
 	note a6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note a6  $05
 	vol $8
 	note g6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note g6  $05
 	vol $8
 	note fs6 $09
-	wait1 $04
+	rest $04
 	vol $5
 	note fs6 $05
 	vol $8
 	note gs6 $09
-	wait1 $04
+	rest $04
 	vol $5
 	note gs6 $05
 	vol $8
 	note as6 $09
-	wait1 $04
+	rest $04
 	vol $5
 	note as6 $09
-	wait1 $05
+	rest $05
 	vol $2
 	note as6 $09
-	wait1 $24
+	rest $24
 	vol $8
 	note cs7 $09
-	wait1 $04
+	rest $04
 	vol $5
 	note cs7 $09
-	wait1 $05
+	rest $05
 	vol $2
 	note cs7 $09
 	vol $8
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $5
 	note b6  $09
-	wait1 $05
+	rest $05
 	vol $2
 	note b6  $09
-	wait1 $04
+	rest $04
 	vol $1
 	note b6  $09
-	wait1 $5f
+	rest $5f
 	goto musice9127
 	cmdff
 
@@ -7890,13 +7891,13 @@ musice925f:
 	note b4  $12
 	note e5  $12
 	note gs5 $12
-	wait1 $48
+	rest $48
 	note fs4 $12
 	note b4  $12
 	note ds5 $12
 	note fs5 $12
 	note b5  $12
-	wait1 $36
+	rest $36
 	note e5  $12
 	note g5  $12
 	note c6  $12
@@ -7904,26 +7905,26 @@ musice925f:
 	note c6  $12
 	note g5  $12
 	note e5  $12
-	wait1 $12
+	rest $12
 	note b4  $12
 	note e5  $12
 	note fs5 $12
 	note ds5 $12
-	wait1 $36
+	rest $36
 	note f5  $12
 	note c5  $12
 	note f5  $12
 	note a5  $12
 	note c6  $12
-	wait1 $36
+	rest $36
 	note e6  $12
 	note b5  $12
 	note g5  $12
 	note e5  $12
 	note b4  $12
-	wait1 $12
+	rest $12
 	note e5  $12
-	wait1 $12
+	rest $12
 	note fs5 $12
 	note cs5 $12
 	note b4  $12
@@ -7937,56 +7938,56 @@ musice925f:
 	note e5  $12
 	note fs5 $12
 	note ds5 $12
-	wait1 $36
+	rest $36
 	goto musice925f
 	cmdff
 
 sound09Channel4:
 musice92cf:
-	wait1 $09
+	rest $09
 	duty $08
 	note e6  $12
-	wait1 $12
+	rest $12
 	note b5  $12
-	wait1 $36
+	rest $36
 	note e6  $09
 	note fs6 $09
 	note gs6 $09
 	note a6  $09
 	note b6  $12
-	wait1 $5a
+	rest $5a
 	note b6  $12
 	note cs7 $09
-	wait1 $09
+	rest $09
 	note e7  $12
-	wait1 $5a
+	rest $5a
 	note e7  $12
 	note d7  $09
 	note c7  $09
 	note b6  $12
-	wait1 $5a
+	rest $5a
 	note b6  $12
-	wait1 $12
+	rest $12
 	note a6  $12
 	note b6  $12
 	note c7  $12
-	wait1 $36
+	rest $36
 	note b6  $12
 	note a6  $12
 	note g6  $12
 	note a6  $12
 	note b6  $12
-	wait1 $36
+	rest $36
 	note a6  $12
 	note g6  $12
 	note fs6 $12
 	note gs6 $12
 	note as6 $12
-	wait1 $36
+	rest $36
 	note cs7 $12
-	wait1 $12
+	rest $12
 	note b6  $12
-	wait1 $75
+	rest $75
 	goto musice92cf
 	cmdff
 	cmdff
@@ -8002,51 +8003,51 @@ musice932f:
 	note d3  $0c
 	env $0 $04
 	note a3  $0c
-	wait1 $24
+	rest $24
 	env $0 $05
 	note b4  $0c
 	note b4  $18
-	wait1 $18
+	rest $18
 	env $0 $06
 	note b2  $0c
 	note cs3 $0c
 	note d3  $0c
 	env $0 $04
 	note gs3 $0c
-	wait1 $24
+	rest $24
 	env $0 $05
 	note as4 $0c
 	note as4 $18
-	wait1 $18
+	rest $18
 	env $0 $06
 	note cs3 $0c
 	note ds3 $0c
 	note e3  $0c
 	env $0 $04
 	note b3  $0c
-	wait1 $24
+	rest $24
 	env $0 $05
 	note cs5 $0c
 	note cs5 $18
-	wait1 $18
+	rest $18
 	env $0 $06
 	note cs3 $0c
 	note ds3 $0c
 	note e3  $0c
 	env $0 $04
 	note as3 $0c
-	wait1 $24
+	rest $24
 	env $0 $05
 	note c5  $0c
 	note c5  $18
-	wait1 $18
+	rest $18
 	env $0 $06
 	note fs3 $0c
 	note gs3 $0c
 	note a3  $0c
 	env $0 $04
 	note e4  $0c
-	wait1 $24
+	rest $24
 	env $0 $05
 	note e5  $0c
 	env $0 $06
@@ -8055,7 +8056,7 @@ musice932f:
 	note as3 $0c
 	env $0 $04
 	note f4  $0c
-	wait1 $24
+	rest $24
 	env $0 $05
 	note f5  $0c
 	note b3  $0c
@@ -8069,7 +8070,7 @@ musice932f:
 	env $0 $00
 	vol $5
 	note f5  $08
-	wait1 $94
+	rest $94
 	goto musice932f
 	cmdff
 
@@ -8085,12 +8086,12 @@ musice93c9:
 	note d3  $0c
 	env $0 $04
 	note a3  $0c
-	wait1 $0e
+	rest $0e
 	vol $6
 	env $0 $03
 	note f4  $0c
 	note f4  $18
-	wait1 $2e
+	rest $2e
 	vol $3
 	env $0 $05
 	note b2  $0c
@@ -8098,12 +8099,12 @@ musice93c9:
 	note d3  $0c
 	env $0 $04
 	note gs3 $0c
-	wait1 $0e
+	rest $0e
 	vol $6
 	env $0 $03
 	note e4  $0c
 	note e4  $18
-	wait1 $2e
+	rest $2e
 	vol $3
 	env $0 $05
 	note cs3 $0c
@@ -8111,12 +8112,12 @@ musice93c9:
 	note e3  $0c
 	env $0 $04
 	note b3  $0c
-	wait1 $0e
+	rest $0e
 	vol $6
 	env $0 $03
 	note g4  $0c
 	note g4  $18
-	wait1 $2e
+	rest $2e
 	vol $3
 	env $0 $05
 	note cs3 $0c
@@ -8124,12 +8125,12 @@ musice93c9:
 	note e3  $0c
 	env $0 $04
 	note as3 $0c
-	wait1 $0e
+	rest $0e
 	vol $6
 	env $0 $03
 	note fs4 $0c
 	note fs4 $18
-	wait1 $2e
+	rest $2e
 	vol $3
 	env $0 $05
 	note fs3 $0c
@@ -8137,11 +8138,11 @@ musice93c9:
 	note a3  $0c
 	env $0 $04
 	note e4  $0c
-	wait1 $0e
+	rest $0e
 	vol $6
 	env $0 $03
 	note as4 $0c
-	wait1 $16
+	rest $16
 	vol $3
 	env $0 $05
 	note g3  $0c
@@ -8149,11 +8150,11 @@ musice93c9:
 	note as3 $0c
 	env $0 $04
 	note f4  $0c
-	wait1 $0e
+	rest $0e
 	vol $6
 	env $0 $03
 	note b4  $0c
-	wait1 $16
+	rest $16
 	vol $3
 	env $0 $04
 	note b3  $0c
@@ -8167,7 +8168,7 @@ musice93c9:
 	env $0 $00
 	vol $5
 	note d5  $08
-	wait1 $94
+	rest $94
 	goto musice93c9
 	cmdff
 
@@ -8232,15 +8233,15 @@ sound10Channel0:
 sound10Channel4:
 	duty $0a
 	note f3  $06
-	wait1 $04
+	rest $04
 	note fs3 $06
-	wait1 $03
+	rest $03
 	note g3  $06
-	wait1 $02
+	rest $02
 	note gs3 $06
-	wait1 $02
+	rest $02
 	note a3  $06
-	wait1 $02
+	rest $02
 	note as3 $4b
 	cmdff
 
@@ -8394,7 +8395,7 @@ sound50Channel2:
 	vol $d
 	note gs7 $01
 	vol $0
-	wait1 $03
+	rest $03
 	vol $b
 	env $0 $01
 	note c8  $0a
@@ -8492,27 +8493,27 @@ sound5aChannel2:
 	vol $e
 	note ds3 $02
 	vol $0
-	wait1 $01
+	rest $01
 	vol $e
 	note ds3 $02
 	vol $0
-	wait1 $0a
+	rest $0a
 	vol $e
 	note ds3 $02
 	vol $0
-	wait1 $01
+	rest $01
 	vol $e
 	note ds3 $02
 	vol $0
-	wait1 $01
+	rest $01
 	vol $e
 	note ds3 $02
 	vol $0
-	wait1 $01
+	rest $01
 	vol $e
 	note ds3 $02
 	vol $0
-	wait1 $01
+	rest $01
 	vol $e
 	note ds3 $02
 	cmdff
@@ -8535,7 +8536,7 @@ sound5bChannel3:
 	duty $02
 	env $0 $02
 	vol $0
-	wait1 $08
+	rest $08
 	vol $c
 	note f6  $10
 	vol $b
@@ -8554,23 +8555,23 @@ sound5eChannel2:
 	vol $d
 	note ds7 $04
 	vol $0
-	wait1 $01
+	rest $01
 	vol $d
 	note f7  $04
 	vol $0
-	wait1 $01
+	rest $01
 	vol $d
 	note g7  $04
 	vol $0
-	wait1 $01
+	rest $01
 	vol $d
 	note as7 $04
 	vol $0
-	wait1 $02
+	rest $02
 	vol $6
 	note as7 $04
 	vol $0
-	wait1 $02
+	rest $02
 	vol $2
 	note as7 $04
 	cmdff
@@ -8595,13 +8596,13 @@ sound60Channel2:
 	vol $b
 	note b5  $02
 	vol $0
-	wait1 $02
+	rest $02
 	vol $d
 	note b6  $04
 	vol $9
 	note b5  $02
 	vol $0
-	wait1 $02
+	rest $02
 	vol $6
 	note b6  $03
 	cmdff
@@ -8614,7 +8615,7 @@ sound61Channel2:
 	vol $d
 	note gs7 $02
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note e8  $02
 	vol $9
@@ -9501,7 +9502,7 @@ sound70Start:
 sound70Channel2:
 	duty $01
 	vol $0
-	wait1 $02
+	rest $02
 	vol $6
 	note c4  $01
 	cmdf8 $0f
@@ -9652,13 +9653,13 @@ sound81Channel2:
 	vol $f
 	note ds2 $03
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note ds2 $01
 	vol $f
 	note ds2 $02
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	env $0 $01
 	note c2  $0a
@@ -9688,7 +9689,7 @@ sound82Start:
 sound82Channel2:
 	duty $00
 	vol $0
-	wait1 $05
+	rest $05
 	vol $f
 	note c2  $01
 	vol $e
@@ -9784,19 +9785,19 @@ sound7eChannel2:
 	vol $d
 	note e5  $01
 	vol $0
-	wait1 $03
+	rest $03
 	vol $a
 	note a5  $01
 	vol $0
-	wait1 $03
+	rest $03
 	vol $8
 	note b5  $01
 	vol $0
-	wait1 $03
+	rest $03
 	vol $a
 	note a5  $01
 	vol $0
-	wait1 $03
+	rest $03
 	vol $d
 	note e5  $01
 	cmdff
@@ -9904,271 +9905,271 @@ sound67Channel2:
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note d3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note d3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note ds3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note ds3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note e3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note e3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note f3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note f3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note g3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note g3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note g3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note a3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note a3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note gs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note gs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note g3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note g3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note g3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note f3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note f3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note e3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note e3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note ds3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note ds3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note d3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note d3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note b2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note b2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note as2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note as2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note g3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note fs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note f3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note ds3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note d3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note as2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	cmdff
 
 soundd2Start:
@@ -10376,147 +10377,147 @@ sound7fChannel2:
 	vol $9
 	note fs2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $b
 	note as2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $d
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note as2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note a2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note gs2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note g2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note fs2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note f2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note e2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note ds2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note d2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note cs2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $f
 	note c2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note fs2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note as2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note cs3 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note c3  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note as2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note a2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note gs2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note g2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note fs2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note f2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note e2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note ds2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note d2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note cs2 $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $5
 	note c2  $01
 	vol $0
-	wait1 $01
+	rest $01
 	cmdff
 
 sound83Start:
@@ -10639,7 +10640,7 @@ sound86Channel2:
 	note c6  $01
 	note fs6 $01
 	vol $0
-	wait1 $0f
+	rest $0f
 	vol $7
 	note c5  $01
 	note d5  $02
@@ -11022,7 +11023,7 @@ sound92Channel2:
 	cmdfd $fc
 	note b3  $41
 	vol $0
-	wait1 $11
+	rest $11
 	env $3 $03
 	vol $4
 	cmdf8 $f8
@@ -11033,13 +11034,13 @@ sound9dStart:
 
 sound9dChannel3:
 	vol $0
-	wait1 $f1
+	rest $f1
 	cmdff
 
 sound9dChannel2:
 	vol $0
 	duty $02
-	wait1 $1f
+	rest $1f
 	vol $2
 	note c6  $05
 	note f6  $04
@@ -11066,16 +11067,16 @@ sound9dChannel5:
 	note f6  $05
 	note g6  $05
 	note c7  $46
-	wait1 $0e
+	rest $0e
 	note as6 $04
 	note c7  $05
 	note as6 $05
 	note a6  $0e
 	note f6  $0e
 	note g6  $03
-	wait1 $0b
+	rest $0b
 	note c6  $38
-	wait1 $1f
+	rest $1f
 	cmdff
 
 sound9dChannel7:
@@ -11087,19 +11088,19 @@ sound9eStart:
 
 sound9eChannel3:
 	vol $0
-	wait1 $f1
+	rest $f1
 	cmdff
 
 sound9eChannel2:
 	vol $0
-	wait1 $1f
+	rest $1f
 	duty $02
 	vol $2
 	note d5  $05
 	note g5  $04
 	note a5  $05
 	note c6  $46
-	wait1 $0e
+	rest $0e
 	note b5  $05
 	note c6  $04
 	note b5  $05
@@ -11113,13 +11114,13 @@ sound9eChannel5:
 	note g5  $05
 	note a5  $05
 	note c6  $46
-	wait1 $0e
+	rest $0e
 	note b5  $04
 	note c6  $05
 	note b5  $05
 	note g5  $0e
 	note a5  $54
-	wait1 $1f
+	rest $1f
 	cmdff
 
 sound9eChannel7:
@@ -11131,22 +11132,22 @@ sound9fStart:
 
 sound9fChannel3:
 	vol $0
-	wait1 $e5
+	rest $e5
 	cmdff
 
 sound9fChannel2:
 	vol $0
-	wait1 $0d
+	rest $0d
 	duty $02
 	vol $2
 	note ds6 $12
 	note as5 $12
 	note as6 $1b
-	wait1 $09
+	rest $09
 	note g6  $12
 	note ds6 $12
 	note c7  $1b
-	wait1 $09
+	rest $09
 	note as6 $48
 	cmdff
 
@@ -11155,13 +11156,13 @@ sound9fChannel5:
 	note ds6 $12
 	note as5 $12
 	note as6 $1b
-	wait1 $09
+	rest $09
 	note g6  $12
 	note ds6 $12
 	note c7  $1b
-	wait1 $09
+	rest $09
 	note as6 $48
-	wait1 $0d
+	rest $0d
 	cmdff
 
 sound9fChannel7:
@@ -11181,7 +11182,7 @@ sound4aChannel1:
 musicea6f4:
 	vol $6
 	note g4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $0b
 	vol $6
@@ -11193,7 +11194,7 @@ musicea6f4:
 	note g4  $0e
 	note a4  $1c
 	note d4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
@@ -11207,7 +11208,7 @@ musicea6f4:
 	env $0 $00
 	vol $6
 	note e4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $0b
 	vol $6
@@ -11215,7 +11216,7 @@ musicea6f4:
 	note c4  $09
 	note e4  $0a
 	note fs4 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $0b
 	vol $6
@@ -11224,7 +11225,7 @@ musicea6f4:
 	note e4  $09
 	note fs4 $0a
 	note g4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $0b
 	vol $6
@@ -11232,22 +11233,22 @@ musicea6f4:
 	note fs4 $09
 	note g4  $0a
 	note b4  $0e
-	wait1 $07
+	rest $07
 	vol $3
 	note b4  $07
 	vol $6
 	note a4  $0e
-	wait1 $07
+	rest $07
 	vol $3
 	note a4  $07
 	vol $6
 	note d5  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $0b
 	vol $6
 	note d5  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
@@ -11268,7 +11269,7 @@ musicea6f4:
 	env $0 $00
 	vol $6
 	note g4  $0e
-	wait1 $07
+	rest $07
 	vol $3
 	note g4  $07
 	vol $6
@@ -11276,7 +11277,7 @@ musicea6f4:
 	note ds4 $09
 	note g4  $0a
 	note a4  $0e
-	wait1 $07
+	rest $07
 	vol $3
 	note a4  $07
 	vol $6
@@ -11284,7 +11285,7 @@ musicea6f4:
 	note f4  $09
 	note a4  $0a
 	note as4 $0e
-	wait1 $07
+	rest $07
 	vol $3
 	note as4 $07
 	vol $6
@@ -11297,12 +11298,12 @@ musicea6f4:
 	note cs5 $0e
 	duty $01
 	note d5  $0e
-	wait1 $07
+	rest $07
 	vol $3
 	note d5  $07
 	vol $6
 	note d5  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
@@ -11311,13 +11312,13 @@ musicea6f4:
 	note d5  $0e
 	note c5  $0e
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
 	note as4 $1c
 	note a4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $04
 	vol $6
@@ -11327,12 +11328,12 @@ musicea6f4:
 	note f4  $1c
 	vol $6
 	note as4 $0e
-	wait1 $07
+	rest $07
 	vol $3
 	note as4 $07
 	vol $6
 	note as4 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
@@ -11342,13 +11343,13 @@ musicea6f4:
 	note c5  $0e
 	note as4 $0e
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note d5  $03
-	wait1 $04
+	rest $04
 	note d5  $38
 	vibrato $01
 	env $0 $00
@@ -11358,26 +11359,26 @@ musicea6f4:
 	env $0 $00
 	vol $6
 	note e5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note e5  $07
 	vol $6
 	note e5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note e5  $04
-	wait1 $03
+	rest $03
 	note e5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note e5  $07
 	vol $6
@@ -11388,32 +11389,32 @@ musicea6f4:
 	note ds5 $05
 	note e5  $05
 	note fs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs5 $07
 	vol $6
 	note fs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note fs5 $04
-	wait1 $03
+	rest $03
 	note fs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs5 $07
-	wait1 $1c
+	rest $1c
 	vol $6
 	note g5  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $0b
 	vol $6
@@ -11421,7 +11422,7 @@ musicea6f4:
 	note ds5 $09
 	note g5  $0a
 	note a5  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note a5  $0b
 	vol $6
@@ -11429,7 +11430,7 @@ musicea6f4:
 	note f5  $09
 	note a5  $0a
 	note as5 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note as5 $0b
 	vol $6
@@ -11437,7 +11438,7 @@ musicea6f4:
 	note g5  $09
 	note as5 $0a
 	note c6  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note c6  $0b
 	vol $6
@@ -11445,52 +11446,52 @@ musicea6f4:
 	note a5  $09
 	note c6  $0a
 	note d6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d6  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note d6  $07
 	vol $6
 	note d6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d6  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note d6  $03
-	wait1 $04
+	rest $04
 	note d6  $38
 	vibrato $01
 	env $0 $00
 	vol $3
 	note d6  $1c
-	wait1 $54
+	rest $54
 	vibrato $e1
 	env $0 $00
 	vol $6
 	note d6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d6  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note d6  $07
 	vol $6
 	note d6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d6  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note d6  $03
-	wait1 $04
+	rest $04
 	note d6  $38
 	vibrato $01
 	env $0 $00
 	vol $3
 	note d6  $1c
-	wait1 $54
+	rest $54
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -11505,7 +11506,7 @@ sound4aChannel0:
 	cmdf2
 	duty $02
 musicea923:
-	wait1 $1c
+	rest $1c
 	vol $6
 	note b2  $1c
 	note d3  $1c
@@ -11548,12 +11549,12 @@ musicea923:
 	note b3  $07
 	note a3  $07
 	note b3  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $0b
 	vol $6
 	note b3  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $04
 	vol $6
@@ -11565,17 +11566,17 @@ musicea923:
 	note fs3 $0e
 	note e3  $0e
 	note d3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d3  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note d3  $07
 	vol $6
 	note fs3 $15
 	note e3  $07
 	note fs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs3 $04
 	vol $6
@@ -11590,14 +11591,14 @@ musicea923:
 	note ds4 $0e
 	note e4  $0e
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $04
 	vol $6
 	note as3 $07
 	note f3  $07
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $6
@@ -11605,7 +11606,7 @@ musicea923:
 	note a3  $07
 	vol $6
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $6
@@ -11616,21 +11617,21 @@ musicea923:
 	note d4  $07
 	note as3 $07
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
 	vol $6
 	note f3  $07
 	note e3  $07
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
 	vol $6
 	note f3  $07
 	note g3  $07
 	note a3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a3  $04
 	vol $6
@@ -11641,18 +11642,18 @@ musicea923:
 	note as3 $07
 	note c4  $07
 	note d4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $0b
 	vol $6
 	note g3  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note g3  $04
 	vol $6
 	note g3  $07
 	note a3  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note a3  $0b
 	vol $6
@@ -11661,21 +11662,21 @@ musicea923:
 	note f3  $07
 	note c4  $07
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
 	note as3 $07
 	note a3  $07
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $6
 	note as3 $07
 	note a3  $07
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $6
@@ -11686,26 +11687,26 @@ musicea923:
 	note d4  $07
 	note as3 $07
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note cs4 $07
 	vol $6
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note cs4 $04
-	wait1 $03
+	rest $03
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note cs4 $07
 	vol $6
@@ -11716,23 +11717,23 @@ musicea923:
 	note f4  $05
 	note e4  $05
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note d4  $07
 	vol $6
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $03
+	rest $03
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
@@ -11743,7 +11744,7 @@ musicea923:
 	note e4  $07
 	note fs4 $07
 	note ds4 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $0b
 	vol $6
@@ -11751,7 +11752,7 @@ musicea923:
 	note as3 $09
 	note ds4 $0a
 	note f4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $0b
 	vol $6
@@ -11759,7 +11760,7 @@ musicea923:
 	note c4  $09
 	note f4  $0a
 	note g4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $0b
 	vol $6
@@ -11771,23 +11772,23 @@ musicea923:
 	note c5  $0e
 	note cs5 $0e
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note d5  $07
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note fs4 $03
-	wait1 $04
+	rest $04
 	note fs4 $31
-	wait1 $07
+	rest $07
 	vol $6
 	note d4  $0e
 	note a3  $07
@@ -11804,10 +11805,10 @@ musicea923:
 	note a3  $07
 	note c4  $07
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs4 $07
 	vol $6
@@ -11815,7 +11816,7 @@ musicea923:
 	note fs4 $09
 	note g4  $0a
 	note a4  $31
-	wait1 $07
+	rest $07
 	vol $6
 	note d4  $0e
 	note a3  $07
@@ -11836,7 +11837,7 @@ musicea923:
 	cmdff
 
 sound4aChannel4:
-	wait1 $07
+	rest $07
 	cmdf2
 musiceab6c:
 	duty $0e
@@ -11847,7 +11848,7 @@ musiceab6c:
 	note g2  $07
 	duty $0f
 	note g2  $0e
-	wait1 $4d
+	rest $4d
 	duty $0e
 	note d2  $07
 	duty $0f
@@ -11856,7 +11857,7 @@ musiceab6c:
 	note d2  $07
 	duty $0f
 	note d2  $0e
-	wait1 $4d
+	rest $4d
 	duty $0e
 	note c2  $1c
 	duty $0f
@@ -11885,7 +11886,7 @@ musiceab6c:
 	note d2  $07
 	duty $0f
 	note d2  $0e
-	wait1 $07
+	rest $07
 	duty $0e
 	note d2  $07
 	note e2  $07
@@ -11899,7 +11900,7 @@ musiceab6c:
 	note g2  $07
 	duty $0f
 	note g2  $0e
-	wait1 $3f
+	rest $3f
 	duty $0e
 	note g2  $0e
 	duty $0e
@@ -11910,7 +11911,7 @@ musiceab6c:
 	note d2  $07
 	duty $0f
 	note d2  $0e
-	wait1 $31
+	rest $31
 	duty $0e
 	note d2  $07
 	duty $0f
@@ -11982,7 +11983,7 @@ musiceab6c:
 	note g2  $07
 	duty $0f
 	note g2  $0e
-	wait1 $15
+	rest $15
 	duty $0e
 	note f2  $07
 	duty $0f
@@ -11991,7 +11992,7 @@ musiceab6c:
 	note f2  $07
 	duty $0f
 	note f2  $0e
-	wait1 $15
+	rest $15
 	duty $0e
 	note as2 $0e
 	duty $0f
@@ -12024,7 +12025,7 @@ musiceab6c:
 	note a2  $1c
 	duty $0f
 	note a2  $0e
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note d2  $0e
 	duty $0f
@@ -12041,7 +12042,7 @@ musiceab6c:
 	note d2  $1c
 	duty $0f
 	note d2  $0e
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note ds2 $0e
 	duty $0f
@@ -12090,7 +12091,7 @@ musiceab6c:
 	note d2  $38
 	duty $0f
 	note d2  $24
-	wait1 $4c
+	rest $4c
 	duty $0e
 	note d2  $0e
 	duty $0f
@@ -12107,7 +12108,7 @@ musiceab6c:
 	note d2  $38
 	duty $0f
 	note d2  $24
-	wait1 $4c
+	rest $4c
 	goto musiceab6c
 	cmdff
 
@@ -12842,87 +12843,87 @@ musiceb1cc:
 	vol $6
 	note b3  $12
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note d4  $12
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $12
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note d4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $03
 	vol $6
 	note d4  $06
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $12
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note d4  $12
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $12
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note d4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $03
 	vol $6
 	note d4  $06
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $06
 	vol $6
@@ -12933,75 +12934,75 @@ musiceb1cc:
 	note f4  $03
 	note fs4 $12
 	note e4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note e4  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g4  $12
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note fs4 $12
 	note e4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note e4  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g4  $0c
 	note a4  $06
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note fs4 $12
 	vol $6
 	note e4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note e4  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g4  $12
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note fs4 $12
 	note e4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note e4  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g4  $06
 	note a4  $06
@@ -13015,52 +13016,52 @@ musiceb1cc:
 	note g4  $06
 	note gs4 $06
 	note a4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note a4  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note a4  $06
 	note as4 $06
 	note b4  $06
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c5  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note c5  $06
 	note cs5 $06
 	note d5  $06
 	note ds5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note ds5 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note ds5 $06
 	note e5  $06
 	note f5  $06
 	note fs5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs5 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note fs5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $03
 	vol $6
@@ -13069,7 +13070,7 @@ musiceb1cc:
 	note as5 $03
 	note b5  $03
 	note c6  $3c
-	wait1 $06
+	rest $06
 	note a5  $06
 	note c6  $06
 	note fs5 $06
@@ -13099,87 +13100,87 @@ musiceb387:
 	vol $6
 	note g3  $12
 	note fs3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $12
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g3  $12
 	note fs3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $03
 	vol $6
 	note b3  $06
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g3  $12
 	note fs3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $12
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g3  $12
 	note fs3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs3 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $03
 	vol $6
 	note b3  $06
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $06
 	vol $6
@@ -13190,74 +13191,74 @@ musiceb387:
 	note d4  $03
 	note ds4 $12
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note e4  $12
 	note ds4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note ds4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note ds4 $12
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note e4  $0c
 	note e4  $06
 	note ds4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note ds4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note ds4 $12
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note e4  $12
 	note ds4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note ds4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note ds4 $12
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note e4  $06
 	note fs4 $06
@@ -13271,52 +13272,52 @@ musiceb387:
 	note e4  $06
 	note f4  $06
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note fs4 $06
 	note g4  $06
 	note gs4 $06
 	note a4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note a4  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note a4  $06
 	note as4 $06
 	note b4  $06
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c5  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note c5  $06
 	note cs5 $06
 	note d5  $06
 	note ds5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note ds5 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note ds5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $03
 	vol $6
@@ -13784,7 +13785,7 @@ musiceb53b:
 	note cs3 $02
 	note c3  $02
 	note b2  $3c
-	wait1 $6c
+	rest $6c
 	goto musiceb53b
 	cmdff
 
@@ -14589,19 +14590,19 @@ soundcfChannel2:
 	note d6  $07
 	cmdf8 $00
 	vol $0
-	wait1 $04
+	rest $04
 	vol $9
 	cmdf8 $08
 	note d6  $08
 	cmdf8 $00
 	vol $0
-	wait1 $03
+	rest $03
 	vol $7
 	cmdf8 $08
 	note cs6 $08
 	cmdf8 $00
 	vol $0
-	wait1 $02
+	rest $02
 	vol $5
 	cmdf8 $09
 	note c6  $0a
@@ -14618,13 +14619,13 @@ soundc5Channel5:
 	duty $0a
 	cmdf8 $1e
 	note c3  $05
-	wait1 $02
+	rest $02
 	cmdf8 $2e
 	note c3  $08
-	wait1 $08
+	rest $08
 	cmdf8 $e2
 	note gs3 $08
-	wait1 $06
+	rest $06
 	cmdf8 $d8
 	note gs3 $08
 	cmdff
@@ -14654,7 +14655,7 @@ soundc6Channel2:
 	cmdf8 $f1
 	note f6  $05
 	cmdf8 $00
-	wait1 $02
+	rest $02
 	vol $e
 	env $1 $00
 	cmdf8 $f1
@@ -14696,7 +14697,7 @@ soundc3Channel5:
 	cmdf8 $0c
 	note g5  $05
 	vol $0
-	wait1 $08
+	rest $08
 	cmdf8 $fe
 	note d6  $05
 	cmdf8 $00
@@ -14704,7 +14705,7 @@ soundc3Channel5:
 	cmdf8 $0c
 	note g5  $05
 	vol $0
-	wait1 $0a
+	rest $0a
 	cmdf8 $fe
 	note d6  $0f
 	cmdff
@@ -15099,83 +15100,83 @@ musicec007:
 	note fs5 $20
 	note cs6 $20
 	note b5  $18
-	wait1 $08
+	rest $08
 	note b5  $10
 	note as5 $10
 	vibrato $00
 	env $0 $00
 	note gs5 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note gs5 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note cs5 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note cs5 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note cs6 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note cs6 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note cs5 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note cs5 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note gs5 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note gs5 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note cs5 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note cs5 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note cs6 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note cs6 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note cs5 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note cs5 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note fs5 $08
 	note gs5 $08
 	note fs5 $08
 	note gs5 $08
 	note fs5 $08
-	wait1 $04
+	rest $04
 	vol $3
 	note fs5 $08
-	wait1 $04
+	rest $04
 	vol $6
 	note as5 $04
 	note cs6 $04
 	note fs6 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note as5 $04
 	note cs6 $04
 	note fs6 $04
-	wait1 $04
+	rest $04
 	vol $1
 	note as5 $04
 	note cs6 $04
 	note fs6 $04
-	wait1 $1c
+	rest $1c
 	vibrato $00
 	env $0 $03
 	goto musicec007
@@ -15284,7 +15285,7 @@ musicec157:
 	note fs5 $20
 	note cs6 $20
 	note b5  $18
-	wait1 $08
+	rest $08
 	note b5  $10
 	note as5 $10
 	note gs5 $10
@@ -15300,11 +15301,11 @@ musicec157:
 	note fs5 $08
 	note gs5 $08
 	note fs5 $10
-	wait1 $08
+	rest $08
 	note as5 $04
 	note cs6 $04
 	note fs6 $04
-	wait1 $2e
+	rest $2e
 	goto musicec157
 	cmdff
 
@@ -15316,67 +15317,67 @@ musicec1c3:
 	env $0 $01
 	note as2 $0c
 	note as3 $0c
-	wait1 $0c
+	rest $0c
 	note as3 $0c
 	env $0 $02
 	note as2 $0c
 	env $0 $01
 	note as3 $0c
-	wait1 $0c
+	rest $0c
 	note as3 $0c
 	note gs2 $0c
 	env $0 $01
 	note gs3 $0c
-	wait1 $0c
+	rest $0c
 	note gs3 $0c
 	note gs2 $0c
 	env $0 $01
 	note gs3 $0c
-	wait1 $0c
+	rest $0c
 	note gs3 $0c
 	note fs2 $0c
 	env $0 $01
 	note fs3 $0c
-	wait1 $0c
+	rest $0c
 	note fs3 $0c
 	note fs2 $0c
 	env $0 $01
 	note fs3 $0c
-	wait1 $0c
+	rest $0c
 	note fs3 $0c
 	note cs3 $0c
 	env $0 $01
 	note cs4 $0c
-	wait1 $0c
+	rest $0c
 	note cs4 $0c
 	note cs3 $0c
 	env $0 $01
 	note cs4 $0c
-	wait1 $0c
+	rest $0c
 	note cs4 $0c
 	note b2  $0c
 	env $0 $01
 	note b3  $0c
-	wait1 $0c
+	rest $0c
 	note b3  $0c
 	note b2  $0c
 	env $0 $01
 	note b3  $0c
-	wait1 $0c
+	rest $0c
 	note b3  $0c
 	note as2 $0c
 	env $0 $01
 	note as3 $0c
-	wait1 $0c
+	rest $0c
 	note as3 $0c
 	note as2 $0c
 	env $0 $01
 	note as3 $0c
-	wait1 $0c
+	rest $0c
 	note as3 $0c
 	note c3  $0c
 	note c4  $0c
-	wait1 $0c
+	rest $0c
 	note c4  $0c
 	note c3  $0c
 	note c4  $0c
@@ -15530,101 +15531,101 @@ musicec336:
 	env $0 $00
 	vol $6
 	note as5 $06
-	wait1 $06
+	rest $06
 	note as5 $03
-	wait1 $03
+	rest $03
 	note c6  $03
-	wait1 $03
+	rest $03
 	note d6  $03
-	wait1 $03
+	rest $03
 	note ds6 $03
-	wait1 $03
+	rest $03
 	vibrato $00
 	env $0 $07
 	note f6  $30
-	wait1 $18
+	rest $18
 	vibrato $00
 	env $0 $00
 	note cs6 $03
-	wait1 $03
+	rest $03
 	note fs6 $03
-	wait1 $03
+	rest $03
 	note gs6 $03
-	wait1 $03
+	rest $03
 	note as6 $03
-	wait1 $03
+	rest $03
 	vibrato $00
 	env $0 $07
 	note cs7 $30
-	wait1 $24
+	rest $24
 	vibrato $00
 	env $0 $00
 	note cs6 $03
-	wait1 $03
+	rest $03
 	note ds6 $03
-	wait1 $03
+	rest $03
 	note f6  $06
-	wait1 $06
+	rest $06
 	note cs6 $06
-	wait1 $06
+	rest $06
 	vibrato $00
 	env $0 $07
 	note gs5 $18
-	wait1 $24
+	rest $24
 	vibrato $00
 	env $0 $00
 	note ds6 $02
-	wait1 $04
+	rest $04
 	note f6  $02
-	wait1 $04
+	rest $04
 	note fs6 $02
-	wait1 $0a
+	rest $0a
 	note ds6 $02
-	wait1 $04
+	rest $04
 	note f6  $02
-	wait1 $04
+	rest $04
 	vibrato $00
 	env $0 $04
 	note fs6 $18
-	wait1 $24
+	rest $24
 	vibrato $00
 	env $0 $00
 	note cs6 $02
-	wait1 $04
+	rest $04
 	note ds6 $02
-	wait1 $04
+	rest $04
 	note f6  $02
-	wait1 $0a
+	rest $0a
 	note cs6 $02
-	wait1 $04
+	rest $04
 	note ds6 $02
-	wait1 $04
+	rest $04
 	vibrato $00
 	env $0 $04
 	note f6  $18
-	wait1 $24
+	rest $24
 	vibrato $00
 	env $0 $00
 	note c6  $02
-	wait1 $04
+	rest $04
 	note d6  $02
-	wait1 $04
+	rest $04
 	note e6  $02
-	wait1 $0a
+	rest $0a
 	note e6  $02
-	wait1 $04
+	rest $04
 	note f6  $02
-	wait1 $04
+	rest $04
 	note g6  $02
-	wait1 $04
+	rest $04
 	note a6  $02
-	wait1 $04
+	rest $04
 	note as6 $02
-	wait1 $04
+	rest $04
 	note c7  $02
-	wait1 $04
+	rest $04
 	note a6  $06
-	wait1 $06
+	rest $06
 	vol $8
 	note ds4 $03
 	vol $2
@@ -15653,7 +15654,7 @@ musicec336:
 	note ds4 $0a
 	vol $1
 	note ds4 $0a
-	wait1 $20
+	rest $20
 	vol $8
 	note ds4 $03
 	vol $2
@@ -15682,7 +15683,7 @@ musicec336:
 	note ds4 $0a
 	vol $1
 	note ds4 $0a
-	wait1 $14
+	rest $14
 	goto musicec336
 	cmdff
 
@@ -15690,64 +15691,64 @@ sound02Channel4:
 musicec45c:
 	duty $01
 	note as4 $06
-	wait1 $12
+	rest $12
 	note f4  $1e
-	wait1 $0c
+	rest $0c
 	note as4 $04
-	wait1 $02
+	rest $02
 	note as4 $06
 	note c5  $03
-	wait1 $03
+	rest $03
 	note d5  $03
-	wait1 $03
+	rest $03
 	note ds5 $03
-	wait1 $03
+	rest $03
 	note f5  $2a
-	wait1 $12
+	rest $12
 	note f5  $09
-	wait1 $03
+	rest $03
 	note f5  $0c
 	note fs5 $03
-	wait1 $03
+	rest $03
 	note gs5 $03
-	wait1 $03
+	rest $03
 	note as5 $2a
-	wait1 $12
+	rest $12
 	note as5 $09
-	wait1 $03
+	rest $03
 	note as5 $0c
 	note gs5 $03
-	wait1 $03
+	rest $03
 	note fs5 $03
-	wait1 $03
+	rest $03
 	note gs5 $06
-	wait1 $0c
+	rest $0c
 	note fs5 $06
 	note f5  $24
-	wait1 $0c
+	rest $0c
 	note f5  $18
 	note ds5 $0c
-	wait1 $06
+	rest $06
 	note f5  $06
 	note fs5 $24
-	wait1 $0c
+	rest $0c
 	note f5  $0c
 	note ds5 $0c
 	note cs5 $0c
-	wait1 $06
+	rest $06
 	note ds5 $06
 	note f5  $24
-	wait1 $0c
+	rest $0c
 	note ds5 $0c
 	note cs5 $0c
 	note c5  $0c
-	wait1 $06
+	rest $06
 	note d5  $06
 	note e5  $24
-	wait1 $0c
+	rest $0c
 	note g5  $18
 	note f5  $08
-	wait1 $b8
+	rest $b8
 	goto musicec45c
 	cmdff
 
@@ -15761,7 +15762,7 @@ sound11Channel1:
 	note as4 $07
 	vol $3
 	note as4 $07
-	wait1 $0e
+	rest $0e
 	env $0 $00
 	vol $5
 	note f4  $15
@@ -15770,7 +15771,7 @@ sound11Channel1:
 	env $0 $02
 	vol $5
 	note as4 $07
-	wait1 $07
+	rest $07
 	vibrato $00
 	env $0 $02
 	note as4 $07
@@ -15784,13 +15785,13 @@ sound11Channel1:
 	note f5  $0e
 	vol $2
 	note f5  $0e
-	wait1 $38
+	rest $38
 	env $0 $00
 	vol $5
 	note as5 $07
 	vol $3
 	note as5 $07
-	wait1 $0e
+	rest $0e
 	env $0 $00
 	vol $5
 	note f5  $15
@@ -15799,7 +15800,7 @@ sound11Channel1:
 	env $0 $02
 	vol $5
 	note as5 $07
-	wait1 $07
+	rest $07
 	env $0 $02
 	note as5 $07
 	note c6  $07
@@ -15811,14 +15812,14 @@ sound11Channel1:
 	note f6  $0e
 	vol $2
 	note f6  $0e
-	wait1 $38
+	rest $38
 musicec53e:
 	env $0 $00
 	vol $5
 	note as4 $07
 	vol $3
 	note as4 $07
-	wait1 $0e
+	rest $0e
 	env $0 $00
 	vol $5
 	note f4  $15
@@ -15827,7 +15828,7 @@ musicec53e:
 	env $0 $02
 	vol $5
 	note as4 $07
-	wait1 $07
+	rest $07
 	env $0 $02
 	note as4 $07
 	note c5  $07
@@ -15840,13 +15841,13 @@ musicec53e:
 	note f5  $0e
 	vol $2
 	note f5  $0e
-	wait1 $38
+	rest $38
 	env $0 $00
 	vol $5
 	note as5 $07
 	vol $3
 	note as5 $07
-	wait1 $0e
+	rest $0e
 	env $0 $00
 	vol $5
 	note f5  $15
@@ -15855,7 +15856,7 @@ musicec53e:
 	env $0 $02
 	vol $5
 	note as5 $07
-	wait1 $07
+	rest $07
 	env $0 $02
 	note as5 $07
 	note c6  $07
@@ -15868,7 +15869,7 @@ musicec53e:
 	note f6  $0e
 	vol $2
 	note f6  $0e
-	wait1 $38
+	rest $38
 	goto musicec53e
 	cmdff
 
@@ -15882,7 +15883,7 @@ sound11Channel0:
 	note gs3 $07
 	vol $4
 	note gs3 $07
-	wait1 $0e
+	rest $0e
 	vol $8
 	note ds3 $15
 	vol $3
@@ -15890,7 +15891,7 @@ sound11Channel0:
 	vol $8
 	env $0 $01
 	note gs3 $07
-	wait1 $07
+	rest $07
 	env $0 $00
 	vol $8
 	note gs3 $04
@@ -15913,13 +15914,13 @@ sound11Channel0:
 	note fs4 $04
 	vol $2
 	note fs4 $03
-	wait1 $85
+	rest $85
 	env $0 $00
 	vol $8
 	note gs4 $07
 	vol $4
 	note gs4 $07
-	wait1 $0e
+	rest $0e
 	vol $8
 	note ds4 $0e
 	vol $3
@@ -15946,13 +15947,13 @@ musicec60f:
 	note as3 $04
 	vol $2
 	note as3 $03
-	wait1 $69
+	rest $69
 	env $0 $00
 	vol $8
 	note gs3 $07
 	vol $4
 	note gs3 $07
-	wait1 $0e
+	rest $0e
 	vol $8
 	note ds3 $15
 	vol $3
@@ -15960,7 +15961,7 @@ musicec60f:
 	vol $8
 	env $0 $01
 	note gs3 $07
-	wait1 $07
+	rest $07
 	env $0 $00
 	vol $8
 	note gs3 $04
@@ -15982,13 +15983,13 @@ musicec60f:
 	note fs4 $04
 	vol $2
 	note fs4 $03
-	wait1 $85
+	rest $85
 	env $0 $00
 	vol $8
 	note gs4 $07
 	vol $4
 	note gs4 $07
-	wait1 $0e
+	rest $0e
 	vol $8
 	note ds4 $0e
 	vol $3
@@ -16018,243 +16019,243 @@ sound11Channel4:
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 musicec76e:
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note as2 $03
 	duty $0d
 	note as2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note fs2 $03
 	duty $0d
 	note fs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $14
+	rest $14
 	duty $0a
 	note gs2 $03
 	duty $0d
 	note gs2 $05
-	wait1 $06
+	rest $06
 	goto musicec76e
 	cmdff
 
@@ -16446,7 +16447,7 @@ musicec97b:
 
 sound0fChannel4:
 	duty $0f
-	wait1 $09
+	rest $09
 musicec9c4:
 	note b3  $0c
 	note cs4 $0c
@@ -16514,7 +16515,7 @@ sound03Channel1:
 	vibrato $e1
 	env $0 $00
 	note d5  $3c
-	wait1 $0c
+	rest $0c
 	vibrato $00
 	env $0 $02
 	note c5  $08
@@ -16523,22 +16524,22 @@ sound03Channel1:
 	vibrato $e1
 	env $0 $00
 	note d5  $3c
-	wait1 $0c
+	rest $0c
 	vibrato $00
 	env $0 $00
 	note c5  $04
-	wait1 $04
+	rest $04
 	note b4  $04
-	wait1 $04
+	rest $04
 	note a4  $04
-	wait1 $04
+	rest $04
 musiceca67:
 	vibrato $00
 	env $0 $05
 	note g4  $18
 	note d4  $18
 	env $0 $04
-	wait1 $12
+	rest $12
 	note g4  $06
 	note g4  $06
 	note a4  $06
@@ -16547,7 +16548,7 @@ musiceca67:
 	env $0 $05
 	note d5  $30
 	env $0 $04
-	wait1 $10
+	rest $10
 	note d5  $08
 	note d5  $08
 	note ds5 $08
@@ -16555,7 +16556,7 @@ musiceca67:
 	env $0 $05
 	note g5  $30
 	env $0 $04
-	wait1 $10
+	rest $10
 	note g5  $08
 	note g5  $08
 	note f5  $08
@@ -16563,13 +16564,13 @@ musiceca67:
 	vibrato $00
 	env $0 $00
 	note f5  $08
-	wait1 $08
+	rest $08
 	note ds5 $08
 	vibrato $00
 	env $0 $05
 	note d5  $18
 	env $0 $04
-	wait1 $18
+	rest $18
 	note d5  $08
 	note ds5 $08
 	note d5  $08
@@ -16579,7 +16580,7 @@ musiceca67:
 	env $0 $05
 	note ds5 $18
 	env $0 $04
-	wait1 $18
+	rest $18
 	note d5  $0c
 	note c5  $0c
 	note as4 $0c
@@ -16588,7 +16589,7 @@ musiceca67:
 	env $0 $05
 	note d5  $18
 	env $0 $04
-	wait1 $18
+	rest $18
 	note c5  $0c
 	note as4 $0c
 	note a4  $0c
@@ -16597,7 +16598,7 @@ musiceca67:
 	env $0 $05
 	note cs5 $18
 	env $0 $04
-	wait1 $18
+	rest $18
 	note e5  $18
 	note d5  $0c
 	vibrato $00
@@ -16618,14 +16619,14 @@ musiceca67:
 	vol $7
 	note fs4 $18
 	vol $6
-	wait1 $18
+	rest $18
 	vibrato $00
 	env $0 $05
 	duty $02
 	note g4  $18
 	note d4  $18
 	env $0 $04
-	wait1 $12
+	rest $12
 	note g4  $06
 	note g4  $06
 	note a4  $06
@@ -16634,7 +16635,7 @@ musiceca67:
 	env $0 $05
 	note d5  $30
 	env $0 $04
-	wait1 $10
+	rest $10
 	note d5  $08
 	note d5  $08
 	note ds5 $08
@@ -16642,7 +16643,7 @@ musiceca67:
 	env $0 $05
 	note g5  $30
 	env $0 $04
-	wait1 $10
+	rest $10
 	note g5  $08
 	note g5  $08
 	note f5  $08
@@ -16650,13 +16651,13 @@ musiceca67:
 	vibrato $00
 	env $0 $00
 	note f5  $08
-	wait1 $08
+	rest $08
 	note ds5 $08
 	vibrato $00
 	env $0 $04
 	note d5  $18
 	env $0 $03
-	wait1 $18
+	rest $18
 	note d5  $08
 	note ds5 $08
 	note d5  $08
@@ -16666,7 +16667,7 @@ musiceca67:
 	env $0 $05
 	note ds5 $18
 	env $0 $04
-	wait1 $18
+	rest $18
 	note d5  $0c
 	note c5  $0c
 	vol $6
@@ -16679,7 +16680,7 @@ musiceca67:
 	vibrato $00
 	env $0 $00
 	note d5  $08
-	wait1 $08
+	rest $08
 	note d5  $08
 	note d5  $08
 	note c5  $08
@@ -16691,122 +16692,122 @@ musiceca67:
 	note d6  $30
 	vol $5
 	note g5  $3c
-	wait1 $0c
+	rest $0c
 	vibrato $00
 	env $0 $00
 	vol $6
 	duty $01
 	note d5  $04
-	wait1 $04
+	rest $04
 	note ds5 $04
-	wait1 $04
+	rest $04
 	note f5  $04
-	wait1 $04
+	rest $04
 	vibrato $e1
 	env $0 $00
 	note g5  $12
-	wait1 $06
+	rest $06
 	note d5  $18
-	wait1 $12
+	rest $12
 	vibrato $00
 	env $0 $00
 	note g5  $03
-	wait1 $03
+	rest $03
 	note g5  $03
-	wait1 $03
+	rest $03
 	note a5  $03
-	wait1 $03
+	rest $03
 	note as5 $03
-	wait1 $03
+	rest $03
 	note c6  $03
-	wait1 $03
+	rest $03
 	note a5  $05
-	wait1 $0b
+	rest $0b
 	note f5  $05
-	wait1 $03
+	rest $03
 	vibrato $f1
 	note c5  $18
-	wait1 $0c
+	rest $0c
 	vibrato $00
 	env $0 $00
 	note c5  $03
-	wait1 $03
+	rest $03
 	note d5  $03
-	wait1 $03
+	rest $03
 	note f5  $03
-	wait1 $03
+	rest $03
 	note ds5 $03
-	wait1 $03
+	rest $03
 	note d5  $03
-	wait1 $03
+	rest $03
 	note c5  $03
-	wait1 $03
+	rest $03
 	note d5  $05
-	wait1 $0b
+	rest $0b
 	note g4  $04
-	wait1 $04
+	rest $04
 	vibrato $e1
 	env $0 $00
 	note g4  $18
-	wait1 $0c
+	rest $0c
 	vibrato $00
 	env $0 $00
 	note g4  $03
-	wait1 $03
+	rest $03
 	note fs4 $03
-	wait1 $03
+	rest $03
 	note g4  $03
-	wait1 $03
+	rest $03
 	note a4  $03
-	wait1 $03
+	rest $03
 	note as4 $03
-	wait1 $03
+	rest $03
 	note c5  $03
-	wait1 $03
+	rest $03
 	vibrato $e1
 	env $0 $00
 	note d5  $24
-	wait1 $24
+	rest $24
 	vibrato $00
 	env $0 $00
 	note d5  $04
-	wait1 $04
+	rest $04
 	note c5  $04
-	wait1 $04
+	rest $04
 	note d5  $04
-	wait1 $04
+	rest $04
 	note as5 $05
-	wait1 $0b
+	rest $0b
 	note a5  $05
-	wait1 $03
+	rest $03
 	note g5  $18
-	wait1 $08
+	rest $08
 	note d5  $04
-	wait1 $04
+	rest $04
 	note d5  $04
-	wait1 $04
+	rest $04
 	note d5  $04
-	wait1 $04
+	rest $04
 	note as4 $04
-	wait1 $04
+	rest $04
 	note g5  $04
-	wait1 $04
+	rest $04
 	note gs5 $05
-	wait1 $0b
+	rest $0b
 	note as5 $05
-	wait1 $03
+	rest $03
 	note c6  $18
-	wait1 $08
+	rest $08
 	note c6  $04
-	wait1 $04
+	rest $04
 	note d6  $04
-	wait1 $04
+	rest $04
 	note ds6 $04
-	wait1 $04
+	rest $04
 	note f6  $04
-	wait1 $04
+	rest $04
 	note ds6 $04
-	wait1 $04
+	rest $04
 	vibrato $e1
 	env $0 $00
 	note d6  $3c
@@ -16816,7 +16817,7 @@ musiceca67:
 	note d6  $0c
 	vol $2
 	note d6  $0c
-	wait1 $18
+	rest $18
 	vibrato $00
 	env $0 $01
 	duty $02
@@ -16831,7 +16832,7 @@ musiceca67:
 	note e5  $08
 	env $0 $04
 	note fs5 $18
-	wait1 $18
+	rest $18
 	vibrato $00
 	env $0 $02
 	goto musiceca67
@@ -16873,7 +16874,7 @@ sound03Channel0:
 	note g4  $0c
 	vol $2
 	note g4  $0c
-	wait1 $06
+	rest $06
 	vibrato $00
 	env $0 $02
 	vol $6
@@ -16889,7 +16890,7 @@ sound03Channel0:
 	note g4  $0c
 	vol $1
 	note g4  $0c
-	wait1 $1e
+	rest $1e
 musicecd1c:
 	vibrato $00
 	env $0 $03
@@ -16921,19 +16922,19 @@ musicecd1c:
 	note g4  $06
 	note a4  $06
 	note as4 $06
-	wait1 $0a
+	rest $0a
 	note as4 $08
 	note as4 $08
 	note a4  $08
 	note g4  $08
 	note as4 $06
-	wait1 $0a
+	rest $0a
 	note f4  $08
 	note f4  $08
 	note f4  $08
 	note ds4 $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
 	note f4  $08
 	note ds4 $08
@@ -16983,7 +16984,7 @@ musicecd1c:
 	vol $7
 	note d4  $18
 	vol $6
-	wait1 $18
+	rest $18
 	duty $02
 	note b3  $18
 	note c4  $08
@@ -17012,19 +17013,19 @@ musicecd1c:
 	note g4  $06
 	note a4  $06
 	note as4 $06
-	wait1 $0a
+	rest $0a
 	note as4 $08
 	note as4 $08
 	note a4  $08
 	note g4  $08
 	note as4 $06
-	wait1 $0a
+	rest $0a
 	note f4  $08
 	note f4  $08
 	note f4  $08
 	note ds4 $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
 	note f4  $08
 	note ds4 $08
@@ -17051,7 +17052,7 @@ musicecd1c:
 	vol $5
 	note c3  $18
 	note d3  $12
-	wait1 $06
+	rest $06
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -17082,110 +17083,110 @@ musicecd1c:
 	note a3  $04
 	vol $1
 	note a3  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note g3  $04
 	vol $1
 	note g3  $04
-	wait1 $28
+	rest $28
 	duty $01
 	vol $6
 	note as4 $10
-	wait1 $08
+	rest $08
 	note g4  $18
-	wait1 $12
+	rest $12
 	note as4 $03
-	wait1 $03
+	rest $03
 	note as4 $03
-	wait1 $03
+	rest $03
 	note c5  $03
-	wait1 $03
+	rest $03
 	note d5  $03
-	wait1 $03
+	rest $03
 	note ds5 $03
-	wait1 $03
+	rest $03
 	note c5  $05
-	wait1 $0b
+	rest $0b
 	note as4 $05
-	wait1 $03
+	rest $03
 	note a4  $18
-	wait1 $18
+	rest $18
 	note f4  $14
-	wait1 $04
+	rest $04
 	note g4  $05
-	wait1 $0b
+	rest $0b
 	note d4  $05
-	wait1 $03
+	rest $03
 	note d4  $14
-	wait1 $04
+	rest $04
 	note c4  $14
-	wait1 $04
+	rest $04
 	note e4  $14
-	wait1 $04
+	rest $04
 	note g4  $03
-	wait1 $09
+	rest $09
 	note g4  $03
-	wait1 $03
+	rest $03
 	note fs4 $03
-	wait1 $03
+	rest $03
 	note g4  $03
-	wait1 $03
+	rest $03
 	note a4  $03
-	wait1 $03
+	rest $03
 	note as4 $03
-	wait1 $03
+	rest $03
 	note c5  $03
-	wait1 $03
+	rest $03
 	note d5  $18
 	vol $3
 	note d5  $0c
-	wait1 $0c
+	rest $0c
 	vol $6
 	note d5  $05
-	wait1 $0b
+	rest $0b
 	note c5  $05
-	wait1 $03
+	rest $03
 	note as4 $18
 	vol $3
 	note as4 $0c
 	vol $1
 	note as4 $0c
-	wait1 $18
+	rest $18
 	vol $6
 	note c5  $05
-	wait1 $0b
+	rest $0b
 	note ds5 $05
-	wait1 $03
+	rest $03
 	note gs5 $18
 	vol $3
 	note gs5 $0c
 	vol $1
 	note gs5 $0c
-	wait1 $30
+	rest $30
 	vibrato $00
 	env $0 $02
 	duty $02
 	vol $6
 	note g4  $04
-	wait1 $04
+	rest $04
 	note g4  $04
-	wait1 $04
+	rest $04
 	note g4  $04
-	wait1 $04
+	rest $04
 	env $0 $04
 	note g4  $0c
 	env $0 $02
-	wait1 $3c
+	rest $3c
 	note c5  $04
-	wait1 $04
+	rest $04
 	note c5  $04
-	wait1 $04
+	rest $04
 	note c5  $04
-	wait1 $04
+	rest $04
 	env $0 $04
 	note d5  $0c
 	env $0 $02
-	wait1 $24
+	rest $24
 	goto musicecd1c
 	cmdff
 
@@ -17194,605 +17195,605 @@ sound03Channel4:
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 musiced0a3:
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d2  $04
 	duty $0f
 	note d2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a3  $18
 	duty $0e
 	note e3  $04
 	duty $0f
 	note e3  $04
-	wait1 $04
+	rest $04
 	duty $0e
 	note fs3 $04
 	duty $0f
 	note fs3 $04
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d2  $04
 	duty $0f
 	note d2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note gs3 $04
 	duty $0f
 	note gs3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs3 $04
 	duty $0f
 	note gs3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs3 $04
 	duty $0f
 	note gs3 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note gs3 $04
 	duty $0f
 	note gs3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs3 $04
 	duty $0f
 	note gs3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs3 $04
 	duty $0f
 	note gs3 $03
-	wait1 $01
+	rest $01
 	duty $14
 	vol $8
 	note d4  $08
@@ -17802,20 +17803,20 @@ musiced0a3:
 	note g4  $08
 	note a4  $08
 	note as4 $08
-	wait1 $08
+	rest $08
 	note as4 $08
 	note as4 $08
 	note a4  $08
 	note g4  $08
 	duty $15
 	note d5  $0c
-	wait1 $04
+	rest $04
 	note as4 $0c
-	wait1 $04
+	rest $04
 	note g4  $10
 	note fs4 $10
 	duty $14
-	wait1 $08
+	rest $08
 	note fs4 $08
 	note e4  $08
 	vol $9
@@ -17827,332 +17828,332 @@ musiced0a3:
 	note as4 $08
 	note a4  $08
 	note as4 $18
-	wait1 $18
+	rest $18
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g3  $04
 	duty $0f
 	note g3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note as3 $04
 	duty $0f
 	note as3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds4 $04
 	duty $0f
 	note ds4 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d2  $04
 	duty $0f
 	note d2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note f3  $04
 	duty $0f
 	note f3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a3  $04
 	duty $0f
 	note a3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d4  $04
 	duty $0f
 	note d4  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $09
+	rest $09
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $09
+	rest $09
 	duty $0e
 	note f2  $04
 	duty $0f
 	note f2  $03
-	wait1 $09
+	rest $09
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g2  $04
 	duty $0f
 	note g2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds2 $04
 	duty $0f
 	note ds2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note c3  $04
 	duty $0f
 	note c3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs3 $04
 	duty $0f
 	note gs3 $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note gs2 $04
 	duty $0f
 	note gs2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d2  $04
 	duty $0f
 	note d2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note c4  $04
 	duty $0f
 	note c4  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note c4  $04
 	duty $0f
 	note c4  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note c4  $04
 	duty $0f
 	note c4  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note c4  $04
 	duty $0f
 	note c4  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note d2  $04
 	duty $0f
 	note d2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d2  $04
 	duty $0f
 	note d2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d2  $04
 	duty $0f
 	note d2  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d2  $04
 	duty $0f
 	note d2  $03
-	wait1 $11
+	rest $11
 	duty $0e
 	note g4  $04
 	duty $0f
 	note g4  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g4  $04
 	duty $0f
 	note g4  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note g4  $04
 	duty $0f
 	note g4  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a4  $04
 	duty $0f
 	note a4  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note ds3 $04
 	duty $0f
 	note ds3 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note d3  $04
 	duty $0f
 	note d3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note c3  $04
 	duty $0f
 	note c3  $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note as2 $04
 	duty $0f
 	note as2 $03
-	wait1 $01
+	rest $01
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $03
-	wait1 $01
+	rest $01
 	goto musiced0a3
 	cmdff
 	cmdff
@@ -18170,12 +18171,12 @@ musiced6de:
 	env $0 $00
 	note c5  $07
 	note e5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $04
 	vol $7
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $04
 	vibrato $32
@@ -18185,10 +18186,10 @@ musiced6de:
 	vibrato $00
 	env $0 $00
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note g5  $07
 	vibrato $32
@@ -18199,12 +18200,12 @@ musiced6de:
 	env $0 $00
 	note a5  $07
 	note gs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs5 $04
 	vol $7
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $04
 	vibrato $32
@@ -18214,13 +18215,13 @@ musiced6de:
 	vibrato $00
 	env $0 $00
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note g5  $07
-	wait1 $0e
+	rest $0e
 	vibrato $00
 	env $0 $02
 	vol $7
@@ -18237,7 +18238,7 @@ musiced6de:
 	note b4  $0e
 	note a4  $0e
 	note g4  $1c
-	wait1 $1c
+	rest $1c
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -18250,12 +18251,12 @@ musiced6de:
 	note g3  $07
 	vol $7
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $7
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $8
@@ -18272,17 +18273,17 @@ musiced6de:
 	note g3  $07
 	vol $7
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $9
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note d4  $04
 	vol $8
 	note g3  $1c
-	wait1 $2a
+	rest $2a
 	vibrato $00
 	env $0 $03
 	vol $7
@@ -18297,61 +18298,61 @@ musiced6de:
 	note a4  $1c
 	note gs4 $1c
 	note g4  $1c
-	wait1 $1c
+	rest $1c
 	vibrato $81
 	env $0 $00
 	note e5  $15
 	note c5  $07
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $7
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $7
 	note f5  $15
 	note cs5 $07
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $04
 	vol $7
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $04
 	vol $7
 	note e5  $15
 	note c5  $07
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $7
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $7
 	note d5  $15
 	note as4 $07
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $04
 	vol $7
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $04
 	vibrato $00
 	env $0 $02
 	vol $7
 	note g4  $07
-	wait1 $07
+	rest $07
 	note g5  $07
 	note fs5 $07
 	note f5  $0e
@@ -18364,7 +18365,7 @@ musiced6de:
 	note as4 $1c
 	note a4  $1c
 	note g4  $1b
-	wait1 $01
+	rest $01
 	vibrato $32
 	env $0 $00
 	goto musiced6de
@@ -18398,7 +18399,7 @@ musiced84b:
 	note a3  $07
 	vol $b
 	note g3  $0e
-	wait1 $fc
+	rest $fc
 	vol $7
 	note a4  $07
 	note gs4 $07
@@ -18411,7 +18412,7 @@ musiced84b:
 	note cs4 $1c
 	note c4  $1c
 	note b3  $1c
-	wait1 $1c
+	rest $1c
 	vibrato $81
 	env $0 $00
 	note g4  $1c
@@ -18450,43 +18451,43 @@ musiced8d1:
 	vol $b
 	note c3  $1c
 	note g3  $07
-	wait1 $07
+	rest $07
 	note g3  $07
-	wait1 $07
+	rest $07
 	note ds3 $1c
 	note e3  $07
-	wait1 $15
+	rest $15
 	note c3  $1c
 	note g3  $07
-	wait1 $07
+	rest $07
 	note g3  $07
-	wait1 $07
+	rest $07
 	note gs3 $1c
 	note g3  $07
-	wait1 $15
+	rest $15
 	note c3  $0e
-	wait1 $ee
+	rest $ee
 	vol $c
 	note g2  $07
-	wait1 $07
+	rest $07
 	note g2  $07
-	wait1 $07
+	rest $07
 	vol $d
 	note g2  $1c
 	note cs3 $03
 	note d3  $07
-	wait1 $2e
+	rest $2e
 	note g2  $07
-	wait1 $07
+	rest $07
 	vol $b
 	note g2  $07
-	wait1 $07
+	rest $07
 	vol $b
 	note g2  $1c
 	vol $c
 	note fs3 $03
 	note g3  $07
-	wait1 $cf
+	rest $cf
 	vol $b
 	note g2  $07
 	vol $b
@@ -18515,30 +18516,30 @@ musiced8d1:
 	note e3  $07
 	note f3  $07
 	note g2  $07
-	wait1 $07
+	rest $07
 	note b4  $07
 	note as4 $07
 	note a4  $07
-	wait1 $07
+	rest $07
 	note gs4 $07
-	wait1 $07
+	rest $07
 	note g4  $07
-	wait1 $07
+	rest $07
 	note fs4 $07
-	wait1 $07
+	rest $07
 	note f4  $07
-	wait1 $07
+	rest $07
 	note e4  $07
-	wait1 $07
+	rest $07
 	note ds4 $07
-	wait1 $15
+	rest $15
 	note d4  $07
-	wait1 $15
+	rest $15
 	note cs4 $07
-	wait1 $11
+	rest $11
 	note fs2 $04
 	note g2  $07
-	wait1 $15
+	rest $15
 	goto musiced8d1
 	cmdff
 
@@ -18550,26 +18551,26 @@ musiced98b:
 	vol $6
 	note g4  $1c
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note fs4 $1c
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note b4  $07
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
@@ -18578,17 +18579,17 @@ musiced98b:
 	note g4  $0e
 	note fs4 $0e
 	note cs5 $04
-	wait1 $06
+	rest $06
 	vol $3
 	note cs5 $04
 	vol $6
 	note as4 $04
-	wait1 $06
+	rest $06
 	vol $3
 	note as4 $04
 	vol $6
 	note fs4 $04
-	wait1 $06
+	rest $06
 	vol $3
 	note fs4 $04
 	vol $6
@@ -18596,34 +18597,34 @@ musiced98b:
 	note f5  $05
 	note fs5 $05
 	note g5  $04
-	wait1 $03
+	rest $03
 	vol $4
 	note g5  $02
-	wait1 $02
+	rest $02
 	vol $3
 	note g5  $03
-	wait1 $1c
+	rest $1c
 	vol $6
 	note b6  $04
 	note a6  $05
 	note g6  $05
 	note ds6 $04
-	wait1 $03
+	rest $03
 	vol $4
 	note ds6 $02
-	wait1 $02
+	rest $02
 	vol $2
 	note ds6 $03
-	wait1 $1c
+	rest $1c
 	vol $6
 	note g4  $1c
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
@@ -18634,7 +18635,7 @@ musiced98b:
 	note as4 $0e
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
@@ -18643,13 +18644,13 @@ musiced98b:
 	note e5  $0e
 	note fs5 $0e
 	note ds5 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note a5  $0e
-	wait1 $38
+	rest $38
 	vibrato $00
 	env $0 $02
 	duty $00
@@ -18659,10 +18660,10 @@ musiced98b:
 	note b4  $0e
 	note b4  $0e
 	note f5  $0e
-	wait1 $38
+	rest $38
 	vol $6
 	note e5  $0e
-	wait1 $2a
+	rest $2a
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -18676,21 +18677,21 @@ sound0cChannel0:
 musiceda60:
 	vol $6
 	note c3  $0e
-	wait1 $0e
+	rest $0e
 	note e3  $0e
-	wait1 $0e
+	rest $0e
 	note g2  $0e
-	wait1 $0e
+	rest $0e
 	note e3  $0e
-	wait1 $0e
+	rest $0e
 	note c3  $0e
-	wait1 $0e
+	rest $0e
 	note e3  $0e
-	wait1 $0e
+	rest $0e
 	note g2  $0e
-	wait1 $0e
+	rest $0e
 	note e3  $0e
-	wait1 $2a
+	rest $2a
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -18698,42 +18699,42 @@ musiceda60:
 	note f2  $05
 	note fs2 $05
 	note g2  $04
-	wait1 $03
+	rest $03
 	vol $5
 	note g2  $02
-	wait1 $02
+	rest $02
 	vol $3
 	note g2  $03
-	wait1 $1c
+	rest $1c
 	vol $6
 	note b2  $04
 	note a2  $05
 	note g2  $05
 	note ds2 $04
-	wait1 $03
+	rest $03
 	vol $4
 	note ds2 $02
-	wait1 $05
+	rest $05
 	vibrato $00
 	env $0 $03
 	vol $6
 	note c3  $0e
-	wait1 $0e
+	rest $0e
 	vol $6
 	note e3  $0e
-	wait1 $0e
+	rest $0e
 	note g2  $0e
-	wait1 $0e
+	rest $0e
 	note e3  $0e
-	wait1 $0e
+	rest $0e
 	note c3  $0e
-	wait1 $0e
+	rest $0e
 	note e3  $0e
-	wait1 $0e
+	rest $0e
 	note g2  $0e
-	wait1 $0e
+	rest $0e
 	note e3  $0e
-	wait1 $46
+	rest $46
 	vibrato $00
 	env $0 $02
 	duty $00
@@ -18742,9 +18743,9 @@ musiceda60:
 	note g4  $0e
 	note g4  $0e
 	note cs5 $0e
-	wait1 $38
+	rest $38
 	note c5  $0e
-	wait1 $2a
+	rest $2a
 	vibrato $00
 	env $0 $03
 	duty $02
@@ -18754,42 +18755,42 @@ musiceda60:
 
 sound0cChannel4:
 musicedaef:
-	wait1 $ff
-	wait1 $5f
+	rest $ff
+	rest $5f
 	duty $17
 	note g4  $07
-	wait1 $07
+	rest $07
 	note g5  $07
-	wait1 $23
+	rest $23
 	note g4  $07
-	wait1 $07
+	rest $07
 	note g5  $07
-	wait1 $23
+	rest $23
 	note g4  $07
-	wait1 $07
+	rest $07
 	note g5  $07
-	wait1 $23
+	rest $23
 	note g4  $07
-	wait1 $07
+	rest $07
 	note g5  $07
-	wait1 $15
+	rest $15
 	duty $10
 	note fs2 $03
 	note g2  $6d
-	wait1 $1c
+	rest $1c
 	note g2  $07
 	note gs2 $07
 	note a2  $07
 	note b2  $05
 	note b2  $02
 	note c3  $07
-	wait1 $07
+	rest $07
 	note g2  $07
-	wait1 $05
+	rest $05
 	note as2 $02
 	note gs2 $0e
 	note g2  $07
-	wait1 $07
+	rest $07
 	goto musicedaef
 	cmdff
 
@@ -19044,12 +19045,12 @@ musicedce8:
 	note b4  $12
 	note c5  $12
 	note g5  $09
-	wait1 $51
+	rest $51
 	note a4  $12
 	note b4  $12
 	note c5  $12
 	note fs5 $09
-	wait1 $51
+	rest $51
 	vibrato $00
 	env $0 $00
 	note b4  $12
@@ -19074,12 +19075,12 @@ musicedce8:
 	note g5  $12
 	note a5  $12
 	note b5  $09
-	wait1 $51
+	rest $51
 	note e5  $12
 	note fs5 $12
 	note g5  $12
 	note a5  $09
-	wait1 $51
+	rest $51
 	vibrato $00
 	env $0 $00
 	goto musicedce8
@@ -19110,19 +19111,19 @@ musicedd69:
 	note e4  $12
 	note fs4 $12
 	note g4  $12
-	wait1 $1f
+	rest $1f
 	vibrato $00
 	env $0 $04
 	vol $4
 	note b4  $12
 	note c5  $12
 	note g5  $09
-	wait1 $51
+	rest $51
 	note a4  $12
 	note b4  $12
 	note c5  $12
 	note fs5 $09
-	wait1 $44
+	rest $44
 	vibrato $00
 	env $0 $00
 	vol $4
@@ -19142,19 +19143,19 @@ musicedd69:
 	note a4  $12
 	note g4  $12
 	note b4  $12
-	wait1 $1f
+	rest $1f
 	vibrato $00
 	env $0 $04
 	vol $4
 	note g5  $12
 	note a5  $12
 	note b5  $09
-	wait1 $51
+	rest $51
 	note e5  $12
 	note fs5 $12
 	note g5  $12
 	note a5  $09
-	wait1 $39
+	rest $39
 	vibrato $00
 	env $0 $00
 	goto musicedd69
@@ -19190,7 +19191,7 @@ musiceddee:
 	note a2  $09
 	duty $0f
 	note a2  $09
-	wait1 $24
+	rest $24
 	duty $0e
 	note a2  $24
 	duty $0f
@@ -19205,7 +19206,7 @@ musiceddee:
 	note a2  $09
 	duty $0f
 	note a2  $09
-	wait1 $24
+	rest $24
 	duty $0e
 	note a2  $24
 	note e3  $24
@@ -19235,7 +19236,7 @@ musiceddee:
 	note a2  $09
 	duty $0f
 	note a2  $09
-	wait1 $24
+	rest $24
 	duty $0e
 	note a2  $24
 	duty $0f
@@ -19250,7 +19251,7 @@ musiceddee:
 	note a2  $09
 	duty $0f
 	note a2  $09
-	wait1 $24
+	rest $24
 	goto musiceddee
 	cmdff
 	cmdff
@@ -19269,10 +19270,10 @@ sound07Channel1:
 musicedeb0:
 	vol $6
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $07
 	note f4  $2a
@@ -19287,10 +19288,10 @@ musicedeb0:
 	note gs4 $07
 	note as4 $07
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note ds4 $07
 	note c5  $31
@@ -19305,10 +19306,10 @@ musicedeb0:
 	note ds5 $07
 	note cs5 $07
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note ds4 $07
 	note c5  $31
@@ -19332,7 +19333,7 @@ musicedeb0:
 	vol $6
 	note c5  $1c
 	note cs5 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
@@ -19345,10 +19346,10 @@ musicedeb0:
 	note c5  $2a
 	note as4 $0e
 	note gs4 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note c5  $07
 	note f5  $07
@@ -19372,17 +19373,17 @@ musicedeb0:
 	note c6  $2a
 	note g5  $0e
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note c5  $1c
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note f4  $07
 	note cs5 $31
@@ -19395,10 +19396,10 @@ musicedeb0:
 	note as4 $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note c5  $03
 	vol $3
@@ -19421,10 +19422,10 @@ musicedeb0:
 	env $0 $00
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $07
 	note as4 $2a
@@ -19464,10 +19465,10 @@ musicedeb0:
 	note as4 $0e
 	note c5  $0e
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note f4  $07
 	note cs5 $2a
@@ -19496,10 +19497,10 @@ musicedeb0:
 	note f5  $0e
 	note g5  $0e
 	note gs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs5 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note b4  $07
 	note gs5 $2a
@@ -19516,10 +19517,10 @@ musicedeb0:
 	note as5 $07
 	note b5  $07
 	note c6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c6  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note g5  $07
 	note c6  $3f
@@ -19527,7 +19528,7 @@ musicedeb0:
 	env $0 $00
 	vol $3
 	note c6  $0e
-	wait1 $07
+	rest $07
 	vibrato $f1
 	env $0 $00
 	goto musicedeb0
@@ -19540,21 +19541,21 @@ sound07Channel0:
 musicee08a:
 	vol $6
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
 	note gs3 $07
 	note f3  $07
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
 	note gs3 $07
 	note f3  $07
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
@@ -19565,7 +19566,7 @@ musicee08a:
 	note f3  $07
 	note g3  $07
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
@@ -19578,42 +19579,42 @@ musicee08a:
 	note gs3 $04
 	vol $6
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
 	note ds3 $07
 	note gs3 $07
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
 	note c4  $07
 	note gs3 $07
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $6
 	note as3 $07
 	note g3  $07
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
 	note c4  $07
 	note gs3 $07
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
 	note c4  $07
 	note gs3 $07
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
@@ -19623,7 +19624,7 @@ musicee08a:
 	note f3  $07
 	note g3  $07
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
@@ -19636,7 +19637,7 @@ musicee08a:
 	note ds3 $04
 	vol $6
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
@@ -19649,7 +19650,7 @@ musicee08a:
 	note ds3 $04
 	vol $6
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
@@ -19665,9 +19666,9 @@ musicee08a:
 	note gs3 $07
 	note as3 $07
 	note gs3 $03
-	wait1 $04
+	rest $04
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
@@ -19680,57 +19681,57 @@ musicee08a:
 	note g3  $04
 	vol $6
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
 	vol $6
 	note g3  $07
 	note f3  $07
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $6
 	note c4  $07
 	note as3 $07
 	note g3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g3  $04
 	vol $6
 	note g3  $07
 	note as3 $07
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
 	note c4  $07
 	note cs4 $07
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
 	note ds4 $03
-	wait1 $04
+	rest $04
 	note ds4 $07
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
 	note ds4 $07
 	note d4  $07
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $04
 	vol $6
 	note cs4 $07
 	note c4  $07
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $04
 	vol $6
@@ -19738,29 +19739,29 @@ musicee08a:
 	note g3  $07
 	note f3  $0e
 	note g3  $03
-	wait1 $04
+	rest $04
 	note g3  $07
 	note b3  $0e
 	note g3  $03
-	wait1 $04
+	rest $04
 	note g3  $07
 	note d4  $0e
 	note b3  $03
-	wait1 $04
+	rest $04
 	note b3  $07
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
 	note c4  $03
-	wait1 $04
+	rest $04
 	note c4  $07
 	note cs4 $09
 	note ds4 $09
 	note cs4 $0a
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
@@ -19770,7 +19771,7 @@ musicee08a:
 	note g3  $07
 	note c4  $07
 	note e4  $07
-	wait1 $23
+	rest $23
 	vol $6
 	note f3  $07
 	note as3 $07
@@ -19804,7 +19805,7 @@ musicee08a:
 	note c4  $07
 	note cs4 $0e
 	note c4  $0e
-	wait1 $07
+	rest $07
 	note c3  $07
 	note g3  $07
 	note e3  $07
@@ -19819,18 +19820,18 @@ musicee08a:
 	note g4  $0e
 	note gs4 $0e
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $07
-	wait1 $12
+	rest $12
 	vol $6
 	note as3 $03
-	wait1 $04
+	rest $04
 	note as3 $07
 	note gs3 $07
 	note g3  $1c
 	note cs4 $1c
-	wait1 $07
+	rest $07
 	note gs3 $07
 	note cs4 $07
 	note b3  $07
@@ -19845,10 +19846,10 @@ musicee08a:
 	note d4  $0e
 	note e4  $0e
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note g3  $07
 	note f4  $1c
@@ -19879,187 +19880,187 @@ musicee2da:
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $0e
+	rest $0e
 	duty $11
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $2a
+	rest $2a
 	duty $11
 	note ds2 $1c
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $0e
+	rest $0e
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $2a
+	rest $2a
 	duty $11
 	note as2 $1c
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $0e
+	rest $0e
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $2a
+	rest $2a
 	duty $11
 	note ds2 $1c
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $0e
+	rest $0e
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $2a
+	rest $2a
 	duty $11
 	note gs2 $1c
 	duty $11
 	note g2  $07
 	duty $0f
 	note g2  $07
-	wait1 $0e
+	rest $0e
 	duty $11
 	note g2  $07
 	duty $0f
 	note g2  $07
-	wait1 $2a
+	rest $2a
 	duty $11
 	note c2  $1c
 	duty $11
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $0e
+	rest $0e
 	duty $11
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $2a
+	rest $2a
 	duty $11
 	note f2  $1c
 	duty $11
 	note g2  $07
 	duty $0f
 	note g2  $07
-	wait1 $0e
+	rest $0e
 	duty $11
 	note g2  $07
 	duty $0f
 	note g2  $07
-	wait1 $2a
+	rest $2a
 	duty $11
 	note g2  $1c
 	duty $11
 	note c2  $07
 	duty $0f
 	note c2  $07
-	wait1 $0e
+	rest $0e
 	duty $11
 	note c2  $07
 	duty $0f
 	note c2  $07
-	wait1 $2a
+	rest $2a
 	duty $11
 	note c2  $1c
 	duty $11
 	note as2 $07
 	duty $0f
 	note as2 $05
-	wait1 $02
+	rest $02
 	duty $11
 	note as2 $07
 	duty $0f
 	note as2 $05
-	wait1 $10
+	rest $10
 	duty $11
 	note as2 $0e
 	note ds2 $07
 	duty $0f
 	note ds2 $05
-	wait1 $02
+	rest $02
 	duty $11
 	note ds2 $07
 	duty $0f
 	note ds2 $05
-	wait1 $10
+	rest $10
 	duty $11
 	note g2  $0e
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $05
-	wait1 $02
+	rest $02
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $05
-	wait1 $10
+	rest $10
 	duty $11
 	note ds2 $0e
 	note gs2 $07
 	duty $0f
 	note gs2 $05
-	wait1 $02
+	rest $02
 	duty $11
 	note gs2 $07
 	duty $0f
 	note gs2 $05
-	wait1 $10
+	rest $10
 	duty $11
 	note gs2 $0e
 	duty $11
 	note g2  $07
 	duty $0f
 	note g2  $05
-	wait1 $02
+	rest $02
 	duty $11
 	note g2  $07
 	duty $0f
 	note g2  $05
-	wait1 $10
+	rest $10
 	duty $11
 	note g2  $0e
 	note c2  $07
 	duty $0f
 	note c2  $05
-	wait1 $02
+	rest $02
 	duty $11
 	note c2  $07
 	duty $0f
 	note c2  $05
-	wait1 $10
+	rest $10
 	duty $11
 	note e2  $0e
 	duty $11
 	note f2  $07
 	duty $0f
 	note f2  $05
-	wait1 $02
+	rest $02
 	duty $11
 	note f2  $0e
 	duty $0f
 	note f2  $05
-	wait1 $09
+	rest $09
 	duty $11
 	note f2  $07
 	duty $0f
 	note f2  $05
-	wait1 $02
+	rest $02
 	duty $11
 	note f2  $07
 	duty $0f
 	note f2  $05
-	wait1 $02
+	rest $02
 	duty $11
 	note f2  $0e
 	note g2  $0e
@@ -20068,76 +20069,76 @@ musicee2da:
 	note as2 $07
 	duty $0f
 	note as2 $05
-	wait1 $02
+	rest $02
 	duty $11
 	note as2 $07
 	duty $0f
 	note as2 $05
-	wait1 $10
+	rest $10
 	duty $11
 	note as2 $0e
 	note ds2 $07
 	duty $0f
 	note ds2 $05
-	wait1 $02
+	rest $02
 	duty $11
 	note ds2 $07
 	duty $0f
 	note ds2 $05
-	wait1 $10
+	rest $10
 	duty $11
 	note ds2 $0e
 	duty $11
 	note f2  $07
 	duty $0f
 	note f2  $05
-	wait1 $02
+	rest $02
 	duty $11
 	note f2  $0e
 	duty $0f
 	note f2  $05
-	wait1 $09
+	rest $09
 	duty $11
 	note f2  $0e
 	note ds2 $07
 	duty $0f
 	note ds2 $05
-	wait1 $02
+	rest $02
 	duty $11
 	note ds2 $0e
 	duty $0f
 	note ds2 $05
-	wait1 $09
+	rest $09
 	duty $11
 	note ds2 $0e
 	duty $11
 	note d2  $07
 	duty $0f
 	note d2  $05
-	wait1 $02
+	rest $02
 	duty $11
 	note d2  $07
 	duty $0f
 	note d2  $05
-	wait1 $10
+	rest $10
 	duty $11
 	note d2  $0e
 	note g2  $07
 	duty $0f
 	note g2  $05
-	wait1 $02
+	rest $02
 	duty $11
 	note g2  $07
 	duty $0f
 	note g2  $05
-	wait1 $10
+	rest $10
 	duty $11
 	note g2  $0e
 	duty $11
 	note c2  $0e
 	duty $0f
 	note c2  $05
-	wait1 $09
+	rest $09
 	duty $11
 	note c2  $1c
 	note d2  $1c
@@ -20214,22 +20215,22 @@ musicee549:
 	note g5  $10
 	note fs5 $10
 	note e5  $10
-	wait1 $08
+	rest $08
 	vol $3
 	note e5  $08
 	vol $6
 	note a4  $10
-	wait1 $08
+	rest $08
 	vol $3
 	note a4  $08
 	vol $6
 	note a4  $10
-	wait1 $08
+	rest $08
 	vol $3
 	note a4  $08
 	vol $6
 	note a4  $0c
-	wait1 $04
+	rest $04
 	note a4  $08
 	note b4  $08
 	note c5  $38
@@ -20242,12 +20243,12 @@ musicee549:
 	note b4  $10
 	note a4  $10
 	note b4  $10
-	wait1 $08
+	rest $08
 	vol $3
 	note b4  $08
 	vol $6
 	note g4  $10
-	wait1 $08
+	rest $08
 	vol $3
 	note g4  $08
 	vol $6
@@ -20259,7 +20260,7 @@ musicee549:
 	vol $6
 	note a4  $10
 	note e5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note e5  $04
 	vol $6
@@ -20268,7 +20269,7 @@ musicee549:
 	note e5  $20
 	vol $1
 	note e5  $10
-	wait1 $10
+	rest $10
 	vol $6
 	note e5  $08
 	note a5  $08
@@ -20291,71 +20292,71 @@ musicee549:
 	note e5  $20
 	vol $6
 	note c6  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note c6  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note c6  $08
 	vol $6
 	note b5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note b5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note b5  $08
 	vol $6
 	note a5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note a5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note a5  $08
 	vol $6
 	note g5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note g5  $08
 	vol $6
 	note fs5 $48
-	wait1 $08
+	rest $08
 	note g5  $10
 	note a5  $10
 	note b5  $10
 	note c6  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note c6  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note c6  $08
 	vol $6
 	note b5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note b5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note b5  $08
 	vol $6
 	note a5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note a5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note a5  $08
 	vol $6
 	note g5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note g5  $08
 	vol $6
@@ -20389,13 +20390,13 @@ musicee549:
 	note d5  $18
 	vol $3
 	note d5  $08
-	wait1 $30
+	rest $30
 	vol $6
 	note b4  $05
 	note e5  $05
 	note a4  $06
 	note b4  $2a
-	wait1 $06
+	rest $06
 	note b4  $04
 	note e5  $04
 	note fs5 $04
@@ -20416,7 +20417,7 @@ sound05Channel0:
 	duty $02
 	vol $6
 	note a3  $08
-	wait1 $08
+	rest $08
 	note b3  $08
 	vol $3
 	note a3  $08
@@ -20735,7 +20736,7 @@ musicee701:
 	note b4  $08
 	vol $6
 	note ds3 $04
-	wait1 $04
+	rest $04
 	note fs3 $04
 	vol $3
 	note ds3 $04
@@ -20989,7 +20990,7 @@ musicee701:
 	note a4  $04
 	vol $6
 	note g3  $08
-	wait1 $08
+	rest $08
 	note b3  $08
 	vol $3
 	note g3  $08
@@ -21118,41 +21119,41 @@ musicee701:
 
 sound05Channel4:
 	duty $08
-	wait1 $ff
-	wait1 $25
+	rest $ff
+	rest $25
 musiceeac7:
 	note g5  $30
-	wait1 $10
+	rest $10
 	note fs5 $20
 	note g5  $10
 	note fs5 $10
 	note e5  $10
-	wait1 $10
+	rest $10
 	note a4  $10
-	wait1 $10
+	rest $10
 	note a4  $10
-	wait1 $10
+	rest $10
 	note a4  $0c
-	wait1 $04
+	rest $04
 	note a4  $08
 	note b4  $08
 	note c5  $38
-	wait1 $08
+	rest $08
 	note b4  $20
 	note d5  $20
 	note c5  $20
 	note b4  $10
 	note a4  $10
 	note b4  $10
-	wait1 $10
+	rest $10
 	note g4  $10
-	wait1 $10
+	rest $10
 	note a4  $60
-	wait1 $10
+	rest $10
 	note e5  $08
-	wait1 $08
+	rest $08
 	note e5  $60
-	wait1 $10
+	rest $10
 	note e5  $08
 	note a5  $08
 	note e5  $30
@@ -21162,29 +21163,29 @@ musiceeac7:
 	note e5  $08
 	note a5  $08
 	note e5  $30
-	wait1 $ff
-	wait1 $ff
+	rest $ff
+	rest $ff
 	duty $08
-	wait1 $32
+	rest $32
 	note g5  $10
 	note a5  $10
 	note b5  $30
-	wait1 $10
+	rest $10
 	note e6  $30
 	note e6  $10
 	note d6  $18
-	wait1 $08
+	rest $08
 	note a5  $18
-	wait1 $08
+	rest $08
 	note f5  $18
-	wait1 $08
+	rest $08
 	note d5  $18
-	wait1 $38
+	rest $38
 	note b4  $05
 	note e5  $05
 	note a4  $06
 	note b4  $2a
-	wait1 $06
+	rest $06
 	note b4  $04
 	note e5  $04
 	note fs5 $04
@@ -21294,7 +21295,7 @@ musiceeb67:
 	vibrato $00
 	env $0 $04
 	note d6  $1c
-	wait1 $1c
+	rest $1c
 	vibrato $00
 	env $0 $03
 	goto musiceeb67
@@ -21432,7 +21433,7 @@ musiceecb1:
 	note c6  $0e
 	note e6  $0e
 	note d6  $1c
-	wait1 $1c
+	rest $1c
 	goto musiceecb1
 	cmdff
 	note c1  $6a
@@ -21455,10 +21456,10 @@ sound34Channel1:
 musiceed3a:
 	vol $6
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note g4  $06
 	note fs4 $48
@@ -21467,139 +21468,139 @@ musiceed3a:
 	note f4  $06
 	note ds4 $06
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c4  $06
 	vol $6
 	note fs3 $30
 	vol $3
 	note fs3 $30
-	wait1 $30
+	rest $30
 	vol $6
 	note fs3 $06
 	note g3  $06
 	note c4  $06
 	note ds4 $06
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note c5  $06
 	note b4  $30
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note b4  $06
 	note as4 $18
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note as4 $06
 	note a4  $18
 	note f4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note gs4 $06
 	note g4  $0c
 	note ds4 $06
 	note c4  $06
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note g3  $06
-	wait1 $30
+	rest $30
 	vol $6
 	note g4  $0c
 	note ds4 $06
 	note c4  $06
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note g3  $06
-	wait1 $18
+	rest $18
 	vol $6
 	note d4  $06
 	note ds4 $06
 	note g4  $06
 	note b4  $06
 	note d5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note f5  $06
 	note ds5 $30
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $7
 	note d5  $06
 	note c5  $18
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $7
 	note as4 $06
 	note a4  $18
 	note f4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $06
-	wait1 $03
+	rest $03
 	vol $7
 	note gs4 $06
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note g4  $06
 	vol $7
 	note c4  $48
 	vol $3
 	note c4  $18
-	wait1 $48
+	rest $48
 	vol $6
 	note f4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note gs4 $06
 	note cs5 $18
 	note c5  $18
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note d5  $06
 	note g5  $24
@@ -21607,10 +21608,10 @@ musiceed3a:
 	note g5  $0c
 	vol $6
 	note gs5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note gs5 $06
-	wait1 $03
+	rest $03
 	vol $6
 	note f5  $06
 	note cs6 $0c
@@ -21618,10 +21619,10 @@ musiceed3a:
 	note b5  $0c
 	note as5 $0c
 	note a5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note a5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note a5  $06
 	vol $6
@@ -21637,10 +21638,10 @@ sound34Channel0:
 musiceee71:
 	vol $6
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note ds4 $06
 	note d4  $48
@@ -21649,56 +21650,56 @@ musiceee71:
 	note cs4 $06
 	note c4  $06
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note g3  $06
-	wait1 $18
+	rest $18
 	vol $6
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c5  $06
 	vol $6
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs4 $06
 	vol $6
 	note c6  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c6  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c6  $06
 	vol $6
 	note fs5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs5 $06
 	vol $6
 	note ds6 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds6 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note ds6 $06
 	vol $6
 	note c6  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c6  $03
 	vol $4
@@ -21707,7 +21708,7 @@ musiceee71:
 	note c4  $06
 	note ds4 $06
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $6
 	note ds4 $48
 	note d4  $30
@@ -21717,19 +21718,19 @@ musiceee71:
 	note c4  $06
 	note g3  $06
 	note ds3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds3 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note ds3 $06
-	wait1 $40
+	rest $40
 	vol $3
 	note g4  $0c
 	note ds4 $06
 	note c4  $06
 	note g3  $06
-	wait1 $02
+	rest $02
 	vol $6
 	note g6  $0c
 	note ds6 $06
@@ -21739,10 +21740,10 @@ musiceee71:
 	note ds4 $06
 	note g4  $06
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $06
 	vol $6
@@ -21752,51 +21753,51 @@ musiceee71:
 	note d4  $18
 	note cs4 $18
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c4  $06
 	vol $6
 	note g3  $48
 	note g5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note g5  $06
 	vol $6
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c5  $06
 	vol $6
 	note g6  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g6  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note g6  $06
 	vol $6
 	note c6  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c6  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c6  $06
 	vol $3
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $6
 	note f4  $06
 	note gs4 $12
@@ -21808,10 +21809,10 @@ musiceee71:
 	note f4  $06
 	vol $6
 	note d4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note g4  $06
 	note b4  $18
@@ -21819,10 +21820,10 @@ musiceee71:
 	note b4  $18
 	vol $6
 	note f5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note f5  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note cs5 $06
 	note as5 $0c
@@ -21830,10 +21831,10 @@ musiceee71:
 	note gs5 $0c
 	note g5  $0c
 	note f5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note f5  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note f5  $06
 	vol $6
@@ -23684,7 +23685,7 @@ musicefa3e:
 sound35Channel4:
 musicefcb4:
 	duty $0c
-	wait1 $0c
+	rest $0c
 	vol $2
 	note e6  $08
 	note b5  $08
@@ -23923,8 +23924,8 @@ musicefcb4:
 	note e3  $20
 	duty $0c
 	note e3  $20
-	wait1 $bf
-	wait1 $21
+	rest $bf
+	rest $21
 	goto musicefcb4
 	cmdff
 
@@ -24027,11 +24028,11 @@ sound89Channel2:
 	vol $d
 	note fs5 $05
 	vol $0
-	wait1 $01
+	rest $01
 	vol $d
 	note b5  $05
 	vol $0
-	wait1 $01
+	rest $01
 	vol $d
 	note e6  $05
 	cmdff
@@ -24091,7 +24092,7 @@ sound8eChannel2:
 	note as4 $05
 	cmdf8 $00
 	vol $0
-	wait1 $0c
+	rest $0c
 	vol $c
 	env $0 $01
 	cmdf8 $e6
@@ -24103,14 +24104,14 @@ sound8eChannel2:
 	note fs4 $06
 	cmdf8 $00
 	vol $0
-	wait1 $03
+	rest $03
 	vol $d
 	env $0 $01
 	cmdf8 $de
 	note b3  $0f
 	cmdf8 $00
 	vol $0
-	wait1 $0b
+	rest $0b
 	vol $d
 	env $0 $01
 	cmdf8 $de
@@ -24610,7 +24611,7 @@ musicf02ac:
 	note e4  $38
 	duty $0c
 	note e4  $38
-	wait1 $c4
+	rest $c4
 	duty $17
 	note d4  $1c
 	note cs4 $1c
@@ -24628,8 +24629,8 @@ musicf02ac:
 	note b3  $38
 	duty $0c
 	note b3  $38
-	wait1 $ff
-	wait1 $c1
+	rest $ff
+	rest $c1
 	goto musicf02ac
 	cmdff
 
@@ -24693,7 +24694,7 @@ musicf02f4:
 	note as3 $05
 	vol $1
 	note as3 $04
-	wait1 $71
+	rest $71
 	vol $6
 	note e4  $12
 	note as3 $12
@@ -24727,7 +24728,7 @@ musicf02f4:
 	note as4 $05
 	vol $2
 	note as4 $04
-	wait1 $68
+	rest $68
 	vol $6
 	note b4  $09
 	note e5  $09
@@ -24793,13 +24794,13 @@ musicf02f4:
 	note as6 $09
 	note f7  $09
 	note e7  $09
-	wait1 $0d
+	rest $0d
 	vol $3
 	note e7  $09
-	wait1 $0e
+	rest $0e
 	vol $1
 	note e7  $09
-	wait1 $24
+	rest $24
 	goto musicf02f4
 	cmdff
 
@@ -24861,7 +24862,7 @@ musicf041c:
 	note e3  $05
 	vol $2
 	note e3  $04
-	wait1 $71
+	rest $71
 	vol $6
 	note fs3 $12
 	note g3  $24
@@ -24897,7 +24898,7 @@ musicf041c:
 	note e4  $05
 	vol $1
 	note e4  $04
-	wait1 $80
+	rest $80
 	vol $2
 	note b4  $09
 	note e5  $09
@@ -24963,10 +24964,10 @@ musicf041c:
 	note a6  $09
 	note ds7 $09
 	note d7  $09
-	wait1 $03
+	rest $03
 	vol $2
 	note e7  $03
-	wait1 $57
+	rest $57
 	goto musicf041c
 	cmdff
 
@@ -25038,9 +25039,9 @@ musicf0536:
 	note gs2 $12
 	note g2  $12
 	note e2  $24
-	wait1 $ff
-	wait1 $ff
-	wait1 $8a
+	rest $ff
+	rest $ff
+	rest $8a
 	goto musicf0536
 	cmdff
 
@@ -25203,9 +25204,9 @@ musicf05c3:
 	note $22 $02
 	vol $4
 	note $23 $10
-	wait1 $ff
-	wait1 $ff
-	wait1 $c0
+	rest $ff
+	rest $ff
+	rest $c0
 	goto musicf05c3
 	cmdff
 
@@ -25225,16 +25226,16 @@ musicf06be:
 	note cs5 $12
 	note c5  $12
 	note f4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $02
-	wait1 $03
+	rest $03
 	vol $6
 	note f4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $02
-	wait1 $6f
+	rest $6f
 	vol $4
 	note a4  $12
 	vol $5
@@ -25246,19 +25247,19 @@ musicf06be:
 	note b4  $12
 	note as4 $12
 	note e4  $09
-	wait1 $03
+	rest $03
 	vol $4
 	note e4  $03
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $09
-	wait1 $02
+	rest $02
 	vol $5
 	note e4  $03
-	wait1 $04
+	rest $04
 	vol $2
 	note e4  $03
-	wait1 $69
+	rest $69
 	vol $4
 	note b4  $12
 	vol $6
@@ -25270,19 +25271,19 @@ musicf06be:
 	note cs5 $12
 	note c5  $12
 	note f4  $09
-	wait1 $02
+	rest $02
 	vol $4
 	note f4  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note f4  $09
-	wait1 $02
+	rest $02
 	vol $4
 	note f4  $03
-	wait1 $04
+	rest $04
 	vol $2
 	note f4  $03
-	wait1 $69
+	rest $69
 	vol $5
 	note a4  $12
 	vol $5
@@ -25294,19 +25295,19 @@ musicf06be:
 	note b4  $12
 	note as4 $12
 	note e4  $09
-	wait1 $03
+	rest $03
 	vol $4
 	note e4  $03
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $09
-	wait1 $01
+	rest $01
 	vol $4
 	note e4  $03
-	wait1 $05
+	rest $05
 	vol $2
 	note e4  $03
-	wait1 $69
+	rest $69
 	duty $01
 	vol $6
 	note b3  $09
@@ -25314,52 +25315,52 @@ musicf06be:
 	note gs3 $09
 	note fs3 $09
 	note f3  $55
-	wait1 $17
+	rest $17
 	note as3 $04
 	note b3  $05
 	note as3 $09
 	note gs3 $09
 	note fs3 $09
 	note f3  $5a
-	wait1 $12
+	rest $12
 	note a3  $09
 	note gs3 $09
 	note fs3 $09
 	note f3  $09
 	note ds3 $5a
-	wait1 $12
+	rest $12
 	note a3  $09
 	note gs3 $09
 	note fs3 $09
 	note f3  $09
 	note ds3 $12
 	note f3  $09
-	wait1 $1b
+	rest $1b
 	note ds3 $12
 	note f3  $09
-	wait1 $1b
+	rest $1b
 	note b3  $09
 	note as3 $09
 	note gs3 $09
 	note fs3 $09
 	note f3  $55
-	wait1 $17
+	rest $17
 	note b3  $09
 	note as3 $09
 	note gs3 $09
 	note fs3 $09
 	note f3  $3f
-	wait1 $09
+	rest $09
 	note f3  $09
 	note g3  $09
 	note a3  $09
 	note b3  $09
 	note c4  $09
-	wait1 $09
+	rest $09
 	note c4  $09
-	wait1 $09
+	rest $09
 	note fs4 $6c
-	wait1 $48
+	rest $48
 	duty $02
 	goto musicf06be
 	cmdff
@@ -25381,16 +25382,16 @@ musicf07ce:
 	note fs4 $12
 	vol $6
 	note b3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $02
-	wait1 $03
+	rest $03
 	vol $6
 	note b3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $02
-	wait1 $6f
+	rest $6f
 	vol $4
 	note e4  $12
 	vol $5
@@ -25402,19 +25403,19 @@ musicf07ce:
 	note fs4 $12
 	note f4  $12
 	note as3 $09
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $6
 	note as3 $09
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $03
-	wait1 $69
+	rest $69
 	vol $3
 	note f4  $12
 	vol $5
@@ -25426,28 +25427,28 @@ musicf07ce:
 	note fs4 $12
 	vol $6
 	note b3  $09
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $03
-	wait1 $03
+	rest $03
 	vol $6
 	note b3  $09
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $03
-	wait1 $03
+	rest $03
 	vol $2
 	note b3  $03
-	wait1 $0f
+	rest $0f
 	vol $6
 	note fs3 $04
-	wait1 $01
+	rest $01
 	vol $4
 	note fs3 $05
-	wait1 $01
+	rest $01
 	vol $3
 	note fs3 $04
-	wait1 $4b
+	rest $4b
 	vol $3
 	note e4  $12
 	vol $5
@@ -25459,34 +25460,34 @@ musicf07ce:
 	note fs4 $12
 	note f4  $12
 	note as3 $09
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $6
 	note as3 $09
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $03
-	wait1 $0f
+	rest $0f
 	vol $6
 	note e3  $04
-	wait1 $01
+	rest $01
 	vol $5
 	note e3  $05
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $04
-	wait1 $ff
-	wait1 $ff
-	wait1 $ff
-	wait1 $e4
+	rest $ff
+	rest $ff
+	rest $ff
+	rest $e4
 	vol $1
 	note c5  $04
-	wait1 $05
+	rest $05
 	vol $2
 	note cs5 $04
 	vol $0
@@ -25523,7 +25524,7 @@ musicf07ce:
 	note cs5 $04
 	vol $2
 	note c5  $05
-	wait1 $48
+	rest $48
 	goto musicf07ce
 	cmdff
 
@@ -25531,117 +25532,117 @@ sound13Channel4:
 musicf08ce:
 	duty $0e
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $75
+	rest $75
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $75
+	rest $75
 	note as2 $09
-	wait1 $09
+	rest $09
 	note as2 $09
-	wait1 $75
+	rest $75
 	note as2 $09
-	wait1 $09
+	rest $09
 	note as2 $09
-	wait1 $75
+	rest $75
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $75
+	rest $75
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $63
+	rest $63
 	note b2  $09
-	wait1 $09
+	rest $09
 	note as2 $09
-	wait1 $09
+	rest $09
 	note as2 $09
-	wait1 $75
+	rest $75
 	note as2 $09
-	wait1 $09
+	rest $09
 	note as2 $09
-	wait1 $63
+	rest $63
 	note as2 $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $1b
+	rest $1b
 	note f2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $1b
+	rest $1b
 	note f2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $1b
+	rest $1b
 	note f2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $1b
+	rest $1b
 	note f2  $09
-	wait1 $09
+	rest $09
 	note a2  $09
-	wait1 $09
+	rest $09
 	note a2  $09
-	wait1 $1b
+	rest $1b
 	note ds2 $09
-	wait1 $09
+	rest $09
 	note a2  $09
-	wait1 $09
+	rest $09
 	note a2  $09
-	wait1 $1b
+	rest $1b
 	note ds2 $09
-	wait1 $09
+	rest $09
 	note a2  $09
-	wait1 $09
+	rest $09
 	note a2  $09
-	wait1 $09
+	rest $09
 	note ds2 $12
 	note f2  $09
-	wait1 $1b
+	rest $1b
 	note ds2 $12
 	note f2  $09
-	wait1 $1b
+	rest $1b
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $1b
+	rest $1b
 	note f2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $1b
+	rest $1b
 	note f2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $1b
+	rest $1b
 	note f2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $09
+	rest $09
 	note b2  $09
-	wait1 $1b
+	rest $1b
 	note f2  $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note d2  $6c
-	wait1 $48
+	rest $48
 	goto musicf08ce
 	cmdff
 
@@ -25753,49 +25754,49 @@ musicf09bb:
 	note as3 $10
 	note a3  $10
 	note gs3 $10
-	wait1 $04
+	rest $04
 	vol $3
 	note gs3 $08
-	wait1 $04
+	rest $04
 	vol $1
 	note gs3 $08
-	wait1 $08
+	rest $08
 	vol $6
 	note gs3 $10
 	note g3  $10
 	note fs3 $10
 	note f3  $10
-	wait1 $04
+	rest $04
 	vol $3
 	note f3  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note f3  $08
-	wait1 $08
+	rest $08
 	vol $6
 	note f3  $10
 	note e3  $10
 	note ds3 $10
 	note d3  $10
-	wait1 $04
+	rest $04
 	vol $3
 	note d3  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note d3  $08
-	wait1 $08
+	rest $08
 	vol $6
 	note d3  $10
 	note cs3 $10
 	note c3  $10
 	note b2  $10
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note b2  $08
-	wait1 $08
+	rest $08
 	goto musicf09bb
 	cmdff
 
@@ -25833,7 +25834,7 @@ musicf0adb:
 	note a4  $10
 	note ds4 $10
 	note d4  $10
-	wait1 $10
+	rest $10
 	note d4  $10
 	note ds4 $10
 	note a4  $10
@@ -25906,7 +25907,7 @@ musicf0adb:
 	note b4  $10
 	note f4  $10
 	note e4  $0a
-	wait1 $04
+	rest $04
 	vol $6
 	note e3  $10
 	vol $6
@@ -25914,52 +25915,52 @@ musicf0adb:
 	vol $6
 	note d3  $10
 	note cs3 $10
-	wait1 $04
+	rest $04
 	vol $3
 	note cs3 $08
-	wait1 $04
+	rest $04
 	vol $1
 	note cs3 $08
-	wait1 $08
+	rest $08
 	vol $6
 	note cs3 $10
 	vol $6
 	note c3  $10
 	note b2  $10
 	note as2 $10
-	wait1 $04
+	rest $04
 	vol $3
 	note as2 $08
-	wait1 $04
+	rest $04
 	vol $1
 	note as2 $08
-	wait1 $08
+	rest $08
 	vol $6
 	note as2 $10
 	note a2  $10
 	vol $6
 	note gs2 $10
 	note g2  $10
-	wait1 $04
+	rest $04
 	vol $3
 	note g2  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note g2  $08
-	wait1 $08
+	rest $08
 	vol $6
 	note g2  $10
 	note fs2 $10
 	note f2  $10
 	vol $6
 	note e2  $10
-	wait1 $04
+	rest $04
 	vol $3
 	note e2  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note e2  $08
-	wait1 $08
+	rest $08
 	goto musicf0adb
 	cmdff
 
@@ -25968,69 +25969,69 @@ sound14Channel4:
 musicf0c00:
 	duty $0e
 	note d2  $10
-	wait1 $10
+	rest $10
 	note d2  $10
-	wait1 $70
+	rest $70
 	note c2  $20
 	note d2  $10
-	wait1 $10
+	rest $10
 	note d2  $10
-	wait1 $80
+	rest $80
 	note c2  $10
 	note d2  $0a
-	wait1 $06
+	rest $06
 	note d2  $0a
-	wait1 $06
+	rest $06
 	note d2  $10
-	wait1 $70
+	rest $70
 	note c2  $20
 	note d2  $10
 	note c2  $10
 	note d2  $10
-	wait1 $70
+	rest $70
 	note ds2 $20
 	note e2  $10
-	wait1 $10
+	rest $10
 	note e2  $10
-	wait1 $80
+	rest $80
 	note d2  $10
 	note e2  $10
 	note g2  $10
 	note e2  $10
-	wait1 $80
+	rest $80
 	note d2  $10
 	note e2  $10
 	note g2  $10
 	note b2  $10
 	note as2 $75
-	wait1 $0b
+	rest $0b
 	note d2  $10
 	note e2  $10
 	note d2  $10
 	note e2  $10
 	note as1 $90
-	wait1 $08
+	rest $08
 	duty $0f
 	note b3  $10
 	note as3 $10
 	note a3  $10
 	note gs3 $10
-	wait1 $20
+	rest $20
 	note gs3 $10
 	note g3  $10
 	note fs3 $10
 	note f3  $10
-	wait1 $20
+	rest $20
 	note f3  $10
 	note e3  $10
 	note ds3 $10
 	note d3  $10
-	wait1 $20
+	rest $20
 	note d3  $10
 	note cs3 $10
 	note c3  $10
 	note b2  $10
-	wait1 $08
+	rest $08
 	duty $0e
 	note c2  $10
 	goto musicf0c00
@@ -26054,13 +26055,13 @@ musicf0c91:
 	note cs3 $05
 	note d3  $05
 	note ds3 $07
-	wait1 $0b
+	rest $0b
 	vol $2
 	note ds3 $07
-	wait1 $0c
+	rest $0c
 	vol $1
 	note ds3 $07
-	wait1 $0c
+	rest $0c
 	vibrato $00
 	env $0 $03
 	vol $6
@@ -26075,13 +26076,13 @@ musicf0c91:
 	note d6  $05
 	note c6  $05
 	note a5  $07
-	wait1 $0b
+	rest $0b
 	vol $2
 	note a5  $07
-	wait1 $0c
+	rest $0c
 	vol $1
 	note a5  $07
-	wait1 $0c
+	rest $0c
 	vibrato $00
 	env $0 $03
 	vol $6
@@ -26104,13 +26105,13 @@ musicf0c91:
 	note gs3 $05
 	note a3  $05
 	note as3 $07
-	wait1 $0b
+	rest $0b
 	vol $3
 	note as3 $07
-	wait1 $0c
+	rest $0c
 	vol $2
 	note as3 $07
-	wait1 $0c
+	rest $0c
 	vibrato $00
 	env $0 $03
 	goto musicf0c91
@@ -26128,13 +26129,13 @@ musicf0d21:
 	note as2 $1c
 	note c3  $1c
 	note as2 $2a
-	wait1 $46
+	rest $46
 	note as2 $1c
 	note c3  $1c
 	note as2 $1c
 	note c3  $1c
 	note as2 $2a
-	wait1 $46
+	rest $46
 	note as2 $1c
 	note c3  $1c
 	note as2 $1c
@@ -26148,7 +26149,7 @@ musicf0d21:
 	note as2 $1c
 	note c3  $1c
 	note as2 $2a
-	wait1 $46
+	rest $46
 	goto musicf0d21
 	cmdff
 
@@ -26157,42 +26158,42 @@ sound12Channel4:
 musicf0d5b:
 	duty $17
 	note ds4 $07
-	wait1 $15
+	rest $15
 	note g4  $15
 	note ds4 $07
 	note as4 $07
-	wait1 $15
+	rest $15
 	note a4  $2a
-	wait1 $62
+	rest $62
 	note ds4 $07
-	wait1 $15
+	rest $15
 	note g4  $15
 	note ds4 $07
 	note a3  $07
-	wait1 $15
+	rest $15
 	note as3 $38
-	wait1 $54
+	rest $54
 	note ds4 $07
-	wait1 $15
+	rest $15
 	note g4  $15
 	note as4 $07
 	note d5  $07
-	wait1 $15
+	rest $15
 	note fs4 $23
-	wait1 $07
+	rest $07
 	note as4 $1c
 	note a4  $1c
 	note g4  $0e
 	note c4  $0e
 	note d4  $0e
 	note fs4 $07
-	wait1 $15
+	rest $15
 	note as4 $15
 	note g4  $07
 	note as4 $07
-	wait1 $15
+	rest $15
 	note e4  $2a
-	wait1 $62
+	rest $62
 	goto musicf0d5b
 	cmdff
 
@@ -26313,57 +26314,57 @@ musicf0db2:
 	vol $6
 	note gs4 $14
 	note g4  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note g4  $05
 	vol $6
 	note f4  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note f4  $05
 	vol $6
 	note d4  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note d4  $05
 	vol $6
 	note f4  $14
 	note d4  $0a
-	wait1 $0a
+	rest $0a
 	vol $3
 	note f4  $14
 	note d4  $0a
-	wait1 $0a
+	rest $0a
 	vol $2
 	note f4  $14
 	note d4  $0a
-	wait1 $0a
+	rest $0a
 	vol $1
 	note f4  $14
 	note d4  $0a
-	wait1 $0a
+	rest $0a
 	vibrato $00
 	env $0 $03
 	vol $6
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $3
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $2
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $1
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vibrato $f1
 	env $0 $00
 	vol $6
@@ -26381,48 +26382,48 @@ musicf0db2:
 	vol $6
 	note ds5 $14
 	note b4  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note b4  $05
 	vol $6
 	note g4  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note g4  $05
 	vol $6
 	note ds4 $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note ds4 $05
 	vol $6
 	note d4  $0a
-	wait1 $0a
+	rest $0a
 	vol $4
 	note d4  $0a
-	wait1 $0a
+	rest $0a
 	vol $2
 	note d4  $0a
-	wait1 $0a
+	rest $0a
 	vol $1
 	note d4  $0a
-	wait1 $5a
+	rest $5a
 	vibrato $00
 	env $0 $03
 	vol $6
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $3
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $2
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $1
 	note d5  $0a
 	note d6  $0a
@@ -26450,48 +26451,48 @@ musicf0f4a:
 	env $0 $00
 	vol $4
 	note gs3 $14
-	wait1 $0f
+	rest $0f
 	vibrato $00
 	env $0 $03
 	note cs4 $0d
 	note gs3 $0d
 	note g3  $06
-	wait1 $08
+	rest $08
 	vol $3
 	note cs4 $0d
 	note gs3 $0d
 	note g3  $06
-	wait1 $08
+	rest $08
 	vol $2
 	note cs4 $0d
 	note gs3 $0d
 	note g3  $06
-	wait1 $08
+	rest $08
 	vol $1
 	note cs4 $0d
 	note gs3 $0d
 	note g3  $06
-	wait1 $08
+	rest $08
 	vol $4
 	note cs5 $0d
 	note gs4 $0d
 	note g4  $06
-	wait1 $08
+	rest $08
 	vol $3
 	note cs5 $0d
 	note gs4 $0d
 	note g4  $06
-	wait1 $08
+	rest $08
 	vol $2
 	note cs5 $0d
 	note gs4 $0d
 	note g4  $06
-	wait1 $08
+	rest $08
 	vol $1
 	note cs5 $0d
 	note gs4 $0d
 	note g4  $06
-	wait1 $21
+	rest $21
 	vibrato $f1
 	env $0 $00
 	vol $7
@@ -26504,44 +26505,44 @@ musicf0f4a:
 	env $0 $00
 	vol $4
 	note cs5 $14
-	wait1 $0f
+	rest $0f
 	vibrato $00
 	env $0 $03
 	vol $3
 	note fs5 $0d
 	note c5  $0d
 	note b4  $06
-	wait1 $08
+	rest $08
 	vol $2
 	note fs5 $0d
 	note c5  $0d
 	note b4  $06
-	wait1 $08
+	rest $08
 	vol $2
 	note fs5 $0d
 	note c5  $0d
 	note b4  $06
-	wait1 $08
+	rest $08
 	vol $1
 	note fs5 $0d
 	note c5  $0d
 	note b4  $06
-	wait1 $08
+	rest $08
 	vol $4
 	note fs6 $0d
 	note c6  $0d
 	note b5  $06
-	wait1 $08
+	rest $08
 	vol $3
 	note fs6 $0d
 	note c6  $0d
 	note b5  $06
-	wait1 $08
+	rest $08
 	vol $2
 	note fs6 $0d
 	note c6  $0d
 	note b5  $06
-	wait1 $08
+	rest $08
 	vol $1
 	note fs6 $0d
 	note c6  $0c
@@ -26562,37 +26563,37 @@ musicf0f4a:
 	vol $6
 	note ds4 $14
 	note d4  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note d4  $05
 	vol $6
 	note c4  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note c4  $05
 	vol $6
 	note a3  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note a3  $05
-	wait1 $af
+	rest $af
 	vibrato $00
 	env $0 $03
 	vol $4
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $3
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $2
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $1
 	note d5  $0a
 	note d6  $0a
@@ -26614,36 +26615,36 @@ musicf0f4a:
 	vol $6
 	note b4  $14
 	note g4  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note g4  $05
 	vol $6
 	note ds4 $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note ds4 $05
 	vol $6
 	note a3  $0a
-	wait1 $05
+	rest $05
 	vol $3
 	note a3  $05
-	wait1 $af
+	rest $af
 	vibrato $00
 	env $0 $03
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $3
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $2
 	note d5  $0a
 	note d6  $0a
 	note d5  $0a
-	wait1 $0a
+	rest $0a
 	vol $1
 	note d5  $0a
 	note d6  $0a
@@ -26658,131 +26659,131 @@ sound19Channel4:
 musicf10cc:
 	duty $0e
 	note d2  $0a
-	wait1 $0a
+	rest $0a
 	note d2  $0a
-	wait1 $6e
+	rest $6e
 	note cs2 $05
-	wait1 $05
+	rest $05
 	note cs2 $05
-	wait1 $05
+	rest $05
 	note d2  $0a
-	wait1 $0a
+	rest $0a
 	note d2  $0a
-	wait1 $6e
+	rest $6e
 	note d2  $0a
-	wait1 $0a
+	rest $0a
 	note cs2 $0b
-	wait1 $09
+	rest $09
 	note cs2 $0d
-	wait1 $6b
+	rest $6b
 	vol $b
 	note cs2 $05
-	wait1 $05
+	rest $05
 	note cs2 $05
-	wait1 $05
+	rest $05
 	vol $b
 	note cs2 $0d
-	wait1 $07
+	rest $07
 	note cs2 $0d
-	wait1 $6b
+	rest $6b
 	note cs2 $0a
-	wait1 $0a
+	rest $0a
 	note d2  $0a
-	wait1 $0a
+	rest $0a
 	note d2  $0a
-	wait1 $6e
+	rest $6e
 	note cs2 $05
-	wait1 $05
+	rest $05
 	note cs2 $05
-	wait1 $05
+	rest $05
 	note d2  $0a
-	wait1 $0a
+	rest $0a
 	note d2  $0a
-	wait1 $6e
+	rest $6e
 	note d2  $0a
-	wait1 $0a
+	rest $0a
 	note cs2 $0b
-	wait1 $09
+	rest $09
 	note d2  $0d
-	wait1 $7f
+	rest $7f
 	note d2  $0d
-	wait1 $07
+	rest $07
 	note d2  $0d
-	wait1 $6b
+	rest $6b
 	note c2  $05
-	wait1 $05
+	rest $05
 	note c2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $19
+	rest $19
 	duty $0e
 	note a1  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $19
+	rest $19
 	duty $0e
 	note a1  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $19
+	rest $19
 	duty $0e
 	note c2  $0a
 	note cs2 $0a
@@ -26790,47 +26791,47 @@ musicf10cc:
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $19
+	rest $19
 	duty $0e
 	note a1  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $19
+	rest $19
 	duty $0e
 	note a1  $05
 	duty $0f
@@ -26843,67 +26844,67 @@ musicf10cc:
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $19
+	rest $19
 	duty $0e
 	note a1  $0a
 	duty $0f
 	note a1  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0a
 	duty $0f
 	note d2  $05
-	wait1 $19
+	rest $19
 	duty $0e
 	note c2  $0a
 	note cs2 $0a
@@ -26916,35 +26917,35 @@ musicf12c5:
 	vol $4
 	note $2a $14
 	note $2a $28
-	wait1 $50
+	rest $50
 	note $2a $14
 	note $2a $14
 	note $2a $28
-	wait1 $50
+	rest $50
 	note $2a $14
 	note $2a $14
 	note $2a $28
-	wait1 $50
+	rest $50
 	note $2a $14
 	note $2a $14
 	note $2a $28
-	wait1 $50
+	rest $50
 	note $2a $14
 	note $2a $14
 	note $2a $28
-	wait1 $50
+	rest $50
 	note $2a $14
 	note $2a $14
 	note $2a $28
-	wait1 $50
+	rest $50
 	note $2a $14
 	note $2a $14
 	note $2a $28
-	wait1 $50
+	rest $50
 	note $2a $14
 	note $2a $14
 	note $2a $28
-	wait1 $64
+	rest $64
 	note $2a $0a
 	note $2a $0a
 	note $2a $0a
@@ -27085,7 +27086,7 @@ sound17Channel1:
 	duty $02
 	vol $6
 	note fs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs3 $04
 	vol $6
@@ -27100,48 +27101,48 @@ musicf1423:
 	vol $6
 	note cs4 $38
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note a3  $0b
-	wait1 $06
+	rest $06
 	vol $3
 	note a3  $04
 	vol $6
 	note fs3 $07
 	note e4  $38
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note fs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs3 $04
 	vol $6
 	note fs3 $03
-	wait1 $01
+	rest $01
 	vol $3
 	note fs3 $03
 	vol $6
 	note fs3 $03
-	wait1 $01
+	rest $01
 	vol $3
 	note fs3 $03
 	vol $6
 	note cs4 $38
 	note c4  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note c4  $07
-	wait1 $07
+	rest $07
 	vol $6
 	note a3  $0b
-	wait1 $06
+	rest $06
 	vol $3
 	note a3  $04
 	vol $6
@@ -27150,58 +27151,58 @@ musicf1423:
 	note fs3 $05
 	note e3  $05
 	note ds3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds3 $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $04
 	vol $6
 	note cs4 $03
-	wait1 $01
+	rest $01
 	vol $3
 	note cs4 $03
 	vol $6
 	note cs4 $03
-	wait1 $01
+	rest $01
 	vol $3
 	note cs4 $03
 	vol $6
 	note gs4 $38
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note gs5 $07
 	note f5  $1c
 	note a4  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note a4  $03
 	vol $6
 	note a4  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note a4  $03
 	vol $6
 	note a4  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note a4  $03
 	vol $6
 	note a4  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note a4  $03
 	vol $6
@@ -27210,7 +27211,7 @@ musicf1423:
 	note ds4 $0b
 	vol $6
 	note a3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a3  $04
 	vol $6
@@ -27218,271 +27219,271 @@ musicf1423:
 	note fs3 $07
 	note cs4 $38
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note a3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a3  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note gs4 $07
 	note ds4 $1c
 	note a3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note a3  $03
 	vol $6
 	note a3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note a3  $03
 	vol $6
 	note a3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note a3  $03
 	vol $6
 	note a3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note a3  $03
 	vol $6
 	note ds3 $0e
 	vol $3
 	note ds3 $0e
-	wait1 $1c
+	rest $1c
 	vol $6
 	note c4  $0e
 	vol $5
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note b3  $04
 	vol $6
 	note c4  $0e
 	vol $5
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note b3  $07
-	wait1 $35
+	rest $35
 	vol $6
 	note d4  $0e
 	vol $5
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note cs4 $04
 	vol $6
 	note d4  $0e
 	vol $5
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note cs4 $07
-	wait1 $35
+	rest $35
 	vol $7
 	note e4  $0e
 	vol $6
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note ds4 $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $04
 	vol $5
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note e4  $04
 	vol $5
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note ds4 $04
 	vol $5
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note e4  $04
 	vol $5
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note f4  $04
 	vol $5
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note fs4 $04
 	vol $5
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note g4  $04
 	vol $6
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note gs4 $04
 	vol $6
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
-	wait1 $1c
+	rest $1c
 	vol $6
 	note fs4 $0e
 	vol $6
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $04
 	vol $6
 	note a4  $0e
 	vol $6
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
 	note fs4 $0e
 	vol $5
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note f4  $04
 	vol $6
 	note a4  $0e
 	vol $5
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note gs4 $04
 	vol $6
 	note g4  $0e
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $04
 	vol $6
 	note a4  $0e
 	vol $6
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $04
 	vol $6
 	note d5  $0e
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $5
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note a4  $04
 	vol $5
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note gs4 $04
 	vol $5
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note g4  $04
 	vol $5
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note fs4 $04
 	vol $6
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note f4  $04
 	vol $6
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $04
-	wait1 $0e
+	rest $0e
 	vol $6
 	note fs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs3 $04
 	vol $6
 	note fs3 $03
-	wait1 $01
+	rest $01
 	vol $3
 	note fs3 $03
 	vol $6
 	note fs3 $03
-	wait1 $01
+	rest $01
 	vol $3
 	note fs3 $03
 	goto musicf1423
@@ -27496,416 +27497,416 @@ sound17Channel0:
 	cmdf2
 	duty $02
 musicf16a7:
-	wait1 $1c
+	rest $1c
 	vol $6
 	note fs3 $11
-	wait1 $04
+	rest $04
 	note fs3 $03
-	wait1 $04
+	rest $04
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
 	vol $6
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
-	wait1 $2a
+	rest $2a
 	vol $6
 	note e3  $07
-	wait1 $07
+	rest $07
 	note e3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $03
 	vol $6
 	note e3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $03
 	vol $6
 	note e3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $03
 	vol $6
 	note e3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $03
 	vol $6
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
 	vol $6
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
-	wait1 $38
+	rest $38
 	vol $6
 	note fs3 $11
-	wait1 $04
+	rest $04
 	note fs3 $03
-	wait1 $04
+	rest $04
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
 	vol $6
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
-	wait1 $2a
+	rest $2a
 	vol $6
 	note e3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e3  $04
 	vol $6
 	note e3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $03
 	vol $6
 	note e3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $03
 	vol $6
 	note e3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $03
 	vol $6
 	note e3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note e3  $03
 	vol $6
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
 	vol $6
 	note f3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f3  $04
-	wait1 $38
+	rest $38
 	vol $6
 	note cs3 $11
-	wait1 $04
+	rest $04
 	note cs3 $03
-	wait1 $04
+	rest $04
 	note c3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c3  $04
 	vol $6
 	note c3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c3  $04
-	wait1 $2a
+	rest $2a
 	vol $6
 	note b2  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b2  $04
 	vol $6
 	note b2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $03
 	vol $6
 	note b2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $03
 	vol $6
 	note b2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $03
 	vol $6
 	note b2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $03
 	vol $6
 	note c3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c3  $04
 	vol $6
 	note c3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c3  $04
-	wait1 $38
+	rest $38
 	vol $6
 	note cs3 $11
-	wait1 $04
+	rest $04
 	note cs3 $03
-	wait1 $04
+	rest $04
 	note c3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c3  $04
 	vol $6
 	note c3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c3  $04
-	wait1 $2a
+	rest $2a
 	vol $6
 	note b2  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b2  $04
 	vol $6
 	note b2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $03
 	vol $6
 	note b2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $03
 	vol $6
 	note b2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $03
 	vol $6
 	note b2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note b2  $03
 	vol $6
 	note c3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c3  $04
 	vol $6
 	note c3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c3  $04
-	wait1 $1c
+	rest $1c
 	vol $6
 	note a3  $0e
 	vol $6
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
 	note a3  $0e
 	vol $6
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $07
-	wait1 $35
+	rest $35
 	vol $6
 	note b3  $0e
 	vol $5
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $04
 	vol $6
 	note b3  $0e
 	vol $5
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $07
-	wait1 $35
+	rest $35
 	vol $6
 	note c4  $0e
 	vol $6
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note b3  $04
 	vol $6
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $04
 	vol $6
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $04
 	vol $5
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note d4  $04
 	vol $5
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note cs4 $04
 	vol $5
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note c4  $04
 	vol $5
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note cs4 $04
 	vol $5
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note d4  $04
 	vol $5
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note ds4 $04
 	vol $6
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note e4  $04
 	vol $6
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $04
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $04
 	vol $7
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $04
-	wait1 $1c
+	rest $1c
 	vol $6
 	note d4  $0e
 	vol $5
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note cs4 $04
 	vol $6
 	note fs4 $0e
 	vol $5
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note f4  $07
-	wait1 $0b
+	rest $0b
 	vol $6
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
 	note d4  $0e
 	vol $5
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note cs4 $04
 	vol $6
 	note fs4 $0e
 	vol $5
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note f4  $04
 	vol $6
 	note e4  $0e
 	vol $6
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $35
+	rest $35
 	vol $6
 	note f4  $0e
 	vol $6
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $04
 	vol $6
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $04
 	vol $6
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $04
 	vol $6
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $04
 	vol $6
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $04
 	vol $5
 	note a3  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note a3  $04
 	vol $6
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $04
 	vol $6
 	note g3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g3  $04
-	wait1 $2a
+	rest $2a
 	goto musicf16a7
 	cmdff
 
 sound17Channel4:
-	wait1 $1c
+	rest $1c
 	cmdf2
 musicf1941:
 	duty $0e
@@ -27928,7 +27929,7 @@ musicf1941:
 	note fs2 $03
 	duty $0c
 	note fs2 $07
-	wait1 $20
+	rest $20
 	duty $0e
 	note fs2 $07
 	duty $0c
@@ -27961,7 +27962,7 @@ musicf1941:
 	note fs2 $07
 	duty $0c
 	note fs2 $07
-	wait1 $1c
+	rest $1c
 	duty $0e
 	note fs2 $0e
 	duty $0c
@@ -27982,7 +27983,7 @@ musicf1941:
 	note fs2 $03
 	duty $0c
 	note fs2 $07
-	wait1 $20
+	rest $20
 	duty $0e
 	note fs2 $07
 	duty $0c
@@ -28015,7 +28016,7 @@ musicf1941:
 	note fs2 $07
 	duty $0c
 	note fs2 $07
-	wait1 $1c
+	rest $1c
 	duty $0e
 	note fs2 $0e
 	duty $0c
@@ -28036,7 +28037,7 @@ musicf1941:
 	note fs2 $03
 	duty $0c
 	note fs2 $07
-	wait1 $20
+	rest $20
 	duty $0e
 	note fs2 $07
 	duty $0c
@@ -28069,7 +28070,7 @@ musicf1941:
 	note fs2 $07
 	duty $0c
 	note fs2 $07
-	wait1 $1c
+	rest $1c
 	duty $0e
 	note fs2 $0e
 	duty $0c
@@ -28090,7 +28091,7 @@ musicf1941:
 	note fs2 $03
 	duty $0c
 	note fs2 $07
-	wait1 $20
+	rest $20
 	duty $0e
 	note fs2 $07
 	duty $0c
@@ -28123,7 +28124,7 @@ musicf1941:
 	note fs2 $07
 	duty $0c
 	note fs2 $07
-	wait1 $62
+	rest $62
 	duty $0e
 	note fs2 $07
 	duty $0c
@@ -28140,20 +28141,16 @@ musicf1941:
 	note fs2 $03
 	duty $0c
 	note fs2 $07
-	wait1 $2e
+	rest $2e
 	duty $0e
 	note fs2 $07
 	duty $0c
 	note fs2 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note fs2 $07
 	duty $0c
 	note fs2 $07
-	duty $0e
-	note fs2 $03
-	duty $0c
-	note fs2 $04
 	duty $0e
 	note fs2 $03
 	duty $0c
@@ -28161,8 +28158,12 @@ musicf1941:
 	duty $0e
 	note fs2 $03
 	duty $0c
+	note fs2 $04
+	duty $0e
+	note fs2 $03
+	duty $0c
 	note fs2 $07
-	wait1 $20
+	rest $20
 	duty $0e
 	note e3  $07
 	duty $0c
@@ -28231,7 +28232,7 @@ musicf1941:
 	note b1  $03
 	duty $0c
 	note b1  $07
-	wait1 $3c
+	rest $3c
 	duty $0e
 	note b2  $03
 	duty $0c
@@ -28252,12 +28253,12 @@ musicf1941:
 	note b1  $03
 	duty $0c
 	note b1  $04
-	wait1 $31
+	rest $31
 	duty $0e
 	note b2  $03
 	duty $0c
 	note b2  $07
-	wait1 $12
+	rest $12
 	duty $0e
 	note b1  $03
 	duty $0c
@@ -28274,7 +28275,7 @@ musicf1941:
 	note b1  $03
 	duty $0c
 	note b1  $0b
-	wait1 $62
+	rest $62
 	duty $0e
 	note cs2 $07
 	duty $0c
@@ -28299,12 +28300,12 @@ musicf1941:
 	note cs2 $03
 	duty $0c
 	note cs2 $07
-	wait1 $19
+	rest $19
 	goto musicf1941
 	cmdff
 
 sound17Channel6:
-	wait1 $1c
+	rest $1c
 	cmdf2
 musicf1c58:
 	vol $5
@@ -28439,7 +28440,7 @@ musicf1c58:
 	note $26 $07
 	vol $4
 	note $26 $2a
-	wait1 $46
+	rest $46
 	note $26 $0e
 	vol $3
 	note $26 $07
@@ -28449,7 +28450,7 @@ musicf1c58:
 	note $26 $07
 	vol $4
 	note $26 $07
-	wait1 $2a
+	rest $2a
 	vol $4
 	note $26 $1c
 	note $26 $0e
@@ -28461,7 +28462,7 @@ musicf1c58:
 	note $26 $07
 	vol $4
 	note $26 $07
-	wait1 $1c
+	rest $1c
 	vol $4
 	note $2a $0e
 	note $2a $0e
@@ -28540,26 +28541,26 @@ musicf1dc1:
 	note e4  $24
 	note ds4 $24
 	note as4 $0d
-	wait1 $01
+	rest $01
 	vol $3
 	note as4 $05
-	wait1 $01
+	rest $01
 	vol $2
 	note as4 $04
-	wait1 $03
+	rest $03
 	vol $1
 	note as4 $04
-	wait1 $29
+	rest $29
 	vol $7
 	note b2  $03
 	note d4  $03
 	note f5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $03
 	note d4  $03
 	note f5  $03
-	wait1 $05
+	rest $05
 	vol $1
 	note b2  $03
 	note d4  $03
@@ -28568,46 +28569,46 @@ musicf1dc1:
 	note gs2 $03
 	note b3  $03
 	note d5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note gs2 $03
 	note b3  $03
 	note d5  $03
-	wait1 $05
+	rest $05
 	vol $1
 	note gs2 $03
 	note b3  $03
 	note d5  $03
-	wait1 $48
+	rest $48
 	vol $7
 	note e4  $24
 	note b4  $24
 	note e5  $24
 	note ds5 $24
 	note as5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as5 $03
-	wait1 $06
+	rest $06
 	vol $2
 	note as5 $03
-	wait1 $03
+	rest $03
 	vol $1
 	note as5 $03
-	wait1 $03
+	rest $03
 	vol $1
 	note as5 $03
-	wait1 $4b
+	rest $4b
 	vol $7
 	note b2  $03
 	note d4  $03
 	note f5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $03
 	note d4  $03
 	note f5  $03
-	wait1 $05
+	rest $05
 	vol $1
 	note b2  $03
 	note d4  $03
@@ -28616,27 +28617,27 @@ musicf1dc1:
 	note gs2 $03
 	note b3  $03
 	note d5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note gs2 $03
 	note b3  $03
 	note d5  $03
-	wait1 $05
+	rest $05
 	vol $1
 	note gs2 $03
 	note b3  $03
 	note d5  $03
-	wait1 $24
+	rest $24
 	vol $7
 	note gs1 $03
 	note b2  $03
 	note d4  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note gs1 $03
 	note b2  $03
 	note d4  $03
-	wait1 $05
+	rest $05
 	vol $1
 	note gs1 $03
 	note b2  $03
@@ -28645,27 +28646,27 @@ musicf1dc1:
 	note f1  $03
 	note gs2 $03
 	note b3  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note f1  $03
 	note gs2 $03
 	note b3  $03
-	wait1 $05
+	rest $05
 	vol $1
 	note f1  $03
 	note gs2 $03
 	note b3  $03
-	wait1 $24
+	rest $24
 	vol $7
 	note as2 $03
 	note cs4 $03
 	note e5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note as2 $03
 	note cs4 $03
 	note e5  $03
-	wait1 $05
+	rest $05
 	vol $1
 	note as2 $03
 	note cs4 $03
@@ -28674,27 +28675,27 @@ musicf1dc1:
 	note g2  $03
 	note as3 $03
 	note cs5 $03
-	wait1 $04
+	rest $04
 	vol $3
 	note g2  $03
 	note as3 $03
 	note cs5 $03
-	wait1 $05
+	rest $05
 	vol $1
 	note g2  $03
 	note as3 $03
 	note cs5 $03
-	wait1 $24
+	rest $24
 	vol $7
 	note f1  $03
 	note gs2 $03
 	note b3  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note f1  $03
 	note gs2 $03
 	note b3  $03
-	wait1 $05
+	rest $05
 	vol $1
 	note f1  $03
 	note gs2 $03
@@ -28703,17 +28704,17 @@ musicf1dc1:
 	note d1  $03
 	note f2  $03
 	note gs3 $03
-	wait1 $04
+	rest $04
 	vol $3
 	note d1  $03
 	note f2  $03
 	note gs3 $03
-	wait1 $05
+	rest $05
 	vol $1
 	note d1  $03
 	note f2  $03
 	note gs3 $03
-	wait1 $48
+	rest $48
 	vol $4
 	note a3  $0c
 	note ds3 $0c
@@ -28734,10 +28735,10 @@ musicf1dc1:
 	note gs4 $0c
 	vol $2
 	note a4  $0c
-	wait1 $03
+	rest $03
 	vol $1
 	note a4  $0c
-	wait1 $21
+	rest $21
 	vol $5
 	note b3  $0c
 	note f3  $0c
@@ -28749,14 +28750,14 @@ musicf1dc1:
 	note f3  $0c
 	note e3  $0c
 	note f3  $0c
-	wait1 $18
+	rest $18
 	note as4 $0c
 	vol $3
 	note b4  $0c
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $0c
-	wait1 $21
+	rest $21
 	vol $4
 	note c4  $0c
 	vol $4
@@ -28765,10 +28766,10 @@ musicf1dc1:
 	note f3  $0c
 	vol $5
 	note fs3 $0c
-	wait1 $06
+	rest $06
 	vol $2
 	note fs3 $0c
-	wait1 $06
+	rest $06
 	vol $5
 	note cs4 $0c
 	vol $5
@@ -28777,10 +28778,10 @@ musicf1dc1:
 	note fs3 $0c
 	vol $5
 	note g3  $0c
-	wait1 $06
+	rest $06
 	vol $2
 	note g3  $0c
-	wait1 $06
+	rest $06
 	vol $5
 	note d4  $0c
 	vol $6
@@ -28797,68 +28798,68 @@ musicf1dc1:
 	note fs4 $04
 	vol $5
 	note a4  $05
-	wait1 $09
+	rest $09
 	vol $6
 	note f4  $04
 	vol $5
 	note gs4 $05
-	wait1 $09
+	rest $09
 	vol $6
 	note e4  $04
 	vol $4
 	note g4  $05
-	wait1 $09
+	rest $09
 	vol $6
 	note ds4 $04
 	vol $4
 	note fs4 $05
-	wait1 $09
+	rest $09
 	vol $6
 	note d4  $04
 	vol $4
 	note f4  $05
-	wait1 $09
+	rest $09
 	vol $6
 	note cs4 $04
 	vol $4
 	note e4  $05
-	wait1 $09
+	rest $09
 	vol $6
 	note c4  $04
 	vol $4
 	note ds4 $05
-	wait1 $09
+	rest $09
 	vol $5
 	note b3  $04
 	vol $4
 	note d4  $05
-	wait1 $0f
+	rest $0f
 	vol $5
 	note as3 $04
 	vol $4
 	note cs4 $04
-	wait1 $07
+	rest $07
 	vol $3
 	note cs4 $03
-	wait1 $36
+	rest $36
 	vol $6
 	note a3  $06
-	wait1 $03
+	rest $03
 	vol $2
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note c4  $06
-	wait1 $2e
+	rest $2e
 	vol $5
 	note gs3 $09
-	wait1 $01
+	rest $01
 	vol $2
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $1
 	note b3  $06
-	wait1 $4e
+	rest $4e
 	goto musicf1dc1
 	cmdff
 
@@ -28874,40 +28875,40 @@ musicf1ffc:
 	note gs3 $24
 	note g3  $24
 	note as3 $0c
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $03
-	wait1 $2a
+	rest $2a
 	vol $4
 	note b4  $09
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $03
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $03
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $03
-	wait1 $09
+	rest $09
 	vol $5
 	note gs4 $04
-	wait1 $01
+	rest $01
 	vol $2
 	note gs4 $04
-	wait1 $06
+	rest $06
 	vol $1
 	note gs4 $03
-	wait1 $06
+	rest $06
 	vol $1
 	note gs4 $03
-	wait1 $51
+	rest $51
 	vol $7
 	note gs3 $24
 	note b3  $24
@@ -28915,97 +28916,97 @@ musicf1ffc:
 	note g3  $24
 	vol $6
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $2
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $03
-	wait1 $03
+	rest $03
 	vol $1
 	note as3 $03
-	wait1 $4e
+	rest $4e
 	vol $4
 	note b4  $09
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $03
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $03
-	wait1 $0f
+	rest $0f
 	vol $4
 	note gs4 $09
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $03
-	wait1 $03
+	rest $03
 	vol $1
 	note gs4 $03
-	wait1 $33
+	rest $33
 	vol $2
 	note f3  $09
-	wait1 $03
+	rest $03
 	vol $4
 	note f3  $03
-	wait1 $03
+	rest $03
 	vol $1
 	note f3  $03
-	wait1 $0f
+	rest $0f
 	vol $3
 	note d3  $09
-	wait1 $03
+	rest $03
 	vol $4
 	note d3  $03
-	wait1 $03
+	rest $03
 	vol $1
 	note d3  $03
-	wait1 $33
+	rest $33
 	vol $5
 	note as4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $03
-	wait1 $06
+	rest $06
 	vol $1
 	note as4 $03
-	wait1 $0f
+	rest $0f
 	vol $3
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $5
 	note g4  $03
-	wait1 $06
+	rest $06
 	vol $1
 	note g4  $03
-	wait1 $33
+	rest $33
 	vol $3
 	note d3  $09
-	wait1 $03
+	rest $03
 	vol $5
 	note d3  $03
-	wait1 $03
+	rest $03
 	vol $2
 	note d3  $03
-	wait1 $0f
+	rest $0f
 	vol $3
 	note b2  $09
-	wait1 $03
+	rest $03
 	vol $4
 	note b2  $03
-	wait1 $03
+	rest $03
 	vol $2
 	note b2  $03
-	wait1 $57
+	rest $57
 	vol $5
 	note d2  $75
-	wait1 $63
+	rest $63
 	vol $6
 	note ds2 $75
-	wait1 $63
+	rest $63
 	vol $5
 	note ds2 $48
 	vol $6
@@ -29015,37 +29016,37 @@ musicf1ffc:
 	vol $6
 	note fs2 $24
 	note a3  $04
-	wait1 $0e
+	rest $0e
 	vol $6
 	note gs3 $04
-	wait1 $0e
+	rest $0e
 	vol $6
 	note g3  $04
-	wait1 $0e
+	rest $0e
 	vol $6
 	note fs3 $04
-	wait1 $0e
+	rest $0e
 	vol $6
 	note f3  $04
-	wait1 $0e
+	rest $0e
 	vol $5
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	vol $5
 	note ds3 $04
-	wait1 $0e
+	rest $0e
 	vol $5
 	note d3  $04
-	wait1 $14
+	rest $14
 	vol $4
 	note cs3 $06
-	wait1 $42
+	rest $42
 	vol $4
 	note c3  $04
-	wait1 $42
+	rest $42
 	vol $3
 	note b2  $05
-	wait1 $63
+	rest $63
 	goto musicf1ffc
 	cmdff
 
@@ -29058,7 +29059,7 @@ sound16Channel1:
 	duty $02
 	vol $6
 	note a3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note a3  $05
 	vol $6
@@ -29093,7 +29094,7 @@ musicf2144:
 	env $0 $00
 	vol $6
 	note a3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note a3  $05
 	vol $6
@@ -29132,7 +29133,7 @@ musicf2144:
 	env $0 $00
 	vol $6
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $05
 	vol $6
@@ -29150,7 +29151,7 @@ musicf2144:
 	env $0 $00
 	vol $6
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $05
 	vol $6
@@ -29168,7 +29169,7 @@ musicf2144:
 	env $0 $00
 	vol $6
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $05
 	vol $6
@@ -29182,7 +29183,7 @@ musicf2144:
 	env $0 $00
 	vol $3
 	note fs4 $12
-	wait1 $12
+	rest $12
 	vibrato $f1
 	env $0 $00
 	vol $6
@@ -29197,7 +29198,7 @@ musicf2144:
 	env $0 $00
 	vol $3
 	note e4  $12
-	wait1 $3f
+	rest $3f
 	vibrato $00
 	env $0 $04
 	vol $5
@@ -29452,12 +29453,12 @@ musicf2144:
 	note ds5 $05
 	vol $6
 	note e5  $04
-	wait1 $05
+	rest $05
 	vibrato $f1
 	env $0 $00
 	vol $6
 	note a3  $09
-	wait1 $09
+	rest $09
 	note a3  $09
 	note c4  $09
 	note a3  $09
@@ -29474,377 +29475,377 @@ sound16Channel0:
 	cmdf2
 	duty $02
 musicf2441:
-	wait1 $12
+	rest $12
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $51
+	rest $51
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $1b
+	rest $1b
 	vol $6
 	note a3  $09
 	note e3  $09
 	note a3  $09
 	note e3  $09
-	wait1 $12
+	rest $12
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $1b
+	rest $1b
 	vol $6
 	note gs3 $09
 	note e3  $09
 	vol $6
 	note gs3 $09
 	note e3  $09
-	wait1 $12
+	rest $12
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $1b
+	rest $1b
 	vol $6
 	note g3  $09
 	note e3  $09
 	note g3  $09
 	note e3  $09
-	wait1 $12
+	rest $12
 	vol $6
 	note e3  $04
-	wait1 $0e
+	rest $0e
 	note d3  $12
 	note ds3 $09
 	note e3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e3  $05
-	wait1 $02
+	rest $02
 	vol $1
 	note e3  $05
-	wait1 $3f
+	rest $3f
 	goto musicf2441
 	cmdff
 
 sound16Channel4:
-	wait1 $3f
+	rest $3f
 	cmdf2
 musicf25dc:
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $0a
-	duty $0e
-	note g2  $12
-	note gs2 $09
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $49
-	duty $0e
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $0a
-	duty $0e
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note g2  $12
 	note gs2 $09
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $49
+	rest $49
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $0a
-	duty $0e
-	note g2  $12
-	note gs2 $09
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $49
-	duty $0e
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $0a
-	duty $0e
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note g2  $12
 	note gs2 $09
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $49
+	rest $49
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $0a
-	duty $0e
-	note g2  $12
-	note gs2 $09
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $49
-	duty $0e
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $0a
-	duty $0e
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note g2  $12
 	note gs2 $09
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $49
+	rest $49
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $0a
-	duty $0e
-	note g2  $12
-	note gs2 $09
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $49
-	duty $0e
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $0a
-	duty $0e
-	note a2  $04
-	duty $0f
-	note a2  $04
-	wait1 $0a
+	rest $0a
 	duty $0e
 	note g2  $12
 	note gs2 $09
 	note a2  $04
 	duty $0f
 	note a2  $04
-	wait1 $25
+	rest $49
+	duty $0e
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $0a
+	duty $0e
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $0a
+	duty $0e
+	note g2  $12
+	note gs2 $09
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $49
+	duty $0e
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $0a
+	duty $0e
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $0a
+	duty $0e
+	note g2  $12
+	note gs2 $09
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $49
+	duty $0e
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $0a
+	duty $0e
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $0a
+	duty $0e
+	note g2  $12
+	note gs2 $09
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $49
+	duty $0e
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $0a
+	duty $0e
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $0a
+	duty $0e
+	note g2  $12
+	note gs2 $09
+	note a2  $04
+	duty $0f
+	note a2  $04
+	rest $25
 	duty $0e
 	note a2  $09
 	note e2  $09
@@ -29862,7 +29863,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $1b
+	rest $1b
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29875,7 +29876,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $3f
+	rest $3f
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29888,7 +29889,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $1b
+	rest $1b
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29901,7 +29902,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $3f
+	rest $3f
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29914,7 +29915,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $1b
+	rest $1b
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29927,7 +29928,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $3f
+	rest $3f
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29940,7 +29941,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $1b
+	rest $1b
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29953,7 +29954,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $12
+	rest $12
 	duty $0e
 	note e2  $09
 	note g2  $09
@@ -29972,7 +29973,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $1b
+	rest $1b
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29985,7 +29986,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $3f
+	rest $3f
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -29998,7 +29999,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $1b
+	rest $1b
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -30011,7 +30012,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $3f
+	rest $3f
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -30024,7 +30025,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $1b
+	rest $1b
 	duty $0e
 	note a2  $04
 	duty $0f
@@ -30037,7 +30038,7 @@ musicf25dc:
 	note a2  $04
 	duty $0f
 	note a2  $05
-	wait1 $3f
+	rest $3f
 	duty $0e
 	note b2  $04
 	duty $0f
@@ -30050,7 +30051,7 @@ musicf25dc:
 	note b2  $04
 	duty $0f
 	note b2  $05
-	wait1 $1b
+	rest $1b
 	duty $0e
 	note b2  $04
 	duty $0f
@@ -30063,175 +30064,175 @@ musicf25dc:
 	note e2  $04
 	duty $0f
 	note e2  $05
-	wait1 $3f
+	rest $3f
 	goto musicf25dc
 	cmdff
 
 sound16Channel6:
-	wait1 $3f
+	rest $3f
 	cmdf2
 musicf28a9:
 	vol $3
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	note $26 $09
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
 	note $26 $09
-	wait1 $2d
+	rest $2d
 	note $26 $09
-	wait1 $09
+	rest $09
 	note $26 $09
-	wait1 $1b
+	rest $1b
 	goto musicf28a9
 	cmdff
 
@@ -30255,13 +30256,13 @@ musicf29f5:
 	note b4  $09
 	note c5  $09
 	note b4  $09
-	wait1 $6c
+	rest $6c
 	vol $4
 	note c5  $09
 	note b4  $09
 	note c5  $09
 	note b4  $09
-	wait1 $90
+	rest $90
 	duty $01
 	vol $6
 	note d4  $24
@@ -30277,14 +30278,14 @@ musicf29f5:
 	note f5  $09
 	note e5  $09
 	note gs4 $48
-	wait1 $24
+	rest $24
 	vol $4
 	note f5  $09
 	note e5  $09
 	note f5  $09
 	note e5  $09
 	note gs4 $48
-	wait1 $24
+	rest $24
 	vol $6
 	note e5  $09
 	note ds5 $09
@@ -30296,31 +30297,31 @@ musicf29f5:
 	note ds5 $09
 	note d5  $09
 	note fs4 $5a
-	wait1 $12
+	rest $12
 	vol $6
 	note c5  $12
 	note b4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note b4  $05
 	vol $6
 	note e5  $12
 	vol $6
 	note ds5 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note ds5 $05
 	vol $6
 	note g5  $12
 	vol $6
 	note fs5 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note fs5 $05
 	vol $6
 	note c6  $12
 	note b5  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note b5  $05
 	vol $6
@@ -30329,7 +30330,7 @@ musicf29f5:
 	note g6  $09
 	note fs6 $09
 	note f6  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f6  $05
 	vol $6
@@ -30338,7 +30339,7 @@ musicf29f5:
 	note ds6 $09
 	note d6  $09
 	note cs6 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note cs6 $05
 	vol $6
@@ -30404,20 +30405,20 @@ musicf29f5:
 	note as4 $12
 	note c5  $12
 	note cs5 $12
-	wait1 $04
+	rest $04
 	vol $3
 	note cs5 $09
-	wait1 $09
+	rest $09
 	vol $1
 	note cs5 $09
-	wait1 $05
+	rest $05
 	vol $6
 	note e4  $51
 	vibrato $01
 	env $0 $00
 	vol $3
 	note e4  $1b
-	wait1 $48
+	rest $48
 	vibrato $c1
 	env $0 $00
 	goto musicf29f5
@@ -30446,13 +30447,13 @@ musicf2b40:
 	note b4  $09
 	note c5  $09
 	note b4  $09
-	wait1 $6c
+	rest $6c
 	vol $2
 	note c5  $09
 	note b4  $09
 	note c5  $09
 	note b4  $09
-	wait1 $99
+	rest $99
 	duty $01
 	vol $3
 	note d4  $24
@@ -30461,7 +30462,7 @@ musicf2b40:
 	note cs5 $48
 	note d5  $24
 	note e5  $24
-	wait1 $03
+	rest $03
 	vol $3
 	note f5  $09
 	note e5  $09
@@ -30470,7 +30471,7 @@ musicf2b40:
 	note e5  $09
 	vol $3
 	note gs4 $48
-	wait1 $24
+	rest $24
 	vol $2
 	note f5  $09
 	note e5  $09
@@ -30493,25 +30494,25 @@ musicf2b40:
 	vol $6
 	note a4  $12
 	note gs4 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note gs4 $05
 	vol $6
 	note c5  $12
 	note b4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note b4  $05
 	vol $6
 	note e5  $12
 	note ds5 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note ds5 $05
 	vol $6
 	note a5  $12
 	note gs5 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note gs5 $05
 	vol $6
@@ -30520,7 +30521,7 @@ musicf2b40:
 	note e6  $09
 	note ds6 $09
 	note d6  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note d6  $05
 	vol $6
@@ -30529,7 +30530,7 @@ musicf2b40:
 	note c6  $09
 	note b5  $09
 	note as5 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note as5 $05
 	vol $6
@@ -30539,7 +30540,7 @@ musicf2b40:
 	note g5  $09
 	duty $02
 	note d4  $04
-	wait1 $05
+	rest $05
 	note f4  $04
 	vol $3
 	note d4  $05
@@ -30806,20 +30807,20 @@ musicf2b40:
 	note as3 $12
 	note c4  $12
 	note cs4 $12
-	wait1 $04
+	rest $04
 	vol $3
 	note cs4 $09
-	wait1 $05
+	rest $05
 	vol $1
 	note cs4 $09
-	wait1 $09
+	rest $09
 	vol $6
 	note e3  $48
 	vibrato $01
 	env $0 $00
 	vol $3
 	note e3  $24
-	wait1 $48
+	rest $48
 	vibrato $d1
 	env $0 $00
 	goto musicf2b40
@@ -30829,81 +30830,81 @@ sound1cChannel4:
 	duty $0e
 musicf2dba:
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $75
+	rest $75
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $75
+	rest $75
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $75
+	rest $75
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $75
+	rest $75
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $63
+	rest $63
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $75
+	rest $75
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $75
+	rest $75
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $75
+	rest $75
 	note cs2 $09
-	wait1 $09
+	rest $09
 	note cs2 $09
-	wait1 $75
+	rest $75
 	note c2  $09
-	wait1 $09
+	rest $09
 	note c2  $09
-	wait1 $75
+	rest $75
 	note b1  $90
-	wait1 $90
+	rest $90
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $2d
+	rest $2d
 	note d2  $09
-	wait1 $09
+	rest $09
 	note d2  $09
-	wait1 $2d
+	rest $2d
 	note gs2 $09
-	wait1 $09
+	rest $09
 	note gs2 $09
-	wait1 $2d
+	rest $2d
 	note gs2 $09
-	wait1 $09
+	rest $09
 	note gs2 $09
-	wait1 $2d
+	rest $2d
 	note c2  $09
-	wait1 $09
+	rest $09
 	note c2  $09
-	wait1 $2d
+	rest $2d
 	note c2  $09
-	wait1 $09
+	rest $09
 	note c2  $09
-	wait1 $2d
+	rest $2d
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $2d
+	rest $2d
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $1b
+	rest $1b
 	note ds2 $04
 	note d2  $05
 	note c2  $04
@@ -30911,11 +30912,11 @@ musicf2dba:
 	note as1 $12
 	note c2  $12
 	note cs2 $2d
-	wait1 $09
+	rest $09
 	note as1 $12
 	note c2  $12
 	note cs2 $12
-	wait1 $24
+	rest $24
 	note e1  $09
 	note f1  $09
 	note e1  $09
@@ -30925,7 +30926,7 @@ musicf2dba:
 	note e1  $09
 	note f1  $09
 	note e1  $09
-	wait1 $63
+	rest $63
 	goto musicf2dba
 	cmdff
 
@@ -30946,13 +30947,13 @@ musicf2e89:
 	note cs5 $07
 	note d5  $0e
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note b4  $0e
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
@@ -30965,17 +30966,17 @@ musicf2e89:
 	note as4 $0e
 	note b4  $0e
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $04
 	vol $6
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $04
 	vol $6
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $04
 	vol $6
@@ -30987,7 +30988,7 @@ musicf2e89:
 	note d4  $04
 	note c4  $07
 	note b3  $03
-	wait1 $19
+	rest $19
 	note cs4 $03
 	note d4  $04
 	note cs4 $03
@@ -30996,7 +30997,7 @@ musicf2e89:
 	note d4  $04
 	note cs4 $07
 	note b3  $03
-	wait1 $19
+	rest $19
 	note e4  $1c
 	note gs4 $1c
 	note b4  $1c
@@ -31005,7 +31006,7 @@ musicf2e89:
 	note cs5 $07
 	note d5  $0e
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
@@ -31019,13 +31020,13 @@ musicf2e89:
 	note cs5 $07
 	note d5  $0e
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note d5  $0e
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
@@ -31037,13 +31038,13 @@ musicf2e89:
 	note as4 $0e
 	note b4  $0e
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
 	note gs4 $0e
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
@@ -31056,7 +31057,7 @@ musicf2e89:
 	note b3  $1c
 	note cs4 $1c
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $04
 	vol $6
@@ -31065,55 +31066,55 @@ musicf2e89:
 	note b3  $1c
 	note cs4 $1c
 	note b3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $07
-	wait1 $19
+	rest $19
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note c5  $0e
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note cs5 $0e
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
@@ -31131,7 +31132,7 @@ musicf2e89:
 	note c4  $05
 	note cs4 $05
 	note b3  $0e
-	wait1 $0e
+	rest $0e
 	note ds4 $1c
 	note b3  $1c
 	note c4  $04
@@ -31141,51 +31142,51 @@ musicf2e89:
 	note c4  $05
 	note cs4 $05
 	note b3  $0e
-	wait1 $1c
+	rest $1c
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note e5  $0e
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note as4 $0e
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
@@ -31213,7 +31214,7 @@ musicf304c:
 	note d3  $04
 	note c3  $07
 	note b2  $03
-	wait1 $19
+	rest $19
 	note cs3 $03
 	note d3  $04
 	note cs3 $03
@@ -31222,8 +31223,8 @@ musicf304c:
 	note d3  $04
 	note cs3 $07
 	note b2  $03
-	wait1 $ff
-	wait1 $cc
+	rest $ff
+	rest $cc
 	note b2  $0e
 	vibrato $00
 	env $0 $03
@@ -31238,7 +31239,7 @@ musicf304c:
 	note cs3 $05
 	note d3  $05
 	note b2  $07
-	wait1 $07
+	rest $07
 	note b2  $0e
 	vibrato $00
 	env $0 $03
@@ -31253,51 +31254,51 @@ musicf304c:
 	note cs3 $05
 	note d3  $05
 	note b2  $0e
-	wait1 $1c
+	rest $1c
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note a4  $0e
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note a4  $0e
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
@@ -31318,7 +31319,7 @@ musicf304c:
 	note c3  $05
 	note cs3 $05
 	note b2  $0e
-	wait1 $0e
+	rest $0e
 	vibrato $00
 	env $0 $03
 	note ds3 $1c
@@ -31332,51 +31333,51 @@ musicf304c:
 	note c3  $05
 	note cs3 $05
 	note b2  $0e
-	wait1 $1c
+	rest $1c
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note as4 $0e
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $04
 	vol $6
 	note fs4 $0e
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $04
 	vol $6
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $04
 	vol $6
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
@@ -31393,20 +31394,20 @@ musicf3194:
 	note e2  $1c
 	duty $0f
 	note e2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note b2  $0e
 	note as2 $1c
 	duty $0f
 	note as2 $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $0e
 	note e2  $0e
 	note b2  $07
 	duty $0f
 	note b2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note as2 $38
 	note g2  $07
@@ -31416,13 +31417,13 @@ musicf3194:
 	note e2  $1c
 	duty $0f
 	note e2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note b2  $0e
 	note as2 $1c
 	duty $0f
 	note as2 $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $0e
 	note c2  $03
@@ -31435,7 +31436,7 @@ musicf3194:
 	note b1  $03
 	duty $0f
 	note b1  $06
-	wait1 $13
+	rest $13
 	duty $0e
 	note cs2 $03
 	note d2  $04
@@ -31454,20 +31455,20 @@ musicf3194:
 	note e2  $1c
 	duty $0f
 	note e2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note b2  $0e
 	note as2 $1c
 	duty $0f
 	note as2 $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $0e
 	note e2  $0e
 	note b2  $07
 	duty $0f
 	note b2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note as2 $38
 	note g2  $07
@@ -31477,20 +31478,20 @@ musicf3194:
 	note e2  $1c
 	duty $0f
 	note e2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note b2  $0e
 	note as2 $1c
 	duty $0f
 	note as2 $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $0e
 	note e2  $0e
 	note b2  $07
 	duty $0f
 	note b2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note as2 $38
 	note g2  $07
@@ -31500,7 +31501,7 @@ musicf3194:
 	note e2  $1c
 	duty $0f
 	note e2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note b2  $0e
 	note as2 $04
@@ -31511,14 +31512,14 @@ musicf3194:
 	note b2  $05
 	duty $0f
 	note b2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $0e
 	note e2  $0e
 	note b2  $07
 	duty $0f
 	note b2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note as2 $20
 	note b2  $05
@@ -31533,20 +31534,20 @@ musicf3194:
 	note e2  $1c
 	duty $0f
 	note e2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note b2  $0e
 	note as2 $1c
 	duty $0f
 	note as2 $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $0e
 	note e2  $0e
 	note b2  $07
 	duty $0f
 	note b2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note as2 $38
 	note g2  $07
@@ -31556,20 +31557,20 @@ musicf3194:
 	note e2  $1c
 	duty $0f
 	note e2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note b2  $0e
 	note as2 $1c
 	duty $0f
 	note as2 $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $0e
 	note e2  $0e
 	note b2  $07
 	duty $0f
 	note b2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note as2 $38
 	note g2  $07
@@ -31579,7 +31580,7 @@ musicf3194:
 	note e2  $1c
 	duty $0f
 	note e2  $0e
-	wait1 $46
+	rest $46
 	duty $0e
 	note as2 $0b
 	duty $0f
@@ -31588,22 +31589,22 @@ musicf3194:
 	note a2  $07
 	duty $0f
 	note a2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note g2  $07
 	duty $0f
 	note g2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note f2  $07
 	duty $0f
 	note f2  $04
-	wait1 $03
+	rest $03
 	duty $0e
 	note e2  $0e
 	duty $0f
 	note e2  $0a
-	wait1 $04
+	rest $04
 	duty $0e
 	note g2  $07
 	note a2  $07
@@ -31780,7 +31781,7 @@ musicf3418:
 	env $0 $00
 	vol $6
 	note a3  $03
-	wait1 $04
+	rest $04
 	note a3  $07
 	note gs3 $07
 	note fs3 $07
@@ -31817,7 +31818,7 @@ musicf3418:
 	env $0 $00
 	vol $3
 	note gs4 $1c
-	wait1 $46
+	rest $46
 	vibrato $f1
 	env $0 $00
 	vol $6
@@ -31900,7 +31901,7 @@ musicf3418:
 	env $0 $00
 	vol $3
 	note e4  $1c
-	wait1 $1c
+	rest $1c
 	vibrato $f1
 	env $0 $00
 	vol $6
@@ -31917,7 +31918,7 @@ musicf3418:
 	note e4  $07
 	note ds4 $07
 	note e4  $54
-	wait1 $1c
+	rest $1c
 	note fs3 $0e
 	note cs4 $0e
 	goto musicf3418
@@ -31931,7 +31932,7 @@ sound18Channel0:
 	cmdf2
 	duty $02
 musicf3598:
-	wait1 $1c
+	rest $1c
 	vol $7
 	note fs4 $0e
 	note cs5 $0e
@@ -31939,7 +31940,7 @@ musicf3598:
 	note c5  $02
 	note cs5 $02
 	note c5  $33
-	wait1 $01
+	rest $01
 	vibrato $01
 	env $0 $00
 	vol $3
@@ -31955,7 +31956,7 @@ musicf3598:
 	note gs4 $02
 	note a4  $02
 	note gs4 $33
-	wait1 $01
+	rest $01
 	vibrato $01
 	env $0 $00
 	vol $3
@@ -31969,7 +31970,7 @@ musicf3598:
 	note c5  $02
 	note cs5 $02
 	note c5  $33
-	wait1 $01
+	rest $01
 	vibrato $01
 	env $0 $00
 	vol $3
@@ -31989,7 +31990,7 @@ musicf3598:
 	note cs5 $02
 	note d5  $02
 	note cs5 $17
-	wait1 $01
+	rest $01
 	vibrato $01
 	env $0 $00
 	vol $3
@@ -32010,7 +32011,7 @@ musicf3598:
 	env $0 $00
 	vol $7
 	note a4  $03
-	wait1 $04
+	rest $04
 	note a4  $07
 	note gs4 $07
 	note fs4 $07
@@ -32049,118 +32050,118 @@ musicf3598:
 	note a4  $07
 	note gs4 $07
 	note g2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note g2  $03
-	wait1 $04
+	rest $04
 	vol $7
 	note g2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note g2  $03
-	wait1 $04
+	rest $04
 	vol $7
 	note gs2 $0e
 	note g2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note g2  $03
-	wait1 $3c
+	rest $3c
 	vol $6
 	note gs2 $03
-	wait1 $04
+	rest $04
 	vol $3
 	note gs2 $03
-	wait1 $04
+	rest $04
 	vol $6
 	note gs2 $03
-	wait1 $04
+	rest $04
 	vol $3
 	note gs2 $03
-	wait1 $04
+	rest $04
 	vol $6
 	note a2  $0e
 	note gs2 $03
-	wait1 $04
+	rest $04
 	vol $3
 	note gs2 $03
-	wait1 $3c
+	rest $3c
 	vol $6
 	note a2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note a2  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note a2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note a2  $03
-	wait1 $04
-	vol $6
-	note as2 $0e
-	note a2  $03
-	wait1 $04
-	vol $3
-	note a2  $03
-	wait1 $3c
-	vol $6
-	note a2  $03
-	wait1 $04
-	vol $3
-	note a2  $03
-	wait1 $04
-	vol $6
-	note a2  $03
-	wait1 $04
-	vol $3
-	note a2  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note as2 $0e
 	note a2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note a2  $03
-	wait1 $3c
+	rest $3c
+	vol $6
+	note a2  $03
+	rest $04
+	vol $3
+	note a2  $03
+	rest $04
+	vol $6
+	note a2  $03
+	rest $04
+	vol $3
+	note a2  $03
+	rest $04
+	vol $6
+	note as2 $0e
+	note a2  $03
+	rest $04
+	vol $3
+	note a2  $03
+	rest $3c
 	vol $6
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note c3  $0e
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $03
-	wait1 $3c
+	rest $3c
 	vol $6
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note c3  $0e
 	note b2  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b2  $03
-	wait1 $46
+	rest $46
 	vol $3
 	note e4  $07
 	note f4  $07
@@ -32176,12 +32177,12 @@ musicf3598:
 	note e4  $07
 	note ds4 $07
 	note e4  $77
-	wait1 $0b
+	rest $0b
 	goto musicf3598
 	cmdff
 
 sound18Channel4:
-	wait1 $1c
+	rest $1c
 	cmdf2
 musicf3753:
 	duty $0e
@@ -32190,119 +32191,119 @@ musicf3753:
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note fs2 $1c
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note fs2 $1c
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note fs2 $1c
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $2a
+	rest $2a
 	duty $0e
 	note fs2 $1c
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note fs2 $1c
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note fs2 $1c
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note fs2 $07
 	duty $0f
 	note fs2 $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note cs2 $07
 	note d2  $07
@@ -32321,104 +32322,104 @@ musicf3753:
 	note cs2 $03
 	duty $0f
 	note cs2 $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note cs2 $03
 	duty $0f
 	note cs2 $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0e
 	duty $0e
 	note cs2 $03
 	duty $0f
 	note cs2 $06
-	wait1 $3d
+	rest $3d
 	duty $0e
 	note cs2 $03
 	duty $0f
 	note cs2 $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note cs2 $03
 	duty $0f
 	note cs2 $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $0e
 	duty $0e
 	note cs2 $03
 	duty $0f
 	note cs2 $06
-	wait1 $3d
+	rest $3d
 	duty $0e
 	note d2  $03
 	duty $0f
 	note d2  $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $03
 	duty $0f
 	note d2  $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note ds2 $0e
 	duty $0e
 	note d2  $03
 	duty $0f
 	note d2  $06
-	wait1 $3d
+	rest $3d
 	duty $0e
 	note d2  $03
 	duty $0f
 	note d2  $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note d2  $03
 	duty $0f
 	note d2  $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note ds2 $0e
 	duty $0e
 	note d2  $03
 	duty $0f
 	note d2  $06
-	wait1 $3d
+	rest $3d
 	duty $0e
 	note e2  $03
 	duty $0f
 	note e2  $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note e2  $03
 	duty $0f
 	note e2  $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note f2  $0e
 	duty $0e
 	note e2  $03
 	duty $0f
 	note e2  $06
-	wait1 $3d
+	rest $3d
 	duty $0e
 	note e2  $03
 	duty $0f
 	note e2  $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note e2  $03
 	duty $0f
 	note e2  $06
-	wait1 $05
+	rest $05
 	duty $0e
 	note f2  $0e
 	duty $0e
 	note e2  $03
 	duty $0f
 	note e2  $06
-	wait1 $ad
+	rest $ad
 	duty $0e
 	note e2  $07
 	note f2  $07
@@ -32458,7 +32459,7 @@ musicf3950:
 	note as4 $12
 	vol $1
 	note as4 $12
-	wait1 $12
+	rest $12
 	vol $6
 	note f4  $24
 	note c5  $24
@@ -32466,13 +32467,13 @@ musicf3950:
 	note ds5 $24
 	note g4  $24
 	note gs4 $0d
-	wait1 $05
+	rest $05
 	vol $4
 	note gs4 $04
-	wait1 $05
+	rest $05
 	vol $2
 	note gs4 $04
-	wait1 $05
+	rest $05
 	vol $6
 	note ds5 $12
 	vol $3
@@ -32516,10 +32517,10 @@ musicf3950:
 	note gs4 $24
 	note as4 $24
 	note ds5 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note ds5 $09
-	wait1 $05
+	rest $05
 	vol $1
 	note ds5 $09
 	vol $6
@@ -32541,22 +32542,22 @@ musicf3950:
 	note c5  $24
 	vol $6
 	note f5  $09
-	wait1 $04
+	rest $04
 	vol $4
 	note f5  $05
-	wait1 $04
+	rest $04
 	vol $2
 	note f5  $05
-	wait1 $09
+	rest $09
 	vol $6
 	note f5  $09
-	wait1 $04
+	rest $04
 	vol $4
 	note f5  $05
-	wait1 $04
+	rest $04
 	vol $2
 	note f5  $05
-	wait1 $09
+	rest $09
 	vol $6
 	note f4  $12
 	vol $3
@@ -32571,7 +32572,7 @@ musicf3950:
 	note cs5 $24
 	vol $1
 	note cs5 $24
-	wait1 $12
+	rest $12
 	vibrato $e1
 	env $0 $00
 	vol $6
@@ -32587,7 +32588,7 @@ musicf3950:
 	note as4 $24
 	vol $1
 	note as4 $24
-	wait1 $48
+	rest $48
 	vibrato $e1
 	env $0 $00
 	goto musicf3950
@@ -32610,7 +32611,7 @@ musicf3a57:
 	note c3  $24
 	vol $3
 	note c3  $12
-	wait1 $12
+	rest $12
 	vol $6
 	note cs3 $24
 	note gs3 $24
@@ -32620,7 +32621,7 @@ musicf3a57:
 	note f3  $24
 	vol $3
 	note f3  $12
-	wait1 $12
+	rest $12
 	vol $6
 	note as2 $12
 	note c3  $12
@@ -32643,10 +32644,10 @@ musicf3a57:
 	note c3  $24
 	vol $6
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note c4  $09
 	vol $6
@@ -32668,7 +32669,7 @@ musicf3a57:
 	note gs3 $24
 	vol $3
 	note gs3 $12
-	wait1 $12
+	rest $12
 	vol $6
 	note as2 $24
 	note c3  $24
@@ -32693,24 +32694,24 @@ sound1fChannel4:
 	cmdf2
 	duty $08
 musicf3afe:
-	wait1 $31
+	rest $31
 	note f4  $24
 	note c5  $24
 	note f4  $24
 	note ds4 $24
 	note as4 $12
-	wait1 $12
+	rest $12
 	note as4 $36
-	wait1 $36
+	rest $36
 	note f4  $24
 	note c5  $24
 	note f5  $24
 	note ds5 $24
 	note g4  $24
 	note gs4 $0e
-	wait1 $16
+	rest $16
 	note ds5 $12
-	wait1 $12
+	rest $12
 	note ds5 $48
 	note cs5 $24
 	note ds5 $12
@@ -32719,19 +32720,19 @@ musicf3afe:
 	note as4 $24
 	note gs4 $24
 	note c5  $12
-	wait1 $12
+	rest $12
 	note c5  $24
 	note as4 $24
 	note g5  $24
 	note f5  $24
 	note e5  $5a
-	wait1 $5a
+	rest $5a
 	note f5  $24
 	note c5  $24
 	note gs4 $24
 	note as4 $24
 	note ds5 $09
-	wait1 $1b
+	rest $1b
 	note ds5 $48
 	note ds5 $24
 	note as5 $12
@@ -32742,20 +32743,20 @@ musicf3afe:
 	note cs5 $12
 	note c5  $24
 	note f5  $09
-	wait1 $1b
+	rest $1b
 	note f5  $09
-	wait1 $1b
+	rest $1b
 	note f4  $24
 	note ds5 $48
 	note cs5 $48
-	wait1 $5a
+	rest $5a
 	note cs5 $12
 	note ds5 $12
 	vol $3
 	note cs5 $12
 	note c5  $48
 	note as4 $48
-	wait1 $83
+	rest $83
 	goto musicf3afe
 	cmdff
 
@@ -32769,10 +32770,10 @@ sound40Channel1:
 	duty $01
 	vol $6
 	note as4 $04
-	wait1 $04
+	rest $04
 	vol $4
 	note as4 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note f4  $05
 	note as4 $05
@@ -32790,10 +32791,10 @@ sound40Channel1:
 	note as4 $0b
 	note f4  $0b
 	note cs4 $04
-	wait1 $04
+	rest $04
 	vol $4
 	note cs4 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note as3 $05
 	note cs4 $05
@@ -32807,10 +32808,10 @@ sound40Channel1:
 	env $0 $00
 	vol $6
 	note ds4 $04
-	wait1 $04
+	rest $04
 	vol $4
 	note ds4 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $05
 	note ds4 $05
@@ -32824,10 +32825,10 @@ sound40Channel1:
 	env $0 $00
 	vol $6
 	note as4 $08
-	wait1 $04
+	rest $04
 	vol $4
 	note as4 $08
-	wait1 $04
+	rest $04
 	vol $6
 	note f4  $08
 	note d4  $30
@@ -32890,10 +32891,10 @@ sound40Channel0:
 	duty $01
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $4
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note f3  $05
 	note as3 $05
@@ -32928,7 +32929,7 @@ sound40Channel0:
 	note gs3 $05
 	note c4  $06
 	note f3  $08
-	wait1 $04
+	rest $04
 	vol $4
 	note f3  $04
 	vol $6
@@ -32939,7 +32940,7 @@ sound40Channel0:
 	note as3 $08
 	vol $5
 	note f5  $04
-	wait1 $04
+	rest $04
 	note as4 $04
 	vol $3
 	note f5  $04
@@ -32990,12 +32991,12 @@ sound40Channel0:
 	cmdff
 
 sound40Channel4:
-	wait1 $10
+	rest $10
 	duty $0e
 	note as2 $20
 	vol $4
 	note as2 $08
-	wait1 $08
+	rest $08
 	duty $0e
 	note f2  $04
 	duty $0f
@@ -33045,7 +33046,7 @@ sound40Channel4:
 	note as2 $20
 	vol $4
 	note as2 $08
-	wait1 $08
+	rest $08
 	duty $0e
 	note f3  $05
 	note d3  $05
@@ -33080,7 +33081,7 @@ sound40Channel4:
 	note f2  $04
 	duty $0f
 	note f2  $05
-	wait1 $09
+	rest $09
 	duty $0e
 	note f3  $24
 	note g3  $2c
@@ -33516,385 +33517,385 @@ musicf4007:
 	note gs3 $20
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note e4  $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $1
 	note fs4 $04
-	wait1 $1c
+	rest $1c
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $04
-	wait1 $04
-	vol $6
-	note e4  $04
-	wait1 $04
-	vol $3
-	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
+	vol $6
+	note e4  $04
+	rest $04
+	vol $3
+	note e4  $04
+	rest $04
 	vol $6
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $1
 	note fs4 $04
-	wait1 $1c
+	rest $1c
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $18
 	vol $3
 	note e4  $08
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $18
 	vol $3
 	note g4  $08
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $14
 	vol $3
 	note e4  $0c
-	wait1 $20
+	rest $20
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note fs4 $04
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $04
-	wait1 $24
+	rest $24
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $02
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $02
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $02
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $02
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note a4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note b4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note c5  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note d5  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note c5  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $05
-	wait1 $23
+	rest $23
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $02
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $02
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $02
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $02
 	vol $6
 	note b4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note b4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note c5  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note b4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note b4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
 	note fs4 $08
@@ -33905,7 +33906,7 @@ musicf4007:
 	note e4  $10
 	vol $1
 	note e4  $08
-	wait1 $18
+	rest $18
 	goto musicf4007
 	cmdff
 
@@ -33918,377 +33919,377 @@ musicf4298:
 	note gs3 $20
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $24
+	rest $24
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $24
+	rest $24
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $14
 	vol $3
 	note c4  $0c
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $18
 	vol $3
 	note d4  $08
 	vol $6
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $14
 	vol $3
 	note c4  $0c
-	wait1 $20
+	rest $20
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $24
+	rest $24
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $02
 	vol $6
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note f4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $24
+	rest $24
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $6
 	note g4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $04
-	wait1 $06
+	rest $06
 	vol $6
 	note a4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note a3  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note a3  $04
-	wait1 $84
+	rest $84
 	goto musicf4298
 	cmdff
 
@@ -34297,103 +34298,103 @@ musicf4503:
 	duty $0e
 	note a2  $20
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $3c
+	rest $3c
 	note b2  $20
 	note c3  $20
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $0c
+	rest $0c
 	note b3  $04
-	wait1 $0c
+	rest $0c
 	note b3  $04
-	wait1 $0c
+	rest $0c
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	note b3  $04
-	wait1 $0c
+	rest $0c
 	note a2  $20
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $1c
+	rest $1c
 	note b2  $3c
-	wait1 $04
+	rest $04
 	note b2  $20
 	note a2  $12
-	wait1 $0e
+	rest $0e
 	note a2  $08
-	wait1 $08
+	rest $08
 	note b2  $1c
-	wait1 $04
+	rest $04
 	note g2  $04
-	wait1 $0c
+	rest $0c
 	note a2  $14
-	wait1 $0c
+	rest $0c
 	note a2  $20
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $04
+	rest $04
 	note a3  $04
-	wait1 $1c
+	rest $1c
 	note b2  $14
-	wait1 $0c
+	rest $0c
 	note e3  $05
-	wait1 $0b
+	rest $0b
 	note d3  $05
-	wait1 $0b
+	rest $0b
 	note c3  $20
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $1c
+	rest $1c
 	note b2  $20
 	note e2  $0d
-	wait1 $03
+	rest $03
 	note g2  $0d
-	wait1 $03
+	rest $03
 	note a2  $20
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	note c4  $04
-	wait1 $04
+	rest $04
 	duty $0e
 	note c4  $04
 	duty $0f
@@ -34421,10 +34422,10 @@ musicf4503:
 	duty $0e
 	note d3  $20
 	note a2  $08
-	wait1 $08
+	rest $08
 	note fs2 $20
 	note a2  $08
-	wait1 $08
+	rest $08
 	note d2  $20
 	goto musicf4503
 	cmdff
@@ -34705,7 +34706,7 @@ sound21Channel1:
 musicf47e4:
 	vol $6
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
@@ -34733,51 +34734,51 @@ musicf47e4:
 	vol $6
 	note ds4 $0e
 	note a3  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a3  $04
 	note ds4 $0e
 	note a3  $07
-	wait1 $03
+	rest $03
 	vol $1
 	note a3  $04
 	note ds4 $0e
 	note a3  $07
-	wait1 $03
+	rest $03
 	vol $0
 	note a3  $04
 	note ds4 $0e
 	note a3  $07
-	wait1 $03
+	rest $03
 	vol $0
 	note a3  $04
 	vol $6
 	note ds4 $0e
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $04
 	vol $5
 	note ds5 $0e
 	note a5  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note a5  $04
 	vol $3
 	note ds4 $0e
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $1
 	note a4  $04
 	vol $2
 	note ds5 $0e
 	note a5  $07
-	wait1 $03
+	rest $03
 	vol $1
 	note a5  $04
 	vol $6
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f4  $04
 	vol $6
@@ -34804,118 +34805,118 @@ musicf47e4:
 	note g4  $07
 	note fs4 $0e
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $04
 	note fs4 $0e
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $04
 	note fs4 $0e
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $0
 	note cs4 $04
 	note fs4 $0e
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $0
 	note cs4 $04
 	vol $6
 	note g4  $0e
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $04
 	note g4  $0e
 	note cs4 $07
-	wait1 $03
+	rest $03
 	vol $1
 	note cs4 $04
 	vol $6
 	note g4  $0e
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	note g4  $0e
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $1
 	note cs5 $04
 	vol $6
 	note a4  $07
 	note e5  $07
 	note a5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a5  $04
 	vol $6
 	note a4  $07
 	note e5  $07
 	note a5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a5  $04
 	vol $6
 	note as4 $07
 	note f5  $07
 	note as5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as5 $07
-	wait1 $19
+	rest $19
 	vol $6
 	note a4  $07
 	note e5  $07
 	note a5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a5  $04
 	vol $6
 	note a4  $07
 	note e5  $07
 	note a5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a5  $04
 	vol $6
 	note gs5 $07
 	note gs4 $03
-	wait1 $04
+	rest $04
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $07
-	wait1 $19
+	rest $19
 	vol $6
 	note a4  $07
 	note e5  $07
 	vol $6
 	note a5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a5  $04
 	vol $6
 	note as4 $07
 	note f5  $07
 	note as5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as5 $04
 	vol $6
 	note b4  $07
 	note fs5 $07
 	note b5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b5  $04
 	vol $6
 	note c5  $07
 	note g5  $07
 	note c6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c6  $04
 	vol $6
@@ -34945,7 +34946,7 @@ sound21Channel0:
 musicf497c:
 	vol $6
 	note a2  $07
-	wait1 $07
+	rest $07
 	note b2  $07
 	vol $3
 	note a2  $07
@@ -35336,79 +35337,79 @@ musicf4b82:
 	note f2  $0e
 	note e2  $0e
 	note a1  $03
-	wait1 $04
+	rest $04
 	note a1  $03
-	wait1 $0b
+	rest $0b
 	note a1  $03
-	wait1 $04
+	rest $04
 	note a1  $03
-	wait1 $04
+	rest $04
 	note a1  $07
-	wait1 $07
+	rest $07
 	note a1  $03
-	wait1 $04
+	rest $04
 	note as1 $03
-	wait1 $04
+	rest $04
 	note as1 $07
-	wait1 $07
+	rest $07
 	note as1 $03
-	wait1 $04
+	rest $04
 	note as1 $03
-	wait1 $04
+	rest $04
 	note as1 $02
-	wait1 $05
+	rest $05
 	note as1 $02
-	wait1 $05
+	rest $05
 	note as1 $03
-	wait1 $04
+	rest $04
 	note a1  $03
-	wait1 $04
+	rest $04
 	note a1  $03
-	wait1 $0b
+	rest $0b
 	note a1  $03
-	wait1 $04
+	rest $04
 	note a1  $03
-	wait1 $04
+	rest $04
 	note a1  $07
-	wait1 $07
+	rest $07
 	note a1  $03
-	wait1 $04
+	rest $04
 	note gs1 $03
-	wait1 $04
+	rest $04
 	note gs1 $07
-	wait1 $07
+	rest $07
 	note gs1 $03
-	wait1 $04
+	rest $04
 	note gs1 $03
-	wait1 $04
+	rest $04
 	note gs1 $02
-	wait1 $05
+	rest $05
 	note gs1 $02
-	wait1 $05
+	rest $05
 	note gs1 $03
-	wait1 $04
+	rest $04
 	note a1  $03
-	wait1 $04
+	rest $04
 	note a1  $07
-	wait1 $07
+	rest $07
 	note a1  $03
-	wait1 $04
+	rest $04
 	note as1 $03
-	wait1 $04
+	rest $04
 	note as1 $07
-	wait1 $07
+	rest $07
 	note as1 $03
-	wait1 $04
+	rest $04
 	note b1  $03
-	wait1 $04
+	rest $04
 	note b1  $07
-	wait1 $07
+	rest $07
 	note b1  $03
-	wait1 $04
+	rest $04
 	note c2  $03
-	wait1 $04
+	rest $04
 	note c2  $07
-	wait1 $07
+	rest $07
 	note c2  $07
 	note cs2 $07
 	note d2  $07
@@ -35752,7 +35753,7 @@ musicf4ea0:
 	note e3  $08
 	note ds3 $0e
 	note e3  $08
-	wait1 $2c
+	rest $2c
 	note a4  $0e
 	note gs4 $08
 	note a4  $0e
@@ -35765,7 +35766,7 @@ musicf4ea0:
 	note e4  $08
 	note f4  $0e
 	note e4  $08
-	wait1 $2c
+	rest $2c
 	note e5  $0e
 	note ds5 $08
 	note e5  $0e
@@ -35788,222 +35789,222 @@ musicf4ea0:
 	note gs4 $0e
 	note f4  $08
 	note e4  $07
-	wait1 $1d
+	rest $1d
 	note d4  $08
 	note c4  $07
-	wait1 $0f
+	rest $0f
 	note b3  $07
-	wait1 $0f
+	rest $0f
 	vol $6
 	note e4  $0e
 	note ds4 $08
 	note e4  $0e
 	note ds4 $08
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note ds4 $0e
 	note d4  $08
 	note ds4 $0e
 	note d4  $08
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $08
-	wait1 $03
+	rest $03
 	vol $1
 	note d4  $08
-	wait1 $16
+	rest $16
 	vol $6
 	note e4  $0e
 	note ds4 $08
 	note e4  $0e
 	note ds4 $08
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note c5  $0e
 	note gs4 $08
 	note c5  $0e
 	note gs4 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $08
-	wait1 $03
+	rest $03
 	vol $1
 	note gs4 $08
-	wait1 $16
+	rest $16
 	vol $6
 	note a4  $0e
 	note gs4 $08
 	note a4  $0e
 	note gs4 $08
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note gs4 $0e
 	note g4  $08
 	note gs4 $0e
 	note g4  $08
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $08
-	wait1 $03
+	rest $03
 	vol $1
 	note g4  $08
-	wait1 $16
+	rest $16
 	vol $6
 	note a4  $0e
 	note gs4 $08
 	note a4  $0e
 	note gs4 $08
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note e5  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e5  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note ds5 $0e
 	note e5  $08
 	note f5  $0e
 	note e5  $08
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $08
-	wait1 $03
+	rest $03
 	vol $1
 	note e5  $08
-	wait1 $24
+	rest $24
 	vol $6
 	note a4  $08
 	note e4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $05
 	vol $6
 	note e4  $0e
 	note ds4 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $08
-	wait1 $03
+	rest $03
 	vol $6
 	note d4  $08
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $0e
 	note b3  $08
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $08
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $08
 	note ds4 $0e
 	note e4  $08
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $03
 	vol $6
 	note e5  $08
 	note ds5 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $05
 	vol $6
 	note ds5 $0e
 	note d5  $08
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $08
-	wait1 $03
+	rest $03
 	vol $6
 	note d5  $08
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note c5  $0e
 	note b4  $08
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $08
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $03
-	wait1 $05
+	rest $05
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $03
 	vol $6
 	note e4  $08
 	note f4  $16
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $16
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note f4  $16
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $16
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $07
-	wait1 $5c
+	rest $5c
 	vol $6
 	note e4  $07
 	note gs4 $07
@@ -36040,7 +36041,7 @@ musicf509b:
 	note e3  $08
 	note ds3 $0e
 	note e3  $08
-	wait1 $2c
+	rest $2c
 	note a4  $0e
 	note gs4 $08
 	note a4  $0e
@@ -36053,7 +36054,7 @@ musicf509b:
 	note e4  $08
 	note f4  $0e
 	note e4  $08
-	wait1 $21
+	rest $21
 	vol $6
 	note a4  $2c
 	note gs4 $2c
@@ -36062,201 +36063,201 @@ musicf509b:
 	note f4  $2c
 	note d4  $2c
 	note b3  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note b3  $08
-	wait1 $07
+	rest $07
 	vol $1
 	note b3  $07
-	wait1 $08
+	rest $08
 	vol $6
 	note gs3 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note gs3 $08
-	wait1 $07
+	rest $07
 	vol $1
 	note gs3 $07
-	wait1 $13
+	rest $13
 	vol $3
 	note e4  $0e
 	note ds4 $08
 	note e4  $0e
 	note ds4 $08
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note ds4 $0e
 	note d4  $08
 	note ds4 $0e
 	note d4  $08
-	wait1 $03
+	rest $03
 	vol $1
 	note d4  $08
-	wait1 $03
+	rest $03
 	vol $0
 	note d4  $08
-	wait1 $16
+	rest $16
 	vol $3
 	note e4  $0e
 	note ds4 $08
 	note e4  $0e
 	note ds4 $08
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note e4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $0e
 	note gs4 $08
 	note c5  $0e
 	note gs4 $08
-	wait1 $03
+	rest $03
 	vol $1
 	note gs4 $08
-	wait1 $03
+	rest $03
 	vol $0
 	note gs4 $08
-	wait1 $16
+	rest $16
 	vol $3
 	note a4  $0e
 	note gs4 $08
 	note a4  $0e
 	note gs4 $08
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note gs4 $0e
 	note g4  $08
 	note gs4 $0e
 	note g4  $08
-	wait1 $03
+	rest $03
 	vol $1
 	note g4  $08
-	wait1 $03
+	rest $03
 	vol $0
 	note g4  $08
-	wait1 $16
+	rest $16
 	vol $3
 	note a4  $0e
 	note gs4 $08
 	note a4  $0e
 	note gs4 $08
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note a4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note e5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note e5  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note ds5 $0e
 	note e5  $08
 	note f5  $0e
 	note e5  $08
-	wait1 $03
+	rest $03
 	vol $1
 	note e5  $08
-	wait1 $03
+	rest $03
 	vol $0
 	note e5  $08
-	wait1 $24
+	rest $24
 	vol $3
 	note a4  $08
 	note e4  $0e
-	wait1 $03
+	rest $03
 	vol $1
 	note e4  $05
 	vol $3
 	note e4  $0e
 	note ds4 $08
-	wait1 $03
+	rest $03
 	vol $1
 	note ds4 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $08
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $0e
 	note b3  $08
-	wait1 $03
+	rest $03
 	vol $1
 	note b3  $08
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $08
 	note ds4 $0b
 	vol $6
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $03
 	vol $6
 	note c5  $08
 	note b4  $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $05
 	vol $6
 	note b4  $0e
 	note as4 $08
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $08
-	wait1 $03
+	rest $03
 	vol $6
 	note as4 $08
 	note gs4 $07
-	wait1 $04
+	rest $04
 	vol $3
 	note gs4 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note gs4 $0e
 	note e4  $08
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $08
-	wait1 $03
+	rest $03
 	vol $6
 	note c4  $03
-	wait1 $05
+	rest $05
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $03
 	vol $6
@@ -36264,31 +36265,31 @@ musicf509b:
 	vol $6
 	note cs4 $16
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note ds4 $16
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note cs4 $16
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note ds4 $16
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $07
-	wait1 $67
+	rest $67
 	note e4  $07
 	note gs4 $07
 	note as4 $08
@@ -36307,14 +36308,14 @@ sound23Channel4:
 musicf5283:
 	duty $0e
 	note a1  $07
-	wait1 $25
+	rest $25
 	note f2  $07
-	wait1 $25
+	rest $25
 	note ds2 $24
 	note e2  $08
 	duty $0f
 	note e2  $08
-	wait1 $06
+	rest $06
 	duty $0e
 	note e2  $08
 	note fs2 $0e
@@ -36323,18 +36324,18 @@ musicf5283:
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note e2  $07
 	duty $0f
 	note e2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note b1  $24
 	note e2  $08
 	duty $0f
 	note e2  $08
-	wait1 $06
+	rest $06
 	duty $0e
 	note e3  $08
 	note ds3 $0e
@@ -36363,18 +36364,18 @@ musicf5283:
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note e2  $07
 	duty $0f
 	note e2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note ds2 $24
 	note e2  $08
 	duty $0f
 	note e2  $08
-	wait1 $06
+	rest $06
 	duty $0e
 	note e2  $16
 	note fs2 $03
@@ -36383,12 +36384,12 @@ musicf5283:
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note e2  $07
 	duty $0f
 	note e2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note ds2 $0e
 	note e2  $08
@@ -36396,7 +36397,7 @@ musicf5283:
 	note e2  $08
 	duty $0f
 	note e2  $08
-	wait1 $06
+	rest $06
 	duty $0e
 	note e2  $16
 	note fs2 $03
@@ -36405,18 +36406,18 @@ musicf5283:
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note e2  $07
 	duty $0f
 	note e2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note d2  $24
 	note ds2 $08
 	duty $0f
 	note ds2 $08
-	wait1 $06
+	rest $06
 	duty $0e
 	note e2  $16
 	note fs2 $03
@@ -36425,12 +36426,12 @@ musicf5283:
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note e2  $07
 	duty $0f
 	note e2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note ds2 $0e
 	note e2  $08
@@ -36438,51 +36439,51 @@ musicf5283:
 	note e2  $08
 	duty $0f
 	note e2  $08
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note e2  $16
 	duty $0e
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note e2  $07
 	duty $0f
 	note e2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note d2  $24
 	note e2  $08
 	duty $0f
 	note e2  $08
-	wait1 $24
+	rest $24
 	duty $0e
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note e2  $07
 	duty $0f
 	note e2  $07
-	wait1 $1e
+	rest $1e
 	duty $0e
 	note d2  $07
 	duty $0f
 	note d2  $07
-	wait1 $08
+	rest $08
 	duty $0e
 	note d2  $0e
 	note e2  $08
 	duty $0f
 	note e2  $08
-	wait1 $24
+	rest $24
 	duty $0e
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $a2
+	rest $a2
 	duty $0e
 	note ds2 $0e
 	note e2  $08
@@ -36492,7 +36493,7 @@ musicf5283:
 	note b2  $08
 	duty $0f
 	note b2  $08
-	wait1 $06
+	rest $06
 	duty $0e
 	note as2 $60
 	goto musicf5283
@@ -36500,9 +36501,9 @@ musicf5283:
 
 sound23Channel6:
 musicf5403:
-	wait1 $ff
-	wait1 $ff
-	wait1 $28
+	rest $ff
+	rest $ff
+	rest $28
 	vol $4
 	vol $3
 	note $2a $2c
@@ -36544,7 +36545,7 @@ musicf5403:
 	vol $4
 	vol $2
 	note $2e $16
-	wait1 $16
+	rest $16
 	vol $4
 	vol $3
 	note $2a $2c
@@ -36560,7 +36561,7 @@ musicf5403:
 	vol $4
 	vol $2
 	note $2e $16
-	wait1 $16
+	rest $16
 	vol $4
 	vol $3
 	note $2a $2c
@@ -36576,7 +36577,7 @@ musicf5403:
 	vol $4
 	vol $2
 	note $2e $16
-	wait1 $16
+	rest $16
 	vol $4
 	vol $3
 	note $2a $2c
@@ -36592,7 +36593,7 @@ musicf5403:
 	vol $4
 	vol $2
 	note $2e $16
-	wait1 $16
+	rest $16
 	vol $4
 	vol $3
 	note $2a $2c
@@ -37042,7 +37043,7 @@ musicf56b1:
 	env $0 $00
 	vol $3
 	note gs3 $1e
-	wait1 $0f
+	rest $0f
 	vibrato $00
 	env $0 $03
 	vol $4
@@ -37110,7 +37111,7 @@ musicf56b1:
 	env $0 $00
 	vol $3
 	note g2  $1e
-	wait1 $0b
+	rest $0b
 	vibrato $00
 	env $0 $03
 	vol $3
@@ -37161,7 +37162,7 @@ musicf586a:
 	duty $0f
 	note gs2 $07
 	duty $0e
-	wait1 $96
+	rest $96
 	note g2  $a5
 	note cs2 $0f
 	duty $0e
@@ -37173,7 +37174,7 @@ musicf586a:
 	duty $0f
 	note g2  $07
 	duty $0e
-	wait1 $96
+	rest $96
 	note gs2 $a5
 	note ds3 $0f
 	duty $0e
@@ -37185,7 +37186,7 @@ musicf586a:
 	duty $0f
 	note gs2 $07
 	duty $0e
-	wait1 $96
+	rest $96
 	note g2  $a5
 	note cs3 $0f
 	duty $0e
@@ -37197,128 +37198,128 @@ musicf586a:
 	duty $0f
 	note g2  $07
 	duty $0e
-	wait1 $96
+	rest $96
 	note gs2 $2a
-	wait1 $03
+	rest $03
 	note gs2 $0f
-	wait1 $0f
+	rest $0f
 	note gs2 $07
-	wait1 $08
+	rest $08
 	note gs2 $07
-	wait1 $08
+	rest $08
 	note gs2 $19
-	wait1 $05
+	rest $05
 	note gs2 $19
-	wait1 $05
+	rest $05
 	note gs2 $07
-	wait1 $08
+	rest $08
 	note gs2 $07
-	wait1 $08
+	rest $08
 	note gs2 $19
-	wait1 $05
+	rest $05
 	note gs2 $19
-	wait1 $05
+	rest $05
 	note gs2 $07
-	wait1 $08
+	rest $08
 	note gs2 $07
-	wait1 $08
+	rest $08
 	note gs2 $19
-	wait1 $05
+	rest $05
 	note gs2 $19
-	wait1 $05
+	rest $05
 	note gs2 $0f
 	note fs2 $2a
-	wait1 $03
+	rest $03
 	note fs2 $0f
-	wait1 $0f
+	rest $0f
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $0f
 	note f3  $07
-	wait1 $08
+	rest $08
 	note f3  $19
-	wait1 $05
+	rest $05
 	note f3  $19
-	wait1 $05
+	rest $05
 	note f3  $0f
 	note e3  $07
-	wait1 $08
+	rest $08
 	note e3  $19
-	wait1 $05
+	rest $05
 	note e3  $19
-	wait1 $05
+	rest $05
 	note e3  $07
-	wait1 $08
+	rest $08
 	note ds3 $07
-	wait1 $08
+	rest $08
 	note ds3 $19
-	wait1 $05
+	rest $05
 	note ds3 $19
-	wait1 $05
+	rest $05
 	note ds3 $07
-	wait1 $08
+	rest $08
 	note d3  $07
-	wait1 $08
+	rest $08
 	note d3  $19
-	wait1 $05
+	rest $05
 	note d3  $19
-	wait1 $05
+	rest $05
 	note d3  $07
-	wait1 $08
+	rest $08
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $07
-	wait1 $08
+	rest $08
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $19
-	wait1 $05
+	rest $05
 	note fs2 $07
-	wait1 $08
+	rest $08
 	goto musicf586a
 	cmdff
 
@@ -37330,37 +37331,37 @@ musicf59c8:
 	vol $6
 	note ds5 $0e
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c5  $07
 	vol $6
 	note b4  $0e
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note ds5 $0e
 	note fs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $04
 	vol $6
@@ -37368,57 +37369,57 @@ musicf59c8:
 	note d5  $07
 	note cs5 $07
 	note b4  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note b4  $07
 	vol $6
 	note b4  $0e
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note ds5 $0e
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c5  $07
 	vol $6
 	note b4  $0e
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note cs5 $07
 	duty $02
 	vol $7
 	note fs6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs6 $04
 	vol $7
@@ -37429,57 +37430,57 @@ musicf59c8:
 	note f6  $07
 	vol $6
 	note fs6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs6 $04
 	vol $6
 	note f6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f6  $04
 	vol $6
 	note fs6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs6 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs6 $07
 	duty $01
 	vol $6
 	note ds5 $0e
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c5  $07
 	vol $6
 	note b4  $0e
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note ds5 $0e
 	note fs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $04
 	vol $6
@@ -37487,43 +37488,43 @@ musicf59c8:
 	note d5  $07
 	note cs5 $07
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $07
-	wait1 $04
+	rest $04
 	vol $6
 	note b4  $0e
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note ds5 $0e
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $04
 	vol $6
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c5  $07
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
@@ -37532,11 +37533,11 @@ musicf59c8:
 	vol $6
 	note d5  $07
 	note ds5 $07
-	wait1 $0e
+	rest $0e
 	duty $02
 	vol $7
 	note as6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as6 $04
 	vol $7
@@ -37547,23 +37548,23 @@ musicf59c8:
 	note a6  $07
 	vol $6
 	note as6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as6 $04
 	vol $6
 	note a6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a6  $04
 	vol $6
 	note as6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as6 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note as6 $06
-	wait1 $01
+	rest $01
 	duty $01
 	goto musicf59c8
 	cmdff
@@ -37579,66 +37580,66 @@ musicf5b5b:
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	duty $02
 	vol $6
 	note ds6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds6 $04
 	vol $6
@@ -37647,88 +37648,88 @@ musicf5b5b:
 	note ds6 $07
 	note d6  $07
 	note ds6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds6 $04
 	vol $6
 	note d6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d6  $04
 	vol $6
 	note ds6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds6 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds6 $07
-	wait1 $0e
+	rest $0e
 	duty $01
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	vol $6
 	note gs3 $0e
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note ds4 $07
 	duty $02
 	vol $6
 	note fs6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs6 $04
 	vol $6
@@ -37737,23 +37738,23 @@ musicf5b5b:
 	note fs6 $07
 	note f6  $07
 	note fs6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs6 $04
 	vol $6
 	note f6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f6  $04
 	vol $6
 	note fs6 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs6 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs6 $06
-	wait1 $01
+	rest $01
 	duty $01
 	goto musicf5b5b
 	cmdff
@@ -37764,62 +37765,62 @@ musicf5c94:
 	note e3  $05
 	duty $0f
 	note e3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b2  $05
 	duty $0f
 	note b2  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note e3  $05
 	duty $0f
 	note e3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b2  $05
 	duty $0f
 	note b2  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note e3  $05
 	duty $0f
 	note e3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b2  $05
 	duty $0f
 	note b2  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note e3  $15
 	duty $0f
@@ -37840,67 +37841,67 @@ musicf5c94:
 	note e3  $07
 	duty $0f
 	note e3  $0e
-	wait1 $07
+	rest $07
 	duty $0e
 	note e3  $05
 	duty $0f
 	note e3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b2  $05
 	duty $0f
 	note b2  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note e3  $05
 	duty $0f
 	note e3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b2  $05
 	duty $0f
 	note b2  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note e3  $05
 	duty $0f
 	note e3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b2  $05
 	duty $0f
 	note b2  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note b3  $05
 	duty $0f
 	note b3  $0f
-	wait1 $08
+	rest $08
 	duty $0e
 	note e3  $15
 	duty $0f
@@ -37919,7 +37920,7 @@ musicf5c94:
 	note e3  $07
 	duty $0f
 	note e3  $0e
-	wait1 $07
+	rest $07
 	goto musicf5c94
 	cmdff
 
@@ -37938,52 +37939,52 @@ musicf5dde:
 	note g4  $0e
 	note c5  $0e
 	note b4  $0a
-	wait1 $04
+	rest $04
 	duty $02
 	note b5  $03
 	note as5 $04
 	note b5  $03
 	note as5 $04
 	note b5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b5  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note b6  $03
 	note as6 $04
 	note b6  $03
 	note as6 $04
 	note b6  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b6  $03
-	wait1 $04
+	rest $04
 	duty $01
 	vol $6
 	note b3  $0e
 	note c4  $0b
-	wait1 $03
+	rest $03
 	duty $02
 	note c5  $03
 	note b4  $04
 	note c5  $03
 	note b4  $04
 	note c5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $03
-	wait1 $04
+	rest $04
 	vol $6
 	note c6  $03
 	note b5  $04
 	note c6  $03
 	note b5  $04
 	note c6  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note c6  $03
-	wait1 $12
+	rest $12
 	duty $01
 	vol $6
 	note b4  $2a
@@ -37999,29 +38000,29 @@ musicf5dde:
 	note c5  $0e
 	note a4  $0e
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note e5  $07
 	note ds5 $07
 	note e5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $04
 	vol $6
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $04
 	vol $6
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $04
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $04
 	vol $6
@@ -38040,7 +38041,7 @@ musicf5dde:
 	note g4  $38
 	note e4  $1c
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	duty $02
@@ -38048,17 +38049,17 @@ musicf5dde:
 	note b5  $07
 	note as5 $07
 	note b5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b5  $04
 	vol $6
 	note b6  $07
 	note as6 $07
 	note b6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b6  $07
-	wait1 $0b
+	rest $0b
 	duty $01
 	vol $6
 	note g4  $2a
@@ -38069,7 +38070,7 @@ musicf5dde:
 	note g4  $07
 	vol $6
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	duty $02
@@ -38079,7 +38080,7 @@ musicf5dde:
 	note b4  $03
 	note as4 $04
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
@@ -38088,14 +38089,14 @@ musicf5dde:
 	note b5  $03
 	note as5 $04
 	note b5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b5  $07
-	wait1 $0b
+	rest $0b
 	duty $01
 	vol $6
 	note ds5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $07
 	vol $6
@@ -38103,18 +38104,18 @@ musicf5dde:
 	note ds5 $03
 	note cs5 $04
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $07
-	wait1 $19
+	rest $19
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	vol $6
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $07
 	vol $6
@@ -38122,19 +38123,19 @@ musicf5dde:
 	note d5  $03
 	note c5  $04
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $07
-	wait1 $19
+	rest $19
 	vol $6
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
 	duty $02
 	vol $6
 	note e5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $04
 	vol $6
@@ -38146,28 +38147,28 @@ musicf5dde:
 	note b4  $04
 	note as4 $03
 	note b4  $04
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $04
-	wait1 $07
+	rest $07
 	vol $6
 	note fs4 $03
 	note g4  $04
 	note fs4 $03
 	note g4  $04
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
-	wait1 $07
+	rest $07
 	vol $6
 	note ds4 $03
 	note e4  $04
 	note ds4 $03
 	note e4  $04
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $04
-	wait1 $07
+	rest $07
 	duty $01
 	vol $6
 	note b3  $0e
@@ -38193,10 +38194,10 @@ musicf5f9d:
 	note as5 $04
 	vol $3
 	note b5  $03
-	wait1 $04
+	rest $04
 	vol $1
 	note b5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note b6  $03
 	note as6 $04
@@ -38204,20 +38205,20 @@ musicf5f9d:
 	note as6 $04
 	vol $3
 	note b6  $03
-	wait1 $04
+	rest $04
 	vol $1
 	note b6  $03
-	wait1 $20
+	rest $20
 	vol $3
 	note c5  $03
 	note b4  $04
 	note c5  $03
 	note b4  $04
 	note c5  $03
-	wait1 $04
+	rest $04
 	vol $1
 	note c5  $03
-	wait1 $04
+	rest $04
 	vol $3
 	note c6  $03
 	note b5  $04
@@ -38225,39 +38226,39 @@ musicf5f9d:
 	note c6  $03
 	note b5  $04
 	note c6  $03
-	wait1 $04
+	rest $04
 	vol $1
 	note c6  $03
-	wait1 $ff
-	wait1 $c5
+	rest $ff
+	rest $c5
 	vol $3
 	note b5  $07
 	note as5 $07
 	note b5  $07
-	wait1 $03
+	rest $03
 	vol $1
 	note b5  $04
 	vol $3
 	note b6  $07
 	note as6 $07
 	note b6  $07
-	wait1 $03
+	rest $03
 	vol $1
 	note b6  $07
-	wait1 $58
+	rest $58
 	vol $3
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $1
 	note fs4 $07
-	wait1 $04
+	rest $04
 	vol $3
 	note b4  $03
 	note as4 $04
 	note b4  $03
 	note as4 $04
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $04
 	vol $3
@@ -38266,35 +38267,35 @@ musicf5f9d:
 	note b5  $03
 	note as5 $04
 	note b5  $07
-	wait1 $03
+	rest $03
 	vol $1
 	note b5  $07
-	wait1 $2e
+	rest $2e
 	cmdfd $00
 	vol $6
 	note cs6 $04
 	note ds6 $05
 	note cs6 $05
 	note b5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note b5  $07
-	wait1 $2a
+	rest $2a
 	vol $6
 	note c6  $04
 	note d6  $05
 	note c6  $05
 	note b5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note b5  $07
-	wait1 $15
+	rest $15
 	vol $3
 	note ds5 $03
 	note e5  $04
@@ -38304,28 +38305,28 @@ musicf5f9d:
 	note b4  $04
 	note as4 $03
 	note b4  $04
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $04
-	wait1 $07
+	rest $07
 	vol $3
 	note fs4 $03
 	note g4  $04
 	note fs4 $03
 	note g4  $04
-	wait1 $03
+	rest $03
 	vol $1
 	note g4  $04
-	wait1 $07
+	rest $07
 	vol $3
 	note ds4 $03
 	note e4  $04
 	note ds4 $03
 	note e4  $04
-	wait1 $03
+	rest $03
 	vol $1
 	note e4  $04
-	wait1 $38
+	rest $38
 	goto musicf5f9d
 	cmdff
 
@@ -38337,62 +38338,62 @@ musicf609e:
 	note b3  $07
 	duty $0f
 	note b3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note b3  $07
 	duty $0f
 	note b3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note f3  $1c
 	duty $0e
 	note a3  $07
 	duty $0f
 	note a3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note a3  $07
 	duty $0f
 	note a3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note e3  $1c
 	duty $0f
 	note e3  $0e
-	wait1 $2a
+	rest $2a
 	duty $0e
 	note b2  $1c
 	duty $0f
 	note b2  $0e
-	wait1 $2a
+	rest $2a
 	duty $0e
 	note e3  $1c
 	duty $0e
 	note b3  $07
 	duty $0f
 	note b3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note b3  $07
 	duty $0f
 	note b3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note f3  $1c
 	note a3  $07
 	duty $0f
 	note a3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note a3  $07
 	duty $0f
 	note a3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note b2  $15
 	duty $0f
 	note b2  $0a
-	wait1 $35
+	rest $35
 	duty $0e
 	note b2  $0e
 	note cs3 $07
@@ -38403,22 +38404,22 @@ musicf609e:
 	note e2  $0e
 	duty $0f
 	note e2  $07
-	wait1 $15
+	rest $15
 	duty $0e
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note b2  $07
 	duty $0f
 	note b2  $07
-	wait1 $46
+	rest $46
 	duty $0e
 	note c3  $1c
 	note e3  $1c
@@ -38426,25 +38427,25 @@ musicf609e:
 	note b2  $0e
 	duty $0f
 	note b2  $07
-	wait1 $3f
+	rest $3f
 	duty $0e
 	note fs3 $38
 	note b2  $07
 	duty $0f
 	note b2  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note f3  $38
 	duty $0e
 	note b2  $07
 	duty $0f
 	note b2  $07
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note e3  $07
 	duty $0f
 	note e3  $07
-	wait1 $46
+	rest $46
 	duty $0e
 	note b2  $54
 	goto musicf609e
@@ -38478,22 +38479,22 @@ sound1dChannel1:
 	note e6  $04
 	note f6  $03
 	note b6  $2c
-	wait1 $02
+	rest $02
 	vol $5
 	note b6  $02
-	wait1 $02
+	rest $02
 	vol $4
 	note b6  $03
-	wait1 $02
+	rest $02
 	vol $4
 	note b6  $02
-	wait1 $03
+	rest $03
 musicf61c7:
 	vol $7
 	note f4  $0e
 	note gs4 $0e
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $7
@@ -38501,7 +38502,7 @@ musicf61c7:
 	note gs4 $0e
 	note f4  $0e
 	note ds5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $04
 	vol $7
@@ -38571,7 +38572,7 @@ musicf61c7:
 	note g4  $0e
 	note f4  $0e
 	note e4  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note e4  $04
 	vol $8
@@ -38589,7 +38590,7 @@ musicf61c7:
 	note c4  $07
 	note f4  $07
 	note c4  $07
-	wait1 $07
+	rest $07
 	vol $5
 	note f4  $0e
 	note c4  $07
@@ -38597,7 +38598,7 @@ musicf61c7:
 	note c4  $07
 	note f4  $07
 	note c4  $07
-	wait1 $07
+	rest $07
 	vol $8
 	note e4  $0e
 	note b3  $07
@@ -38605,7 +38606,7 @@ musicf61c7:
 	note b3  $07
 	note e4  $07
 	note b3  $07
-	wait1 $07
+	rest $07
 	vol $5
 	note e4  $0e
 	note b3  $07
@@ -38613,7 +38614,7 @@ musicf61c7:
 	note b3  $07
 	note e4  $07
 	note b3  $07
-	wait1 $07
+	rest $07
 	vol $8
 	note f4  $0e
 	note c4  $07
@@ -38651,7 +38652,7 @@ musicf61c7:
 	note f4  $07
 	note c5  $07
 	note f4  $07
-	wait1 $07
+	rest $07
 	vol $5
 	note c5  $0e
 	note f4  $07
@@ -38659,7 +38660,7 @@ musicf61c7:
 	note f4  $07
 	note c5  $07
 	note f4  $07
-	wait1 $07
+	rest $07
 	vol $8
 	note b4  $0e
 	note e4  $07
@@ -38667,7 +38668,7 @@ musicf61c7:
 	note e4  $07
 	note b4  $07
 	note e4  $07
-	wait1 $07
+	rest $07
 	vol $5
 	note b4  $0e
 	note e4  $07
@@ -38675,7 +38676,7 @@ musicf61c7:
 	note e4  $07
 	note b4  $07
 	note e4  $07
-	wait1 $07
+	rest $07
 	vol $8
 	note a4  $0e
 	note d4  $07
@@ -38685,23 +38686,23 @@ musicf61c7:
 	note d4  $0e
 	vol $4
 	note d4  $0e
-	wait1 $1c
+	rest $1c
 	vol $8
 	note f5  $0e
 	note fs5 $07
-	wait1 $07
+	rest $07
 	vol $4
 	note f5  $0e
 	note fs5 $07
-	wait1 $07
+	rest $07
 	vol $2
 	note f5  $0e
 	note fs5 $07
-	wait1 $07
+	rest $07
 	vol $1
 	note f5  $0e
 	note fs5 $07
-	wait1 $85
+	rest $85
 	goto musicf61c7
 	cmdff
 
@@ -38728,7 +38729,7 @@ sound1dChannel0:
 	note e6  $04
 	note f6  $03
 	note b6  $04
-	wait1 $2f
+	rest $2f
 musicf6377:
 	vol $8
 	note c3  $0e
@@ -38801,7 +38802,7 @@ musicf6377:
 	note gs3 $0e
 	vol $8
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note gs3 $04
 	vol $8
@@ -38813,7 +38814,7 @@ musicf6377:
 	note g3  $0e
 	vol $8
 	note g3  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note g3  $04
 	vol $8
@@ -38825,7 +38826,7 @@ musicf6377:
 	note gs3 $0e
 	vol $8
 	note gs3 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note gs3 $04
 	vol $8
@@ -38838,10 +38839,10 @@ musicf6377:
 	note d4  $0e
 	note e4  $0e
 	note f4  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note f4  $07
-	wait1 $04
+	rest $04
 	vol $2
 	note f4  $07
 	vol $8
@@ -38853,10 +38854,10 @@ musicf6377:
 	note f4  $0e
 	note gs4 $0e
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note g4  $07
-	wait1 $04
+	rest $04
 	vol $2
 	note g4  $07
 	vol $8
@@ -38876,16 +38877,16 @@ musicf6377:
 	note f4  $0e
 	note a4  $0e
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note as4 $07
-	wait1 $04
+	rest $04
 	vol $2
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $1
 	note as4 $07
-	wait1 $20
+	rest $20
 	vol $8
 	note cs4 $0e
 	note c4  $0e
@@ -39146,17 +39147,17 @@ musicf64b5:
 	note c3  $07
 	duty $0f
 	note c3  $0e
-	wait1 $07
+	rest $07
 	duty $0e
 	note c2  $54
 	duty $0f
 	note c2  $0c
-	wait1 $64
+	rest $64
 	goto musicf64b5
 	cmdff
 
 sound1dChannel6:
-	wait1 $70
+	rest $70
 musicf66a1:
 	vol $5
 	note $26 $2a
@@ -39439,7 +39440,7 @@ musicf685b:
 	note g5  $2c
 	vol $6
 	note as5 $03
-	wait1 $03
+	rest $03
 	note d6  $05
 	vol $4
 	note as5 $03
@@ -39447,16 +39448,16 @@ musicf685b:
 	note as5 $03
 	vol $4
 	note d6  $05
-	wait1 $03
+	rest $03
 	note as5 $03
 	vol $6
 	note as5 $05
-	wait1 $07
+	rest $07
 	vol $4
 	note as5 $04
 	vol $6
 	note as5 $03
-	wait1 $03
+	rest $03
 	note d6  $05
 	vol $4
 	note as5 $03
@@ -39464,16 +39465,16 @@ musicf685b:
 	note as5 $03
 	vol $4
 	note d6  $05
-	wait1 $03
+	rest $03
 	note as5 $03
 	vol $6
 	note as5 $05
-	wait1 $07
+	rest $07
 	vol $4
 	note as5 $04
 	vol $6
 	note as5 $03
-	wait1 $03
+	rest $03
 	note d6  $05
 	vol $4
 	note as5 $03
@@ -39481,16 +39482,16 @@ musicf685b:
 	note as5 $03
 	vol $4
 	note d6  $05
-	wait1 $03
+	rest $03
 	note as5 $03
 	vol $6
 	note as5 $05
-	wait1 $07
+	rest $07
 	vol $4
 	note as5 $04
 	vol $6
 	note as5 $03
-	wait1 $03
+	rest $03
 	note d6  $05
 	vol $4
 	note as5 $03
@@ -39498,11 +39499,11 @@ musicf685b:
 	note as5 $03
 	vol $4
 	note d6  $05
-	wait1 $03
+	rest $03
 	note as5 $03
 	vol $6
 	note as5 $05
-	wait1 $07
+	rest $07
 	vol $4
 	note as5 $04
 	vol $6
@@ -39510,7 +39511,7 @@ musicf685b:
 	note f6  $0b
 	note gs6 $0b
 	note c7  $0b
-	wait1 $58
+	rest $58
 	vol $6
 	note cs4 $2c
 	note ds4 $42
@@ -39531,7 +39532,7 @@ musicf685b:
 	note fs5 $2c
 	note a5  $2c
 	note c6  $03
-	wait1 $03
+	rest $03
 	note e6  $05
 	vol $4
 	note c6  $03
@@ -39539,16 +39540,16 @@ musicf685b:
 	note c6  $03
 	vol $4
 	note e6  $05
-	wait1 $03
+	rest $03
 	note c6  $03
 	vol $6
 	note c6  $05
-	wait1 $07
+	rest $07
 	vol $4
 	note c6  $04
 	vol $6
 	note c6  $03
-	wait1 $03
+	rest $03
 	note e6  $05
 	vol $4
 	note c6  $03
@@ -39556,16 +39557,16 @@ musicf685b:
 	note c6  $03
 	vol $4
 	note e6  $05
-	wait1 $03
+	rest $03
 	note c6  $03
 	vol $6
 	note c6  $05
-	wait1 $07
+	rest $07
 	vol $4
 	note c6  $04
 	vol $6
 	note c6  $03
-	wait1 $03
+	rest $03
 	note e6  $05
 	vol $4
 	note c6  $03
@@ -39573,16 +39574,16 @@ musicf685b:
 	note c6  $03
 	vol $4
 	note e6  $05
-	wait1 $03
+	rest $03
 	note c6  $03
 	vol $6
 	note c6  $05
-	wait1 $07
+	rest $07
 	vol $4
 	note c6  $04
 	vol $6
 	note c6  $03
-	wait1 $03
+	rest $03
 	note e6  $05
 	vol $3
 	note c6  $03
@@ -39590,11 +39591,11 @@ musicf685b:
 	note c6  $03
 	vol $3
 	note e6  $05
-	wait1 $03
+	rest $03
 	note c6  $03
 	vol $6
 	note c6  $05
-	wait1 $07
+	rest $07
 	vol $3
 	note c6  $04
 	vol $6
@@ -39602,7 +39603,7 @@ musicf685b:
 	note g6  $0b
 	note as6 $0b
 	note c7  $0b
-	wait1 $58
+	rest $58
 	goto musicf685b
 	cmdff
 
@@ -39630,13 +39631,13 @@ musicf6999:
 	note b4  $2c
 	note d5  $2c
 	note e5  $b0
-	wait1 $10
+	rest $10
 	vol $3
 	note d6  $0b
 	note f6  $0b
 	note gs6 $0b
 	note c7  $0b
-	wait1 $48
+	rest $48
 	vol $6
 	note gs3 $2c
 	note as3 $4d
@@ -39656,13 +39657,13 @@ musicf6999:
 	note cs5 $2c
 	note e5  $2c
 	note fs5 $b0
-	wait1 $10
+	rest $10
 	vol $3
 	note e6  $0b
 	note g6  $0b
 	note as6 $0b
 	note c7  $0b
-	wait1 $48
+	rest $48
 	goto musicf6999
 	cmdff
 
@@ -39671,10 +39672,10 @@ musicf69f9:
 	duty $0e
 	note g2  $2c
 	note a2  $42
-	wait1 $16
+	rest $16
 	note a2  $2c
 	note b2  $42
-	wait1 $16
+	rest $16
 	note b2  $2c
 	note c3  $2c
 	note e3  $2c
@@ -39683,13 +39684,13 @@ musicf69f9:
 	note cs4 $2c
 	note e4  $2c
 	note g4  $b0
-	wait1 $84
+	rest $84
 	note a2  $2c
 	note b2  $42
-	wait1 $16
+	rest $16
 	note b2  $2c
 	note cs3 $42
-	wait1 $16
+	rest $16
 	note cs3 $2c
 	note d3  $2c
 	note fs3 $2c
@@ -39698,7 +39699,7 @@ musicf69f9:
 	note ds4 $2c
 	note fs4 $2c
 	note a4  $b0
-	wait1 $84
+	rest $84
 	goto musicf69f9
 	cmdff
 
@@ -39716,7 +39717,7 @@ musicf6a3b:
 	note ds5 $16
 	note gs5 $16
 	note as5 $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note as5 $06
 	vol $6
@@ -39731,7 +39732,7 @@ musicf6a3b:
 	note as5 $0b
 	note gs5 $0b
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f5  $06
 	vol $6
@@ -39741,7 +39742,7 @@ musicf6a3b:
 	note ds5 $0b
 	note cs5 $0b
 	note as4 $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note as4 $06
 	vol $6
@@ -39756,14 +39757,14 @@ musicf6a3b:
 	env $0 $00
 	vol $6
 	note as5 $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note as5 $06
 	vol $6
 	note c6  $0b
 	note cs6 $0b
 	note ds6 $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note ds6 $06
 	vol $6
@@ -39793,40 +39794,40 @@ musicf6a3b:
 	note ds6 $0b
 	note f6  $2c
 	note ds6 $05
-	wait1 $01
+	rest $01
 	vol $4
 	note ds6 $07
-	wait1 $01
+	rest $01
 	vol $3
 	note ds6 $05
-	wait1 $03
+	rest $03
 	vol $6
 	note cs6 $05
-	wait1 $01
+	rest $01
 	vol $4
 	note cs6 $07
-	wait1 $01
+	rest $01
 	vol $3
 	note cs6 $05
-	wait1 $03
+	rest $03
 	vol $6
 	note c6  $05
-	wait1 $01
+	rest $01
 	vol $4
 	note c6  $07
-	wait1 $01
+	rest $01
 	vol $3
 	note c6  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note as5 $05
-	wait1 $01
+	rest $01
 	vol $3
 	note as5 $07
-	wait1 $01
+	rest $01
 	vol $3
 	note as5 $05
-	wait1 $03
+	rest $03
 	vol $6
 	note as4 $16
 	note f5  $16
@@ -39840,13 +39841,13 @@ musicf6a3b:
 	note gs5 $16
 	vol $1
 	note gs5 $0b
-	wait1 $0b
+	rest $0b
 	vibrato $f1
 	env $0 $00
 	vol $6
 	note as5 $16
 	note f6  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f6  $06
 	vol $6
@@ -39858,50 +39859,50 @@ musicf6a3b:
 	note as5 $0b
 	note gs5 $0b
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f5  $06
 	vol $6
 	note as5 $0b
 	note gs5 $0b
 	note f5  $07
-	wait1 $04
+	rest $04
 	note f5  $0b
 	note ds5 $0b
 	note cs5 $0b
 	note as4 $05
-	wait1 $01
+	rest $01
 	vol $5
 	note as4 $07
-	wait1 $01
+	rest $01
 	vol $4
 	note as4 $05
-	wait1 $03
+	rest $03
 	vol $6
 	note f5  $05
-	wait1 $01
+	rest $01
 	vol $4
 	note f5  $07
-	wait1 $01
+	rest $01
 	vol $3
 	note f5  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note as5 $05
-	wait1 $06
+	rest $06
 	vol $5
 	note as5 $05
-	wait1 $06
+	rest $06
 	vol $4
 	note as5 $05
-	wait1 $27
+	rest $27
 	vol $6
 	note as5 $0b
 	note c6  $0b
 	note cs6 $0b
 	note ds6 $0b
 	note f6  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f6  $06
 	vol $6
@@ -39913,13 +39914,13 @@ musicf6a3b:
 	note as5 $0b
 	note gs5 $0b
 	note f5  $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note f5  $0b
-	wait1 $06
+	rest $06
 	vol $6
 	note as5 $0b
-	wait1 $05
+	rest $05
 	vol $3
 	note as5 $06
 	vol $6
@@ -39945,25 +39946,25 @@ musicf6a3b:
 	note as4 $07
 	note gs4 $08
 	note as4 $05
-	wait1 $01
+	rest $01
 	vol $4
 	note as4 $07
-	wait1 $09
+	rest $09
 	vol $6
 	note ds5 $05
-	wait1 $01
+	rest $01
 	vol $4
 	note ds5 $07
-	wait1 $09
+	rest $09
 	vol $6
 	note as5 $05
-	wait1 $01
+	rest $01
 	vol $4
 	note as5 $07
-	wait1 $01
+	rest $01
 	vol $2
 	note as5 $05
-	wait1 $45
+	rest $45
 	goto musicf6a3b
 	cmdff
 
@@ -40024,23 +40025,23 @@ musicf6c10:
 	env $0 $00
 	note fs4 $2c
 	note f3  $58
-	wait1 $16
+	rest $16
 	note fs3 $16
 	note f3  $4d
-	wait1 $0b
+	rest $0b
 	note fs3 $2c
 	note gs3 $2c
 	note fs3 $2c
 	note g3  $16
 	note gs3 $0b
-	wait1 $0b
+	rest $0b
 	note gs3 $16
 	vol $6
 	note as3 $0b
-	wait1 $0b
+	rest $0b
 	note as3 $16
 	note c4  $0b
-	wait1 $0b
+	rest $0b
 	note cs4 $16
 	note as3 $16
 	note c4  $16
@@ -40072,7 +40073,7 @@ musicf6c10:
 sound38Channel4:
 musicf6cd3:
 	duty $0f
-	wait1 $0b
+	rest $0b
 	note as4 $0b
 	note c5  $0b
 	note cs5 $0b
@@ -40081,7 +40082,7 @@ musicf6cd3:
 	note ds5 $16
 	note gs5 $16
 	note as5 $0b
-	wait1 $0b
+	rest $0b
 	note f5  $0b
 	note ds5 $0b
 	note f5  $2c
@@ -40093,24 +40094,24 @@ musicf6cd3:
 	note as5 $0b
 	note gs5 $0b
 	note f5  $0b
-	wait1 $0b
+	rest $0b
 	note as5 $0b
 	note gs5 $0b
 	note f5  $16
 	note ds5 $0b
 	note cs5 $0b
 	note as4 $0b
-	wait1 $0b
+	rest $0b
 	note f5  $0b
 	note ds5 $0b
 	note f5  $2c
-	wait1 $16
+	rest $16
 	note as5 $0b
-	wait1 $0b
+	rest $0b
 	note c6  $0b
 	note cs6 $0b
 	note ds6 $0b
-	wait1 $0b
+	rest $0b
 	note ds6 $21
 	note c6  $0b
 	note f6  $0b
@@ -40130,14 +40131,14 @@ musicf6cd3:
 	note f6  $0b
 	note ds6 $0b
 	note f6  $2c
-	wait1 $4d
+	rest $4d
 	duty $0e
 	note cs3 $2c
 	note c3  $16
 	note ds3 $16
 	note f3  $16
 	note c3  $16
-	wait1 $16
+	rest $16
 	note cs3 $16
 	note c3  $16
 	note c3  $16
@@ -40151,7 +40152,7 @@ musicf6cd3:
 	note ds3 $16
 	duty $0f
 	note ds3 $0b
-	wait1 $0b
+	rest $0b
 	duty $0e
 	note fs3 $2c
 	note gs3 $58
@@ -40170,7 +40171,7 @@ musicf6cd3:
 	note ds3 $58
 	duty $0f
 	note ds3 $16
-	wait1 $16
+	rest $16
 	goto musicf6cd3
 	cmdff
 
@@ -40183,37 +40184,37 @@ sound2bChannel1:
 	vol $6
 	note fs2 $0e
 	note g2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note g2  $04
-	wait1 $01
+	rest $01
 	vol $1
 	note g2  $05
 	vol $6
 	note fs3 $0e
 	note g3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note g3  $04
-	wait1 $01
+	rest $01
 	vol $1
 	note g3  $05
 	vol $6
 	note fs4 $0e
 	note g4  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note g4  $04
-	wait1 $01
+	rest $01
 	vol $1
 	note g4  $05
 	vol $6
 	note fs5 $0e
 	note g5  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note g5  $04
-	wait1 $01
+	rest $01
 	vol $1
 	note g5  $05
 	vol $6
@@ -40227,31 +40228,31 @@ sound2bChannel1:
 	note as3 $1c
 	vol $1
 	note as3 $0e
-	wait1 $0e
+	rest $0e
 	vibrato $e1
 	env $0 $00
 musicf6dfa:
 	vol $6
 	note c5  $09
-	wait1 $07
+	rest $07
 	vol $3
 	note c5  $09
-	wait1 $03
+	rest $03
 	vol $6
 	note c5  $09
-	wait1 $05
+	rest $05
 	vol $3
 	note c5  $04
 	vol $6
 	note c5  $0a
 	note g5  $09
-	wait1 $07
+	rest $07
 	vol $3
 	note g5  $09
-	wait1 $03
+	rest $03
 	vol $6
 	note g5  $12
-	wait1 $05
+	rest $05
 	note g5  $02
 	note a5  $03
 	note as5 $12
@@ -40276,7 +40277,7 @@ musicf6dfa:
 	vol $6
 	note c6  $0a
 	note g5  $09
-	wait1 $09
+	rest $09
 	vol $3
 	note g5  $0a
 	vol $6
@@ -40291,20 +40292,20 @@ musicf6dfa:
 	note fs5 $12
 	note g5  $0a
 	note e5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note e5  $05
 	vol $6
 	note c5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note c5  $05
 	vol $6
 	note as4 $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note as4 $05
-	wait1 $12
+	rest $12
 	vol $6
 	note e5  $13
 	vol $3
@@ -40312,28 +40313,28 @@ musicf6dfa:
 	vol $6
 	note e5  $0a
 	note c5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note c5  $05
 	vol $6
 	note as4 $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note as4 $05
-	wait1 $1c
+	rest $1c
 	vol $6
 	note e5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note e5  $05
 	vol $6
 	note c5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note c5  $05
 	vol $6
 	note as4 $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note as4 $05
 	vol $6
@@ -40342,25 +40343,25 @@ musicf6dfa:
 	env $0 $00
 	vol $3
 	note g4  $38
-	wait1 $1c
+	rest $1c
 	vibrato $f1
 	env $0 $00
 	vol $6
 	note e5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note e5  $05
 	vol $6
 	note c5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note c5  $05
 	vol $6
 	note as4 $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note as4 $05
-	wait1 $12
+	rest $12
 	vol $6
 	note e5  $13
 	vol $3
@@ -40368,29 +40369,29 @@ musicf6dfa:
 	vol $6
 	note e5  $0a
 	note c5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note c5  $05
 	vol $6
 	note as4 $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note as4 $05
-	wait1 $1c
+	rest $1c
 	vol $6
 	note e5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note e5  $05
 	vol $6
 	note c5  $09
-	wait1 $0e
+	rest $0e
 	vol $3
 	note c5  $05
 	vol $6
 	note as5 $12
 	note a5  $0a
-	wait1 $09
+	rest $09
 	vol $3
 	note a5  $09
 	vol $6
@@ -40401,7 +40402,7 @@ musicf6dfa:
 	note g5  $1c
 	vol $1
 	note g5  $09
-	wait1 $01
+	rest $01
 	vibrato $f1
 	env $0 $00
 	goto musicf6dfa
@@ -40414,37 +40415,37 @@ sound2bChannel0:
 	vol $6
 	note cs2 $0e
 	note c2  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note c2  $04
-	wait1 $01
+	rest $01
 	vol $1
 	note c2  $05
 	vol $6
 	note cs3 $0e
 	note c3  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note c3  $04
-	wait1 $01
+	rest $01
 	vol $1
 	note c3  $05
 	vol $6
 	note cs4 $0e
 	note c4  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note c4  $04
-	wait1 $01
+	rest $01
 	vol $1
 	note c4  $05
 	vol $6
 	note cs5 $0e
 	note c5  $03
-	wait1 $01
+	rest $01
 	vol $3
 	note c5  $04
-	wait1 $01
+	rest $01
 	vol $1
 	note c5  $05
 	vol $6
@@ -40458,12 +40459,12 @@ sound2bChannel0:
 	note as2 $1c
 	vol $1
 	note as2 $0e
-	wait1 $0e
+	rest $0e
 	vibrato $f1
 	env $0 $00
 musicf6f7c:
-	wait1 $ff
-	wait1 $47
+	rest $ff
+	rest $47
 	vol $6
 	note fs3 $0a
 	note g3  $12
@@ -40471,38 +40472,38 @@ musicf6f7c:
 	note g3  $12
 	note fs3 $0a
 	note g3  $0e
-	wait1 $04
+	rest $04
 	note f3  $0a
 	note e3  $12
 	note d3  $0a
 	note c3  $09
-	wait1 $48
+	rest $48
 	vol $6
 	note fs3 $03
 	note g3  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note fs3 $03
 	note g3  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs3 $03
 	note g3  $07
-	wait1 $41
+	rest $41
 	vol $6
 	note fs3 $02
 	note g3  $07
 	note fs3 $03
 	note g3  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note fs3 $03
 	note g3  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs3 $03
 	note g3  $07
-	wait1 $72
+	rest $72
 	vol $6
 	note b2  $09
 	note ds3 $0a
@@ -40514,37 +40515,37 @@ musicf6f7c:
 	note e4  $05
 	note d4  $05
 	note c4  $09
-	wait1 $48
+	rest $48
 	note fs3 $03
 	note g3  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note fs3 $03
 	note g3  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs3 $03
 	note g3  $07
-	wait1 $41
+	rest $41
 	vol $6
 	note fs4 $02
 	note g4  $07
 	note fs4 $03
 	note g4  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $03
 	note g4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note fs4 $03
 	note g4  $07
-	wait1 $d9
+	rest $d9
 	goto musicf6f7c
 	cmdff
 
 sound2bChannel4:
-	wait1 $ee
+	rest $ee
 	duty $0e
 	note g2  $03
 	note f2  $04
@@ -40555,37 +40556,37 @@ musicf701b:
 	note c2  $07
 	duty $0f
 	note c2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note g2  $07
 	duty $0f
 	note g2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note as1 $07
 	duty $0f
 	note as1 $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note f2  $07
 	duty $0f
 	note f2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note c2  $07
 	duty $0f
 	note c2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note g2  $07
 	duty $0f
 	note g2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note d2  $07
 	duty $0f
 	note d2  $0e
-	wait1 $35
+	rest $35
 	duty $0e
 	note g2  $0a
 	duty $0e
@@ -40598,32 +40599,32 @@ musicf701b:
 	note c2  $1c
 	duty $0f
 	note c2  $0e
-	wait1 $0e
+	rest $0e
 	duty $0e
 	note g2  $07
 	duty $0f
 	note g2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note as2 $07
 	duty $0f
 	note as2 $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note f2  $07
 	duty $0f
 	note f2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note c3  $07
 	duty $0f
 	note c3  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note as2 $07
 	duty $0f
 	note as2 $0e
-	wait1 $07
+	rest $07
 	duty $0e
 	note g2  $0e
 	note g1  $04
@@ -40636,42 +40637,42 @@ musicf701b:
 	note g2  $07
 	duty $0f
 	note g2  $0e
-	wait1 $21
+	rest $21
 	duty $0e
 	note c3  $07
 	duty $0f
 	note c3  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note g2  $07
 	duty $0f
 	note g2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note as2 $07
 	duty $0f
 	note as2 $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note f2  $07
 	duty $0f
 	note f2  $0e
-	wait1 $23
+	rest $23
 	duty $0e
 	note c3  $07
 	duty $0f
 	note c3  $0e
-	wait1 $07
+	rest $07
 	duty $0e
 	note c3  $07
 	duty $0f
 	note c3  $0e
-	wait1 $07
+	rest $07
 	duty $0e
 	note as2 $07
 	duty $0f
 	note as2 $0e
-	wait1 $07
+	rest $07
 	duty $0e
 	note g2  $2e
 	note gs2 $0a
@@ -40685,7 +40686,7 @@ musicf701b:
 	cmdff
 
 sound2bChannel6:
-	wait1 $fc
+	rest $fc
 musicf7125:
 	vol $2
 	note $2e $1c
@@ -40706,7 +40707,7 @@ musicf7125:
 	note $2e $1c
 	note $2a $1c
 	note $2e $09
-	wait1 $09
+	rest $09
 	note $2a $0a
 	note $2a $12
 	note $2a $0a
@@ -40725,7 +40726,7 @@ musicf7125:
 	note $2a $1c
 	vol $2
 	note $2e $1c
-	wait1 $70
+	rest $70
 	vol $2
 	note $2e $1c
 	note $2a $1c
@@ -40741,7 +40742,7 @@ musicf7125:
 	note $2a $1c
 	note $2a $1c
 	note $2e $1c
-	wait1 $70
+	rest $70
 	goto musicf7125
 	cmdff
 
@@ -40813,10 +40814,10 @@ sound3fChannel1:
 	note e5  $1c
 	vol $4
 	note e5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e5  $07
-	wait1 $04
+	rest $04
 	vol $2
 	note e5  $07
 	duty $02
@@ -40826,31 +40827,31 @@ sound3fChannel1:
 	note ds5 $07
 	vol $6
 	note as4 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note as4 $04
 	vol $6
 	note as5 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note as5 $04
 	vol $6
 	note gs5 $1c
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note g5  $04
 	vol $6
 	note f5  $1c
 	note cs5 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note cs5 $04
 	vol $6
 	note ds5 $07
 	note f5  $07
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note g5  $04
 	vol $6
@@ -40870,13 +40871,13 @@ sound3fChannel1:
 	note f5  $07
 	note g5  $07
 	note gs5 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note gs5 $07
-	wait1 $04
+	rest $04
 	vol $2
 	note gs5 $07
-	wait1 $03
+	rest $03
 	vol $1
 	note gs5 $04
 	vol $6
@@ -40892,7 +40893,7 @@ sound3fChannel1:
 	note ds6 $07
 	note f6  $07
 	note fs6 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note fs6 $04
 	vol $6
@@ -40900,20 +40901,20 @@ sound3fChannel1:
 	note ds6 $0e
 	note cs6 $0e
 	note as5 $0e
-	wait1 $03
+	rest $03
 	vol $4
 	note as5 $07
-	wait1 $04
+	rest $04
 	vol $6
 	note f6  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note f6  $04
 	vol $6
 	note fs6 $07
 	note gs6 $07
 	note a6  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note a6  $04
 	vol $6
@@ -40923,13 +40924,13 @@ sound3fChannel1:
 	note d6  $0e
 	note c6  $1c
 	note b5  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note b5  $04
 	vol $6
 	note a5  $1c
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note g5  $04
 	vol $6
@@ -40943,13 +40944,13 @@ sound3fChannel1:
 	note gs5 $1c
 	vol $6
 	note fs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $04
 	vol $6
 	note e5  $1c
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
@@ -40961,27 +40962,27 @@ sound3fChannel1:
 	vibrato $e1
 	vol $6
 	note b4  $07
-	wait1 $07
+	rest $07
 	vol $4
 	note b4  $07
-	wait1 $07
+	rest $07
 	vol $2
 	note b4  $07
-	wait1 $07
+	rest $07
 	vol $1
 	note b4  $07
-	wait1 $07
+	rest $07
 	vibrato $e1
 	env $0 $00
 	vol $0
 	note b4  $07
-	wait1 $15
+	rest $15
 	vibrato $00
 	duty $02
 musicf731c:
 	vol $5
 	note e5  $05
-	wait1 $05
+	rest $05
 	vol $7
 	note d5  $05
 	vol $3
@@ -41664,19 +41665,19 @@ sound3fChannel0:
 	note d5  $07
 	note g5  $07
 	note d6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d6  $07
-	wait1 $04
+	rest $04
 	vol $2
 	note d6  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note d6  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note d6  $07
-	wait1 $07
+	rest $07
 	duty $01
 	vol $4
 	note b3  $1c
@@ -41694,19 +41695,19 @@ sound3fChannel0:
 	note c6  $07
 	note f5  $07
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $2
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c5  $07
-	wait1 $31
+	rest $31
 	duty $01
 	vol $5
 	note ds4 $0e
@@ -41721,19 +41722,19 @@ sound3fChannel0:
 	note ds5 $07
 	note gs5 $07
 	note cs6 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note cs6 $07
-	wait1 $04
+	rest $04
 	vol $3
 	note cs6 $07
-	wait1 $03
+	rest $03
 	vol $2
 	note cs6 $07
-	wait1 $04
+	rest $04
 	vol $1
 	note cs6 $07
-	wait1 $07
+	rest $07
 	duty $01
 	vol $6
 	note c4  $1c
@@ -41752,19 +41753,19 @@ sound3fChannel0:
 	note b5  $07
 	vol $6
 	note e6  $07
-	wait1 $03
+	rest $03
 	vol $5
 	note e6  $07
-	wait1 $04
+	rest $04
 	vol $4
 	note e6  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note e6  $07
-	wait1 $04
+	rest $04
 	vol $2
 	note e6  $07
-	wait1 $07
+	rest $07
 	vol $6
 	note b3  $07
 	vol $6
@@ -41783,10 +41784,10 @@ sound3fChannel0:
 	note b4  $07
 	vol $3
 	note b4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $07
-	wait1 $04
+	rest $04
 	vol $2
 	note b4  $07
 	vol $6
@@ -41795,12 +41796,12 @@ sound3fChannel0:
 	note as4 $07
 	vol $6
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note ds4 $04
 	vol $6
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note g4  $04
 	vol $6
@@ -41810,13 +41811,13 @@ sound3fChannel0:
 	vol $6
 	note cs4 $1c
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note as3 $04
 	vol $6
 	note b3  $0e
 	note ds4 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note ds4 $04
 	vol $6
@@ -41831,21 +41832,21 @@ sound3fChannel0:
 	note ds3 $07
 	note as3 $07
 	note ds4 $03
-	wait1 $04
+	rest $04
 	note ds4 $07
 	note as4 $03
-	wait1 $04
+	rest $04
 	note as4 $07
 	note ds5 $03
-	wait1 $04
+	rest $04
 	note ds5 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note ds5 $07
-	wait1 $04
+	rest $04
 	vol $2
 	note ds5 $07
-	wait1 $03
+	rest $03
 	vol $1
 	note ds5 $04
 	vol $6
@@ -41859,7 +41860,7 @@ sound3fChannel0:
 	note fs5 $07
 	note gs5 $07
 	note as5 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note as5 $04
 	vol $6
@@ -41872,7 +41873,7 @@ sound3fChannel0:
 	note d5  $07
 	note e5  $07
 	note fs5 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note fs5 $04
 	vol $6
@@ -41882,13 +41883,13 @@ sound3fChannel0:
 	note fs5 $0e
 	note a5  $1c
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note g5  $04
 	vol $6
 	note f5  $1c
 	note e5  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note e5  $04
 	vol $6
@@ -41898,46 +41899,46 @@ sound3fChannel0:
 	note c5  $0e
 	note b4  $1c
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note a4  $04
 	vol $6
 	note gs4 $1c
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note fs4 $04
 	vol $6
 	note gs4 $1c
 	note a4  $07
-	wait1 $03
+	rest $03
 	vol $4
 	note a4  $04
 	vol $6
 	note gs4 $1c
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $4
 	note fs4 $04
 	vol $6
 	note gs4 $07
-	wait1 $07
+	rest $07
 	vol $5
 	note gs4 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note gs4 $07
-	wait1 $07
+	rest $07
 	vol $2
 	note gs4 $07
-	wait1 $07
+	rest $07
 	vol $1
 	note gs4 $07
-	wait1 $15
+	rest $15
 	vibrato $00
 	duty $01
 musicf78ef:
-	wait1 $78
+	rest $78
 	vol $7
 	note e3  $28
 	note g3  $46
@@ -42003,7 +42004,7 @@ musicf78ef:
 	note b2  $1e
 	vol $0
 	note b2  $1e
-	wait1 $78
+	rest $78
 	goto musicf78ef
 	cmdff
 
@@ -42011,7 +42012,7 @@ sound3fChannel4:
 	cmdf2
 	duty $0e
 	note g3  $07
-	wait1 $07
+	rest $07
 	note f3  $07
 	duty $0f
 	note g3  $07
@@ -42256,7 +42257,7 @@ sound3fChannel4:
 	note e3  $07
 	note fs3 $07
 	note gs3 $07
-	wait1 $1c
+	rest $1c
 	note ds2 $15
 	duty $0f
 	note ds2 $0e
@@ -42348,9 +42349,9 @@ sound3fChannel4:
 	note e2  $1c
 	note gs2 $0e
 	note e2  $1c
-	wait1 $38
+	rest $38
 musicf7c09:
-	wait1 $78
+	rest $78
 	duty $0e
 	note a3  $28
 	note d4  $46
@@ -42416,7 +42417,7 @@ musicf7c09:
 	note fs3 $1e
 	duty $0c
 	note fs3 $1e
-	wait1 $78
+	rest $78
 	goto musicf7c09
 	cmdff
 
@@ -42615,12 +42616,12 @@ sound3fChannel6:
 	vol $2
 	note $2e $1c
 	note $2e $2a
-	wait1 $02
+	rest $02
 	note $2a $05
 	note $2a $04
 	note $2a $03
 	note $2e $46
-	wait1 $03
+	rest $03
 	note $2a $04
 	note $2a $03
 	note $2a $04
@@ -42639,13 +42640,13 @@ sound31Channel1:
 	note b6  $03
 	note as6 $02
 	note b6  $07
-	wait1 $28
+	rest $28
 	note c7  $02
 	note b6  $02
 	note c7  $03
 	note b6  $02
 	note c7  $07
-	wait1 $3c
+	rest $3c
 musicf7df7:
 	vibrato $00
 	env $0 $00
@@ -42687,7 +42688,7 @@ musicf7df7:
 	note d6  $05
 	vol $3
 	note d6  $05
-	wait1 $0a
+	rest $0a
 	vol $6
 	note d6  $05
 	note ds6 $05
@@ -42726,7 +42727,7 @@ musicf7df7:
 	note d6  $05
 	vol $3
 	note d6  $05
-	wait1 $0a
+	rest $0a
 	vol $5
 	note d6  $05
 	note ds6 $05
@@ -42746,7 +42747,7 @@ musicf7df7:
 	note cs6 $05
 	vol $2
 	note cs6 $05
-	wait1 $69
+	rest $69
 	vibrato $00
 	env $0 $02
 	duty $02
@@ -42759,7 +42760,7 @@ musicf7df7:
 	note fs6 $02
 	note e6  $02
 	note d6  $0b
-	wait1 $53
+	rest $53
 	vibrato $00
 	env $0 $00
 	duty $00
@@ -42773,92 +42774,92 @@ sound31Channel0:
 	duty $02
 	vol $6
 	note f6  $07
-	wait1 $31
+	rest $31
 	note fs6 $07
-	wait1 $45
+	rest $45
 musicf7ee1:
 	vol $6
 	note g4  $05
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $05
+	rest $05
 	note d4  $05
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $05
+	rest $05
 	note g4  $05
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $05
+	rest $05
 	note d4  $05
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $05
+	rest $05
 	note gs4 $05
-	wait1 $05
+	rest $05
 	note ds5 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds5 $05
-	wait1 $05
+	rest $05
 	note gs4 $05
-	wait1 $05
+	rest $05
 	note ds5 $05
-	wait1 $05
+	rest $05
 	note ds4 $05
-	wait1 $05
+	rest $05
 	note ds5 $05
-	wait1 $05
+	rest $05
 	note as4 $05
-	wait1 $05
+	rest $05
 	note f5  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f5  $05
-	wait1 $05
+	rest $05
 	note as4 $05
-	wait1 $05
+	rest $05
 	note f5  $05
-	wait1 $05
+	rest $05
 	note f4  $05
-	wait1 $05
+	rest $05
 	note f5  $05
-	wait1 $05
+	rest $05
 	note c5  $05
-	wait1 $05
+	rest $05
 	note g5  $05
-	wait1 $05
+	rest $05
 	note g4  $05
-	wait1 $05
+	rest $05
 	note g5  $05
-	wait1 $05
+	rest $05
 	note c5  $05
-	wait1 $05
+	rest $05
 	note g5  $05
-	wait1 $05
+	rest $05
 	note b4  $05
-	wait1 $05
+	rest $05
 	note a4  $05
-	wait1 $05
+	rest $05
 	vol $5
 	note g4  $05
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $05
+	rest $05
 	note d4  $05
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $05
+	rest $05
 	note g4  $05
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $05
+	rest $05
 	note d4  $05
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $78
+	rest $78
 	vol $3
 	note d7  $02
 	note c7  $03
@@ -42868,7 +42869,7 @@ musicf7ee1:
 	note fs6 $04
 	note e6  $02
 	note d6  $0a
-	wait1 $4e
+	rest $4e
 	goto musicf7ee1
 	cmdff
 
@@ -42879,27 +42880,27 @@ sound93Channel2:
 	vol $b
 	note c8  $01
 	vol $0
-	wait1 $0b
+	rest $0b
 	vol $b
 	note c7  $01
 	vol $0
-	wait1 $03
+	rest $03
 	vol $b
 	note f6  $01
 	vol $0
-	wait1 $03
+	rest $03
 	vol $b
 	note c6  $01
 	vol $0
-	wait1 $04
+	rest $04
 	vol $b
 	note as5 $01
 	vol $0
-	wait1 $04
+	rest $04
 	vol $b
 	note f5  $01
 	vol $0
-	wait1 $05
+	rest $05
 	vol $b
 	note d5  $01
 	cmdff
@@ -42951,7 +42952,7 @@ sounda7Channel2:
 	vol $d
 	note c7  $01
 	vol $0
-	wait1 $01
+	rest $01
 	vol $3
 	note c7  $01
 	cmdff
@@ -43052,7 +43053,7 @@ soundc4Channel5:
 	note c3  $02
 	cmdf8 $1e
 	note c3  $05
-	wait1 $05
+	rest $05
 	note c3  $02
 	cmdf8 $1e
 	note c3  $08
@@ -43118,7 +43119,7 @@ soundcdStart:
 soundcdChannel2:
 	duty $01
 	vol $0
-	wait1 $03
+	rest $03
 	vol $c
 	note a5  $01
 	vol $d
@@ -43133,7 +43134,7 @@ soundcdChannel2:
 soundcdChannel3:
 	duty $00
 	vol $0
-	wait1 $03
+	rest $03
 	vol $d
 	note g5  $03
 	vol $a
@@ -43219,41 +43220,41 @@ musicf80d7:
 	vol $6
 	note cs4 $48
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note c4  $09
 	vol $6
 	note fs4 $12
 	note g4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $05
 	vol $6
 	note gs4 $12
 	note g4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note g4  $09
-	wait1 $5a
+	rest $5a
 	vol $6
 	note cs4 $48
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note c4  $09
 	vol $6
 	note fs4 $12
 	note g4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $05
 	vol $6
@@ -43261,39 +43262,39 @@ musicf80d7:
 	note a4  $0c
 	note gs4 $0c
 	note g4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note g4  $09
-	wait1 $48
+	rest $48
 	vol $6
 	note c5  $48
 	note fs4 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $09
-	wait1 $05
+	rest $05
 	vol $1
 	note fs4 $09
 	vol $6
 	note f4  $12
 	note ds4 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note ds4 $05
 	vol $6
 	note f4  $09
 	note ds4 $09
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note c4  $09
-	wait1 $36
+	rest $36
 	vol $6
 	note f4  $12
 	note ds4 $12
@@ -43303,28 +43304,28 @@ musicf80d7:
 	note f4  $12
 	note ds4 $12
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note c4  $09
 	vol $6
 	note as3 $12
 	note ds4 $12
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note c4  $09
 	vol $6
 	note as3 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note as3 $09
-	wait1 $05
+	rest $05
 	vol $1
 	note as3 $09
 	vol $6
@@ -43339,50 +43340,50 @@ sound39Channel0:
 musicf819f:
 	note c2  $24
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $3f
+	rest $3f
 	note c2  $09
-	wait1 $1b
+	rest $1b
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $04
-	wait1 $05
+	rest $05
 	note fs2 $04
-	wait1 $05
+	rest $05
 	note fs2 $04
-	wait1 $20
+	rest $20
 	note c2  $04
-	wait1 $05
+	rest $05
 	note c2  $04
-	wait1 $05
+	rest $05
 	note c2  $04
-	wait1 $0e
+	rest $0e
 	note c2  $24
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $1b
+	rest $1b
 	note fs2 $09
-	wait1 $1b
+	rest $1b
 	note c2  $09
-	wait1 $1b
+	rest $1b
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $04
-	wait1 $05
+	rest $05
 	note fs2 $04
-	wait1 $05
+	rest $05
 	note as2 $12
 	note a2  $12
 	note gs2 $12
 	note g2  $12
 	note c2  $51
-	wait1 $09
+	rest $09
 	note fs2 $09
 	note f2  $09
 	note e2  $09
@@ -43390,36 +43391,36 @@ musicf819f:
 	note d2  $09
 	note cs2 $09
 	note c2  $09
-	wait1 $1b
+	rest $1b
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $04
-	wait1 $05
+	rest $05
 	note fs2 $04
-	wait1 $05
+	rest $05
 	note fs2 $09
-	wait1 $1b
+	rest $1b
 	note c2  $04
-	wait1 $05
+	rest $05
 	note c2  $04
-	wait1 $05
+	rest $05
 	note c2  $04
-	wait1 $0e
+	rest $0e
 	note c2  $24
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $09
-	wait1 $3f
+	rest $3f
 	note c2  $09
-	wait1 $1b
+	rest $1b
 	note fs2 $09
-	wait1 $09
+	rest $09
 	note fs2 $04
-	wait1 $05
+	rest $05
 	note fs2 $04
-	wait1 $05
+	rest $05
 	note as2 $48
 	goto musicf819f
 	cmdff
@@ -43432,7 +43433,7 @@ musicf824c:
 	note fs3 $09
 	duty $0c
 	note fs3 $12
-	wait1 $09
+	rest $09
 	duty $17
 	note c4  $12
 	note cs4 $09
@@ -43443,13 +43444,13 @@ musicf824c:
 	note cs4 $09
 	duty $0c
 	note cs4 $12
-	wait1 $87
+	rest $87
 	duty $17
 	note g3  $24
 	note fs3 $09
 	duty $0c
 	note fs3 $12
-	wait1 $09
+	rest $09
 	duty $17
 	note c4  $12
 	note cs4 $09
@@ -43462,7 +43463,7 @@ musicf824c:
 	note cs4 $09
 	duty $0c
 	note cs4 $12
-	wait1 $63
+	rest $63
 	duty $17
 	note g4  $09
 	note fs4 $09
@@ -43473,7 +43474,7 @@ musicf824c:
 	note cs4 $09
 	duty $0c
 	note cs4 $12
-	wait1 $09
+	rest $09
 	duty $17
 	note b3  $12
 	note a3  $09
@@ -43485,8 +43486,8 @@ musicf824c:
 	note fs3 $09
 	duty $17
 	note fs3 $12
-	wait1 $ff
-	wait1 $84
+	rest $ff
+	rest $84
 	goto musicf824c
 	cmdff
 
@@ -43529,7 +43530,7 @@ musicf82d4:
 	note f2  $08
 	vol $2
 	note f2  $04
-	wait1 $48
+	rest $48
 	vol $c
 	note c2  $02
 	vol $5
@@ -43558,7 +43559,7 @@ musicf82d4:
 	note b2  $08
 	vol $2
 	note b2  $04
-	wait1 $f8
+	rest $f8
 	goto musicf82d4
 	cmdff
 	cmdff
@@ -43594,37 +43595,37 @@ musicf8324:
 	vibrato $00
 	env $0 $03
 	note cs5 $05
-	wait1 $0f
+	rest $0f
 	note d5  $05
-	wait1 $0f
+	rest $0f
 	note ds6 $05
-	wait1 $0f
+	rest $0f
 	note d6  $05
-	wait1 $0f
+	rest $0f
 	note cs6 $05
-	wait1 $0f
+	rest $0f
 	note d6  $05
-	wait1 $0f
+	rest $0f
 	note c6  $05
-	wait1 $0f
+	rest $0f
 	note cs6 $05
-	wait1 $0f
+	rest $0f
 	note b5  $05
-	wait1 $0f
+	rest $0f
 	note c6  $05
-	wait1 $0f
+	rest $0f
 	note as5 $05
-	wait1 $0f
+	rest $0f
 	note b5  $05
-	wait1 $0f
+	rest $0f
 	note a5  $05
-	wait1 $05
+	rest $05
 	note as5 $05
-	wait1 $05
+	rest $05
 	note gs5 $05
-	wait1 $05
+	rest $05
 	note a5  $05
-	wait1 $55
+	rest $55
 	vol $3
 	note as7 $01
 	note as5 $01
@@ -43632,7 +43633,7 @@ musicf8324:
 	note cs5 $03
 	cmdf8 $00
 	vol $0
-	wait1 $05
+	rest $05
 	vol $3
 	note as7 $01
 	note as5 $01
@@ -43640,7 +43641,7 @@ musicf8324:
 	note cs5 $03
 	cmdf8 $00
 	vol $0
-	wait1 $05
+	rest $05
 	goto musicf8324
 	cmdff
 
@@ -43715,32 +43716,32 @@ musicf83b5:
 	vol $3
 	note c4  $0a
 	vol $3
-	wait1 $28
+	rest $28
 	note d6  $05
-	wait1 $0f
+	rest $0f
 	note cs6 $05
-	wait1 $0f
+	rest $0f
 	env $0 $03
 	note c6  $05
-	wait1 $0f
+	rest $0f
 	note cs6 $05
-	wait1 $0f
+	rest $0f
 	note b5  $05
-	wait1 $0f
+	rest $0f
 	note c6  $05
-	wait1 $0f
+	rest $0f
 	note as5 $05
-	wait1 $0f
+	rest $0f
 	note b5  $05
-	wait1 $0f
+	rest $0f
 	note a5  $05
-	wait1 $0f
+	rest $0f
 	note as5 $05
-	wait1 $0f
+	rest $0f
 	note gs5 $05
-	wait1 $0f
+	rest $0f
 	note g5  $05
-	wait1 $73
+	rest $73
 	goto musicf83b5
 	cmdff
 
@@ -43748,52 +43749,52 @@ sound3cChannel4:
 	cmdf2
 musicf8456:
 	duty $17
-	wait1 $28
+	rest $28
 	note fs4 $05
-	wait1 $05
+	rest $05
 	duty $0c
 	note fs4 $03
-	wait1 $07
+	rest $07
 	duty $17
 	duty $0f
 	note g7  $09
-	wait1 $01
+	rest $01
 	note g7  $0a
 	duty $17
-	wait1 $28
+	rest $28
 	note f4  $05
-	wait1 $05
+	rest $05
 	duty $0c
 	note f4  $03
-	wait1 $07
+	rest $07
 	duty $0f
 	note g7  $09
-	wait1 $01
+	rest $01
 	note g7  $0a
 	duty $17
-	wait1 $28
+	rest $28
 	note fs4 $05
-	wait1 $05
+	rest $05
 	duty $0c
 	note fs4 $03
-	wait1 $07
+	rest $07
 	duty $0f
 	note g7  $09
-	wait1 $01
+	rest $01
 	note g7  $0a
 	duty $17
-	wait1 $28
+	rest $28
 	note f4  $05
-	wait1 $05
+	rest $05
 	duty $0c
 	note f4  $03
-	wait1 $07
+	rest $07
 	duty $0f
 	note g7  $09
-	wait1 $01
+	rest $01
 	note g7  $0a
-	wait1 $fa
-	wait1 $82
+	rest $fa
+	rest $82
 	goto musicf8456
 	cmdff
 
@@ -43811,25 +43812,25 @@ musicf84c2:
 	note d4  $08
 	note f4  $08
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note d5  $08
 	vol $7
 	note d4  $08
 	note f4  $08
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note d5  $08
 	vol $7
 	note e5  $10
-	wait1 $04
+	rest $04
 	vol $3
 	note e5  $04
 	vol $7
@@ -43839,10 +43840,10 @@ musicf84c2:
 	note e5  $08
 	note c5  $08
 	note a4  $10
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $1
 	note a4  $04
 	vol $7
@@ -43865,25 +43866,25 @@ musicf84c2:
 	note d4  $08
 	note f4  $08
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note d5  $08
 	vol $7
 	note d4  $08
 	note f4  $08
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note d5  $08
 	vol $7
 	note e5  $10
-	wait1 $04
+	rest $04
 	vol $3
 	note e5  $04
 	vol $7
@@ -43901,14 +43902,14 @@ musicf84c2:
 	note f4  $08
 	note g4  $08
 	note a4  $10
-	wait1 $06
+	rest $06
 	vol $3
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $7
 	note a4  $10
 	note d4  $50
-	wait1 $70
+	rest $70
 	goto musicf84c2
 	cmdff
 
@@ -43921,245 +43922,245 @@ sound3dChannel0:
 	duty $02
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
-	wait1 $08
+	rest $08
 	vol $6
 	note e3  $08
 	note b3  $18
 	vol $3
 	note b3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note c4  $04
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note c4  $04
-	wait1 $08
+	rest $08
 	vol $6
 	note e3  $08
 	note b3  $18
 	vol $3
 	note b3  $08
 musicf85ca:
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note b3  $18
 	vol $3
 	note b3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note c4  $04
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note c4  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note b3  $18
 	vol $3
 	note b3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $18
 	vol $3
 	note a3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $18
 	vol $3
 	note a3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note b3  $18
 	vol $3
 	note b3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note c4  $04
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note c4  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note b3  $18
 	vol $3
 	note b3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $18
 	vol $3
 	note a3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
 	vol $6
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note a3  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note a3  $04
-	wait1 $08
+	rest $08
 	vol $6
 	note e3  $08
 	note b3  $18
 	vol $3
 	note b3  $08
-	wait1 $10
+	rest $10
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note c4  $04
 	vol $6
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $1
 	note c4  $04
-	wait1 $08
+	rest $08
 	vol $6
 	note e3  $08
 	note b3  $18
@@ -44174,185 +44175,185 @@ sound3dChannel4:
 	note d2  $10
 	duty $17
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	duty $17
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	duty $17
 	note e2  $10
 	note g3  $20
 	note f2  $10
 	duty $17
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	duty $17
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	duty $17
 	note e2  $10
 	note g3  $20
 musicf8741:
 	note d2  $10
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note e2  $10
 	note g3  $20
 	note f2  $10
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	note e2  $10
 	note g3  $20
 	note as2 $10
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note f2  $10
 	note f3  $20
 	note as2 $10
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note a2  $10
 	note e3  $20
 	note d2  $10
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note e2  $10
 	note g3  $20
 	note f2  $10
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	note e2  $10
 	note g3  $20
 	note as2 $10
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note a2  $10
 	note e3  $20
 	note d2  $10
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note e2  $10
 	note g3  $20
 	note f2  $10
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	note a3  $04
-	wait1 $0c
+	rest $0c
 	note e2  $10
 	note g3  $20
 	goto musicf8741
 	cmdff
 
 sound3dChannel6:
-	wait1 $10
+	rest $10
 	cmdf2
 	cmdf2
 	vol $3
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $07
+	rest $07
 musicf87e8:
-	wait1 $11
+	rest $11
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $18
+	rest $18
 	note $2a $10
 	note $2a $10
-	wait1 $08
+	rest $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
 	note $2a $08
-	wait1 $07
+	rest $07
 	goto musicf87e8
 	cmdff
 
@@ -44368,577 +44369,577 @@ musicf8885:
 	note gs3 $30
 	vol $6
 	note e4  $0d
-	wait1 $03
+	rest $03
 	vol $3
 	note e4  $02
-	wait1 $02
+	rest $02
 	vol $6
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note d4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note d4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note c4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $02
-	wait1 $ae
+	rest $ae
 	vol $6
 	note e4  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $3
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $3
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note d4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $2
 	note c4  $02
-	wait1 $5e
+	rest $5e
 	vol $6
 	note as3 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as3 $04
-	wait1 $02
+	rest $02
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $2
 	note c4  $02
-	wait1 $2e
+	rest $2e
 	vol $6
 	note e4  $0d
-	wait1 $03
+	rest $03
 	note e4  $02
-	wait1 $02
+	rest $02
 	vol $3
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note d4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note d4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note c4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $1
 	note c4  $02
-	wait1 $ac
+	rest $ac
 	vol $6
 	note e4  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $3
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $3
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note d4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $2
 	note c4  $02
-	wait1 $5e
+	rest $5e
 	vol $6
 	note as3 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as3 $04
-	wait1 $02
+	rest $02
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $1
 	note c4  $02
-	wait1 $5e
+	rest $5e
 	vol $6
 	note as3 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as3 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $02
-	wait1 $06
+	rest $06
 	vol $6
 	note as3 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as3 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $02
-	wait1 $46
+	rest $46
 	vol $6
 	note as3 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as3 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $02
-	wait1 $06
+	rest $06
 	vol $1
 	note c4  $02
-	wait1 $5e
+	rest $5e
 	vol $6
 	note as3 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as3 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $02
-	wait1 $06
+	rest $06
 	vol $6
 	note d4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note d4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $02
-	wait1 $06
+	rest $06
 	vol $6
 	note as3 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as3 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $02
-	wait1 $06
+	rest $06
 	vol $1
 	note c4  $02
-	wait1 $ff
-	wait1 $ff
-	wait1 $10
+	rest $ff
+	rest $ff
+	rest $10
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note as4 $0c
-	wait1 $01
+	rest $01
 	vol $3
 	note as4 $03
-	wait1 $02
+	rest $02
 	note as4 $02
-	wait1 $0c
+	rest $0c
 	vol $6
 	note as4 $0a
-	wait1 $02
+	rest $02
 	vol $1
 	note as4 $04
-	wait1 $02
+	rest $02
 	vol $3
 	note as4 $02
-	wait1 $06
+	rest $06
 	vol $2
 	note as4 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $34
+	rest $34
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note as4 $0c
-	wait1 $01
+	rest $01
 	vol $3
 	note as4 $03
-	wait1 $05
+	rest $05
 	vol $3
 	note as4 $03
-	wait1 $02
+	rest $02
 	vol $3
 	note as4 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note as4 $10
-	wait1 $02
+	rest $02
 	vol $3
 	note as4 $02
-	wait1 $06
+	rest $06
 	note as4 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $0
-	wait1 $ff
+	rest $ff
 	vol $0
-	wait1 $ff
-	wait1 $36
+	rest $ff
+	rest $36
 	vol $6
 	note e4  $0d
-	wait1 $03
+	rest $03
 	note e4  $02
-	wait1 $02
+	rest $02
 	vol $4
 	note e4  $04
-	wait1 $04
+	rest $04
 	vol $3
 	note e4  $04
-	wait1 $10
+	rest $10
 	vol $6
 	note d4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note d4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note c4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $2
 	note c4  $02
-	wait1 $ac
+	rest $ac
 	vol $6
 	note e4  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $05
-	wait1 $03
+	rest $03
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $3
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note e4  $05
-	wait1 $05
+	rest $05
 	vol $3
 	note e4  $04
-	wait1 $02
+	rest $02
 	vol $6
 	note d4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
-	wait1 $04
+	rest $04
 	vol $6
 	note c4  $05
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
-	wait1 $04
+	rest $04
 	vol $2
 	note c4  $02
-	wait1 $4e
+	rest $4e
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note as4 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as4 $02
-	wait1 $06
+	rest $06
 	note as4 $02
-	wait1 $06
+	rest $06
 	note as4 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note as4 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as4 $02
-	wait1 $06
+	rest $06
 	vol $3
 	note as4 $02
-	wait1 $06
+	rest $06
 	vol $2
 	note as4 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $34
+	rest $34
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note as4 $08
-	wait1 $02
+	rest $02
 	vol $3
 	note as4 $02
-	wait1 $06
+	rest $06
 	vol $3
 	note as4 $02
-	wait1 $06
+	rest $06
 	vol $3
 	note as4 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note as4 $08
-	wait1 $02
+	rest $02
 	vol $5
 	note as4 $02
-	wait1 $06
+	rest $06
 	vol $4
 	note as4 $02
-	wait1 $06
+	rest $06
 	vol $3
 	note as4 $02
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note a4  $02
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
-	wait1 $02
+	rest $02
 	vol $3
 	note g4  $02
 	vol $0
-	wait1 $ff
+	rest $ff
 	vol $0
-	wait1 $85
+	rest $85
 	goto musicf8885
 	cmdff
 
@@ -44950,456 +44951,456 @@ sound3eChannel0:
 musicf8c51:
 	vol $6
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
-	wait1 $10
+	rest $10
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $04
-	wait1 $04
+	rest $04
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $04
-	wait1 $04
+	rest $04
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $04
-	wait1 $04
+	rest $04
 	note g2  $18
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
-	wait1 $10
+	rest $10
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
-	wait1 $10
+	rest $10
 	note g2  $08
 	note as2 $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $04
-	wait1 $04
+	rest $04
 	note g2  $10
-	wait1 $10
+	rest $10
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $20
 	note e3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $18
+	rest $18
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note as2 $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note g2  $08
-	wait1 $18
+	rest $18
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note g2  $08
-	wait1 $18
+	rest $18
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note as2 $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
-	wait1 $18
+	rest $18
 	note g2  $10
 	note as2 $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note g2  $08
-	wait1 $18
+	rest $18
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $10
+	rest $10
 	note c2  $08
 	note e3  $18
 	note g2  $04
-	wait1 $04
+	rest $04
 	note g2  $08
-	wait1 $08
+	rest $08
 	note g2  $08
 	note as2 $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note g2  $08
-	wait1 $18
+	rest $18
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
-	wait1 $10
+	rest $10
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
-	wait1 $10
+	rest $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $10
-	wait1 $08
+	rest $08
 	note ds3 $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $10
-	wait1 $10
+	rest $10
 	note e3  $10
 	note c3  $08
 	note g2  $08
-	wait1 $10
+	rest $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $10
-	wait1 $08
+	rest $08
 	note ds3 $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $18
+	rest $18
 	note e3  $10
 	note c3  $08
 	note g2  $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
-	wait1 $10
+	rest $10
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
-	note e3  $10
-	note c3  $08
-	note g2  $04
-	wait1 $04
-	note g2  $08
-	wait1 $08
-	note as2 $08
-	wait1 $08
-	note c3  $08
-	wait1 $08
-	note g2  $08
-	wait1 $08
-	note c2  $08
-	wait1 $08
-	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $04
-	wait1 $04
+	rest $04
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
+	note c2  $08
+	rest $08
+	note c2  $08
+	rest $08
+	note e3  $10
+	note c3  $08
+	note g2  $04
+	rest $04
+	note g2  $08
+	rest $08
+	note as2 $08
+	rest $08
+	note c3  $08
+	rest $08
+	note g2  $08
+	rest $08
 	note c2  $20
 	note e3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $18
+	rest $18
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $18
+	rest $18
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $10
+	rest $10
 	note c2  $08
 	note e3  $18
 	note g2  $08
-	wait1 $10
+	rest $10
 	note g2  $08
 	note as2 $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $18
+	rest $18
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note c2  $08
-	wait1 $08
+	rest $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
-	wait1 $10
+	rest $10
 	note c3  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note c2  $0a
-	wait1 $0e
+	rest $0e
 	note ds3 $08
 	note e3  $10
 	note c3  $08
 	note g2  $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	note g2  $08
-	wait1 $08
+	rest $08
 	note as2 $08
-	wait1 $08
+	rest $08
 	note c3  $08
-	wait1 $08
+	rest $08
 	goto musicf8c51
 	cmdff
 
@@ -45407,176 +45408,176 @@ sound3eChannel4:
 	cmdf2
 musicf8fdd:
 	duty $17
-	wait1 $30
+	rest $30
 	note g3  $0d
-	wait1 $23
+	rest $23
 	note f3  $08
-	wait1 $08
+	rest $08
 	note e3  $08
-	wait1 $b8
+	rest $b8
 	note g3  $02
-	wait1 $06
+	rest $06
 	note g3  $02
-	wait1 $06
+	rest $06
 	note g3  $04
-	wait1 $0c
+	rest $0c
 	note g3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note e3  $04
-	wait1 $6c
+	rest $6c
 	note d3  $08
-	wait1 $08
+	rest $08
 	note e3  $04
-	wait1 $3c
+	rest $3c
 	note g3  $0d
-	wait1 $23
+	rest $23
 	note f3  $08
-	wait1 $08
+	rest $08
 	note e3  $08
-	wait1 $b8
+	rest $b8
 	note g3  $02
-	wait1 $06
+	rest $06
 	note g3  $02
-	wait1 $06
+	rest $06
 	note g3  $04
-	wait1 $0c
+	rest $0c
 	note g3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note e3  $04
-	wait1 $6c
+	rest $6c
 	note d3  $08
-	wait1 $08
+	rest $08
 	note e3  $04
-	wait1 $6c
+	rest $6c
 	note d3  $08
-	wait1 $08
+	rest $08
 	note e3  $04
-	wait1 $0c
+	rest $0c
 	note d3  $08
-	wait1 $08
+	rest $08
 	note e3  $04
-	wait1 $4c
+	rest $4c
 	note d3  $08
-	wait1 $08
+	rest $08
 	note e3  $04
-	wait1 $6c
+	rest $6c
 	note f3  $06
-	wait1 $0a
+	rest $0a
 	note f3  $04
-	wait1 $0c
+	rest $0c
 	note f3  $06
-	wait1 $0a
+	rest $0a
 	note f3  $04
-	wait1 $ff
-	wait1 $ff
-	wait1 $3e
+	rest $ff
+	rest $ff
+	rest $3e
 	duty $17
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note g4  $0c
-	wait1 $14
+	rest $14
 	note g4  $0a
-	wait1 $16
+	rest $16
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $38
+	rest $38
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note g4  $0c
-	wait1 $14
+	rest $14
 	note g4  $10
-	wait1 $10
+	rest $10
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $ff
-	wait1 $ff
-	wait1 $3a
+	rest $ff
+	rest $ff
+	rest $3a
 	duty $17
 	note g3  $0d
-	wait1 $23
+	rest $23
 	note f3  $08
-	wait1 $08
+	rest $08
 	note e3  $08
-	wait1 $b8
+	rest $b8
 	note g3  $04
-	wait1 $04
+	rest $04
 	note g3  $04
-	wait1 $04
+	rest $04
 	note g3  $08
-	wait1 $08
+	rest $08
 	note g3  $08
-	wait1 $08
+	rest $08
 	note f3  $08
-	wait1 $08
+	rest $08
 	note e3  $08
-	wait1 $58
+	rest $58
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note g4  $08
-	wait1 $18
+	rest $18
 	note g4  $08
-	wait1 $18
+	rest $18
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $38
+	rest $38
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $08
+	rest $08
 	note g4  $08
-	wait1 $18
+	rest $18
 	note g4  $08
-	wait1 $18
+	rest $18
 	note f4  $08
-	wait1 $08
+	rest $08
 	note e4  $08
-	wait1 $ff
-	wait1 $89
+	rest $ff
+	rest $89
 	goto musicf8fdd
 	cmdff
 
@@ -45714,10 +45715,10 @@ sound2aChannel1:
 	duty $01
 	vol $6
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $6
 	note as3 $09
 	note c4  $90
@@ -45731,28 +45732,28 @@ sound2aChannel1:
 	env $0 $00
 	vol $6
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $6
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $6
 	note as3 $09
 	note c4  $90
@@ -45773,10 +45774,10 @@ sound2aChannel1:
 	note d5  $06
 	vol $6
 	note ds5 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note ds5 $09
-	wait1 $05
+	rest $05
 	vol $6
 	note d5  $09
 	note c5  $48
@@ -45800,30 +45801,30 @@ sound2aChannel1:
 	note g5  $10
 	vol $6
 	note g5  $04
-	wait1 $04
+	rest $04
 	note g5  $04
-	wait1 $04
+	rest $04
 	note g5  $1c
 	vol $3
 	note g5  $0e
 	vol $6
 	note g5  $03
-	wait1 $04
+	rest $04
 	note g5  $03
-	wait1 $04
+	rest $04
 	note g5  $0e
 	note g4  $02
-	wait1 $02
+	rest $02
 	note g4  $03
-	wait1 $02
+	rest $02
 	note g4  $02
-	wait1 $03
+	rest $03
 	note a4  $04
-	wait1 $05
+	rest $05
 	note a4  $05
-	wait1 $04
+	rest $04
 	note a4  $05
-	wait1 $05
+	rest $05
 	note b4  $0e
 	vol $3
 	note b4  $0e
@@ -45835,16 +45836,16 @@ musicf92ff:
 	duty $02
 	vol $6
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c5  $07
 	vol $6
 	note g4  $2a
 	note c5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c5  $04
 	vol $6
@@ -45877,7 +45878,7 @@ musicf92ff:
 	note as5 $0e
 	note gs5 $0e
 	note as5 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note as5 $07
 	vol $6
@@ -45892,7 +45893,7 @@ musicf92ff:
 	vol $6
 	note g5  $1c
 	note f5  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note f5  $07
 	vol $6
@@ -45904,7 +45905,7 @@ musicf92ff:
 	note g5  $0e
 	note f5  $0e
 	note ds5 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note ds5 $07
 	vol $6
@@ -45913,7 +45914,7 @@ musicf92ff:
 	note f5  $0e
 	note ds5 $0e
 	note d5  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note d5  $07
 	vol $6
@@ -45934,18 +45935,18 @@ musicf92ff:
 	env $0 $00
 	vol $6
 	note c5  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note c5  $07
 	vol $6
 	note g4  $03
-	wait1 $04
+	rest $04
 	note g4  $2a
 	vol $3
 	note g4  $07
 	vol $6
 	note c5  $03
-	wait1 $04
+	rest $04
 	note c5  $07
 	note d5  $07
 	note e5  $07
@@ -45961,7 +45962,7 @@ musicf92ff:
 	env $0 $00
 	vol $6
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $04
 	vol $6
@@ -45980,17 +45981,17 @@ musicf92ff:
 	note d6  $05
 	note c6  $05
 	note as5 $03
-	wait1 $07
+	rest $07
 	vol $3
 	note as5 $04
 	vol $6
 	note gs5 $03
-	wait1 $07
+	rest $07
 	vol $3
 	note gs5 $04
 	vol $6
 	note as5 $0e
-	wait1 $03
+	rest $03
 	vol $3
 	note as5 $04
 	vol $6
@@ -46005,7 +46006,7 @@ musicf92ff:
 	vol $6
 	note g5  $1c
 	note f5  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note f5  $07
 	vol $6
@@ -46018,17 +46019,17 @@ musicf92ff:
 	note as5 $05
 	note gs5 $05
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $04
 	vol $6
 	note f5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f5  $04
 	vol $6
 	note ds5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $04
 	vol $6
@@ -46042,31 +46043,31 @@ musicf92ff:
 	note gs5 $05
 	note g5  $05
 	note f5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note f5  $04
 	vol $6
 	note ds5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $04
 	vol $6
 	note d5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d5  $04
 	vol $6
 	note d5  $07
 	note e5  $07
 	note fs5 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs5 $04
 	vol $6
 	note fs5 $07
 	note g5  $07
 	note a5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note a5  $04
 	vol $6
@@ -46097,7 +46098,7 @@ musicf92ff:
 	env $0 $00
 	vol $6
 	note c6  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note c6  $07
 	vol $6
@@ -46110,7 +46111,7 @@ musicf92ff:
 	note d6  $0e
 	note ds6 $0e
 	note d6  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note d6  $07
 	vol $6
@@ -46121,7 +46122,7 @@ musicf92ff:
 	vol $6
 	note g5  $1c
 	note gs5 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note gs5 $07
 	vol $6
@@ -46134,7 +46135,7 @@ musicf92ff:
 	note as5 $0e
 	note c6  $0e
 	note as5 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note as5 $07
 	vol $6
@@ -46144,14 +46145,14 @@ musicf92ff:
 	note g5  $0e
 	vol $6
 	note g5  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g5  $04
 	vol $6
 	note gs5 $07
 	note g5  $07
 	note f5  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note f5  $07
 	vol $6
@@ -46179,12 +46180,12 @@ musicf92ff:
 	note d6  $07
 	note ds6 $07
 	note d6  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note d6  $07
 	vol $6
 	note a5  $03
-	wait1 $04
+	rest $04
 	note a5  $2a
 	vol $3
 	note a5  $0e
@@ -46192,7 +46193,7 @@ musicf92ff:
 	note d6  $0e
 	note c6  $0e
 	note b5  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note b5  $07
 	vol $6
@@ -46202,7 +46203,7 @@ musicf92ff:
 	note ds6 $0e
 	note d6  $0e
 	note ds6 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note ds6 $07
 	vol $6
@@ -46215,7 +46216,7 @@ musicf92ff:
 	note f6  $0e
 	note g6  $0e
 	note f6  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note f6  $07
 	vol $6
@@ -46226,7 +46227,7 @@ musicf92ff:
 	vol $6
 	note d6  $1c
 	note c6  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note c6  $07
 	vol $6
@@ -46254,7 +46255,7 @@ musicf92ff:
 	note as5 $1c
 	vol $6
 	note gs5 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note gs5 $07
 	vol $6
@@ -46294,7 +46295,7 @@ musicf92ff:
 	note c6  $1c
 	vol $1
 	note c6  $0e
-	wait1 $0e
+	rest $0e
 	vibrato $e1
 	env $0 $00
 	goto musicf92ff
@@ -46310,7 +46311,7 @@ sound2aChannel0:
 	note e3  $09
 	note f3  $09
 	note g3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note g3  $05
 	vol $6
@@ -46327,10 +46328,10 @@ sound2aChannel0:
 	note c3  $12
 	note d3  $12
 	note e3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note e3  $09
-	wait1 $05
+	rest $05
 	vol $6
 	note d3  $09
 	note e3  $90
@@ -46346,10 +46347,10 @@ sound2aChannel0:
 	note ds4 $06
 	note f4  $06
 	note g4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $09
-	wait1 $05
+	rest $05
 	vol $6
 	note f4  $09
 	note ds4 $48
@@ -46368,10 +46369,10 @@ sound2aChannel0:
 	note c5  $12
 	duty $02
 	note b4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note b4  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note b4  $08
 	vol $6
@@ -46380,16 +46381,16 @@ sound2aChannel0:
 	note g4  $0e
 	vol $6
 	note d4  $03
-	wait1 $04
+	rest $04
 	note d4  $03
-	wait1 $04
+	rest $04
 	note g4  $0e
 	note d4  $03
-	wait1 $04
+	rest $04
 	note d4  $03
-	wait1 $04
+	rest $04
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
@@ -46408,14 +46409,14 @@ sound2aChannel0:
 	note f4  $07
 	note g4  $07
 musicf96e3:
-	wait1 $38
+	rest $38
 	vibrato $e1
 	env $0 $00
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $07
-	wait1 $04
+	rest $04
 	vol $1
 	note c4  $07
 	vol $6
@@ -46449,7 +46450,7 @@ musicf96e3:
 	note f4  $09
 	note ds4 $0a
 	note d4  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note d4  $07
 	vol $6
@@ -46461,11 +46462,11 @@ musicf96e3:
 	note ds4 $0e
 	note as3 $0e
 	note g3  $0e
-	wait1 $2a
+	rest $2a
 	note gs3 $07
 	note as3 $07
 	note c4  $38
-	wait1 $2a
+	rest $2a
 	note ds4 $07
 	note d4  $07
 	note ds4 $38
@@ -46473,17 +46474,17 @@ musicf96e3:
 	note b3  $1c
 	note c4  $1c
 	note d4  $0a
-	wait1 $04
+	rest $04
 	vibrato $00
 	env $0 $02
 	note g4  $03
-	wait1 $01
+	rest $01
 	vol $5
 	note g4  $04
-	wait1 $01
+	rest $01
 	vol $4
 	note g4  $03
-	wait1 $02
+	rest $02
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -46491,13 +46492,13 @@ musicf96e3:
 	vibrato $00
 	env $0 $02
 	note c5  $03
-	wait1 $01
+	rest $01
 	vol $5
 	note c5  $04
-	wait1 $01
+	rest $01
 	vol $4
 	note c5  $03
-	wait1 $02
+	rest $02
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -46505,13 +46506,13 @@ musicf96e3:
 	vibrato $00
 	env $0 $02
 	note d5  $03
-	wait1 $01
+	rest $01
 	vol $5
 	note d5  $04
-	wait1 $01
+	rest $01
 	vol $4
 	note d5  $03
-	wait1 $02
+	rest $02
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -46519,13 +46520,13 @@ musicf96e3:
 	vibrato $00
 	env $0 $02
 	note g5  $03
-	wait1 $01
+	rest $01
 	vol $5
 	note g5  $04
-	wait1 $01
+	rest $01
 	vol $4
 	note g5  $03
-	wait1 $02
+	rest $02
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -46533,13 +46534,13 @@ musicf96e3:
 	vibrato $00
 	env $0 $02
 	note d5  $03
-	wait1 $01
+	rest $01
 	vol $5
 	note d5  $04
-	wait1 $01
+	rest $01
 	vol $4
 	note d5  $03
-	wait1 $02
+	rest $02
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -46547,13 +46548,13 @@ musicf96e3:
 	vibrato $00
 	env $0 $02
 	note c5  $03
-	wait1 $01
+	rest $01
 	vol $5
 	note c5  $04
-	wait1 $01
+	rest $01
 	vol $4
 	note c5  $03
-	wait1 $02
+	rest $02
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -46561,13 +46562,13 @@ musicf96e3:
 	vibrato $00
 	env $0 $02
 	note g4  $03
-	wait1 $01
+	rest $01
 	vol $5
 	note g4  $04
-	wait1 $01
+	rest $01
 	vol $4
 	note g4  $03
-	wait1 $02
+	rest $02
 	vibrato $00
 	env $0 $00
 	vol $6
@@ -46575,13 +46576,13 @@ musicf96e3:
 	vibrato $00
 	env $0 $02
 	note d4  $03
-	wait1 $01
+	rest $01
 	vol $5
 	note d4  $04
-	wait1 $01
+	rest $01
 	vol $4
 	note d4  $03
-	wait1 $3a
+	rest $3a
 	vibrato $e1
 	env $0 $00
 	vol $6
@@ -46589,7 +46590,7 @@ musicf96e3:
 	note c4  $1c
 	note g3  $15
 	note c4  $03
-	wait1 $04
+	rest $04
 	note c4  $07
 	note d4  $07
 	note e4  $07
@@ -46612,13 +46613,13 @@ musicf96e3:
 	note f4  $07
 	note ds4 $07
 	note d4  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note d4  $07
 	vol $6
 	note c4  $07
 	note as3 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $04
 	vol $6
@@ -46628,30 +46629,30 @@ musicf96e3:
 	note ds4 $0e
 	note as3 $0e
 	note g3  $0e
-	wait1 $2a
+	rest $2a
 	note gs3 $07
 	note as3 $07
 	note c4  $1c
 	vol $3
 	note c4  $1c
-	wait1 $2a
+	rest $2a
 	vol $6
 	note c4  $07
 	note d4  $07
 	note ds4 $1c
 	vol $3
 	note ds4 $1c
-	wait1 $1c
+	rest $1c
 	vol $6
 	note d4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $04
 	vol $6
 	note d4  $07
 	note e4  $07
 	note fs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $04
 	vol $6
@@ -46691,12 +46692,12 @@ musicf96e3:
 	note ds5 $07
 	note f5  $07
 	note g5  $03
-	wait1 $04
+	rest $04
 	note g5  $07
 	note a5  $07
 	note b5  $07
 	note ds5 $07
-	wait1 $07
+	rest $07
 	vol $3
 	note ds5 $07
 	vol $6
@@ -46709,7 +46710,7 @@ musicf96e3:
 	note f5  $0e
 	note g5  $0e
 	note f5  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note f5  $07
 	vol $6
@@ -46726,7 +46727,7 @@ musicf96e3:
 	note d5  $1c
 	note c5  $1c
 	note d5  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note d5  $07
 	vol $6
@@ -46757,7 +46758,7 @@ musicf96e3:
 	note d4  $07
 	note cs4 $07
 	note c4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $04
 	vol $6
@@ -46771,11 +46772,11 @@ musicf96e3:
 	env $0 $02
 	vol $6
 	note d4  $03
-	wait1 $01
+	rest $01
 	note d4  $04
-	wait1 $01
+	rest $01
 	note d4  $03
-	wait1 $02
+	rest $02
 	vibrato $e1
 	env $0 $00
 	note fs4 $0e
@@ -46799,11 +46800,11 @@ musicf96e3:
 	note f4  $07
 	note fs4 $07
 	note g4  $23
-	wait1 $07
+	rest $07
 	note g4  $03
-	wait1 $04
+	rest $04
 	note g4  $03
-	wait1 $04
+	rest $04
 	note g4  $2a
 	vibrato $01
 	env $0 $00
@@ -46819,14 +46820,14 @@ musicf96e3:
 	note g4  $07
 	note c5  $07
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
 	note g4  $0e
 	note gs4 $0e
 	note g4  $07
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $04
 	vol $6
@@ -46848,7 +46849,7 @@ musicf96e3:
 	note e4  $07
 	note g4  $07
 	note f4  $07
-	wait1 $07
+	rest $07
 	vol $3
 	note f4  $07
 	vol $6
@@ -46857,7 +46858,7 @@ musicf96e3:
 	note f4  $07
 	note g4  $07
 	note gs4 $07
-	wait1 $03
+	rest $03
 	vol $3
 	note gs4 $04
 	vol $6
@@ -46877,7 +46878,7 @@ musicf96e3:
 	note a3  $07
 	note gs3 $07
 	note f3  $18
-	wait1 $04
+	rest $04
 	note f3  $09
 	note g3  $09
 	note gs3 $0a
@@ -46893,39 +46894,39 @@ musicf96e3:
 	note c4  $0e
 	vol $6
 	note g3  $0a
-	wait1 $04
+	rest $04
 	note g3  $03
-	wait1 $04
+	rest $04
 	note g3  $03
-	wait1 $04
+	rest $04
 	note c4  $1c
 	vibrato $01
 	env $0 $00
 	vol $3
 	note c4  $0e
-	wait1 $0e
+	rest $0e
 	vibrato $e1
 	env $0 $00
 	goto musicf96e3
 	cmdff
 
 sound2aChannel4:
-	wait1 $09
+	rest $09
 	duty $0f
 	note c4  $04
-	wait1 $17
+	rest $17
 	note as3 $09
 	note c4  $b4
-	wait1 $12
+	rest $12
 	note c4  $04
-	wait1 $0e
+	rest $0e
 	note c4  $04
-	wait1 $0e
+	rest $0e
 	note c4  $04
-	wait1 $05
+	rest $05
 	duty $06
 	note as2 $51
-	wait1 $09
+	rest $09
 	note as2 $09
 	note a2  $09
 	note as2 $12
@@ -46976,37 +46977,37 @@ sound2aChannel4:
 	note g2  $10
 	duty $0f
 	note g2  $08
-	wait1 $08
+	rest $08
 	duty $06
 	note g2  $10
 	duty $0f
 	note g2  $08
-	wait1 $08
+	rest $08
 	duty $06
 	note a2  $0e
 	duty $0f
 	note a2  $07
-	wait1 $07
+	rest $07
 	duty $06
 	note a2  $0e
 	duty $0f
 	note a2  $07
-	wait1 $07
+	rest $07
 	duty $06
 	note as2 $0e
 	duty $0f
 	note as2 $07
-	wait1 $07
+	rest $07
 	duty $06
 	note as2 $0e
 	duty $0f
 	note as2 $07
-	wait1 $07
+	rest $07
 	duty $06
 	note b2  $0e
 	duty $0f
 	note b2  $07
-	wait1 $07
+	rest $07
 	duty $06
 	note g2  $15
 	duty $0f
@@ -47016,147 +47017,147 @@ musicf9b43:
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds2 $07
 	duty $0f
 	note ds2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds2 $07
 	duty $0f
 	note ds2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds2 $07
 	duty $0f
 	note ds2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds2 $07
 	duty $0f
 	note ds2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note g2  $1c
 	duty $0f
 	note g2  $07
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $03
 	duty $0f
@@ -47169,89 +47170,89 @@ musicf9b43:
 	note g2  $03
 	duty $0f
 	note g2  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $0e
 	duty $0f
 	note g2  $07
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $03
 	duty $0f
 	note g2  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $11
 	duty $0f
 	note g2  $07
-	wait1 $04
+	rest $04
 	duty $04
 	note g2  $11
 	duty $0f
 	note g2  $07
-	wait1 $04
+	rest $04
 	duty $04
 	note a2  $11
 	duty $0f
 	note a2  $07
-	wait1 $04
+	rest $04
 	duty $04
 	note b2  $11
 	duty $0f
 	note b2  $07
-	wait1 $04
+	rest $04
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note g2  $07
 	duty $0f
 	note g2  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note g2  $07
 	duty $0f
 	note g2  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note gs2 $18
 	duty $0f
 	note gs2 $04
 	duty $04
 	note as2 $07
-	wait1 $15
+	rest $15
 	note as2 $18
 	duty $0f
 	note as2 $04
@@ -47259,49 +47260,49 @@ musicf9b43:
 	note ds3 $07
 	duty $0f
 	note ds3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note as2 $07
 	duty $0f
 	note as2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds3 $07
 	duty $0f
 	note ds3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds3 $1c
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note gs2 $07
 	duty $0f
 	note gs2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $1c
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $18
 	duty $0f
@@ -47310,29 +47311,29 @@ musicf9b43:
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note a2  $07
 	duty $0f
 	note a2  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note a2  $03
 	duty $0f
 	note a2  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note a2  $07
 	note gs2 $07
 	note g2  $1c
 	duty $0f
 	note g2  $07
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $03
 	duty $0f
@@ -47345,17 +47346,17 @@ musicf9b43:
 	note g2  $03
 	duty $0f
 	note g2  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $11
 	duty $0f
 	note g2  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $03
 	duty $0f
 	note g2  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $1c
 	note a2  $1c
@@ -47364,7 +47365,7 @@ musicf9b43:
 	note c3  $1c
 	duty $0f
 	note c3  $07
-	wait1 $07
+	rest $07
 	duty $04
 	note c3  $03
 	duty $0f
@@ -47377,12 +47378,12 @@ musicf9b43:
 	note c3  $03
 	duty $0f
 	note c3  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note c3  $11
 	duty $0f
 	note c3  $07
-	wait1 $04
+	rest $04
 	duty $04
 	note c3  $07
 	duty $0f
@@ -47391,7 +47392,7 @@ musicf9b43:
 	note g2  $1c
 	duty $0f
 	note g2  $07
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $03
 	duty $0f
@@ -47404,12 +47405,12 @@ musicf9b43:
 	note g2  $03
 	duty $0f
 	note g2  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note g2  $11
 	duty $0f
 	note g2  $07
-	wait1 $04
+	rest $04
 	duty $04
 	note g2  $07
 	duty $0f
@@ -47418,7 +47419,7 @@ musicf9b43:
 	note gs2 $1c
 	duty $0f
 	note gs2 $07
-	wait1 $07
+	rest $07
 	duty $04
 	note gs2 $03
 	duty $0f
@@ -47431,12 +47432,12 @@ musicf9b43:
 	note as2 $03
 	duty $0f
 	note as2 $04
-	wait1 $07
+	rest $07
 	duty $04
 	note as2 $11
 	duty $0f
 	note as2 $07
-	wait1 $04
+	rest $04
 	duty $04
 	note as2 $07
 	duty $0f
@@ -47445,74 +47446,74 @@ musicf9b43:
 	note ds2 $07
 	duty $0f
 	note ds2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds2 $07
 	duty $0f
 	note ds2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds2 $07
 	duty $0f
 	note ds2 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note ds2 $1c
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note cs3 $07
 	duty $0f
 	note cs3 $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $07
 	duty $0f
 	note c3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note c3  $1c
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note d3  $07
 	duty $0f
 	note d3  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note g2  $18
 	duty $0f
@@ -47533,7 +47534,7 @@ musicf9b43:
 	note c3  $1f
 	duty $0f
 	note c3  $07
-	wait1 $04
+	rest $04
 	duty $04
 	note c3  $03
 	duty $0f
@@ -47546,7 +47547,7 @@ musicf9b43:
 	note c3  $03
 	duty $0f
 	note c3  $04
-	wait1 $07
+	rest $07
 	duty $04
 	note c3  $15
 	duty $0f
@@ -47559,7 +47560,7 @@ musicf9b43:
 	note as2 $1f
 	duty $0f
 	note as2 $07
-	wait1 $04
+	rest $04
 	duty $04
 	note as2 $03
 	duty $0f
@@ -47572,7 +47573,7 @@ musicf9b43:
 	note as2 $03
 	duty $0f
 	note as2 $04
-	wait1 $07
+	rest $07
 	duty $04
 	note as2 $15
 	duty $0f
@@ -47585,7 +47586,7 @@ musicf9b43:
 	note gs2 $1f
 	duty $0f
 	note gs2 $07
-	wait1 $04
+	rest $04
 	duty $04
 	note gs2 $03
 	duty $0f
@@ -47602,7 +47603,7 @@ musicf9b43:
 	note as2 $11
 	duty $0f
 	note as2 $07
-	wait1 $04
+	rest $04
 	duty $04
 	note as2 $07
 	duty $0f
@@ -47611,7 +47612,7 @@ musicf9b43:
 	note g2  $1f
 	duty $0f
 	note g2  $07
-	wait1 $04
+	rest $04
 	duty $04
 	note g2  $03
 	duty $0f
@@ -47624,12 +47625,12 @@ musicf9b43:
 	note cs3 $03
 	duty $0f
 	note cs3 $04
-	wait1 $07
+	rest $07
 	duty $04
 	note cs3 $11
 	duty $0f
 	note cs3 $07
-	wait1 $04
+	rest $04
 	duty $04
 	note cs3 $07
 	duty $0f
@@ -47638,17 +47639,17 @@ musicf9b43:
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note f2  $07
 	duty $0f
 	note f2  $07
-	wait1 $0e
+	rest $0e
 	duty $04
 	note f2  $15
 	duty $0f
@@ -47677,25 +47678,25 @@ musicf9b43:
 	note c3  $0a
 	duty $0f
 	note c3  $07
-	wait1 $0b
+	rest $0b
 	duty $04
 	note g2  $0a
 	duty $0f
 	note g2  $07
-	wait1 $0b
+	rest $0b
 	duty $04
 	note c3  $1c
 	duty $0f
 	note c3  $07
-	wait1 $15
+	rest $15
 	goto musicf9b43
 	cmdff
 
 sound2aChannel6:
-	wait1 $ff
-	wait1 $ff
-	wait1 $ff
-	wait1 $db
+	rest $ff
+	rest $ff
+	rest $ff
+	rest $db
 	vol $4
 	note $26 $0e
 	vol $3
@@ -48281,25 +48282,25 @@ musicfa410:
 	vol $6
 	note as4 $06
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $03
 	vol $6
 	note c5  $06
 	note cs5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $03
 	vol $6
 	note d5  $06
 	note ds5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds5 $03
 	vol $6
 	note e5  $06
 	note f5  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note f5  $03
 	vol $6
@@ -48333,7 +48334,7 @@ musicfa410:
 	vol $6
 	note a4  $06
 	note as4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as4 $03
 	vol $6
@@ -48346,20 +48347,20 @@ musicfa410:
 	note e5  $1e
 	vol $3
 	note e5  $0c
-	wait1 $06
+	rest $06
 	vol $6
 	note c5  $12
 	note g4  $12
 	note c5  $0c
 	note b4  $12
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note fs4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note fs4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note c5  $12
 	vol $6
@@ -48367,13 +48368,13 @@ musicfa410:
 	note c5  $0c
 	note cs5 $12
 	note gs5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note gs5 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note gs5 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note c5  $12
 	note g4  $12
@@ -48382,25 +48383,25 @@ musicfa410:
 	note ds5 $18
 	note d5  $06
 	note cs5 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs5 $03
 	vol $6
 	note c5  $06
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $03
 	vol $6
 	note as4 $06
 	note a4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note a4  $03
 	vol $6
 	note gs4 $06
 	note g4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g4  $03
 	vol $6
@@ -48411,7 +48412,7 @@ musicfa410:
 	note ds4 $48
 	vol $3
 	note ds4 $18
-	wait1 $60
+	rest $60
 	goto musicfa410
 	cmdff
 
@@ -48448,25 +48449,25 @@ musicfa52d:
 	vol $6
 	note d4  $06
 	note cs4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note cs4 $03
 	vol $6
 	note c4  $06
 	note b3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b3  $03
 	vol $6
 	note as3 $06
 	note a3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note a3  $03
 	vol $6
 	note gs3 $06
 	note g3  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note g3  $03
 	vol $6
@@ -48498,32 +48499,32 @@ musicfa52d:
 	note b3  $0c
 	note e4  $0c
 	note g4  $0c
-	wait1 $60
+	rest $60
 	note g4  $12
 	note e4  $12
 	note g4  $0c
 	note fs4 $12
 	note ds4 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note ds4 $06
-	wait1 $03
+	rest $03
 	vol $1
 	note ds4 $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g4  $12
 	note e4  $12
 	note g4  $0c
 	note fs4 $12
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note b4  $06
-	wait1 $03
+	rest $03
 	vol $1
 	note b4  $06
-	wait1 $06
+	rest $06
 	vol $6
 	note g4  $12
 	note e4  $12
@@ -48532,28 +48533,28 @@ musicfa52d:
 	note ds4 $0c
 	note fs4 $0c
 	note b4  $0c
-	wait1 $60
+	rest $60
 	note ds4 $06
 	note d4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note d4  $03
 	vol $6
 	note cs4 $06
 	note c4  $06
-	wait1 $03
+	rest $03
 	vol $3
 	note c4  $03
 	vol $6
 	note b3  $06
 	note as3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note as3 $03
 	vol $6
 	note a3  $06
 	note gs3 $06
-	wait1 $03
+	rest $03
 	vol $3
 	note gs3 $03
 	vol $6
@@ -48561,7 +48562,7 @@ musicfa52d:
 	note fs3 $06
 	note f3  $06
 	note e3  $06
-	wait1 $60
+	rest $60
 	goto musicfa52d
 	cmdff
 
@@ -49306,7 +49307,7 @@ musicfa633:
 	note ds3 $13
 	duty $12
 	note b1  $48
-	wait1 $60
+	rest $60
 	goto musicfa633
 	cmdff
 
@@ -50007,28 +50008,28 @@ musicfaffc:
 	note gs3 $24
 	vol $6
 	note f4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note f4  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note f4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note f4  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note f4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note f4  $09
 	vibrato $00
@@ -50038,33 +50039,33 @@ musicfaffc:
 	note f5  $12
 	note f5  $12
 	note fs5 $12
-	wait1 $36
+	rest $36
 	duty $01
 	vibrato $00
 	env $0 $00
 	note f4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note f4  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note f4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note f4  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note f4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note f4  $09
 	vibrato $00
@@ -50074,53 +50075,53 @@ musicfaffc:
 	note f5  $12
 	note f5  $12
 	note fs5 $12
-	wait1 $12
+	rest $12
 	vibrato $e1
 	env $0 $00
 	duty $01
 	note e4  $36
 	note d4  $12
 	note c4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note c4  $09
 	vol $6
 	note b3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note b3  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note b3  $09
 	vol $6
 	note as3 $48
 	note a3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note a3  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note a3  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note gs3 $48
 	note g3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note g3  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note g3  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note f3  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note f3  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note f3  $09
 	vol $6
@@ -50128,32 +50129,32 @@ musicfaffc:
 	note fs3 $09
 	note f3  $09
 	note fs3 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note fs3 $09
-	wait1 $05
+	rest $05
 	vol $6
 	note f4  $09
 	note fs4 $09
 	note f4  $09
 	note fs4 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $09
-	wait1 $05
+	rest $05
 	vol $6
 	note g4  $12
 	note a4  $09
 	note g4  $09
 	note f4  $24
 	note fs4 $09
-	wait1 $04
+	rest $04
 	vol $3
 	note fs4 $09
-	wait1 $05
+	rest $05
 	vol $1
 	note fs4 $09
-	wait1 $24
+	rest $24
 	goto musicfaffc
 	cmdff
 
@@ -50166,28 +50167,28 @@ musicfb10b:
 	note gs3 $24
 	vol $6
 	note d4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note d4  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note d4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note d4  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note d4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note d4  $09
 	env $0 $03
@@ -50196,33 +50197,33 @@ musicfb10b:
 	note d5  $12
 	note d5  $12
 	note ds5 $12
-	wait1 $36
+	rest $36
 	vibrato $00
 	env $0 $00
 	duty $01
 	note d4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note d4  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note d4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note d4  $09
-	wait1 $24
+	rest $24
 	vol $6
 	note d4  $09
-	wait1 $04
+	rest $04
 	vol $3
 	note d4  $09
-	wait1 $05
+	rest $05
 	vol $1
 	note d4  $09
 	vibrato $00
@@ -50232,9 +50233,9 @@ musicfb10b:
 	note d5  $12
 	note d5  $12
 	note ds5 $12
-	wait1 $ff
-	wait1 $ff
-	wait1 $e4
+	rest $ff
+	rest $ff
+	rest $e4
 	vibrato $00
 	env $0 $00
 	duty $01
@@ -50254,7 +50255,7 @@ musicfb193:
 	note fs3 $09
 	duty $0f
 	note fs3 $09
-	wait1 $5a
+	rest $5a
 	duty $0e
 	note b2  $24
 	note f3  $12
@@ -50270,26 +50271,26 @@ musicfb193:
 	note fs3 $09
 	duty $0f
 	note fs3 $09
-	wait1 $5a
+	rest $5a
 	duty $0e
 	note g3  $36
 	note fs3 $12
 	note e3  $09
 	duty $0f
 	note e3  $09
-	wait1 $12
+	rest $12
 	duty $0e
 	note d3  $09
 	duty $0f
 	note d3  $09
-	wait1 $12
+	rest $12
 	duty $0e
 	note c3  $48
 	note b2  $12
-	wait1 $36
+	rest $36
 	note as2 $48
 	note a2  $12
-	wait1 $36
+	rest $36
 	note gs2 $48
 	note fs2 $36
 	duty $0f
@@ -50304,13 +50305,13 @@ musicfb193:
 	note fs2 $09
 	duty $0f
 	note fs2 $09
-	wait1 $12
+	rest $12
 	duty $0e
 	note f2  $03
 	note fs2 $09
 	duty $0f
 	note fs2 $09
-	wait1 $0f
+	rest $0f
 	duty $0e
 	goto musicfb193
 	cmdff
@@ -50357,11 +50358,11 @@ sound29Channel1:
 	vibrato $e1
 	vol $6
 	note c5  $08
-	wait1 $02
+	rest $02
 	note c5  $08
-	wait1 $02
+	rest $02
 	note c5  $09
-	wait1 $03
+	rest $03
 	note d5  $50
 	vibrato $01
 	vol $3
@@ -50373,10 +50374,10 @@ sound29Channel1:
 	note a4  $0b
 musicfb27e:
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note g4  $08
 	vol $6
@@ -50385,7 +50386,7 @@ musicfb27e:
 	note d4  $10
 	vol $6
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
 	vol $6
@@ -50400,7 +50401,7 @@ musicfb27e:
 	vibrato $e1
 	vol $6
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $04
 	vol $6
@@ -50417,10 +50418,10 @@ musicfb27e:
 	note f5  $10
 	note ds5 $10
 	note f5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note f5  $08
-	wait1 $04
+	rest $04
 	vol $6
 	note ds5 $08
 	note d5  $28
@@ -50433,7 +50434,7 @@ musicfb27e:
 	note ds5 $0b
 	note d5  $0b
 	note c5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $04
 	vol $6
@@ -50448,7 +50449,7 @@ musicfb27e:
 	note d5  $10
 	note c5  $10
 	note as4 $08
-	wait1 $04
+	rest $04
 	vol $3
 	note as4 $04
 	vol $6
@@ -50462,7 +50463,7 @@ musicfb27e:
 	note c5  $10
 	note as4 $10
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $04
 	vol $6
@@ -50481,22 +50482,22 @@ musicfb27e:
 	note g5  $08
 	note a5  $08
 	note fs5 $08
-	wait1 $04
+	rest $04
 	vol $3
 	note fs5 $04
 	vol $6
 	note d5  $02
-	wait1 $02
+	rest $02
 	note d5  $04
-	wait1 $02
+	rest $02
 	note d5  $02
-	wait1 $04
+	rest $04
 	note e5  $08
-	wait1 $02
+	rest $02
 	note e5  $08
-	wait1 $02
+	rest $02
 	note e5  $09
-	wait1 $03
+	rest $03
 	note fs5 $28
 	vibrato $01
 	vol $3
@@ -50504,10 +50505,10 @@ musicfb27e:
 	vibrato $e1
 	vol $6
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note g4  $08
 	vol $6
@@ -50516,7 +50517,7 @@ musicfb27e:
 	note d4  $08
 	vol $6
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
 	vol $6
@@ -50531,7 +50532,7 @@ musicfb27e:
 	vibrato $e1
 	vol $6
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $04
 	vol $6
@@ -50551,10 +50552,10 @@ musicfb27e:
 	note a5  $08
 	note g5  $08
 	note g5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g5  $08
-	wait1 $04
+	rest $04
 	vol $6
 	note a5  $08
 	note f5  $28
@@ -50568,7 +50569,7 @@ musicfb27e:
 	note ds5 $0b
 	note d5  $0b
 	note c5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $04
 	vol $6
@@ -50588,17 +50589,17 @@ musicfb27e:
 	note as4 $0b
 	note c5  $0b
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $08
-	wait1 $01
+	rest $01
 	vol $6
 	note cs5 $08
-	wait1 $03
+	rest $03
 	note d5  $0a
 	note g5  $0b
 	note as5 $0b
-	wait1 $20
+	rest $20
 	note d5  $20
 	note d6  $28
 	note c6  $08
@@ -50615,10 +50616,10 @@ musicfb27e:
 	note ds5 $0b
 	note f5  $0b
 	note g5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note g5  $08
 	vol $8
@@ -50629,16 +50630,16 @@ musicfb27e:
 	vibrato $e1
 	vol $8
 	note g5  $04
-	wait1 $04
+	rest $04
 	note g5  $08
 	note a5  $08
 	note as5 $08
 	note c6  $08
 	note a5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note a5  $08
-	wait1 $04
+	rest $04
 	vol $8
 	note f5  $08
 	note c5  $20
@@ -50652,10 +50653,10 @@ musicfb27e:
 	note d5  $08
 	note c5  $08
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note d5  $08
 	vol $8
@@ -50678,15 +50679,15 @@ musicfb27e:
 	note d5  $10
 	note cs5 $10
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $04
 	vol $8
 	note as5 $08
-	wait1 $04
+	rest $04
 	vol $3
 	note as5 $08
-	wait1 $04
+	rest $04
 	vol $8
 	note a5  $08
 	note g5  $20
@@ -50694,17 +50695,17 @@ musicfb27e:
 	note g5  $0a
 	vol $8
 	note d5  $06
-	wait1 $05
+	rest $05
 	note d5  $05
-	wait1 $06
+	rest $06
 	note d5  $0a
 	note as4 $0b
 	note g5  $0b
 	note gs5 $08
-	wait1 $04
+	rest $04
 	vol $3
 	note gs5 $08
-	wait1 $04
+	rest $04
 	vol $8
 	note as5 $08
 	note c6  $20
@@ -50712,43 +50713,43 @@ musicfb27e:
 	note c6  $0a
 	vol $8
 	note c6  $08
-	wait1 $02
+	rest $02
 	note d6  $09
-	wait1 $03
+	rest $03
 	note ds6 $0a
 	note f6  $0b
 	note ds6 $0b
 	note d6  $2a
-	wait1 $06
+	rest $06
 	note d6  $05
-	wait1 $03
+	rest $03
 	note d6  $05
-	wait1 $03
+	rest $03
 	note d6  $2a
-	wait1 $06
+	rest $06
 	note d6  $05
-	wait1 $03
+	rest $03
 	note d6  $05
-	wait1 $03
+	rest $03
 	note d6  $10
 	vol $3
 	note d6  $10
 	duty $02
 	vol $8
 	note e5  $05
-	wait1 $05
+	rest $05
 	note e5  $06
-	wait1 $05
+	rest $05
 	note e5  $05
-	wait1 $06
+	rest $06
 	note f5  $1a
-	wait1 $06
+	rest $06
 	note fs5 $05
-	wait1 $05
+	rest $05
 	note fs5 $06
-	wait1 $05
+	rest $05
 	note fs5 $05
-	wait1 $06
+	rest $06
 	goto musicfb27e
 	cmdff
 
@@ -50763,18 +50764,18 @@ sound29Channel0:
 	note f3  $40
 	note ds3 $20
 	note g3  $08
-	wait1 $02
+	rest $02
 	note g3  $08
-	wait1 $02
+	rest $02
 	note g3  $09
-	wait1 $03
+	rest $03
 	note d4  $20
 	note ds3 $08
-	wait1 $02
+	rest $02
 	note ds3 $08
-	wait1 $02
+	rest $02
 	note ds3 $09
-	wait1 $03
+	rest $03
 	note d3  $10
 	note g3  $08
 	note a3  $08
@@ -50782,18 +50783,18 @@ sound29Channel0:
 	note g3  $08
 	note a3  $08
 	note d3  $1d
-	wait1 $03
+	rest $03
 	note d3  $08
-	wait1 $02
+	rest $02
 	note d3  $08
-	wait1 $02
+	rest $02
 	note d3  $09
-	wait1 $03
+	rest $03
 musicfb564:
 	vol $0
 	note gs3 $15
 	note b3  $05
-	wait1 $02
+	rest $02
 	vol $3
 	note b3  $04
 	vol $6
@@ -50809,7 +50810,7 @@ musicfb564:
 	note b4  $10
 	note c5  $10
 	note b4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note b4  $04
 	vol $6
@@ -50821,7 +50822,7 @@ musicfb564:
 	note ds5 $05
 	vol $6
 	note as4 $05
-	wait1 $02
+	rest $02
 	vol $3
 	note as4 $04
 	vol $6
@@ -50830,7 +50831,7 @@ musicfb564:
 	note as4 $08
 	note a4  $08
 	note as4 $0a
-	wait1 $02
+	rest $02
 	vol $3
 	note as4 $04
 	vol $6
@@ -50838,14 +50839,14 @@ musicfb564:
 	note a4  $10
 	note g4  $10
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
 	note f4  $08
-	wait1 $02
+	rest $02
 	note f4  $0b
 	note g4  $0b
 	note gs4 $10
@@ -50860,7 +50861,7 @@ musicfb564:
 	note ds4 $08
 	note f4  $08
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
 	vol $6
@@ -50874,7 +50875,7 @@ musicfb564:
 	note d4  $08
 	note ds4 $08
 	note f4  $0a
-	wait1 $06
+	rest $06
 	note f4  $10
 	note ds4 $10
 	note d4  $10
@@ -50892,19 +50893,19 @@ musicfb564:
 	note a4  $10
 	note as4 $20
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note a4  $08
 	vol $6
 	note as4 $20
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $1
 	note a4  $08
 	vol $6
@@ -50913,7 +50914,7 @@ musicfb564:
 	note c5  $20
 	note b4  $10
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
 	vol $6
@@ -50923,7 +50924,7 @@ musicfb564:
 	note c5  $08
 	note d5  $10
 	note b4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note b4  $04
 	vol $6
@@ -50938,14 +50939,14 @@ musicfb564:
 	note a4  $10
 	note g4  $10
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note a4  $08
-	wait1 $04
+	rest $04
 	vol $6
 	note g4  $08
 	note f4  $05
-	wait1 $03
+	rest $03
 	note f4  $10
 	note g4  $08
 	note f4  $30
@@ -50958,7 +50959,7 @@ musicfb564:
 	vol $6
 	note f4  $10
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
 	vol $6
@@ -50982,7 +50983,7 @@ musicfb564:
 	note as4 $10
 	note a4  $10
 	note g4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note g4  $04
 	vol $6
@@ -50994,10 +50995,10 @@ musicfb564:
 	note ds4 $05
 	note f4  $06
 	note as4 $08
-	wait1 $04
+	rest $04
 	vol $3
 	note as4 $08
-	wait1 $04
+	rest $04
 	vol $6
 	note a4  $08
 	note g4  $20
@@ -51010,10 +51011,10 @@ musicfb564:
 	note g4  $08
 	note a4  $08
 	note c5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note c5  $08
-	wait1 $04
+	rest $04
 	vol $6
 	note as4 $08
 	note a4  $08
@@ -51045,32 +51046,32 @@ musicfb564:
 	note a4  $10
 	note as4 $10
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note d5  $08
-	wait1 $04
+	rest $04
 	vol $6
 	note c5  $08
 	note as4 $18
 	vol $3
 	note as4 $10
-	wait1 $02
+	rest $02
 	vol $6
 	note as4 $06
-	wait1 $05
+	rest $05
 	note as4 $05
-	wait1 $06
+	rest $06
 	note as4 $0a
 	note g4  $0b
 	note d4  $0b
 	note c4  $08
-	wait1 $04
+	rest $04
 	vol $3
 	note c4  $08
-	wait1 $01
+	rest $01
 	vol $6
 	note gs3 $08
-	wait1 $03
+	rest $03
 	note gs3 $0a
 	note ds3 $0b
 	note gs3 $0b
@@ -51102,27 +51103,27 @@ musicfb564:
 	note c4  $04
 	note d4  $04
 	note g4  $05
-	wait1 $05
+	rest $05
 	note g4  $06
-	wait1 $05
+	rest $05
 	note g4  $05
-	wait1 $06
+	rest $06
 	note a4  $1a
-	wait1 $06
+	rest $06
 	note as4 $05
-	wait1 $05
+	rest $05
 	note as4 $06
-	wait1 $05
+	rest $05
 	note as4 $05
-	wait1 $06
+	rest $06
 	goto musicfb564
 	cmdff
 
 sound29Channel4:
 	duty $0e
-	wait1 $ff
-	wait1 $ff
-	wait1 $02
+	rest $ff
+	rest $ff
+	rest $02
 musicfb7bb:
 	duty $0e
 	note g3  $80
@@ -51149,13 +51150,13 @@ musicfb7bb:
 	note c3  $20
 	note cs3 $20
 	note d3  $20
-	wait1 $40
+	rest $40
 	note d2  $08
-	wait1 $02
+	rest $02
 	note d2  $08
-	wait1 $02
+	rest $02
 	note d2  $09
-	wait1 $03
+	rest $03
 	note g2  $08
 	duty $17
 	note g2  $08
@@ -51988,114 +51989,114 @@ sound25Channel1:
 musicfbd80:
 	vol $8
 	note c3  $0a
-	wait1 $14
+	rest $14
 	note ds3 $14
 	note c3  $0a
-	wait1 $14
+	rest $14
 	note g2  $0a
 	note as2 $14
 	note b2  $0a
 	note c3  $1e
 	note ds3 $14
 	note g3  $0a
-	wait1 $14
+	rest $14
 	note g2  $0a
 	note as2 $14
 	note g2  $0a
 	note c3  $1e
 	note ds3 $14
 	note c3  $0a
-	wait1 $14
+	rest $14
 	note g2  $0a
 	note as2 $14
 	note b2  $0a
 	note c3  $1e
 	note ds3 $14
 	note c3  $0a
-	wait1 $14
+	rest $14
 	note c3  $0a
 	note ds3 $14
 	note g3  $0a
 	note f3  $1e
 	note a3  $14
 	note c3  $0a
-	wait1 $14
+	rest $14
 	note c3  $0a
 	note ds3 $14
 	note e3  $0a
 	note f3  $1e
 	note a3  $14
 	note c3  $0a
-	wait1 $14
+	rest $14
 	note c3  $0a
 	note ds3 $14
 	note e3  $0a
 	note f3  $1e
 	note a3  $14
 	note c3  $0a
-	wait1 $14
+	rest $14
 	note c3  $0a
 	note ds3 $14
 	note e3  $0a
 	note f3  $1e
 	note a3  $14
 	note f3  $0a
-	wait1 $14
+	rest $14
 	note f3  $0a
 	note a3  $14
 	note f3  $0a
-	wait1 $14
+	rest $14
 	vibrato $00
 	env $0 $00
 	vol $6
 	note g5  $0a
 	note fs5 $0a
-	wait1 $14
+	rest $14
 	note fs5 $14
 	note f5  $0a
-	wait1 $14
+	rest $14
 	note f5  $0a
 	note e5  $0a
-	wait1 $14
+	rest $14
 	note e5  $14
 	note ds5 $0a
-	wait1 $14
+	rest $14
 	note ds5 $0a
 	note d5  $14
 	vol $3
 	note d5  $0a
-	wait1 $14
+	rest $14
 	vol $6
 	note as5 $0a
 	note a5  $0a
-	wait1 $14
+	rest $14
 	note a5  $14
 	note gs5 $0a
-	wait1 $14
+	rest $14
 	note gs5 $0a
 	note g5  $0a
-	wait1 $14
+	rest $14
 	note g5  $14
 	note fs5 $0a
-	wait1 $14
+	rest $14
 	note fs5 $0a
 	note f5  $14
 	vol $3
 	note f5  $0a
-	wait1 $14
+	rest $14
 	vol $6
 	note c6  $0a
 	note b5  $0a
-	wait1 $14
+	rest $14
 	note b5  $14
 	note as5 $0a
-	wait1 $14
+	rest $14
 	note as5 $0a
 	note a5  $0a
-	wait1 $14
+	rest $14
 	note a5  $14
 	note gs5 $0a
-	wait1 $14
+	rest $14
 	note gs5 $0a
 	note g5  $14
 	vol $3
@@ -52104,13 +52105,13 @@ musicfbd80:
 	env $0 $03
 	vol $6
 	note fs5 $14
-	wait1 $28
+	rest $28
 	note f5  $14
-	wait1 $28
+	rest $28
 	note ds5 $14
-	wait1 $28
+	rest $28
 	note d5  $14
-	wait1 $28
+	rest $28
 	vibrato $00
 	env $0 $04
 	goto musicfbd80
@@ -52123,58 +52124,58 @@ sound25Channel0:
 musicfbe80:
 	vol $0
 	note gs3 $ff
-	wait1 $ff
-	wait1 $ff
-	wait1 $d7
+	rest $ff
+	rest $ff
+	rest $d7
 	vol $6
 	note ds5 $0a
 	note d5  $0a
-	wait1 $14
+	rest $14
 	note d5  $14
 	note cs5 $0a
-	wait1 $14
+	rest $14
 	note cs5 $0a
 	note c5  $0a
-	wait1 $14
+	rest $14
 	note c5  $14
 	note b4  $0a
-	wait1 $14
+	rest $14
 	note b4  $0a
 	note as4 $14
 	vol $3
 	note as4 $0a
-	wait1 $14
+	rest $14
 	vol $6
 	note g5  $0a
 	note fs5 $0a
-	wait1 $14
+	rest $14
 	note fs5 $14
 	note f5  $0a
-	wait1 $14
+	rest $14
 	note f5  $0a
 	note e5  $0a
-	wait1 $14
+	rest $14
 	note e5  $14
 	note ds5 $0a
-	wait1 $14
+	rest $14
 	note ds5 $0a
 	note d5  $14
 	vol $3
 	note d5  $0a
-	wait1 $14
+	rest $14
 	vol $6
 	note a5  $0a
 	note gs5 $0a
-	wait1 $14
+	rest $14
 	note gs5 $14
 	note g5  $0a
-	wait1 $14
+	rest $14
 	note g5  $0a
 	note fs5 $0a
-	wait1 $14
+	rest $14
 	note fs5 $14
 	note f5  $0a
-	wait1 $14
+	rest $14
 	note f5  $0a
 	note e5  $14
 	vol $3
@@ -52183,13 +52184,13 @@ musicfbe80:
 	env $0 $03
 	vol $6
 	note ds5 $14
-	wait1 $28
+	rest $28
 	note d5  $14
-	wait1 $28
+	rest $28
 	note c5  $14
-	wait1 $28
+	rest $28
 	note b4  $14
-	wait1 $28
+	rest $28
 	vibrato $00
 	env $0 $00
 	goto musicfbe80
@@ -52201,20 +52202,20 @@ musicfbf0a:
 	note d4  $05
 	note ds4 $2d
 	note c4  $0a
-	wait1 $32
+	rest $32
 	note g3  $0a
 	note as3 $14
 	note a3  $0a
 	note as3 $14
 	note a3  $0a
 	note g3  $0a
-	wait1 $14
+	rest $14
 	note f3  $0a
-	wait1 $14
+	rest $14
 	note d4  $05
 	note ds4 $2d
 	note c4  $0a
-	wait1 $32
+	rest $32
 	note g3  $0a
 	note as3 $0a
 	note a3  $0a
@@ -52225,25 +52226,25 @@ musicfbf0a:
 	note g3  $14
 	note as3 $0a
 	note c4  $0a
-	wait1 $0a
+	rest $0a
 	note ds4 $0a
 	note e4  $05
 	note f4  $2d
 	note c4  $0a
-	wait1 $32
+	rest $32
 	note d4  $0a
 	note ds4 $14
 	note d4  $0a
 	note ds4 $14
 	note d4  $0a
 	note c4  $0a
-	wait1 $14
+	rest $14
 	note as3 $0a
-	wait1 $14
+	rest $14
 	note e4  $05
 	note f4  $2d
 	note a4  $0a
-	wait1 $32
+	rest $32
 	note c5  $0a
 	note ds5 $0a
 	note d5  $0a
@@ -52251,7 +52252,7 @@ musicfbf0a:
 	note ds5 $0a
 	note d5  $0a
 	note c5  $05
-	wait1 $05
+	rest $05
 	note c5  $14
 	note ds5 $0a
 	note d5  $14
@@ -52260,7 +52261,7 @@ musicfbf0a:
 	note g2  $3c
 	duty $0f
 	note g2  $14
-	wait1 $78
+	rest $78
 	duty $0e
 	note g2  $07
 	duty $0f
@@ -52277,7 +52278,7 @@ musicfbf0a:
 	note gs2 $3c
 	duty $0f
 	note gs2 $14
-	wait1 $78
+	rest $78
 	duty $0e
 	note gs2 $07
 	duty $0f
@@ -52294,13 +52295,13 @@ musicfbf0a:
 	note g2  $3c
 	duty $0f
 	note g2  $14
-	wait1 $be
+	rest $be
 	duty $0e
 	note g2  $0f
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note g2  $0f
-	wait1 $2d
+	rest $2d
 	duty $0e
 	note g2  $0f
 	duty $0f

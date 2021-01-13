@@ -202,7 +202,7 @@ def parseChannelData(address, channel, chanOut):
         elif b == 0x60:
             param = rom[address]
             address+=1
-            chanOut.write('\twait1 ' + wlahex(param,2) + '\n')
+            chanOut.write('\trest ' + wlahex(param,2) + '\n')
 
         elif channel >= 6:
             # Noise channels
@@ -219,7 +219,7 @@ def parseChannelData(address, channel, chanOut):
         elif b == 0x61:
             param = rom[address]
             address+=1
-            chanOut.write('\twait2 ' + wlahex(param,2) + '\n')
+            chanOut.write('\trest2 ' + wlahex(param,2) + '\n')
         elif b >= 0 and b <= 0x58: # and b >= 0xc
             l = rom[address]
             address+=1
