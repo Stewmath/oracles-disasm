@@ -1,17 +1,21 @@
 sounddeStart:
-; @addr{e5a86}
+
 sounddeChannel0:
 sounddeChannel1:
 sounddeChannel4:
 sounddeChannel6:
 	cmdff
-; $e5a87
+
 sound06Start:
+
 sound97Start:
+
 sounda1Start:
+
 soundadStart:
+
 soundb6Start:
-; @addr{e5a87}
+
 sound06Channel6:
 sound97Channel2:
 sound97Channel7:
@@ -22,9 +26,9 @@ soundadChannel7:
 soundb6Channel2:
 soundb6Channel7:
 	cmdff
-; $e5a88
+
 sound91Start:
-; @addr{e5a88}
+
 sound91Channel2:
 	cmdf0 $d1
 	.db $07 $d1 $04
@@ -105,11 +109,10 @@ sound91Channel2:
 	vol $1
 	.db $07 $bf $02
 	cmdff
-; $e5b27
-; GAP
 	cmdff
+
 sound99Start:
-; @addr{e5b28}
+
 sound99Channel2:
 	cmdf0 $80
 	cmdf8 $1e
@@ -148,8 +151,6 @@ sound99Channel2:
 	vol $d
 	.db $07 $4f $01
 	cmdff
-; $e5b71
-; GAP
 	cmdff
 	cmdff
 	cmdff
@@ -162,8 +163,9 @@ sound99Channel2:
 	cmdff
 	cmdff
 	cmdff
+
 sounda4Start:
-; @addr{e5b7d}
+
 sounda4Channel2:
 	cmdf0 $3c
 	vol $9
@@ -193,8 +195,7 @@ sounda4Channel2:
 	vol $2
 	.db $06 $0b $02
 	cmdff
-; $e5bb4
-; @addr{e5bb4}
+
 sounda4Channel7:
 	cmdf0 $b0
 	note $37 $02
@@ -208,9 +209,9 @@ sounda4Channel7:
 	note $35 $03
 	note $36 $05
 	cmdff
-; $e5bcb
+
 sounda5Start:
-; @addr{e5bcb}
+
 sounda5Channel7:
 	cmdf0 $a0
 	note $64 $03
@@ -235,9 +236,9 @@ sounda5Channel7:
 	cmdf0 $30
 	note $14 $03
 	cmdff
-; $e5bf8
+
 soundaaStart:
-; @addr{e5bf8}
+
 soundaaChannel7:
 	cmdf0 $20
 	note $15 $03
@@ -258,9 +259,9 @@ soundaaChannel7:
 	cmdf0 $77
 	note $15 $4b
 	cmdff
-; $e5c1d
+
 soundabStart:
-; @addr{e5c1d}
+
 soundabChannel2:
 	cmdf0 $00
 	vol $0
@@ -269,8 +270,7 @@ soundabChannel2:
 	env $0 $07
 	.db $07 $c0 $55
 	cmdff
-; $e5c2a
-; @addr{e5c2a}
+
 soundabChannel7:
 	cmdf0 $80
 	note $27 $01
@@ -283,19 +283,18 @@ soundabChannel7:
 	note $37 $01
 	note $27 $01
 	cmdff
-; $e5c3f
-; GAP
 	cmdff
+
 soundafStart:
-; @addr{e5c40}
+
 soundafChannel2:
 	vol $9
 	note f6  $01
 	note c6  $01
 	cmdff
-; $e5c46
+
 sound8aStart:
-; @addr{e5c46}
+
 sound8aChannel2:
 	duty $02
 	vol $d
@@ -392,9 +391,9 @@ sound8aChannel2:
 	vol $2
 	note e7  $01
 	cmdff
-; $e5cf4
+
 sound88Start:
-; @addr{e5cf4}
+
 sound88Channel2:
 	duty $02
 	env $2 $00
@@ -412,11 +411,10 @@ sound88Channel2:
 	cmdf8 $16
 	note b3  $05
 	cmdff
-; $e5d10
-; GAP
 	cmdff
+
 sound98Start:
-; @addr{e5d11}
+
 sound98Channel2:
 	vol $d
 	cmdf0 $80
@@ -443,9 +441,9 @@ sound98Channel2:
 	cmdf8 $66
 	.db $05 $39 $03
 	cmdff
-; $e5d46
+
 soundb1Start:
-; @addr{e5d46}
+
 soundb1Channel7:
 	cmdf0 $90
 	note $54 $01
@@ -488,9 +486,9 @@ soundb1Channel7:
 	note $54 $01
 	note $56 $01
 	cmdff
-; $e5d97
+
 soundb5Start:
-; @addr{e5d97}
+
 soundb5Channel7:
 	cmdf0 $00
 	note $00 $01
@@ -509,9 +507,9 @@ soundb5Channel7:
 	cmdf0 $30
 	note $06 $06
 	cmdff
-; $e5db8
+
 soundb3Start:
-; @addr{e5db8}
+
 soundb3Channel2:
 	cmdf0 $df
 	.db $00 $45 $03
@@ -519,15 +517,14 @@ soundb3Channel2:
 	env $0 $05
 	.db $00 $45 $32
 	cmdff
-; $e5dc4
-; @addr{e5dc4}
+
 soundb3Channel7:
 	cmdf0 $f5
 	note $75 $3c
 	cmdff
-; $e5dc9
+
 soundaeStart:
-; @addr{e5dc9}
+
 soundaeChannel2:
 	cmdf0 $d3
 	.db $07 $08 $01
@@ -606,8 +603,7 @@ soundaeChannel2:
 	vol $3
 	.db $06 $0e $01
 	cmdff
-; $e5e63
-; @addr{e5e63}
+
 soundaeChannel7:
 	cmdf0 $10
 	note $15 $01
@@ -686,9 +682,9 @@ soundaeChannel7:
 	cmdf0 $10
 	note $15 $01
 	cmdff
-; $e5efc
+
 soundbeStart:
-; @addr{e5efc}
+
 soundbeChannel2:
 	cmdf0 $00
 	vol $0
@@ -754,9 +750,9 @@ soundbeChannel2:
 	cmdf8 $fc
 	.db $07 $80 $05
 	cmdff
-; $e5f8d
+
 soundacStart:
-; @addr{e5f8d}
+
 soundacChannel2:
 	cmdf0 $db
 	.db $06 $0b $02
@@ -785,8 +781,7 @@ soundacChannel2:
 	vol $b
 	.db $06 $0b $02
 	cmdff
-; $e5fc3
-; @addr{e5fc3}
+
 soundacChannel7:
 	cmdf0 $d0
 	note $24 $02
@@ -815,9 +810,9 @@ soundacChannel7:
 	cmdf0 $d0
 	note $34 $02
 	cmdff
-; $e5ff8
+
 soundbaStart:
-; @addr{e5ff8}
+
 soundbaChannel7:
 	cmdf0 $20
 	note $36 $02
@@ -852,9 +847,9 @@ soundbaChannel7:
 	cmdf0 $11
 	note $44 $03
 	cmdff
-; $e6039
+
 soundb4Start:
-; @addr{e6039}
+
 soundb4Channel7:
 	cmdf0 $60
 	note $37 $06
@@ -885,9 +880,9 @@ soundb4Channel7:
 	cmdf0 $47
 	note $07 $46
 	cmdff
-; $e6072
+
 sound9cStart:
-; @addr{e6072}
+
 sound9cChannel2:
 	cmdf0 $80
 	vol $9
@@ -903,9 +898,9 @@ sound9cChannel2:
 	.db $06 $85 $01
 	.db $06 $50 $01
 	cmdff
-; $e6095
+
 sounda0Start:
-; @addr{e6095}
+
 sounda0Channel2:
 	cmdf0 $80
 	vol $9
@@ -935,9 +930,9 @@ sounda0Channel2:
 	.db $07 $10 $01
 	.db $06 $f4 $01
 	cmdff
-; $e60d8
+
 soundb2Start:
-; @addr{e60d8}
+
 soundb2Channel2:
 	duty $02
 	vol $3
@@ -947,8 +942,7 @@ soundb2Channel2:
 	note c2  $1c
 	note c2  $1c
 	cmdff
-; $e60e6
-; @addr{e60e6}
+
 soundb2Channel7:
 	cmdf0 $f0
 	note $75 $1c
@@ -1021,9 +1015,9 @@ soundb2Channel7:
 	note $54 $01
 	note $47 $01
 	cmdff
-; $e6173
+
 soundbbStart:
-; @addr{e6173}
+
 soundbbChannel7:
 	cmdf0 $10
 	note $24 $01
@@ -1062,12 +1056,11 @@ soundbbChannel7:
 	cmdf0 $10
 	note $36 $02
 	cmdff
-; $e61bc
-; GAP
 	cmdff
 	cmdff
+
 soundb7Start:
-; @addr{e61be}
+
 soundb7Channel2:
 	cmdf0 $00
 	vol $6
@@ -1107,8 +1100,7 @@ soundb7Channel2:
 	.db $07 $06 $01
 	.db $06 $0b $01
 	cmdff
-; $e6215
-; @addr{e6215}
+
 soundb7Channel7:
 	cmdf0 $90
 	note $27 $03
@@ -1127,9 +1119,9 @@ soundb7Channel7:
 	cmdf0 $20
 	note $36 $03
 	cmdff
-; $e6236
+
 sounda8Start:
-; @addr{e6236}
+
 sounda8Channel2:
 	cmdf0 $34
 	vol $9
@@ -1151,8 +1143,7 @@ sounda8Channel2:
 	vol $1
 	.db $06 $46 $04
 	cmdff
-; $e625d
-; @addr{e625d}
+
 sounda8Channel7:
 	cmdf0 $90
 	note $36 $01
@@ -1205,9 +1196,9 @@ sounda8Channel7:
 	note $27 $01
 	note $26 $01
 	cmdff
-; $e62c2
+
 soundb8Start:
-; @addr{e62c2}
+
 soundb8Channel2:
 	vol $3
 	note c2  $14
@@ -1217,8 +1208,7 @@ soundb8Channel2:
 	note c2  $14
 	note c2  $0a
 	cmdff
-; $e62d0
-; @addr{e62d0}
+
 soundb8Channel7:
 	cmdf0 $f0
 	note $75 $14
@@ -1233,9 +1223,9 @@ soundb8Channel7:
 	cmdf0 $f0
 	note $74 $0a
 	cmdff
-; $e62e9
+
 soundb0Start:
-; @addr{e62e9}
+
 soundb0Channel2:
 	duty $02
 	vol $3
@@ -1254,8 +1244,7 @@ soundb0Channel2:
 	env $0 $07
 	note c2  $32
 	cmdff
-; $e6309
-; @addr{e6309}
+
 soundb0Channel7:
 	cmdf0 $f0
 	note $76 $1f
@@ -1300,9 +1289,9 @@ soundb0Channel7:
 	cmdf0 $85
 	note $76 $32
 	cmdff
-; $e635e
+
 sound95Start:
-; @addr{e635e}
+
 sound95Channel2:
 	cmdf0 $d2
 	.db $07 $07 $03
@@ -1460,9 +1449,9 @@ sound95Channel2:
 	.db $07 $1a $01
 	.db $07 $46 $01
 	cmdff
-; $e64f3
+
 soundb9Start:
-; @addr{e64f3}
+
 soundb9Channel7:
 	cmdf0 $30
 	note $67 $07
@@ -1513,9 +1502,9 @@ musice654b:
 	note $07 $0f
 	goto musice654b
 	cmdff
-; $e6553
+
 soundbcStart:
-; @addr{e6553}
+
 soundbcChannel7:
 	cmdf0 $90
 	note $24 $02
@@ -1619,9 +1608,9 @@ soundbcChannel7:
 	note $65 $05
 	note $66 $14
 	cmdff
-; $e661e
+
 soundbdStart:
-; @addr{e661e}
+
 soundbdChannel2:
 	duty $02
 	cmdf0 $d2
@@ -2090,9 +2079,9 @@ soundbdChannel2:
 	.db $05 $43 $01
 	.db $05 $41 $01
 	cmdff
-; $e6b85
+
 sound2cStart:
-; @addr{e6b85}
+
 sound2cChannel1:
 	duty $01
 musice6b87:
@@ -2412,8 +2401,7 @@ musice6b87:
 	note cs6 $03
 	goto musice6b87
 	cmdff
-; $e6da1
-; @addr{e6da1}
+
 sound2cChannel0:
 	duty $01
 musice6da3:
@@ -2712,8 +2700,7 @@ musice6da3:
 	note as2 $05
 	goto musice6da3
 	cmdff
-; $e6fb8
-; @addr{e6fb8}
+
 sound2cChannel4:
 musice6fb8:
 	duty $0e
@@ -3168,8 +3155,7 @@ musice6fb8:
 	note fs2 $05
 	goto musice6fb8
 	cmdff
-; $e7340
-; @addr{e7340}
+
 sound2cChannel6:
 musice7340:
 	vol $3
@@ -3502,9 +3488,9 @@ musice7340:
 	note $2a $05
 	goto musice7340
 	cmdff
-; $e7534
+
 sound32Start:
-; @addr{e7534}
+
 sound32Channel1:
 	vibrato $e1
 	env $0 $00
@@ -3710,8 +3696,7 @@ musice753a:
 	note as3 $06
 	goto musice753a
 	cmdff
-; $e769b
-; @addr{e769b}
+
 sound32Channel0:
 	vibrato $e1
 	env $0 $00
@@ -3986,8 +3971,7 @@ musice76a1:
 	note e6  $04
 	goto musice76a1
 	cmdff
-; $e7879
-; @addr{e7879}
+
 sound32Channel4:
 musice7879:
 	duty $12
@@ -4440,8 +4424,7 @@ musice7879:
 	note b1  $04
 	goto musice7879
 	cmdff
-; $e7bfd
-; @addr{e7bfd}
+
 sound32Channel6:
 musice7bfd:
 	vol $5
@@ -4804,8 +4787,7 @@ musice7bfd:
 	note $27 $01
 	goto musice7bfd
 	cmdff
-; $e7e1a
-; @addr{e7e1a}
+
 sound06Channel1:
 	vibrato $d1
 	env $0 $00
@@ -4941,8 +4923,7 @@ sound06Channel1:
 	vol $1
 	note fs6 $04
 	cmdff
-; $e7ef9
-; @addr{e7ef9}
+
 sound06Channel0:
 	vol $0
 	note gs3 $03
@@ -5076,8 +5057,7 @@ sound06Channel0:
 	vol $1
 	note ds5 $03
 	cmdff
-; $e7fc8
-; @addr{e7fc8}
+
 sound06Channel4:
 	duty $0e
 	note g2  $60
@@ -5101,8 +5081,6 @@ sound06Channel4:
 	duty $0f
 	note b2  $07
 	cmdff
-; $e7ff3
-; GAP
 	cmdff
 	cmdff
 	cmdff
@@ -5118,14 +5096,21 @@ sound06Channel4:
 	cmdff
 .bank $3a slot 1
 .org 0
+
 sound00Start:
+
 sound01Start:
+
 sound09Start:
+
 sound0eStart:
+
 sound36Start:
+
 sound41Start:
+
 sound42Start:
-; @addr{e8000}
+
 sound00Channel6:
 sound01Channel6:
 sound09Channel6:
@@ -5141,8 +5126,7 @@ sound42Channel1:
 sound42Channel4:
 sound42Channel6:
 	cmdff
-; $e8001
-; @addr{e8001}
+
 sound0eChannel1:
 	vibrato $e1
 	env $0 $00
@@ -5326,8 +5310,7 @@ musice8007:
 	wait1 $1b
 	goto musice8007
 	cmdff
-; $e812c
-; @addr{e812c}
+
 sound0eChannel4:
 	duty $08
 musice812e:
@@ -5656,8 +5639,7 @@ musice812e:
 	wait1 $10
 	goto musice812e
 	cmdff
-; $e8355
-; @addr{e8355}
+
 sound0eChannel0:
 	duty $02
 musice8357:
@@ -5806,12 +5788,10 @@ musice8357:
 	note b3  $0b
 	goto musice8357
 	cmdff
-; $e8435
-; GAP
 	cmdff
 	cmdff
 	cmdff
-; @addr{e8438}
+
 sound00Channel1:
 sound01Channel1:
 	duty $02
@@ -6150,8 +6130,7 @@ musice8529:
 	note a2  $01
 	goto musice8529
 	cmdff
-; $e8674
-; @addr{e8674}
+
 sound00Channel0:
 sound01Channel0:
 	duty $02
@@ -6446,8 +6425,7 @@ musice8765:
 	wait1 $14
 	goto musice8765
 	cmdff
-; $e8869
-; @addr{e8869}
+
 sound00Channel4:
 sound01Channel4:
 	wait1 $24
@@ -6563,9 +6541,9 @@ musice88cd:
 	wait1 $b8
 	goto musice88cd
 	cmdff
-; $e8949
+
 sound2dStart:
-; @addr{e8949}
+
 sound2dChannel1:
 	duty $02
 	vol $7
@@ -6760,8 +6738,7 @@ musice89a4:
 	wait1 $0c
 	goto musice89a4
 	cmdff
-; $e8aaa
-; @addr{e8aaa}
+
 sound2dChannel0:
 	duty $02
 	vol $7
@@ -6959,8 +6936,7 @@ musice8b07:
 	env $0 $04
 	goto musice8b07
 	cmdff
-; $e8c10
-; @addr{e8c10}
+
 sound2dChannel4:
 	duty $12
 	wait1 $30
@@ -7137,8 +7113,7 @@ musice8c54:
 	note fs2 $06
 	goto musice8c54
 	cmdff
-; $e8d6c
-; @addr{e8d6c}
+
 sound2dChannel6:
 	wait1 $30
 	vol $3
@@ -7713,8 +7688,7 @@ musice8e09:
 	wait1 $02
 	goto musice8e09
 	cmdff
-; $e9123
-; @addr{e9123}
+
 sound09Channel1:
 	duty $02
 	env $0 $03
@@ -7904,8 +7878,7 @@ musice9127:
 	wait1 $5f
 	goto musice9127
 	cmdff
-; $e925b
-; @addr{e925b}
+
 sound09Channel0:
 	duty $02
 	env $0 $03
@@ -7967,8 +7940,7 @@ musice925f:
 	wait1 $36
 	goto musice925f
 	cmdff
-; $e92cf
-; @addr{e92cf}
+
 sound09Channel4:
 musice92cf:
 	wait1 $09
@@ -8017,11 +7989,9 @@ musice92cf:
 	wait1 $75
 	goto musice92cf
 	cmdff
-; $e932b
-; GAP
 	cmdff
 	cmdff
-; @addr{e932d}
+
 sound36Channel1:
 	duty $02
 musice932f:
@@ -8102,8 +8072,7 @@ musice932f:
 	wait1 $94
 	goto musice932f
 	cmdff
-; $e93c7
-; @addr{e93c7}
+
 sound36Channel0:
 	duty $02
 musice93c9:
@@ -8201,9 +8170,9 @@ musice93c9:
 	wait1 $94
 	goto musice93c9
 	cmdff
-; $e9475
+
 sound10Start:
-; @addr{e9475}
+
 sound10Channel1:
 	duty $00
 	vol $b
@@ -8231,8 +8200,7 @@ sound10Channel1:
 	vibrato $e1
 	note d6  $52
 	cmdff
-; $e949d
-; @addr{e949d}
+
 sound10Channel0:
 	duty $00
 	vol $c
@@ -8260,8 +8228,7 @@ sound10Channel0:
 	vibrato $e1
 	note f5  $52
 	cmdff
-; $e94c5
-; @addr{e94c5}
+
 sound10Channel4:
 	duty $0a
 	note f3  $06
@@ -8276,8 +8243,7 @@ sound10Channel4:
 	wait1 $02
 	note as3 $4b
 	cmdff
-; $e94de
-; @addr{e94de}
+
 sound10Channel6:
 	vol $0
 	note $30 $1b
@@ -8292,9 +8258,9 @@ sound10Channel6:
 	vol $2
 	note $30 $52
 	cmdff
-; $e94f1
+
 sound56Start:
-; @addr{e94f1}
+
 sound56Channel2:
 	duty $02
 	vol $8
@@ -8327,9 +8293,9 @@ sound56Channel2:
 	vol $1
 	note a6  $04
 	cmdff
-; $e9520
+
 sound4dStart:
-; @addr{e9520}
+
 sound4dChannel2:
 	duty $02
 	vol $f
@@ -8344,9 +8310,9 @@ sound4dChannel2:
 	env $0 $01
 	note b6  $0f
 	cmdff
-; $e9538
+
 sound4cStart:
-; @addr{e9538}
+
 sound4cChannel2:
 	duty $01
 	vol $b
@@ -8355,8 +8321,7 @@ sound4cChannel2:
 	note d5  $0a
 	note ds5 $32
 	cmdff
-; $e9544
-; @addr{e9544}
+
 sound4cChannel3:
 	duty $01
 	vol $9
@@ -8365,8 +8330,7 @@ sound4cChannel3:
 	note b5  $0a
 	note c6  $32
 	cmdff
-; $e9550
-; @addr{e9550}
+
 sound4cChannel5:
 	duty $01
 	note f4  $0a
@@ -8374,15 +8338,14 @@ sound4cChannel5:
 	note g4  $0a
 	note gs4 $32
 	cmdff
-; $e955b
-; @addr{e955b}
+
 sound4cChannel7:
 	cmdf0 $00
 	note $00 $50
 	cmdff
-; $e9560
+
 sound4fStart:
-; @addr{e9560}
+
 sound4fChannel2:
 	duty $02
 	vol $b
@@ -8423,9 +8386,9 @@ sound4fChannel2:
 	vol $1
 	note f6  $02
 	cmdff
-; $e95a2
+
 sound50Start:
-; @addr{e95a2}
+
 sound50Channel2:
 	duty $00
 	vol $d
@@ -8436,9 +8399,9 @@ sound50Channel2:
 	env $0 $01
 	note c8  $0a
 	cmdff
-; $e95b0
+
 sound51Start:
-; @addr{e95b0}
+
 sound51Channel2:
 	duty $02
 	vol $d
@@ -8451,9 +8414,9 @@ sound51Channel2:
 	cmdf8 $e0
 	note c5  $08
 	cmdff
-; $e95c3
+
 sound52Start:
-; @addr{e95c3}
+
 sound52Channel2:
 	duty $02
 	vol $d
@@ -8464,9 +8427,9 @@ sound52Channel2:
 	cmdf8 $81
 	note cs3 $05
 	cmdff
-; $e95d3
+
 sound53Start:
-; @addr{e95d3}
+
 sound53Channel2:
 	duty $02
 	vol $c
@@ -8474,9 +8437,9 @@ sound53Channel2:
 	cmdf8 $10
 	note d4  $14
 	cmdff
-; $e95dd
+
 sound4eStart:
-; @addr{e95dd}
+
 sound4eChannel2:
 	duty $00
 	vol $d
@@ -8489,9 +8452,9 @@ sound4eChannel2:
 	cmdf8 $7f
 	note g2  $07
 	cmdff
-; $e95ef
+
 sound57Start:
-; @addr{e95ef}
+
 sound57Channel2:
 	duty $02
 	vol $9
@@ -8499,18 +8462,18 @@ sound57Channel2:
 	note g5  $01
 	note d6  $01
 	cmdff
-; $e95f9
+
 sound58Start:
-; @addr{e95f9}
+
 sound58Channel2:
 	duty $00
 	vol $9
 	env $0 $01
 	note as6 $0a
 	cmdff
-; $e9601
+
 sound59Start:
-; @addr{e9601}
+
 sound59Channel2:
 	duty $02
 	vol $9
@@ -8521,9 +8484,9 @@ sound59Channel2:
 	cmdf8 $f4
 	note a4  $14
 	cmdff
-; $e9610
+
 sound5aStart:
-; @addr{e9610}
+
 sound5aChannel2:
 	duty $01
 	vol $e
@@ -8553,9 +8516,9 @@ sound5aChannel2:
 	vol $e
 	note ds3 $02
 	cmdff
-; $e963a
+
 sound5bStart:
-; @addr{e963a}
+
 sound5bChannel2:
 	duty $02
 	env $0 $02
@@ -8567,8 +8530,7 @@ sound5bChannel2:
 	vol $d
 	note g6  $18
 	cmdff
-; $e964a
-; @addr{e964a}
+
 sound5bChannel3:
 	duty $02
 	env $0 $02
@@ -8584,9 +8546,9 @@ sound5bChannel3:
 	vol $e
 	note b6  $23
 	cmdff
-; $e9660
+
 sound5eStart:
-; @addr{e9660}
+
 sound5eChannel2:
 	duty $01
 	vol $d
@@ -8612,11 +8574,10 @@ sound5eChannel2:
 	vol $2
 	note as7 $04
 	cmdff
-; $e9684
-; GAP
 	cmdff
+
 sound5fStart:
-; @addr{e9685}
+
 sound5fChannel5:
 	cmdfd $fd
 	duty $2d
@@ -8626,9 +8587,9 @@ sound5fChannel5:
 	cmdf8 $00
 	cmdfd $00
 	cmdff
-; $e9694
+
 sound60Start:
-; @addr{e9694}
+
 sound60Channel2:
 	duty $02
 	vol $b
@@ -8644,9 +8605,9 @@ sound60Channel2:
 	vol $6
 	note b6  $03
 	cmdff
-; $e96a9
+
 sound61Start:
-; @addr{e96a9}
+
 sound61Channel2:
 	duty $00
 	env $0 $03
@@ -8665,9 +8626,9 @@ sound61Channel2:
 	vol $2
 	note e8  $03
 	cmdff
-; $e96c3
+
 sound62Start:
-; @addr{e96c3}
+
 sound62Channel2:
 	duty $00
 	vol $b
@@ -8678,9 +8639,9 @@ sound62Channel2:
 	cmdf8 $05
 	note b6  $0a
 	cmdff
-; $e96d2
+
 sound7aStart:
-; @addr{e96d2}
+
 sound7aChannel7:
 	cmdf0 $f0
 	note $75 $09
@@ -8717,9 +8678,9 @@ sound7aChannel7:
 	note $74 $07
 	note $75 $03
 	cmdff
-; $e9717
+
 sound6aStart:
-; @addr{e9717}
+
 sound6aChannel7:
 	cmdf0 $b0
 	note $17 $01
@@ -8730,9 +8691,9 @@ sound6aChannel7:
 	note $45 $01
 	note $47 $01
 	cmdff
-; $e9728
+
 sound6bStart:
-; @addr{e9728}
+
 sound6bChannel7:
 	cmdf0 $40
 	note $07 $01
@@ -8769,9 +8730,9 @@ sound6bChannel7:
 	cmdf0 $30
 	note $07 $01
 	cmdff
-; $e976d
+
 sound6cStart:
-; @addr{e976d}
+
 sound6cChannel7:
 	cmdf0 $f0
 	note $37 $01
@@ -8784,9 +8745,9 @@ sound6cChannel7:
 	cmdf0 $b0
 	note $44 $02
 	cmdff
-; $e9782
+
 sound6dStart:
-; @addr{e9782}
+
 sound6dChannel7:
 	cmdf0 $60
 	note $34 $04
@@ -8807,9 +8768,9 @@ sound6dChannel7:
 	cmdf0 $20
 	note $06 $04
 	cmdff
-; $e97a7
+
 sound6eStart:
-; @addr{e97a7}
+
 sound6eChannel7:
 	cmdf0 $71
 	note $24 $04
@@ -8826,9 +8787,9 @@ sound6eChannel7:
 	cmdf0 $24
 	note $34 $04
 	cmdff
-; $e97c4
+
 sound79Start:
-; @addr{e97c4}
+
 sound79Channel7:
 	cmdf0 $c0
 	note $24 $03
@@ -8868,9 +8829,9 @@ sound79Channel7:
 	note $66 $06
 	note $74 $46
 	cmdff
-; $e980f
+
 sound78Start:
-; @addr{e980f}
+
 sound78Channel7:
 	cmdf0 $20
 	note $16 $02
@@ -8883,9 +8844,9 @@ sound78Channel7:
 	cmdf0 $f0
 	note $44 $01
 	cmdff
-; $e9824
+
 sound77Start:
-; @addr{e9824}
+
 sound77Channel2:
 	duty $00
 	vol $d
@@ -8896,9 +8857,9 @@ sound77Channel2:
 	env $0 $02
 	note c7  $0f
 	cmdff
-; $e9833
+
 sound76Start:
-; @addr{e9833}
+
 sound76Channel2:
 	duty $00
 	vol $0
@@ -8916,8 +8877,7 @@ sound76Channel2:
 	vol $0
 	note c7  $02
 	cmdff
-; $e984e
-; @addr{e984e}
+
 sound76Channel7:
 	cmdf0 $10
 	note $26 $01
@@ -8926,9 +8886,9 @@ sound76Channel7:
 	cmdf0 $00
 	note $36 $01
 	cmdff
-; $e985b
+
 sound75Start:
-; @addr{e985b}
+
 sound75Channel7:
 	cmdf0 $30
 	note $27 $01
@@ -8941,9 +8901,9 @@ sound75Channel7:
 	cmdf0 $f0
 	note $07 $01
 	cmdff
-; $e9870
+
 sound74Start:
-; @addr{e9870}
+
 sound74Channel7:
 	cmdf0 $20
 	note $47 $01
@@ -8964,9 +8924,9 @@ sound74Channel7:
 	cmdf0 $c0
 	note $25 $01
 	cmdff
-; $e9895
+
 sound73Start:
-; @addr{e9895}
+
 sound73Channel7:
 	cmdf0 $d3
 	note $37 $01
@@ -8989,9 +8949,9 @@ sound73Channel7:
 	note $47 $04
 	note $46 $04
 	cmdff
-; $e98be
+
 sound54Start:
-; @addr{e98be}
+
 sound54Channel2:
 	duty $01
 	vol $f
@@ -8999,8 +8959,7 @@ sound54Channel2:
 	cmdf8 $23
 	note c3  $16
 	cmdff
-; $e98c8
-; @addr{e98c8}
+
 sound54Channel3:
 	duty $02
 	vol $f
@@ -9008,9 +8967,9 @@ sound54Channel3:
 	cmdf8 $2c
 	note c2  $16
 	cmdff
-; $e98d2
+
 sound55Start:
-; @addr{e98d2}
+
 sound55Channel2:
 	duty $02
 	vol $d
@@ -9018,8 +8977,7 @@ sound55Channel2:
 	cmdf8 $d3
 	note g4  $09
 	cmdff
-; $e98dc
-; @addr{e98dc}
+
 sound55Channel3:
 	duty $01
 	vol $d
@@ -9027,9 +8985,9 @@ sound55Channel3:
 	cmdf8 $e0
 	note g4  $09
 	cmdff
-; $e98e6
+
 sound5cStart:
-; @addr{e98e6}
+
 sound5cChannel2:
 	duty $00
 	vol $1
@@ -9233,9 +9191,9 @@ sound5cChannel2:
 	note b7  $01
 	note cs8 $01
 	cmdff
-; $e9a4c
+
 sound5dStart:
-; @addr{e9a4c}
+
 sound5dChannel2:
 	duty $00
 	vol $d
@@ -9309,9 +9267,9 @@ sound5dChannel2:
 	note g4  $01
 	note f4  $01
 	cmdff
-; $e9ad1
+
 sound64Start:
-; @addr{e9ad1}
+
 sound64Channel5:
 	duty $03
 	vibrato $08
@@ -9350,9 +9308,9 @@ sound64Channel5:
 	vol $3
 	note fs4 $02
 	cmdff
-; $e9b11
+
 sound65Start:
-; @addr{e9b11}
+
 sound65Channel5:
 	duty $03
 	note c6  $02
@@ -9391,9 +9349,9 @@ sound65Channel5:
 	note e5  $02
 	note ds5 $02
 	cmdff
-; $e9b5a
+
 sound66Start:
-; @addr{e9b5a}
+
 sound66Channel2:
 	duty $02
 	vol $2
@@ -9402,9 +9360,9 @@ sound66Channel2:
 	vol $b
 	note f6  $01
 	cmdff
-; $e9b65
+
 sound63Start:
-; @addr{e9b65}
+
 sound63Channel2:
 	cmdf0 $3c
 	vol $f
@@ -9512,9 +9470,9 @@ sound63Channel2:
 	vol $6
 	.db $05 $ce $01
 	cmdff
-; $e9c38
+
 sound6fStart:
-; @addr{e9c38}
+
 sound6fChannel7:
 	cmdf0 $f1
 	note $64 $01
@@ -9537,9 +9495,9 @@ sound6fChannel7:
 	cmdf0 $25
 	note $56 $0a
 	cmdff
-; $e9c61
+
 sound70Start:
-; @addr{e9c61}
+
 sound70Channel2:
 	duty $01
 	vol $0
@@ -9550,8 +9508,7 @@ sound70Channel2:
 	note c4  $05
 	cmdf8 $00
 	cmdff
-; $e9c70
-; @addr{e9c70}
+
 sound70Channel7:
 	cmdf0 $d0
 	note $24 $02
@@ -9573,9 +9530,9 @@ sound70Channel7:
 	note $56 $02
 	note $57 $05
 	cmdff
-; $e9c97
+
 sound71Start:
-; @addr{e9c97}
+
 sound71Channel7:
 	cmdf0 $60
 	note $65 $02
@@ -9597,9 +9554,9 @@ sound71Channel7:
 	cmdf0 $d0
 	note $65 $04
 	cmdff
-; $e9cbe
+
 sound72Start:
-; @addr{e9cbe}
+
 sound72Channel7:
 	cmdf0 $30
 	note $67 $01
@@ -9630,9 +9587,9 @@ sound72Channel7:
 	note $65 $02
 	note $66 $02
 	cmdff
-; $e9cf7
+
 sound68Start:
-; @addr{e9cf7}
+
 sound68Channel2:
 	duty $01
 	vibrato $0b
@@ -9658,9 +9615,9 @@ sound68Channel2:
 	note gs5 $01
 	note b4  $01
 	cmdff
-; $e9d20
+
 sound80Start:
-; @addr{e9d20}
+
 sound80Channel7:
 	cmdf0 $91
 	note $44 $01
@@ -9687,9 +9644,9 @@ sound80Channel7:
 	cmdf0 $26
 	note $44 $0c
 	cmdff
-; $e9d51
+
 sound81Start:
-; @addr{e9d51}
+
 sound81Channel2:
 	duty $00
 	vol $f
@@ -9706,8 +9663,7 @@ sound81Channel2:
 	env $0 $01
 	note c2  $0a
 	cmdff
-; $e9d68
-; @addr{e9d68}
+
 sound81Channel7:
 	cmdf0 $f1
 	note $55 $03
@@ -9726,9 +9682,9 @@ sound81Channel7:
 	cmdf0 $96
 	note $57 $46
 	cmdff
-; $e9d89
+
 sound82Start:
-; @addr{e9d89}
+
 sound82Channel2:
 	duty $00
 	vol $0
@@ -9762,8 +9718,7 @@ sound82Channel2:
 	vol $2
 	note ds2 $01
 	cmdff
-; $e9db9
-; @addr{e9db9}
+
 sound82Channel7:
 	cmdf0 $f1
 	note $52 $01
@@ -9778,9 +9733,9 @@ sound82Channel7:
 	cmdf0 $43
 	note $57 $1e
 	cmdff
-; $e9dd2
+
 sound7bStart:
-; @addr{e9dd2}
+
 sound7bChannel2:
 	duty $00
 	vol $6
@@ -9806,9 +9761,9 @@ sound7bChannel2:
 	note fs6 $04
 	note as6 $04
 	cmdff
-; $e9dfb
+
 sound7dStart:
-; @addr{e9dfb}
+
 sound7dChannel2:
 	duty $02
 	vol $f
@@ -9821,9 +9776,9 @@ sound7dChannel2:
 	note b2  $33
 	cmdf8 $00
 	cmdff
-; $e9e0f
+
 sound7eStart:
-; @addr{e9e0f}
+
 sound7eChannel2:
 	duty $02
 	vol $d
@@ -9845,9 +9800,9 @@ sound7eChannel2:
 	vol $d
 	note e5  $01
 	cmdff
-; $e9e2d
+
 sound7cStart:
-; @addr{e9e2d}
+
 sound7cChannel2:
 	duty $01
 musice9e2f:
@@ -9893,9 +9848,9 @@ musice9e2f:
 	cmdf8 $00
 	goto musice9e2f
 	cmdff
-; $e9e79
+
 sound69Start:
-; @addr{e9e79}
+
 sound69Channel2:
 	duty $02
 	vol $d
@@ -9941,9 +9896,9 @@ sound69Channel2:
 	note c2  $01
 	note c3  $01
 	cmdff
-; $e9eca
+
 sound67Start:
-; @addr{e9eca}
+
 sound67Channel2:
 	duty $00
 	vol $f
@@ -10215,9 +10170,9 @@ sound67Channel2:
 	vol $0
 	wait1 $01
 	cmdff
-; $ea05f
+
 soundd2Start:
-; @addr{ea05f}
+
 soundd2Channel7:
 	cmdf0 $f0
 	note $00 $01
@@ -10258,9 +10213,9 @@ soundd2Channel7:
 	note $47 $02
 	note $54 $01
 	cmdff
-; $ea0ac
+
 soundd3Start:
-; @addr{ea0ac}
+
 soundd3Channel7:
 	cmdf0 $40
 	note $37 $01
@@ -10338,9 +10293,9 @@ soundd3Channel7:
 	note $34 $03
 	note $27 $19
 	cmdff
-; $ea143
+
 soundd1Start:
-; @addr{ea143}
+
 soundd1Channel2:
 	duty $00
 	vol $9
@@ -10354,8 +10309,7 @@ soundd1Channel2:
 	cmdf8 $ef
 	note a2  $32
 	cmdff
-; $ea158
-; @addr{ea158}
+
 soundd1Channel7:
 	cmdf0 $40
 	note $44 $02
@@ -10369,9 +10323,9 @@ soundd1Channel7:
 	note $56 $02
 	note $57 $02
 	cmdff
-; $ea16f
+
 soundd0Start:
-; @addr{ea16f}
+
 soundd0Channel2:
 	duty $00
 	vol $c
@@ -10400,8 +10354,7 @@ soundd0Channel2:
 	note ds5 $01
 	note fs5 $01
 	cmdff
-; $ea19c
-; @addr{ea19c}
+
 soundd0Channel7:
 	cmdf0 $f0
 	note $34 $01
@@ -10415,9 +10368,9 @@ soundd0Channel7:
 	note $17 $03
 	note $16 $28
 	cmdff
-; $ea1b3
+
 sound7fStart:
-; @addr{ea1b3}
+
 sound7fChannel2:
 	duty $00
 	vol $9
@@ -10565,9 +10518,9 @@ sound7fChannel2:
 	vol $0
 	wait1 $01
 	cmdff
-; $ea28e
+
 sound83Start:
-; @addr{ea28e}
+
 sound83Channel2:
 	duty $00
 	cmdf0 $df
@@ -10600,9 +10553,9 @@ sound83Channel2:
 	env $0 $03
 	.db $07 $de $04
 	cmdff
-; $ea2cc
+
 sound84Start:
-; @addr{ea2cc}
+
 sound84Channel2:
 	duty $02
 	cmdf0 $d9
@@ -10610,9 +10563,9 @@ sound84Channel2:
 	vol $1
 	.db $07 $a0 $05
 	cmdff
-; $ea2d8
+
 sound85Start:
-; @addr{ea2d8}
+
 sound85Channel2:
 	duty $02
 	vol $f
@@ -10653,9 +10606,9 @@ sound85Channel2:
 	note a2  $06
 	cmdf8 $00
 	cmdff
-; $ea31c
+
 sound86Start:
-; @addr{ea31c}
+
 sound86Channel2:
 	duty $02
 	vol $7
@@ -10716,9 +10669,9 @@ sound86Channel2:
 	note f7  $02
 	note c7  $01
 	cmdff
-; $ea37e
+
 sound8dStart:
-; @addr{ea37e}
+
 sound8dChannel2:
 	duty $01
 	vol $1
@@ -10886,23 +10839,22 @@ sound8dChannel2:
 	vol $1
 	note d6  $01
 	cmdff
-; $ea477
+
 soundd4Start:
-; @addr{ea477}
+
 soundd4Channel2:
 	cmdff
-; $ea478
-; @addr{ea478}
+
 soundd4Channel7:
 	cmdff
-; $ea479
+
 soundd5Start:
-; @addr{ea479}
+
 soundd5Channel2:
 	cmdff
-; $ea47a
+
 soundc0Start:
-; @addr{ea47a}
+
 soundc0Channel2:
 	duty $00
 	vol $3
@@ -10932,9 +10884,9 @@ soundc0Channel2:
 	vol $2
 	note fs5 $03
 	cmdff
-; $ea4a4
+
 soundbfStart:
-; @addr{ea4a4}
+
 soundbfChannel2:
 	duty $00
 	cmdf0 $d9
@@ -11059,9 +11011,9 @@ soundbfChannel2:
 	.db $06 $f6 $01
 	.db $06 $f8 $01
 	cmdff
-; $ea611
+
 sound92Start:
-; @addr{ea611}
+
 sound92Channel2:
 	duty $01
 	env $2 $04
@@ -11076,15 +11028,14 @@ sound92Channel2:
 	cmdf8 $f8
 	note e5  $37
 	cmdff
-; $ea627
+
 sound9dStart:
-; @addr{ea627}
+
 sound9dChannel3:
 	vol $0
 	wait1 $f1
 	cmdff
-; $ea62b
-; @addr{ea62b}
+
 sound9dChannel2:
 	vol $0
 	duty $02
@@ -11108,8 +11059,7 @@ sound9dChannel2:
 	vol $2
 	note c6  $38
 	cmdff
-; $ea650
-; @addr{ea650}
+
 sound9dChannel5:
 	duty $16
 	note c6  $04
@@ -11127,21 +11077,19 @@ sound9dChannel5:
 	note c6  $38
 	wait1 $1f
 	cmdff
-; $ea66f
-; @addr{ea66f}
+
 sound9dChannel7:
 	cmdf0 $00
 	note $00 $f1
 	cmdff
-; $ea674
+
 sound9eStart:
-; @addr{ea674}
+
 sound9eChannel3:
 	vol $0
 	wait1 $f1
 	cmdff
-; $ea678
-; @addr{ea678}
+
 sound9eChannel2:
 	vol $0
 	wait1 $1f
@@ -11158,8 +11106,7 @@ sound9eChannel2:
 	note g5  $0e
 	note a5  $54
 	cmdff
-; $ea693
-; @addr{ea693}
+
 sound9eChannel5:
 	duty $16
 	note d5  $04
@@ -11174,21 +11121,19 @@ sound9eChannel5:
 	note a5  $54
 	wait1 $1f
 	cmdff
-; $ea6ac
-; @addr{ea6ac}
+
 sound9eChannel7:
 	cmdf0 $00
 	note $00 $f1
 	cmdff
-; $ea6b1
+
 sound9fStart:
-; @addr{ea6b1}
+
 sound9fChannel3:
 	vol $0
 	wait1 $e5
 	cmdff
-; $ea6b5
-; @addr{ea6b5}
+
 sound9fChannel2:
 	vol $0
 	wait1 $0d
@@ -11204,8 +11149,7 @@ sound9fChannel2:
 	wait1 $09
 	note as6 $48
 	cmdff
-; $ea6ce
-; @addr{ea6ce}
+
 sound9fChannel5:
 	duty $16
 	note ds6 $12
@@ -11219,15 +11163,14 @@ sound9fChannel5:
 	note as6 $48
 	wait1 $0d
 	cmdff
-; $ea6e5
-; @addr{ea6e5}
+
 sound9fChannel7:
 	cmdf0 $00
 	note $00 $e5
 	cmdff
-; $ea6ea
+
 sound4aStart:
-; @addr{ea6ea}
+
 sound4aChannel1:
 	vol $0
 	note gs3 $07
@@ -11553,8 +11496,7 @@ musicea6f4:
 	duty $02
 	goto musicea6f4
 	cmdff
-; $ea919
-; @addr{ea919}
+
 sound4aChannel0:
 	vol $0
 	note gs3 $07
@@ -11892,8 +11834,7 @@ musicea923:
 	note d3  $07
 	goto musicea923
 	cmdff
-; $eab69
-; @addr{eab69}
+
 sound4aChannel4:
 	wait1 $07
 	cmdf2
@@ -12169,8 +12110,7 @@ musiceab6c:
 	wait1 $4c
 	goto musiceab6c
 	cmdff
-; $ead8a
-; @addr{ead8a}
+
 sound4aChannel6:
 	cmdf2
 	vol $3
@@ -12890,9 +12830,9 @@ musicead94:
 	note $26 $04
 	goto musicead94
 	cmdff
-; $eb1c5
+
 sound33Start:
-; @addr{eb1c5}
+
 sound33Channel1:
 	vibrato $e1
 	env $0 $00
@@ -13149,8 +13089,7 @@ musiceb1cc:
 	note a3  $06
 	goto musiceb1cc
 	cmdff
-; $eb380
-; @addr{eb380}
+
 sound33Channel0:
 	vibrato $e1
 	env $0 $00
@@ -13407,8 +13346,7 @@ musiceb387:
 	note fs2 $06
 	goto musiceb387
 	cmdff
-; $eb53a
-; @addr{eb53a}
+
 sound33Channel4:
 	cmdf2
 musiceb53b:
@@ -13849,8 +13787,7 @@ musiceb53b:
 	wait1 $6c
 	goto musiceb53b
 	cmdff
-; $eb8a5
-; @addr{eb8a5}
+
 sound33Channel6:
 	cmdf2
 musiceb8a6:
@@ -14498,9 +14435,9 @@ musiceb8a6:
 	note $27 $05
 	goto musiceb8a6
 	cmdff
-; $ebc49
+
 soundceStart:
-; @addr{ebc49}
+
 soundceChannel2:
 	duty $02
 	vol $5
@@ -14514,8 +14451,7 @@ soundceChannel2:
 	cmdf8 $ff
 	note c7  $37
 	cmdff
-; $ebc5e
-; @addr{ebc5e}
+
 soundceChannel5:
 	duty $08
 	vibrato $00
@@ -14525,8 +14461,7 @@ soundceChannel5:
 	cmdf8 $ff
 	note c7  $28
 	cmdff
-; $ebc6d
-; @addr{ebc6d}
+
 soundceChannel7:
 	cmdf0 $20
 	note $16 $12
@@ -14536,9 +14471,9 @@ soundceChannel7:
 	cmdf0 $24
 	note $16 $1e
 	cmdff
-; $ebc7c
+
 soundc1Start:
-; @addr{ebc7c}
+
 soundc1Channel2:
 	duty $02
 	vol $1
@@ -14643,9 +14578,9 @@ soundc1Channel2:
 	env $0 $01
 	note d8  $01
 	cmdff
-; $ebd3c
+
 soundcfStart:
-; @addr{ebd3c}
+
 soundcfChannel2:
 	duty $00
 	env $0 $01
@@ -14676,9 +14611,9 @@ soundcfChannel2:
 	note as5 $0a
 	cmdf8 $00
 	cmdff
-; $ebd6d
+
 soundc5Start:
-; @addr{ebd6d}
+
 soundc5Channel5:
 	duty $0a
 	cmdf8 $1e
@@ -14693,9 +14628,9 @@ soundc5Channel5:
 	cmdf8 $d8
 	note gs3 $08
 	cmdff
-; $ebd86
+
 soundc8Start:
-; @addr{ebd86}
+
 soundc8Channel2:
 	duty $01
 	vol $f
@@ -14704,15 +14639,14 @@ soundc8Channel2:
 	env $0 $06
 	note ds6 $3c
 	cmdff
-; $ebd91
-; @addr{ebd91}
+
 soundc8Channel7:
 	cmdf0 $41
 	note $15 $01
 	cmdff
-; $ebd96
+
 soundc6Start:
-; @addr{ebd96}
+
 soundc6Channel2:
 	duty $00
 	vol $d
@@ -14727,9 +14661,9 @@ soundc6Channel2:
 	note f6  $05
 	cmdf8 $00
 	cmdff
-; $ebdad
+
 soundc2Start:
-; @addr{ebdad}
+
 soundc2Channel7:
 	cmdf0 $10
 	note $25 $02
@@ -14754,9 +14688,9 @@ musicebdd1:
 	note $25 $ff
 	goto musicebdd1
 	cmdff
-; $ebdd9
+
 soundc3Start:
-; @addr{ebdd9}
+
 soundc3Channel5:
 	duty $03
 	cmdf8 $0c
@@ -14774,9 +14708,9 @@ soundc3Channel5:
 	cmdf8 $fe
 	note d6  $0f
 	cmdff
-; $ebdf6
+
 soundc9Start:
-; @addr{ebdf6}
+
 soundc9Channel2:
 	duty $00
 	vol $1
@@ -15050,9 +14984,9 @@ soundc9Channel2:
 	cmdf8 $00
 	env $0 $00
 	cmdff
-; $ebfdf
+
 sounda9Start:
-; @addr{ebfdf}
+
 sounda9Channel7:
 	cmdf0 $20
 	note $46 $01
@@ -15069,29 +15003,41 @@ sounda9Channel7:
 	cmdf0 $f1
 	note $64 $0a
 	cmdff
-; $ebffc
-; GAP
 	cmdff
 	cmdff
 	cmdff
 	cmdff
 .bank $3b slot 1
 .org 0
+
 sound02Start:
+
 sound03Start:
+
 sound04Start:
+
 sound05Start:
+
 sound08Start:
+
 sound0aStart:
+
 sound0bStart:
+
 sound0cStart:
+
 sound0dStart:
+
 sound0fStart:
+
 sound35Start:
+
 sound43Start:
+
 sound44Start:
+
 sound45Start:
-; @addr{ec000}
+
 sound02Channel6:
 sound03Channel6:
 sound04Channel6:
@@ -15116,8 +15062,7 @@ sound45Channel1:
 sound45Channel4:
 sound45Channel6:
 	cmdff
-; $ec001
-; @addr{ec001}
+
 sound0aChannel1:
 	vibrato $00
 	env $0 $03
@@ -15235,8 +15180,7 @@ musicec007:
 	env $0 $03
 	goto musicec007
 	cmdff
-; $ec0d2
-; @addr{ec0d2}
+
 sound0aChannel0:
 	vibrato $00
 	env $0 $03
@@ -15305,8 +15249,7 @@ musicec0d8:
 	note fs4 $10
 	goto musicec0d8
 	cmdff
-; $ec155
-; @addr{ec155}
+
 sound0aChannel4:
 	duty $0c
 musicec157:
@@ -15364,8 +15307,7 @@ musicec157:
 	wait1 $2e
 	goto musicec157
 	cmdff
-; $ec1c3
-; @addr{ec1c3}
+
 sound02Channel1:
 musicec1c3:
 	duty $02
@@ -15578,8 +15520,7 @@ musicec1c3:
 	note a2  $01
 	goto musicec1c3
 	cmdff
-; $ec336
-; @addr{ec336}
+
 sound02Channel0:
 musicec336:
 	duty $02
@@ -15744,8 +15685,7 @@ musicec336:
 	wait1 $14
 	goto musicec336
 	cmdff
-; $ec45c
-; @addr{ec45c}
+
 sound02Channel4:
 musicec45c:
 	duty $01
@@ -15810,9 +15750,9 @@ musicec45c:
 	wait1 $b8
 	goto musicec45c
 	cmdff
-; $ec4d8
+
 sound11Start:
-; @addr{ec4d8}
+
 sound11Channel1:
 	vibrato $00
 	duty $02
@@ -15931,8 +15871,7 @@ musicec53e:
 	wait1 $38
 	goto musicec53e
 	cmdff
-; $ec5a4
-; @addr{ec5a4}
+
 sound11Channel0:
 	vol $0
 	note gs3 $70
@@ -16073,8 +16012,7 @@ musicec60f:
 	note gs3 $03
 	goto musicec60f
 	cmdff
-; $ec67e
-; @addr{ec67e}
+
 sound11Channel4:
 	duty $0a
 	note as2 $03
@@ -16319,8 +16257,7 @@ musicec76e:
 	wait1 $06
 	goto musicec76e
 	cmdff
-; $ec862
-; @addr{ec862}
+
 sound11Channel6:
 	vol $5
 	note $2a $0e
@@ -16422,8 +16359,7 @@ musicec8c3:
 	note $2a $07
 	goto musicec8c3
 	cmdff
-; $ec927
-; @addr{ec927}
+
 sound0fChannel1:
 	vibrato $00
 	env $0 $02
@@ -16464,8 +16400,7 @@ musicec92d:
 	note fs7 $0c
 	goto musicec92d
 	cmdff
-; $ec972
-; @addr{ec972}
+
 sound0fChannel0:
 	vol $1
 	note b3  $06
@@ -16508,8 +16443,7 @@ musicec97b:
 	note fs7 $0c
 	goto musicec97b
 	cmdff
-; $ec9c0
-; @addr{ec9c0}
+
 sound0fChannel4:
 	duty $0f
 	wait1 $09
@@ -16548,8 +16482,7 @@ musicec9c4:
 	note fs7 $0c
 	goto musicec9c4
 	cmdff
-; $eca08
-; @addr{eca08}
+
 sound03Channel1:
 	vibrato $00
 	duty $02
@@ -16903,8 +16836,7 @@ musiceca67:
 	env $0 $02
 	goto musiceca67
 	cmdff
-; $eccba
-; @addr{eccba}
+
 sound03Channel0:
 	vibrato $00
 	duty $02
@@ -17256,8 +17188,7 @@ musicecd1c:
 	wait1 $24
 	goto musicecd1c
 	cmdff
-; $ecf4f
-; @addr{ecf4f}
+
 sound03Channel4:
 	duty $0e
 	note g3  $04
@@ -18224,12 +18155,10 @@ musiced0a3:
 	wait1 $01
 	goto musiced0a3
 	cmdff
-; $ed6d5
-; GAP
 	cmdff
 	cmdff
 	cmdff
-; @addr{ed6d8}
+
 sound0bChannel1:
 	vibrato $32
 	env $0 $00
@@ -18440,8 +18369,7 @@ musiced6de:
 	env $0 $00
 	goto musiced6de
 	cmdff
-; $ed845
-; @addr{ed845}
+
 sound0bChannel0:
 	vibrato $00
 	env $0 $02
@@ -18515,8 +18443,7 @@ musiced84b:
 	note ds4 $1c
 	goto musiced84b
 	cmdff
-; $ed8cf
-; @addr{ed8cf}
+
 sound0bChannel4:
 	duty $0e
 musiced8d1:
@@ -18614,8 +18541,7 @@ musiced8d1:
 	wait1 $15
 	goto musiced8d1
 	cmdff
-; $ed985
-; @addr{ed985}
+
 sound0cChannel1:
 	vibrato $e1
 	env $0 $00
@@ -18742,8 +18668,7 @@ musiced98b:
 	duty $02
 	goto musiced98b
 	cmdff
-; $eda5a
-; @addr{eda5a}
+
 sound0cChannel0:
 	vibrato $00
 	env $0 $03
@@ -18825,9 +18750,8 @@ musiceda60:
 	duty $02
 	goto musiceda60
 	cmdff
-; $edaef
 ; BACKWARD GAP
-; @addr{edaef}
+
 sound0cChannel4:
 musicedaef:
 	wait1 $ff
@@ -18868,8 +18792,7 @@ musicedaef:
 	wait1 $07
 	goto musicedaef
 	cmdff
-; $edb3b
-; @addr{edb3b}
+
 sound0dChannel1:
 	vibrato $00
 	env $0 $03
@@ -18943,8 +18866,7 @@ musicedb41:
 	note e3  $09
 	goto musicedb41
 	cmdff
-; $edbc7
-; @addr{edbc7}
+
 sound0dChannel0:
 	vibrato $00
 	env $0 $03
@@ -19021,8 +18943,7 @@ musicedbd2:
 	note e3  $09
 	goto musicedbd2
 	cmdff
-; $edc58
-; @addr{edc58}
+
 sound0dChannel4:
 	duty $08
 	note a2  $09
@@ -19095,8 +19016,7 @@ musicedc60:
 	note e3  $09
 	goto musicedc60
 	cmdff
-; $edce4
-; @addr{edce4}
+
 sound04Channel1:
 	vibrato $00
 	env $0 $00
@@ -19164,8 +19084,7 @@ musicedce8:
 	env $0 $00
 	goto musicedce8
 	cmdff
-; $edd65
-; @addr{edd65}
+
 sound04Channel0:
 	vibrato $00
 	env $0 $00
@@ -19240,8 +19159,7 @@ musicedd69:
 	env $0 $00
 	goto musicedd69
 	cmdff
-; $eddee
-; @addr{eddee}
+
 sound04Channel4:
 musiceddee:
 	duty $0e
@@ -19335,16 +19253,15 @@ musiceddee:
 	wait1 $24
 	goto musiceddee
 	cmdff
-; $edea4
-; GAP
 	cmdff
 	cmdff
 	cmdff
 	cmdff
 	cmdff
 	cmdff
+
 sound07Start:
-; @addr{edeaa}
+
 sound07Channel1:
 	vibrato $f1
 	env $0 $00
@@ -19615,8 +19532,7 @@ musicedeb0:
 	env $0 $00
 	goto musicedeb0
 	cmdff
-; $ee084
-; @addr{ee084}
+
 sound07Channel0:
 	vibrato $f1
 	env $0 $00
@@ -19956,8 +19872,7 @@ musicee08a:
 	note g4  $07
 	goto musicee08a
 	cmdff
-; $ee2da
-; @addr{ee2da}
+
 sound07Channel4:
 musicee2da:
 	duty $11
@@ -20229,8 +20144,7 @@ musicee2da:
 	note e2  $1c
 	goto musicee2da
 	cmdff
-; $ee4f4
-; @addr{ee4f4}
+
 sound07Channel6:
 musicee4f4:
 	vol $5
@@ -20281,8 +20195,7 @@ musicee4f4:
 	note $26 $04
 	goto musicee4f4
 	cmdff
-; $ee53d
-; @addr{ee53d}
+
 sound05Channel1:
 	vol $0
 	note gs3 $ff
@@ -20496,8 +20409,7 @@ musicee549:
 	note d5  $10
 	goto musicee549
 	cmdff
-; $ee69d
-; @addr{ee69d}
+
 sound05Channel0:
 	vibrato $00
 	env $0 $00
@@ -21203,8 +21115,7 @@ musicee701:
 	note e3  $08
 	goto musicee701
 	cmdff
-; $eeac1
-; @addr{eeac1}
+
 sound05Channel4:
 	duty $08
 	wait1 $ff
@@ -21287,8 +21198,7 @@ musiceeac7:
 	note d5  $10
 	goto musiceeac7
 	cmdff
-; $eeb61
-; @addr{eeb61}
+
 sound08Channel1:
 	vibrato $00
 	env $0 $03
@@ -21389,8 +21299,7 @@ musiceeb67:
 	env $0 $03
 	goto musiceeb67
 	cmdff
-; $eec24
-; @addr{eec24}
+
 sound08Channel0:
 	vibrato $00
 	env $0 $03
@@ -21463,8 +21372,7 @@ musiceec2a:
 	note b2  $0e
 	goto musiceec2a
 	cmdff
-; $eecaf
-; @addr{eecaf}
+
 sound08Channel4:
 	duty $0c
 musiceecb1:
@@ -21527,8 +21435,6 @@ musiceecb1:
 	wait1 $1c
 	goto musiceecb1
 	cmdff
-; $eed26
-; GAP
 	note c1  $6a
 	.db $6e ; ???
 	note cs1 $33
@@ -21538,8 +21444,9 @@ musiceecb1:
 	note fs1 $02
 	.db $77 ; ???
 	cmdff
+
 sound34Start:
-; @addr{eed33}
+
 sound34Channel1:
 	vibrato $00
 	env $0 $00
@@ -21721,8 +21628,7 @@ musiceed3a:
 	note b4  $48
 	goto musiceed3a
 	cmdff
-; $eee6a
-; @addr{eee6a}
+
 sound34Channel0:
 	vibrato $00
 	env $0 $00
@@ -21934,8 +21840,7 @@ musiceee71:
 	note gs4 $48
 	goto musiceee71
 	cmdff
-; $eefcd
-; @addr{eefcd}
+
 sound34Channel4:
 	cmdf2
 musiceefce:
@@ -22861,8 +22766,7 @@ musiceefce:
 	note g2  $48
 	goto musiceefce
 	cmdff
-; $ef702
-; @addr{ef702}
+
 sound34Channel6:
 	cmdf2
 musicef703:
@@ -23403,8 +23307,7 @@ musicef703:
 	note $27 $05
 	goto musicef703
 	cmdff
-; $efa38
-; @addr{efa38}
+
 sound35Channel1:
 	vibrato $00
 	env $0 $00
@@ -23777,8 +23680,7 @@ musicefa3e:
 	env $0 $00
 	goto musicefa3e
 	cmdff
-; $efcb4
-; @addr{efcb4}
+
 sound35Channel4:
 musicefcb4:
 	duty $0c
@@ -24025,8 +23927,7 @@ musicefcb4:
 	wait1 $21
 	goto musicefcb4
 	cmdff
-; $efe8d
-; @addr{efe8d}
+
 sound35Channel0:
 musicefe8d:
 	duty $02
@@ -24107,9 +24008,9 @@ musicefe8d:
 	note a3  $48
 	goto musicefe8d
 	cmdff
-; $eff26
+
 sound87Start:
-; @addr{eff26}
+
 sound87Channel2:
 	duty $02
 	env $1 $00
@@ -24117,9 +24018,9 @@ sound87Channel2:
 	cmdf8 $30
 	note fs4 $06
 	cmdff
-; $eff30
+
 sound89Start:
-; @addr{eff30}
+
 sound89Channel2:
 	duty $02
 	env $1 $00
@@ -24134,9 +24035,9 @@ sound89Channel2:
 	vol $d
 	note e6  $05
 	cmdff
-; $eff44
+
 sound8bStart:
-; @addr{eff44}
+
 sound8bChannel2:
 	duty $02
 	vol $a
@@ -24148,9 +24049,9 @@ sound8bChannel2:
 	env $0 $04
 	note cs7 $1e
 	cmdff
-; $eff56
+
 soundcbStart:
-; @addr{eff56}
+
 soundcbChannel2:
 	duty $02
 	vol $c
@@ -24164,26 +24065,25 @@ soundcbChannel2:
 	env $0 $02
 	note ds5 $0c
 	cmdff
-; $eff6b
-; @addr{eff6b}
+
 soundcbChannel7:
 	cmdf0 $b1
 	note $25 $01
 	cmdf0 $41
 	note $14 $0a
 	cmdff
-; $eff74
+
 sound8cStart:
-; @addr{eff74}
+
 sound8cChannel2:
 	duty $02
 	vol $5
 	note d6  $01
 	note d7  $04
 	cmdff
-; $eff7c
+
 sound8eStart:
-; @addr{eff7c}
+
 sound8eChannel2:
 	duty $02
 	vol $c
@@ -24216,9 +24116,9 @@ sound8eChannel2:
 	cmdf8 $de
 	note b3  $0f
 	cmdff
-; $effb1
+
 sound8fStart:
-; @addr{effb1}
+
 sound8fChannel2:
 	duty $02
 	vol $b
@@ -24226,9 +24126,9 @@ sound8fChannel2:
 	cmdf8 $0f
 	note c4  $13
 	cmdff
-; $effbb
+
 sound90Start:
-; @addr{effbb}
+
 sound90Channel2:
 	duty $02
 	vol $b
@@ -24266,8 +24166,6 @@ sound90Channel2:
 	note gs5 $02
 	note as5 $02
 	cmdff
-; $efff6
-; GAP
 	cmdff
 	cmdff
 	cmdff
@@ -24280,15 +24178,23 @@ sound90Channel2:
 	cmdff
 .bank $3c slot 1
 .org 0
+
 sound12Start:
+
 sound13Start:
+
 sound14Start:
+
 sound15Start:
+
 sound18Start:
+
 sound1cStart:
+
 sound1eStart:
+
 sound1fStart:
-; @addr{f0000}
+
 sound12Channel6:
 sound13Channel6:
 sound14Channel6:
@@ -24299,8 +24205,7 @@ sound1cChannel6:
 sound1eChannel6:
 sound1fChannel6:
 	cmdff
-; $f0001
-; @addr{f0001}
+
 sound1eChannel1:
 musicf0001:
 	vibrato $e1
@@ -24493,8 +24398,7 @@ musicf0001:
 	env $0 $00
 	goto musicf0001
 	cmdff
-; $f0156
-; @addr{f0156}
+
 sound1eChannel0:
 musicf0156:
 	vibrato $e1
@@ -24689,8 +24593,7 @@ musicf0156:
 	env $0 $00
 	goto musicf0156
 	cmdff
-; $f02ac
-; @addr{f02ac}
+
 sound1eChannel4:
 musicf02ac:
 	duty $17
@@ -24729,9 +24632,9 @@ musicf02ac:
 	wait1 $c1
 	goto musicf02ac
 	cmdff
-; $f02f4
+
 sound1aStart:
-; @addr{f02f4}
+
 sound1aChannel1:
 musicf02f4:
 	vibrato $e1
@@ -24899,8 +24802,7 @@ musicf02f4:
 	wait1 $24
 	goto musicf02f4
 	cmdff
-; $f0415
-; @addr{f0415}
+
 sound1aChannel0:
 	vibrato $e1
 	env $0 $00
@@ -25067,8 +24969,7 @@ musicf041c:
 	wait1 $57
 	goto musicf041c
 	cmdff
-; $f0535
-; @addr{f0535}
+
 sound1aChannel4:
 	cmdf2
 musicf0536:
@@ -25142,8 +25043,7 @@ musicf0536:
 	wait1 $8a
 	goto musicf0536
 	cmdff
-; $f05c2
-; @addr{f05c2}
+
 sound1aChannel6:
 	cmdf2
 musicf05c3:
@@ -25308,8 +25208,7 @@ musicf05c3:
 	wait1 $c0
 	goto musicf05c3
 	cmdff
-; $f06b7
-; @addr{f06b7}
+
 sound13Channel1:
 	vibrato $f1
 	env $0 $00
@@ -25464,8 +25363,7 @@ musicf06be:
 	duty $02
 	goto musicf06be
 	cmdff
-; $f07c7
-; @addr{f07c7}
+
 sound13Channel0:
 	cmdf2
 	vibrato $f1
@@ -25628,8 +25526,7 @@ musicf07ce:
 	wait1 $48
 	goto musicf07ce
 	cmdff
-; $f08ce
-; @addr{f08ce}
+
 sound13Channel4:
 musicf08ce:
 	duty $0e
@@ -25747,8 +25644,7 @@ musicf08ce:
 	wait1 $48
 	goto musicf08ce
 	cmdff
-; $f09b4
-; @addr{f09b4}
+
 sound14Channel1:
 	vibrato $00
 	env $0 $00
@@ -25902,8 +25798,7 @@ musicf09bb:
 	wait1 $08
 	goto musicf09bb
 	cmdff
-; $f0ad4
-; @addr{f0ad4}
+
 sound14Channel0:
 	vibrato $00
 	env $0 $00
@@ -26067,8 +25962,7 @@ musicf0adb:
 	wait1 $08
 	goto musicf0adb
 	cmdff
-; $f0bff
-; @addr{f0bff}
+
 sound14Channel4:
 	cmdf2
 musicf0c00:
@@ -26141,8 +26035,7 @@ musicf0c00:
 	note c2  $10
 	goto musicf0c00
 	cmdff
-; $f0c8a
-; @addr{f0c8a}
+
 sound12Channel1:
 	vibrato $00
 	env $0 $03
@@ -26222,8 +26115,7 @@ musicf0c91:
 	env $0 $03
 	goto musicf0c91
 	cmdff
-; $f0d1a
-; @addr{f0d1a}
+
 sound12Channel0:
 	vibrato $00
 	env $0 $03
@@ -26259,8 +26151,7 @@ musicf0d21:
 	wait1 $46
 	goto musicf0d21
 	cmdff
-; $f0d5a
-; @addr{f0d5a}
+
 sound12Channel4:
 	cmdf2
 musicf0d5b:
@@ -26304,9 +26195,9 @@ musicf0d5b:
 	wait1 $62
 	goto musicf0d5b
 	cmdff
-; $f0dab
+
 sound19Start:
-; @addr{f0dab}
+
 sound19Channel1:
 	vibrato $f1
 	env $0 $00
@@ -26540,8 +26431,7 @@ musicf0db2:
 	env $0 $00
 	goto musicf0db2
 	cmdff
-; $f0f43
-; @addr{f0f43}
+
 sound19Channel0:
 	vibrato $f1
 	env $0 $00
@@ -26762,8 +26652,7 @@ musicf0f4a:
 	env $0 $00
 	goto musicf0f4a
 	cmdff
-; $f10cb
-; @addr{f10cb}
+
 sound19Channel4:
 	cmdf2
 musicf10cc:
@@ -27020,8 +26909,7 @@ musicf10cc:
 	note cs2 $0a
 	goto musicf10cc
 	cmdff
-; $f12c4
-; @addr{f12c4}
+
 sound19Channel6:
 	cmdf2
 musicf12c5:
@@ -27187,9 +27075,9 @@ musicf12c5:
 	note $2a $0a
 	goto musicf12c5
 	cmdff
-; $f1408
+
 sound17Start:
-; @addr{f1408}
+
 sound17Channel1:
 	vibrato $e1
 	env $0 $00
@@ -27599,8 +27487,7 @@ musicf1423:
 	note fs3 $03
 	goto musicf1423
 	cmdff
-; $f169d
-; @addr{f169d}
+
 sound17Channel0:
 	vol $0
 	note gs3 $1c
@@ -28016,8 +27903,7 @@ musicf16a7:
 	wait1 $2a
 	goto musicf16a7
 	cmdff
-; $f193e
-; @addr{f193e}
+
 sound17Channel4:
 	wait1 $1c
 	cmdf2
@@ -28416,8 +28302,7 @@ musicf1941:
 	wait1 $19
 	goto musicf1941
 	cmdff
-; $f1c55
-; @addr{f1c55}
+
 sound17Channel6:
 	wait1 $1c
 	cmdf2
@@ -28642,8 +28527,7 @@ musicf1c58:
 	note $26 $23
 	goto musicf1c58
 	cmdff
-; $f1dba
-; @addr{f1dba}
+
 sound15Channel1:
 	vibrato $f1
 	env $0 $00
@@ -28977,8 +28861,7 @@ musicf1dc1:
 	wait1 $4e
 	goto musicf1dc1
 	cmdff
-; $f1ff5
-; @addr{f1ff5}
+
 sound15Channel0:
 	vibrato $00
 	env $0 $00
@@ -29165,9 +29048,9 @@ musicf1ffc:
 	wait1 $63
 	goto musicf1ffc
 	cmdff
-; $f212a
+
 sound16Start:
-; @addr{f212a}
+
 sound16Channel1:
 	vibrato $f1
 	env $0 $00
@@ -29582,8 +29465,7 @@ musicf2144:
 	note g4  $09
 	goto musicf2144
 	cmdff
-; $f2437
-; @addr{f2437}
+
 sound16Channel0:
 	vol $0
 	note gs3 $3f
@@ -29822,8 +29704,7 @@ musicf2441:
 	wait1 $3f
 	goto musicf2441
 	cmdff
-; $f25d9
-; @addr{f25d9}
+
 sound16Channel4:
 	wait1 $3f
 	cmdf2
@@ -30185,8 +30066,7 @@ musicf25dc:
 	wait1 $3f
 	goto musicf25dc
 	cmdff
-; $f28a6
-; @addr{f28a6}
+
 sound16Channel6:
 	wait1 $3f
 	cmdf2
@@ -30354,8 +30234,7 @@ musicf28a9:
 	wait1 $1b
 	goto musicf28a9
 	cmdff
-; $f29ee
-; @addr{f29ee}
+
 sound1cChannel1:
 	vibrato $c1
 	env $0 $00
@@ -30543,8 +30422,7 @@ musicf29f5:
 	env $0 $00
 	goto musicf29f5
 	cmdff
-; $f2b39
-; @addr{f2b39}
+
 sound1cChannel0:
 	vibrato $c1
 	env $0 $00
@@ -30946,8 +30824,7 @@ musicf2b40:
 	env $0 $00
 	goto musicf2b40
 	cmdff
-; $f2db8
-; @addr{f2db8}
+
 sound1cChannel4:
 	duty $0e
 musicf2dba:
@@ -31051,9 +30928,9 @@ musicf2dba:
 	wait1 $63
 	goto musicf2dba
 	cmdff
-; $f2e82
+
 sound22Start:
-; @addr{f2e82}
+
 sound22Channel1:
 	vibrato $00
 	env $0 $04
@@ -31317,8 +31194,7 @@ musicf2e89:
 	note e4  $0e
 	goto musicf2e89
 	cmdff
-; $f3045
-; @addr{f3045}
+
 sound22Channel0:
 	vibrato $00
 	env $0 $03
@@ -31509,8 +31385,7 @@ musicf304c:
 	note as3 $0e
 	goto musicf304c
 	cmdff
-; $f3193
-; @addr{f3193}
+
 sound22Channel4:
 	cmdf2
 musicf3194:
@@ -31736,8 +31611,7 @@ musicf3194:
 	note fs2 $07
 	goto musicf3194
 	cmdff
-; $f3350
-; @addr{f3350}
+
 sound22Channel6:
 	cmdf2
 musicf3351:
@@ -31835,8 +31709,7 @@ musicf3351:
 	note $26 $1c
 	goto musicf3351
 	cmdff
-; $f340c
-; @addr{f340c}
+
 sound18Channel1:
 	vibrato $f1
 	env $0 $00
@@ -32049,8 +31922,7 @@ musicf3418:
 	note cs4 $0e
 	goto musicf3418
 	cmdff
-; $f358e
-; @addr{f358e}
+
 sound18Channel0:
 	vol $0
 	note gs3 $1c
@@ -32307,8 +32179,7 @@ musicf3598:
 	wait1 $0b
 	goto musicf3598
 	cmdff
-; $f3750
-; @addr{f3750}
+
 sound18Channel4:
 	wait1 $1c
 	cmdf2
@@ -32564,8 +32435,7 @@ musicf3753:
 	note e2  $1c
 	goto musicf3753
 	cmdff
-; $f3949
-; @addr{f3949}
+
 sound1fChannel1:
 	vibrato $e1
 	env $0 $00
@@ -32722,8 +32592,7 @@ musicf3950:
 	env $0 $00
 	goto musicf3950
 	cmdff
-; $f3a50
-; @addr{f3a50}
+
 sound1fChannel0:
 	vibrato $e1
 	env $0 $00
@@ -32819,8 +32688,7 @@ musicf3a57:
 	note ds4 $24
 	goto musicf3a57
 	cmdff
-; $f3afb
-; @addr{f3afb}
+
 sound1fChannel4:
 	cmdf2
 	duty $08
@@ -32890,9 +32758,9 @@ musicf3afe:
 	wait1 $83
 	goto musicf3afe
 	cmdff
-; $f3b7f
+
 sound40Start:
-; @addr{f3b7f}
+
 sound40Channel1:
 	vol $0
 	note gs3 $10
@@ -33013,8 +32881,7 @@ sound40Channel1:
 	vol $2
 	note a5  $16
 	cmdff
-; $f3c53
-; @addr{f3c53}
+
 sound40Channel0:
 	vol $0
 	note gs3 $10
@@ -33121,8 +32988,7 @@ sound40Channel0:
 	vol $2
 	note c5  $16
 	cmdff
-; $f3d0b
-; @addr{f3d0b}
+
 sound40Channel4:
 	wait1 $10
 	duty $0e
@@ -33222,8 +33088,7 @@ sound40Channel4:
 	duty $0f
 	note a3  $16
 	cmdff
-; $f3dc9
-; @addr{f3dc9}
+
 sound40Channel6:
 	vol $5
 	note $26 $05
@@ -33524,9 +33389,9 @@ sound40Channel6:
 	vol $4
 	note $26 $1b
 	cmdff
-; $f3f8f
+
 soundc7Start:
-; @addr{f3f8f}
+
 soundc7Channel2:
 	duty $00
 	vol $d
@@ -33538,9 +33403,9 @@ soundc7Channel2:
 	note f2  $0f
 	cmdf8 $00
 	cmdff
-; $f3fa0
+
 sound96Start:
-; @addr{f3fa0}
+
 sound96Channel2:
 	duty $02
 	vol $1
@@ -33569,9 +33434,9 @@ sound96Channel2:
 	env $0 $07
 	note e6  $08
 	cmdff
-; $f3fc9
+
 sound9aStart:
-; @addr{f3fc9}
+
 sound9aChannel2:
 	vol $9
 	note f7  $08
@@ -33583,9 +33448,9 @@ sound9aChannel2:
 	note g7  $08
 	note gs7 $08
 	cmdff
-; $f3fdb
+
 sound9bStart:
-; @addr{f3fdb}
+
 sound9bChannel2:
 	vol $8
 	env $0 $02
@@ -33594,9 +33459,9 @@ sound9bChannel2:
 	note d6  $0a
 	note a6  $0f
 	cmdff
-; $f3fe7
+
 sounda6Start:
-; @addr{f3fe7}
+
 sounda6Channel7:
 	cmdf0 $80
 	note $54 $01
@@ -33609,22 +33474,27 @@ sounda6Channel7:
 	cmdf0 $60
 	note $47 $02
 	cmdff
-; $f3ffc
-; GAP
 	cmdff
 	cmdff
 	cmdff
 	cmdff
 .bank $3d slot 1
 .org 0
+
 sound1bStart:
+
 sound24Start:
+
 sound26Start:
+
 sound27Start:
+
 sound31Start:
+
 sound38Start:
+
 sound46Start:
-; @addr{f4000}
+
 sound1bChannel6:
 sound24Channel6:
 sound26Channel6:
@@ -33634,9 +33504,9 @@ sound31Channel6:
 sound38Channel6:
 sound46Channel6:
 	cmdff
-; $f4001
+
 sound20Start:
-; @addr{f4001}
+
 sound20Channel1:
 	vibrato $00
 	env $0 $00
@@ -34038,8 +33908,7 @@ musicf4007:
 	wait1 $18
 	goto musicf4007
 	cmdff
-; $f4292
-; @addr{f4292}
+
 sound20Channel0:
 	vibrato $00
 	env $0 $00
@@ -34422,8 +34291,7 @@ musicf4298:
 	wait1 $84
 	goto musicf4298
 	cmdff
-; $f4503
-; @addr{f4503}
+
 sound20Channel4:
 musicf4503:
 	duty $0e
@@ -34560,8 +34428,7 @@ musicf4503:
 	note d2  $20
 	goto musicf4503
 	cmdff
-; $f460f
-; @addr{f460f}
+
 sound20Channel6:
 musicf460f:
 	vol $5
@@ -34828,9 +34695,9 @@ musicf460f:
 	note $26 $04
 	goto musicf460f
 	cmdff
-; $f47de
+
 sound21Start:
-; @addr{f47de}
+
 sound21Channel1:
 	vibrato $e1
 	env $0 $00
@@ -35070,8 +34937,7 @@ musicf47e4:
 	note b5  $07
 	goto musicf47e4
 	cmdff
-; $f4976
-; @addr{f4976}
+
 sound21Channel0:
 	vibrato $e1
 	env $0 $00
@@ -35401,8 +35267,7 @@ musicf497c:
 	note g5  $07
 	goto musicf497c
 	cmdff
-; $f4b82
-; @addr{f4b82}
+
 sound21Channel4:
 musicf4b82:
 	duty $0e
@@ -35563,8 +35428,7 @@ musicf4b82:
 	note g1  $07
 	goto musicf4b82
 	cmdff
-; $f4cbe
-; @addr{f4cbe}
+
 sound21Channel6:
 musicf4cbe:
 	vol $2
@@ -35858,21 +35722,18 @@ musicf4cbe:
 	note $26 $07
 	goto musicf4cbe
 	cmdff
-; $f4e97
-; @addr{f4e97}
+
 sound24Channel1:
 	cmdff
-; $f4e98
-; @addr{f4e98}
+
 sound24Channel0:
 	cmdff
-; $f4e99
-; @addr{f4e99}
+
 sound24Channel4:
 	cmdff
-; $f4e9a
+
 sound23Start:
-; @addr{f4e9a}
+
 sound23Channel1:
 	vibrato $e1
 	env $0 $00
@@ -36158,8 +36019,7 @@ musicf4ea0:
 	note as5 $08
 	goto musicf4ea0
 	cmdff
-; $f5095
-; @addr{f5095}
+
 sound23Channel0:
 	vibrato $e1
 	env $0 $00
@@ -36442,8 +36302,7 @@ musicf509b:
 	note e5  $04
 	goto musicf509b
 	cmdff
-; $f5283
-; @addr{f5283}
+
 sound23Channel4:
 musicf5283:
 	duty $0e
@@ -36638,8 +36497,7 @@ musicf5283:
 	note as2 $60
 	goto musicf5283
 	cmdff
-; $f5403
-; @addr{f5403}
+
 sound23Channel6:
 musicf5403:
 	wait1 $ff
@@ -36810,8 +36668,7 @@ musicf5403:
 	note $2a $08
 	goto musicf5403
 	cmdff
-; $f54fb
-; @addr{f54fb}
+
 sound1bChannel1:
 musicf54fb:
 	vibrato $00
@@ -37047,8 +36904,7 @@ musicf54fb:
 	note ds6 $0f
 	goto musicf54fb
 	cmdff
-; $f56b1
-; @addr{f56b1}
+
 sound1bChannel0:
 musicf56b1:
 	vibrato $00
@@ -37290,8 +37146,7 @@ musicf56b1:
 	note ds6 $04
 	goto musicf56b1
 	cmdff
-; $f586a
-; @addr{f586a}
+
 sound1bChannel4:
 musicf586a:
 	duty $0e
@@ -37466,8 +37321,7 @@ musicf586a:
 	wait1 $08
 	goto musicf586a
 	cmdff
-; $f59c2
-; @addr{f59c2}
+
 sound26Channel1:
 	vibrato $00
 	env $0 $00
@@ -37713,8 +37567,7 @@ musicf59c8:
 	duty $01
 	goto musicf59c8
 	cmdff
-; $f5b55
-; @addr{f5b55}
+
 sound26Channel0:
 	vibrato $00
 	env $0 $00
@@ -37904,8 +37757,7 @@ musicf5b5b:
 	duty $01
 	goto musicf5b5b
 	cmdff
-; $f5c94
-; @addr{f5c94}
+
 sound26Channel4:
 musicf5c94:
 	duty $0e
@@ -38070,8 +37922,7 @@ musicf5c94:
 	wait1 $07
 	goto musicf5c94
 	cmdff
-; $f5dd8
-; @addr{f5dd8}
+
 sound27Channel1:
 	vibrato $e1
 	env $0 $00
@@ -38325,8 +38176,7 @@ musicf5dde:
 	note ds4 $0e
 	goto musicf5dde
 	cmdff
-; $f5f97
-; @addr{f5f97}
+
 sound27Channel0:
 	vibrato $e1
 	env $0 $00
@@ -38478,8 +38328,7 @@ musicf5f9d:
 	wait1 $38
 	goto musicf5f9d
 	cmdff
-; $f609e
-; @addr{f609e}
+
 sound27Channel4:
 musicf609e:
 	duty $0e
@@ -38600,9 +38449,9 @@ musicf609e:
 	note b2  $54
 	goto musicf609e
 	cmdff
-; $f618a
+
 sound1dStart:
-; @addr{f618a}
+
 sound1dChannel1:
 	vibrato $e1
 	env $0 $00
@@ -38855,8 +38704,7 @@ musicf61c7:
 	wait1 $85
 	goto musicf61c7
 	cmdff
-; $f634b
-; @addr{f634b}
+
 sound1dChannel0:
 	vol $0
 	note gs3 $09
@@ -39056,8 +38904,7 @@ musicf6377:
 	note g3  $0e
 	goto musicf6377
 	cmdff
-; $f64b1
-; @addr{f64b1}
+
 sound1dChannel4:
 	duty $0e
 	note b1  $70
@@ -39307,8 +39154,7 @@ musicf64b5:
 	wait1 $64
 	goto musicf64b5
 	cmdff
-; $f669f
-; @addr{f669f}
+
 sound1dChannel6:
 	wait1 $70
 musicf66a1:
@@ -39567,8 +39413,7 @@ musicf66a1:
 	note $26 $05
 	goto musicf66a1
 	cmdff
-; $f6855
-; @addr{f6855}
+
 sound46Channel1:
 	vibrato $00
 	env $0 $00
@@ -39760,8 +39605,7 @@ musicf685b:
 	wait1 $58
 	goto musicf685b
 	cmdff
-; $f6993
-; @addr{f6993}
+
 sound46Channel0:
 	vibrato $00
 	env $0 $00
@@ -39821,8 +39665,7 @@ musicf6999:
 	wait1 $48
 	goto musicf6999
 	cmdff
-; $f69f9
-; @addr{f69f9}
+
 sound46Channel4:
 musicf69f9:
 	duty $0e
@@ -39858,8 +39701,7 @@ musicf69f9:
 	wait1 $84
 	goto musicf69f9
 	cmdff
-; $f6a3b
-; @addr{f6a3b}
+
 sound38Channel1:
 musicf6a3b:
 	vibrato $f1
@@ -40124,8 +39966,7 @@ musicf6a3b:
 	wait1 $45
 	goto musicf6a3b
 	cmdff
-; $f6c10
-; @addr{f6c10}
+
 sound38Channel0:
 musicf6c10:
 	vibrato $00
@@ -40227,8 +40068,7 @@ musicf6c10:
 	note gs3 $16
 	goto musicf6c10
 	cmdff
-; $f6cd3
-; @addr{f6cd3}
+
 sound38Channel4:
 musicf6cd3:
 	duty $0f
@@ -40333,9 +40173,9 @@ musicf6cd3:
 	wait1 $16
 	goto musicf6cd3
 	cmdff
-; $f6d9f
+
 sound2bStart:
-; @addr{f6d9f}
+
 sound2bChannel1:
 	vibrato $e1
 	env $0 $00
@@ -40566,8 +40406,7 @@ musicf6dfa:
 	env $0 $00
 	goto musicf6dfa
 	cmdff
-; $f6f21
-; @addr{f6f21}
+
 sound2bChannel0:
 	vibrato $e1
 	env $0 $00
@@ -40703,8 +40542,7 @@ musicf6f7c:
 	wait1 $d9
 	goto musicf6f7c
 	cmdff
-; $f700f
-; @addr{f700f}
+
 sound2bChannel4:
 	wait1 $ee
 	duty $0e
@@ -40845,8 +40683,7 @@ musicf701b:
 	note g3  $0a
 	goto musicf701b
 	cmdff
-; $f7123
-; @addr{f7123}
+
 sound2bChannel6:
 	wait1 $fc
 musicf7125:
@@ -40907,9 +40744,9 @@ musicf7125:
 	wait1 $70
 	goto musicf7125
 	cmdff
-; $f718f
+
 sound3fStart:
-; @addr{f718f}
+
 sound3fChannel1:
 	vibrato $e1
 	env $0 $00
@@ -41815,8 +41652,7 @@ musicf731c:
 	note b4  $05
 	goto musicf731c
 	cmdff
-; $f770f
-; @addr{f770f}
+
 sound3fChannel0:
 	vol $0
 	note gs3 $62
@@ -42170,8 +42006,7 @@ musicf78ef:
 	wait1 $78
 	goto musicf78ef
 	cmdff
-; $f7960
-; @addr{f7960}
+
 sound3fChannel4:
 	cmdf2
 	duty $0e
@@ -42584,8 +42419,7 @@ musicf7c09:
 	wait1 $78
 	goto musicf7c09
 	cmdff
-; $f7c93
-; @addr{f7c93}
+
 sound3fChannel6:
 	cmdf2
 	vol $2
@@ -42793,8 +42627,7 @@ sound3fChannel6:
 	vol $2
 	note $2e $1c
 	cmdff
-; $f7dd7
-; @addr{f7dd7}
+
 sound31Channel1:
 	vibrato $00
 	env $0 $02
@@ -42932,8 +42765,7 @@ musicf7df7:
 	duty $00
 	goto musicf7df7
 	cmdff
-; $f7ed1
-; @addr{f7ed1}
+
 sound31Channel0:
 	vibrato $00
 	env $0 $02
@@ -43039,9 +42871,9 @@ musicf7ee1:
 	wait1 $4e
 	goto musicf7ee1
 	cmdff
-; $f7f9a
+
 sound93Start:
-; @addr{f7f9a}
+
 sound93Channel2:
 	duty $02
 	vol $b
@@ -43071,17 +42903,17 @@ sound93Channel2:
 	vol $b
 	note d5  $01
 	cmdff
-; $f7fc4
+
 sound94Start:
-; @addr{f7fc4}
+
 sound94Channel2:
 	vol $e
 	cmdf8 $10
 	note f2  $11
 	cmdff
-; $f7fca
+
 sounda2Start:
-; @addr{f7fca}
+
 sounda2Channel2:
 	duty $02
 	vol $9
@@ -43101,9 +42933,9 @@ sounda2Channel2:
 	vol $3
 	note fs6 $06
 	cmdff
-; $f7fe5
+
 sounda3Start:
-; @addr{f7fe5}
+
 sounda3Channel7:
 	cmdf0 $90
 	note $14 $01
@@ -43112,9 +42944,9 @@ sounda3Channel7:
 	cmdf0 $22
 	note $14 $02
 	cmdff
-; $f7ff2
+
 sounda7Start:
-; @addr{f7ff2}
+
 sounda7Channel2:
 	vol $d
 	note c7  $01
@@ -43123,28 +42955,39 @@ sounda7Channel2:
 	vol $3
 	note c7  $01
 	cmdff
-; $f7ffc
-; GAP
 	cmdff
 	cmdff
 	cmdff
 	cmdff
 .bank $3e slot 1
 .org 0
+
 sound25Start:
+
 sound28Start:
+
 sound2fStart:
+
 sound30Start:
+
 sound37Start:
+
 sound39Start:
+
 sound3aStart:
+
 sound3bStart:
+
 sound3cStart:
+
 sound47Start:
+
 sound48Start:
+
 sound49Start:
+
 sound4bStart:
-; @addr{f8000}
+
 sound25Channel6:
 sound28Channel6:
 sound2fChannel0:
@@ -43177,9 +43020,9 @@ sound4bChannel1:
 sound4bChannel4:
 sound4bChannel6:
 	cmdff
-; $f8001
+
 soundcaStart:
-; @addr{f8001}
+
 soundcaChannel2:
 	duty $02
 	vol $f
@@ -43194,17 +43037,16 @@ soundcaChannel2:
 	note as2 $0c
 	cmdf8 $f6
 	cmdff
-; $f8017
-; @addr{f8017}
+
 soundcaChannel7:
 	cmdf0 $f1
 	note $54 $02
 	cmdf0 $51
 	note $25 $0a
 	cmdff
-; $f8020
+
 soundc4Start:
-; @addr{f8020}
+
 soundc4Channel5:
 	duty $0b
 	note c3  $02
@@ -43215,9 +43057,9 @@ soundc4Channel5:
 	cmdf8 $1e
 	note c3  $08
 	cmdff
-; $f8031
+
 soundccStart:
-; @addr{f8031}
+
 soundccChannel2:
 	duty $00
 	vol $c
@@ -43270,9 +43112,9 @@ soundccChannel2:
 	note g7  $01
 	note gs7 $01
 	cmdff
-; $f8095
+
 soundcdStart:
-; @addr{f8095}
+
 soundcdChannel2:
 	duty $01
 	vol $0
@@ -43287,8 +43129,7 @@ soundcdChannel2:
 	env $0 $01
 	note c6  $08
 	cmdff
-; $f80a9
-; @addr{f80a9}
+
 soundcdChannel3:
 	duty $00
 	vol $0
@@ -43299,8 +43140,7 @@ soundcdChannel3:
 	env $0 $01
 	note g5  $08
 	cmdff
-; $f80b7
-; @addr{f80b7}
+
 soundcdChannel7:
 	cmdf0 $a1
 	note $07 $01
@@ -43313,16 +43153,23 @@ soundcdChannel7:
 	cmdf0 $61
 	note $17 $02
 	cmdff
-; $f80cc
+
 soundd6Start:
+
 soundd7Start:
+
 soundd8Start:
+
 soundd9Start:
+
 sounddaStart:
+
 sounddbStart:
+
 sounddcStart:
+
 soundddStart:
-; @addr{f80cc}
+
 soundd6Channel1:
 soundd7Channel1:
 soundd8Channel1:
@@ -43332,8 +43179,7 @@ sounddbChannel1:
 sounddcChannel1:
 soundddChannel1:
 	cmdff
-; $f80cd
-; @addr{f80cd}
+
 soundd6Channel0:
 soundd7Channel0:
 soundd8Channel0:
@@ -43343,8 +43189,7 @@ sounddbChannel0:
 sounddcChannel0:
 soundddChannel0:
 	cmdff
-; $f80ce
-; @addr{f80ce}
+
 soundd6Channel4:
 soundd7Channel4:
 soundd8Channel4:
@@ -43354,8 +43199,7 @@ sounddbChannel4:
 sounddcChannel4:
 soundddChannel4:
 	cmdff
-; $f80cf
-; @addr{f80cf}
+
 soundd6Channel6:
 soundd7Channel6:
 soundd8Channel6:
@@ -43365,8 +43209,7 @@ sounddbChannel6:
 sounddcChannel6:
 soundddChannel6:
 	cmdff
-; $f80d0
-; @addr{f80d0}
+
 sound39Channel1:
 	vibrato $00
 	env $0 $00
@@ -43488,8 +43331,7 @@ musicf80d7:
 	note e3  $48
 	goto musicf80d7
 	cmdff
-; $f819b
-; @addr{f819b}
+
 sound39Channel0:
 	cmdf2
 	env $0 $02
@@ -43581,8 +43423,7 @@ musicf819f:
 	note as2 $48
 	goto musicf819f
 	cmdff
-; $f824b
-; @addr{f824b}
+
 sound39Channel4:
 	cmdf2
 musicf824c:
@@ -43648,28 +43489,22 @@ musicf824c:
 	wait1 $84
 	goto musicf824c
 	cmdff
-; $f82c8
-; @addr{f82c8}
+
 sound37Channel1:
 	cmdff
-; $f82c9
-; @addr{f82c9}
+
 sound37Channel0:
 	cmdff
-; $f82ca
-; @addr{f82ca}
+
 sound37Channel6:
 	cmdff
-; $f82cb
-; @addr{f82cb}
+
 sound30Channel1:
 	cmdff
-; $f82cc
-; @addr{f82cc}
+
 sound30Channel0:
 	cmdff
-; $f82cd
-; @addr{f82cd}
+
 sound2fChannel1:
 	vibrato $00
 	env $0 $00
@@ -43726,12 +43561,10 @@ musicf82d4:
 	wait1 $f8
 	goto musicf82d4
 	cmdff
-; $f8321
-; GAP
 	cmdff
 	cmdff
 	cmdff
-; @addr{f8324}
+
 sound3cChannel1:
 musicf8324:
 	vibrato $00
@@ -43810,8 +43643,7 @@ musicf8324:
 	wait1 $05
 	goto musicf8324
 	cmdff
-; $f83b5
-; @addr{f83b5}
+
 sound3cChannel0:
 musicf83b5:
 	vibrato $00
@@ -43911,8 +43743,7 @@ musicf83b5:
 	wait1 $73
 	goto musicf83b5
 	cmdff
-; $f8455
-; @addr{f8455}
+
 sound3cChannel4:
 	cmdf2
 musicf8456:
@@ -43965,9 +43796,9 @@ musicf8456:
 	wait1 $82
 	goto musicf8456
 	cmdff
-; $f84b8
+
 sound3dStart:
-; @addr{f84b8}
+
 sound3dChannel1:
 	vol $0
 	note gs3 $c0
@@ -44080,8 +43911,7 @@ musicf84c2:
 	wait1 $70
 	goto musicf84c2
 	cmdff
-; $f8576
-; @addr{f8576}
+
 sound3dChannel0:
 	vol $0
 	note gs3 $10
@@ -44337,8 +44167,7 @@ musicf85ca:
 	note b3  $08
 	goto musicf85ca
 	cmdff
-; $f8716
-; @addr{f8716}
+
 sound3dChannel4:
 	cmdf2
 	duty $17
@@ -44428,8 +44257,7 @@ musicf8741:
 	note g3  $20
 	goto musicf8741
 	cmdff
-; $f87c3
-; @addr{f87c3}
+
 sound3dChannel6:
 	wait1 $10
 	cmdf2
@@ -44527,9 +44355,9 @@ musicf87e8:
 	wait1 $07
 	goto musicf87e8
 	cmdff
-; $f887e
+
 sound3eStart:
-; @addr{f887e}
+
 sound3eChannel1:
 	vibrato $00
 	env $0 $00
@@ -45113,8 +44941,7 @@ musicf8885:
 	wait1 $85
 	goto musicf8885
 	cmdff
-; $f8c4a
-; @addr{f8c4a}
+
 sound3eChannel0:
 	vibrato $00
 	env $0 $00
@@ -45575,8 +45402,7 @@ musicf8c51:
 	wait1 $08
 	goto musicf8c51
 	cmdff
-; $f8fdc
-; @addr{f8fdc}
+
 sound3eChannel4:
 	cmdf2
 musicf8fdd:
@@ -45753,8 +45579,7 @@ musicf8fdd:
 	wait1 $89
 	goto musicf8fdd
 	cmdff
-; $f9137
-; @addr{f9137}
+
 sound3eChannel6:
 	cmdf2
 musicf9138:
@@ -45876,14 +45701,13 @@ musicf9138:
 	note $24 $10
 	goto musicf9138
 	cmdff
-; $f9223
-; GAP
 	cmdff
 	cmdff
 	cmdff
 	cmdff
+
 sound2aStart:
-; @addr{f9227}
+
 sound2aChannel1:
 	vibrato $e1
 	env $0 $00
@@ -46475,8 +46299,7 @@ musicf92ff:
 	env $0 $00
 	goto musicf92ff
 	cmdff
-; $f9623
-; @addr{f9623}
+
 sound2aChannel0:
 	vol $0
 	note gs3 $5a
@@ -47085,8 +46908,7 @@ musicf96e3:
 	env $0 $00
 	goto musicf96e3
 	cmdff
-; $f9a79
-; @addr{f9a79}
+
 sound2aChannel4:
 	wait1 $09
 	duty $0f
@@ -47868,8 +47690,7 @@ musicf9b43:
 	wait1 $15
 	goto musicf9b43
 	cmdff
-; $fa08f
-; @addr{fa08f}
+
 sound2aChannel6:
 	wait1 $ff
 	wait1 $ff
@@ -48424,9 +48245,9 @@ musicfa0d2:
 	note $26 $1c
 	goto musicfa0d2
 	cmdff
-; $fa409
+
 sound2eStart:
-; @addr{fa409}
+
 sound2eChannel1:
 	vibrato $00
 	env $0 $00
@@ -48593,8 +48414,7 @@ musicfa410:
 	wait1 $60
 	goto musicfa410
 	cmdff
-; $fa526
-; @addr{fa526}
+
 sound2eChannel0:
 	vibrato $00
 	env $0 $00
@@ -48744,8 +48564,7 @@ musicfa52d:
 	wait1 $60
 	goto musicfa52d
 	cmdff
-; $fa632
-; @addr{fa632}
+
 sound2eChannel4:
 	cmdf2
 musicfa633:
@@ -49490,8 +49309,7 @@ musicfa633:
 	wait1 $60
 	goto musicfa633
 	cmdff
-; $fabfd
-; @addr{fabfd}
+
 sound2eChannel6:
 	cmdf2
 musicfabfe:
@@ -50163,20 +49981,15 @@ musicfabfe:
 	note $2a $06
 	goto musicfabfe
 	cmdff
-; $fafec
-; @addr{fafec}
+
 sound3aChannel1:
 	cmdff
-; $fafed
-; @addr{fafed}
+
 sound3aChannel0:
 	cmdff
-; $fafee
-; @addr{fafee}
+
 sound3aChannel4:
 	cmdff
-; $fafef
-; GAP
 	cmdff
 	cmdff
 	cmdff
@@ -50184,7 +49997,7 @@ sound3aChannel4:
 	cmdff
 	cmdff
 	cmdff
-; @addr{faff6}
+
 sound28Channel1:
 	vibrato $00
 	env $0 $00
@@ -50343,8 +50156,7 @@ musicfaffc:
 	wait1 $24
 	goto musicfaffc
 	cmdff
-; $fb105
-; @addr{fb105}
+
 sound28Channel0:
 	vibrato $00
 	env $0 $00
@@ -50428,8 +50240,7 @@ musicfb10b:
 	duty $01
 	goto musicfb10b
 	cmdff
-; $fb193
-; @addr{fb193}
+
 sound28Channel4:
 musicfb193:
 	duty $0e
@@ -50503,9 +50314,9 @@ musicfb193:
 	duty $0e
 	goto musicfb193
 	cmdff
-; $fb221
+
 sound29Start:
-; @addr{fb221}
+
 sound29Channel1:
 	vibrato $e1
 	env $0 $00
@@ -50940,8 +50751,7 @@ musicfb27e:
 	wait1 $06
 	goto musicfb27e
 	cmdff
-; $fb51d
-; @addr{fb51d}
+
 sound29Channel0:
 	vibrato $00
 	env $0 $00
@@ -51307,8 +51117,7 @@ musicfb564:
 	wait1 $06
 	goto musicfb564
 	cmdff
-; $fb7b3
-; @addr{fb7b3}
+
 sound29Channel4:
 	duty $0e
 	wait1 $ff
@@ -51611,8 +51420,7 @@ musicfb7bb:
 	note fs2 $06
 	goto musicfb7bb
 	cmdff
-; $fba0b
-; @addr{fba0b}
+
 sound29Channel6:
 	vol $6
 	note $26 $38
@@ -52172,8 +51980,7 @@ musicfba80:
 	note $26 $0b
 	goto musicfba80
 	cmdff
-; $fbd7a
-; @addr{fbd7a}
+
 sound25Channel1:
 	vibrato $00
 	env $0 $04
@@ -52308,8 +52115,7 @@ musicfbd80:
 	env $0 $04
 	goto musicfbd80
 	cmdff
-; $fbe7a
-; @addr{fbe7a}
+
 sound25Channel0:
 	vibrato $00
 	env $0 $00
@@ -52388,8 +52194,7 @@ musicfbe80:
 	env $0 $00
 	goto musicfbe80
 	cmdff
-; $fbf0a
-; @addr{fbf0a}
+
 sound25Channel4:
 musicfbf0a:
 	duty $0e
@@ -52510,4 +52315,3 @@ musicfbf0a:
 	note b2  $0f
 	goto musicfbf0a
 	cmdff
-; $fbff6
