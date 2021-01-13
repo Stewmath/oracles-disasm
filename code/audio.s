@@ -1962,7 +1962,9 @@ _playSound:
 	add hl,de
 	ld a,(hl)
 	and $80
-	jr z,+
+
+	; RANDO: Changed this to a conditional jump so that any bank number can be used for audio.
+	jr +
 
 	; What were the programmers on? Clearly this part of the code is unused
 	call _noiseFrequencyTable
@@ -2240,8 +2242,10 @@ _waveformTable:
 	.dw @waveform2c
 	.dw @waveform2d
 
+; RANDO: In order to free up some space in bank $39, unused waveforms are commented out.
+
 @waveformUnused0:
-	.db $00 $00 $00 $00 $66 $77 $88 $88 $88 $88 $88 $88 $88 $77 $66 $55
+	;.db $00 $00 $00 $00 $66 $77 $88 $88 $88 $88 $88 $88 $88 $77 $66 $55
 
 @waveform04:
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $88 $99 $aa $aa $aa $aa $99 $88
@@ -2271,7 +2275,7 @@ _waveformTable:
 	.db $00 $01 $23 $45 $67 $89 $ab $cd $cb $a9 $87 $65 $43 $21 $00 $00
 
 @waveformUnused1:
-	.db $00 $00 $00 $00 $88 $88 $88 $88 $88 $88 $88 $88 $88 $88 $88 $88
+	;.db $00 $00 $00 $00 $88 $88 $88 $88 $88 $88 $88 $88 $88 $88 $88 $88
 
 @waveform0a:
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $cc $cc $cc $cc $cc $cc $cc $cc
@@ -2283,13 +2287,13 @@ _waveformTable:
 	.db $00 $00 $00 $00 $77 $77 $77 $77 $77 $77 $77 $77 $ff $ff $ff $ff
 
 @waveformUnused2:
-	.db $ff $ee $cc $bb $99 $88 $66 $55 $cc $aa $99 $77 $66 $44 $22 $00
+	;.db $ff $ee $cc $bb $99 $88 $66 $55 $cc $aa $99 $77 $66 $44 $22 $00
 
 @waveform23:
 	.db $77 $77 $66 $66 $55 $55 $44 $44 $cc $bb $ba $aa $a9 $99 $88 $88
 
 @waveformUnused3:
-	.db $88 $aa $cc $ee $ff $ee $dd $cc $bb $aa $99 $88 $66 $44 $22 $00
+	;.db $88 $aa $cc $ee $ff $ee $dd $cc $bb $aa $99 $88 $66 $44 $22 $00
 
 @waveform22:
 	.db $6c $6c $6c $6c $6b $6a $69 $68 $77 $66 $55 $44 $33 $22 $11 $00
@@ -2301,13 +2305,13 @@ _waveformTable:
 	.db $80 $ae $db $f6 $ff $f6 $db $ae $80 $4f $25 $0a $00 $0a $25 $4f
 
 @waveformUnused4:
-	.db $ff $f6 $db $ae $80 $4f $25 $0a $00 $0a $25 $4f $80 $ae $db $f6
+	;.db $ff $f6 $db $ae $80 $4f $25 $0a $00 $0a $25 $4f $80 $ae $db $f6
 
 @waveform25:
 	.db $c0 $d2 $db $d2 $c0 $a3 $80 $5c $40 $2d $25 $2d $40 $5c $80 $a3
 
 @waveformUnused5:
-	.db $c0 $db $c0 $80 $40 $25 $40 $80 $c0 $db $c0 $80 $40 $25 $40 $80
+	;.db $c0 $db $c0 $80 $40 $25 $40 $80 $c0 $db $c0 $80 $40 $25 $40 $80
 
 @waveform1a:
 	.db $80 $db $ff $db $80 $25 $00 $25 $80 $db $ff $db $80 $25 $00 $25
@@ -2316,7 +2320,7 @@ _waveformTable:
 	.db $40 $6e $80 $6e $40 $13 $00 $13 $40 $6e $80 $6e $40 $13 $00 $13
 
 @waveformUnused6:
-	.db $20 $37 $40 $37 $20 $0a $00 $0a $20 $37 $40 $37 $20 $0a $00 $0a
+	;.db $20 $37 $40 $37 $20 $0a $00 $0a $20 $37 $40 $37 $20 $0a $00 $0a
 
 @waveform27:
 	.db $00 $00 $00 $00 $99 $bb $dd $ee $ff $ff $ee $dd $bb $99 $00 $00
@@ -2346,7 +2350,7 @@ _waveformTable:
 	.db $00 $00 $00 $09 $99 $99 $99 $99 $99 $99 $99 $99 $99 $99 $99 $99
 
 @waveformUnused7:
-	.db $01 $23 $45 $67 $89 $ab $cd $ef $fe $dc $ba $98 $76 $54 $32 $10
+	;.db $01 $23 $45 $67 $89 $ab $cd $ef $fe $dc $ba $98 $76 $54 $32 $10
 
 @waveform0c:
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $11 $11 $11 $11 $11 $11 $11 $11

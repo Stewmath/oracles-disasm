@@ -54,22 +54,15 @@ sound05:
 	.dw sound05Channel6
 	.db $ff
 
-soundd6:
-soundd7:
-soundd8:
-soundd9:
-soundda:
-sounddb:
-sounddc:
 sounddd:
 	.db $00
-	.dw soundd6Channel0
+	.dw soundddChannel0
 	.db $01
-	.dw soundd6Channel1
+	.dw soundddChannel1
 	.db $04
-	.dw soundd6Channel4
+	.dw soundddChannel4
 	.db $06
-	.dw soundd6Channel6
+	.dw soundddChannel6
 	.db $ff
 
 sound07:
@@ -1613,10 +1606,48 @@ soundd4:
 	.dw soundd4Channel7
 	.db $ff
 
+
+; RANDO: Sounds d5-dc are custom compass chimes
 soundd5:
 	.db $02
 	.dw soundd5Channel2
 	.db $ff
+
+soundd6:
+	.db $02
+	.dw soundd6Channel2
+	.db $ff
+
+soundd7:
+	.db $02
+	.dw soundd7Channel2
+	.db $ff
+
+soundd8:
+	.db $02
+	.dw soundd8Channel2
+	.db $ff
+
+soundd9:
+	.db $02
+	.dw soundd9Channel2
+	.db $ff
+
+soundda:
+	.db $02
+	.dw sounddaChannel2
+	.db $ff
+
+sounddb:
+	.db $02
+	.dw sounddbChannel2
+	.db $ff
+
+sounddc:
+	.db $02
+	.dw sounddcChannel2
+	.db $ff
+
 
 sound92:
 	.db $02

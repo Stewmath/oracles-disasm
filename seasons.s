@@ -536,3 +536,4 @@ oamData_15_4e0c:
 ; Randomizer stuff that sets the section on its own
 .include "code/rando/warningObject.s"
 .include "data/rando/fileSelectGfx.s"
+.include "data/rando/compassChimes.s"

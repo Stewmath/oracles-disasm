@@ -12,4 +12,4 @@ randovar_initialSeedType:
 ; Boolean options will be written here and can be accessed with the "checkRandoConfig" function. See
 ; "constants/rando.s" for values.
 randoConfig:
-	.db %00000000
+	.db %00000001

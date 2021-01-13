@@ -10849,11 +10849,6 @@ soundd4Channel2:
 soundd4Channel7:
 	cmdff
 
-soundd5Start:
-
-soundd5Channel2:
-	cmdff
-
 soundc0Start:
 
 soundc0Channel2:
@@ -43155,59 +43150,17 @@ soundcdChannel7:
 	note $17 $02
 	cmdff
 
-soundd6Start:
-
-soundd7Start:
-
-soundd8Start:
-
-soundd9Start:
-
-sounddaStart:
-
-sounddbStart:
-
-sounddcStart:
-
 soundddStart:
 
-soundd6Channel1:
-soundd7Channel1:
-soundd8Channel1:
-soundd9Channel1:
-sounddaChannel1:
-sounddbChannel1:
-sounddcChannel1:
 soundddChannel1:
 	cmdff
 
-soundd6Channel0:
-soundd7Channel0:
-soundd8Channel0:
-soundd9Channel0:
-sounddaChannel0:
-sounddbChannel0:
-sounddcChannel0:
 soundddChannel0:
 	cmdff
 
-soundd6Channel4:
-soundd7Channel4:
-soundd8Channel4:
-soundd9Channel4:
-sounddaChannel4:
-sounddbChannel4:
-sounddcChannel4:
 soundddChannel4:
 	cmdff
 
-soundd6Channel6:
-soundd7Channel6:
-soundd8Channel6:
-soundd9Channel6:
-sounddaChannel6:
-sounddbChannel6:
-sounddcChannel6:
 soundddChannel6:
 	cmdff
 

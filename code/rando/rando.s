@@ -216,6 +216,7 @@ playCompassSoundIfKeyInRoom_override:
 	; It's a key. Do we have the compass for it?
 	push hl
 	ld a,(hl) ; Treasure subid (always the same as parameter, or dungeon index)
+	ld e,a
 	ld hl,wDungeonCompasses
 	call checkFlag
 	pop hl
@@ -231,7 +232,7 @@ playCompassSoundIfKeyInRoom_override:
 	call getItemSlotCallback
 	jr nz,@callback
 	
-	; No callback defined
+	; No callback defined; default is to check room flags
 	call getThisRoomFlags
 	ld a,ROOMFLAG_ITEM
 	and (hl)
@@ -239,15 +240,18 @@ playCompassSoundIfKeyInRoom_override:
 	jr @popVars
 
 @callback:
+	push de
 	call jpHl
+	pop de
 	jr c,@popVars
 
 @playSound:
+	call @getSoundToPlay
+	call playSound
 	pop bc
 	pop de
 	pop hl
-	ld a,SND_COMPASS
-	jp playSound
+	ret
 
 @popVars:
 	pop bc
@@ -259,6 +263,16 @@ playCompassSoundIfKeyInRoom_override:
 	rst_addAToHl
 	dec d
 	jr nz,@loop
+	ret
+
+
+@getSoundToPlay:
+	ld a,RANDO_CONFIG_KEYSANITY
+	call checkRandoConfig
+	ld a,SND_COMPASS
+	ret z
+	ld a,e ; Dungeon index
+	add $d4 ; Sounds $d5-$dc are the compass chimes
 	ret
 
 
