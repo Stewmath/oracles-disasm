@@ -54,6 +54,9 @@
 .define UNCMP_GFXH_35	$35
 .define UNCMP_GFXH_36	$36
 .define UNCMP_GFXH_37	$37
+
+.ifdef ROM_AGES
+
 .define UNCMP_GFXH_38	$38
 .define UNCMP_GFXH_39	$39 ; Same as below?
 .define UNCMP_GFXH_IMPA_FAINTED	$3a
@@ -62,3 +65,5 @@
 .define UNCMP_GFXH_3d	$3d
 .define UNCMP_GFXH_3e	$3e
 .define UNCMP_GFXH_3f	$3f
+
+.endif

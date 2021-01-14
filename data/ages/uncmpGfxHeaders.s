@@ -1,68 +1,68 @@
-uncmpGfxHeaderTable: ; $6744
+uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader00
-	.dw uncmpGfxHeader01 ; 0x01
-	.dw uncmpGfxHeader02 ; 0x02
-	.dw uncmpGfxHeader03 ; 0x03
-	.dw uncmpGfxHeader04 ; 0x04
-	.dw uncmpGfxHeader05 ; 0x05
-	.dw uncmpGfxHeader06 ; 0x06
-	.dw uncmpGfxHeader07 ; 0x07
-	.dw uncmpGfxHeader08 ; 0x08
-	.dw uncmpGfxHeader09 ; 0x09
-	.dw uncmpGfxHeader0a ; 0x0a
-	.dw uncmpGfxHeader0b ; 0x0b
-	.dw uncmpGfxHeader0c ; 0x0c
-	.dw uncmpGfxHeader0d ; 0x0d
-	.dw uncmpGfxHeader0e ; 0x0e
-	.dw uncmpGfxHeader0f ; 0x0f
-	.dw uncmpGfxHeader10 ; 0x10
-	.dw uncmpGfxHeader11 ; 0x11
-	.dw uncmpGfxHeader12 ; 0x12
-	.dw uncmpGfxHeader13 ; 0x13
-	.dw uncmpGfxHeader14 ; 0x14
-	.dw uncmpGfxHeader15 ; 0x15
-	.dw uncmpGfxHeader16 ; 0x16
-	.dw uncmpGfxHeader17 ; 0x17
-	.dw uncmpGfxHeader18 ; 0x18
-	.dw uncmpGfxHeader19 ; 0x19
-	.dw uncmpGfxHeader1a ; 0x1a
-	.dw uncmpGfxHeader1b ; 0x1b
-	.dw uncmpGfxHeader1c ; 0x1c
-	.dw uncmpGfxHeader1d ; 0x1d
-	.dw uncmpGfxHeader1e ; 0x1e
-	.dw uncmpGfxHeader1f ; 0x1f
-	.dw uncmpGfxHeader20 ; 0x20
-	.dw uncmpGfxHeader21 ; 0x21
-	.dw uncmpGfxHeader22 ; 0x22
-	.dw uncmpGfxHeader23 ; 0x23
-	.dw uncmpGfxHeader24 ; 0x24
-	.dw uncmpGfxHeader25 ; 0x25
-	.dw uncmpGfxHeader26 ; 0x26
-	.dw uncmpGfxHeader27 ; 0x27
-	.dw uncmpGfxHeader28 ; 0x28
-	.dw uncmpGfxHeader29 ; 0x29
-	.dw uncmpGfxHeader2a ; 0x2a
-	.dw uncmpGfxHeader2b ; 0x2b
-	.dw uncmpGfxHeader2c ; 0x2c
-	.dw uncmpGfxHeader2d ; 0x2d
-	.dw uncmpGfxHeader2e ; 0x2e
-	.dw uncmpGfxHeader2f ; 0x2f
-	.dw uncmpGfxHeader30 ; 0x30
-	.dw uncmpGfxHeader31 ; 0x31
-	.dw uncmpGfxHeader32 ; 0x32
-	.dw uncmpGfxHeader33 ; 0x33
-	.dw uncmpGfxHeader34 ; 0x34
-	.dw uncmpGfxHeader35 ; 0x35
-	.dw uncmpGfxHeader36 ; 0x36
-	.dw uncmpGfxHeader37 ; 0x37
-	.dw uncmpGfxHeader38 ; 0x38
-	.dw uncmpGfxHeader39 ; 0x39
-	.dw uncmpGfxHeader3a ; 0x3a
-	.dw uncmpGfxHeader3b ; 0x3b
-	.dw uncmpGfxHeader3c ; 0x3c
-	.dw uncmpGfxHeader3d ; 0x3d
-	.dw uncmpGfxHeader3e ; 0x3e
-	.dw uncmpGfxHeader3f ; 0x3f
+	.dw uncmpGfxHeader01
+	.dw uncmpGfxHeader02
+	.dw uncmpGfxHeader03
+	.dw uncmpGfxHeader04
+	.dw uncmpGfxHeader05
+	.dw uncmpGfxHeader06
+	.dw uncmpGfxHeader07
+	.dw uncmpGfxHeader08
+	.dw uncmpGfxHeader09
+	.dw uncmpGfxHeader0a
+	.dw uncmpGfxHeader0b
+	.dw uncmpGfxHeader0c
+	.dw uncmpGfxHeader0d
+	.dw uncmpGfxHeader0e
+	.dw uncmpGfxHeader0f
+	.dw uncmpGfxHeader10
+	.dw uncmpGfxHeader11
+	.dw uncmpGfxHeader12
+	.dw uncmpGfxHeader13
+	.dw uncmpGfxHeader14
+	.dw uncmpGfxHeader15
+	.dw uncmpGfxHeader16
+	.dw uncmpGfxHeader17
+	.dw uncmpGfxHeader18
+	.dw uncmpGfxHeader19
+	.dw uncmpGfxHeader1a
+	.dw uncmpGfxHeader1b
+	.dw uncmpGfxHeader1c
+	.dw uncmpGfxHeader1d
+	.dw uncmpGfxHeader1e
+	.dw uncmpGfxHeader1f
+	.dw uncmpGfxHeader20
+	.dw uncmpGfxHeader21
+	.dw uncmpGfxHeader22
+	.dw uncmpGfxHeader23
+	.dw uncmpGfxHeader24
+	.dw uncmpGfxHeader25
+	.dw uncmpGfxHeader26
+	.dw uncmpGfxHeader27
+	.dw uncmpGfxHeader28
+	.dw uncmpGfxHeader29
+	.dw uncmpGfxHeader2a
+	.dw uncmpGfxHeader2b
+	.dw uncmpGfxHeader2c
+	.dw uncmpGfxHeader2d
+	.dw uncmpGfxHeader2e
+	.dw uncmpGfxHeader2f
+	.dw uncmpGfxHeader30
+	.dw uncmpGfxHeader31
+	.dw uncmpGfxHeader32
+	.dw uncmpGfxHeader33
+	.dw uncmpGfxHeader34
+	.dw uncmpGfxHeader35
+	.dw uncmpGfxHeader36
+	.dw uncmpGfxHeader37
+	.dw uncmpGfxHeader38
+	.dw uncmpGfxHeader39
+	.dw uncmpGfxHeader3a
+	.dw uncmpGfxHeader3b
+	.dw uncmpGfxHeader3c
+	.dw uncmpGfxHeader3d
+	.dw uncmpGfxHeader3e
+	.dw uncmpGfxHeader3f
 
 
 
