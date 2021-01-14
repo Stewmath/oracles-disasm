@@ -2256,7 +2256,7 @@ _armosWarrior_sword_checkCollisionWithShield:
 	ret nc
 
 	ld c,Enemy.xh
-	ld l,$a7
+	ld l,Enemy.collisionRadiusX
 	call @checkIntersection
 	ret nc
 
@@ -9832,9 +9832,9 @@ enemyCode7d:
 	jr nz,@normalStatus
 
 	; Health just reached 0
-	ld hl,wGroup5Flags+$2d
+	ld hl,wGroup5Flags+(<ROOM_AGES_52d)
 	set 7,(hl)
-	ld l,$36
+	ld l,<ROOM_AGES_536
 	set 7,(hl)
 	ld a,MUS_BOSS
 	ld (wActiveMusic),a

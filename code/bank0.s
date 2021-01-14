@@ -8404,7 +8404,7 @@ itemIncState:
 ;;
 itemIncSubstate:
 	ld h,d
-	ld l,$05
+	ld l,Item.substate
 	inc (hl)
 	ret
 ;;
@@ -13994,7 +13994,7 @@ objectCreateSparkleMovingUp:
 	ld (hl),INTERACID_SPARKLE
 	inc l
 	ld (hl),$02
-	ld l,$50
+	ld l,Interaction.speedY
 	ld (hl),$80
 	inc l
 	ld (hl),$ff

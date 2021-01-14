@@ -2225,7 +2225,7 @@ itemCode06:
 .else
 	ld e,Item.subid
 	ld a,(de)
-	add $18
+	add UNCMP_GFXH_18
 .endif
 	call loadWeaponGfx
 
@@ -4572,7 +4572,9 @@ itemCode18:
 	dec (hl)
 	dec (hl)
 	ret
-.else
+
+.else; ROM_SEASONS
+
 ; ITEMID_ROD_OF_SEASONS
 itemCode07:
 	call _itemTransferKnockbackToLink
@@ -4581,36 +4583,39 @@ itemCode07:
 	rst_jumpTable
 	.dw @state0
 	.dw @state1
+
 @state0:
 	ld a,$01
 	ld (de),a
 	ld h,d
-	ld l,$00
+	ld l,Item.enabled
 	ld (hl),$03
-	ld l,$06
+	ld l,Item.counter1
 	ld (hl),$10
-	ld a,$74
+	ld a,SND_SWORDSLASH
 	call playSound
-	ld a,$1c
+	ld a,UNCMP_GFXH_1c
 	call loadWeaponGfx
 	call _itemLoadAttributesAndGraphics
 	jp objectSetVisible82
+
 @state1:
 	ld h,d
-	ld l,$06
+	ld l,Item.counter1
 	dec (hl)
 	ret nz
 	ld a,(wActiveTileType)
-	cp $08
+	cp TILETYPE_STUMP
 	ret nz
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_USED_ROD_OF_SEASONS
-	ld e,$09
-	ld l,$49
+	ld e,Item.angle
+	ld l,Interaction.angle
 	ld a,(de)
 	ldi (hl),a
 	jp objectCopyPosition
+
 .endif
 
 ;;
@@ -4639,24 +4644,28 @@ itemCode1dPost:
 	jp itemDelete
 
 .ifdef ROM_AGES
+
 ;;
 ; ITEMID_SLINGSHOT
 itemCode13:
 	ret
+
 .else
+
+;;
 ; ITEMID_SLINGSHOT
 itemCode13:
 	ld e,Item.state
 	ld a,(de)
 	or a
 	ret nz
-	ld a,$1d
+	ld a,UNCMP_GFXH_1d
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	ld h,d
 	ld a,(wSlingshotLevel)
 	or $08
-	ld l,$1b
+	ld l,Item.oamFlagsBackup
 	ldi (hl),a
 	ld (hl),a
 	jp objectSetVisible81
@@ -4673,7 +4682,7 @@ itemCode08:
 	.dw @state1
 
 @state0:
-	ld a,$1e
+	ld a,UNCMP_GFXH_1e
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	call objectSetVisible81
@@ -4702,7 +4711,7 @@ itemCode1e:
 	.dw foolsOreRet
 
 @state0:
-	ld a,$1f
+	ld a,UNCMP_GFXH_1f
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	xor a

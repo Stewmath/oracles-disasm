@@ -76,7 +76,7 @@ agesFunc_10_70f6:
 	call clearOam
 	xor a
 	ld ($cfde),a
-	ld a,$95
+	ld a,GFXH_95
 	call loadGfxHeader
 	ld a,PALH_a0
 	call loadPaletteHeader
@@ -86,7 +86,7 @@ agesFunc_10_70f6:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL
-	ld l,$4b
+	ld l,Interaction.yh
 	ld (hl),$e8
 	inc l
 	inc l

@@ -498,17 +498,20 @@ textOptionCode:
 	ld (wTextDisplayMode),a
 	ld h,d
 	ld l,e
-	ld (hl),$02
+	ld (hl),$02 ; [w7TextDisplayState]
 	inc l
-	ld (hl),$00
-	ld l,$c5
+	ld (hl),$00 ; [w7d0c1]
+	ld l,<w7CharacterDisplayLength
 	ldi a,(hl)
-	ld (hl),a
-	ld l,$d3
+	ld (hl),a ; [w7CharacterDisplayTimer]
+	ld l,<w7d0d3
 	ld (hl),$40
-	ld l,$e0
+
+	; Clear w7TextboxOptionPositions, w7SelectedTextOption, and w7SelectedTextPosition
+	ld l,<w7TextboxOptionPositions
 	ld b,$0a
 	call clearMemory
+
 	call _drawLineOfText
 	jp _dmaTextGfxBuffer
 
@@ -1721,7 +1724,7 @@ _func_5296:
 	or a
 	jr nz,_label_3f_159
 
-	ld (hl),a
+	ld (hl),a ; [w7TextDisplayState]
 	ld a,$01
 	ld (wTextDisplayMode),a
 	or h
@@ -1732,14 +1735,14 @@ _label_3f_155:
 	jr z,+
 
 	inc l
-	res 0,(hl)
+	res 0,(hl) ; [w7d0c1]
 	jr _label_3f_157
 +
 	ld a,(wKeysJustPressed)
-	and $03
+	and (BTN_A | BTN_B)
 	jr z,_label_3f_157
-	ld (hl),$00
-	ld l,$c1
+	ld (hl),$00 ; [w7TextDisplayState]
+	ld l,<w7d0c1
 	res 1,(hl)
 	pop hl
 	ld a,SND_TEXT_2
@@ -1750,7 +1753,7 @@ _label_3f_157:
 	ret
 _label_3f_158:
 	xor a
-	ld ($00c2),a
+	ld ($00c2),a ; ????????
 	ret
 
 _label_3f_159:

@@ -86,18 +86,18 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld (wLoadedTreeGfxIndex),a
 +
 	ld a,c
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
 	ld de,@state0Table_03_55f3
 	call addDoubleIndexToDe
 	ld a,(de)
 	inc de
-	ld l,$0b
+	ld l,<w1Link.yh
 	ldi (hl),a
 	inc l
 	ld a,(de)
 	ldi (hl),a
-	ld l,$08
+	ld l,<w1Link.direction
 	ld (hl),$03
 	ld a,c
 	ld bc,$0050
@@ -518,9 +518,9 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld c,$40
 	ld a,TREASURE_HEART_REFILL
 	call giveTreasure
-	ld a,$08
+	ld a,SPECIALOBJECTID_LINK_CUTSCENE
 	call setLinkIDOverride
-	ld l,$02
+	ld l,<w1Link.subid
 	ld (hl),$07
 	ld hl,$cbb3
 	ld (hl),$5a
@@ -926,7 +926,7 @@ _endgameCutsceneHandler_0f_stage0_body:
 	call objectCreateExclamationMark
 	ld a,$28
 	call objectCreateExclamationMark
-	ld l,$4b
+	ld l,Interaction.yh
 	ld (hl),$30
 	inc l
 	inc l
@@ -1523,12 +1523,12 @@ _endgameCutsceneHandler_0a_stage1:
 	ld ($cbc1),a
 	ld hl,wLinkMaxHealth
 	ldd a,(hl)
-	ld (hl),a
+	ld (hl),a ; [wLinkHealth]
 	xor a
-	ld l,$80
+	ld l,<wInventoryB
 	ldi (hl),a
-	ld (hl),a
-	ld l,$c5
+	ld (hl),a ; [wInventoryA]
+	ld l,<wActiveRing
 	ld (hl),$ff
 ++
 	jp fadeoutToWhite
@@ -1569,7 +1569,7 @@ _endgameCutsceneHandler_0a_stage2:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL
-	ld l,$4b
+	ld l,Interaction.yh
 	ld (hl),$e8
 	inc l
 	inc l

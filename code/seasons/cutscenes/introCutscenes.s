@@ -209,13 +209,13 @@ seasonsFunc_03_74b6:
 	call getFreePartSlot
 	jr nz,+
 	ld (hl),PARTID_LIGHTNING
-	ld l,$c2
+	ld l,Part.subid
 	inc (hl)
 	inc l
 	ld a,(de)
 	ld (hl),a
 	inc de
-	ld l,$cb
+	ld l,Part.yh
 	ld a,(de)
 	ldi (hl),a
 	inc de
@@ -1420,9 +1420,9 @@ cutscene0dFunca:
 	call playSound
 	ld a,$08
 	call setLinkID
-	ld l,$00
+	ld l,<w1Link.enabled
 	ld (hl),$01
-	ld l,$02
+	ld l,<w1Link.subid
 	ld (hl),$0a
 	ld a,$00
 	ld (wScrollMode),a

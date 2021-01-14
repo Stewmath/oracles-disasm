@@ -806,14 +806,14 @@ _endgameCutsceneHandler_20:
 	ld a,$0c
 	ld ($cfde),a
 	call _cutscene_loadRoomObjectSetAndFadein
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld (hl),$48
-	ld l,$0d
+	ld l,<w1Link.xh
 	ld (hl),$60
-	ld l,$08
-	ld (hl),$00
+	ld l,<w1Link.direction
+	ld (hl),DIR_UP
 	ld a,$81
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
@@ -837,7 +837,7 @@ _endgameCutsceneHandler_20:
 	call giveTreasure
 	ld a,$08
 	call setLinkIDOverride
-	ld l,$02
+	ld l,<w1Link.subid
 	ld (hl),$0c
 	ld hl,wTmpcbb3
 	ld (hl),$5a
@@ -1049,7 +1049,7 @@ _endgameCutsceneHandler_0f:
 	call objectCreateExclamationMark
 	ld a,$28
 	call objectCreateExclamationMark
-	ld l,$4b
+	ld l,Interaction.yh
 	ld (hl),$30
 	inc l
 	inc l

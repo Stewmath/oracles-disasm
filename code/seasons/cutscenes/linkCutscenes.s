@@ -443,7 +443,7 @@ _linkCutscene1:
 	inc l
 	ld (hl),$fd
 	; direction
-	ld l,$08
+	ld l,Item.direction
 	ld (hl),DIR_DOWN
 	ld a,$0a
 	call specialObjectSetAnimation
@@ -574,7 +574,7 @@ _linkCutscene2:
 	ld a,($cfd0)
 	cp $03
 	ret nz
-	ld a,$00
+	ld a,SPECIALOBJECTID_LINK
 	jp setLinkIDOverride
 
 seasonsFunc_06_7178:
@@ -963,7 +963,7 @@ _linkCutscene8:
 	call moveToAngleSnapToGrid
 	call checkCloseToY48X50
 	ret nc
-	ld a,$00
+	ld a,SPECIALOBJECTID_LINK
 	jp setLinkIDOverride
 
 

@@ -288,9 +288,9 @@ seasonsFunc_03_6db1:
 	ld (hl),PARTID_VOLCANO_ROCK
 	inc l
 	ld (hl),$01
-	ld l,$cb
+	ld l,Part.yh
 	ld (hl),b
-	ld l,$cd
+	ld l,Part.xh
 	ld (hl),c
 	ret
 
