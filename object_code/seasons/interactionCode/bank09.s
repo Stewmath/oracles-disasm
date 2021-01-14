@@ -6297,10 +6297,10 @@ interactionCode81:
 	.db <TX_004b ; Gasha seed
 	.db <TX_004b ; Gasha seed
 	.db $ff      ; Piece of heart
-	.db <TX_0054 ; Ring
-	.db <TX_0054 ; Ring
-	.db <TX_0054 ; Ring
-	.db <TX_0054 ; Ring
+	.db $ff      ; Ring
+	.db $ff      ; Ring
+	.db $ff      ; Ring
+	.db $ff      ; Ring
 	.db <TX_004f ; 4 ember seeds
 	.db <TX_001f ; Shield
 	.db <TX_0050 ; 10 pegasus seeds

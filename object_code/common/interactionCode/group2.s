@@ -1298,7 +1298,7 @@ _shopItemReplacementTable:
 
 
 ; Text to show upon buying a shop item (or $00 for no text)
-; RANDO: Removed text for randomized items
+; RANDO: Removed text for randomized items (and for all rings)
 _shopItemTextTable:
 .ifdef ROM_AGES
 	/* $00 */ .db <TX_0058
@@ -1310,9 +1310,9 @@ _shopItemTextTable:
 	/* $03 */ .db <TX_001f
 	/* $04 */ .db <TX_004d
 .ifdef ROM_AGES
-	/* $05 */ .db <TX_0054
+	/* $05 */ .db $00 ; Ring
 .else
-	/* $05 */ .db $00
+	/* $05 */ .db $00 ; Treasure Map
 .endif
 	/* $06 */ .db <TX_004b
 	/* $07 */ .db <TX_006d
@@ -1323,8 +1323,8 @@ _shopItemTextTable:
 	/* $0c */ .db $00
 	/* $0d */ .db $00
 	/* $0e */ .db <TX_004b
-	/* $0f */ .db <TX_0054
-	/* $10 */ .db <TX_0054
+	/* $0f */ .db $00 ; Ring
+	/* $10 */ .db $00 ; Ring
 	/* $11 */ .db <TX_0020
 	/* $12 */ .db <TX_0021
 	/* $13 */ .db <TX_004b
