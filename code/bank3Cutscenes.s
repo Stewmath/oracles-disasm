@@ -921,9 +921,9 @@ _introCinematic_ridingHorse_state6:
 
 	call disableLcd
 .ifdef ROM_AGES
-	ld a,PALH_92		;$4fce
+	ld a,PALH_92
 .else
-	ld a,SEASONS_PALH_92	;$4fce
+	ld a,SEASONS_PALH_92
 .endif
 	call loadPaletteHeader
 	ld a,GFXH_9c
