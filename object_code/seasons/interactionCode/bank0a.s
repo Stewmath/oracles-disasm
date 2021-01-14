@@ -2443,7 +2443,7 @@ _state1_subid3:
 	ld a,$03
 	ld ($cc6a),a
 	xor a
-	ld ($c6a2),a
+	ld (wLinkHealth),a
 	jp interactionDelete
 _table_5a5e:
 	; tile replacement tables
@@ -2672,7 +2672,7 @@ _func_5b49:
 	ld a,$03
 	ld ($cc6a),a
 	xor a
-	ld ($c6a2),a
+	ld (wLinkHealth),a
 	jp interactionDelete
 
 

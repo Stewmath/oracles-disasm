@@ -7314,7 +7314,7 @@ _subrosianAtD8_subid1:
 
 ;;
 _subrosianAtD8_getNumEssences:
-	ld a,($c6bb)
+	ld a,(wEssencesObtained)
 	jp getNumSetBits
 
 

@@ -193,7 +193,7 @@ _rickyState1:
 	ld (hl),$1e
 	dec l
 	inc (hl)
-	ld hl,$c6c5
+	ld hl,wActiveRing
 	ld (hl),$ff
 	ld a,$81
 	ld ($cc77),a

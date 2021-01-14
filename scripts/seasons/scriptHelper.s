@@ -1278,7 +1278,8 @@ zelda_checkIfLinkFullyHealed:
 	ret
 
 
-	ld hl,$c6a2
+; Unused function?
+	ld hl,wLinkHealth
 	ld a,($cbe4)
 	cp (hl)
 	ret nz
@@ -1686,7 +1687,7 @@ seasonsFunc_15_5cf7:
 	push de
 	ld a,$ff
 	ld ($cbea),a
-	ld h,$c6
+	ld h,>wc600Block
 	ld de,$cfdf
 	ld c,$80
 	call seasonsFunc_15_5d12
@@ -1836,7 +1837,7 @@ rosaHiding_hidingFinishedSetInitialRoomsFlags:
 strangeBrothersFunc_15_5dc4:
 	ld a,$1e
 	call addToGashaMaturity
-	ld hl,$c6e3
+	ld hl,wNumTimesPlayedStrangeBrothersGame
 	call incHlRefWithCap
 	call getThisRoomFlags
 	bit 5,(hl)
@@ -1845,7 +1846,7 @@ strangeBrothersFunc_15_5dc4:
 	jr _strangeBrothersFunc_15_5e00
 	
 _strangeBrothersFunc_15_5ddb:
-	ld a,($c6e3)
+	ld a,(wNumTimesPlayedStrangeBrothersGame)
 	cp $08
 	jr z,_strangeBrothersFunc_15_5dee
 	call getRandomNumber
@@ -2551,7 +2552,7 @@ moblin_spawnSwordMaskedMoblin:
 ; INTERACID_S_OLD_MAN_WITH_RUPEES
 ; ==============================================================================
 oldMan_takeRupees:
-	ld hl,$c6a5
+	ld hl,wNumRupees
 	ldi a,(hl)
 	or (hl)
 	ld e,$7f

@@ -796,7 +796,7 @@ wc6e2: ; $c6e2/$c6dc
 ; Bit 4: Stage 6 done (answered a question from the child).
 ; Bit 5: Stage 8 done (depends on personality type)
 	db
-wChildStage8Response: ; $c6e3
+wChildStage8Response: ; $c6e3/$c6dd
 ; This is the response to the child's question or request at stage 8.
 	db
 wChildPersonality: ; $c6e4/$c6de
@@ -818,11 +818,17 @@ wc6e5: ; $c6e5/$c6df ; In seasons, growth of Maku tree
 
 ws_c6e0: ; TODO: figure out what this is
 	db
+
 wInsertedJewels: ; -/$c6e1
 ; Bitset of jewels inserted into tarm ruins entrance.
 	db
-ws_c6e2: ; TODO: figure out what this is
-	dsb 2
+
+wNumTimesPlayedSubrosianDance: ; -/$c6e2
+	db
+
+wNumTimesPlayedStrangeBrothersGame: ; -/$c6e3
+	db
+
 wTalkedToPirationCaptainState: ; -/$c6e4
 ; 0: Not yet talked to him after D6 beaten
 ; 1: Talked to him without a bell
@@ -2649,7 +2655,8 @@ wcdd9: ; $cdd9
 	db
 
 .ifdef ROM_SEASONS
-ws_cc39: ; TODO: figure out what this is
+ws_cc39:
+; Maku tree stage (largely depends on # of essences)
 	db
 .endif
 
