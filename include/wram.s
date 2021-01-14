@@ -920,18 +920,22 @@ wGroup5Flags: ; $ca00
 
 .ENDS
 
-; Ages indoors in respective time's map. Seasons' Holodrum indoors in Subrosia's map
+; "group 2" = present underwater in Ages, or indoor rooms in Seasons (shared with subrosia map). Set
+; room flags accordingly.
 .ifdef ROM_AGES
-.define wGroup2Flags wPresentRoomFlags
+	.define wGroup2Flags wPresentRoomFlags
 .else
-.define wGroup2Flags wPastRoomFlags
+	.define wGroup2Flags wPastRoomFlags
 .endif
 
-; Steal 6 of the past room flags for vine seed positions
-.define wVinePositions wPastRoomFlags+$f0
-; Steal 16 of subrosia's room flags for rupee room rupees gotten
-.define wD2RupeeRoomRupees wPastRoomFlags+$f0
-.define wD6RupeeRoomRupees wPastRoomFlags+$f8
+.ifdef ROM_AGES
+	; Steal 6 of the past room flags for vine seed positions
+	.define wVinePositions wPastRoomFlags+$f0
+.else; ROM_SEASONS
+	; Steal 16 of subrosia's room flags for rupee room rupees gotten
+	.define wD2RupeeRoomRupees wPastRoomFlags+$f0
+	.define wD6RupeeRoomRupees wPastRoomFlags+$f8
+.endif
 
 ; ========================================================================================
 ; $cb00: END of data that goes into the save file

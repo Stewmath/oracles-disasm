@@ -490,7 +490,6 @@ unsetFlag:
 
 ;;
 ; Add (a/8) to hl, set 'a' to a bitmask for the desired bit (a%8)
-;
 _flagHlpr:
 	ld b,a
 	and $f8
@@ -1097,6 +1096,7 @@ loadPaletteHeader:
 ; Do a DMA transfer next vblank. Note:
 ;  - Only banks $00-$3f work properly
 ;  - Destination address must be a multiple of 16
+;
 ; @param	b	(data size)/16 - 1
 ; @param	c	src bank
 ; @param	de	(dest address) | (vram or wram bank)
@@ -1471,6 +1471,7 @@ _label_00_069:
 
 ;;
 ; Copies a single byte, and checks whether to increment the bank.
+;
 ; @param	bc	Amount of bytes to read (not enforced here)
 ; @param	de	Address to write data to
 ; @param	hl	Address to read data from
@@ -1484,6 +1485,7 @@ copyByteSequential:
 ;;
 ; Adjusts the value of hl and the current loaded bank for various "sequental read"
 ; functions.
+;
 ; @param	hl	Address
 ; @param[out]	zflag	Set if bc is 0.
 _adjustHLSequential:
@@ -1826,6 +1828,7 @@ resumeThreadNextFrameAndSaveBank:
 ;;
 resumeThreadNextFrame:
 	ld a,$01
+
 ;;
 ; @param	a	Frames before the active thread will be executed next
 resumeThreadInAFrames:
@@ -1861,7 +1864,6 @@ _nextThread:
 
 ;;
 ; Called just after basic initialization
-;
 startGame:
 	; Initialize thread states
 	ld sp,wMainStackTop
@@ -2296,7 +2298,6 @@ vblankDmaFunction:
 
 ;;
 ; Update all palettes marked as dirty.
-;
 updateDirtyPalettes:
 	ld a,$02
 	ld ($ff00+R_SVBK),a
@@ -2440,7 +2441,6 @@ lcdInterrupt_setLcdcToA7:
 ; Ring menu: LCD interrupt triggers up to two times:
 ;   * Once on line $47 (list menu) or $57 (appraisal menu), where the textbox starts.
 ;   * If on the list menu, once more on line $87, where the textbox ends.
-;
 lcdInterrupt_ringMenu:
 	ld a,($ff00+R_STAT)
 	and c
@@ -2572,7 +2572,6 @@ serialInterrupt:
 ;;
 ; Writes A to SC. Also writes $01 beforehand which might just be to reset any active
 ; transfers?
-;
 writeToSC:
 	push af
 	and $01
@@ -3296,10 +3295,12 @@ _drawObjectTerrainEffects:
 ;;
 ; Get the position where an object should be drawn on-screen, accounting for
 ; screen scrolling. Clears carry flag if the object is not visible.
-; @param[in] hl Pointer to an object's y-position.
-; @param[out] hl Pointer to the object's Object.oamFlags variable.
-; @param[out] hFF8C Y position to draw the object
-; @param[out] hFF8D X position to draw the object
+;
+; @param	hl	Pointer to an object's y-position.
+; @param[out]	hl	Pointer to the object's Object.oamFlags variable.
+; @param[out]	hFF8C	Y position to draw the object
+; @param[out]	hFF8D	X position to draw the object
+; @param[out]	cflag	nc if the object is not visible
 _getObjectPositionOnScreen:
 	ldh a,(<hCameraX)
 	ld c,a
@@ -3370,13 +3371,16 @@ _label_00_152:
 ;;
 ; This function takes the place of "_getObjectPositionOnScreen" during screen
 ; transitions.
+;
 ; Clears carry flag if the object shouldn't be drawn for whatever reason.
-; @param[in]	hl	Pointer to an object's y-position.
-; @param[in]	hFF8A	Bitset on Object.enabled to check (always $01?)
-; @param[in]	hFF90-hFF93
+;
+; @param	hl	Pointer to an object's y-position.
+; @param	hFF8A	Bitset on Object.enabled to check (always $01?)
+; @param	hFF90-hFF93
 ; @param[out]	hl	Pointer to the object's Object.oamFlags variable.
 ; @param[out]	hFF8C	Y position to draw the object
 ; @param[out]	hFF8D	X position to draw the object
+; @param[out]	cflag	nc if object shouldn't be drawn
 _getObjectPositionOnScreen_duringScreenTransition:
 	ld d,h
 	ld a,l
@@ -3514,8 +3518,7 @@ _getObjectPositionOnScreen_duringScreenTransition:
 	ret
 
 ; Something to do with sprite positions during screen transitions. 4 bytes get written to
-; hFF90-hFF93, and the values are used in
-; _getObjectPositionOnScreen_duringScreenTransition.
+; hFF90-hFF93, and the values are used in _getObjectPositionOnScreen_duringScreenTransition.
 data_1058:
 	; Small rooms
 	.db $80 $ff $00 $00 ; scrolling up
@@ -3604,6 +3607,7 @@ objectQueueDraw:
 ;;
 ; Gets the data for a chest in the current room.
 ; Defaults to position $00, contents $2800 if a chest is not found.
+;
 ; @param	bc	Chest contents
 ; @param	e	Chest position
 getChestData:
@@ -3970,7 +3974,7 @@ _adjacentRoomsData:
 
 ;;
 ; This function differs from the above one in that:
-; * It only works for the PRESENT OVERWORLD.
+; * It only works for the PRESENT OVERWORLD (ages) or INDOOR ROOMS in group 2 (seasons).
 ; * The above, which CAN work for the overworlds, only sets the flag on the one screen
 ;   when used on the overworld; the adjacent room doesn't get updated.
 ; * This only works for rooms connected horizontally, since it uses the table above for
@@ -5304,7 +5308,6 @@ showTextOnInventoryMenu:
 
 ;;
 ; Displays text index bc while not being able to exit the textbox with button presses
-;
 showTextNonExitable:
 	ld l,TEXTBOXFLAG_NONEXITABLE
 	jr _label_00_203
@@ -5417,7 +5420,7 @@ retrieveTextCharacter:
 @func_18fd:
 	ld e,$10
 
-	; gfx_font_start+$140 is the heart character. It's always red?
+	; gfx_font_start+$140 is the heart character. It's always red.
 	ld a,h
 	cp >(gfx_font_start+$140)
 	jr nz,@notHeart
@@ -5486,7 +5489,6 @@ retrieveTextCharacter:
 
 ;;
 ; Can only be called from bank $3f. Also assumes RAM bank 7 is loaded.
-;
 readByteFromW7ActiveBank:
 	push bc
 	ld a,(w7ActiveBank)
@@ -5502,7 +5504,6 @@ readByteFromW7ActiveBank:
 
 ;;
 ; Assumes RAM bank 7 is loaded.
-;
 readByteFromW7TextTableBank:
 	ldh a,(<hRomBank)
 	push af
@@ -5574,7 +5575,6 @@ setInstrumentsDisabledCounterAndScrollMode:
 
 ;;
 ; Clears all physical item objects (not parent items) and clears midair-related variables.
-;
 clearAllItemsAndPutLinkOnGround:
 	push de
 	call clearAllParentItems
@@ -5735,7 +5735,6 @@ updateMenus:
 ;;
 ; If wStatusBarNeedsRefresh is nonzero, this function dma's the status bar graphics to
 ; vram. It also reloads the item icon's graphics, if bit 0 is set.
-;
 checkReloadStatusBarGraphics:
 	ld hl,wStatusBarNeedsRefresh
 	ld a,(hl)
@@ -5869,7 +5868,6 @@ copy8BytesFromRingMapToCec0:
 
 ;;
 ; Runs game over screen?
-;
 thread_1b10:
 	ld hl,wTmpcbb3
 	ld b,$10
@@ -6230,7 +6228,6 @@ objectCheckCollidedWithLink_ignoreZ:
 
 ;;
 ; Unused?
-;
 hObjectCheckCollidedWithLink:
 	push de
 	ld d,h
@@ -6244,7 +6241,6 @@ hObjectCheckCollidedWithLink:
 
 ;;
 ; Unused?
-;
 func_1c84:
 	ld a,(w1ReservedItemC.enabled)
 	or a
@@ -6659,6 +6655,8 @@ checkEnemyAndPartCollisionsIfTextInactive:
 ;
 ; @param	a	Room index
 ; @param	hl	Table address
+; @param[out]	a	The value associated with the room
+; @param[out]	cflag	c if the room existed in the table
 findRoomSpecificData:
 	ld e,a
 	ld a,(wActiveGroup)
@@ -7895,9 +7893,9 @@ objectCopyPosition:
 	ldh a,(<hActiveObjectType)
 	add Object.yh
 	ld e,a
+
 ;;
 ; Copies the xyz position at address de to object h.
-;
 objectCopyPosition_rawAddress:
 	ld a,l
 	and $c0
@@ -10180,7 +10178,6 @@ clearPegasusSeedCounter:
 
 ;;
 ; Resets some Link variables - primarily his Z position - and resets his animation?
-;
 putLinkOnGround:
 	; Return if Link is riding something
 	ld a,(wLinkObjectIndex)
@@ -10213,7 +10210,6 @@ putLinkOnGround:
 
 ;;
 ; Sets wLinkForceState to LINK_STATE_08.
-;
 setLinkForceStateToState08:
 	xor a
 
@@ -10237,7 +10233,6 @@ setLinkForceStateToState08_withParam:
 ; Reads w1Link.damageToApply and applies that to his health.
 ;
 ; Parameter 'd' does not need to be passed as the Link object.
-;
 linkApplyDamage:
 	push de
 	ldh a,(<hRomBank)
@@ -10876,7 +10871,6 @@ flashScreen:
 
 ;;
 ; SpecialObject code for IDs $0f-$12
-;
 specialObjectCode_companionCutscene:
 	ldh a,(<hRomBank)
 	push af
@@ -10903,7 +10897,6 @@ specialObjectCode_linkInCutscene:
 
 ;;
 ; Load dungeon layout if currently in a dungeon.
-;
 loadDungeonLayout:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_DUNGEON
@@ -11104,7 +11097,6 @@ enemyReplaceWithID:
 
 ;;
 ; Update all enemies with 'state' variables equal to 0.
-;
 _updateEnemiesIfStateIsZero:
 	ld a,Enemy.start
 	ldh (<hActiveObjectType),a
@@ -11129,7 +11121,7 @@ _updateEnemiesIfStateIsZero:
 @next:
 	inc d
 	ld a,d
-	cp $e0
+	cp LAST_ENEMY_INDEX+1
 	jr c,--
 	ret
 
@@ -11290,7 +11282,6 @@ updateEnemy:
 ;
 ; Note: ages doesn't save the bank number properly when something calls this, so it only
 ; works when called from bank 1 (same bank as "checkLoadPirateShip").
-;
 initializeRoom:
 
 .ifdef ROM_AGES
@@ -11367,7 +11358,6 @@ parseGivenObjectData:
 
 ;;
 ; Checks if there are any "static objects" in the room to load.
-;
 loadStaticObjects:
 	ldh a,(<hRomBank)
 	push af
@@ -11415,7 +11405,6 @@ findFreeStaticObjectSlot:
 ;;
 ; Deletes the object which the relatedObj1 variable points to, assuming it points to
 ; a "static" object (stored in wStaticObjects).
-;
 objectDeleteRelatedObj1AsStaticObject:
 	ldh a,(<hActiveObjectType)
 	add Object.relatedObj1
@@ -12004,7 +11993,6 @@ updateAnimationsAfterCutscene:
 ;;
 ; Sets wActiveMusic2 to the appropriate value, and sets wLoadingRoomPack (for present/past
 ; overworlds only)
-;
 loadScreenMusic:
 	ldh a,(<hRomBank)
 	push af
@@ -12076,7 +12064,6 @@ applyWarpDest:
 ; - Calls loadScreenMusic
 ; - Copies wActiveRoom to wLoadingRoom
 ; - Copies wLoadingRoomPack to wRoomPack (for group 0 only)
-;
 loadScreenMusicAndSetRoomPack:
 	call loadScreenMusic
 	ld a,(wActiveRoom)
@@ -12168,7 +12155,6 @@ zeldaKidnappedCutsceneCaller:
 
 ;;
 ; TODO: give this a better name
-;
 updateAllObjects:
 	ldh a,(<hRomBank)
 	push af
@@ -12234,7 +12220,6 @@ updateInteractionsAndDrawAllSprites:
 
 ;;
 ; Similar to updateAllObjects but calls a bit less
-;
 func_3539:
 	ldh a,(<hRomBank)
 	push af
@@ -12328,7 +12313,6 @@ clearReservedInteraction0:
 
 ;;
 ; Unused?
-;
 clearReservedInteraction1:
 	ld hl,w1ReservedInteraction1
 	ld b,$40
@@ -12430,10 +12414,10 @@ setEnemyTargetToLinkPosition:
 	ldh (<hFFB3),a
 	ret
 
+.ifdef ROM_AGES
+
 ;;
 getEntryFromObjectTable2:
-
-.ifdef ROM_AGES
 	ldh a,(<hRomBank)
 	push af
 	ld a, :objectData.objectTable2
@@ -12450,6 +12434,7 @@ getEntryFromObjectTable2:
 
 .else ; ROM_SEASONS
 
+;;
 multiIntroCutsceneCaller:
 	ldh a,(<hRomBank)
 	push af
@@ -13771,7 +13756,6 @@ tokayIslandStolenItems:
 ;;
 ; This function is identical to "interactionSetMiniScript", but is used in different
 ; contexts. See "include/simplescript_commands.s".
-;
 interactionSetSimpleScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
@@ -13832,14 +13816,12 @@ interactionRunSimpleScript:
 
 ;;
 ; This doesn't get executed, value $00 is checked for above.
-;
 @command0:
 	pop hl
 	ret
 
 ;;
 ; Set counter1
-;
 @command1:
 	pop hl
 	ldi a,(hl)
@@ -13850,7 +13832,6 @@ interactionRunSimpleScript:
 
 ;;
 ; Call playSound
-;
 @command2:
 	pop hl
 	ldi a,(hl)
@@ -13861,7 +13842,6 @@ interactionRunSimpleScript:
 
 ;;
 ; Call setTile
-;
 @command3:
 	pop hl
 	ldi a,(hl)
@@ -13875,7 +13855,6 @@ interactionRunSimpleScript:
 
 ;;
 ; Call setInterleavedTile
-;
 @command4:
 	pop hl
 	ldi a,(hl)
@@ -13974,7 +13953,6 @@ getWildTokayObjectDataIndex:
 
 ;;
 ; Create a sparkle at the current object's position.
-;
 objectCreateSparkle:
 	call getFreeInteractionSlot
 	ret nz
@@ -13987,7 +13965,6 @@ objectCreateSparkle:
 ; Create a sparkle at the current object's position that moves up briefly.
 ;
 ; Unused?
-;
 objectCreateSparkleMovingUp:
 	call getFreeInteractionSlot
 	ret nz
@@ -14004,7 +13981,6 @@ objectCreateSparkleMovingUp:
 ; Create a red and blue decorative orb.
 ;
 ; Unused?
-;
 objectCreateRedBlueOrb:
 	call getFreeInteractionSlot
 	ret nz
@@ -14026,7 +14002,6 @@ incMakuTreeState:
 
 ;;
 ; Sets w1Link.direction, as well as w1Companion.direction if Link is riding something.
-;
 setLinkDirection:
 	ld b,a
 	ld a,(wLinkObjectIndex)
@@ -14054,6 +14029,7 @@ checkIfHoronVillageNPCShouldBeSeen:
 	setrombank
 	ret
 
+;;
 ; When Maku tree speaks from other screens?
 setMakuTreeStageAndMapText:
 	ldh a,(<hRomBank)
@@ -14074,6 +14050,7 @@ getSunkenCityNPCVisibleSubId_caller:
 	setrombank
 	ret
 
+;;
 setUpCharactersAfterMoblinKeepDestroyed:
 	ldh a,(<hRomBank)
 	push af
@@ -14090,7 +14067,6 @@ setUpCharactersAfterMoblinKeepDestroyed:
 
 ;;
 ; Used during the end credits. Seems to load the credit text into OAM.
-;
 interactionFunc_3e6d:
 	push de
 	ld l,Interaction.var03
@@ -14192,8 +14168,6 @@ checkLinkCanSurface:
 ; Copy $100 bytes from a specified bank.
 ;
 ; This DOES NOT set the bank back to its previous value, so it's not very useful.
-;
-; In fact, it's unused.
 ;
 ; @param	c	ROM Bank to copy from
 ; @param	d	High byte of address to copy to
