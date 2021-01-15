@@ -446,10 +446,10 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_59 (0x59)
+	; TREASURE_MERMAID_SUIT (0x59)
 	.db $00
 	.db $00
-	.db SND_NONE
+	.db SND_GETITEM
 
 	; TREASURE_5a (0x5a)
 	.db $00

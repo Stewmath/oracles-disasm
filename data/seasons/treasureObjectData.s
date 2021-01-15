@@ -147,7 +147,7 @@ treasureObjectData:
 	/* $56 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_56_00
 	/* $57 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_57_00
 	/* $58 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_BOMB_FLOWER_LOWER_HALF_00
-	/* $59 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_59_00
+	/* $59 */ m_TreasureSubid   $38, $00, <TX_00_GET_MERMAIDSUIT, $7c, TREASURE_OBJECT_MERMAID_SUIT_00
 	/* $5a */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5a_00
 	/* $5b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5b_00
 	/* $5c */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5c_00

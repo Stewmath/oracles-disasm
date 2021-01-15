@@ -372,7 +372,10 @@ interactiondeSubidData:
 	m_InteractionData $64 $04 $53
 	m_InteractionData $64 $08 $33
 	m_InteractionData $64 $0c $13
-	m_InteractionData $64 $90 $03
+	m_InteractionData $64 $10 $03
+
+	; CROSSITEMS: Extra values for ages items, for interaction $60 (INTERACID_TREASURE).
+	m_InteractionData $5d $16 $43 ; $7c (Mermaid Suit)
 
 interaction7dSubidData:
 	m_InteractionData $58 $00 $40

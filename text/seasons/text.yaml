@@ -960,6 +960,18 @@ groups:
     text: |-
       GOAL!!!
 
+  # CROSSITEMS: Text for obtaining Ages items.
+  - name: TX_00_GET_MERMAIDSUIT
+    index: auto
+    text: |-
+      You got a
+      \col(1)Mermaid Suit\col(0)!
+      Now you can swim
+      in deep waters.
+      Press \col(0x84)\item(0x00)\col(0) to swim,
+      \bbtn to dive and
+      \abtn to use items.
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -2817,6 +2829,14 @@ groups:
     text: |-
       The season is
       winter.
+
+  # CROSSITEMS: Text for Ages items on the subscreen.
+  - name: TX_09_MERMAIDSUIT
+    index: auto
+    text: |-
+      Mermaid Suit
+      The skin of the
+      mythical beast.
 
 - group: 0x0a
   data:

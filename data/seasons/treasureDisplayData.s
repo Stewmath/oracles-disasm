@@ -120,6 +120,8 @@ treasureDisplayData_standard:
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_56
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_57
 	.db TREASURE_BOMB_FLOWER        $f7 $04 $f8 $04 $ff $1a ; TREASURE_BOMB_FLOWER_LOWER_HALF
+	.db TREASURE_MERMAID_SUIT       $2b $04 $2c $04 $ff <TX_09_MERMAIDSUIT ; TREASURE_MERMAID_SUIT
+
 
 treasureDisplayData_satchel:
 	.db TREASURE_EMBER_SEEDS        $80 $05 $83 $02 $01 $2d
