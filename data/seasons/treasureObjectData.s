@@ -80,7 +80,7 @@ treasureObjectData:
 	/* $13 */ m_TreasurePointer treasureObjectData13
 	/* $14 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_14_00
 	/* $15 */ m_TreasureSubid   $0a, $00, $25, $1b, TREASURE_OBJECT_SHOVEL_00
-	/* $16 */ m_TreasureSubid   $38, $00, $26, $19, TREASURE_OBJECT_BRACELET_00
+	/* $16 */ m_TreasurePointer treasureObjectData16
 	/* $17 */ m_TreasurePointer treasureObjectData17
 	/* $18 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_18_00
 	/* $19 */ m_TreasurePointer treasureObjectData19
@@ -158,6 +158,11 @@ treasureObjectData:
 	/* $61 */ m_TreasureSubid   $02, $00, $6e, $05, TREASURE_OBJECT_BOMB_UPGRADE_00
 	/* $62 */ m_TreasureSubid   $02, $00, $46, $20, TREASURE_OBJECT_SATCHEL_UPGRADE_00
 
+
+treasureObjectData16:
+	m_BeginTreasureSubids TREASURE_BRACELET
+	m_TreasureSubid $38, $01, $26, $19, TREASURE_OBJECT_BRACELET_00
+	m_TreasureSubid $38, $02, <TX_00_GET_POWERGLOVE, $7d, TREASURE_OBJECT_BRACELET_01
 
 treasureObjectData19:
 	m_BeginTreasureSubids TREASURE_SEED_SATCHEL

@@ -972,6 +972,14 @@ groups:
       \bbtn to dive and
       \abtn to use items.
 
+  - name: TX_00_GET_POWERGLOVE
+    index: auto
+    text: |-
+      You got the
+      \col(1)Power Glove\col(0)!
+      You can now lift
+      heavy objects.
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -2837,6 +2845,13 @@ groups:
       Mermaid Suit
       The skin of the
       mythical beast.
+
+  - name: TX_09_POWERGLOVE
+    index: auto
+    text: |-
+      Power Gloves
+      Used to lift
+      large objects.
 
 - group: 0x0a
   data:

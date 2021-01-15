@@ -900,6 +900,13 @@ wSecretType: ; $c6fe
 ; 3: 5-letter secret
 	db
 
+.ifdef ROM_SEASONS
+wSwitchHookLevel: ; -/$c6ea
+	db
+wBraceletLevel: ; -/$c6eb
+	db
+.endif
+
 .ENDS
 
 .define wSeedsAndHarpSongsObtained	wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8

@@ -725,7 +725,6 @@ interactionCode14:
 	; Determine speed to push with (L-2 bracelet pushes faster)
 	ld h,d
 	ldbc SPEED_80, $20
-.ifdef ROM_AGES
 	ld a,(wBraceletLevel)
 	cp $02
 	jr nz,+
@@ -734,7 +733,6 @@ interactionCode14:
 	jr nz,+
 	ldbc SPEED_c0, $15
 +
-.endif
 	ld l,Interaction.speed
 	ld (hl),b
 	ld l,Interaction.counter1
