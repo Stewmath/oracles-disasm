@@ -5024,9 +5024,9 @@ itemCode27:
 _updateSwingableItemAnimation:
 	ld l,Item.animParameter
 .ifdef ROM_AGES
-	cp $04
+	cp ITEMID_CANE_OF_SOMARIA
 .else
-	cp $07
+	cp ITEMID_ROD_OF_SEASONS
 .endif
 	jr z,_label_07_227
 	bit 6,(hl)
