@@ -2121,7 +2121,7 @@ _func_70f7:
 	ldh (<hFF93),a
 	ld c,$20
 	call multiplyAByC
-	ld bc,$d800
+	ld bc,w3VramTiles
 	ldh a,(<hFF8D)
 	and $0f
 	call addDoubleIndexToBc
@@ -2154,7 +2154,7 @@ _func_712f:
 	ld a,(de)
 	inc de
 	ldh (<hFF8B),a
-	ld a,$03
+	ld a,:w3VramTiles
 	ld ($ff00+R_SVBK),a
 	ldh a,(<hFF8B)
 	ldi (hl),a
@@ -2238,7 +2238,7 @@ func_7168:
 	ld bc,roomGfxChanges.rectangleData_02_7de1
 	callab roomGfxChanges.copyRectangleFromTmpGfxBuffer_paramBc
 @func_71d0:
-	ld a,UNCMP_GFXH_3c
+	ld a,UNCMP_GFXH_AGES_3c
 	call loadUncompressedGfxHeader
 	ld a,SND_DOORCLOSE
 	call playSound

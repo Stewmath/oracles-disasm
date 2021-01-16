@@ -161,7 +161,7 @@ _fake_checkLoadPastSignAndChestGfx:
 	and $1c
 	ret z
 
-	ld a,UNCMP_GFXH_37
+	ld a,UNCMP_GFXH_AGES_37
 	jp $05df
 
 _fake_rectangleData_02_7de1:

@@ -26,10 +26,19 @@
 .define UNCMP_GFXH_19	$19
 .define UNCMP_GFXH_1a	$1a
 .define UNCMP_GFXH_1b	$1b
-.define UNCMP_GFXH_1c	$1c
-.define UNCMP_GFXH_1d	$1d
-.define UNCMP_GFXH_1e	$1e
-.define UNCMP_GFXH_1f	$1f
+
+.ifdef ROM_AGES
+	.define UNCMP_GFXH_AGES_1c	$1c
+	.define UNCMP_GFXH_AGES_1d	$1d
+	.define UNCMP_GFXH_AGES_1e	$1e
+	.define UNCMP_GFXH_AGES_1f	$1f
+.else
+	.define UNCMP_GFXH_SEASONS_1c	$1c
+	.define UNCMP_GFXH_SEASONS_1d	$1d
+	.define UNCMP_GFXH_SEASONS_1e	$1e
+	.define UNCMP_GFXH_SEASONS_1f	$1f
+.endif
+
 .define UNCMP_GFXH_20	$20
 .define UNCMP_GFXH_21	$21
 .define UNCMP_GFXH_22	$22
@@ -52,18 +61,23 @@
 .define UNCMP_GFXH_33	$33
 .define UNCMP_GFXH_34	$34
 .define UNCMP_GFXH_35	$35
-.define UNCMP_GFXH_36	$36
-.define UNCMP_GFXH_37	$37
 
 .ifdef ROM_AGES
 
-.define UNCMP_GFXH_38	$38
-.define UNCMP_GFXH_39	$39 ; Same as below?
-.define UNCMP_GFXH_IMPA_FAINTED	$3a
-.define UNCMP_GFXH_3b	$3b
-.define UNCMP_GFXH_3c	$3c
-.define UNCMP_GFXH_3d	$3d
-.define UNCMP_GFXH_3e	$3e
-.define UNCMP_GFXH_3f	$3f
+	.define UNCMP_GFXH_AGES_36	$36
+	.define UNCMP_GFXH_AGES_37	$37
+	.define UNCMP_GFXH_AGES_38	$38
+	.define UNCMP_GFXH_AGES_39	$39 ; Same as below?
+	.define UNCMP_GFXH_AGES_IMPA_FAINTED	$3a
+	.define UNCMP_GFXH_AGES_3b	$3b
+	.define UNCMP_GFXH_AGES_3c	$3c
+	.define UNCMP_GFXH_AGES_3d	$3d
+	.define UNCMP_GFXH_AGES_3e	$3e
+	.define UNCMP_GFXH_AGES_3f	$3f
+
+.else
+
+	.define UNCMP_GFXH_SEASONS_36	$36
+	.define UNCMP_GFXH_SEASONS_37	$37
 
 .endif

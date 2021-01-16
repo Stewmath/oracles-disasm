@@ -12895,11 +12895,11 @@ loadUniqueGfxHeaderEntry:
 	ld b,a
 	ldh a,(<hFF8C)
 	ld c,a
-	ld de,$d807
+	ld de, w7d800 | :w7d800
 	call decompressGraphics
 	pop de
-	ld hl,$d800
-	ld c,$07
+	ld hl,w7d800
+	ld c,:w7d800
 	ldh a,(<hFF8D)
 	ld b,a
 	call queueDmaTransfer

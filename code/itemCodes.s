@@ -2225,7 +2225,7 @@ itemCode06:
 .else
 	ld e,Item.subid
 	ld a,(de)
-	add UNCMP_GFXH_18
+	add UNCMP_GFXH_18 ; Either this or UNCMP_GFXH_19
 .endif
 	call loadWeaponGfx
 
@@ -2576,7 +2576,7 @@ itemCode0a:
 	.dw _switchHookState3
 
 @state0:
-	ld a,UNCMP_GFXH_1f
+	ld a,UNCMP_GFXH_AGES_1f
 	call loadWeaponGfx
 
 	ld hl,@offsetsTable
@@ -3256,7 +3256,7 @@ itemCode29:
 	.dw @state1
 
 @state0:
-	ld a,UNCMP_GFXH_1d
+	ld a,UNCMP_GFXH_AGES_1d
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	ld e,Item.var30
@@ -4155,7 +4155,7 @@ itemCode04:
 	.dw @state2
 
 @state0:
-	ld a,UNCMP_GFXH_1c
+	ld a,UNCMP_GFXH_AGES_1c
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 
@@ -4594,7 +4594,7 @@ itemCode07:
 	ld (hl),$10
 	ld a,SND_SWORDSLASH
 	call playSound
-	ld a,UNCMP_GFXH_1c
+	ld a,UNCMP_GFXH_SEASONS_1c
 	call loadWeaponGfx
 	call _itemLoadAttributesAndGraphics
 	jp objectSetVisible82
@@ -4659,7 +4659,7 @@ itemCode13:
 	ld a,(de)
 	or a
 	ret nz
-	ld a,UNCMP_GFXH_1d
+	ld a,UNCMP_GFXH_SEASONS_1d
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	ld h,d
@@ -4682,7 +4682,7 @@ itemCode08:
 	.dw @state1
 
 @state0:
-	ld a,UNCMP_GFXH_1e
+	ld a,UNCMP_GFXH_SEASONS_1e
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	call objectSetVisible81
@@ -4711,7 +4711,7 @@ itemCode1e:
 	.dw foolsOreRet
 
 @state0:
-	ld a,UNCMP_GFXH_1f
+	ld a,UNCMP_GFXH_SEASONS_1f
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	xor a

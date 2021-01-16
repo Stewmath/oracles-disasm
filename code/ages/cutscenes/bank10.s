@@ -391,7 +391,7 @@ agesFunc_10_7298:
 	ld a,TEXT_BANK
 	ld ($ff00+R_SVBK),a
 	ld hl,w7SecretText1
-	ld de,$d800
+	ld de,w7d800
 	ld bc,$1800
 -
 	ldi a,(hl)
@@ -401,14 +401,14 @@ agesFunc_10_7298:
 	pop af
 	ld ($ff00+R_SVBK),a
 	
-	ld a,$97
+	ld a,GFXH_97
 	call loadGfxHeader
 	ld a,PALH_05
 	call loadPaletteHeader
 	ld a,UNCMP_GFXH_2b
 	call loadUncompressedGfxHeader
 	call checkIsLinkedGame
-	ld a,$06
+	ld a,GFXH_06
 	call nz,loadGfxHeader
 	call clearDynamicInteractions
 	call clearOam

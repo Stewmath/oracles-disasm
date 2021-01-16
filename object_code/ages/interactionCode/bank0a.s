@@ -387,7 +387,7 @@ _interaction6b_subid01:
 	ld (wInteractionIDToLoadExtraGfx),a
 
 	push de
-	ld a,UNCMP_GFXH_IMPA_FAINTED
+	ld a,UNCMP_GFXH_AGES_IMPA_FAINTED
 	call loadUncompressedGfxHeader
 	pop de
 

@@ -1253,7 +1253,7 @@ interactionCodeb6:
 	ld d,a
 	ld e,Interaction.counter2
 	ld a,(de)
-	add UNCMP_GFXH_1f
+	add UNCMP_GFXH_20 - 1
 	call loadUncompressedGfxHeader
 
 	call reloadTileMap

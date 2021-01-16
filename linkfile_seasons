@@ -18,5 +18,8 @@ bank 0 slot $c000 orga $ce00 Wram0_ce00
 bank 0 slot $c000 orga $cee0 Wram0_cee0
 bank 0 slot $c000 orga $cf00 Wram0_cf00
 
+bank 7 slot $d000 orga $d000 RAM_7
+bank 7 slot $d000 orga $d800 RAM_7_Extra
+
 bank 0 slot $c000 appendto Wram0_cc00             Wram0_FloatingSection2
 bank 0 slot $c000 appendto Wram0_FloatingSection2 Wram0_FloatingSection1

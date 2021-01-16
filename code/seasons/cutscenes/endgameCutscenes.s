@@ -1865,10 +1865,10 @@ _endgameCutsceneHandler_0a_stage3:
 	ld ($cbba),a
 	ld a,($ff00+R_SVBK)
 	push af
-	ld a,$07
+	ld a,:w7d800
 	ld ($ff00+R_SVBK),a
-	ld hl,$d460
-	ld de,$d800
+	ld hl,w7SecretText1
+	ld de,w7d800
 	ld bc,$1800
 -
 	ldi a,(hl)

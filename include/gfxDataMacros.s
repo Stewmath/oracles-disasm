@@ -108,8 +108,9 @@
 		dwbe \3
 		.db \4
 	.else
-		.db \1
-		dwbe \2|:\2
+		.db :\1
+		dwbe \1
+		dwbe \2
 		.db \3
 	.endif
 .endm

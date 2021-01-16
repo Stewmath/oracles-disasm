@@ -3424,7 +3424,7 @@ w4GfxBuf2:			dsb $200	; $de00
 
 .RAMSECTION Ram_5 BANK 5 SLOT 3
 
-w5NameEntryCharacterGfx:	dsb $100	; $d000
+w5NameEntryCharacterGfx:	dsb $800 ; $d000
 
 .ENDS
 
@@ -3434,9 +3434,22 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 .RAMSECTION Ram_6 BANK 6 SLOT 3
 
-w6Filler1:			dsb $600
+w6Filler1:                      dsb $3c0
 
-w6SpecialObjectGfxBuffer:	dsb $100	; $d600
+w6d3c0:                         dsb $40  ; $d3c0
+
+w6Filler2:                      dsb $200
+
+w6SpecialObjectGfxBuffer:       dsb $100 ; $d600
+
+w6Filler3:                      dsb $c0
+
+w6d7c0:                         dsb $40 ; $d7c0
+
+w6Filler4:                      dsb $400
+
+w6TileBuffer:                   dsb $200 ; $dc00
+w6AttributeBuffer:              dsb $200 ; $de00
 
 .ENDS
 
@@ -3669,6 +3682,14 @@ w7SecretGenerationBuffer: ; $d478
 
 .ENDS
 
+
 .define w7d5e0 $d5e0 ; ?
 
-.define w7d800 $d800 ; $300 bytes? Secret text gets written here?
+
+.RAMSECTION RAM_7_Extra BANK 7 SLOT 3
+
+w7d800:
+; Used for a lot of various graphical storage things?
+	dsb $800
+
+.ENDS
