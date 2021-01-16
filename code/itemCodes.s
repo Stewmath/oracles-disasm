@@ -2245,7 +2245,7 @@ itemCode06:
 
 	; level-2
 	ld l,Item.collisionType
-	ld (hl),$96
+	ld (hl),$80|ITEMCOLLISION_L2_BOOMERANG
 	ld l,Item.oamFlagsBackup
 	ld a,$0c
 	ldi (hl),a
@@ -4925,7 +4925,7 @@ itemCode02:
 	add $fd
 	ld (hl),a
 
-	; Different collisionType for expert's ring?
+	; Use ITEMCOLLISION_EXPERT_PUNCH for expert's ring
 	ld l,Item.collisionType
 	inc (hl)
 

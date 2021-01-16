@@ -887,7 +887,7 @@ _ironMask_subid01:
 	ld l,Enemy.speed
 	ld (hl),$50
 	ld l,Enemy.enemyCollisionMode
-	ld (hl),$05
+	ld (hl),ENEMYCOLLISION_05
 	ld a,$05
 	call enemySetAnimation
 	call objectSetVisible82
@@ -1032,7 +1032,7 @@ _ironMask_magnetGloveCheck:
 	ld l,Enemy.state
 	ld (hl),$0a
 	ld l,Enemy.enemyCollisionMode
-	ld (hl),$50
+	ld (hl),ENEMYCOLLISION_UNMASKED_IRON_MASK
 	ld a,$04
 	call enemySetAnimation
 	ld b,ENEMYID_IRON_MASK

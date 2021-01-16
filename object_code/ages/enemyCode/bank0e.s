@@ -1624,7 +1624,7 @@ _ambiGuard_collisionOccured:
 	ld h,d
 	ld l,Enemy.var2a
 	ld a,(hl)
-	cp $80|ITEMCOLLISION_11+1
+	cp $92 ; Collisions up to & including ITEMCOLLISION_11 are "direct" attacks
 	jr c,_ambiGuard_directAttackOccurred
 
 	cp $80|ITEMCOLLISION_GALE_SEED
@@ -3011,7 +3011,7 @@ _veranPossessionBoss_humanForm_stateB:
 	ld (hl),120 ; [counter1]
 
 	ld l,Enemy.enemyCollisionMode
-	ld (hl),ENEMYCOLLISION_VERAN_FAIRY
+	ld (hl),ENEMYCOLLISION_VERAN_HUMAN
 
 	ld l,e
 	inc (hl) ; [state]

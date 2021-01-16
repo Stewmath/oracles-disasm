@@ -1,5 +1,3 @@
-; (TODO: update with changes to constants/ages/enemyCollisionModes.s)
-;
 ; The collision system works between two groups of objects: Items and Special Objects (A),
 ; and Enemies and Parts (B). We'll simplify these groups to "Items" and "Enemies". Link
 ; counts as an "item" (though he's really a "special object"), and enemies' projectiles
@@ -24,7 +22,7 @@
 ;
 ; See also:
 ;  constants/itemCollisionTypes.s  (Values for Item.collisionType)
-;  constants/enemyCollisionModes.s (Values for Enemy.collisionType)
+;  constants/enemyCollisionModes.s (Values for Enemy.enemyCollisionMode)
 ;  constants/collisionEffects.s    (Each byte's value corresponds to a CollisionEffect)
 ;
 ;  data/{game}/enemyActiveCollisions.s (Collisions here don't work unless the
@@ -68,7 +66,7 @@ objectCollisionTable:
 	.db $02 $06 $05 $05 $2c $2c $2c $2c $2c $2c $2c $2c $00 $1c $00 $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1c $21 $21 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_ONOX (0x09)
+	; ENEMYCOLLISION_VERAN_TURTLE_FORM_VULNERABLE (0x09)
 	.db $02 $06 $05 $05 $21 $21 $21 $21 $21 $1c $21 $21 $00 $1c $00 $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1c $1c $20 $20 $21 $21 $20 $20 $00
 
@@ -80,11 +78,11 @@ objectCollisionTable:
 	.db $02 $05 $05 $05 $16 $15 $2c $15 $2c $16 $00 $00 $00 $1c $00 $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1b $00 $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_0c (0x0c)
+	; ENEMYCOLLISION_RAMROCK_ARMS (0x0c)
 	.db $02 $05 $05 $05 $1b $1b $1b $1b $1b $1b $1c $1c $00 $1b $1b $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1b $1c $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_0d (0x0d)
+	; ENEMYCOLLISION_VERAN_FAIRY (0x0d)
 	.db $02 $05 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $1c $00 $00
 	.db $00 $00 $00 $00 $00 $2d $21 $1c $21 $21 $20 $21 $21 $20 $20 $00
 
@@ -400,7 +398,7 @@ objectCollisionTable:
 	.db $02 $00 $00 $00 $1c $1c $1c $1c $00 $1c $00 $00 $00 $2e $1c $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1c $00 $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_VERAN_FAIRY (0x5c)
+	; ENEMYCOLLISION_VERAN_HUMAN (0x5c)
 	.db $02 $06 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $1c $1c $00
 	.db $00 $00 $00 $00 $00 $2d $21 $1c $21 $21 $20 $20 $21 $20 $20 $00
 
@@ -456,15 +454,15 @@ objectCollisionTable:
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $1c $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; ENEMYCOLLISION_VERAN_FINAL_FORM (0x6a)
+	; ENEMYCOLLISION_VERAN_TURTLE_FORM (0x6a)
 	.db $02 $06 $05 $05 $00 $00 $00 $00 $00 $1c $00 $00 $00 $1c $00 $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1c $00 $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_6b (0x6b)
+	; ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE (0x6b)
 	.db $02 $06 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $1b $00 $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1b $00 $20 $20 $21 $21 $20 $20 $00
 
-	; ENEMYCOLLISION_6c (0x6c)
+	; ENEMYCOLLISION_VERAN_SPIDER_FORM (0x6c)
 	.db $02 $06 $05 $05 $1b $1b $1b $14 $1b $1b $00 $00 $00 $1b $00 $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1b $0e $20 $20 $20 $20 $20 $20 $00
 
@@ -488,11 +486,11 @@ objectCollisionTable:
 	.db $01 $00 $00 $1e $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; ENEMYCOLLISION_72 (0x72)
+	; ENEMYCOLLISION_FALLING_FIRE (0x72)
 	.db $03 $00 $00 $06 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; ENEMYCOLLISION_73 (0x73)
+	; ENEMYCOLLISION_WALL_FLAME (0x73)
 	.db $03 $00 $00 $07 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
@@ -500,7 +498,7 @@ objectCollisionTable:
 	.db $02 $17 $16 $16 $15 $15 $15 $16 $1b $15 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $2d $1c $1b $00 $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_75 (0x75)
+	; ENEMYCOLLISION_ROTATABLE_SEED_THING (0x75)
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $2a $2a $2a $2a $2a $00
 
@@ -508,7 +506,7 @@ objectCollisionTable:
 	.db $02 $1f $1f $1f $1c $1c $1c $1c $1c $1c $00 $1c $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $1c $1c $1c $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_77 (0x77)
+	; ENEMYCOLLISION_BABY_BALL (0x77)
 	.db $3b $00 $00 $1e $1c $1c $1c $1c $1c $00 $00 $00 $1c $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
@@ -516,7 +514,7 @@ objectCollisionTable:
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $1c $00 $00 $00 $00 $00 $00 $00 $00
 
-	; ENEMYCOLLISION_79 (0x79)
+	; ENEMYCOLLISION_SEED_EYE_STATUE (0x79)
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $31 $31 $31 $31 $31 $00
 
@@ -524,10 +522,10 @@ objectCollisionTable:
 	.db $02 $00 $00 $1e $00 $1c $1c $00 $1c $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; ENEMYCOLLISION_7b (0x7b)
+	; ENEMYCOLLISION_GANON_TRIDENT (0x7b)
 	.db $03 $00 $06 $06 $16 $16 $16 $16 $16 $16 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $2d $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; ENEMYCOLLISION_7c (0x7c)
+	; ENEMYCOLLISION_VERAN_SPIDERWEB (0x7c)
 	.db $3d $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00

@@ -2382,7 +2382,7 @@ interactionCode2e:
 	call @func_5f65
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_32
+	ld (hl),PARTID_POPPABLE_BUBBLE
 	inc l
 	ld (hl),$01
 	ld l,$c9
@@ -2398,7 +2398,7 @@ interactionCode2e:
 -
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_32
+	ld (hl),PARTID_POPPABLE_BUBBLE
 	inc l
 	ld (hl),$00
 	ld l,$c9

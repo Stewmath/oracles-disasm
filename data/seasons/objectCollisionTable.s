@@ -237,7 +237,7 @@ objectCollisionTable:
 	.db $02 $07 $06 $06 $1c $1c $1c $1c $1c $1c $1c $1c $0b $0b $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $1c $1c $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_BLAINO (0x3b)
+	; ENEMYCOLLISION_BLAINO_VULNERABLE (0x3b)
 	.db $05 $00 $00 $00 $00 $00 $00 $00 $00 $00 $0c $0e $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
@@ -265,15 +265,15 @@ objectCollisionTable:
 	.db $02 $10 $0f $0f $08 $09 $09 $0a $0a $08 $08 $0a $0d $0d $00 $00
 	.db $00 $00 $00 $00 $09 $1c $1c $09 $00 $20 $20 $20 $08 $20 $20 $00
 
-	; ENEMYCOLLISION_OMUAI (0x42)
+	; ENEMYCOLLISION_OMUAI_VULNERABLE (0x42)
 	.db $02 $06 $05 $05 $0b $0b $0b $0b $0b $0b $0b $0b $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1b $1b $0b $00 $20 $20 $20 $0b $20 $20 $00
 
-	; ENEMYCOLLISION_AGUNIMA (0x43)
+	; ENEMYCOLLISION_AGUNIMA_VULNERABLE (0x43)
 	.db $02 $06 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $21 $00 $20 $20 $20 $21 $20 $20 $00
 
-	; ENEMYCOLLISION_SYGER (0x44)
+	; ENEMYCOLLISION_SYGER_TAIL (0x44)
 	.db $02 $05 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $21 $00 $20 $20 $20 $21 $20 $20 $00
 
@@ -281,7 +281,7 @@ objectCollisionTable:
 	.db $03 $00 $00 $07 $21 $21 $21 $21 $21 $21 $00 $21 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $21 $1c $1c $21 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_POE_SISTER (0x46)
+	; ENEMYCOLLISION_POE_SISTER_MINIBOSS (0x46)
 	.db $02 $10 $0f $0f $21 $21 $21 $21 $21 $21 $21 $21 $21 $00 $00 $00
 	.db $00 $00 $00 $00 $21 $1c $1c $21 $00 $21 $20 $21 $21 $20 $20 $00
 
@@ -289,7 +289,7 @@ objectCollisionTable:
 	.db $02 $00 $00 $06 $1c $1c $1c $1c $00 $1c $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_AQUAMENTUS (0x48)
+	; ENEMYCOLLISION_AQUAMENTUS_HORN (0x48)
 	.db $02 $05 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $21 $1c $1c $21 $00 $21 $20 $20 $21 $20 $20 $00
 
@@ -301,11 +301,11 @@ objectCollisionTable:
 	.db $02 $06 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $21 $1c $1c $21 $00 $20 $20 $20 $21 $20 $20 $00
 
-	; ENEMYCOLLISION_GOHMA (0x4b)
+	; ENEMYCOLLISION_GOHMA_EYE (0x4b)
 	.db $02 $06 $05 $05 $1b $1b $1b $1b $1b $1b $00 $00 $1b $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1b $1b $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_4c (0x4c)
+	; ENEMYCOLLISION_MANHANDLA_BODY_VULNERABLE (0x4c)
 	.db $02 $06 $06 $05 $36 $36 $36 $36 $36 $36 $00 $36 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $21 $00 $00 $20 $20 $20 $20 $20 $20 $00
 
@@ -345,31 +345,31 @@ objectCollisionTable:
 	.db $02 $06 $05 $05 $1c $1c $1c $1c $00 $1c $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $00 $00 $20 $1c $34 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_56 (0x56)
+	; ENEMYCOLLISION_BLAINO_INVULNERABLE (0x56)
 	.db $05 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; SE_ENEMYCOLLISION_57 (0x57)
+	; ENEMYCOLLISION_BLAINO_GLOVE_SOFT_PUNCH (0x57)
 	.db $01 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; SE_ENEMYCOLLISION_58 (0x58)
+	; ENEMYCOLLISION_BLAINO_GLOVE_HARD_PUNCH (0x58)
 	.db $03 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; SE_ENEMYCOLLISION_59 (0x59)
+	; ENEMYCOLLISION_OMUAI_GRABBABLE (0x59)
 	.db $00 $06 $06 $06 $15 $16 $16 $17 $00 $15 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1b $1b $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_5a (0x5a)
+	; ENEMYCOLLISION_AGUNIMA_INVULNERABLE (0x5a)
 	.db $02 $06 $05 $05 $1c $1c $1c $1c $00 $1c $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_5b (0x5b)
+	; ENEMYCOLLISION_SYGER_BODY (0x5b)
 	.db $02 $07 $06 $06 $1c $1c $1c $1c $00 $1c $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_5c (0x5c)
+	; ENEMYCOLLISION_POE_SISTER_FIRSTFIGHT (0x5c)
 	.db $02 $10 $0f $0f $21 $21 $21 $21 $21 $21 $21 $21 $21 $00 $00 $00
 	.db $00 $00 $00 $00 $21 $1c $1c $21 $00 $21 $20 $21 $21 $20 $29 $00
 
@@ -389,15 +389,15 @@ objectCollisionTable:
 	.db $3d $00 $00 $00 $0b $0b $0b $0b $0b $0b $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1b $1b $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; ENEMYCOLLISION_MANHANDLA (0x61)
+	; ENEMYCOLLISION_MANHANDLA_BODY_INVULNERABLE (0x61)
 	.db $02 $06 $06 $05 $36 $36 $36 $36 $36 $36 $00 $36 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_62 (0x62)
+	; ENEMYCOLLISION_MANHANDLA_HEAD_VULNERABLE (0x62)
 	.db $02 $06 $06 $06 $1c $1c $1c $1c $00 $1c $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $0b $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_63 (0x63)
+	; ENEMYCOLLISION_MANHANDLA_CORE (0x63)
 	.db $02 $06 $06 $06 $21 $21 $21 $21 $21 $21 $21 $21 $00 $21 $00 $00
 	.db $00 $00 $00 $00 $21 $1c $1c $21 $21 $21 $21 $21 $21 $21 $21 $00
 
@@ -405,7 +405,7 @@ objectCollisionTable:
 	.db $02 $07 $06 $06 $1c $1c $1c $1c $00 $1c $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1b $1b $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_65 (0x65)
+	; ENEMYCOLLISION_DRAGON_ONOX_CLAW (0x65)
 	.db $03 $06 $06 $06 $16 $16 $16 $16 $16 $16 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1b $1b $00 $00 $20 $20 $20 $20 $20 $20 $00
 
@@ -421,11 +421,11 @@ objectCollisionTable:
 	.db $01 $00 $00 $1e $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; ENEMYCOLLISION_72 (0x69)
+	; ENEMYCOLLISION_FALLING_FIRE (0x69)
 	.db $03 $00 $00 $06 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; ENEMYCOLLISION_73 (0x6a)
+	; ENEMYCOLLISION_WALL_FLAME (0x6a)
 	.db $03 $00 $00 $07 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $1c $00 $00 $00 $00 $00 $00 $00
 
@@ -433,7 +433,7 @@ objectCollisionTable:
 	.db $02 $17 $16 $16 $15 $15 $15 $16 $1b $15 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1b $1b $00 $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_6c (0x6c)
+	; ENEMYCOLLISION_POE_SISTER_FLAME (0x6c)
 	.db $02 $00 $00 $1e $00 $00 $00 $00 $1c $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
@@ -445,11 +445,11 @@ objectCollisionTable:
 	.db $02 $00 $00 $1e $00 $1c $1c $00 $1c $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
-	; SE_ENEMYCOLLISION_6f (0x6f)
+	; ENEMYCOLLISION_DIN_CRYSTAL (0x6f)
 	.db $05 $06 $06 $06 $36 $36 $36 $36 $36 $36 $36 $36 $14 $36 $00 $00
 	.db $00 $00 $00 $00 $36 $36 $36 $36 $00 $36 $36 $36 $36 $36 $36 $00
 
-	; ENEMYCOLLISION_7b (0x70)
+	; ENEMYCOLLISION_GANON_TRIDENT (0x70)
 	.db $03 $00 $06 $06 $16 $16 $16 $16 $16 $16 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 
@@ -457,6 +457,6 @@ objectCollisionTable:
 	.db $02 $1f $1f $1f $1c $1c $1c $1c $1c $1c $00 $1c $1c $00 $00 $00
 	.db $00 $00 $00 $00 $1c $1c $1c $1c $00 $20 $20 $20 $20 $20 $20 $00
 
-	; SE_ENEMYCOLLISION_72 (0x72)
+	; ENEMYCOLLISION_POPPABLE_BUBBLE (0x72)
 	.db $00 $00 $00 $00 $23 $23 $23 $23 $23 $23 $23 $00 $23 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $23 $23 $00 $00 $00 $00 $00 $00 $00 $00 $00

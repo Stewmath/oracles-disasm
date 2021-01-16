@@ -2813,7 +2813,7 @@ _ganon_stateA_substate3:
 	ld l,Enemy.speed
 	ld (hl),SPEED_300
 	call _ecom_updateAngleTowardTarget
-	ld e,PARTID_50
+	ld e,PARTID_GANON_TRIDENT
 	call _ganon_spawnPart
 	jp objectSetVisible83
 

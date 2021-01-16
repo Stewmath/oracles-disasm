@@ -3905,7 +3905,7 @@ partCode22:
 
 
 ; ==============================================================================
-; PARTID_FIRE_PIPES
+; PARTID_FALLING_FIRE
 ; ==============================================================================
 partCode23:
 	ld e,$c2
@@ -3943,7 +3943,7 @@ partCode23:
 ++
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_FIRE_PIPES
+	ld (hl),PARTID_FALLING_FIRE
 	inc l
 	ld (hl),$02
 	ld l,$f0
@@ -5126,8 +5126,7 @@ partCode4e:
 
 
 ; ==============================================================================
-; PARTID_50
-; Used by Ganon
+; PARTID_GANON_TRIDENT
 ; ==============================================================================
 partCode50:
 	ld a,$04

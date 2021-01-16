@@ -1755,18 +1755,19 @@ dragonOnox_leftClaw:
 	inc (hl)
 	ld l,Enemy.collisionType
 	set 7,(hl)
+	inc l
 	; enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_DRAGON_ONOX_CLAW
 	inc l
-	ld (hl),$65
 	; collisionRadiusY
-	inc l
 	ld (hl),$05
+	inc l
 	; collisionRadiusX
-	inc l
 	ld (hl),$09
-	; damage
 	inc l
+	; damage
 	ld (hl),$fc
+
 	ld l,Enemy.relatedObj1+1
 	; dragon Onox subid 1
 	ld a,($cfd7)
@@ -2086,7 +2087,7 @@ dragonOnox_rightClaw:
 	set 7,(hl)
 	inc l
 	; enemyCollisionMode
-	ld (hl),$65
+	ld (hl),ENEMYCOLLISION_DRAGON_ONOX_CLAW
 	inc l
 	; collisionRadiusY
 	ld (hl),$05
@@ -3336,8 +3337,8 @@ enemyCode06:
 ++
 	ld l,e
 	inc (hl)
-	ld l,$a5
-	ld (hl),$0d
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_GLEEOK
 	ld l,$90
 	ld (hl),$14
 	ld l,$86
@@ -3425,8 +3426,8 @@ enemyCode06:
 	ld h,d
 	ld l,e
 	inc (hl)
-	ld l,$a5
-	ld (hl),$04
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_PODOBOO
 	ld e,$82
 	ld a,(de)
 	sub $04
@@ -3502,8 +3503,8 @@ enemyCode06:
 	ld h,d
 	ld l,e
 	inc (hl)
-	ld l,$a5
-	ld (hl),$04
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_PODOBOO
 	ld e,$82
 	ld a,(de)
 	sub $06
@@ -3552,8 +3553,8 @@ enemyCode06:
 	ld h,d
 	ld l,e
 	inc (hl)
-	ld l,$a5
-	ld (hl),$04
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_PODOBOO
 	ld e,$82
 	ld a,(de)
 	sub $08
