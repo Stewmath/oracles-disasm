@@ -3446,148 +3446,229 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 
 .define TEXT_BANK $07
 
+.RAMSECTION RAM_7 BANK 7 SLOT 3
+
+w7TextboxMap: ; $d000
 ; Mapping for textbox. Goes with w7TextboxAttributes.
-; Each row is $20 bytes, and there are 5 rows. So this should take $a0 bytes.
-.define w7TextboxMap	$d000
+; Each row is $20 bytes, and there are 5 rows. So this should take $a0 bytes, but it seems to have
+; room for an extra row.
+	dsb $c0
 
-.define w7TextDisplayState $d0c0
+w7TextDisplayState: ; $d0c0
+	db
 
+w7d0c1: ; $d0c1
 ; When bit 0 is set, text skips to the end of a line (A or B was pressed)
 ; When bit 3 is set, an option prompt has already been shown?
 ; When bit 4 is set, an extra text index will be shown when this text is done.
 ; See _getExtraTextIndex.
 ; When bit 5 is set, it shows the heart icon like when you get a piece of heart.
-.define w7d0c1		$d0c1
+	db
 
-; This is $00 when the text is done, $01 when a newline is encountered, and $ff
-; for anything else?
-.define w7TextStatus		$d0c2
+w7TextStatus: ; $d0c2
+; This is $00 when the text is done, $01 when a newline is encountered, and $ff for anything else?
+	db
 
-; w7SoundEffect is a one-off sound effect, while w7TextSound is the sound that
-; each character makes as it's displayed.
-.define w7SoundEffect	$d0c3
-.define w7TextSound	$d0c4
+w7SoundEffect: ; $d0c3
+; A sound effect that's played once
+	db
 
+w7TextSound: ; $d0c4
+; The sound that each character makes as it's displayed
+	db
+
+w7CharacterDisplayLength: ; $d0c6
 ; How many frames each character is displayed for before the next appears
-.define w7CharacterDisplayLength	$d0c5
+	db
+
+w7CharacterDisplayTimer: ; $d0c6
 ; The timer until the next character will be displayed
-.define w7CharacterDisplayTimer		$d0c6
+	db
 
-; The attribute byte for subsequent characters. This is the byte that is
-; written into vram bank 1, which determines which palette to use and stuff
-; like that.
-.define w7TextAttribute	$d0c7
+w7TextAttribute: ; $d0c7
+; The attribute byte for subsequent characters. This is the byte that is written into vram bank 1,
+; which determines which palette to use and stuff like that.
+	db
 
+w7TextArrowState: ; $d0c8
 ; Whether or not the little red arrow in the bottom-right is being displayed.
 ; This can be eiher $02 (not displayed) or $03 (displayed).
 ; This changes every 16 frames.
-.define w7TextArrowState $d0c8
+	db
 
-; These 3 bytes specify where the tilemap for the textbox is located. It points
-; to the start of the row where it should be displayed.
-.define w7TextboxPosBank $d0c9
-.define w7TextboxPosL	$d0ca
-.define w7TextboxPosH	$d0cb
-; d0cc: low byte of where to save the tiles under the textbox?
-.define w7d0cc		$d0cc
+w7TextboxPosBank: ; $d0c9
+; w7TextboxPosBank/w7TextboxPos specify where the tilemap for the textbox is located. It points to
+; the start of the row where it should be displayed.
+	db
+w7TextboxPos: ; $d0ca
+	dw
 
+w7d0cc: ; $d0cc
+; Low byte of where to save the tiles under the textbox?
+	db
+
+w7d0cd: ; $d0cd
+	db
+
+w7d0ce: ; $d0ce
+	db
+
+w7d0cf: ; $d0cf
+	db
+
+w7NextTextColumnToDisplay: ; $d0d0
 ; The next column of text to be shown
-.define w7NextTextColumnToDisplay	$d0d0
+	db
 
+w7d0d1: ; $d0d1
+	db
+
+w7TextGfxSource: ; $d0d2
 ; This variable is used by the retrieveTextCharacter function.
 ; 0: read a normal character
 ; 1: read a kanji
 ; 2: read a trade item symbol
-.define w7TextGfxSource	$d0d2
+	db
 
+w7d0d3: ; $d0d3
 ; Textbox position?
-.define w7d0d3		$d0d3
+	db
 
-.define w7ActiveBank	$d0d4
-; d0d5/6: address of text being read?
-.define w7TextAddressL	$d0d5
-.define w7TextAddressH	$d0d6
+w7ActiveBank: ; $d0d4
+	db
+w7TextAddress: ; $d0d5
+; Address of text being read
+	dw
 
+w7TextSlowdownTimer: ; $d0d7
 ; d0d7: counter for how long to slow down the text? (Used for getting essences)
-.define w7TextSlowdownTimer $d0d7
+	db
 
+w7TextboxVramPos: ; $d0d8
 ; Similar to w7TextboxPos, but this points to the vram where it ends up.
-.define w7TextboxVramPosL $d0d8
-.define w7TextboxVramPosH $d0d9
+	dw
 
-.define w7InvTextScrollTimer	$d0de
+w7d0da: ; $d0da
+	dsb 4
+
+w7InvTextScrollTimer: ; $d0de
+	db
+w7InvTextSpaceCounter: ; $d0df
 ; Number of spaces to be inserted before looping back to the start of the text.
-.define w7InvTextSpaceCounter	$d0df
+	db
 
-; This is 8 bytes. Each byte correspond to a position for an available option
-; in the text prompt.
-; The bytes can be written straight to w7TextboxMap as the indices for the
-; tiles that would normally be in those positions. They can also be converted
-; into an INDEX for w7TextboxMap with the _getAddressInTextboxMap function.
-.define w7TextboxOptionPositions $d0e0
+w7TextboxOptionPositions: ; $d0e0
+; This is 8 bytes. Each byte correspond to a position for an available option in the text prompt.
+; The bytes can be written straight to w7TextboxMap as the indices for the tiles that would normally
+; be in those positions. They can also be converted into an INDEX for w7TextboxMap with the
+; _getAddressInTextboxMap function.
+	dsb 8
 
+w7SelectedTextOption: ; $d0e8
 ; Note that this is distinct from wSelectedTextOption, but they behave very
 ; similarly. This is just used internally in text routines.
-.define w7SelectedTextOption	$d0e8
+	db
+
+w7SelectedTextPosition: ; $d0e9
 ; The corresponding value from w7TextboxOptionPositions.
-.define w7SelectedTextPosition		$d0e9
+	db
 
-.define w7d0ea		$d0ea
+w7d0ea: ; $d0ea
+	db
 
+w7TextboxTimer: ; $d0eb
 ; Number of frames until the textbox closes itself.
-.define w7TextboxTimer		$d0eb
-.define w7TextIndexL_backup			$d0ec
+	db
 
-; How many spaces to put after the name of the item.
+w7TextIndexL_backup: ; $d0ec
+	db
+
+w7InvTextSpacesAfterName: ; $d0ed
+; How many spaces to put after the name of the item (for the inventory menu).
 ; This is calculated so that the item name appears in the middle.
-.define w7InvTextSpacesAfterName	$d0ed
+	db
 
+w7TextSoundCooldownCounter: ; $d0ee
 ; Frame counter until the next time a character should play its sound effect.
 ; While nonzero, the text scrolling sound doesn't play (although explicit sound
 ; effects do play).
-.define w7TextSoundCooldownCounter	$d0ee
+	db
 
-.define w7d0ef		$d0ef
+w7d0ef: ; $d0ef
+	db
 
-.define w7TextTableAddr $d0f0
-.define w7TextTableBank $d0f2
+w7TextTableAddr: ; $d0f0
+	dw
+w7TextTableBank: ; $d0f2
+	db
 
-; How big is this?
-.define w7TextboxAttributes	$d100
+w7d0f3: ; $d0f3
+	dsb $d
 
-; $20 bytes total, 4 bytes per entry. When looking up a word in a dictionary,
-; this remembers the position it left off at.
-; b0: bank of text where it left off
-; b1/2: address of text where it left off
-; b3: high byte of text index
-.define w7TextStack	$d1c0
+w7TextboxAttributes: ; $d100
+; This goes with w7TextboxMap, so it should be the same size.
+	dsb $c0
 
-; Holds a line of text graphics. $200 bytes.
-.define w7TextGfxBuffer $d200
+w7TextStack: ; $d1c0
+; $20 bytes total, 4 bytes per entry. When looking up a word in a dictionary, this remembers the
+; position it left off at.
+; Entry format:
+;   b0: bank of text where it left off
+;   b1/2: address of text where it left off
+;   b3: high byte of text index
+	dsb $20
 
+w7d1e0: ; $d1e0
+	dsb $20
+
+w7TextGfxBuffer:
+; Holds a line of text graphics.
+	dsb $200
+
+w7LineTextBuffer: ; $d400
 ; The text for the line
-.define w7LineTextBuffer	$d400
+	dsb $10
+
+w7LineAttributesBuffer: ; $d410
 ; The attributes for the line
-.define w7LineAttributesBuffer $d410
+	dsb $10
+
+w7LineDelaysBuffer: ; $d420
 ; The number of frames each character is displayed before the next appears.
-.define w7LineDelaysBuffer	$d420
+	dsb $10
+
+w7LineSoundsBuffer: ; $d430
 ; The sound each character will play as it's displayed.
-.define w7LineSoundsBuffer	$d430
+	dsb $10
+
+w7LineSoundEffectsBuffer: ; $d440
 ; Sound effects created by the "sfx" command (ie. goron noise)
-.define w7LineSoundEffectsBuffer	$d440
-; Bit 0 of a byte in this buffer is set if the text can be advanced with the
-; A/B buttons.
-.define w7LineAdvanceableBuffer		$d450
+	dsb $10
 
-.define w7SecretText1		$d460
-.define w7SecretText2		$d46c
+w7LineAdvanceableBuffer: ; $d450
+; Bit 0 of a byte in this buffer is set if the text can be advanced with the A/B buttons.
+	dsb $10
 
+w7TextVariablesEnd: ; $d460
+; Everything from the start of the bank ($d000) up to here is cleared when "initTextbox" is called.
+	.db
+
+
+w7SecretText1: ; $d460
+	dsb $c
+
+w7SecretText2: ; $d46c
+	dsb $c
+
+w7SecretGenerationBuffer: ; $d478
 ; This is a 20-byte buffer containing the symbols generated so far (byte form, not ascii).
 ; Each symbol is 6 bits long (value from $00-$3f).
-; When encoding data into a secret, bits are inserted one at a time to the end of this
-; buffer, causing all existing data to be shifted forward by one bit.
-.define w7SecretGenerationBuffer	$d478
+; When encoding data into a secret, bits are inserted one at a time to the end of this buffer,
+; causing all existing data to be shifted forward by one bit.
+	dsb 20
 
-; $d5e0: Used at some point for unknown purpose
+.ENDS
 
-.define w7d800			$d800 ; $300 bytes? Secret text gets written here?
+.define w7d5e0 $d5e0 ; ?
+
+.define w7d800 $d800 ; $300 bytes? Secret text gets written here?

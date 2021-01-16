@@ -20,7 +20,7 @@ initTextbox:
 	ld a,$07
 	ld ($ff00+R_SVBK),a
 	ld hl,$d000
-	ld bc,$0460
+	ld bc,w7TextVariablesEnd - $d000
 	call clearMemoryBc
 	jp _initTextboxStuff
 
@@ -29,7 +29,7 @@ initTextbox:
 updateTextbox:
 	ld a,$07
 	ld ($ff00+R_SVBK),a
-	ld d,$d0
+	ld d,>w7TextDisplayState
 	ld a,(wTextIsActive)
 	inc a
 	jr nz,+
@@ -150,14 +150,14 @@ updateTextbox:
 
 	call _displayNextTextCharacter
 	call _dmaTextboxMap
-	ld d,$d0
+	ld d,>w7TextStatus
 	call _getNextCharacterToDisplay
 	ret nz
 +
 	call _func_53eb
 	ret nz
 
-	ld d,$d0
+	ld d,>w7TextStatus
 	call _func_5296
 	ret nz
 
@@ -542,10 +542,10 @@ inventoryTextCode:
 
 	call _doInventoryTextFirstPass
 
-	ld d,>w7TextAddressL
+	ld d,>w7TextAddress
 	jr z,+
 
-	ld e,<w7TextAddressL
+	ld e,<w7TextAddress
 	ld a,l
 	ld (de),a
 	inc e
@@ -638,7 +638,7 @@ inventoryTextCode:
 	ld l,<w7TextDisplayState
 	inc (hl)
 
-	ld l,<w7TextAddressL
+	ld l,<w7TextAddress
 	ldi (hl),a
 	ld (hl),b
 
@@ -686,9 +686,9 @@ inventoryTextCode:
 
 @saveTextAddressAndDmaTextGfxBuffer:
 	ld a,l
-	ld (w7TextAddressL),a
+	ld (w7TextAddress),a
 	ld a,h
-	ld (w7TextAddressH),a
+	ld (w7TextAddress+1),a
 
 @dmaTextGfxBuffer:
 	; Copy w7TextGfxBuffer to vram
@@ -714,8 +714,8 @@ inventoryTextCode:
 
 	ld a,l
 	ld b,h
-	ld hl,w7TextAddressL
-	ld l,<w7TextAddressL
+	ld hl,w7TextAddress
+	ld l,<w7TextAddress
 	ldi (hl),a
 	ld (hl),b
 
@@ -788,7 +788,7 @@ inventoryTextCode:
 	ld l,<w7TextStatus
 	ld (hl),$ff
 
-	ld l,<w7TextAddressL
+	ld l,<w7TextAddress
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
@@ -871,10 +871,10 @@ _initTextboxStuff:
 	swap a
 	rlca
 	add l
-	ld (w7TextboxPosL),a
+	ld (w7TextboxPos),a
 
 	ld a,h
-	ld (w7TextboxPosH),a
+	ld (w7TextboxPos+1),a
 
 	; Same as above but for calculating the position in vram. Accounts for
 	; wScreenOffsetX/Y for some reason? That's weirdly inconsistent. If
@@ -905,9 +905,9 @@ _initTextboxStuff:
 	ld c,$00
 	add hl,bc
 	ld a,l
-	ld (w7TextboxVramPosL),a
+	ld (w7TextboxVramPos),a
 	ld a,h
-	ld (w7TextboxVramPosH),a
+	ld (w7TextboxVramPos+1),a
 
 	ld a,(wScreenOffsetX)
 	ld b,a
@@ -926,11 +926,11 @@ _initTextboxStuff:
 	jr c,+
 	ld a,$10
 +
-	ld ($d0cd),a
+	ld (w7d0cd),a
 	ld b,a
 	ld a,$10
 	sub b
-	ld ($d0ce),a
+	ld (w7d0ce),a
 
 	ld a,(wTextboxFlags)
 	bit TEXTBOXFLAG_BIT_NOCOLORS,a
@@ -1117,9 +1117,9 @@ _checkInitialTextCommands:
 
 @end:
 	ld a,l
-	ld (w7TextAddressL),a
+	ld (w7TextAddress),a
 	ld a,h
-	ld (w7TextAddressH),a
+	ld (w7TextAddress+1),a
 	pop de
 	ret
 
@@ -1155,7 +1155,7 @@ _drawLineOfText:
 	ld h,d
 	ld l,<w7TextStatus
 	ld (hl),$ff
-	ld l,<w7TextAddressL
+	ld l,<w7TextAddress
 	push hl
 	ldi a,(hl)
 	ld h,(hl)
@@ -1185,11 +1185,11 @@ _drawLineOfText:
 ++
 	pop de
 	ld a,l
-	ld (de),a
+	ld (de),a ; w7TextAddress
 	inc e
 	ld a,h
-	ld (de),a
-	ld e,$d0
+	ld (de),a ; w7TextAddress+1
+	ld e,<w7NextTextColumnToDisplay
 	xor a
 	ld (de),a
 	ret
@@ -1272,24 +1272,23 @@ _dmaTextGfxBuffer:
 
 ;;
 _saveTilesUnderTextbox:
-	ld hl,w7TextboxPosL
+	ld hl,w7TextboxPos
 	ld e,(hl)
 	inc l
 	ld d,(hl)
 	inc l
 	ld l,(hl)
-	ld h,$d0
+	ld h,>w7TextboxMap
 	call @copyTileMap
 
-	; The attribute map is assumed to be $400 bytes after the tile map
-	ld hl,w7TextboxPosL
+	ld hl,w7TextboxPos
 	ld e,(hl)
 	inc l
 	ldi a,(hl)
 	add $04
 	ld d,a
 	ld l,(hl)
-	ld h,$d1
+	ld h,>w7TextboxAttributes
 
 ;;
 ; Copies 6 rows of tiles (from a tile map) from de to hl. A row is $20 bytes,
@@ -1418,7 +1417,7 @@ _dmaTextboxMap:
 	ld a,(wTextMapAddress)
 	add $03
 	ld c,a
-	ld hl,w7TextboxVramPosL
+	ld hl,w7TextboxVramPos
 	ldi a,(hl)
 	ld e,a
 	cp $61
@@ -1772,7 +1771,7 @@ _label_3f_160:
 
 ;;
 _readNextTextByte:
-	ld l,<w7TextAddressL
+	ld l,<w7TextAddress
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
@@ -1828,7 +1827,7 @@ _updateTextboxArrow:
 	ld c,a
 	ld l,<w7TextboxMap+$80
 	ld h,>w7TextboxMap
-	ld e,<w7TextboxVramPosL
+	ld e,<w7TextboxVramPos
 	ld a,(de)
 	add l
 	ld b,a
@@ -2001,8 +2000,9 @@ _func_53eb:
 
 ;;
 ; Something to do with pieces of heart
-; @param b Relative number of pieces of heart to show; $ff to show one less
-; than you actually have
+;
+; @param	b	Relative number of pieces of heart to show; $ff to show one less
+;			than you actually have
 @func:
 	ld a,(wNumHeartPieces)
 	add b
@@ -2019,7 +2019,7 @@ _func_53eb:
 	pop af
 	ld hl,@data
 	rst_addDoubleIndex
-	ld d,$d0
+	ld d,>w7TextboxMap
 	ld a,(w7d0cc)
 	add $11
 	and $1f
@@ -2046,7 +2046,7 @@ _func_53eb:
 	ld e,a
 	ld a,(hl)
 	ld (de),a
-	ld d,$d1
+	ld d,>w7TextboxAttributes
 	ld a,(de)
 	or $20
 	ld (de),a
@@ -2130,7 +2130,7 @@ _doInventoryTextFirstPass:
 @lineEnd:
 	call _popFromTextStack
 
-	; pop the initial text address, store it into w7TextAddressL/H
+	; pop the initial text address, store it into w7TextAddress
 	pop bc
 	ld hl,w7ActiveBank
 	ldh a,(<hFF8A)
@@ -2295,7 +2295,7 @@ _shiftTextGfxBufferLeft:
 	or b
 	jr nz,--
 
-	ld hl,w7TextAddressL
+	ld hl,w7TextAddress
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
@@ -2327,7 +2327,7 @@ _handleTextControlCodeWithSpecialCase:
 	; Control code 6: trade item or symbol
 @cmd6:
 	ld bc,w7TextGfxBuffer+$1e0
-	ld de,$d5e0
+	ld de,w7d5e0
 	call _handleTextControlCode
 	xor a
 	ret
@@ -2571,7 +2571,7 @@ _popFromTextStack:
 	ldd a,(hl)
 	ld (wTextIndexH),a
 	ldd a,(hl)
-	ld de,w7TextAddressH
+	ld de,w7TextAddress+1
 	ld (de),a
 	ld b,a
 	ldd a,(hl)
