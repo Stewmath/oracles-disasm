@@ -791,7 +791,7 @@ enemyCode1c:
 	ret z
 	ld e,Enemy.var2a
 	ld a,(de)
-	cp $80
+	cp $80|ITEMCOLLISION_LINK
 	ret nz
 	jp enemyDelete
 
@@ -862,8 +862,7 @@ _ironMask_subid00:
 	call _ironMask_updateCollisionsFromLinkRelativeAngle
 	jp enemyAnimate
 
-; This enemy has turned into the mask that was removed; will delete self after [counter1]
-; frames.
+; Maskless
 @stateA:
 	call _ecom_decCounter1
 	call z,_ironMask_chooseRandomAngleAndCounter1
@@ -871,7 +870,7 @@ _ironMask_subid00:
 	jp enemyAnimate
 
 
-; Iron mask without mask on
+; Detached "mask"
 _ironMask_subid01:
 	ld a,(de)
 	sub $08
@@ -885,7 +884,7 @@ _ironMask_subid01:
 	ld l,e
 	inc (hl)
 	ld l,Enemy.speed
-	ld (hl),$50
+	ld (hl),SPEED_200
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_05
 	ld a,$05
@@ -903,7 +902,7 @@ _ironMask_subid01:
 	ld l,e
 	inc (hl)
 	ld l,Enemy.counter1
-	ld (hl),$1e
+	ld (hl),30
 
 @stateA:
 	call _ecom_decCounter1
@@ -948,8 +947,7 @@ _ironMask_chooseRandomAngleAndCounter1:
 	cp $0a
 	jp z,_ecom_setRandomCardinalAngle
 
-	; Subid 0 only: 1 in 4 chance of turning directly toward Link, otherwise just
-	; choose a random angle
+	; 1 in 4 chance of turning directly toward Link, otherwise just choose a random angle
 	call @chooseAngle
 	swap a
 	rlca
@@ -967,7 +965,7 @@ _ironMask_chooseRandomAngleAndCounter1:
 	jp _ecom_setRandomCardinalAngle
 
 @counter1Vals:
-	.db $19 $1e $23 $28 $2d $32 $37 $3c
+	.db 25, 30, 35, 40, 45, 50, 55, 60
 
 
 ;;
@@ -982,7 +980,7 @@ _ironMask_chooseAmountOfTimeToStand:
 	ret
 
 @counter1Vals:
-	.db $0f $1e $2d $3c
+	.db 15, 30, 45, 60
 
 
 _ironMask_magnetGloveCheck:
@@ -1058,9 +1056,12 @@ _ironMask_magnetGloveCheck:
 	.dw @ret
 	.dw @ret
 	.dw @ret
+
 @enemyDelete:
 	jp enemyDelete
+
 @ret:
 	ret
+
 	; left over
 	jp enemyDelete

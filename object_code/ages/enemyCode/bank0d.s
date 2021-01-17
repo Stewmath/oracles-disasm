@@ -867,7 +867,7 @@ _ironMask_chooseRandomAngleAndCounter1:
 	jp _ecom_setRandomCardinalAngle
 
 @counter1Vals:
-	.db 25 30 35 40 45 50 55 60
+	.db 25, 30, 35, 40, 45, 50, 55, 60
 
 ;;
 _ironMask_chooseAmountOfTimeToStand:
@@ -881,7 +881,7 @@ _ironMask_chooseAmountOfTimeToStand:
 	ret
 
 @counter1Vals:
-	.db 15 30 45 60
+	.db 15, 30, 45, 60
 
 
 ; ==============================================================================
