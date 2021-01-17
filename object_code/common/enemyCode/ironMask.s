@@ -10,11 +10,15 @@ enemyCode1c:
 	dec a
 	jp nz,_ecom_updateKnockbackAndCheckHazards
 
-.ifdef ROM_SEASONS
+	; Delete detached mask when it touches Link (if being pulled with magnet gloves)
 	ld e,Enemy.subid
 	ld a,(de)
 	or a
-	ret z
+	jr nz,@normalStatus
+	ld e,Enemy.state
+	ld a,(de)
+	cp $0b
+	jr c,@normalStatus
 	ld e,Enemy.var2a
 	ld a,(de)
 	cp $80|ITEMCOLLISION_LINK
@@ -23,33 +27,7 @@ enemyCode1c:
 
 @normalStatus:
 	call _ecom_getSubidAndCpStateTo08
-	jr nc,+
-
-@commonState:
-	rst_jumpTable
-	.dw _ironMask_state_uninitialized
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
-	.dw _ecom_blownByGaleSeedState
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
-
-+
-	ld a,b
-	rst_jumpTable
-	.dw _ironMask_subid00
-	.dw _ironMask_subid01
-
-.else; ROM_AGES
-
-@normalStatus:
-	call _ecom_getSubidAndCpStateTo08
-	jr c,@commonState
-	bit 0,b
-	jp z,_ironMask_subid00
-	jp _ironMask_subid01
+	jr nc,@subidTable
 
 @commonState:
 	rst_jumpTable
@@ -62,40 +40,29 @@ enemyCode1c:
 	.dw _ironMask_state_stub
 	.dw _ironMask_state_stub
 
-.endif
+@subidTable:
+	ld a,b
+	rst_jumpTable
+	.dw _ironMask_subid00
+	.dw _ironMask_subid01
 
 _ironMask_state_uninitialized:
-
-.ifdef ROM_SEASONS
-	bit 0,b
-	jp nz,_ecom_setSpeedAndState8
-.endif
-
 	ld a,SPEED_80
 	call _ecom_setSpeedAndState8AndVisible
 
 	ld l,Enemy.counter1
 	inc (hl)
 
-.ifdef ROM_SEASONS
-	ret
-.else
 	bit 0,b
 	ret z
 
-	; Subid 1 only
+	; Subid 1 only (maskless enemy)
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_UNMASKED_IRON_MASK
-	ld l,Enemy.knockbackCounter
-	ld (hl),$10
-	ld l,Enemy.invincibilityCounter
-	ld (hl),$e8
+
 	ld a,$04
 	jp enemySetAnimation
-.endif
 
-
-.ifdef ROM_AGES
 
 _ironMask_state_switchHook:
 	inc e
@@ -121,6 +88,11 @@ _ironMask_state_switchHook:
 	ld b,ENEMYID_IRON_MASK
 	call _ecom_spawnUncountedEnemyWithSubid01
 	jr nz,@dontRemoveMask
+
+	ld l,Enemy.knockbackCounter
+	ld (hl),$10
+	ld l,Enemy.invincibilityCounter
+	ld (hl),$e8
 
 	; Transfer "index" from enabled byte to new enemy
 	ld l,Enemy.enabled
@@ -172,14 +144,12 @@ _ironMask_state_switchHook:
 	res 7,(hl)
 	ret
 
-.endif ; ROM_AGES
-
 
 _ironMask_state_stub:
 	ret
 
 
-; Iron mask with mask on
+; Iron mask (with or without mask on)
 _ironMask_subid00:
 	ld a,(de)
 	sub $08
@@ -187,35 +157,26 @@ _ironMask_subid00:
 	.dw @state8
 	.dw @state9
 	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+	.dw @stateD
 
 
 ; Standing in place
 @state8:
-.ifdef ROM_SEASONS
 	call _ironMask_magnetGloveCheck
-.endif
 	call _ecom_decCounter1
 	jp nz,_ironMask_updateCollisionsFromLinkRelativeAngle
-.ifdef ROM_SEASONS
 	ld l,Enemy.state
-.else
-	ld l,e
-.endif
 	inc (hl) ; [state]
 	call _ironMask_chooseRandomAngleAndCounter1
 
 ; Moving in some direction for [counter1] frames
 @state9:
-.ifdef ROM_SEASONS
 	call _ironMask_magnetGloveCheck
-.endif
 	call _ecom_decCounter1
 	jr nz,++
-.ifdef ROM_SEASONS
 	ld l,Enemy.state
-.else
-	ld l,e
-.endif
 	dec (hl) ; [state]
 	call _ironMask_chooseAmountOfTimeToStand
 ++
@@ -223,31 +184,15 @@ _ironMask_subid00:
 	call _ironMask_updateCollisionsFromLinkRelativeAngle
 	jp enemyAnimate
 
-; This enemy has turned into the mask that was removed; will delete self after [counter1]
-; frames.
+; This enemy has turned into the mask that was removed, using the switch hook; will delete self
+; after [counter1] frames.
 @stateA:
 	call _ecom_decCounter1
-.ifdef ROM_AGES
 	jp nz,_ecom_flickerVisibility
 	jp enemyDelete
-.else
-	call z,_ironMask_chooseRandomAngleAndCounter1
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
-	jp enemyAnimate
-.endif
 
-
-; Iron mask without mask on
-_ironMask_subid01:
-.ifdef ROM_SEASONS
-	ld a,(de)
-	sub $08
-	rst_jumpTable
-	.dw @state8
-	.dw @state9
-	.dw @stateA
-
-@state8:
+; This enemy has turned into the mask being pulled off with magnet gloves
+@stateB:
 	ld h,d
 	ld l,e
 	inc (hl)
@@ -259,7 +204,7 @@ _ironMask_subid01:
 	call enemySetAnimation
 	call objectSetVisible82
 
-@state9:
+@stateC:
 	ld a,(wMagnetGloveState)
 	or a
 	jr z,+
@@ -272,16 +217,18 @@ _ironMask_subid01:
 	ld l,Enemy.counter1
 	ld (hl),30
 
-@stateA:
+@stateD:
 	call _ecom_decCounter1
 	jp nz,_ecom_flickerVisibility
 	jp enemyDelete
-.else
+
+
+; Iron mask without mask on
+_ironMask_subid01:
 	call _ecom_decCounter1
 	call z,_ironMask_chooseRandomAngleAndCounter1
 	call _ecom_applyVelocityForSideviewEnemyNoHoles
 	jp enemyAnimate
-.endif
 
 
 ;;
@@ -316,29 +263,18 @@ _ironMask_chooseRandomAngleAndCounter1:
 	ld a,(hl)
 	ld (de),a
 
-.ifdef ROM_AGES
 	ld e,Enemy.subid
 	ld a,(de)
 	or a
 	jp nz,_ecom_setRandomCardinalAngle
-.else
-	ld e,Enemy.state
-	ld a,(de)
-	cp $0a
-	jp z,_ecom_setRandomCardinalAngle
-.endif
 
-	; Subid 0 only: 1 in 4 chance of turning directly toward Link, otherwise just
-	; choose a random angle
+	; Masked version only: 1 in 4 chance of turning directly toward Link, otherwise just choose
+	; a random angle
 	call @chooseAngle
 	swap a
 	rlca
 	ld h,d
-.ifdef ROM_SEASONS
-	ld l,Enemy.var31
-.else
 	ld l,Enemy.direction
-.endif
 	cp (hl)
 	ret z
 	ld (hl),a
@@ -367,8 +303,6 @@ _ironMask_chooseAmountOfTimeToStand:
 @counter1Vals:
 	.db 15, 30, 45, 60
 
-
-.ifdef ROM_SEASONS
 
 _ironMask_magnetGloveCheck:
 	ld a,(wMagnetGloveState)
@@ -414,43 +348,14 @@ _ironMask_magnetGloveCheck:
 	ld (hl),a
 	ret
 ++
+	; Turn self into the removed mask
 	ld l,Enemy.state
-	ld (hl),$0a
+	ld (hl),$0b
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_UNMASKED_IRON_MASK
-	ld a,$04
-	call enemySetAnimation
+
+	; Spawn the maskless version of the enemy
 	ld b,ENEMYID_IRON_MASK
 	call _ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 	jp objectCopyPosition
-	jr z,+
-	sub $03
-	ret c
-	jp z,enemyDie
-	dec a
-	jp nz,_ecom_updateKnockback
-	ret
-+
-	ld e,Enemy.state
-	ld a,(de)
-	rst_jumpTable
-	.dw @enemyDelete
-	.dw @ret
-	.dw @ret
-	.dw @ret
-	.dw @ret
-	.dw @ret
-	.dw @ret
-	.dw @ret
-
-@enemyDelete:
-	jp enemyDelete
-
-@ret:
-	ret
-
-	; left over
-	jp enemyDelete
-
-.endif ; ROM_SEASONS
