@@ -460,3 +460,7 @@ objectCollisionTable:
 	; ENEMYCOLLISION_POPPABLE_BUBBLE (0x72)
 	.db $00 $00 $00 $00 $23 $23 $23 $23 $23 $23 $23 $00 $23 $00 $23 $00
 	.db $00 $00 $00 $00 $00 $23 $23 $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+	; ENEMYCOLLISION_SWITCHHOOK_DAMAGE_ENEMY (0x73)
+	.db $02 $10 $0f $0f $08 $09 $09 $0a $0a $08 $08 $0a $0d $0d $08 $25
+	.db $00 $00 $00 $2f $09 $22 $22 $0a $09 $09 $1c $27 $08 $28 $29 $00

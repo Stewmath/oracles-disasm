@@ -4659,11 +4659,7 @@ _fish_subid00:
 	ld l,e
 	inc (hl)
 	ld l,Enemy.enemyCollisionMode
-.ifdef ROM_AGES
 	ld (hl),ENEMYCOLLISION_SWITCHHOOK_DAMAGE_ENEMY
-.else
-	ld (hl),ENEMYCOLLISION_STANDARD_ENEMY
-.endif
 	ld l,Enemy.zh
 	ld (hl),$00
 
