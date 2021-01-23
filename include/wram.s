@@ -2386,7 +2386,7 @@ wFollowingLinkObjectType: ; $cce7/$ccfd
 wFollowingLinkObject: ; $cce8/$ccfe
 	db
 
-wcce9: ; $cce9
+wcce9: ; $cce9/$ccff
 ; This might be a marker for the end of data in the $cc00 block?
 	.db
 
@@ -2717,7 +2717,7 @@ wcde3: ; $cde3
 ; are given back to Link during credits cutscene state 3
 	dw
 
-; $cde5-$ceff unused?
+; $cde5-$cdff unused?
 
 .endif ; ROM_AGES
 .ENDS
