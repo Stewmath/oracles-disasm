@@ -1,7 +1,6 @@
 ;;
 ; ITEMID_SWITCH_HOOK ($08)
 _parentItemCode_switchHook:
-.ifdef ROM_AGES
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -28,13 +27,15 @@ _parentItemCode_switchHook:
 
 	call _parentItemLoadAnimationAndIncState
 	call itemCreateChild
-
+.ifdef ROM_AGES
 	; If underwater, use a different animation
 	call _isLinkUnderwater
 	ret z
 	ld a,LINK_ANIM_MODE_2e
 	jp specialObjectSetAnimationWithLinkData
-
+.else
+	ret
+.endif
 @state1:
 	ld a,(w1WeaponItem.var2f)
 	or a
@@ -54,4 +55,3 @@ _parentItemCode_switchHook:
 	ld hl,w1WeaponItem.var2f
 	set 5,(hl)
 	ret
-.endif

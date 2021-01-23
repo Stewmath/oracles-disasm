@@ -988,6 +988,24 @@ groups:
       Use it to create
       blocks.
 
+  - name: TX_00_GET_SWITCHHOOK
+    index: auto
+    text: |-
+      You got the
+      \col(1)Switch Hook\col(0)!
+      Shoot at an
+      object to switch
+      places with it.
+
+  - name: TX_00_GET_LONGHOOK
+    index: auto
+    text: |-
+      You got the \col(1)Long
+      Switch\col(0)! Switch
+      places with
+      objects from a
+      distance.
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -2867,6 +2885,20 @@ groups:
       Cane of Somaria
       Used to create
       blocks.
+
+  - name: TX_09_SWITCHHOOK
+    index: auto
+    text: |-
+      Switch Hook
+      User and target
+      trade places.
+
+  - name: TX_09_LONGHOOK
+    index: auto
+    text: |-
+      Long Hook
+      Switches places
+      from a distance.
 
 - group: 0x0a
   data:

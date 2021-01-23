@@ -10,7 +10,7 @@ _itemUsageParameterTable:
 	.db $33 <wGameKeysJustPressed   ; ITEMID_ROD_OF_SEASONS
 	.db $53 <wGameKeysJustPressed   ; ITEMID_MAGNET_GLOVES
 	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_HELPER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
+	.db $73 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_CHAIN
 	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS

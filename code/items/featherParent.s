@@ -12,12 +12,12 @@ _parentItemCode_feather:
 .ifdef ROM_AGES
 	call _isLinkUnderwater
 	jr nz,@deleteParent
+.endif
 
 	; Can't use the feather while using the switch hook
 	ld a,(w1ParentItem2.id)
 	cp ITEMID_SWITCH_HOOK
 	jr z,@deleteParent
-.endif
 
 	; No jumping in minecarts / on companions
 	ld a,(wLinkObjectIndex)

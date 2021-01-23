@@ -10,9 +10,6 @@ sounddeChannel6:
 sound06Start:
 
 sound97Start:
-
-sounda1Start:
-
 soundadStart:
 
 soundb6Start:
@@ -20,8 +17,6 @@ soundb6Start:
 sound06Channel6:
 sound97Channel2:
 sound97Channel7:
-sounda1Channel2:
-sounda1Channel7:
 soundadChannel2:
 soundadChannel7:
 soundb6Channel2:

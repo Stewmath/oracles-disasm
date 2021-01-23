@@ -2393,7 +2393,14 @@ wFollowingLinkObjectType: ; $cce7/$ccfd
 wFollowingLinkObject: ; $cce8/$ccfe
 	db
 
-wcce9: ; $cce9/$ccff
+.ifdef ROM_SEASONS
+wSwitchHookState: ; -/$ccff
+; Used when swapping with the switch hook.
+	db
+.endif
+
+
+wcce9: ; $cce9/$cd00
 ; This might be a marker for the end of data in the $cc00 block?
 	.db
 

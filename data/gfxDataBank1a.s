@@ -24,4 +24,5 @@ gfxDataBank1a:
 	m_GfxDataSimple spr_slingshot
 	m_GfxDataSimple spr_magnet_gloves
 	m_GfxDataSimple spr_cane_of_somaria
+	m_GfxDataSimple spr_switch_hook
 .endif

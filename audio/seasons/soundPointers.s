@@ -160,7 +160,7 @@ _soundPointers:
 	m_soundPointer sound9e
 	m_soundPointer sound9f
 	m_soundPointer sounda0
-	m_soundPointer sounda1
+	m_soundPointer switchHookSound
 	m_soundPointer sounda2
 	m_soundPointer sounda3
 	m_soundPointer sounda4
