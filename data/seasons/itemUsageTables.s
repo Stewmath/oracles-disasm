@@ -15,7 +15,7 @@ _itemUsageParameterTable:
 	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS
 	.db $05 <wGameKeysJustPressed   ; ITEMID_FLUTE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SHOOTER
+	.db $43 <wGameKeysJustPressed   ; ITEMID_SHOOTER
 	.db $00 <wGameKeysJustPressed   ; ITEMID_10
 	.db $00 <wGameKeysJustPressed   ; ITEMID_HARP
 	.db $00 <wGameKeysJustPressed   ; ITEMID_12

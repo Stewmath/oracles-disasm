@@ -3807,6 +3807,7 @@ _loadItemIconGfx:
 	ld b,:spr_boomerang
 	jp copy20BytesFromBank
 +
+.endif
 	; Also replace L-1 slingshot with L-2 sprite if applicable.
 	ld a,b
 	cp $81
@@ -3816,7 +3817,6 @@ _loadItemIconGfx:
 	jr nz,+
 	inc b
 +
-.endif
 	; Also replace magnet glove polarity. ("N" symbol was moved from "gfx_hud.png" to
 	; "spr_item_icons_1.png".)
 	ld a,b
@@ -4015,6 +4015,7 @@ _inventoryMenuState0:
 	ld a,UNCMP_GFXH_MAGIC_BOOMERANG_INV
 	call loadUncompressedGfxHeader
 +
+.endif
 	; Do the same with the hyper slingshot.
 	ld a,(wSlingshotLevel)
 	cp $02
@@ -4022,7 +4023,6 @@ _inventoryMenuState0:
 	ld a,UNCMP_GFXH_HYPER_SLINGSHOT_INV
 	call loadUncompressedGfxHeader
 +
-.endif
 
 	ld a,UNCMP_GFXH_06
 	call loadUncompressedGfxHeader
@@ -4144,17 +4144,17 @@ _inventoryMenuState1:
 	cp ITEMID_SEED_SATCHEL
 	jr z,@hasSubmenu
 
-.ifdef ROM_AGES
+	cp ITEMID_SLINGSHOT
+	jr z,@hasSubmenu
 	cp ITEMID_SHOOTER
 	jr z,@hasSubmenu
 
+.ifdef ROM_AGES
 	cp ITEMID_HARP
 	jr nz,@finalizeEquip
 	ld c,$e0
-
-.else; ROM_SEASONS
-	cp ITEMID_SLINGSHOT
-	jr nz,@finalizeEquip
+.else
+	jr @finalizeEquip
 .endif
 
 @hasSubmenu:
@@ -4457,16 +4457,15 @@ _inventoryMenuState2:
 	rst_addAToHl
 	ld a,(wInventory.selectedItem)
 
-.ifdef ROM_AGES
 	cp ITEMID_SHOOTER
-.else
+	jr z,+
 	cp ITEMID_SLINGSHOT
-.endif
-
-	ld a,$00
-	jr nz,+
-	ld a,$05
+	jr z,+
+	xor a
+	jr ++
 +
+	ld a,$05
+++
 	add (hl)
 	call _showItemText2
 	jp _func_02_5a35

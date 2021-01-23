@@ -73,7 +73,7 @@ treasureObjectData:
 	/* $0c */ m_TreasurePointer treasureObjectData0c
 	/* $0d */ m_TreasurePointer treasureObjectData0d
 	/* $0e */ m_TreasureSubid   $0a, $0c, $3b, $23, TREASURE_OBJECT_FLUTE_00
-	/* $0f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SHOOTER_00
+	/* $0f */ m_TreasureSubid   $38, $01, <TX_00_GET_SEEDSHOOTER, $80, TREASURE_OBJECT_SHOOTER_00
 	/* $10 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_10_00
 	/* $11 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_HARP_00
 	/* $12 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_12_00

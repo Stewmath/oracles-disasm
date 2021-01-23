@@ -57,6 +57,7 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader_hyperSlingshotInv
 	.dw uncmpGfxHeader_caneOfSomaria
 	.dw uncmpGfxHeader_switchHook
+	.dw uncmpGfxHeader_seedShooter
 
 uncmpGfxHeader00:
 uncmpGfxHeader01:
@@ -207,3 +208,6 @@ uncmpGfxHeader_caneOfSomaria:
 
 uncmpGfxHeader_switchHook:
 	m_GfxHeader spr_switch_hook, $8521, $0b
+
+uncmpGfxHeader_seedShooter:
+	m_GfxHeader spr_seed_shooter, $8521, $09

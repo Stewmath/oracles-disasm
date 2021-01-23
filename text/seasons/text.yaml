@@ -1006,6 +1006,15 @@ groups:
       objects from a
       distance.
 
+  - name: TX_00_GET_SEEDSHOOTER
+    index: auto
+    text: |-
+      You got the
+      \col(1)Seed Shooter\col(0)!\stop
+      Pick your \col(1)seeds\col(0),
+      fire, then watch
+      them ricochet.
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -2899,6 +2908,13 @@ groups:
       Long Hook
       Switches places
       from a distance.
+
+  - name: TX_09_SEED_SHOOTER
+    index: auto
+    text: |-
+      Seed Shooter
+      Used to bounce
+      seeds around.
 
 - group: 0x0a
   data:

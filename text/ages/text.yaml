@@ -1031,6 +1031,23 @@ groups:
       to reverse
       polarity.
 
+  - name: TX_00_GET_SLINGSHOT
+    index: auto
+    text: |-
+      You got the
+      \col(1)Slingshot\col(0)!
+      Choose your
+      \col(1)seeds\col(0) and
+      take aim!
+
+  - name: TX_00_GET_HYPERSLINGSHOT
+    index: auto
+    text: |-
+      You got the
+      \col(1)Hyper Slingshot\col(0)!
+      It shoots three
+      seeds at a time!
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -4560,6 +4577,20 @@ groups:
       Magnetic Gloves
       Magnetically
       attractive!
+
+  - name: TX_09_SLINGSHOT
+    index: auto
+    text: |-
+      Slingshot
+      Used to shoot
+      seeds.
+
+  - name: TX_09_HYPERSLINGSHOT
+    index: auto
+    text: |-
+      Hyper Slingshot
+      Shoots in three
+      directions.
 
 - group: 0x0a
   data:

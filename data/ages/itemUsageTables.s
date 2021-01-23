@@ -38,7 +38,7 @@ _itemUsageParameterTable:
 	.db $00 <wGameKeysJustPressed	; ITEMID_10
 	.db $05 <wGameKeysJustPressed	; ITEMID_HARP
 	.db $00 <wGameKeysJustPressed	; ITEMID_12
-	.db $00 <wGameKeysJustPressed	; ITEMID_SLINGSHOT
+	.db $43 <wGameKeysJustPressed	; ITEMID_SLINGSHOT
 	.db $00 <wGameKeysJustPressed	; ITEMID_14
 	.db $13 <wGameKeysJustPressed	; ITEMID_SHOVEL
 	.db $13 <wGameKeysPressed	; ITEMID_BRACELET

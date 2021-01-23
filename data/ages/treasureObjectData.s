@@ -77,7 +77,7 @@ treasureObjectData:
 	/* $10 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_10_00
 	/* $11 */ m_TreasurePointer treasureObjectData11
 	/* $12 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_12_00
-	/* $13 */ m_TreasurePointer $0000
+	/* $13 */ m_TreasurePointer treasureObjectData13
 	/* $14 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_14_00
 	/* $15 */ m_TreasurePointer treasureObjectData15
 	/* $16 */ m_TreasurePointer treasureObjectData16
@@ -217,6 +217,11 @@ treasureObjectData11:
 	m_BeginTreasureSubids TREASURE_HARP
 	m_TreasureSubid $0a, $00, $71, $68, TREASURE_OBJECT_HARP_00
 	m_TreasureSubid $0a, $01, $78, $68, TREASURE_OBJECT_HARP_01
+
+treasureObjectData13:
+	m_BeginTreasureSubids TREASURE_SLINGSHOT
+	m_TreasureSubid $38, $01, <TX_00_GET_SLINGSHOT,      $7d, TREASURE_OBJECT_SLINGSHOT_00
+	m_TreasureSubid $38, $02, <TX_00_GET_HYPERSLINGSHOT, $7e, TREASURE_OBJECT_SLINGSHOT_01
 
 treasureObjectData15:
 	m_BeginTreasureSubids TREASURE_SHOVEL

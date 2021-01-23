@@ -14,6 +14,8 @@ treasureDisplayData1:
 	.db TREASURE_TUNI_NUT		<wTuniNutState         $09
 	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel      $0a
 	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity  $0b
+	.db TREASURE_SLINGSHOT		<wShooterSelectedSeeds $0c
+	.db TREASURE_SLINGSHOT		<wShooterSelectedSeeds $0d
 	.db $00				$00                    $00
 
 treasureDisplayData2:
@@ -29,6 +31,8 @@ treasureDisplayData2:
 	.dw treasureDisplayData_tuniNut
 	.dw treasureDisplayData_switchHook-7
 	.dw treasureDisplayData_magnetGlove
+	.dw treasureDisplayData_slingshot
+	.dw treasureDisplayData_hyperSlingshot
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -224,3 +228,17 @@ treasureDisplayData_switchHook:
 treasureDisplayData_magnetGlove:
 	.db TREASURE_MAGNET_GLOVES      $88 $01 $89 $00 $03 <TX_09_MAGNETGLOVES
 	.db TREASURE_MAGNET_GLOVES      $88 $02 $89 $00 $03 <TX_09_MAGNETGLOVES
+
+treasureDisplayData_slingshot:
+	.db TREASURE_EMBER_SEEDS        $81 $04 $83 $02 $01 <TX_09_SLINGSHOT
+	.db TREASURE_SCENT_SEEDS        $81 $04 $84 $03 $01 <TX_09_SLINGSHOT
+	.db TREASURE_PEGASUS_SEEDS      $81 $04 $85 $01 $01 <TX_09_SLINGSHOT
+	.db TREASURE_GALE_SEEDS         $81 $04 $86 $01 $01 <TX_09_SLINGSHOT
+	.db TREASURE_MYSTERY_SEEDS      $81 $04 $87 $00 $01 <TX_09_SLINGSHOT
+
+treasureDisplayData_hyperSlingshot:
+	.db TREASURE_EMBER_SEEDS        $81 $05 $83 $02 $01 <TX_09_HYPERSLINGSHOT
+	.db TREASURE_SCENT_SEEDS        $81 $05 $84 $03 $01 <TX_09_HYPERSLINGSHOT
+	.db TREASURE_PEGASUS_SEEDS      $81 $05 $85 $01 $01 <TX_09_HYPERSLINGSHOT
+	.db TREASURE_GALE_SEEDS         $81 $05 $86 $01 $01 <TX_09_HYPERSLINGSHOT
+	.db TREASURE_MYSTERY_SEEDS      $81 $05 $87 $00 $01 <TX_09_HYPERSLINGSHOT

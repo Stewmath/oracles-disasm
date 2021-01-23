@@ -8,6 +8,7 @@ treasureDisplayData1:
 	.db TREASURE_FLUTE		<wFluteIcon $0b
 	.db TREASURE_SLINGSHOT		<wShooterSelectedSeeds $02
 	.db TREASURE_SLINGSHOT 		<wShooterSelectedSeeds $03
+	.db TREASURE_SHOOTER 		<wShooterSelectedSeeds $0e
 	.db TREASURE_FEATHER		<wFeatherLevel $06
 	.db TREASURE_BOOMERANG		<wBoomerangLevel $07
 	.db TREASURE_PIRATES_BELL	<wPirateBellState $09
@@ -31,6 +32,7 @@ treasureDisplayData2:
 	.dw treasureDisplayData_flute
 	.dw treasureDisplayData_bracelet  - 7
 	.dw treasureDisplayData_switchHook - 7
+	.dw treasureDisplayData_shooter
 
 	.dw treasureDisplayData_sword
 
@@ -201,3 +203,10 @@ treasureDisplayData_bracelet:
 treasureDisplayData_switchHook:
 	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 <TX_09_SWITCHHOOK ; L1
 	.db TREASURE_SWITCH_HOOK        $9f $04 $00 $00 $00 <TX_09_LONGHOOK   ; L2
+
+treasureDisplayData_shooter:
+	.db TREASURE_EMBER_SEEDS        $8a $05 $83 $02 $01 <TX_09_SEED_SHOOTER
+	.db TREASURE_SCENT_SEEDS        $8a $05 $84 $03 $01 <TX_09_SEED_SHOOTER
+	.db TREASURE_PEGASUS_SEEDS      $8a $05 $85 $01 $01 <TX_09_SEED_SHOOTER
+	.db TREASURE_GALE_SEEDS         $8a $05 $86 $01 $01 <TX_09_SEED_SHOOTER
+	.db TREASURE_MYSTERY_SEEDS      $8a $05 $87 $00 $01 <TX_09_SEED_SHOOTER
