@@ -886,7 +886,7 @@ _ironMask_subid01:
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
 	ld l,Enemy.enemyCollisionMode
-	ld (hl),ENEMYCOLLISION_05
+	ld (hl),ENEMYCOLLISION_IRON_MASK_DETACHED
 	ld a,$05
 	call enemySetAnimation
 	call objectSetVisible82

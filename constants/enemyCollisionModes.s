@@ -12,7 +12,7 @@
 	ENEMYCOLLISION_DORMANT				db ; $02: Used by armos, dragonflies?
 	ENEMYCOLLISION_SWITCH				db ; $03
 	ENEMYCOLLISION_PODOBOO				db ; $04: Damages Link, is invincible
-	ENEMYCOLLISION_05				db ; $05: Used by ENEMYID_IRON_MASK in seasons?
+	ENEMYCOLLISION_IRON_MASK_DETACHED		db ; $05: Mask detached from enemy (seasons)
 	ENEMYCOLLISION_PROJECTILE			db ; $06
 	ENEMYCOLLISION_PROJECTILE_WITH_RING_MOD		db ; $07: Same as above, but rings affect it
 	ENEMYCOLLISION_MERGED_TWINROVA			db ; $08: Also digdogger
