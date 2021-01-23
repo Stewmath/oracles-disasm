@@ -274,12 +274,12 @@ interaction60SubidData:
 	m_InteractionData $60 $14 $10
 	m_InteractionData $60 $16 $40
 	m_InteractionData $60 $18 $50
-	m_InteractionData $60 $1a $40
+	m_InteractionData $67 $04 $40 ; CROSSITEMS: Changed magic boomerang to use spr_boomerang.png
 	m_InteractionData $60 $10 $20
 	m_InteractionData $60 $1e $40
 	m_InteractionData $5f $00 $50
 	m_InteractionData $5f $02 $40
-	m_InteractionData $5f $04 $50
+	m_InteractionData $c7 $00 $50 ; CROSSITEMS: Changed hyper slingshot similarly
 	m_InteractionData $5f $16 $03
 	m_InteractionData $61 $00 $50
 	m_InteractionData $61 $02 $33

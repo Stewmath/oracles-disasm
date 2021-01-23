@@ -63,6 +63,8 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader3d
 	.dw uncmpGfxHeader3e
 	.dw uncmpGfxHeader3f
+	.dw uncmpGfxHeader_magicBoomerangInv
+	.dw uncmpGfxHeader_hyperSlingshotInv
 
 
 
@@ -219,3 +221,11 @@ uncmpGfxHeader3e:
 	m_GfxHeader gfx_animations_2, $8cc1, $03, $780
 uncmpGfxHeader3f:
 	m_GfxHeader gfx_animations_2, $8cc1, $03, $7c0
+
+; CROSSITEMS: Magical boomerang overwriting L-1 boomerang for inventory gfx
+uncmpGfxHeader_magicBoomerangInv:
+	m_GfxHeader spr_boomerang, $8381, $01, $40
+
+; Hyper slingshot overwriting L-1 slingshot for inventory gfx
+uncmpGfxHeader_hyperSlingshotInv:
+	m_GfxHeader spr_hyperslingshot_inventory, $8021, $01

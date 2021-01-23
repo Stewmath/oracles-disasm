@@ -76,10 +76,13 @@
 	UNCMP_GFXH_AGES_3e:              db ; $3e
 	UNCMP_GFXH_AGES_3f:              db ; $3f
 
+	UNCMP_GFXH_MAGIC_BOOMERANG_INV   db
+	UNCMP_GFXH_HYPER_SLINGSHOT_INV   db
+
 .else; ROM_SEASONS
 
-	UNCMP_GFXH_SEASONS_36:           db ; $36
-	UNCMP_GFXH_SEASONS_37:           db ; $37
+	UNCMP_GFXH_MAGIC_BOOMERANG_INV   db
+	UNCMP_GFXH_HYPER_SLINGSHOT_INV   db
 
 .endif
 

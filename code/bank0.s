@@ -5760,11 +5760,22 @@ checkReloadStatusBarGraphics:
 ; @param	de	Destination
 ; @param	hl	Source
 copy20BytesFromBank:
+	ld c,$20
+
+;;
+; Copy 'c' bytes from bank b at hl to de. (CROSSITEMS: Added this function to help with magnet glove
+; polarity graphics.)
+;
+; @param	b	Bank
+; @param	c	Bytes to copy
+; @param	de	Destination
+; @param	hl	Source
+copyBytesFromBank:
 	ldh a,(<hRomBank)
 	push af
 	ld a,b
 	setrombank
-	ld b,$20
+	ld b,c
 	call copyMemory
 	pop af
 	setrombank

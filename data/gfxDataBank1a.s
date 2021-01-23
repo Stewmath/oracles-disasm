@@ -10,6 +10,7 @@ gfxDataBank1a:
 	m_GfxDataSimple spr_boomerang			; $06ada0
 	m_GfxDataSimple spr_swords			; $06ade0
 	m_GfxDataSimple spr_rod_of_seasons		; $06af60
+	m_GfxDataSimple spr_hyperslingshot_inventory
 
 .ifdef ROM_AGES
 	m_GfxDataSimple spr_cane_of_somaria		; $06b000

@@ -60,7 +60,7 @@ treasureDisplayData_standard:
 	.db $00				$07 $00 $00 $00 $00 <TX_0900 ; (filler) TREASURE_SHIELD (0x01)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_PUNCH (0x02)
 	.db TREASURE_BOMBS		$9e $04 $00 $00 $01 <TX_0926 ; TREASURE_BOMBS (0x03)
-	.db $00				$97 $02 $00 $00 $ff <TX_093c ; TREASURE_CANE_OF_SOMARIA (0x04)
+	.db $00				$9d $02 $00 $00 $ff <TX_093c ; TREASURE_CANE_OF_SOMARIA (0x04)
 	.db $00				$07 $00 $07 $00 $00 <TX_0900 ; (filler) TREASURE_SWORD (0x05)
 	.db TREASURE_BOOMERANG		$9c $05 $00 $00 $ff <TX_0927 ; TREASURE_BOOMERANG (0x06)
 	.db TREASURE_ROD_OF_SEASONS	$98 $02 $00 $00 $02 <TX_0900 ; TREASURE_ROD_OF_SEASONS (0x07)
@@ -164,11 +164,11 @@ treasureDisplayData_satchel:
 	.db TREASURE_MYSTERY_SEEDS	$80 $05 $87 $00 $01 <TX_092d ; Mystery seeds
 
 treasureDisplayData_shooter:
-	.db TREASURE_EMBER_SEEDS	$81 $05 $83 $02 $01 <TX_0940 ; Ember seeds
-	.db TREASURE_SCENT_SEEDS	$81 $05 $84 $03 $01 <TX_0940 ; Scent seeds
-	.db TREASURE_PEGASUS_SEEDS	$81 $05 $85 $01 $01 <TX_0940 ; Pegasus seeds
-	.db TREASURE_GALE_SEEDS		$81 $05 $86 $01 $01 <TX_0940 ; Gale seeds
-	.db TREASURE_MYSTERY_SEEDS	$81 $05 $87 $00 $01 <TX_0940 ; Mystery seeds
+	.db TREASURE_EMBER_SEEDS	$8a $05 $83 $02 $01 <TX_0940 ; Ember seeds
+	.db TREASURE_SCENT_SEEDS	$8a $05 $84 $03 $01 <TX_0940 ; Scent seeds
+	.db TREASURE_PEGASUS_SEEDS	$8a $05 $85 $01 $01 <TX_0940 ; Pegasus seeds
+	.db TREASURE_GALE_SEEDS		$8a $05 $86 $01 $01 <TX_0940 ; Gale seeds
+	.db TREASURE_MYSTERY_SEEDS	$8a $05 $87 $00 $01 <TX_0940 ; Mystery seeds
 
 treasureDisplayData_sword:
 	.db TREASURE_SWORD $90 $00 $00 $00 $00 <TX_0923 ; L1
@@ -182,7 +182,7 @@ treasureDisplayData_shield:
 
 treasureDisplayData_bracelet:
 	.db TREASURE_BRACELET $99 $05 $00 $00 $00 <TX_092b ; L1
-	.db TREASURE_BRACELET $98 $05 $00 $00 $00 <TX_093f ; L2
+	.db TREASURE_BRACELET $af $05 $00 $00 $00 <TX_093f ; L2
 
 treasureDisplayData_trade:
 	.db TREASURE_TRADEITEM $c0 $05 $c1 $05 $ff <TX_0909 ; Poe clock

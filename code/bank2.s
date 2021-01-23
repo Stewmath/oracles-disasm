@@ -2881,6 +2881,19 @@ _loadCommonGraphics:
 	call loadGfxHeader
 
 .ifdef ROM_AGES
+	; CROSSITEMS: Like Seasons, load the key graphic to replace the rupee graphic when in
+	; dungeons. (Necessary to save space in gfx_hud.png.)
+	ld a,(wTilesetFlags)
+	bit TILESETFLAG_BIT_LARGE_INDOORS,a
+	jr nz,+
+	bit TILESETFLAG_BIT_DUNGEON,a
+	jr z,+
+	ld hl,gfx_key
+	ld de,$9040
+	ldbc $00, :gfx_key
+	call queueDmaTransfer
++
+
 	xor a
 	ld (wcbe8),a
 	call _updateStatusBar
@@ -2927,7 +2940,7 @@ _loadCommonGraphics:
 	push bc
 	ld hl,gfx_key_orechunk
 	rst_addAToHl
-	ld de,$9090
+	ld de,$9040
 	ldbc $00, :gfx_key_orechunk
 	call queueDmaTransfer
 	pop bc
@@ -3063,7 +3076,7 @@ _updateStatusBar:
 	call nz,_inGameDrawHeartDisplay
 	ld hl,w4StatusBarTileMap+$0a
 	call _correctAddressForExtraHeart
-	ld (hl),$09
+	ld (hl),$04
 
 	ld a,(wTilesetFlags)
 
@@ -3074,13 +3087,6 @@ _updateStatusBar:
 
 	bit TILESETFLAG_BIT_DUNGEON,a
 	jr z,+
-
-.ifdef ROM_AGES
-	; Seasons replaces the rupee gfx with the key gfx if necessary, while Ages has
-	; both the rupee and the key gfx loaded at all times (so it just changes which
-	; tile is shown here).
-	inc (hl)
-.endif
 
 	; "X" symbol next to key icon
 	inc l
@@ -3276,19 +3282,21 @@ _loadEquippedItemSpriteData:
 	inc e
 	ld b,a
 
-	; Comparion differs between ages/seasons. See the respective games'
-	; "spr_item_icons_1.bin". This comparison changes the palette used for the seed
-	; satchel, seed shooter, slingshot, and hyper slingshot.
-.ifdef ROM_AGES
-	cp $84
-.else; ROM_SEASONS
+	; This comparison changes the palette used for the seed satchel, seed shooter, slingshot,
+	; and hyper slingshot.
+	cp $8a
+	jr z,+
 	cp $86
-.endif
+	jr c,+
 	ldi a,(hl)
-	jr nc,+
+	jr @gotAttribute
++
+	ldi a,(hl)
 	sub $03
 	or $01
-+
+
+@gotAttribute:
+
 	; Store into [wItemSpriteAttribtue1]
 	set 3,a
 	ld (de),a
@@ -3504,9 +3512,9 @@ _drawTreasureExtraTiles:
 
 	; Drawing on A/B buttons
 
-	ld a,$1f
+	ld a,$0f
 	ldd (hl),a
-	ld (hl),$1d
+	ld (hl),$0d
 	set 2,h
 	ld a,$80
 	ldi (hl),a
@@ -3519,9 +3527,9 @@ _drawTreasureExtraTiles:
 	ldd (hl),a
 	ld (hl),a
 	res 2,h
-	ld a,$1c
+	ld a,$0c
 	ldi (hl),a
-	ld (hl),$1e
+	ld (hl),$0e
 	ret
 
 @@drawOnInventory:
@@ -3546,6 +3554,11 @@ _drawTreasureExtraTiles:
 
 ; Print magnet glove polarity (overwrites "S" with "N" if necessary)
 @val03:
+	; CROSSITEMS: Return if we're drawing on the status bar rather than the inventory
+	ld a,c
+	cp $07
+	ret nz
+
 	ld h,d
 	ld l,e
 	ld a,(wMagnetGlovePolarity)
@@ -3689,6 +3702,10 @@ _drawHeartDisplay:
 	ld b,a
 
 ;;
+; CROSSITEMS: Modified this function due to the rearrangement of "gfx_hud.png". To save 2 tiles in
+; that file, the partial heart is dynamically loaded into VRAM, instead of having all 3 possible
+; tiles available at all times.
+;
 ; @param b Number of unfilled hearts (including partially filled one)
 ; @param c Number of filled hearts (not quarters)
 ; @param d Number of quarters in partially-filled heart
@@ -3699,7 +3716,7 @@ _drawHeartDisplay:
 	jr z,@partiallyFilledHeart
 
 @filledHearts:
-	ld a,$0f
+	ld a,$0a
 -
 	ldi (hl),a
 	dec c
@@ -3714,8 +3731,25 @@ _drawHeartDisplay:
 	or a
 	jr z,@unfilledHearts
 
-	add $0b
-	ldi (hl),a
+	ld (hl),$0b
+	inc hl
+
+	push bc
+	push de
+	push hl
+
+	ld hl,gfx_partial_hearts - $10
+	ld a,d
+	swap a
+	rst_addAToHl
+	ldbc $00, :gfx_partial_hearts
+	ld de,$90b0
+	call queueDmaTransfer
+
+	pop hl
+	pop de
+	pop bc
+
 	ld d,$00
 	dec b
 
@@ -3724,7 +3758,7 @@ _drawHeartDisplay:
 	or a
 	jr z,@fillBlankSpace
 
-	ld a,$0b
+	ld a,$09
 -
 	ldi (hl),a
 	dec b
@@ -3762,12 +3796,62 @@ _loadItemIconGfx:
 	or a
 	jr z,@clear
 
+.ifdef ROM_SEASONS
+	; CROSSITEMS: Replace L-1 boomerang sprite with L-2 sprite if applicable. (This was
+	; necessary due to VRAM limitations.)
+	ld b,a
+	cp $9c
+	jr nz,+
+	ld a,(wBoomerangLevel)
+	cp $02
+	jr nz,+
+	ld hl,spr_boomerang+$40
+	ld b,:spr_boomerang
+	jp copy20BytesFromBank
++
+	; Also replace L-1 slingshot with L-2 sprite if applicable.
+	ld a,b
+	cp $81
+	jr nz,+
+	ld a,(wSlingshotLevel)
+	cp $02
+	jr nz,+
+	inc b
++
+	; Also replace magnet glove polarity. ("N" symbol was moved from "gfx_hud.png" to
+	; "spr_item_icons_1.png".)
+	ld a,b
+	cp $89
+	jr nz,+
+
+	; Copy "blank" sprite for top half (using lower half of mystery seed sprite)
+	ld hl,spr_item_icons_1 + $07 * $20 + $10
+	ld b,:spr_item_icons_1
+	ld c,$10
+	call copyBytesFromBank
+
+	; Copy polarity sprite ("N" or "S")
+	ld hl,spr_item_icons_1 + $09 * $20
+	ld a,(wMagnetGlovePolarity)
+	and $01
+	xor $01
+	swap a
+	rst_addAToHl
+	ld b,:spr_item_icons_1
+	ld c,$10
+	jp copyBytesFromBank
++
+	ld a,b
+.endif
+
 .ifdef ROM_AGES
 	; Special behaviour for harp song icons: add 2 to the index so that the "smaller
 	; version" of the icon is drawn. (spr_item_icons_3.bin has two versions of each
 	; song)
 	cp $a3
 	jr c,+
+	cp $af ; Power Glove sprite was moved to be after the harp
+	jr z,+
 	add $02
 +
 .endif
@@ -3923,6 +4007,25 @@ _inventoryMenuState0:
 	call loadCommonGraphics
 	ld a,GFXH_08
 	call loadGfxHeader
+
+.ifdef ROM_SEASONS
+	; CROSSITEMS: Overwrite L-1 boomerang sprite with L-2 sprite if applicable. (This was
+	; necessary due to VRAM limitations.)
+	ld a,(wBoomerangLevel)
+	cp $02
+	jr nz,+
+	ld a,UNCMP_GFXH_MAGIC_BOOMERANG_INV
+	call loadUncompressedGfxHeader
++
+	; Do the same with the hyper slingshot.
+	ld a,(wSlingshotLevel)
+	cp $02
+	jr nz,+
+	ld a,UNCMP_GFXH_HYPER_SLINGSHOT_INV
+	call loadUncompressedGfxHeader
++
+.endif
+
 	ld a,UNCMP_GFXH_06
 	call loadUncompressedGfxHeader
 	ld a,PALH_0a

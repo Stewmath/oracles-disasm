@@ -602,3 +602,5 @@
 	m_GfxData unk_0e2ad7 ; $0e3b9a
 	m_GfxData gfx_tileset_0e3baf ; $0e3baf
 	m_GfxData spr_caravan ; $0e3ca0
+
+	m_GfxData gfx_harp_inventory

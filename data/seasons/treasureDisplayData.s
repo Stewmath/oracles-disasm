@@ -136,11 +136,11 @@ treasureDisplayData_slingshot:
 	.db TREASURE_MYSTERY_SEEDS      $81 $04 $87 $00 $01 $3c
 
 treasureDisplayData_hyperSlingshot:
-	.db TREASURE_EMBER_SEEDS        $82 $05 $83 $02 $01 $3d
-	.db TREASURE_SCENT_SEEDS        $82 $05 $84 $03 $01 $3d
-	.db TREASURE_PEGASUS_SEEDS      $82 $05 $85 $01 $01 $3d
-	.db TREASURE_GALE_SEEDS         $82 $05 $86 $01 $01 $3d
-	.db TREASURE_MYSTERY_SEEDS      $82 $05 $87 $00 $01 $3d
+	.db TREASURE_EMBER_SEEDS        $81 $05 $83 $02 $01 $3d
+	.db TREASURE_SCENT_SEEDS        $81 $05 $84 $03 $01 $3d
+	.db TREASURE_PEGASUS_SEEDS      $81 $05 $85 $01 $01 $3d
+	.db TREASURE_GALE_SEEDS         $81 $05 $86 $01 $01 $3d
+	.db TREASURE_MYSTERY_SEEDS      $81 $05 $87 $00 $01 $3d
 
 treasureDisplayData_sword:
 	.db TREASURE_SWORD              $90 $00 $00 $00 $00 $23
@@ -158,7 +158,7 @@ treasureDisplayData_feather:
 
 treasureDisplayData_boomerang:
 	.db TREASURE_BOOMERANG          $9c $05 $00 $00 $00 $27
-	.db TREASURE_BOOMERANG          $9d $04 $00 $00 $00 $40
+	.db TREASURE_BOOMERANG          $9c $04 $00 $00 $00 $40
 
 treasureDisplayData_tradeItem:
 	.db TREASURE_TRADEITEM          $c0 $00 $c1 $00 $ff $09
@@ -180,7 +180,7 @@ treasureDisplayData_pirateBell:
 
 treasureDisplayData_magnetGlove:
 	.db TREASURE_MAGNET_GLOVES      $88 $01 $89 $00 $03 $42
-	.db TREASURE_MAGNET_GLOVES      $88 $02 $00 $00 $03 $42
+	.db TREASURE_MAGNET_GLOVES      $88 $02 $89 $00 $03 $42
 
 treasureDisplayData_flute:
 	.db TREASURE_FLUTE              $8b $00 $8c $00 $ff $2e

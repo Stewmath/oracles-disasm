@@ -2335,21 +2335,61 @@ _handleTextControlCodeWithSpecialCase:
 ;;
 ; Updates w7SelectedTextPosition based on w7SelectedTextOption, and draws the
 ; cursor to that position in w7TextboxMap.
+;
+; CROSSITEMS: Originally, to display the text cursor, this used a character in "gfx_hud.png". To
+; save space so that we can have both the harp & rod in gfx_hud.png, that character has been moved
+; into the font, so we load the graphic dynamically instead.
 _updateSelectedTextPosition:
 	call _getSelectedTextOptionAddress
-	bit 5,(hl)
-	ld b,$60
-	jr nz,+
-	ld b,$20
-+
 	ld a,(hl)
 
 	; de = w7SelectedTextPosition
 	inc e
 	ld (de),a
 
-	call _getAddressInTextboxMap
-	ld (hl),$04
+	dec a
+	ld c,a
+	ld a,$9f
+	ld b,$00
+	; Fall through
+
+;;
+; CROSSITEMS: Function added to DMA a character to a specific position in the textbox. Uses
+; "w7d800" for temporary storage, which seems to be a general-purpose gfx buffer that I'm fairly
+; certain is safe to use.
+;
+; @param	a	Character to load
+; @param	b	Offset for w7d800 buffer (can't use the same offset twice per frame)
+; @param	c	Position (with format of values from "w7TextboxOptionPositions")
+_dmaTextCharacter:
+	push hl
+	push de
+
+	push bc
+	push af
+	xor a
+	ld (w7TextGfxSource),a
+	ld a,b
+	ld bc,w7d800
+	call addAToBc
+	pop af
+	push bc
+	call retrieveTextCharacter
+
+	pop hl
+	pop bc
+	ld a,c
+	call multiplyABy16
+	ld a,$90
+	add b
+	ld d,a
+	ld e,c
+
+	ldbc $01, :w7d800
+	call queueDmaTransfer
+
+	pop de
+	pop hl
 	ret
 
 ;;
@@ -2386,17 +2426,15 @@ _getAddressInTextboxMap:
 
 ;;
 _removeCursorFromSelectedTextPosition:
-	ld b,$60
+	; CROSSITEMS: Instead of changing the gfx map, we have to change the actual graphics to
+	; remove the cursor.
 	ld e,<w7SelectedTextPosition
 	ld a,(de)
+	dec a
 	ld c,a
-	bit 5,a
-	jr nz,+
+	ld a,$20 ; Space
 	ld b,$20
-+
-	call _getAddressInTextboxMap
-	ld (hl),c
-	ret
+	jr _dmaTextCharacter
 
 ;;
 _moveSelectedTextOptionRight:
@@ -2496,8 +2534,11 @@ _textOptionCode_checkDirectionButtons:
 
 ;;
 _updateSelectedTextPositionAndDmaTextboxMap:
-	call _updateSelectedTextPosition
-	jp _dmaTextboxMap
+	jp _updateSelectedTextPosition
+
+	; CROSSITEMS: No need to DMA the textbox map because the option cursor is now written to the
+	; textbox buffer instead of being a separate character.
+	;jp _dmaTextboxMap
 
 ;;
 ; When the B button is pressed, move the cursor to the last option.

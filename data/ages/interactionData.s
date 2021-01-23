@@ -281,17 +281,17 @@ interaction63SubidData:
 	m_InteractionData $7d $08 $50
 	m_InteractionData $7d $0a $40
 	m_InteractionData $7d $0c $40
-	m_InteractionData $7d $0e $20
+	m_InteractionData $7d $1a $20 ; CROSSITEMS: Cane of Somaria gfx moved
 	m_InteractionData $00 $00 $00
 	m_InteractionData $7d $12 $50
-	m_InteractionData $7d $10 $50
+	m_InteractionData $7e $1e $50 ; CROSSITEMS: Power Glove gfx moved
 	m_InteractionData $7d $16 $40
 	m_InteractionData $7d $18 $50
 	m_InteractionData $00 $00 $00
 	m_InteractionData $00 $00 $00
 	m_InteractionData $7d $1e $40
 	m_InteractionData $7c $00 $50
-	m_InteractionData $7c $02 $50
+	m_InteractionData $7c $14 $50 ; CROSSITEMS: Seed Shooter gfx moved
 	m_InteractionData $00 $00 $00
 	m_InteractionData $7c $16 $03
 	m_InteractionData $7e $00 $50
