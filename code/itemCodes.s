@@ -3242,62 +3242,6 @@ itemCode2a:
 
 	jp itemAnimate
 
-.ifdef ROM_AGES
-;;
-; ITEMID_SHOOTER
-; ITEMID_29
-;
-itemCode0f:
-itemCode29:
-	ld e,Item.state
-	ld a,(de)
-	rst_jumpTable
-	.dw @state0
-	.dw @state1
-
-@state0:
-	ld a,UNCMP_GFXH_AGES_1d
-	call loadWeaponGfx
-	call _loadAttributesAndGraphicsAndIncState
-	ld e,Item.var30
-	ld a,$ff
-	ld (de),a
-	jp objectSetVisible81
-
-@state1:
-	ret
-
-
-;;
-; ITEMID_SHOOTER
-itemCode0fPost:
-	call _cpRelatedObject1ID
-	jp nz,itemDelete
-
-	ld hl,@data
-	call _itemInitializeFromLinkPosition
-
-	; Copy link Z position
-	ld h,d
-	ld a,(w1Link.zh)
-	ld l,Item.zh
-	ld (hl),a
-
-	; Check if angle has changed
-	ld l,Item.var30
-	ld a,(w1ParentItem2.angle)
-	cp (hl)
-	ld (hl),a
-	ret z
-	jp itemSetAnimation
-
-
-; b0/b1: collisionRadiusY/X
-; b2/b3: Y/X offsets relative to Link
-@data:
-	.db $00 $00 $00 $00
-.else
-
 ;;
 ; ITEMID_MAGNET_BALL
 ; Variables:
@@ -3309,6 +3253,7 @@ itemCode0fPost:
 ;   var33: vertical friction - the higher, the faster
 ;   var34: horizontal friction
 itemCode29:
+.ifdef ROM_SEASONS
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -4000,7 +3945,63 @@ itemCode29:
 	ld c,a
 	ld b,SPEED_080
 	jp updateLinkPositionGivenVelocity
-.endif
+
+.else; ROM_AGES
+
+;;
+; ITEMID_SHOOTER
+itemCode0f:
+	ld e,Item.state
+	ld a,(de)
+	rst_jumpTable
+	.dw @state0
+	.dw @state1
+
+@state0:
+	ld a,UNCMP_GFXH_AGES_1d
+	call loadWeaponGfx
+	call _loadAttributesAndGraphicsAndIncState
+	ld e,Item.var30
+	ld a,$ff
+	ld (de),a
+	jp objectSetVisible81
+
+@state1:
+	ret
+
+
+;;
+; ITEMID_SHOOTER
+itemCode0fPost:
+	call _cpRelatedObject1ID
+	jp nz,itemDelete
+
+	ld hl,@data
+	call _itemInitializeFromLinkPosition
+
+	; Copy link Z position
+	ld h,d
+	ld a,(w1Link.zh)
+	ld l,Item.zh
+	ld (hl),a
+
+	; Check if angle has changed
+	ld l,Item.var30
+	ld a,(w1ParentItem2.angle)
+	cp (hl)
+	ld (hl),a
+	ret z
+	jp itemSetAnimation
+
+
+; b0/b1: collisionRadiusY/X
+; b2/b3: Y/X offsets relative to Link
+@data:
+	.db $00 $00 $00 $00
+
+.endif ; ROM_AGES
+
+
 
 ;;
 ; ITEMID_28 (ricky/moosh attack?)
