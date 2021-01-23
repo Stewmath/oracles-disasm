@@ -1018,6 +1018,19 @@ groups:
       carry more
       \col(1)seeds\col(0)!
 
+  # CROSSITEMS: Text for obtaining Seasons items.
+  - name: TX_00_GET_MAGNETGLOVES
+    index: auto
+    text: |-
+      You got the
+      \col(1)Magnetic Gloves\col(0)!
+      Their magnetic
+      might attracts
+      and repels.
+      Press the button
+      to reverse
+      polarity.
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -4539,6 +4552,14 @@ groups:
     text: |-
       The current age
       is the past.
+
+  # CROSSITEMS: Text for Seasons items on the subscreen.
+  - name: TX_09_MAGNETGLOVES
+    index: auto
+    text: |-
+      Magnetic Gloves
+      Magnetically
+      attractive!
 
 - group: 0x0a
   data:

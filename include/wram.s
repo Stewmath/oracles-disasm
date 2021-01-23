@@ -875,8 +875,12 @@ wPirateShipX: ; $c6ee
 wPirateShipAngle: ; $c6ef
 	db
 
+wMagnetGlovePolarity: ; $c6f0
+; 0=S, 1=N
+	db
+
 wc6f0: ; $c6f0
-	dsb $b
+	dsb $a
 
 .endif ; ROM_AGES
 

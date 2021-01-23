@@ -4697,6 +4697,8 @@ itemCode13:
 foolsOreRet:
 	ret
 
+.endif
+
 ; ITEMID_MAGNET_GLOVES
 itemCode08:
 	ld e,Item.state
@@ -4706,7 +4708,11 @@ itemCode08:
 	.dw @state1
 
 @state0:
+.ifdef ROM_AGES
+	ld a,UNCMP_GFXH_AGES_MAGNETGLOVES
+.else
 	ld a,UNCMP_GFXH_SEASONS_1e
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	call objectSetVisible81
@@ -4723,7 +4729,6 @@ itemCode08:
 	ldi (hl),a
 	ld (hl),a
 	ret
-.endif
 
 ; ITEMID_FOOLS_ORE
 itemCode1e:

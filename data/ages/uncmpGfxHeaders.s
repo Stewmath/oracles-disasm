@@ -65,6 +65,7 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader3f
 	.dw uncmpGfxHeader_magicBoomerangInv
 	.dw uncmpGfxHeader_hyperSlingshotInv
+	.dw uncmpGfxHeader_magnetGloves
 
 
 
@@ -229,3 +230,6 @@ uncmpGfxHeader_magicBoomerangInv:
 ; Hyper slingshot overwriting L-1 slingshot for inventory gfx
 uncmpGfxHeader_hyperSlingshotInv:
 	m_GfxHeader spr_hyperslingshot_inventory, $8021, $01
+
+uncmpGfxHeader_magnetGloves:
+	m_GfxHeader spr_magnet_gloves, $8521, $07

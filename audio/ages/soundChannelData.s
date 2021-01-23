@@ -14534,12 +14534,6 @@ sounda9Channel7:
 	note $64 $0a
 	cmdff
 
-sound7aStart:
-
-sound7aChannel2:
-	cmdff
-	cmdff
-
 sound8eStart:
 
 sound8eChannel2:

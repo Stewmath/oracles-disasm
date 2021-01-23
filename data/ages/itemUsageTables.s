@@ -27,7 +27,7 @@ _itemUsageParameterTable:
 	.db $63 <wGameKeysJustPressed	; ITEMID_SWORD
 	.db $02 <wGameKeysJustPressed	; ITEMID_BOOMERANG
 	.db $00 <wGameKeysJustPressed	; ITEMID_ROD_OF_SEASONS
-	.db $00 <wGameKeysJustPressed	; ITEMID_MAGNET_GLOVES
+	.db $53 <wGameKeysJustPressed	; ITEMID_MAGNET_GLOVES
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_HELPER
 	.db $73 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_CHAIN

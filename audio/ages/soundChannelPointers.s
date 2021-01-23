@@ -1501,9 +1501,9 @@ soundaf:
 	.dw soundafChannel7
 	.db $ff
 
-sound7a:
+magnetGloveSound:
 	.db $02
-	.dw sound7aChannel2
+	.dw magnetGloveSoundChannel2
 	.db $ff
 
 sound8e:

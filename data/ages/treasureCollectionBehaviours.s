@@ -74,8 +74,8 @@ treasureCollectionBehaviourTable:
 	.db SND_NONE
 
 	; TREASURE_MAGNET_GLOVES (0x08)
-	.db $00
-	.db $00
+	.db <wMagnetGlovePolarity
+	.db $08
 	.db SND_GETSEED
 
 	; TREASURE_SWITCH_HOOK_HELPER (0x09)

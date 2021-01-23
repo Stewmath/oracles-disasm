@@ -13,6 +13,7 @@
 
 .include "objects/macros.s"
 .include "include/gfxDataMacros.s"
+.include "include/musicMacros.s"
 
 .include "build/textDefines.s"
 
@@ -881,5 +882,17 @@ oamData_7249:
 .include "object_code/ages/interactionCode/bank3f.s"
 
 .include "code/ages/garbage/bank3fEnd.s"
+
+.ends
+
+ m_section_free Crossitem_Sounds
+
+; Magnet glove noise
+magnetGloveSoundStart:
+magnetGloveSoundChannel2:
+	vol $9
+	note f6  $01
+	note c6  $01
+	cmdff
 
 .ends

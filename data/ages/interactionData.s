@@ -384,7 +384,10 @@ interactiond7SubidData:
 	m_InteractionData $80 $1a $13
 	m_InteractionData $81 $00 $33
 	m_InteractionData $81 $04 $33
-	m_InteractionData $81 $88 $13
+	m_InteractionData $81 $08 $13
+
+	; CROSSITEMS: Extra values for seasons items, for interaction $60 (INTERACID_TREASURE).
+	m_InteractionData $7c $90 $10 ; $7c (Magnet Gloves)
 
 interaction1bSubidData:
 	m_InteractionData $74 $10 $00

@@ -3420,7 +3420,7 @@ _drawTreasureExtraTiles:
 	dec a
 	jr z,@val02
 	dec a
-	jr z,@val03
+	jp z,@val03
 	dec a
 	jr z,@val04
 	jr @val00
@@ -3496,10 +3496,6 @@ _drawTreasureExtraTiles:
 
 .ifdef ROM_AGES
 
-; Stub
-@val03:
-	ret
-
 ; Display the harp?
 @val02:
 	ld h,d
@@ -3550,7 +3546,7 @@ _drawTreasureExtraTiles:
 	ld (hl),$1e
 	ret
 
-.else; ROM_SEASONS
+.endif
 
 ; Print magnet glove polarity (overwrites "S" with "N" if necessary)
 @val03:
@@ -3571,6 +3567,7 @@ _drawTreasureExtraTiles:
 	ld (de),a
 	ret
 
+.ifdef ROM_SEASONS
 ; Display obtained seasons
 @val02:
 	ld h,d
@@ -3796,10 +3793,11 @@ _loadItemIconGfx:
 	or a
 	jr z,@clear
 
+	ld b,a
+
 .ifdef ROM_SEASONS
 	; CROSSITEMS: Replace L-1 boomerang sprite with L-2 sprite if applicable. (This was
 	; necessary due to VRAM limitations.)
-	ld b,a
 	cp $9c
 	jr nz,+
 	ld a,(wBoomerangLevel)
@@ -3818,6 +3816,7 @@ _loadItemIconGfx:
 	jr nz,+
 	inc b
 +
+.endif
 	; Also replace magnet glove polarity. ("N" symbol was moved from "gfx_hud.png" to
 	; "spr_item_icons_1.png".)
 	ld a,b
@@ -3842,7 +3841,6 @@ _loadItemIconGfx:
 	jp copyBytesFromBank
 +
 	ld a,b
-.endif
 
 .ifdef ROM_AGES
 	; Special behaviour for harp song icons: add 2 to the index so that the "smaller

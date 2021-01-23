@@ -121,7 +121,7 @@ _soundPointers:
 	m_soundPointer sound77
 	m_soundPointer sound78
 	m_soundPointer sound79
-	m_soundPointer sound7a
+	m_soundPointer magnetGloveSound
 	m_soundPointer sound7b
 	m_soundPointer sound7c
 	m_soundPointer sound7d

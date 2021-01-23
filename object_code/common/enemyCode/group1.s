@@ -1066,11 +1066,7 @@ _moblin_state_9:
 ; ENEMYID_ARROW_DARKNUT
 ; ==============================================================================
 enemyCode21:
-.ifdef ROM_AGES
-	call _ecom_checkHazards
-.else
 	call _ecom_seasonsFunc_4446
-.endif
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c

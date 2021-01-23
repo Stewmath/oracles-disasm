@@ -200,7 +200,7 @@
 	SND_BIG_EXPLOSION       db ; $79
 
 .ifdef ROM_AGES
-	SND_7a                  db ; $7a (blank)
+	SND_MAGNET_GLOVES       db ; $7a
 .else
 	SND_FREEZE_LAVA         db ; $7a (used in Sword & Shield dungeon)
 .endif

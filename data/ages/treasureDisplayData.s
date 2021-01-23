@@ -13,6 +13,7 @@ treasureDisplayData1:
 	.db TREASURE_HARP		<wSelectedHarpSong     $08
 	.db TREASURE_TUNI_NUT		<wTuniNutState         $09
 	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel      $0a
+	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity  $0b
 	.db $00				$00                    $00
 
 treasureDisplayData2:
@@ -27,6 +28,7 @@ treasureDisplayData2:
 	.dw treasureDisplayData_harp
 	.dw treasureDisplayData_tuniNut
 	.dw treasureDisplayData_switchHook-7
+	.dw treasureDisplayData_magnetGlove
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -219,4 +221,6 @@ treasureDisplayData_switchHook:
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093d ; L1
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093e ; L2
 
-
+treasureDisplayData_magnetGlove:
+	.db TREASURE_MAGNET_GLOVES      $88 $01 $89 $00 $03 <TX_09_MAGNETGLOVES
+	.db TREASURE_MAGNET_GLOVES      $88 $02 $89 $00 $03 <TX_09_MAGNETGLOVES
