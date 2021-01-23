@@ -31,7 +31,7 @@ itemAttributes:
 	.db $8d $33 $ff $00 ; $15: ITEMID_SHOVEL
 	.db $14 $00 $fd $00 ; $16: ITEMID_BRACELET
 	.db $12 $00 $00 $00 ; $17: ITEMID_FEATHER
-	.db $13 $77 $fc $09 ; $18: ITEMID_18
+	.db $14 $77 $fc $09 ; $18: ITEMID_18
 	.db $12 $00 $00 $00 ; $19: ITEMID_SEED_SATCHEL
 	.db $12 $00 $00 $00 ; $1a: ITEMID_DUST
 	.db $12 $00 $00 $00 ; $1b: ITEMID_1b

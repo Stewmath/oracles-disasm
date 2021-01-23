@@ -1560,12 +1560,17 @@ interactionCode1e:
 	.dw @state3Substate1
 
 @state3Substate0:
-.ifdef ROM_AGES
 	; The tile at this position must not be solid
 	call objectGetTileAtPosition
+.ifdef ROM_AGES
 	cp TILEINDEX_SOMARIA_BLOCK
-	jr z,@interleaveDoorTile
+.else; ROM_SEASONS
+	push af
+	call getSomariaBlockIndex
+	pop af
+	cp b
 .endif
+	jr z,@interleaveDoorTile
 	call objectCheckTileCollision_allowHoles
 	jr c,@gotoState1
 	jr @interleaveDoorTile

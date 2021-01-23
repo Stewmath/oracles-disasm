@@ -55,6 +55,7 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader35
 	.dw uncmpGfxHeader_magicBoomerangInv
 	.dw uncmpGfxHeader_hyperSlingshotInv
+	.dw uncmpGfxHeader_caneOfSomaria
 
 uncmpGfxHeader00:
 uncmpGfxHeader01:
@@ -199,3 +200,6 @@ uncmpGfxHeader_magicBoomerangInv:
 ; Hyper slingshot overwriting L-1 slingshot for inventory gfx
 uncmpGfxHeader_hyperSlingshotInv:
 	m_GfxHeader spr_hyperslingshot_inventory, $8021, $01
+
+uncmpGfxHeader_caneOfSomaria:
+	m_GfxHeader spr_cane_of_somaria, $8521, $09

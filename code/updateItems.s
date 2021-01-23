@@ -117,7 +117,7 @@ updateItems:
 	.dw itemDelete ; 0x01
 	.dw itemCode02 ; 0x02
 	.dw itemCode03 ; 0x03
-	.dw itemDelete ; 0x04
+	.dw itemCode04 ; 0x04
 	.dw itemCode05 ; 0x05
 	.dw itemCode06 ; 0x06
 	.dw itemCode07 ; 0x07
@@ -137,7 +137,7 @@ updateItems:
 	.dw itemCode15 ; 0x15
 	.dw itemCode16 ; 0x16
 	.dw itemDelete ; 0x17
-	.dw itemDelete ; 0x18
+	.dw itemCode18 ; 0x18
 	.dw itemDelete ; 0x19
 	.dw itemCode1a ; 0x1a
 	.dw itemDelete ; 0x1b

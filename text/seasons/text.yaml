@@ -980,6 +980,14 @@ groups:
       You can now lift
       heavy objects.
 
+  - name: TX_00_GET_CANE
+    index: auto
+    text: |-
+      You got the
+      \col(1)Cane of Somaria\col(0)!
+      Use it to create
+      blocks.
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -2852,6 +2860,13 @@ groups:
       Power Gloves
       Used to lift
       large objects.
+
+  - name: TX_09_CANE
+    index: auto
+    text: |-
+      Cane of Somaria
+      Used to create
+      blocks.
 
 - group: 0x0a
   data:

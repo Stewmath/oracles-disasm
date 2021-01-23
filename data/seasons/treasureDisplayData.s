@@ -37,7 +37,7 @@ treasureDisplayData_standard:
 	.db $00                         $07 $00 $00 $00 $00 $00 ; (filler) TREASURE_SHIELD
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_PUNCH
 	.db TREASURE_BOMBS              $9e $04 $00 $00 $01 $26 ; TREASURE_BOMBS
-	.db $00                         $97 $02 $00 $00 $ff $00 ; TREASURE_CANE_OF_SOMARIA
+	.db $00                         $9d $02 $00 $00 $ff <TX_09_CANE ; TREASURE_CANE_OF_SOMARIA
 	.db $00                         $07 $00 $07 $00 $00 $00 ; (filler) TREASURE_SWORD
 	.db $06                         $07 $00 $07 $00 $00 $00 ; (filler) TREASURE_BOOMERANG
 	.db TREASURE_ROD_OF_SEASONS     $98 $02 $00 $00 $02 $41 ; TREASURE_ROD_OF_SEASONS

@@ -62,7 +62,7 @@ treasureObjectData:
 	/* $01 */ m_TreasurePointer treasureObjectData01
 	/* $02 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_PUNCH_00
 	/* $03 */ m_TreasurePointer treasureObjectData03
-	/* $04 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_CANE_OF_SOMARIA_00
+	/* $04 */ m_TreasureSubid   $38, $00, <TX_00_GET_CANE, $7e, TREASURE_OBJECT_CANE_OF_SOMARIA_00
 	/* $05 */ m_TreasurePointer treasureObjectData05
 	/* $06 */ m_TreasurePointer treasureObjectData06
 	/* $07 */ m_TreasurePointer treasureObjectData07
