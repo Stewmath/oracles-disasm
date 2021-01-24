@@ -1094,7 +1094,7 @@ sound7a:
 	.db $ff
 
 sound7b:
-	.db $02
+	.db $32
 	.dw sound7bChannel2
 	.db $ff
 
