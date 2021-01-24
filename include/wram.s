@@ -916,6 +916,8 @@ wSlingshotLevel:
 	db
 wBoomerangLevel:
 	db
+wFeatherLevel:
+	db
 
 .endif
 

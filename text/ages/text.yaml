@@ -1059,6 +1059,15 @@ groups:
       control its
       flight path!
 
+  - name: TX_00_GET_ROCSCAPE
+    index: auto
+    text: |-
+      You got \col(1)Roc's
+      Cape\col(0)! Press and
+      hold the button
+      to do a double
+      jump!
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -4609,6 +4618,13 @@ groups:
       Magic Boomerang
       A remote-control
       weapon.
+
+  - name: TX_09_ROCSCAPE
+    index: auto
+    text: |-
+      Roc's Cape
+      A wind-riding
+      cape.
 
 - group: 0x0a
   data:

@@ -390,7 +390,8 @@ interactiond7SubidData:
 	m_InteractionData $7c $10 $10 ; $7c (Magnet Gloves)
 	m_InteractionData $7c $02 $40 ; $7d (Slingshot)
 	m_InteractionData $e0 $00 $50 ; $7e (Hyper Slingshot)
-	m_InteractionData $84 $84 $40 ; $7f (Magic Boomerang)
+	m_InteractionData $84 $04 $40 ; $7f (Magic Boomerang)
+	m_InteractionData $7d $8e $50 ; $80 (Roc's Cape)
 
 interaction1bSubidData:
 	m_InteractionData $74 $10 $00

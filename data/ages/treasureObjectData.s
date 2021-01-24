@@ -242,6 +242,7 @@ treasureObjectData17:
 	m_TreasureSubid $0a, $01, $27, $16, TREASURE_OBJECT_FEATHER_00
 	m_TreasureSubid $0a, $01, $79, $16, TREASURE_OBJECT_FEATHER_01
 	m_TreasureSubid $0a, $01, $27, $16, TREASURE_OBJECT_FEATHER_02
+	m_TreasureSubid $38, $02, <TX_00_GET_ROCSCAPE, $80, TREASURE_OBJECT_FEATHER_03
 
 treasureObjectData19:
 	m_BeginTreasureSubids TREASURE_SEED_SATCHEL

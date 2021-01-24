@@ -17,6 +17,7 @@ treasureDisplayData1:
 	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $0c
 	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $0d
 	.db TREASURE_BOOMERANG		<wBoomerangLevel         $0e
+	.db TREASURE_FEATHER		<wFeatherLevel           $0f
 	.db $00				$00                    $00
 
 treasureDisplayData2:
@@ -35,6 +36,7 @@ treasureDisplayData2:
 	.dw treasureDisplayData_slingshot
 	.dw treasureDisplayData_hyperSlingshot
 	.dw treasureDisplayData_boomerang-7
+	.dw treasureDisplayData_feather-7
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -87,7 +89,7 @@ treasureDisplayData_standard:
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_14 (0x14)
 	.db $00				$9b $04 $00 $00 $ff <TX_092a ; TREASURE_SHOVEL (0x15)
 	.db TREASURE_BRACELET		$99 $05 $00 $00 $00 <TX_092b ; (filler) TREASURE_BRACELET (0x16)
-	.db TREASURE_FEATHER		$96 $04 $00 $00 $ff <TX_092c ; TREASURE_FEATHER (0x17)
+	.db TREASURE_FEATHER		$96 $04 $00 $00 $ff <TX_092c ; (filler) TREASURE_FEATHER (0x17)
 	.db $00				$00 $03 $00 $00 $ff <TX_0900 ; TREASURE_18 (0x18)
 	.db $00				$07 $00 $07 $00 $01 <TX_0900 ; (filler) TREASURE_SEED_SATCHEL (0x19)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_1a (0x1a)
@@ -248,3 +250,7 @@ treasureDisplayData_hyperSlingshot:
 treasureDisplayData_boomerang:
 	.db TREASURE_BOOMERANG          $9c $05 $00 $00 $00 <TX_0927
 	.db TREASURE_BOOMERANG          $9c $04 $00 $00 $00 <TX_09_MAGICBOOMERANG
+
+treasureDisplayData_feather:
+	.db TREASURE_FEATHER		$96 $04 $00 $00 $00 <TX_092c
+	.db TREASURE_FEATHER		$97 $05 $00 $00 $00 <TX_09_ROCSCAPE

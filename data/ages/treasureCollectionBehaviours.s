@@ -149,8 +149,8 @@ treasureCollectionBehaviourTable:
 	.db SND_GETSEED
 
 	; TREASURE_FEATHER (0x17)
-	.db $00
-	.db $00
+	.db <wFeatherLevel
+	.db $08
 	.db SND_GETITEM
 
 	; TREASURE_18 (0x18)
