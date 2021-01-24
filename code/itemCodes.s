@@ -27,28 +27,24 @@ itemCode24:
 	ld bc,$ffe0
 	call objectSetSpeedZ
 
-.ifdef ROM_AGES
-	; Subid is nonzero if being used from seed shooter
-	ld l,Item.subid
-	ld a,(hl)
-	or a
-	call z,itemUpdateAngle
-
 	ld l,Item.var34
 	ld (hl),$03
-.else
-	call itemUpdateAngle
-.endif
 
+	; Determine whether the seed came from the satchel, slingshot, or seed shooter
 	ld l,Item.subid
-	ldd a,(hl)
-	or a
-.ifdef ROM_AGES
-	jr nz,@shooter
-.else
-	jr nz,@slingshot
-.endif
+	ld a,(hl)
+	cp $63
+	jr z,@shooter
 
+	ld b,a
+	call itemUpdateAngle
+	ld a,b
+	or a
+	ld l,Item.id
+	jr z,@satchel
+	jr @slingshot
+
+@satchel:
 	; Satchel
 	ldi a,(hl)
 	cp ITEMID_GALE_SEED
@@ -64,15 +60,16 @@ itemCode24:
 	ret
 ++
 
-.ifdef ROM_AGES
-	ld hl,@satchelPositionOffsets
-	call _applyOffsetTableHL
-.endif
-
+	call @applySatchelOrSlingshotPositionOffsets
 	ld a,SPEED_c0
 	jr @setSpeed
 
-.ifdef ROM_AGES
+
+@applySatchelOrSlingshotPositionOffsets:
+	ld hl,@satchelPositionOffsets
+	jp _applyOffsetTableHL
+
+
 @shooter:
 	ld e,Item.angle
 	ld a,(de)
@@ -91,7 +88,8 @@ itemCode24:
 
 	; Since 'd'='h', this will copy its own position and apply the offset
 	call objectCopyPositionWithOffset
-.else
+	jr @slingshotOrShooter
+
 @slingshot:
 	ld hl,@slingshotAngleTable-1
 	rst_addAToHl
@@ -100,8 +98,9 @@ itemCode24:
 	add (hl)
 	and $1f
 	ld (de),a
-.endif
+	call @applySatchelOrSlingshotPositionOffsets
 
+@slingshotOrShooter:
 	ld hl,wIsSeedShooterInUse
 	inc (hl)
 	ld a,SPEED_300
@@ -109,10 +108,6 @@ itemCode24:
 @setSpeed:
 	ld e,Item.speed
 	ld (de),a
-.ifdef ROM_SEASONS
-	ld hl,@satchelPositionOffsets
-	call _applyOffsetTableHL
-.endif
 
 	; If it's a mystery seed, get a random effect
 	ld e,Item.id
@@ -129,10 +124,8 @@ itemCode24:
 	ld (de),a
 	ret
 
-.ifdef ROM_SEASONS
 @slingshotAngleTable:
 	.db $00 $02 $fe
-.endif
 
 ; Y/X/Z position offsets relative to Link to make seeds appear at (for satchel)
 @satchelPositionOffsets:
@@ -141,7 +134,6 @@ itemCode24:
 	.db $05 $00 $fe ; DIR_DOWN
 	.db $01 $fb $fe ; DIR_LEFT
 
-.ifdef ROM_AGES
 ; Y/X offsets for shooter
 @shooterPositionOffsets:
 	.db $f2 $fc ; Up
@@ -152,7 +144,6 @@ itemCode24:
 	.db $0a $f8 ; Down-left
 	.db $05 $f3 ; Left
 	.db $f8 $f8 ; Up-left
-.endif
 
 ;;
 ; State 1: seed moving
@@ -181,22 +172,31 @@ _seedItemState1:
 	or a
 	jr z,@satchelUpdate
 
-@slingshotUpdate:
-.ifdef ROM_AGES
-	call _seedItemUpdateBouncing
-.else
+@nonSatchelUpdate:
+	ld e,Item.subid
+	ld a,(de)
+	cp $63
+	jr z,@shooter
 	call _slingshotCheckCanPassSolidTile
-.endif
+	jr +
+@shooter:
+	call _seedItemUpdateBouncing
++
 	jr nz,@seedCollidedWithWall
 
 @updatePosition:
-.ifdef ROM_AGES
-	call objectCheckWithinRoomBoundary
-.else
-	call objectCheckWithinScreenBoundary
-.endif
+	call @checkWithinBoundary
 	jp c,objectApplySpeed
 	jp _seedItemDelete
+
+@checkWithinBoundary:
+	; Slingshot seeds disappear when they leave the screen; seed shooter seeds disappear when
+	; they leave the room.
+	ld e,Item.subid
+	ld a,(de)
+	cp $63
+	jp z,objectCheckWithinRoomBoundary
+	jp objectCheckWithinScreenBoundary
 
 @satchelUpdate:
 	; Set speed to 0 if landed in water?
@@ -699,7 +699,6 @@ _galeSeedTryToWarpLink:
 	ld (hl),a
 	ret
 
-.ifdef ROM_AGES
 ;;
 ; Called for seeds used with seed shooter. Checks for tile collisions and triggers
 ; "bounces" when that happens.
@@ -876,6 +875,13 @@ _seedItemCheckDiagonalCollision:
 ; @param	h,d	Object
 ; @param[out]	zflag	Set if there are still bounces left?
 _func_50f4:
+	; CROSSITEMS: Only allow seeds to bounce off of the seed-bouncing-things if this came from
+	; the seed shooter
+	ld e,Item.subid
+	ld a,(de)
+	cp $63
+	ret nz
+
 	ld e,Item.angle
 	ld l,Item.knockbackAngle
 	ld a,(de)
@@ -926,6 +932,8 @@ _seedDontBounceTilesTable:
 	.dw @collisions4
 	.dw @collisions5
 
+.ifdef ROM_AGES
+
 @collisions0:
 	.db $ce $cf $c5 $c5 $c6 $c7 $c8 $c9 $ca
 @collisions1:
@@ -939,6 +947,25 @@ _seedDontBounceTilesTable:
 	.db TILEINDEX_LIT_TORCH
 	.db $00
 .else
+
+; Not including most types of flowers in this table because some of them can be "fall leaves" in
+; autumn (and then the seeds would stop when touching fall leaves which is obviously wrong)
+@collisions0:
+	.db $c4 $c5 $c6 $c7 $ca $cb $d8 $e5
+@collisions1:
+@collisions2:
+@collisions5:
+	.db $00
+
+@collisions3:
+@collisions4:
+	.db TILEINDEX_UNLIT_TORCH
+	.db TILEINDEX_LIT_TORCH
+	.db $00
+
+.endif
+
+
 ;;
 ; @param[out]	zflag	z if no collision
 _slingshotCheckCanPassSolidTile:
@@ -949,7 +976,6 @@ _slingshotCheckCanPassSolidTile:
 ++
 	xor a
 	ret
-.endif
 
 ;;
 ; This is an object which serves as a collision for enemies when Dimitri does his eating
@@ -2220,24 +2246,17 @@ itemCode06:
 
 @state0:
 	call _itemLoadAttributesAndGraphics
-.ifdef ROM_AGES
-	ld a,UNCMP_GFXH_18
-.else
 	ld e,Item.subid
 	ld a,(de)
+.ifdef ROM_AGES
+	add UNCMP_GFXH_AGES_L1_BOOMERANG
+.else
 	add UNCMP_GFXH_18 ; Either this or UNCMP_GFXH_19
 .endif
 	call loadWeaponGfx
 
 	call itemIncState
 
-.ifdef ROM_AGES
-	ld l,Item.speed
-	ld (hl),SPEED_1a0
-
-	ld l,Item.counter1
-	ld (hl),$28
-.else
 	ld bc,(SPEED_1a0<<8|$28)
 	ld l,Item.subid
 	bit 0,(hl)
@@ -2256,7 +2275,6 @@ itemCode06:
 	ld (hl),b
 	ld l,Item.counter1
 	ld (hl),c
-.endif
 
 	ld c,-1
 	ld a,RANG_RING_L1
@@ -2281,9 +2299,7 @@ itemCode06:
 
 ; State 1: boomerang moving outward
 @state1:
-.ifdef ROM_SEASONS
 	call magicBoomerangTryToBreakTile
-.endif
 
 	ld e,Item.var2a
 	ld a,(de)
@@ -2406,9 +2422,7 @@ itemCode06:
 	jp objectTakePosition
 
 @breakTileAndUpdateSpeedAndAnimation:
-.ifdef ROM_SEASONS
 	call magicBoomerangTryToBreakTile
-.endif
 
 @updateSpeedAndAnimation:
 	call objectApplySpeed
@@ -2424,7 +2438,6 @@ itemCode06:
 
 	jp itemAnimate
 
-.ifdef ROM_SEASONS
 magicBoomerangTryToBreakTile:
 	ld e,Item.subid
 	ld a,(de)
@@ -2434,7 +2447,6 @@ magicBoomerangTryToBreakTile:
 	; level-2
 	ld a,BREAKABLETILESOURCE_07
 	jp itemTryToBreakTile
-.endif
 
 ;;
 ; Assumes that both objects are of the same size (checks top-left positions)
@@ -2459,7 +2471,6 @@ _itemCheckWithinRangeOfLink:
 	cp b
 	ret
 
-.ifdef ROM_AGES
 ;;
 ; The chain on the switch hook; cycles between 3 intermediate positions
 ;
@@ -2576,7 +2587,11 @@ itemCode0a:
 	.dw _switchHookState3
 
 @state0:
+.ifdef ROM_AGES
 	ld a,UNCMP_GFXH_AGES_1f
+.else
+	ld a,UNCMP_GFXH_SEASONS_SWITCH_HOOK
+.endif
 	call loadWeaponGfx
 
 	ld hl,@offsetsTable
@@ -3045,8 +3060,12 @@ _switchHookState3:
 	ld c,l
 	ld e,Item.var3d
 	ld a,(de)
+.ifdef ROM_AGES
 	cp TILEINDEX_SWITCH_DIAMOND
 	jr nz,+
+.else
+	jr +
+.endif
 
 	call setTile
 	jr @delete
@@ -3174,7 +3193,6 @@ _func_5af5:
 	ld l,Item.var2f
 	set 5,(hl)
 	ret
-.endif
 
 ;;
 ; ITEMID_RICKY_TORNADO
@@ -3946,7 +3964,7 @@ itemCode29:
 	ld b,SPEED_080
 	jp updateLinkPositionGivenVelocity
 
-.else; ROM_AGES
+.endif ; ROM_SEASONS
 
 ;;
 ; ITEMID_SHOOTER
@@ -3958,7 +3976,11 @@ itemCode0f:
 	.dw @state1
 
 @state0:
+.ifdef ROM_AGES
 	ld a,UNCMP_GFXH_AGES_1d
+.else
+	ld a,UNCMP_GFXH_SEASONS_SEED_SHOOTER
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	ld e,Item.var30
@@ -3998,9 +4020,6 @@ itemCode0fPost:
 ; b2/b3: Y/X offsets relative to Link
 @data:
 	.db $00 $00 $00 $00
-
-.endif ; ROM_AGES
-
 
 
 ;;
@@ -4142,7 +4161,6 @@ itemCode15:
 	ret nz
 	jp itemDelete
 
-.ifdef ROM_AGES
 ;;
 ; ITEMID_CANE_OF_SOMARIA
 itemCode04:
@@ -4156,7 +4174,11 @@ itemCode04:
 	.dw @state2
 
 @state0:
+.ifdef ROM_AGES
 	ld a,UNCMP_GFXH_AGES_1c
+.else
+	ld a,UNCMP_GFXH_CANE_OF_SOMARIA
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 
@@ -4475,9 +4497,16 @@ itemCode18:
 	ld e,Item.var32
 	ld a,(de)
 	ld l,a
+.ifdef ROM_AGES
 	ld h,>wRoomLayout
 	ld a,(hl)
 	cp TILEINDEX_SOMARIA_BLOCK
+.else
+	call getSomariaBlockIndex
+	ld h,>wRoomLayout
+	ld a,(hl)
+	cp b
+.endif
 	ret nz
 
 	ld h,>wRoomCollisions
@@ -4517,12 +4546,12 @@ itemCode18:
 	; Can't be in a wall
 	call objectGetTileCollisions
 	ret nz
-
+.ifdef ROM_AGES
 	; If underwater, never allow it
 	ld a,(wTilesetFlags)
 	bit TILESETFLAG_BIT_UNDERWATER,a
 	ret nz
-
+.endif
 	; If in a sidescrolling area, check for floor underneath
 	and TILESETFLAG_SIDESCROLL
 	ret z
@@ -4550,8 +4579,15 @@ itemCode18:
 	jr c,++
 
 	; Overwrite the tile with the somaria block
+.ifdef ROM_AGES
 	ld b,(hl)
 	ld (hl),TILEINDEX_SOMARIA_BLOCK
+.else
+	call getSomariaBlockIndex
+	ld a,b
+	ld b,(hl)
+	ld (hl),a
+.endif
 	ld h,>wRoomCollisions
 	ld (hl),$0f
 
@@ -4574,7 +4610,6 @@ itemCode18:
 	dec (hl)
 	ret
 
-.else; ROM_SEASONS
 
 ; ITEMID_ROD_OF_SEASONS
 itemCode07:
@@ -4595,12 +4630,19 @@ itemCode07:
 	ld (hl),$10
 	ld a,SND_SWORDSLASH
 	call playSound
+.ifdef ROM_AGES
+	ld a,UNCMP_GFXH_AGES_ROD_OF_SEASONS
+.else
 	ld a,UNCMP_GFXH_SEASONS_1c
+.endif
 	call loadWeaponGfx
 	call _itemLoadAttributesAndGraphics
 	jp objectSetVisible82
 
 @state1:
+.ifdef ROM_AGES
+	ret
+.else
 	ld h,d
 	ld l,Item.counter1
 	dec (hl)
@@ -4644,15 +4686,6 @@ itemCode1dPost:
 	jp z,objectTakePosition
 	jp itemDelete
 
-.ifdef ROM_AGES
-
-;;
-; ITEMID_SLINGSHOT
-itemCode13:
-	ret
-
-.else
-
 ;;
 ; ITEMID_SLINGSHOT
 itemCode13:
@@ -4660,7 +4693,11 @@ itemCode13:
 	ld a,(de)
 	or a
 	ret nz
+.ifdef ROM_SEASONS
 	ld a,UNCMP_GFXH_SEASONS_1d
+.else
+	ld a,UNCMP_GFXH_AGES_SLINGSHOT
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	ld h,d
@@ -4683,7 +4720,11 @@ itemCode08:
 	.dw @state1
 
 @state0:
+.ifdef ROM_AGES
+	ld a,UNCMP_GFXH_AGES_MAGNETGLOVES
+.else
 	ld a,UNCMP_GFXH_SEASONS_1e
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	call objectSetVisible81
@@ -4700,7 +4741,6 @@ itemCode08:
 	ldi (hl),a
 	ld (hl),a
 	ret
-.endif
 
 ; ITEMID_FOOLS_ORE
 itemCode1e:
@@ -5024,12 +5064,12 @@ itemCode27:
 ;
 _updateSwingableItemAnimation:
 	ld l,Item.animParameter
-.ifdef ROM_AGES
+
 	cp ITEMID_CANE_OF_SOMARIA
-.else
-	cp ITEMID_ROD_OF_SEASONS
-.endif
 	jr z,_label_07_227
+	cp ITEMID_ROD_OF_SEASONS
+	jr z,_label_07_227
+
 	bit 6,(hl)
 	jr z,_label_07_227
 

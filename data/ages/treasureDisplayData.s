@@ -13,6 +13,11 @@ treasureDisplayData1:
 	.db TREASURE_HARP		<wSelectedHarpSong     $08
 	.db TREASURE_TUNI_NUT		<wTuniNutState         $09
 	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel      $0a
+	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity  $0b
+	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $0c
+	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $0d
+	.db TREASURE_BOOMERANG		<wBoomerangLevel         $0e
+	.db TREASURE_FEATHER		<wFeatherLevel           $0f
 	.db $00				$00                    $00
 
 treasureDisplayData2:
@@ -27,6 +32,11 @@ treasureDisplayData2:
 	.dw treasureDisplayData_harp
 	.dw treasureDisplayData_tuniNut
 	.dw treasureDisplayData_switchHook-7
+	.dw treasureDisplayData_magnetGlove
+	.dw treasureDisplayData_slingshot
+	.dw treasureDisplayData_hyperSlingshot
+	.dw treasureDisplayData_boomerang-7
+	.dw treasureDisplayData_feather-7
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -40,9 +50,10 @@ treasureDisplayData2:
 ;  b4: Right attribute
 ;  b5: $00: display level
 ;      $01: display quantity
-;      $02: display harp song?
+;      $02: display seasons
 ;      $03: display nothing extra (stub?)
 ;      $04: display number with "x" (ie. x2). Used by slates only.
+;      $05: display harp song (CROSSITEMS: Used to be $02)
 ;      $ff: display nothing extra
 ;  b6: Low byte of text index (high byte is $09)
 ;
@@ -60,10 +71,10 @@ treasureDisplayData_standard:
 	.db $00				$07 $00 $00 $00 $00 <TX_0900 ; (filler) TREASURE_SHIELD (0x01)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_PUNCH (0x02)
 	.db TREASURE_BOMBS		$9e $04 $00 $00 $01 <TX_0926 ; TREASURE_BOMBS (0x03)
-	.db $00				$97 $02 $00 $00 $ff <TX_093c ; TREASURE_CANE_OF_SOMARIA (0x04)
+	.db $00				$9d $02 $00 $00 $ff <TX_093c ; TREASURE_CANE_OF_SOMARIA (0x04)
 	.db $00				$07 $00 $07 $00 $00 <TX_0900 ; (filler) TREASURE_SWORD (0x05)
-	.db TREASURE_BOOMERANG		$9c $05 $00 $00 $ff <TX_0927 ; TREASURE_BOOMERANG (0x06)
-	.db TREASURE_ROD_OF_SEASONS	$98 $02 $00 $00 $02 <TX_0900 ; TREASURE_ROD_OF_SEASONS (0x07)
+	.db TREASURE_BOOMERANG		$9c $05 $00 $00 $ff <TX_0927 ; (filler) TREASURE_BOOMERANG (0x06)
+	.db TREASURE_ROD_OF_SEASONS	$98 $02 $00 $00 $02 <TX_09_RODOFSEASONS ; TREASURE_ROD_OF_SEASONS (0x07)
 	.db $00				$07 $00 $07 $00 $ff <TX_0900 ; TREASURE_MAGNET_GLOVES (0x08)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_SWITCH_HOOK_HELPER (0x09)
 	.db $00				$07 $00 $07 $00 $00 <TX_0900 ; (filler) TREASURE_SWITCH_HOOK (0x0a)
@@ -73,13 +84,13 @@ treasureDisplayData_standard:
 	.db $00				$07 $00 $07 $00 $ff <TX_0900 ; (filler) TREASURE_FLUTE (0x0e)
 	.db $00				$88 $00 $00 $00 $ff <TX_0940 ; (filler) TREASURE_SHOOTER (0x0f)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_10 (0x10)
-	.db TREASURE_HARP		$00 $00 $00 $00 $02 <TX_0941 ; (filler) TREASURE_HARP (0x11)
+	.db TREASURE_HARP		$00 $00 $00 $00 $05 <TX_0941 ; (filler) TREASURE_HARP (0x11)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_12 (0x12)
 	.db $00				$07 $00 $07 $00 $ff <TX_0900 ; TREASURE_SLINGSHOT (0x13)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_14 (0x14)
 	.db $00				$9b $04 $00 $00 $ff <TX_092a ; TREASURE_SHOVEL (0x15)
 	.db TREASURE_BRACELET		$99 $05 $00 $00 $00 <TX_092b ; (filler) TREASURE_BRACELET (0x16)
-	.db TREASURE_FEATHER		$96 $04 $00 $00 $ff <TX_092c ; TREASURE_FEATHER (0x17)
+	.db TREASURE_FEATHER		$96 $04 $00 $00 $ff <TX_092c ; (filler) TREASURE_FEATHER (0x17)
 	.db $00				$00 $03 $00 $00 $ff <TX_0900 ; TREASURE_18 (0x18)
 	.db $00				$07 $00 $07 $00 $01 <TX_0900 ; (filler) TREASURE_SEED_SATCHEL (0x19)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_1a (0x1a)
@@ -164,11 +175,11 @@ treasureDisplayData_satchel:
 	.db TREASURE_MYSTERY_SEEDS	$80 $05 $87 $00 $01 <TX_092d ; Mystery seeds
 
 treasureDisplayData_shooter:
-	.db TREASURE_EMBER_SEEDS	$81 $05 $83 $02 $01 <TX_0940 ; Ember seeds
-	.db TREASURE_SCENT_SEEDS	$81 $05 $84 $03 $01 <TX_0940 ; Scent seeds
-	.db TREASURE_PEGASUS_SEEDS	$81 $05 $85 $01 $01 <TX_0940 ; Pegasus seeds
-	.db TREASURE_GALE_SEEDS		$81 $05 $86 $01 $01 <TX_0940 ; Gale seeds
-	.db TREASURE_MYSTERY_SEEDS	$81 $05 $87 $00 $01 <TX_0940 ; Mystery seeds
+	.db TREASURE_EMBER_SEEDS	$8a $05 $83 $02 $01 <TX_0940 ; Ember seeds
+	.db TREASURE_SCENT_SEEDS	$8a $05 $84 $03 $01 <TX_0940 ; Scent seeds
+	.db TREASURE_PEGASUS_SEEDS	$8a $05 $85 $01 $01 <TX_0940 ; Pegasus seeds
+	.db TREASURE_GALE_SEEDS		$8a $05 $86 $01 $01 <TX_0940 ; Gale seeds
+	.db TREASURE_MYSTERY_SEEDS	$8a $05 $87 $00 $01 <TX_0940 ; Mystery seeds
 
 treasureDisplayData_sword:
 	.db TREASURE_SWORD $90 $00 $00 $00 $00 <TX_0923 ; L1
@@ -182,7 +193,7 @@ treasureDisplayData_shield:
 
 treasureDisplayData_bracelet:
 	.db TREASURE_BRACELET $99 $05 $00 $00 $00 <TX_092b ; L1
-	.db TREASURE_BRACELET $98 $05 $00 $00 $00 <TX_093f ; L2
+	.db TREASURE_BRACELET $af $05 $00 $00 $00 <TX_093f ; L2
 
 treasureDisplayData_trade:
 	.db TREASURE_TRADEITEM $c0 $05 $c1 $05 $ff <TX_0909 ; Poe clock
@@ -206,10 +217,10 @@ treasureDisplayData_flute:
 	.db TREASURE_FLUTE $8b $01 $8f $01 $ff <TX_0931 ; Moosh's flute
 
 treasureDisplayData_harp:
-	.db $00 $02 $04 $02 $00 $02 <TX_0941 ; No song?
-	.db $00 $a3 $00 $a4 $00 $02 <TX_0941 ; Tune of echoes
-	.db $00 $a7 $03 $a8 $03 $02 <TX_0941 ; Tune of currents
-	.db $00 $ab $01 $ac $01 $02 <TX_0941 ; Tune of ages
+	.db $00 $02 $04 $02 $00 $05 <TX_0941 ; No song?
+	.db $00 $a3 $00 $a4 $00 $05 <TX_0941 ; Tune of echoes
+	.db $00 $a7 $03 $a8 $03 $05 <TX_0941 ; Tune of currents
+	.db $00 $ab $01 $ac $01 $05 <TX_0941 ; Tune of ages
 treasureDisplayData_tuniNut:
 	.db TREASURE_TUNI_NUT $f3 $05 $f4 $05 $ff <TX_0957 ; Broken
 	.db TREASURE_TUNI_NUT $00 $00 $00 $00 $ff <TX_0900 ; Invisible (during the ceremony?)
@@ -219,4 +230,28 @@ treasureDisplayData_switchHook:
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093d ; L1
 	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 <TX_093e ; L2
 
+treasureDisplayData_magnetGlove:
+	.db TREASURE_MAGNET_GLOVES      $88 $01 $89 $00 $03 <TX_09_MAGNETGLOVES
+	.db TREASURE_MAGNET_GLOVES      $88 $02 $89 $00 $03 <TX_09_MAGNETGLOVES
 
+treasureDisplayData_slingshot:
+	.db TREASURE_EMBER_SEEDS        $81 $04 $83 $02 $01 <TX_09_SLINGSHOT
+	.db TREASURE_SCENT_SEEDS        $81 $04 $84 $03 $01 <TX_09_SLINGSHOT
+	.db TREASURE_PEGASUS_SEEDS      $81 $04 $85 $01 $01 <TX_09_SLINGSHOT
+	.db TREASURE_GALE_SEEDS         $81 $04 $86 $01 $01 <TX_09_SLINGSHOT
+	.db TREASURE_MYSTERY_SEEDS      $81 $04 $87 $00 $01 <TX_09_SLINGSHOT
+
+treasureDisplayData_hyperSlingshot:
+	.db TREASURE_EMBER_SEEDS        $81 $05 $83 $02 $01 <TX_09_HYPERSLINGSHOT
+	.db TREASURE_SCENT_SEEDS        $81 $05 $84 $03 $01 <TX_09_HYPERSLINGSHOT
+	.db TREASURE_PEGASUS_SEEDS      $81 $05 $85 $01 $01 <TX_09_HYPERSLINGSHOT
+	.db TREASURE_GALE_SEEDS         $81 $05 $86 $01 $01 <TX_09_HYPERSLINGSHOT
+	.db TREASURE_MYSTERY_SEEDS      $81 $05 $87 $00 $01 <TX_09_HYPERSLINGSHOT
+
+treasureDisplayData_boomerang:
+	.db TREASURE_BOOMERANG          $9c $05 $00 $00 $00 <TX_0927
+	.db TREASURE_BOOMERANG          $9c $04 $00 $00 $00 <TX_09_MAGICBOOMERANG
+
+treasureDisplayData_feather:
+	.db TREASURE_FEATHER		$96 $04 $00 $00 $00 <TX_092c
+	.db TREASURE_FEATHER		$97 $05 $00 $00 $00 <TX_09_ROCSCAPE

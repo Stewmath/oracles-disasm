@@ -3254,6 +3254,22 @@ _drawObjectTerrainEffects:
 	ld b,>wRoomLayout
 	ld a,(bc)
 
+.ifdef ROM_SEASONS
+	; CROSSITEMS: Cane of Somaria uses tile index $f9 indoors. It behaves like a grass tile, but
+	; it's never used indoors, so disable the grass animation on that tile.
+	; (Even though the somaria block is solid, the grass animation can be seen when item drops
+	; land on top of it, so this disables that.)
+	cp $f9
+	jr nz,+
+	ld b,a
+	ld a,(wActiveGroup)
+	or a
+	ld a,b
+	jr z,+
+	jr @end
++
+.endif
+
 .ifdef ROM_AGES
 	cp TILEINDEX_GRASS
 	jr z,@walkingInGrass
@@ -5767,11 +5783,22 @@ checkReloadStatusBarGraphics:
 ; @param	de	Destination
 ; @param	hl	Source
 copy20BytesFromBank:
+	ld c,$20
+
+;;
+; Copy 'c' bytes from bank b at hl to de. (CROSSITEMS: Added this function to help with magnet glove
+; polarity graphics.)
+;
+; @param	b	Bank
+; @param	c	Bytes to copy
+; @param	de	Destination
+; @param	hl	Source
+copyBytesFromBank:
 	ldh a,(<hRomBank)
 	push af
 	ld a,b
 	setrombank
-	ld b,$20
+	ld b,c
 	call copyMemory
 	pop af
 	setrombank
@@ -14224,6 +14251,32 @@ func_3ee4:
 
 .endif
 
+
+.ifdef ROM_SEASONS
+;;
+; CROSSITEMS: For Seasons only, determine which tile index is the cane of somaria (varies based on
+; which group we're in).
+;
+; This is important for determining if the tile can be pushed and for making it disappear when
+; slashing it with the sword. The tile index should be something that is never used for anything
+; else.
+;
+; Tile index $f9 normally behaves like a grass tile, but since it's unused indoors, that
+; functionality is disabled.
+getSomariaBlockIndex:
+	ld a,(wActiveCollisions)
+	ld b,$3f ; Overworld
+	or a
+	ret z
+
+	dec a ; Subrosia
+	ld b,$ba
+	ret z
+
+	; Maku Tree (2), Indoors (3), Dungeon (4), Sidescrolling (5)
+	ld b,$f9
+	ret
+.endif
 
 .include "code/rando/bank0.s"
 .include "code/rando/util.s"

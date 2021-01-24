@@ -3728,11 +3728,7 @@ _swordEnemy_gotoState8:
 ; ENEMYID_SWORD_DARKNUT
 ; ==============================================================================
 enemyCode48:
-.ifdef ROM_AGES
-	call _ecom_checkHazards
-.else
 	call _ecom_seasonsFunc_4446
-.endif
 	call @runState
 	jp _swordDarknut_updateEnemyCollisionMode
 
@@ -5900,11 +5896,7 @@ enemyCode4b:
 	jp enemyDie
 
 @normalStatus:
-.ifdef ROM_AGES
-	call _ecom_checkHazards
-.else
 	call _ecom_seasonsFunc_4446
-.endif
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable

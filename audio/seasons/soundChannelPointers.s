@@ -1087,7 +1087,7 @@ sound7a:
 	.db $ff
 
 sound7b:
-	.db $02
+	.db $32
 	.dw sound7bChannel2
 	.db $ff
 
@@ -1300,11 +1300,9 @@ sounda0:
 	.dw sounda0Channel2
 	.db $ff
 
-sounda1:
-	.db $02
-	.dw sounda1Channel2
-	.db $07
-	.dw sounda1Channel7
+switchHookSound:
+	.db $a2
+	.dw switchHookSoundChannel2
 	.db $ff
 
 sounda2:

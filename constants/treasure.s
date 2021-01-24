@@ -145,7 +145,7 @@
 
 	; The remainder appear as seeds in seed satchel/slingshot, but that probably
 	; doesn't mean anything. These may not be valid treasures.
-	TREASURE_59			db ; $59
+	TREASURE_MERMAID_SUIT		db ; $59
 	TREASURE_5a			db ; $5a
 	TREASURE_5b			db ; $5b
 	TREASURE_5c			db ; $5c

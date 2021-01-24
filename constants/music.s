@@ -200,7 +200,7 @@
 	SND_BIG_EXPLOSION       db ; $79
 
 .ifdef ROM_AGES
-	SND_7a                  db ; $7a (blank)
+	SND_MAGNET_GLOVES       db ; $7a
 .else
 	SND_FREEZE_LAVA         db ; $7a (used in Sword & Shield dungeon)
 .endif
@@ -279,7 +279,7 @@
 .ifdef ROM_AGES
 	SND_MONKEY              db ; $a1 ; Monkey from LADX?
 .else
-	SND_a1                  db ; $a1 ; Blank
+	SND_SWITCH2             db ; $a1
 .endif
 
 	SND_COMPASS             db ; $a2

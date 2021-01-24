@@ -281,17 +281,17 @@ interaction63SubidData:
 	m_InteractionData $7d $08 $50
 	m_InteractionData $7d $0a $40
 	m_InteractionData $7d $0c $40
-	m_InteractionData $7d $0e $20
+	m_InteractionData $7d $1a $20 ; CROSSITEMS: Cane of Somaria gfx moved
 	m_InteractionData $00 $00 $00
 	m_InteractionData $7d $12 $50
-	m_InteractionData $7d $10 $50
+	m_InteractionData $7e $1e $50 ; CROSSITEMS: Power Glove gfx moved
 	m_InteractionData $7d $16 $40
 	m_InteractionData $7d $18 $50
 	m_InteractionData $00 $00 $00
 	m_InteractionData $00 $00 $00
 	m_InteractionData $7d $1e $40
 	m_InteractionData $7c $00 $50
-	m_InteractionData $7c $02 $50
+	m_InteractionData $7c $14 $50 ; CROSSITEMS: Seed Shooter gfx moved
 	m_InteractionData $00 $00 $00
 	m_InteractionData $7c $16 $03
 	m_InteractionData $7e $00 $50
@@ -384,7 +384,15 @@ interactiond7SubidData:
 	m_InteractionData $80 $1a $13
 	m_InteractionData $81 $00 $33
 	m_InteractionData $81 $04 $33
-	m_InteractionData $81 $88 $13
+	m_InteractionData $81 $08 $13
+
+	; CROSSITEMS: Extra values for seasons items, for interaction $60 (INTERACID_TREASURE).
+	m_InteractionData $7c $10 $10 ; $7c (Magnet Gloves)
+	m_InteractionData $7c $02 $40 ; $7d (Slingshot)
+	m_InteractionData $e0 $00 $50 ; $7e (Hyper Slingshot)
+	m_InteractionData $84 $04 $40 ; $7f (Magic Boomerang)
+	m_InteractionData $7d $0e $50 ; $80 (Roc's Cape)
+	m_InteractionData $7d $90 $20 ; $81 (Rod of Seasons)
 
 interaction1bSubidData:
 	m_InteractionData $74 $10 $00

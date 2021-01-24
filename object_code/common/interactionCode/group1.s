@@ -725,7 +725,6 @@ interactionCode14:
 	; Determine speed to push with (L-2 bracelet pushes faster)
 	ld h,d
 	ldbc SPEED_80, $20
-.ifdef ROM_AGES
 	ld a,(wBraceletLevel)
 	cp $02
 	jr nz,+
@@ -734,7 +733,6 @@ interactionCode14:
 	jr nz,+
 	ldbc SPEED_c0, $15
 +
-.endif
 	ld l,Interaction.speed
 	ld (hl),b
 	ld l,Interaction.counter1
@@ -1562,12 +1560,17 @@ interactionCode1e:
 	.dw @state3Substate1
 
 @state3Substate0:
-.ifdef ROM_AGES
 	; The tile at this position must not be solid
 	call objectGetTileAtPosition
+.ifdef ROM_AGES
 	cp TILEINDEX_SOMARIA_BLOCK
-	jr z,@interleaveDoorTile
+.else; ROM_SEASONS
+	push af
+	call getSomariaBlockIndex
+	pop af
+	cp b
 .endif
+	jr z,@interleaveDoorTile
 	call objectCheckTileCollision_allowHoles
 	jr c,@gotoState1
 	jr @interleaveDoorTile

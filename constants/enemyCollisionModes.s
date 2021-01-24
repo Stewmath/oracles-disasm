@@ -246,6 +246,8 @@
 	ENEMYCOLLISION_GANON_TRIDENT			db ; -/$70
 	ENEMYCOLLISION_VIRE_PROJECTILE			db ; -/$71
 	ENEMYCOLLISION_POPPABLE_BUBBLE			db ; -/$72
+
+	ENEMYCOLLISION_SWITCHHOOK_DAMAGE_ENEMY		db ; -/$73: Added for CROSSITEMS branch
 .endif
 
 ; Can't have values that are $80 or higher without changing how this works

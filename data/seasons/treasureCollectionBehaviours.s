@@ -51,9 +51,9 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_SWITCH_HOOK (0x09)
-	.db $00
-	.db $00
+	; TREASURE_SWITCH_HOOK (0x0a)
+	.db <wSwitchHookLevel
+	.db $08
 	.db SND_GETITEM
 
 	; TREASURE_SWITCH_HOOK_CHAIN (0x0b)
@@ -87,9 +87,9 @@ treasureCollectionBehaviourTable:
 	.db SND_NONE
 
 	; TREASURE_HARP (0x11)
-	.db $00
-	.db $00
-	.db SND_NONE
+	.db <wSelectedHarpSong
+	.db $05
+	.db SND_GETITEM
 
 	; TREASURE_12 (0x12)
 	.db $00
@@ -112,8 +112,8 @@ treasureCollectionBehaviourTable:
 	.db SND_GETITEM
 
 	; TREASURE_BRACELET (0x16)
-	.db $00
-	.db $00
+	.db <wBraceletLevel
+	.db $08
 	.db SND_GETSEED
 
 	; TREASURE_FEATHER (0x17)
@@ -446,10 +446,10 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_59 (0x59)
+	; TREASURE_MERMAID_SUIT (0x59)
 	.db $00
 	.db $00
-	.db SND_NONE
+	.db SND_GETITEM
 
 	; TREASURE_5a (0x5a)
 	.db $00

@@ -53,8 +53,11 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader33
 	.dw uncmpGfxHeader34
 	.dw uncmpGfxHeader35
-	.dw uncmpGfxHeader36
-	.dw uncmpGfxHeader37
+	.dw uncmpGfxHeader_magicBoomerangInv
+	.dw uncmpGfxHeader_hyperSlingshotInv
+	.dw uncmpGfxHeader_caneOfSomaria
+	.dw uncmpGfxHeader_switchHook
+	.dw uncmpGfxHeader_seedShooter
 
 uncmpGfxHeader00:
 uncmpGfxHeader01:
@@ -191,5 +194,20 @@ uncmpGfxHeader33:
 uncmpGfxHeader34:
 uncmpGfxHeader35:
 	m_GfxHeaderRam w7d800, $8300, $2f
-uncmpGfxHeader36:
-uncmpGfxHeader37:
+
+; CROSSITEMS: Magical boomerang overwriting L-1 boomerang for inventory gfx
+uncmpGfxHeader_magicBoomerangInv:
+	m_GfxHeader spr_boomerang, $8381, $01, $40
+
+; Hyper slingshot overwriting L-1 slingshot for inventory gfx
+uncmpGfxHeader_hyperSlingshotInv:
+	m_GfxHeader spr_hyperslingshot_inventory, $8021, $01
+
+uncmpGfxHeader_caneOfSomaria:
+	m_GfxHeader spr_cane_of_somaria, $8521, $09
+
+uncmpGfxHeader_switchHook:
+	m_GfxHeader spr_switch_hook, $8521, $0b
+
+uncmpGfxHeader_seedShooter:
+	m_GfxHeader spr_seed_shooter, $8521, $09

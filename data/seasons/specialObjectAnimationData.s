@@ -270,7 +270,7 @@ specialObject09AnimationDataPointers:
 	.dw animationData19c65
 	.dw animationData19c6b
 	.dw animationData19c71
-	.dw animationData19c9a
+	.dw animationDataMermaid
 	.dw animationData19cbc
 	.dw animationData19c9a
 	.dw animationData19ca5
@@ -283,7 +283,7 @@ specialObject09AnimationDataPointers:
 	.dw animationData19cf7
 	.dw animationData19d0c
 	.dw animationData19d0c
-	.dw animationData19d0c
+	.dw animationDataHarp
 	.dw animationData19d0c
 	.dw animationData19d15
 	.dw animationData19d18
@@ -593,6 +593,11 @@ animationLoop19c74:
 	.db $06 $54 $00
 	m_AnimationLoop animationLoop19c74
 
+animationDataMermaid:
+	.db $09 $7c $00
+	.db $09 $a8 $00
+	m_AnimationLoop animationDataMermaid
+
 animationData19c9a:
 	.db $01 $d0 $00
 animationLoop19c9d:
@@ -653,6 +658,25 @@ animationData19cf7:
 	.db $3c $2f $01
 	.db $1e $2e $01
 	.db $7f $2e $ff
+
+animationDataHarp: ; CROSSITEMS: Harp animation
+	.db $14 $34 $00
+	.db $14 $35 $00
+	.db $0c $34 $00
+	.db $14 $36 $01
+	.db $14 $37 $01
+	.db $0c $36 $01
+	.db $14 $34 $00
+	.db $14 $35 $00
+	.db $0c $34 $00
+	.db $14 $36 $01
+	.db $14 $37 $01
+	.db $0c $36 $01
+	.db $14 $36 $01
+	.db $14 $37 $01
+	.db $0c $36 $01
+	.db $01 $36 $81
+	.db $7f $1c $ff
 
 animationData19d0c:
 	.db $06 $b4 $44

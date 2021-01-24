@@ -198,3 +198,6 @@ objectGfxHeaderTable: ; $fdafb
 	/* $c4 */ m_ObjectGfxHeader spr_twinrova_8 $00
 	/* $c5 */ m_ObjectGfxHeader spr_twinrova_9 $00
 	/* $c6 */ m_ObjectGfxHeader spr_twinrovamerged_2 $80
+
+	; CROSSITEMS: Extra object gfx headers
+	/* $c7 */ m_ObjectGfxHeader spr_hyperslingshot_inventory $00

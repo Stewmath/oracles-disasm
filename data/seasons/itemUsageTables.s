@@ -4,20 +4,20 @@ _itemUsageParameterTable:
 	.db $05 <wGameKeysPressed       ; ITEMID_SHIELD
 	.db $03 <wGameKeysJustPressed   ; ITEMID_PUNCH
 	.db $23 <wGameKeysJustPressed   ; ITEMID_BOMB
-	.db $00 <wGameKeysJustPressed   ; ITEMID_CANE_OF_SOMARIA
+	.db $03 <wGameKeysJustPressed   ; ITEMID_CANE_OF_SOMARIA
 	.db $63 <wGameKeysJustPressed   ; ITEMID_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOOMERANG
 	.db $33 <wGameKeysJustPressed   ; ITEMID_ROD_OF_SEASONS
 	.db $53 <wGameKeysJustPressed   ; ITEMID_MAGNET_GLOVES
 	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_HELPER
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
+	.db $73 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed   ; ITEMID_SWITCH_HOOK_CHAIN
 	.db $73 <wGameKeysJustPressed   ; ITEMID_BIGGORON_SWORD
 	.db $02 <wGameKeysJustPressed   ; ITEMID_BOMBCHUS
 	.db $05 <wGameKeysJustPressed   ; ITEMID_FLUTE
-	.db $00 <wGameKeysJustPressed   ; ITEMID_SHOOTER
+	.db $43 <wGameKeysJustPressed   ; ITEMID_SHOOTER
 	.db $00 <wGameKeysJustPressed   ; ITEMID_10
-	.db $00 <wGameKeysJustPressed   ; ITEMID_HARP
+	.db $05 <wGameKeysJustPressed   ; ITEMID_HARP
 	.db $00 <wGameKeysJustPressed   ; ITEMID_12
 	.db $43 <wGameKeysJustPressed   ; ITEMID_SLINGSHOT
 	.db $00 <wGameKeysJustPressed   ; ITEMID_14

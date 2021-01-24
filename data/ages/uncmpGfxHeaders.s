@@ -63,6 +63,13 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader3d
 	.dw uncmpGfxHeader3e
 	.dw uncmpGfxHeader3f
+	.dw uncmpGfxHeader_magicBoomerangInv
+	.dw uncmpGfxHeader_hyperSlingshotInv
+	.dw uncmpGfxHeader_magnetGloves
+	.dw uncmpGfxHeader_slingshot
+	.dw uncmpGfxHeader_l1Boomerang
+	.dw uncmpGfxHeader_l2Boomerang
+	.dw uncmpGfxHeader_rodOfSeasons
 
 
 
@@ -219,3 +226,26 @@ uncmpGfxHeader3e:
 	m_GfxHeader gfx_animations_2, $8cc1, $03, $780
 uncmpGfxHeader3f:
 	m_GfxHeader gfx_animations_2, $8cc1, $03, $7c0
+
+; CROSSITEMS: Magical boomerang overwriting L-1 boomerang for inventory gfx
+uncmpGfxHeader_magicBoomerangInv:
+	m_GfxHeader spr_boomerang, $8381, $01, $40
+
+; Hyper slingshot overwriting L-1 slingshot for inventory gfx
+uncmpGfxHeader_hyperSlingshotInv:
+	m_GfxHeader spr_hyperslingshot_inventory, $8021, $01
+
+uncmpGfxHeader_magnetGloves:
+	m_GfxHeader spr_magnet_gloves, $8521, $07
+
+uncmpGfxHeader_slingshot:
+	m_GfxHeader spr_slingshot, $8521, $07
+
+uncmpGfxHeader_l1Boomerang:
+	m_GfxHeader spr_boomerang, $84e1, $03
+
+uncmpGfxHeader_l2Boomerang:
+	m_GfxHeader spr_boomerang, $84e1, $03, $40
+
+uncmpGfxHeader_rodOfSeasons:
+	m_GfxHeader spr_rod_of_seasons, $8521, $09

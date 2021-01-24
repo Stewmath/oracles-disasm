@@ -26,8 +26,8 @@ _itemUsageParameterTable:
 	.db $03 <wGameKeysJustPressed	; ITEMID_CANE_OF_SOMARIA
 	.db $63 <wGameKeysJustPressed	; ITEMID_SWORD
 	.db $02 <wGameKeysJustPressed	; ITEMID_BOOMERANG
-	.db $00 <wGameKeysJustPressed	; ITEMID_ROD_OF_SEASONS
-	.db $00 <wGameKeysJustPressed	; ITEMID_MAGNET_GLOVES
+	.db $33 <wGameKeysJustPressed	; ITEMID_ROD_OF_SEASONS
+	.db $53 <wGameKeysJustPressed	; ITEMID_MAGNET_GLOVES
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_HELPER
 	.db $73 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_CHAIN
@@ -38,7 +38,7 @@ _itemUsageParameterTable:
 	.db $00 <wGameKeysJustPressed	; ITEMID_10
 	.db $05 <wGameKeysJustPressed	; ITEMID_HARP
 	.db $00 <wGameKeysJustPressed	; ITEMID_12
-	.db $00 <wGameKeysJustPressed	; ITEMID_SLINGSHOT
+	.db $43 <wGameKeysJustPressed	; ITEMID_SLINGSHOT
 	.db $00 <wGameKeysJustPressed	; ITEMID_14
 	.db $13 <wGameKeysJustPressed	; ITEMID_SHOVEL
 	.db $13 <wGameKeysPressed	; ITEMID_BRACELET

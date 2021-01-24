@@ -1066,11 +1066,7 @@ _moblin_state_9:
 ; ENEMYID_ARROW_DARKNUT
 ; ==============================================================================
 enemyCode21:
-.ifdef ROM_AGES
-	call _ecom_checkHazards
-.else
 	call _ecom_seasonsFunc_4446
-.endif
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
@@ -4659,11 +4655,7 @@ _fish_subid00:
 	ld l,e
 	inc (hl)
 	ld l,Enemy.enemyCollisionMode
-.ifdef ROM_AGES
 	ld (hl),ENEMYCOLLISION_SWITCHHOOK_DAMAGE_ENEMY
-.else
-	ld (hl),ENEMYCOLLISION_STANDARD_ENEMY
-.endif
 	ld l,Enemy.zh
 	ld (hl),$00
 

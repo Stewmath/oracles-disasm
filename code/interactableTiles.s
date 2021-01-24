@@ -20,7 +20,21 @@ interactWithTileBeforeLink:
 	; Note: The function that's called must set or unset the carry flag on returning.
 	; Setting it disables some of Link's per-frame update code?
 	ld hl,interactableTilesTable
+.ifdef ROM_AGES
 	call lookupCollisionTable_paramE
+.else
+	call getSomariaBlockIndex
+	ld a,b
+	cp e
+	jr z,@somaria
+	call lookupCollisionTable_paramE
+	jr +
+
+@somaria:
+	ld a,$80
+	scf
++
+.endif
 	jp nc,_resetPushingAgainstTileCounter
 	ld b,a
 	and $0f
@@ -277,8 +291,12 @@ _nextToPushableBlock:
 .ifdef ROM_AGES
 	ldh a,(<hFF8B)
 	cp TILEINDEX_SOMARIA_BLOCK
-	jr z,@somariaBlock
+.else
+	call getSomariaBlockIndex
+	ldh a,(<hFF8B)
+	cp b
 .endif
+	jr z,@somariaBlock
 
 	; Used w1ReservedInteraction1 for the block pushing animation.
 	ld hl,w1ReservedInteraction1.enabled
@@ -330,7 +348,6 @@ _nextToPushableBlock:
 	xor a
 	jp _resetPushingAgainstTileCounter
 
-.ifdef ROM_AGES
 	; For the somaria block, use its dedicated object to move it around.
 @somariaBlock:
 	ld c,ITEMID_18
@@ -343,7 +360,6 @@ _nextToPushableBlock:
 	ld l,Item.direction
 	ld (hl),a
 	jr @end
-.endif
 
 ;;
 _nextToKeyBlock:

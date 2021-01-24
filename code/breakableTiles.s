@@ -33,7 +33,24 @@ tryToBreakTile_body:
 	ldh (<hFF93),a
 
 	ld hl,_breakableTileCollisionTable
+.ifdef ROM_AGES
 	call lookupCollisionTable_paramE
+.else
+	push bc
+	call getSomariaBlockIndex
+	ld a,b
+	cp e
+	jr z,@somaria
+	call lookupCollisionTable_paramE
+	pop bc
+	jr +
+
+@somaria:
+	ld hl,caneBreakableTileData
+	pop bc
+	jr ++
++
+.endif
 	ret nc
 
 	; hl = _breakableTileModes + a*5
@@ -43,7 +60,7 @@ tryToBreakTile_body:
 	rst_addDoubleIndex
 	ld a,e
 	rst_addAToHl
-
+++
 	ldh a,(<hFF8F)
 	ld e,a
 	and $1f
@@ -122,10 +139,14 @@ tryToBreakTile_body:
 .endif
 
 @doneSettingTile:
-	ldh a,(<hFF92)
-
 .ifdef ROM_AGES
+	ldh a,(<hFF92)
 	cp TILEINDEX_SOMARIA_BLOCK
+	jr z,@somariaBlock
+.else
+	call getSomariaBlockIndex
+	ldh a,(<hFF92)
+	cp b
 	jr z,@somariaBlock
 .endif
 
@@ -170,7 +191,6 @@ tryToBreakTile_body:
 	scf
 	ret
 
-.ifdef ROM_AGES
 @somariaBlock:
 	ld c,ITEMID_18
 	call findItemWithID
@@ -194,7 +214,6 @@ tryToBreakTile_body:
 	ld l,Item.var2f
 	set 5,(hl)
 	ret
-.endif ; ROM_AGES
 
 ;;
 ; Makes an interaction for a breakable tile at the item's location.
