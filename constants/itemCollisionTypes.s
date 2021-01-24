@@ -45,7 +45,7 @@
 	ITEMCOLLISION_HARMLESS			db ; $12: Cane of Somaria, other harmless things
 
 .ifdef ROM_AGES
-	ITEMCOLLISION_AG_13			db ; $13: Unused?
+	ITEMCOLLISION_L2_BOOMERANG		db ; $13: Unused?
 	ITEMCOLLISION_AG_14			db ; $14: Unused?
 	ITEMCOLLISION_SOMARIA_BLOCK		db ; $15: Cane of Somaria block
 	ITEMCOLLISION_THROWN_OBJECT		db ; $16: Object being thrown (ie. sign)

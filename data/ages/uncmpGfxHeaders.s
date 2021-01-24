@@ -67,6 +67,8 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader_hyperSlingshotInv
 	.dw uncmpGfxHeader_magnetGloves
 	.dw uncmpGfxHeader_slingshot
+	.dw uncmpGfxHeader_l1Boomerang
+	.dw uncmpGfxHeader_l2Boomerang
 
 
 
@@ -237,3 +239,9 @@ uncmpGfxHeader_magnetGloves:
 
 uncmpGfxHeader_slingshot:
 	m_GfxHeader spr_slingshot, $8521, $07
+
+uncmpGfxHeader_l1Boomerang:
+	m_GfxHeader spr_boomerang, $84e1, $03
+
+uncmpGfxHeader_l2Boomerang:
+	m_GfxHeader spr_boomerang, $84e1, $03, $40

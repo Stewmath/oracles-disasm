@@ -3795,7 +3795,6 @@ _loadItemIconGfx:
 
 	ld b,a
 
-.ifdef ROM_SEASONS
 	; CROSSITEMS: Replace L-1 boomerang sprite with L-2 sprite if applicable. (This was
 	; necessary due to VRAM limitations.)
 	cp $9c
@@ -3807,7 +3806,6 @@ _loadItemIconGfx:
 	ld b,:spr_boomerang
 	jp copy20BytesFromBank
 +
-.endif
 	; Also replace L-1 slingshot with L-2 sprite if applicable.
 	ld a,b
 	cp $81
@@ -4006,7 +4004,6 @@ _inventoryMenuState0:
 	ld a,GFXH_08
 	call loadGfxHeader
 
-.ifdef ROM_SEASONS
 	; CROSSITEMS: Overwrite L-1 boomerang sprite with L-2 sprite if applicable. (This was
 	; necessary due to VRAM limitations.)
 	ld a,(wBoomerangLevel)
@@ -4015,7 +4012,6 @@ _inventoryMenuState0:
 	ld a,UNCMP_GFXH_MAGIC_BOOMERANG_INV
 	call loadUncompressedGfxHeader
 +
-.endif
 	; Do the same with the hyper slingshot.
 	ld a,(wSlingshotLevel)
 	cp $02

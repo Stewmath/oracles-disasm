@@ -7,6 +7,7 @@
 	m_GfxDataSimple spr_maple		; $06ea20
 
 	m_GfxDataSimple gfx_partial_hearts
+	m_GfxDataSimple spr_slingshot
 
 .ifdef ROM_AGES
 	m_GfxDataSimple spr_raft		; $06f620

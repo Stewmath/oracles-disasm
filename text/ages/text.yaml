@@ -1048,6 +1048,17 @@ groups:
       It shoots three
       seeds at a time!
 
+  - name: TX_00_GET_MAGICBOOMERANG
+    index: auto
+    text: |-
+      It's the \col(1)Magical
+      Boomerang\col(0)!
+      Press \col(0x84)\item(0x00)\col(0)
+      while holding
+      the button to
+      control its
+      flight path!
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -4591,6 +4602,13 @@ groups:
       Hyper Slingshot
       Shoots in three
       directions.
+
+  - name: TX_09_MAGICBOOMERANG
+    index: auto
+    text: |-
+      Magic Boomerang
+      A remote-control
+      weapon.
 
 - group: 0x0a
   data:

@@ -16,6 +16,7 @@ treasureDisplayData1:
 	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity  $0b
 	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $0c
 	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $0d
+	.db TREASURE_BOOMERANG		<wBoomerangLevel         $0e
 	.db $00				$00                    $00
 
 treasureDisplayData2:
@@ -33,6 +34,7 @@ treasureDisplayData2:
 	.dw treasureDisplayData_magnetGlove
 	.dw treasureDisplayData_slingshot
 	.dw treasureDisplayData_hyperSlingshot
+	.dw treasureDisplayData_boomerang-7
 
 
 ; The parts marked as "filler" in this table aren't actually used, since they have their
@@ -68,7 +70,7 @@ treasureDisplayData_standard:
 	.db TREASURE_BOMBS		$9e $04 $00 $00 $01 <TX_0926 ; TREASURE_BOMBS (0x03)
 	.db $00				$9d $02 $00 $00 $ff <TX_093c ; TREASURE_CANE_OF_SOMARIA (0x04)
 	.db $00				$07 $00 $07 $00 $00 <TX_0900 ; (filler) TREASURE_SWORD (0x05)
-	.db TREASURE_BOOMERANG		$9c $05 $00 $00 $ff <TX_0927 ; TREASURE_BOOMERANG (0x06)
+	.db TREASURE_BOOMERANG		$9c $05 $00 $00 $ff <TX_0927 ; (filler) TREASURE_BOOMERANG (0x06)
 	.db TREASURE_ROD_OF_SEASONS	$98 $02 $00 $00 $02 <TX_0900 ; TREASURE_ROD_OF_SEASONS (0x07)
 	.db $00				$07 $00 $07 $00 $ff <TX_0900 ; TREASURE_MAGNET_GLOVES (0x08)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_SWITCH_HOOK_HELPER (0x09)
@@ -242,3 +244,7 @@ treasureDisplayData_hyperSlingshot:
 	.db TREASURE_PEGASUS_SEEDS      $81 $05 $85 $01 $01 <TX_09_HYPERSLINGSHOT
 	.db TREASURE_GALE_SEEDS         $81 $05 $86 $01 $01 <TX_09_HYPERSLINGSHOT
 	.db TREASURE_MYSTERY_SEEDS      $81 $05 $87 $00 $01 <TX_09_HYPERSLINGSHOT
+
+treasureDisplayData_boomerang:
+	.db TREASURE_BOOMERANG          $9c $05 $00 $00 $00 <TX_0927
+	.db TREASURE_BOOMERANG          $9c $04 $00 $00 $00 <TX_09_MAGICBOOMERANG

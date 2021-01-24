@@ -914,6 +914,8 @@ wBraceletLevel: ; -/$c6eb
 
 wSlingshotLevel:
 	db
+wBoomerangLevel:
+	db
 
 .endif
 
