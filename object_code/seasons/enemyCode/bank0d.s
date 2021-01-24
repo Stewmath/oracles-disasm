@@ -371,8 +371,8 @@ _gohma_gel_state0:
 	ld a,(hl)
 	cp $02
 	jr nz,+
-	ld l,$a5
-	ld (hl),$31
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_GEL
 +
 	jp objectSetVisiblec1
 
@@ -1332,8 +1332,8 @@ seasonsFunc_0d_736d:
 	ld h,d
 	ld l,$84
 	ld (hl),$08
-	ld l,$a5
-	ld (hl),$56
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_BLAINO_INVULNERABLE
 	ld l,$90
 	ld (hl),$0f
 	ld l,$b1
@@ -1878,9 +1878,9 @@ enemyCode5c:
 enemyCode5f:
 	jr z,++
 	call seasonsFunc_0d_7986
-	ld e,$a5
+	ld e,Enemy.enemyCollisionMode
 	ld a,(de)
-	cp $40
+	cp ENEMYCOLLISION_BLAINO_GLOVE
 	jr nz,++
 	ld e,$aa
 	ld a,(de)
@@ -1939,8 +1939,8 @@ enemyCode5f:
 	ld a,$2e
 	call objectGetRelatedObject1Var
 	ld (hl),$02
-	ld l,$a5
-	ld (hl),$3b
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_BLAINO_VULNERABLE
 	jr ++
 +
 	ld l,e
@@ -1975,8 +1975,8 @@ enemyCode5f:
 	ld h,d
 	ld l,e
 	inc (hl)
-	ld l,$a5
-	ld (hl),$57
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_BLAINO_GLOVE_SOFT_PUNCH
 
 @@substate1:
 	call @seasonsFunc_0d_76fa
@@ -2022,8 +2022,8 @@ enemyCode5f:
 	ld h,d
 	ld l,e
 	inc (hl)
-	ld l,$a5
-	ld (hl),$04
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_PODOBOO
 	ld l,$90
 	ld (hl),$0a
 	ld l,$87
@@ -2095,8 +2095,8 @@ enemyCode5f:
 	ld h,d
 	ld l,e
 	inc (hl)
-	ld l,$a5
-	ld (hl),$57
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_BLAINO_GLOVE_SOFT_PUNCH
 
 @@substate1:
 	call @seasonsFunc_0d_76fa
@@ -2112,8 +2112,8 @@ enemyCode5f:
 	call seasonsFunc_0d_78ce
 	ld bc,$ff80
 	call objectSetSpeedZ
-	ld l,$a5
-	ld (hl),$58
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_BLAINO_GLOVE_HARD_PUNCH
 	ld l,$85
 	inc (hl)
 	ld l,$87
@@ -2217,8 +2217,8 @@ seasonsFunc_0d_786d:
 	ret z
 	ld a,(hl)
 	ld (de),a
-	ld e,$a5
-	ld a,$40
+	ld e,Enemy.enemyCollisionMode
+	ld a,ENEMYCOLLISION_BLAINO_GLOVE
 	ld (de),a
 	ld e,$85
 	xor a

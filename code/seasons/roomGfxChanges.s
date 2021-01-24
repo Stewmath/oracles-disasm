@@ -221,7 +221,7 @@ _roomTileChangesAfterLoad00:
 	ret z
 
 	; Load extra tileset graphics
-	ld e,OBJGFXH_PIRATE_SHIP_TILES_1 - 1
+	ld e,OBJ_GFXH_PIRATE_SHIP_TILES_1 - 1
 	call loadObjectGfxHeaderToSlot4
 
 	; Load new tilemaps
@@ -262,7 +262,7 @@ _roomTileChangesAfterLoad01:
 	ret z
 
 	; Load extra tileset graphics
-	ld e,OBJGFXH_PIRATE_SHIP_TILES_1 - 1
+	ld e,OBJ_GFXH_PIRATE_SHIP_TILES_1 - 1
 	call loadObjectGfxHeaderToSlot4
 
 	; Load new tilemaps

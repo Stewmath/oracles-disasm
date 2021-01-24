@@ -387,7 +387,7 @@ _interaction6b_subid01:
 	ld (wInteractionIDToLoadExtraGfx),a
 
 	push de
-	ld a,UNCMP_GFXH_IMPA_FAINTED
+	ld a,UNCMP_GFXH_AGES_IMPA_FAINTED
 	call loadUncompressedGfxHeader
 	pop de
 
@@ -7529,7 +7529,7 @@ interactionCode93:
 _twinrova_loadGfx:
 	ld hl,wLoadedObjectGfx+10
 	ld b,$03
-	ld a,OBJGFXH_2c
+	ld a,AGES_OBJ_GFXH_2c
 --
 	ldi (hl),a
 	inc a

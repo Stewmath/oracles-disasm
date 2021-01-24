@@ -3059,9 +3059,9 @@ _ramrock_state8_substate5:
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 	call _ecom_incState
-	ld l,$89
+	ld l,Enemy.angle
 	ld (hl),$08
-	ld l,$82
+	ld l,Enemy.subid
 	ld (hl),$03
 	ld a,MUS_BOSS
 	jp playSound

@@ -2225,7 +2225,7 @@ itemCode06:
 .else
 	ld e,Item.subid
 	ld a,(de)
-	add $18
+	add UNCMP_GFXH_18 ; Either this or UNCMP_GFXH_19
 .endif
 	call loadWeaponGfx
 
@@ -2245,7 +2245,7 @@ itemCode06:
 
 	; level-2
 	ld l,Item.collisionType
-	ld (hl),$96
+	ld (hl),$80|ITEMCOLLISION_L2_BOOMERANG
 	ld l,Item.oamFlagsBackup
 	ld a,$0c
 	ldi (hl),a
@@ -2576,7 +2576,7 @@ itemCode0a:
 	.dw _switchHookState3
 
 @state0:
-	ld a,UNCMP_GFXH_1f
+	ld a,UNCMP_GFXH_AGES_1f
 	call loadWeaponGfx
 
 	ld hl,@offsetsTable
@@ -3242,62 +3242,6 @@ itemCode2a:
 
 	jp itemAnimate
 
-.ifdef ROM_AGES
-;;
-; ITEMID_SHOOTER
-; ITEMID_29
-;
-itemCode0f:
-itemCode29:
-	ld e,Item.state
-	ld a,(de)
-	rst_jumpTable
-	.dw @state0
-	.dw @state1
-
-@state0:
-	ld a,UNCMP_GFXH_1d
-	call loadWeaponGfx
-	call _loadAttributesAndGraphicsAndIncState
-	ld e,Item.var30
-	ld a,$ff
-	ld (de),a
-	jp objectSetVisible81
-
-@state1:
-	ret
-
-
-;;
-; ITEMID_SHOOTER
-itemCode0fPost:
-	call _cpRelatedObject1ID
-	jp nz,itemDelete
-
-	ld hl,@data
-	call _itemInitializeFromLinkPosition
-
-	; Copy link Z position
-	ld h,d
-	ld a,(w1Link.zh)
-	ld l,Item.zh
-	ld (hl),a
-
-	; Check if angle has changed
-	ld l,Item.var30
-	ld a,(w1ParentItem2.angle)
-	cp (hl)
-	ld (hl),a
-	ret z
-	jp itemSetAnimation
-
-
-; b0/b1: collisionRadiusY/X
-; b2/b3: Y/X offsets relative to Link
-@data:
-	.db $00 $00 $00 $00
-.else
-
 ;;
 ; ITEMID_MAGNET_BALL
 ; Variables:
@@ -3309,6 +3253,7 @@ itemCode0fPost:
 ;   var33: vertical friction - the higher, the faster
 ;   var34: horizontal friction
 itemCode29:
+.ifdef ROM_SEASONS
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -4000,7 +3945,63 @@ itemCode29:
 	ld c,a
 	ld b,SPEED_080
 	jp updateLinkPositionGivenVelocity
-.endif
+
+.else; ROM_AGES
+
+;;
+; ITEMID_SHOOTER
+itemCode0f:
+	ld e,Item.state
+	ld a,(de)
+	rst_jumpTable
+	.dw @state0
+	.dw @state1
+
+@state0:
+	ld a,UNCMP_GFXH_AGES_1d
+	call loadWeaponGfx
+	call _loadAttributesAndGraphicsAndIncState
+	ld e,Item.var30
+	ld a,$ff
+	ld (de),a
+	jp objectSetVisible81
+
+@state1:
+	ret
+
+
+;;
+; ITEMID_SHOOTER
+itemCode0fPost:
+	call _cpRelatedObject1ID
+	jp nz,itemDelete
+
+	ld hl,@data
+	call _itemInitializeFromLinkPosition
+
+	; Copy link Z position
+	ld h,d
+	ld a,(w1Link.zh)
+	ld l,Item.zh
+	ld (hl),a
+
+	; Check if angle has changed
+	ld l,Item.var30
+	ld a,(w1ParentItem2.angle)
+	cp (hl)
+	ld (hl),a
+	ret z
+	jp itemSetAnimation
+
+
+; b0/b1: collisionRadiusY/X
+; b2/b3: Y/X offsets relative to Link
+@data:
+	.db $00 $00 $00 $00
+
+.endif ; ROM_AGES
+
+
 
 ;;
 ; ITEMID_28 (ricky/moosh attack?)
@@ -4155,7 +4156,7 @@ itemCode04:
 	.dw @state2
 
 @state0:
-	ld a,UNCMP_GFXH_1c
+	ld a,UNCMP_GFXH_AGES_1c
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 
@@ -4572,7 +4573,9 @@ itemCode18:
 	dec (hl)
 	dec (hl)
 	ret
-.else
+
+.else; ROM_SEASONS
+
 ; ITEMID_ROD_OF_SEASONS
 itemCode07:
 	call _itemTransferKnockbackToLink
@@ -4581,36 +4584,39 @@ itemCode07:
 	rst_jumpTable
 	.dw @state0
 	.dw @state1
+
 @state0:
 	ld a,$01
 	ld (de),a
 	ld h,d
-	ld l,$00
+	ld l,Item.enabled
 	ld (hl),$03
-	ld l,$06
+	ld l,Item.counter1
 	ld (hl),$10
-	ld a,$74
+	ld a,SND_SWORDSLASH
 	call playSound
-	ld a,$1c
+	ld a,UNCMP_GFXH_SEASONS_1c
 	call loadWeaponGfx
 	call _itemLoadAttributesAndGraphics
 	jp objectSetVisible82
+
 @state1:
 	ld h,d
-	ld l,$06
+	ld l,Item.counter1
 	dec (hl)
 	ret nz
 	ld a,(wActiveTileType)
-	cp $08
+	cp TILETYPE_STUMP
 	ret nz
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_USED_ROD_OF_SEASONS
-	ld e,$09
-	ld l,$49
+	ld e,Item.angle
+	ld l,Interaction.angle
 	ld a,(de)
 	ldi (hl),a
 	jp objectCopyPosition
+
 .endif
 
 ;;
@@ -4639,24 +4645,28 @@ itemCode1dPost:
 	jp itemDelete
 
 .ifdef ROM_AGES
+
 ;;
 ; ITEMID_SLINGSHOT
 itemCode13:
 	ret
+
 .else
+
+;;
 ; ITEMID_SLINGSHOT
 itemCode13:
 	ld e,Item.state
 	ld a,(de)
 	or a
 	ret nz
-	ld a,$1d
+	ld a,UNCMP_GFXH_SEASONS_1d
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	ld h,d
 	ld a,(wSlingshotLevel)
 	or $08
-	ld l,$1b
+	ld l,Item.oamFlagsBackup
 	ldi (hl),a
 	ld (hl),a
 	jp objectSetVisible81
@@ -4673,7 +4683,7 @@ itemCode08:
 	.dw @state1
 
 @state0:
-	ld a,$1e
+	ld a,UNCMP_GFXH_SEASONS_1e
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	call objectSetVisible81
@@ -4702,7 +4712,7 @@ itemCode1e:
 	.dw foolsOreRet
 
 @state0:
-	ld a,$1f
+	ld a,UNCMP_GFXH_SEASONS_1f
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	xor a
@@ -4916,7 +4926,7 @@ itemCode02:
 	add $fd
 	ld (hl),a
 
-	; Different collisionType for expert's ring?
+	; Use ITEMCOLLISION_EXPERT_PUNCH for expert's ring
 	ld l,Item.collisionType
 	inc (hl)
 
@@ -5015,9 +5025,9 @@ itemCode27:
 _updateSwingableItemAnimation:
 	ld l,Item.animParameter
 .ifdef ROM_AGES
-	cp $04
+	cp ITEMID_CANE_OF_SOMARIA
 .else
-	cp $07
+	cp ITEMID_ROD_OF_SEASONS
 .endif
 	jr z,_label_07_227
 	bit 6,(hl)

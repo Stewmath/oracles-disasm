@@ -1912,7 +1912,7 @@ boySubid07Script:
 ;;
 _ghostVeranApplySpeedUntilVar38Zero:
 	ld h,d
-	ld l,$78
+	ld l,Interaction.var38
 	dec (hl)
 	ret z
 	call objectApplySpeed
@@ -8268,7 +8268,7 @@ linkedNpc_checkHasExtraTextBox:
 ;;
 linkedNpc_generateSecret:
 	ld h,d
-	ld l,$7f
+	ld l,Interaction.var3f
 	ld b,(hl)
 	ld a,GLOBALFLAG_FIRST_AGES_BEGAN_SECRET
 	add b

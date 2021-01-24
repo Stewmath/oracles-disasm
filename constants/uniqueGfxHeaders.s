@@ -1,21 +1,23 @@
-.define UNIQGFXH_00 $00
-.define UNIQGFXH_01 $01
-.define UNIQGFXH_02 $02
-.define UNIQGFXH_03 $03
-.define UNIQGFXH_04 $04
-.define UNIQGFXH_05 $05
-.define UNIQGFXH_06 $06
-.define UNIQGFXH_07 $07
-.define UNIQGFXH_08 $08
-.define UNIQGFXH_09 $09
-.define UNIQGFXH_0a $0a
-.define UNIQGFXH_0b $0b
-.define UNIQGFXH_0c $0c
-.define UNIQGFXH_0d $0d
-.define UNIQGFXH_0e $0e
-.define UNIQGFXH_0f $0f
-.define UNIQGFXH_10 $10
-.define UNIQGFXH_11 $11
-.define UNIQGFXH_12 $12
-.define UNIQGFXH_13 $13
-.define UNIQGFXH_14 $14
+.ENUM 0
+	UNIQGFXH_00:	db ; $00
+	UNIQGFXH_01:	db ; $01
+	UNIQGFXH_02:	db ; $02
+	UNIQGFXH_03:	db ; $03
+	UNIQGFXH_04:	db ; $04
+	UNIQGFXH_05:	db ; $05
+	UNIQGFXH_06:	db ; $06
+	UNIQGFXH_07:	db ; $07
+	UNIQGFXH_08:	db ; $08
+	UNIQGFXH_09:	db ; $09
+	UNIQGFXH_0a:	db ; $0a
+	UNIQGFXH_0b:	db ; $0b
+	UNIQGFXH_0c:	db ; $0c
+	UNIQGFXH_0d:	db ; $0d
+	UNIQGFXH_0e:	db ; $0e
+	UNIQGFXH_0f:	db ; $0f
+	UNIQGFXH_10:	db ; $10
+	UNIQGFXH_11:	db ; $11
+	UNIQGFXH_12:	db ; $12
+	UNIQGFXH_13:	db ; $13
+	UNIQGFXH_14:	db ; $14
+.ENDE

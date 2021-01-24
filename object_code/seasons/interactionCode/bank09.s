@@ -2046,7 +2046,7 @@ interactionCode6a:
 @@@substate0:
 	ld a,$01
 	ld (de),a
-	ld a,($c6e2)
+	ld a,(wNumTimesPlayedSubrosianDance)
 	cp $08
 	jr c,+
 	ld a,$08
@@ -2233,7 +2233,7 @@ interactionCode6a:
 	ld a,$81
 	ld ($cca4),a
 	ld ($cc02),a
-	ld hl,$c6e2
+	ld hl,wNumTimesPlayedSubrosianDance
 	call incHlRefWithCap
 	ld a,(hl)
 	dec a
@@ -2247,7 +2247,7 @@ interactionCode6a:
 
 	; RANDO: Prevent subrosian dancing from giving dimitri's flute.
 	jr @@@func_5e56
-	;ld a,($c643)
+	;ld a,(wRickyState)
 	;and $20
 	;jr nz,@@@func_5e56
 
@@ -4421,7 +4421,7 @@ _companionScript_subid00:
 	ld a,($d101)
 	cp $0b
 	jr nz,_companionScript_delete
-	ld a,($c610)
+	ld a,(wAnimalCompanion)
 	cp $0b
 	jp z,interactionDelete
 	ld a,$0a
@@ -4450,7 +4450,7 @@ _companionScript_subid01:
 	ld a,($d101)
 	cp $0d
 	jr nz,_companionScript_delete
-	ld a,($c610)
+	ld a,(wAnimalCompanion)
 	cp $0d
 	jr nz,_companionScript_delete
 	ld a,$01
@@ -4625,7 +4625,7 @@ _companionScript_subid03:
 	.dw @state2
 	.dw _companionScriptFunc_6eaf
 @state0:
-	ld a,($c643)
+	ld a,(wRickyState)
 	and $80
 	jp nz,_companionScript_delete2
 	ld a,$01
@@ -4648,16 +4648,16 @@ _companionScript_giveFlute:
 	ld c,a
 	cp $0d
 	jr z,+
-	ld hl,$c638
+	ld hl,wLastAnimalMountPointY
 	rst_addAToHl
 	set 7,(hl)
 +
 	ld a,c
-	ld hl,$c610
+	ld hl,wAnimalCompanion
 	cp (hl)
 	ret nz
 	sub $0a
-	ld l,$af
+	ld l,<wFluteIcon
 	ld (hl),a
 	ld a,(de)
 	ld c,a
@@ -4720,7 +4720,7 @@ _companionScript_subid04:
 	ld a,(wDimitriState)
 	and $80
 	jr nz,_companionScript_delete2
-	ld a,($c610)
+	ld a,(wAnimalCompanion)
 	cp $0c
 	jr nz,_companionScript_delete2
 	ld a,$01
@@ -4745,7 +4745,7 @@ _companionScript_subid05:
 
 	; RANDO: Check wFluteIcon instead of wAnimalCompanion (dimitri event in sunken city will
 	; trigger before getting his flute)
-	;ld a,($c610)
+	;ld a,(wAnimalCompanion)
 	;cp $0c
 	ld a,(wFluteIcon)
 	cp $02
@@ -4818,7 +4818,7 @@ _companionScript_subid08:
 
 ; 1st screen of North Horon from Eyeglass lake area
 _companionScript_subid09:
-	ld h,$c6
+	ld h,>wc600Block
 	call checkIsLinkedGame
 	jr nz,+
 	ld a,TREASURE_FLUTE
@@ -5012,7 +5012,7 @@ interactionCode73:
 	ret
 @func_7078:
 	ld e,$44
-	ld a,($c610)
+	ld a,(wAnimalCompanion)
 	cp SPECIALOBJECTID_RICKY
 	or a
 	jr z,@func_70fd_delete
@@ -5482,7 +5482,7 @@ interactionCode76:
 
 	; RANDO: Check wFluteIcon instead of wAnimalCompanion (dimitri event in sunken city will
 	; trigger before getting his flute)
-	;ld a,($c610)
+	;ld a,(wAnimalCompanion)
 	;cp SPECIALOBJECTID_DIMITRI
 	ld a,(wFluteIcon)
 	cp $02
@@ -6351,7 +6351,7 @@ interactionCode81:
 	ld (hl),a
 	ld l,$45
 	ld (hl),$04
-	ld hl,$c6ab
+	ld hl,wMaxBombs
 	ld a,(hl)
 	add $20
 	ldd (hl),a
@@ -6382,7 +6382,7 @@ _func_7931:
 	or a
 	jr z,+
 	ld l,a
-	ld h,$c6
+	ld h,>wc600Block
 	inc e
 	ld a,(de)
 	ld b,a
@@ -6432,7 +6432,7 @@ _func_7973:
 	or a
 	jr z,+
 	ld l,a
-	ld h,$c6
+	ld h,>wc600Block
 	inc e
 	ld a,(de)
 	ld c,a
@@ -7022,9 +7022,9 @@ _table_7d0a:
 ; INTERACID_MAKU_TREE
 ; TODO: finish
 ; Variables:
-;   $cc39: Maku tree stage
-;   $c6df/wc6e5: ???
-;   $c6eo/ws_c6e0: ???
+;   ws_cc39: Maku tree stage
+;   wc6e5: ???
+;   ws_c6e0: ???
 ; ==============================================================================
 interactionCode87:
 	ld e,Interaction.state

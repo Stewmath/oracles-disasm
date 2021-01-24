@@ -63,7 +63,7 @@ func_03_6103:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_FOREST_FAIRY
-	ld l,$43
+	ld l,Interaction.var03
 	ld (hl),b
 	jp _fairyCutscene_incState
 @state3:
@@ -106,16 +106,16 @@ func_03_6103:
 	ret nz
 	ld a,<ROOM_AGES_082
 	call @loadNewFairyRoom
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld a,(wTmpcbb3)
 	ldi (hl),a
 	inc l
 	ld a,(wTmpcbb4)
 	ld (hl),a
 	ld a,(wTmpcbb5)
-	ld l,$08
+	ld l,<w1Link.direction
 	ld (hl),a
 	ret
 @stateB:
@@ -458,9 +458,9 @@ _nayruSingingCutsceneHandler:
 	inc (hl)
 	inc l
 	inc (hl)
-	ld l,$cb
+	ld l,Part.yh
 	ld (hl),$24
-	ld l,$cd
+	ld l,Part.xh
 	ld (hl),$28
 	ret
 @state9:
@@ -551,9 +551,9 @@ _nayruSingingStateF:
 	call loadPaletteHeader
 	ld a,$08
 	call setLinkIDOverride
-	ld l,$00
+	ld l,<w1Link.enabled
 	ld (hl),$03
-	ld l,$02
+	ld l,<w1Link.subid
 	ld (hl),$04
 	ld a,SNDCTRL_MEDIUM_FADEOUT
 	call playSound
@@ -772,14 +772,14 @@ _blackTowerExplanationCutsceneHandler:
 	inc l
 	ld (hl),$04
 +
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld (hl),$65
-	ld l,$0d
+	ld l,<w1Link.xh
 	ld (hl),$58
-	ld l,$08
-	ld (hl),$02
+	ld l,<w1Link.direction
+	ld (hl),DIR_DOWN
 	ld a,(wLoadingRoomPack)
 	ld (wRoomPack),a
 	ld a,SNDCTRL_STOPMUSIC
@@ -965,14 +965,14 @@ _nayruWarpToMakuTreeCutsceneHandler:
 @func_6838:
 	ld a,$00
 	call setLinkIDOverride
-	ld l,$00
+	ld l,<w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld (hl),$68
-	ld l,$0d
+	ld l,<w1Link.xh
 	ld (hl),$50
-	ld l,$08
-	ld (hl),$00
+	ld l,<w1Link.direction
+	ld (hl),DIR_UP
 	ret
 @state4:
 	call _cutscene_decCBB3whenFadeDone
@@ -1072,7 +1072,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	call _cutscene_incCutsceneState
 	ld hl,wTmpcbb3
 	ld (hl),$b4
-	ld a,$01
+	ld a,DIR_RIGHT
 	ld (w1Link.direction),a
 	ld ($cbb7),a
 	jr @func_6955
@@ -1092,9 +1092,9 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	inc (hl)
 	inc l
 	inc (hl)
-	ld l,$cb
+	ld l,Part.yh
 	ld (hl),$40
-	ld l,$cd
+	ld l,Part.xh
 	ld (hl),$88
 +
 	call getFreeInteractionSlot
@@ -1105,7 +1105,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 @func_6948:
 	call _cutscene_decCBB6
 	ret nz
-	ld l,$b7
+	ld l,<wGenericCutscene.cbb7
 	ld a,(hl)
 	xor $02
 	ld (hl),a
@@ -1140,7 +1140,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	call objectGetRelativeAngle
 	call convertAngleToDirection
 	ld h,d
-	ld l,$08
+	ld l,<w1Link.direction
 	cp (hl)
 	ret z
 	jr @func_6962
@@ -1354,14 +1354,14 @@ _turnToStoneCutsceneHandler:
 	call resetCamera
 	ld hl,objectData.objectData7798
 	call parseGivenObjectData
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld (hl),$58
-	ld l,$0d
+	ld l,<w1Link.xh
 	ld (hl),$50
-	ld l,$08
-	ld (hl),$02
+	ld l,<w1Link.direction
+	ld (hl),DIR_DOWN
 	call refreshObjectGfx
 	ld a,SNDCTRL_STOPMUSIC
 	call playSound
@@ -1497,14 +1497,14 @@ _twinrovaRevealCutsceneHandler:
 	ld hl,$cfde
 	inc (hl)
 	call _cutscene_loadRoomObjectSetAndFadein
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld (hl),$68
-	ld l,$0d
+	ld l,<w1Link.xh
 	ld (hl),$50
-	ld l,$08
-	ld (hl),$00
+	ld l,<w1Link.direction
+	ld (hl),DIR_UP
 	ld a,$2c
 	ld b,$03
 	call _cutscene_loadAObjectGfxBTimes
@@ -1731,9 +1731,9 @@ _pregameIntroCutsceneHandler:
 	call playSound
 	ld a,$08
 	call setLinkID
-	ld l,$00
+	ld l,<w1Link.enabled
 	ld (hl),$01
-	ld l,$02
+	ld l,<w1Link.subid
 	ld (hl),$0b
 	ld a,$00
 	ld (wScrollMode),a
@@ -2121,7 +2121,7 @@ _func_70f7:
 	ldh (<hFF93),a
 	ld c,$20
 	call multiplyAByC
-	ld bc,$d800
+	ld bc,w3VramTiles
 	ldh a,(<hFF8D)
 	and $0f
 	call addDoubleIndexToBc
@@ -2154,7 +2154,7 @@ _func_712f:
 	ld a,(de)
 	inc de
 	ldh (<hFF8B),a
-	ld a,$03
+	ld a,:w3VramTiles
 	ld ($ff00+R_SVBK),a
 	ldh a,(<hFF8B)
 	ldi (hl),a
@@ -2201,7 +2201,7 @@ func_7168:
 	call clearMemory
 	call getThisRoomFlags
 	set 7,(hl)
-	ld l,$73
+	ld l,<ROOM_AGES_073
 	set 7,(hl)
 	xor a
 	ld (wScrollMode),a
@@ -2216,12 +2216,12 @@ func_7168:
 	call getFreeInteractionSlot
 	jr nz,+
 	ld (hl),INTERACID_97
-	ld l,$4b
+	ld l,Interaction.yh
 	ld (hl),$2c
-	ld l,$4d
+	ld l,Interaction.xh
 	ld (hl),$58
 +
-	ld a,$50
+	ld a,GFXH_50
 	jp loadGfxHeader
 @state2:
 	ld a,$0f
@@ -2238,7 +2238,7 @@ func_7168:
 	ld bc,roomGfxChanges.rectangleData_02_7de1
 	callab roomGfxChanges.copyRectangleFromTmpGfxBuffer_paramBc
 @func_71d0:
-	ld a,UNCMP_GFXH_3c
+	ld a,UNCMP_GFXH_AGES_3c
 	call loadUncompressedGfxHeader
 	ld a,SND_DOORCLOSE
 	call playSound
@@ -2431,8 +2431,8 @@ func_03_7244:
 @@cbb3_01:
 	call getFreeInteractionSlot
 	ld (hl),INTERACID_TIMEWARP
-	ld l,$46
-	ld a,$78
+	ld l,Interaction.counter1
+	ld a,120
 	ld (hl),a
 	ld (wTmpcbb4),a
 	ld a,(wTilesetFlags)
@@ -2441,7 +2441,7 @@ func_03_7244:
 	jr nz,+
 	dec a
 +
-	ld l,$43
+	ld l,Interaction.var03
 	ld (hl),a
 	ld (wcc50),a
 	ld a,SND_TIMEWARP_INITIATED
@@ -2672,14 +2672,14 @@ func_03_7493:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_PUSHBLOCK
-	ld l,$49
+	ld l,Interaction.angle
 	ld (hl),b
-	ld l,$4b
+	ld l,Interaction.yh
 	call setShortPosition_paramC
-	ld l,$4b
+	ld l,Interaction.yh
 	dec (hl)
 	dec (hl)
-	ld l,$70
+	ld l,Interaction.var30
 	ld (hl),c
 	jp _ambiPassageOpen_incCBB3
 
@@ -2895,7 +2895,7 @@ func_03_7619:
 	call getRandomNumber
 	and $7f
 	ld c,a
-	ld l,$cb
+	ld l,Part.yh
 	call setShortPosition_paramC
 +
 	ld a,(wFrameCounter)
@@ -3002,14 +3002,14 @@ func_03_7619:
 	ld (wTmpcbb3),a
 	ld bc, ROOM_AGES_1a3
 	call @func_764a
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld (hl),$38
-	ld l,$0d
+	ld l,<w1Link.xh
 	ld (hl),$68
-	ld l,$08
-	ld (hl),$02
+	ld l,<w1Link.direction
+	ld (hl),DIR_DOWN
 	jp setLinkForceStateToState08
 @state5:
 	ld a,(wTmpcbb3)
@@ -3137,15 +3137,15 @@ func_03_7cb7:
 	ld a,$3c
 	ld (wTmpcbb4),a
 	call _blackTowerEscapeAttempt_incState
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld (hl),$58
 	inc l
 	inc l
 	ld (hl),$78
-	ld l,$08
-	ld (hl),$02
+	ld l,<w1Link.direction
+	ld (hl),DIR_DOWN
 	call resetCamera
 	ld a,$00
 	ld (wScrollMode),a
@@ -3242,13 +3242,13 @@ func_03_7cb7:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_EXCLAMATION_MARK
-	ld l,$46
-	ld a,$1e
+	ld l,Interaction.counter1
+	ld a,30
 	ld (hl),a
 	ld (wTmpcbb4),a
 	ld a,(w1Link.yh)
 	sub $10
-	ld l,$4b
+	ld l,Interaction.yh
 	ldi (hl),a
 	inc l
 	ld a,(w1Link.xh)
@@ -3265,20 +3265,20 @@ func_03_7cb7:
 	ld a,$10
 	ld (wLinkStateParameter),a
 	ld hl,w1Link.direction
-	ld a,$02
+	ld a,DIR_DOWN
 	ldi (hl),a
-	ld (hl),$10
+	ld (hl),ANGLE_DOWN
 	ld a,$07
 	ld (wTmpcbb5),a
 	xor a
 	ld ($cfde),a
 	call getFreeInteractionSlot
 	ld (hl),INTERACID_FALLING_ROCK
-	ld l,$43
+	ld l,Interaction.var03
 	ld (hl),$01
 	call getFreeInteractionSlot
 	ld (hl),INTERACID_VERAN_CUTSCENE_WALLMASTER
-	ld l,$4b
+	ld l,Interaction.yh
 	ld a,(w1Link.yh)
 	add $10
 	ldi (hl),a

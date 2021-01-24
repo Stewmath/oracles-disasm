@@ -4668,7 +4668,7 @@ _linkState0f:
 	and $01
 	add a
 	inc a
-	ld l,$08
+	ld l,SpecialObject.direction
 	ld (hl),a
 	ret
 +
@@ -10001,7 +10001,7 @@ _mapleFindNextUnexplodedBomb:
 	jr nz,++
 	and $60
 	ret nz
-	ld l,$0f
+	ld l,Item.zh
 	bit 7,(hl)
 	ret nz
 ++
@@ -11909,7 +11909,7 @@ _dimitriState2Substate0:
 
 	ld l,SpecialObject.var38
 	ld (hl),a
-	ld l,$3f
+	ld l,SpecialObject.var3f
 	ld (hl),$ff
 
 	call objectSetVisiblec0
@@ -11952,9 +11952,9 @@ _dimitriState2Substate1:
 
 @releaseDimitri:
 	ld h,d
-	ld l,$00
+	ld l,SpecialObject.enabled
 	res 1,(hl)
-	ld l,$3b
+	ld l,SpecialObject.var3b
 	ld (hl),$01
 	jp dropLinkHeldItem
 

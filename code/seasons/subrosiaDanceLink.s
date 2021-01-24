@@ -16,7 +16,7 @@ _subrosiaDance_state0:
 	call clearAllParentItems
 	call specialObjectSetOamVariables
 	ld h,d
-	ld l,$00
+	ld l,SpecialObject.enabled
 	ld a,(hl)
 	or $03
 	ld (hl),a

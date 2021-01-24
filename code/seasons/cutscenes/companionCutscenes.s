@@ -9,7 +9,7 @@ specialObjectCode_companionCutscene:
 	.dw mapleCutscenes
 
 rickyCutscenes:
-	ld e,Object.state
+	ld e,SpecialObject.state
 	ld a,(de)
 	ld a,(de)
 	rst_jumpTable
@@ -19,17 +19,17 @@ rickyCutscenes:
 @state0:
 	call _incState
 	ld h,d
-	ld l,Object.subid
+	ld l,SpecialObject.subid
 	ld a,(hl)
 	or a
 	jr z,_func_69fe
-	ld l,$10
-	ld (hl),$50
-	ld l,$09
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_200
+	ld l,SpecialObject.angle
 	ld (hl),$08
 
 _func_69f3:
-	ld bc,$fe00
+	ld bc,-$200
 	call objectSetSpeedZ
 	ld a,$02
 	jp specialObjectSetAnimation
@@ -47,14 +47,14 @@ _incState:
 	jp objectSetVisiblec0
 
 _rickyState1:
-	ld e,Object.subid
+	ld e,SpecialObject.subid
 	ld a,(de)
 	rst_jumpTable
 	.dw @subid0
 	.dw @subid1
 
 @subid0:
-	ld e,Object.substate
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -63,26 +63,26 @@ _rickyState1:
 @@substate0:
 	call specialObjectAnimate
 	ld h,d
-	ld l,$21
+	ld l,SpecialObject.animParameter
 	ld a,(hl)
 	or a
 	jr z,+
 	ld a,$01
 	ld ($cbb5),a
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
 +
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
 	ld h,d
-	ld bc,$ff20
+	ld bc,-$e0
 	jp objectSetSpeedZ
 
 @@substate1:
 	call specialObjectAnimate
 	ld h,d
-	ld l,$21
+	ld l,SpecialObject.animParameter
 	ld a,(hl)
 	or a
 	ret z
@@ -98,12 +98,12 @@ _rickyState1:
 	jp objectCopyPositionWithOffset
 
 +
-	ld l,$05
+	ld l,SpecialObject.substate
 	ld (hl),$00
 	jp _func_69fe
 
 @subid1:
-	ld e,Object.substate
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -119,16 +119,16 @@ _rickyState1:
 	.dw @@substateA
 
 @@substate0:
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
 
 @@substate1:
 	call objectApplySpeed
-	ld e,$0d
+	ld e,SpecialObject.xh
 	ld a,(de)
 	bit 7,a
 	jr nz,+
-	ld hl,$d00d
+	ld hl,w1Link.xh
 	ld b,(hl)
 	add $18
 	cp b
@@ -136,8 +136,8 @@ _rickyState1:
 	call itemIncSubstate
 	inc (hl)
 	inc l
-	ld (hl),$3c
-	ld l,$0e
+	ld (hl),60 ; [counter1]
+	ld l,Item.z
 	xor a
 	ldi (hl),a
 	ld (hl),a
@@ -147,7 +147,7 @@ _rickyState1:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 	call itemIncSubstate
-	ld l,$06
+	ld l,SpecialObject.counter1
 	ld (hl),$08
 	jp specialObjectAnimate
 
@@ -161,7 +161,7 @@ _rickyState1:
 @@substate3:
 	call itemDecCounter1
 	ret nz
-	ld (hl),$5a
+	ld (hl),90
 	dec l
 	inc (hl)
 	ld a,$14
@@ -190,32 +190,32 @@ _rickyState1:
 @@substate6:
 	call itemDecCounter1
 	ret nz
-	ld (hl),$1e
+	ld (hl),30
 	dec l
 	inc (hl)
-	ld hl,$c6c5
+	ld hl,wActiveRing
 	ld (hl),$ff
 	ld a,$81
 	ld ($cc77),a
-	ld hl,$d010
-	ld (hl),$14
-	ld l,$14
+	ld hl,w1Link.speed
+	ld (hl),SPEED_80
+	ld l,<w1Link.speedZ
 	ld (hl),$00
 	inc l
 	ld (hl),$fe
 	ld a,$18
-	ld ($d009),a
-	ld a,$53
+	ld (w1Link.angle),a
+	ld a,SND_JUMP
 	jp playSound
 
 @@substate7:
 	call itemDecCounter1
 	ret nz
-	ld (hl),$14
+	ld (hl),20
 	dec l
 	inc (hl)
 	xor a
-	ld hl,$d01a
+	ld hl,w1Link.visible
 	ld (hl),a
 	inc a
 	ld ($cca4),a
@@ -226,18 +226,18 @@ _rickyState1:
 	ret nz
 	dec l
 	inc (hl)
-	ld l,$09
+	ld l,SpecialObject.angle
 	ld (hl),$18
 
 @@func_6b2e:
 	ld a,$1c
 	call specialObjectSetAnimation
-	ld bc,$fe00
+	ld bc,-$200
 	jp objectSetSpeedZ
 
 @@substate9:
 	call objectApplySpeed
-	ld e,$0d
+	ld e,SpecialObject.xh
 	ld a,(de)
 	sub $10
 	rlca
@@ -250,20 +250,20 @@ _rickyState1:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 	call itemIncSubstate
-	ld l,$06
+	ld l,SpecialObject.counter1
 	ld (hl),$08
 	jp specialObjectAnimate
 
 @@substateA:
 	call itemDecCounter1
 	ret nz
-	ld l,$05
+	ld l,SpecialObject.substate
 	dec (hl)
 	jp @@func_6b2e
 
 
 mooshCutscenes:
-	ld e,Object.state
+	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -272,36 +272,36 @@ mooshCutscenes:
 @state0:
 	call _incState
 	ld h,d
-	ld l,$06
-	ld (hl),$5a
-	ld l,$10
-	ld (hl),$37
-	ld l,$36
+	ld l,SpecialObject.counter1
+	ld (hl),90
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_160
+	ld l,SpecialObject.var36
 	ld (hl),$05
-	ld l,$09
+	ld l,SpecialObject.angle
 	ld (hl),$10
-	ld l,$0e
+	ld l,SpecialObject.z
 	ld (hl),$ff
 	inc l
 	ld (hl),$e0
 	call getFreeInteractionSlot
 	jr nz,+
 	ld (hl),INTERACID_BANANA
-	ld l,$57
+	ld l,Interaction.relatedObj1+1
 	ld (hl),d
 +
 	ld a,$07
 	jp specialObjectSetAnimation
 
 @state1:
-	ld e,Object.substate
+	ld e,SpecialObject.substate
 	ld a,(de)
 	or a
 	jr z,+
 	call specialObjectAnimate
 	call objectApplySpeed
 +
-	ld e,Object.substate
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -313,8 +313,8 @@ mooshCutscenes:
 @@substate0:
 	call itemDecCounter1
 	ret nz
-	ld (hl),$48
-	ld l,$05
+	ld (hl),72
+	ld l,SpecialObject.substate
 	inc (hl)
 	ret
 
@@ -322,21 +322,21 @@ mooshCutscenes:
 	call itemDecCounter1
 	ret nz
 	ld (hl),$06
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
 	jp seasonsFunc_06_6d89
 
 @@substate2:
 	ld h,d
-	ld l,$09
+	ld l,SpecialObject.angle
 	ld a,(hl)
 	cp $10
 	jr z,@@func_6bd2
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
 	ret
 @@func_6bd2:
-	ld l,$06
+	ld l,SpecialObject.counter1
 	dec (hl)
 	ret nz
 	call seasonsFunc_06_6da0
@@ -345,26 +345,26 @@ mooshCutscenes:
 
 @@substate3:
 	ld h,d
-	ld l,$09
+	ld l,SpecialObject.angle
 	ld a,(hl)
 	cp $10
 	jr nz,@@func_6bd2
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
 	ld a,$07
 	jp specialObjectSetAnimation
 
 @@substate4:
-	ld e,$0b
+	ld e,SpecialObject.yh
 	ld a,(de)
 	cp $b0
 	ret c
-	ld hl,$d101
+	ld hl,w1Companion.id
 	ld b,$3f
 	call clearMemory
-	ld hl,$d101
-	ld (hl),$10
-	ld l,$0b
+	ld hl,w1Companion.id
+	ld (hl),SPECIALOBJECTID_DIMITRI_CUTSCENE
+	ld l,SpecialObject.yh
 	ld (hl),$e8
 	inc l
 	inc l
@@ -373,7 +373,7 @@ mooshCutscenes:
 
 
 dimitriCutscenes:
-	ld e,Object.state
+	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -382,9 +382,9 @@ dimitriCutscenes:
 @state0:
 	call _incState
 	ld h,d
-	ld l,$10
-	ld (hl),$28
-	ld l,$0e
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_100
+	ld l,SpecialObject.z
 	ld (hl),$e0
 	inc l
 	ld (hl),$ff
@@ -392,7 +392,7 @@ dimitriCutscenes:
 	jp specialObjectSetAnimation
 
 @state1:
-	ld e,Object.substate
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -405,9 +405,9 @@ dimitriCutscenes:
 
 @@substate0:
 	ld h,d
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
-	ld l,$07
+	ld l,SpecialObject.counter2
 	ld a,(hl)
 	cp $02
 	jr nz,+
@@ -422,7 +422,7 @@ dimitriCutscenes:
 	ld hl,@@table_6c5b
 	rst_addAToHl
 	ldi a,(hl)
-	ld e,$09
+	ld e,SpecialObject.angle
 	ld (de),a
 	ld c,(hl)
 	inc hl
@@ -430,9 +430,9 @@ dimitriCutscenes:
 	jp objectSetSpeedZ
 
 @@table_6c5b:
-	.db $0c $40 $fd
-	.db $0c $a0 $fd
-	.db $13 $80 $fe
+	dbw $0c $fd40
+	dbw $0c $fda0
+	dbw $13 $fe80
 
 @@substate1:
 	call specialObjectAnimate
@@ -441,59 +441,59 @@ dimitriCutscenes:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 	ld h,d
-	ld l,$07
+	ld l,SpecialObject.counter2
 	inc (hl)
 	ld a,(hl)
-	ld l,$05
+	ld l,SpecialObject.substate
 	cp $03
 	jr z,+
 	dec (hl)
-	ld l,$06
+	ld l,SpecialObject.counter1
 	ld (hl),$08
 	ret
 +
 	inc (hl)
-	ld l,$06
+	ld l,SpecialObject.counter1
 	ld (hl),$06
 	ret
 
 @@substate2:
 	call itemDecCounter1
 	ret nz
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
-	ld l,$06
-	ld (hl),$14
+	ld l,SpecialObject.counter1
+	ld (hl),20
 	ld a,$27
 	jp specialObjectSetAnimation
 
 @@substate3:
 	call itemDecCounter1
 	ret nz
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
-	ld l,$06
-	ld (hl),$78
+	ld l,SpecialObject.counter1
+	ld (hl),120
 	ret
 
 @@substate4:
 	call specialObjectAnimate
 	call itemDecCounter1
 	ret nz
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
-	ld l,$06
-	ld (hl),$3c
-	ld l,$09
+	ld l,SpecialObject.counter1
+	ld (hl),60
+	ld l,SpecialObject.angle
 	ld (hl),$0b
-	ld l,$10
-	ld (hl),$14
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_80
 	ret
 
 @@substate5:
 	call itemDecCounter1
 	ret nz
-	ld l,$05
+	ld l,SpecialObject.substate
 	inc (hl)
 	ld a,$26
 	jp specialObjectSetAnimation
@@ -501,7 +501,7 @@ dimitriCutscenes:
 @@substate6:
 	call specialObjectAnimate
 	call objectApplySpeed
-	ld e,$0d
+	ld e,SpecialObject.xh
 	ld a,(de)
 	cp $78
 	jr nz,+
@@ -510,14 +510,14 @@ dimitriCutscenes:
 +
 	cp $b0
 	ret c
-	ld hl,$d101
+	ld hl,w1Companion.id
 	ld b,$3f
 	call clearMemory
-	ld hl,$d101
-	ld (hl),$0f
+	ld hl,w1Companion.id
+	ld (hl),SPECIALOBJECTID_RICKY_CUTSCENE
 	inc l
-	ld (hl),$01
-	ld l,$0b
+	ld (hl),$01 ; subid
+	ld l,SpecialObject.yh
 	ld (hl),$48
 	inc l
 	inc l
@@ -526,7 +526,7 @@ dimitriCutscenes:
 
 
 mapleCutscenes:
-	ld e,Object.state
+	ld e,SpecialObject.state
 	ld a,(de)
 	ld a,(de)
 	rst_jumpTable
@@ -536,11 +536,11 @@ mapleCutscenes:
 @state0:
 	call _incState
 	ld h,d
-	ld l,$10
-	ld (hl),$32
-	ld l,$36
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_140
+	ld l,SpecialObject.var36
 	ld (hl),$04
-	ld l,$02
+	ld l,SpecialObject.subid
 	ld a,(hl)
 	or a
 	ld a,$f0
@@ -549,23 +549,23 @@ mapleCutscenes:
 	ld ($cc48),a
 	ld a,$d0
 +
-	ld l,$0f
+	ld l,SpecialObject.zh
 	ld (hl),a
-	ld l,$09
+	ld l,SpecialObject.angle
 	ld (hl),$18
-	ld l,$02
+	ld l,SpecialObject.subid
 	ld a,(hl)
 	jp seasonsFunc_06_6d78
 
 @state1:
-	ld e,Object.subid
+	ld e,SpecialObject.subid
 	ld a,(de)
 	rst_jumpTable
 	.dw @@subid0
 	.dw @@subid1
 
 @@subid1:
-	ld e,Object.substate
+	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@@substate0
@@ -577,20 +577,20 @@ mapleCutscenes:
 	or a
 	jr z,@@subid0
 	call itemIncSubstate
-	ld bc,$ff00
+	ld bc,-$100
 	call objectSetSpeedZ
-	ld l,$09
+	ld l,SpecialObject.angle
 	ld (hl),$0e
-	ld l,$10
-	ld (hl),$14
+	ld l,SpecialObject.speed
+	ld (hl),SPEED_80
 	ld a,$1b
 	jp specialObjectSetAnimation
 
 @@subid0:
 	ld h,d
-	ld l,$02
+	ld l,SpecialObject.subid
 	ld a,(hl)
-	ld l,$06
+	ld l,SpecialObject.counter1
 	dec (hl)
 	call z,seasonsFunc_06_6d78
 	call objectApplySpeed
@@ -602,7 +602,7 @@ seasonsFunc_06_6d62:
 	call objectUpdateSpeedZAndBounce
 	jp nc,seasonsFunc_06_6d74
 	call itemIncSubstate
-	ld l,$20
+	ld l,SpecialObject.animCounter
 	ld (hl),$01
 
 seasonsFunc_06_6d74:
@@ -621,7 +621,7 @@ seasonsFunc_06_6d78:
 	ld b,a
 	rst_addAToHl
 	ld a,(hl)
-	ld e,$06
+	ld e,SpecialObject.counter1
 	ld (de),a
 	ld a,b
 
@@ -629,19 +629,19 @@ seasonsFunc_06_6d89:
 	sub $04
 	and $07
 	ret nz
-	ld e,$09
+	ld e,SpecialObject.angle
 	call convertAngleDeToDirection
 	dec a
 	and $03
 	ld h,d
-	ld l,$08
+	ld l,SpecialObject.direction
 	ld (hl),a
-	ld l,$36
+	ld l,SpecialObject.var36
 	add (hl)
 	jp specialObjectSetAnimation
 
 seasonsFunc_06_6da0:
-	ld e,$09
+	ld e,SpecialObject.angle
 	ld a,(de)
 	dec a
 	and $1f

@@ -710,8 +710,22 @@
 .define ENEMYID_OMUAI				$72
 .define ENEMYID_AGUNIMA				$73
 .define ENEMYID_SYGER				$74
+
+;;
+; Second poe sister in D7.
+;
+; @subid_00{First encounter}
+; @subid_01{Second encounter (miniboss)}
 .define ENEMYID_POE_SISTER_2			$76
+
 .define ENEMYID_FRYPOLAR			$77
+
+
+;;
+; First poe sister in D7.
+;
+; @subid_00{First encounter}
+; @subid_01{Second encounter (miniboss)}
 .define ENEMYID_POE_SISTER_1			$7e
 
 .endif
@@ -862,11 +876,17 @@
 
 ;;
 ; @subid_00{Spawner (use this)}
-; @subid_01{Main body}
-; @subid_02{Body hitbox?}
+; @subid_01{Main body / Eye}
+; @subid_02{Legs hitbox (nothing drawn)}
 ; @subid_03{Claw}
 .define ENEMYID_GOHMA				$7b
 .define ENEMYID_DIGDOGGER			$7c
+
+;;
+; @subid_00{Spawner (use this)}
+; @subid_01{Main body}
+; @subid_02{?}
+; @subid_03-06{Heads}
 .define ENEMYID_MANHANDLA			$7d
 .define ENEMYID_MEDUSA_HEAD			$7f
 

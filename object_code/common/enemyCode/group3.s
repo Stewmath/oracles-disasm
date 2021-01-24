@@ -2314,19 +2314,19 @@ _ganon_state_uninitialized:
 	; Load extra graphics for ganon
 	ld hl,wLoadedObjectGfx
 	ld a,$01
-	ld (hl),OBJGFXH_16
+	ld (hl),OBJ_GFXH_16
 	inc l
 	ldi (hl),a
-	ld (hl),OBJGFXH_18
+	ld (hl),OBJ_GFXH_18
 	inc l
 	ldi (hl),a
-	ld (hl),OBJGFXH_19
+	ld (hl),OBJ_GFXH_19
 	inc l
 	ldi (hl),a
-	ld (hl),OBJGFXH_1a
+	ld (hl),OBJ_GFXH_1a
 	inc l
 	ldi (hl),a
-	ld (hl),OBJGFXH_1b
+	ld (hl),OBJ_GFXH_1b
 	inc l
 	ldi (hl),a
 	xor a
@@ -2458,7 +2458,7 @@ _ganon_state4:
 	call loadUncompressedGfxHeader
 
 	ld hl,wLoadedObjectGfx+2
-	ld (hl),OBJGFXH_17
+	ld (hl),OBJ_GFXH_17
 	inc l
 	ld (hl),$01
 
@@ -2813,7 +2813,7 @@ _ganon_stateA_substate3:
 	ld l,Enemy.speed
 	ld (hl),SPEED_300
 	call _ecom_updateAngleTowardTarget
-	ld e,PARTID_50
+	ld e,PARTID_GANON_TRIDENT
 	call _ganon_spawnPart
 	jp objectSetVisible83
 
@@ -3329,7 +3329,7 @@ ganon_loadGfxHeader:
 	call loadUncompressedGfxHeader
 	pop af
 	sub GFXH_b2
-	add OBJGFXH_1e
+	add OBJ_GFXH_1e
 	ld hl,wLoadedObjectGfx+4
 	ldi (hl),a
 	ld (hl),$01

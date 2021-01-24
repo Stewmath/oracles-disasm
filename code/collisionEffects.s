@@ -680,7 +680,7 @@ _collisionEffect20:
 	ld h,b
 	ld l,Item.id
 	ld a,(hl)
-	cp $28
+	cp ITEMID_28
 	jr nc,+
 
 	ld l,Item.collisionType
@@ -1373,7 +1373,7 @@ _func_07_47b7:
 	ldh a,(<hActiveObjectType)
 	add Object.var2a
 	ld e,a
-	ld a,$9a
+	ld a,$80|ITEMCOLLISION_MYSTERY_SEED
 	ld (de),a
 
 	ld a,e

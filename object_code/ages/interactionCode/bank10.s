@@ -1746,7 +1746,7 @@ interactionCodee6:
 ; Subid 2: when the raft's position was remembered
 @subid2:
 	push de
-	ld a,UNCMP_GFXH_3b
+	ld a,UNCMP_GFXH_AGES_3b
 	call loadUncompressedGfxHeader
 	pop de
 	call interactionInitGraphics

@@ -880,7 +880,7 @@ enemyCode72:
 	ld l,$a4
 	set 7,(hl)
 	inc l
-	ld (hl),$42
+	ld (hl),ENEMYCOLLISION_OMUAI_VULNERABLE ; enemyCollisionMode
 	
 @func_4aaf:
 	call getRandomNumber_noPreserveVars
@@ -960,7 +960,7 @@ enemyCode72:
 	ld l,$a4
 	set 7,(hl)
 	inc l
-	ld (hl),$59
+	ld (hl),ENEMYCOLLISION_OMUAI_GRABBABLE ; enemyCollisionMode
 	ld a,$01
 	jp enemySetAnimation
 	
@@ -1375,9 +1375,9 @@ enemyCode73:
 +
 	jp _enemyBoss_dead
 @justHit:
-	ld e,$a5
+	ld e,Enemy.enemyCollisionMode
 	ld a,(de)
-	cp $5a
+	cp ENEMYCOLLISION_AGUNIMA_INVULNERABLE
 	jr z,@normalStatus
 	ld a,$29
 	call objectGetRelatedObject1Var
@@ -1640,8 +1640,8 @@ _agunimaSubId00:
 	ld h,d
 	ld l,e
 	inc (hl)
-	ld l,$a5
-	ld (hl),$5a
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_AGUNIMA_INVULNERABLE
 	ld l,$90
 	ld (hl),$14
 	ld l,$8f
@@ -1783,11 +1783,11 @@ _agunimaSubId00:
 	ld (hl),$0a
 	ld l,$b0
 	ld (hl),$00
-	ld l,$a5
+	ld l,Enemy.enemyCollisionMode
 	ld a,(hl)
-	cp $43
+	cp ENEMYCOLLISION_AGUNIMA_VULNERABLE
 	jr nz,+
-	ld (hl),$5a
+	ld (hl),ENEMYCOLLISION_AGUNIMA_INVULNERABLE
 	ld l,$97
 	ld h,(hl)
 	ld l,$8f
@@ -2005,13 +2005,13 @@ _func_5131:
 	ret z
 	ld a,($cca9)
 	cp $02
-	ld a,$5a
+	ld a,ENEMYCOLLISION_AGUNIMA_INVULNERABLE
 	ld b,$00
 	jr nz,+
-	ld a,$43
+	ld a,ENEMYCOLLISION_AGUNIMA_VULNERABLE
 	ld b,$fc
 +
-	ld e,$a5
+	ld e,Enemy.enemyCollisionMode
 	ld (de),a
 	ld a,$0f
 	call objectGetRelatedObject1Var
@@ -2154,8 +2154,8 @@ _sygerSubId01:
 	call _ecom_setZAboveScreen
 	ld l,$85
 	inc (hl)
-	ld l,$a5
-	ld (hl),$5b
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_SYGER_BODY
 	ld a,$02
 	call _func_5512
 	jp objectSetVisible81
@@ -4078,11 +4078,13 @@ enemyCode76:
 	ld (hl),d
 	ld h,d
 	jp enemyCode7e@func_5dd5
+
+; Also used by ENEMYID_POE_SISTER_1
 @func5c6d:
 	ld l,$84
 	ld (hl),$0b
-	ld l,$a5
-	ld (hl),$5c
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_POE_SISTER_FIRSTFIGHT
 	ld l,$86
 	ld (hl),$3c
 	ld a,$01
@@ -4560,7 +4562,7 @@ _func_5f49:
 	ld a,(de)
 	and $07
 	ret nz
-	ld b,PARTID_3c
+	ld b,PARTID_POE_SISTER_FLAME
 	jp _ecom_spawnProjectile
 
 _func_5f54:
@@ -7761,7 +7763,7 @@ _gohma_subid1_stateD:
 	jp enemyAnimate
 
 
-; Collision box for body?
+; Collision box for legs
 _gohma_subid2:
 	ld a,(de)
 	sub $08
@@ -9409,8 +9411,8 @@ enemyCode7d:
 	ld h,d
 	ld l,$90
 	ld (hl),$0a
-	ld l,$a5
-	ld (hl),$61
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_MANHANDLA_BODY_INVULNERABLE
 	ld l,$b6
 	ld (hl),$04
 	inc l
@@ -9661,8 +9663,8 @@ _func_7a14:
 	ld h,d
 	ld l,$84
 	ld (hl),$08
-	ld l,$a5
-	ld (hl),$0a
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_TWINROVA
 	jr --
 
 _func_7a1f:
@@ -9725,8 +9727,8 @@ _func_7a63:
 	ld (hl),$0b
 	ld l,$90
 	ld (hl),$50
-	ld l,$a5
-	ld (hl),$4c
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_MANHANDLA_BODY_VULNERABLE
 	ret
 	
 _func_7a70:
@@ -9850,8 +9852,8 @@ _func_7b1c:
 	ld h,d
 	ld l,$84
 	inc (hl)
-	ld l,$a5
-	ld (hl),$62
+	ld l,Enemy.enemyCollisionMode
+	ld (hl),ENEMYCOLLISION_MANHANDLA_HEAD_VULNERABLE
 	ld l,$86
 	ld (hl),$78
 	ld l,$b0

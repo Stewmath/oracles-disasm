@@ -683,11 +683,7 @@ _introCinematic_ridingHorse_state0:
 
 	ld a,GFXH_9b
 	call loadGfxHeader
-.ifdef ROM_AGES
 	ld a,PALH_90
-.else
-	ld a,SEASONS_PALH_90
-.endif
 	call loadPaletteHeader
 
 	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x15e=350 frames
@@ -799,13 +795,9 @@ _introCinematic_ridingHorse_state3:
 	inc hl
 	ld (hl),$01
 
-.ifdef ROM_AGES
 	ld a,PALH_96
-.else
-	ld a,SEASONS_PALH_96
-.endif
 	call loadPaletteHeader
-	ld a,UNCMP_GFXH_38
+	ld a,UNCMP_GFXH_AGES_38
 	call loadUncompressedGfxHeader
 
 	ld a,$18
@@ -835,7 +827,7 @@ _introCinematic_ridingHorse_state4:
 	call decHlRef16WithCap
 	ret nz
 
-	ld a,UNCMP_GFXH_36
+	ld a,UNCMP_GFXH_AGES_36
 	call loadUncompressedGfxHeader
 
 	; After calling "loadUncompressedGfxHeader", hl points to rom. They almost
@@ -926,11 +918,7 @@ _introCinematic_ridingHorse_state6:
 	ret nz
 
 	call disableLcd
-.ifdef ROM_AGES
-	ld a,PALH_92		;$4fce
-.else
-	ld a,SEASONS_PALH_92	;$4fce
-.endif
+	ld a,PALH_92
 	call loadPaletteHeader
 	ld a,GFXH_9c
 	call loadGfxHeader
@@ -969,11 +957,7 @@ _introCinematic_ridingHorse_state0:
 	ldh (<hOamTail),a
 	ld a,GFXH_9b
 	call loadGfxHeader
-.ifdef ROM_AGES
-	ld a,PALH_90
-.else
 	ld a,SEASONS_PALH_90
-.endif
 	call loadPaletteHeader
 
 	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x37e=894 frames
@@ -1018,19 +1002,11 @@ _introCinematic_ridingHorse_state1:
 	ret nz
 
 	call clearPaletteFadeVariablesAndRefreshPalettes
-.ifdef ROM_AGES
-	ld a,PALH_96
-.else
 	ld a,SEASONS_PALH_96
-.endif
 	call loadPaletteHeader
 	ld a,$0c
 	call loadGfxRegisterStateIndex
-.ifdef ROM_AGES
-	ld a,(wGfxRegs1.LYC)
-.else
 	ld a,(wGfxRegs2.SCY)
-.endif
 	ld (wTmpcbbb),a
 	ld a,(wGfxRegs2.SCX)
 	ld (wTmpcbbc),a
@@ -1049,11 +1025,7 @@ _introCinematic_ridingHorse_state2:
 	jr nz,++
 
 	call disableLcd
-.ifdef ROM_AGES
-	ld a,PALH_92
-.else
 	ld a,SEASONS_PALH_92
-.endif
 	call loadPaletteHeader
 	ld a,GFXH_9c
 	call loadGfxHeader

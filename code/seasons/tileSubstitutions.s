@@ -19,14 +19,14 @@ applyAllTileSubstitutions:
 	jp applyRoomSpecificTileChanges
 ++
 	; group 2
-	ld e,OBJGFXH_04-1
+	ld e,OBJ_GFXH_04-1
 	jp loadObjectGfxHeaderToSlot4
 
 loadSubrosiaObjectGfxHeader:
 	ld a,(wMinimapGroup)
 	cp $01
 	ret nz
-	ld e,OBJGFXH_07-1
+	ld e,OBJ_GFXH_07-1
 	jp loadObjectGfxHeaderToSlot4
 
 ;;

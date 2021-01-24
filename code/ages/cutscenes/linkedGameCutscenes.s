@@ -535,11 +535,11 @@ _func_7bff:
 	inc bc
 	ld (hl),a
 _func_7c09:
-	ld l,$4b
+	ld l,Interaction.yh
 	ld a,(bc)
 	inc bc
 	ld (hl),a
-	ld l,$4d
+	ld l,Interaction.xh
 	ld a,(bc)
 	ld (hl),a
 	ret
@@ -587,11 +587,11 @@ _spawnZeldaKidnappedNPCs:
 	ld a,(bc)
 	ldi (hl),a
 	inc bc
-	ld l,$4b
+	ld l,Interaction.yh
 	ld a,(bc)
 	ld (hl),a
 	inc bc
-	ld l,$4d
+	ld l,Interaction.xh
 	ld a,(bc)
 	ld (hl),a
 	inc bc
@@ -616,7 +616,7 @@ _func_7c68:
 	ld (hl),PARTID_LIGHTNING
 	inc l
 	inc (hl)
-	ld l,$cb
+	ld l,Part.yh
 	ld a,(bc)
 	ldi (hl),a
 	inc bc
@@ -637,6 +637,6 @@ _func_7c83:
 	ld (hl),INTERACID_MISCELLANEOUS_1
 	inc l
 	ld (hl),$16
-	ld l,$46
+	ld l,Interaction.counter1
 	ld (hl),$78
 	jp _func_7c09

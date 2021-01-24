@@ -1011,7 +1011,9 @@ partCode2f:
 	ld (de),a
 	ret
 
-
+; ==============================================================================
+; PARTID_POPPABLE_BUBBLE
+; ==============================================================================
 partCode32:
 	jr z,@normalStatus
 	ld e,$c5
@@ -3927,7 +3929,9 @@ _seasonsFunc_10_79ab:
 	jp objectApplySpeed
 
 
-; PARTID_S_4f
+; ==============================================================================
+; PARTID_DIN_CRYSTAL
+; ==============================================================================
 partCode4f:
 	jr z,@normalStatus
 	ld e,Part.state
@@ -4035,7 +4039,7 @@ partCode4f:
 	ld bc,$0404
 -
 	call getFreePartSlot
-	ld (hl),PARTID_S_4f
+	ld (hl),PARTID_DIN_CRYSTAL
 	inc l
 	inc (hl)
 	ld l,Part.angle

@@ -1699,7 +1699,7 @@ _loadFileDisplayVariables:
 	ld a,(wFileIsHeroGame)
 	add a
 	ld e,a
-	ld a,($c614)
+	ld a,(wFileIsCompleted)
 	or e
 	ldi (hl),a
 	ldh a,(<hActiveFileSlot)
@@ -6724,7 +6724,7 @@ _mapGetRoomText:
 	ret z
 
 	; If so, use the appropriate text
-	ld a,($c6e5)
+	ld a,(wMakuMapTextPresent)
 	ld c,a
 	ld b,>TX_1700
 	ret

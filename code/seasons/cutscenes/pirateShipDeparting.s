@@ -210,13 +210,13 @@ _cutsceneHandler_0c_stage2:
 	call _incCbb3
 	ld bc,ROOM_SEASONS_5d4
 	call _cutsceneHandler_0c_stage3@loadNewRoom
-	ld hl,$d000
+	ld hl,w1Link.enabled
 	ld (hl),$03
-	ld l,$0b
+	ld l,<w1Link.yh
 	ld (hl),$58
-	ld l,$0d
+	ld l,<w1Link.xh
 	ld (hl),$70
-	ld l,$08
+	ld l,<w1Link.direction
 	ld (hl),$02
 	xor a
 	ld (wLinkForceState),a

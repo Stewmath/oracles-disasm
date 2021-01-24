@@ -1,6 +1,6 @@
-# About
+# About oracles-disasm
 
-This is intended to be a full disassembly of Oracle of Ages and Seasons for the Gameboy
+This is a complete, documented disassembly of Oracle of Ages and Seasons for the Gameboy
 Color. When combined with [LynnaLab](https://github.com/drenn1/lynnalab), it is a level
 editing suite.
 

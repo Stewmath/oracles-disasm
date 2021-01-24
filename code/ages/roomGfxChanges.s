@@ -47,9 +47,9 @@ func_02_7a77:
 	ret z
 	ld a,(wToggleBlocksState)
 	or a
-	ld a,UNCMP_GFXH_3d
+	ld a,UNCMP_GFXH_AGES_3d
 	jr z,+
-	ld a,UNCMP_GFXH_3f
+	ld a,UNCMP_GFXH_AGES_3f
 +
 	jp loadUncompressedGfxHeader
 
@@ -687,7 +687,7 @@ checkLoadPastSignAndChestGfx:
 	and (TILESETFLAG_LARGE_INDOORS|TILESETFLAG_DUNGEON|TILESETFLAG_INDOORS)
 	ret z
 
-	ld a,UNCMP_GFXH_37
+	ld a,UNCMP_GFXH_AGES_37
 	jp loadUncompressedGfxHeader
 
 

@@ -1445,22 +1445,22 @@ _interaction21_subid18:
 	call getThisRoomFlags
 	ld b,$00
 
-	ld l,$5d
+	ld l,<ROOM_AGES_45d
 	bit 6,(hl)
 	jr z,+
 	set 4,b
 +
-	ld l,$5f
+	ld l,<ROOM_AGES_45f
 	bit 6,(hl)
 	jr z,+
 	set 5,b
 +
-	ld l,$61
+	ld l,<ROOM_AGES_461
 	bit 6,(hl)
 	jr z,+
 	set 6,b
 +
-	ld l,$63
+	ld l,<ROOM_AGES_463
 	bit 6,(hl)
 	jr z,+
 	set 7,b
@@ -3976,7 +3976,7 @@ _impaSubid4:
 
 @incVar38:
 	ld h,d
-	ld l,$78
+	ld l,Interaction.var38
 	inc (hl)
 	ret
 
@@ -6727,7 +6727,7 @@ _nayruSubid10:
 	dec a
 	and $03
 	ld h,d
-	ld l,$7f
+	ld l,Interaction.var3f
 	cp (hl)
 	jr z,_nayruSubid0a
 	ld (hl),a

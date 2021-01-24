@@ -200,7 +200,9 @@
 .define PARTID_CUCCO_ATTACKER			$22
 
 ;;
-.define PARTID_FIRE_PIPES			$23
+; Fire that falls down from its initial position, and respawns back there after a set amount of
+; time. They're always used with "pipes" that they appear to come from.
+.define PARTID_FALLING_FIRE			$23
 
 ;;
 .define PARTID_GROTTO_CRYSTAL			$24
@@ -413,8 +415,8 @@
 .define PARTID_RAMROCK_SEED_FORM_ORB				$4f
 
 ;;
-; Used by Ganon
-.define PARTID_50				$50
+; Used by Ganon. (Seems to be invisible, only there to provide collisions?)
+.define PARTID_GANON_TRIDENT			$50
 
 ;;
 ; Used by Ganon
@@ -486,6 +488,7 @@
 .define PARTID_SHOOTING_DRAGON_HEAD		$24
 
 ;;
+; A flame coming from the wall in Unicorn's Cave
 .define PARTID_WALL_FLAME_SHOOTERS_FLAMES	$26
 
 ;;
@@ -514,9 +517,9 @@
 ; @subid_81{Low health}
 .define PARTID_MOTHULA_PROJECTILE_1		$31
 
-; Exists just in the side-scrolling ice room in D8 with 3 1-block platforms
-; and from fickle girl in Sunken City
-.define PARTID_32				$32
+;;
+; Bubble that can be popped, used primarily (only?) by the girl blowing bubbles in Sunken City
+.define PARTID_POPPABLE_BUBBLE			$32
 
 ;;
 ; created by dragon onox
@@ -535,7 +538,7 @@
 
 ;;
 ; created by Poe sister 2
-.define PARTID_3c				$3c
+.define PARTID_POE_SISTER_FLAME			$3c
 
 ;;
 ; created by frypolar
@@ -581,7 +584,7 @@
 .define PARTID_4a				$4a
 
 ; located in Onox's room
-.define PARTID_S_4f				$4f
+.define PARTID_DIN_CRYSTAL			$4f
 
 
 .endif
