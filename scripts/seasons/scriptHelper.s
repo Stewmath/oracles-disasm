@@ -3299,5 +3299,7 @@ dekuScrub_upgradeSatchel:
 	ld l,$78
 	ld (hl),$01
 	ret
+
+; RANDO-TODO: Fix this? (Must account for if we have no satchel?)
 _table_65cf:
 	.db $20 $50 $99
