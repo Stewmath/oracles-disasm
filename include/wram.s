@@ -754,11 +754,10 @@ wPirateBellState: ; -/$c6bd
 	db
 .endif
 
-wSatchelSelectedSeeds: ; $c6c4/$c6be
-	db
-wShooterSelectedSeeds: ; $c6c5/$c6bf
-; Can also be slingshot selected seeds for seasons
-	db
+wUnusedc6c4:
+; Used to have satchel/shooter selected seeds here
+	dsb 2
+
 wRingBoxContents: ; $c6c6/$c6c0
 	dsb 5
 wActiveRing: ; $c6cb/$c6c5
@@ -880,7 +879,7 @@ wMagnetGlovePolarity: ; $c6f0
 	db
 
 wc6f0: ; $c6f0
-	dsb $a
+	dsb $1
 
 .endif ; ROM_AGES
 
@@ -913,10 +912,17 @@ wBraceletLevel: ; -/$c6eb
 
 .else
 
-wSlingshotLevel: ; $c6ff
+wSlingshotLevel:
 	db
 
 .endif
+
+wSatchelSelectedSeeds:
+	db
+wShooterSelectedSeeds:
+	db
+wSlingshotSelectedSeeds:
+	db
 
 .ENDS
 

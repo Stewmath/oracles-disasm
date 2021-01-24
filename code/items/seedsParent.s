@@ -26,7 +26,7 @@ _parentItemCode_slingshot:
 	cp c
 	jp c,_clearParentItem
 
-	ld a,$01
+	ld a,$02
 	call _clearSelfIfNoSeeds
 	; b = seed ID after above call
 	push bc
@@ -269,7 +269,7 @@ _parentItemCode_satchel:
 ;;
 ; Gets the number of seeds available, or returns from caller if none are available.
 ;
-; @param	a	0 for satchel, 1 for shooter/slingshot
+; @param	a	0 for satchel, 1 for shooter, 2 for slingshot
 ; @param[out]	a	# of seeds of that type
 ; @param[out]	b	Item ID for seed type (value between $20-$24)
 ; @param[out]	hl	Address of "wNum*Seeds" variable

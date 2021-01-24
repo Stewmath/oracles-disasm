@@ -4370,6 +4370,9 @@ _inventoryMenuState2:
 	cp ITEMID_SEED_SATCHEL
 	jr z,+
 	inc l
+	cp ITEMID_SHOOTER
+	jr z,+
+	inc l
 +
 	ld e,(hl)
 	ld d,$00
@@ -4481,20 +4484,17 @@ _inventoryMenuState2:
 	inc a
 	jr ++
 +
-	ld e,<wSatchelSelectedSeeds
-	cp ITEMID_SEED_SATCHEL
-	jr z,+
-	inc e
-+
-.else; ROM_SEASONS
+.endif
 
 	ld a,(wInventory.selectedItem)
 	ld e,<wSatchelSelectedSeeds
 	cp ITEMID_SEED_SATCHEL
 	jr z,+
 	inc e
+	cp ITEMID_SHOOTER
+	jr z,+
+	inc e
 +
-.endif
 
 	ld a,(wInventory.itemSubmenuIndex)
 	call _getSeedTypeInventoryIndex

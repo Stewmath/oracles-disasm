@@ -14,8 +14,8 @@ treasureDisplayData1:
 	.db TREASURE_TUNI_NUT		<wTuniNutState         $09
 	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel      $0a
 	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity  $0b
-	.db TREASURE_SLINGSHOT		<wShooterSelectedSeeds $0c
-	.db TREASURE_SLINGSHOT		<wShooterSelectedSeeds $0d
+	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $0c
+	.db TREASURE_SLINGSHOT		<wSlingshotSelectedSeeds $0d
 	.db $00				$00                    $00
 
 treasureDisplayData2:
