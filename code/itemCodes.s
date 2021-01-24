@@ -4610,7 +4610,6 @@ itemCode18:
 	dec (hl)
 	ret
 
-.ifdef ROM_SEASONS
 
 ; ITEMID_ROD_OF_SEASONS
 itemCode07:
@@ -4631,12 +4630,19 @@ itemCode07:
 	ld (hl),$10
 	ld a,SND_SWORDSLASH
 	call playSound
+.ifdef ROM_AGES
+	ld a,UNCMP_GFXH_AGES_ROD_OF_SEASONS
+.else
 	ld a,UNCMP_GFXH_SEASONS_1c
+.endif
 	call loadWeaponGfx
 	call _itemLoadAttributesAndGraphics
 	jp objectSetVisible82
 
 @state1:
+.ifdef ROM_AGES
+	ret
+.else
 	ld h,d
 	ld l,Item.counter1
 	dec (hl)

@@ -3418,11 +3418,13 @@ _drawTreasureExtraTiles:
 	dec a
 	jr z,@val01
 	dec a
-	jr z,@val02
+	jp z,@val02
 	dec a
 	jp z,@val03
 	dec a
 	jr z,@val04
+	dec a
+	jr z,@val05
 	jr @val00
 
 ; Display item quantity with "x" symbol (ie. slates in ages d8)
@@ -3494,10 +3496,10 @@ _drawTreasureExtraTiles:
 	ld (de),a
 	ret
 
-.ifdef ROM_AGES
 
 ; Display the harp?
-@val02:
+@val05:
+.ifdef ROM_AGES
 	ld h,d
 	ld l,e
 
@@ -3567,7 +3569,6 @@ _drawTreasureExtraTiles:
 	ld (de),a
 	ret
 
-.ifdef ROM_SEASONS
 ; Display obtained seasons
 @val02:
 	ld h,d
@@ -3575,6 +3576,14 @@ _drawTreasureExtraTiles:
 
 	; Spring
 	ld b,$1c
+.ifdef ROM_AGES
+	; Inventory only: adjust tile index
+	ld a,c
+	cp $07
+	jr nz,+
+	ld b,$2c
++
+.endif
 	ld a,(wObtainedSeasons)
 	rrca
 	ld e,a
@@ -3602,7 +3611,6 @@ _drawTreasureExtraTiles:
 	jr c,@drawTile
 	ret
 
-.endif
 
 ;;
 ; Unused in ages

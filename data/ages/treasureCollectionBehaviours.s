@@ -69,9 +69,9 @@ treasureCollectionBehaviourTable:
 	.db SND_GETITEM
 
 	; TREASURE_ROD_OF_SEASONS (0x07)
-	.db $00
-	.db $00
-	.db SND_NONE
+	.db <wObtainedSeasons
+	.db $81
+	.db SND_GETITEM
 
 	; TREASURE_MAGNET_GLOVES (0x08)
 	.db <wMagnetGlovePolarity

@@ -65,7 +65,7 @@ treasureObjectData:
 	/* $04 */ m_TreasureSubid   $38, $00, $73, $17, TREASURE_OBJECT_CANE_OF_SOMARIA_00
 	/* $05 */ m_TreasurePointer treasureObjectData05
 	/* $06 */ m_TreasurePointer treasureObjectData06
-	/* $07 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_ROD_OF_SEASONS_00
+	/* $07 */ m_TreasureSubid   $38, $07, <TX_00_GET_RODOFSEASONS, $81, TREASURE_OBJECT_ROD_OF_SEASONS_00
 	/* $08 */ m_TreasureSubid   $38, $00, <TX_00_GET_MAGNETGLOVES, $7c, TREASURE_OBJECT_MAGNET_GLOVES_00
 	/* $09 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_HELPER_00
 	/* $0a */ m_TreasurePointer treasureObjectData0a

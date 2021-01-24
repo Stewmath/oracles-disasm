@@ -918,6 +918,8 @@ wBoomerangLevel:
 	db
 wFeatherLevel:
 	db
+wObtainedSeasons:
+	db
 
 .endif
 

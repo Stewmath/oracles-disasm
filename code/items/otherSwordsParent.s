@@ -1,14 +1,12 @@
 ;;
 ; ITEMID_ROD_OF_SEASONS ($07)
 _parentItemCode_rodOfSeasons:
-.ifdef ROM_SEASONS
 	call _clearParentItemIfCantUseSword
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
 	.dw _parentItemCode_foolsOre@rod_state0
 	.dw _parentItemCode_punch@state1
-.endif
 
 ;;
 ; ITEMID_BIGGORON_SWORD ($0c)
@@ -31,12 +29,10 @@ _parentItemCode_foolsOre:
 	.dw @state0
 	.dw _parentItemCode_punch@state1
 
-.ifdef ROM_SEASONS
 @rod_state0:
 	ld a,(wActiveTileType)
 	cp TILETYPE_STUMP
 	jr nz,++
-.endif
 
 @state0:
 	; Don't allow any other items to be used

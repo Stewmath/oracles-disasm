@@ -69,6 +69,7 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader_slingshot
 	.dw uncmpGfxHeader_l1Boomerang
 	.dw uncmpGfxHeader_l2Boomerang
+	.dw uncmpGfxHeader_rodOfSeasons
 
 
 
@@ -245,3 +246,6 @@ uncmpGfxHeader_l1Boomerang:
 
 uncmpGfxHeader_l2Boomerang:
 	m_GfxHeader spr_boomerang, $84e1, $03, $40
+
+uncmpGfxHeader_rodOfSeasons:
+	m_GfxHeader spr_rod_of_seasons, $8521, $09

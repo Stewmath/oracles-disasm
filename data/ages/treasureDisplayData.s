@@ -50,9 +50,10 @@ treasureDisplayData2:
 ;  b4: Right attribute
 ;  b5: $00: display level
 ;      $01: display quantity
-;      $02: display harp song?
+;      $02: display seasons
 ;      $03: display nothing extra (stub?)
 ;      $04: display number with "x" (ie. x2). Used by slates only.
+;      $05: display harp song (CROSSITEMS: Used to be $02)
 ;      $ff: display nothing extra
 ;  b6: Low byte of text index (high byte is $09)
 ;
@@ -73,7 +74,7 @@ treasureDisplayData_standard:
 	.db $00				$9d $02 $00 $00 $ff <TX_093c ; TREASURE_CANE_OF_SOMARIA (0x04)
 	.db $00				$07 $00 $07 $00 $00 <TX_0900 ; (filler) TREASURE_SWORD (0x05)
 	.db TREASURE_BOOMERANG		$9c $05 $00 $00 $ff <TX_0927 ; (filler) TREASURE_BOOMERANG (0x06)
-	.db TREASURE_ROD_OF_SEASONS	$98 $02 $00 $00 $02 <TX_0900 ; TREASURE_ROD_OF_SEASONS (0x07)
+	.db TREASURE_ROD_OF_SEASONS	$98 $02 $00 $00 $02 <TX_09_RODOFSEASONS ; TREASURE_ROD_OF_SEASONS (0x07)
 	.db $00				$07 $00 $07 $00 $ff <TX_0900 ; TREASURE_MAGNET_GLOVES (0x08)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_SWITCH_HOOK_HELPER (0x09)
 	.db $00				$07 $00 $07 $00 $00 <TX_0900 ; (filler) TREASURE_SWITCH_HOOK (0x0a)
@@ -83,7 +84,7 @@ treasureDisplayData_standard:
 	.db $00				$07 $00 $07 $00 $ff <TX_0900 ; (filler) TREASURE_FLUTE (0x0e)
 	.db $00				$88 $00 $00 $00 $ff <TX_0940 ; (filler) TREASURE_SHOOTER (0x0f)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_10 (0x10)
-	.db TREASURE_HARP		$00 $00 $00 $00 $02 <TX_0941 ; (filler) TREASURE_HARP (0x11)
+	.db TREASURE_HARP		$00 $00 $00 $00 $05 <TX_0941 ; (filler) TREASURE_HARP (0x11)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_12 (0x12)
 	.db $00				$07 $00 $07 $00 $ff <TX_0900 ; TREASURE_SLINGSHOT (0x13)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_14 (0x14)
@@ -216,10 +217,10 @@ treasureDisplayData_flute:
 	.db TREASURE_FLUTE $8b $01 $8f $01 $ff <TX_0931 ; Moosh's flute
 
 treasureDisplayData_harp:
-	.db $00 $02 $04 $02 $00 $02 <TX_0941 ; No song?
-	.db $00 $a3 $00 $a4 $00 $02 <TX_0941 ; Tune of echoes
-	.db $00 $a7 $03 $a8 $03 $02 <TX_0941 ; Tune of currents
-	.db $00 $ab $01 $ac $01 $02 <TX_0941 ; Tune of ages
+	.db $00 $02 $04 $02 $00 $05 <TX_0941 ; No song?
+	.db $00 $a3 $00 $a4 $00 $05 <TX_0941 ; Tune of echoes
+	.db $00 $a7 $03 $a8 $03 $05 <TX_0941 ; Tune of currents
+	.db $00 $ab $01 $ac $01 $05 <TX_0941 ; Tune of ages
 treasureDisplayData_tuniNut:
 	.db TREASURE_TUNI_NUT $f3 $05 $f4 $05 $ff <TX_0957 ; Broken
 	.db TREASURE_TUNI_NUT $00 $00 $00 $00 $ff <TX_0900 ; Invisible (during the ceremony?)
