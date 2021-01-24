@@ -203,9 +203,7 @@ giveTreasure_body:
 	.db TREASURE_SEED_SATCHEL	TREASURE_EMBER_SEEDS		$20
 	.db TREASURE_HEART_CONTAINER	TREASURE_HEART_REFILL		$40
 	.db TREASURE_BOMB_FLOWER	TREASURE_BOMB_FLOWER_LOWER_HALF	$00
-.ifdef ROM_AGES
 	.db TREASURE_TUNE_OF_ECHOES	TREASURE_HARP			$01
-.endif
 	.db $00
 
 ; This is similar to above, except whenever Link obtains an item in the first column, the

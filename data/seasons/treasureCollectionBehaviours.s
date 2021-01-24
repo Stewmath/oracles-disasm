@@ -87,9 +87,9 @@ treasureCollectionBehaviourTable:
 	.db SND_NONE
 
 	; TREASURE_HARP (0x11)
-	.db $00
-	.db $00
-	.db SND_NONE
+	.db <wSelectedHarpSong
+	.db $05
+	.db SND_GETITEM
 
 	; TREASURE_12 (0x12)
 	.db $00

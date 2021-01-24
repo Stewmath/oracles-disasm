@@ -3119,7 +3119,6 @@ _updateStatusBar:
 	ld c,$30
 +
 
-.ifdef ROM_AGES
 	; If harp is equipped, adjust sprite X-position 8 pixels right
 	ld hl,wInventoryB
 	ld a,ITEMID_HARP
@@ -3135,7 +3134,6 @@ _updateStatusBar:
 	add $08
 	ld c,a
 +
-.endif
 
 	ld hl,wOam
 	ld a,b
@@ -3499,7 +3497,6 @@ _drawTreasureExtraTiles:
 
 ; Display the harp?
 @val05:
-.ifdef ROM_AGES
 	ld h,d
 	ld l,e
 
@@ -3530,10 +3527,16 @@ _drawTreasureExtraTiles:
 	ld (hl),$0e
 	ret
 
+.ifdef ROM_AGES
+	.define HARP_TILE_BASE $1c
+.else
+	.define HARP_TILE_BASE $80
+.endif
+
 @@drawOnInventory:
-	ld a,$1f
+	ld a,HARP_TILE_BASE+3
 	ldd (hl),a
-	ld (hl),$1d
+	ld (hl),HARP_TILE_BASE+1
 	set 2,h
 	ld a,$84
 	ldi (hl),a
@@ -3543,12 +3546,13 @@ _drawTreasureExtraTiles:
 	ldi (hl),a
 	ldd (hl),a
 	res 2,h
-	ld a,$1c
+	ld a,HARP_TILE_BASE+0
 	ldi (hl),a
-	ld (hl),$1e
+	ld (hl),HARP_TILE_BASE+2
 	ret
 
-.endif
+.undefine HARP_TILE_BASE
+
 
 ; Print magnet glove polarity (overwrites "S" with "N" if necessary)
 @val03:
@@ -3848,7 +3852,6 @@ _loadItemIconGfx:
 +
 	ld a,b
 
-.ifdef ROM_AGES
 	; Special behaviour for harp song icons: add 2 to the index so that the "smaller
 	; version" of the icon is drawn. (spr_item_icons_3.bin has two versions of each
 	; song)
@@ -3858,7 +3861,6 @@ _loadItemIconGfx:
 	jr z,+
 	add $02
 +
-.endif
 
 	add a
 	call multiplyABy16
@@ -4153,13 +4155,9 @@ _inventoryMenuState1:
 	cp ITEMID_SHOOTER
 	jr z,@hasSubmenu
 
-.ifdef ROM_AGES
 	cp ITEMID_HARP
 	jr nz,@finalizeEquip
 	ld c,$e0
-.else
-	jr @finalizeEquip
-.endif
 
 @hasSubmenu:
 	ld a,(wSeedsAndHarpSongsObtained)
@@ -4356,20 +4354,12 @@ _inventoryMenuState2:
 
 ;;
 @subState0:
-
-.ifdef ROM_AGES
 	ld hl,wSelectedHarpSong
 	ld d,(hl)
 	dec d
 	ld l,<wSatchelSelectedSeeds
 	call _cpInventorySelectedItemToHarp
 	jr z,++
-
-.else; ROM_SEASONS
-
-	ld hl,wSatchelSelectedSeeds
-	ld a,(wInventory.selectedItem)
-.endif
 
 	cp ITEMID_SEED_SATCHEL
 	jr z,+
@@ -4442,20 +4432,12 @@ _inventoryMenuState2:
 
 	call _func_02_5938
 
-.ifdef ROM_AGES
 	call _cpInventorySelectedItemToHarp
 	ld a,(wInventory.itemSubmenuIndex)
 	jr nz,+
 	add $25
 	jr ++
 +
-
-.else; ROM_SEASONS
-
-	ld a,(wInventory.selectedItem)
-	ld a,(wInventory.itemSubmenuIndex)
-.endif
-
 	call _getSeedTypeInventoryIndex
 	add $20
 ++
@@ -4478,8 +4460,6 @@ _inventoryMenuState2:
 	jp _func_02_5a35
 
 @buttonPressed:
-
-.ifdef ROM_AGES
 	call _cpInventorySelectedItemToHarp
 	jr nz,+
 
@@ -4488,7 +4468,6 @@ _inventoryMenuState2:
 	inc a
 	jr ++
 +
-.endif
 
 	ld a,(wInventory.selectedItem)
 	ld e,<wSatchelSelectedSeeds
@@ -4994,12 +4973,10 @@ _inventorySubmenu2_drawCursor:
 _func_02_5a35:
 	ldde $05, $00
 
-.ifdef ROM_AGES
 	call _cpInventorySelectedItemToHarp
 	jr nz,+
 	ldde $03, $05
 +
-.endif
 
 	; d = maximum number of options
 	; e = first bit to check in wSeedsAndHarpSongsObtained
@@ -5024,12 +5001,10 @@ _func_02_5a35:
 	call addSpritesToOam_withOffset
 	pop de
 
-.ifdef ROM_AGES
 	; If this is for the harp, skip over some of the following code
 	ld a,e
 	cp $05
 	jr nc,@seedOnlyCodeDone
-.endif
 
 ; Seed-only code (for seed satchel, seed shooter)
 	ld a,e
@@ -5090,12 +5065,9 @@ _seedAndHarpSpriteTable:
 	.db @sprite2-CADDR
 	.db @sprite3-CADDR
 	.db @sprite4-CADDR
-
-.ifdef ROM_AGES
 	.db @sprite5-CADDR
 	.db @sprite6-CADDR
 	.db @sprite7-CADDR
-.endif
 
 @sprite0:
 	.db $01
@@ -5117,9 +5089,6 @@ _seedAndHarpSpriteTable:
 	.db $01
 	.db $14 $0c $0e $08
 
-
-.ifdef ROM_AGES
-
 @sprite5:
 	.db $02
 	.db $14 $08 $46 $08
@@ -5134,8 +5103,6 @@ _seedAndHarpSpriteTable:
 	.db $02
 	.db $14 $08 $56 $09
 	.db $14 $10 $58 $09
-
-.endif
 
 
 _table_5ae5:
@@ -5154,14 +5121,12 @@ _table_5ae5:
 	.db $06 $09 $0c $0f
 
 
-.ifdef ROM_AGES
 ;;
 ; Set z flag if selected inventory item is the harp.
 _cpInventorySelectedItemToHarp:
 	ld a,(wInventory.selectedItem)
 	cp ITEMID_HARP
 	ret
-.endif
 
 
 ;;
@@ -5735,10 +5700,7 @@ _drawTreasureDisplayDataToBg:
 ; at least partly sprites, unlike everything else.
 ;
 _inventoryMenuDrawSprites:
-
-.ifdef ROM_AGES
 	call _inventoryMenuDrawHarpSprites
-.endif
 
 ; Remainder of function: draw maku seed sprite
 
@@ -5798,8 +5760,6 @@ _inventoryMenuDrawSprites:
 		.db $08 $08 $fc $0f
 	.endif
 
-
-.ifdef ROM_AGES
 
 ;;
 ; Draw harp sprites if it's in the inventory.
@@ -5872,6 +5832,8 @@ _inventoryMenuDrawHarpSprites:
 	rst_addAToHl
 	jp addSpritesToOam_withOffset
 
+
+.ifdef ROM_AGES
 
 ;;
 ; While an item submenu is up (for harp or satchel), this creates a bunch of "blank

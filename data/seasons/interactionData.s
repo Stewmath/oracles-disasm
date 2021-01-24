@@ -379,7 +379,11 @@ interactiondeSubidData:
 	m_InteractionData $61 $1e $50 ; $7d (Power Glove)
 	m_InteractionData $60 $1a $20 ; $7e (Cane of Somaria)
 	m_InteractionData $60 $1e $40 ; $7f (Switch Hook)
-	m_InteractionData $5f $94 $50 ; $80 (Seed Shooter)
+	m_InteractionData $5f $14 $50 ; $80 (Seed Shooter)
+	m_InteractionData $5d $1a $23 ; $81 (Harp of Ages)
+	m_InteractionData $61 $06 $03 ; $82 (Tune of Echoes)
+	m_InteractionData $61 $0e $33 ; $83 (Tune of Currents)
+	m_InteractionData $61 $96 $13 ; $84 (Tune of Ages)
 
 interaction7dSubidData:
 	m_InteractionData $58 $00 $40

@@ -15,6 +15,7 @@ treasureDisplayData1:
 	.db TREASURE_MAGNET_GLOVES	<wMagnetGlovePolarity $0a
 	.db TREASURE_BRACELET		<wBraceletLevel $0c
 	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel $0d
+	.db TREASURE_HARP		<wSelectedHarpSong $0f
 	.db $00 $00 $00
 
 treasureDisplayData2:
@@ -33,6 +34,7 @@ treasureDisplayData2:
 	.dw treasureDisplayData_bracelet  - 7
 	.dw treasureDisplayData_switchHook - 7
 	.dw treasureDisplayData_shooter
+	.dw treasureDisplayData_harp
 
 	.dw treasureDisplayData_sword
 
@@ -74,9 +76,9 @@ treasureDisplayData_standard:
 	.db TREASURE_PEGASUS_SEEDS      $80 $00 $85 $00 $ff $34 ; TREASURE_PEGASUS_SEEDS
 	.db TREASURE_GALE_SEEDS         $80 $00 $86 $00 $ff $35 ; TREASURE_GALE_SEEDS
 	.db TREASURE_MYSTERY_SEEDS      $80 $00 $87 $00 $ff $36 ; TREASURE_MYSTERY_SEEDS
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_TUNE_OF_ECHOES
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_TUNE_OF_CURRENTS
-	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_TUNE_OF_AGES
+	.db $00                         $00 $00 $00 $00 $ff <TX_09_ECHOES ; TREASURE_TUNE_OF_ECHOES
+	.db $00                         $00 $00 $00 $00 $ff <TX_09_CURRENTS ; TREASURE_TUNE_OF_CURRENTS
+	.db $00                         $00 $00 $00 $00 $ff <TX_09_AGES ; TREASURE_TUNE_OF_AGES
 	.db TREASURE_RUPEES             $00 $00 $00 $00 $ff $00 ; TREASURE_RUPEES
 	.db $00                         $00 $00 $00 $00 $ff $00 ; TREASURE_HEART_REFILL
 	.db TREASURE_HEART_CONTAINER    $00 $00 $00 $00 $ff $00 ; TREASURE_HEART_CONTAINER
@@ -210,3 +212,9 @@ treasureDisplayData_shooter:
 	.db TREASURE_PEGASUS_SEEDS      $8a $05 $85 $01 $01 <TX_09_SEED_SHOOTER
 	.db TREASURE_GALE_SEEDS         $8a $05 $86 $01 $01 <TX_09_SEED_SHOOTER
 	.db TREASURE_MYSTERY_SEEDS      $8a $05 $87 $00 $01 <TX_09_SEED_SHOOTER
+
+treasureDisplayData_harp:
+	.db $00 $02 $04 $02 $00 $05 <TX_09_HARP ; No song?
+	.db $00 $a3 $00 $a4 $00 $05 <TX_09_HARP ; Tune of echoes
+	.db $00 $a7 $03 $a8 $03 $05 <TX_09_HARP ; Tune of currents
+	.db $00 $ab $01 $ac $01 $05 <TX_09_HARP ; Tune of ages

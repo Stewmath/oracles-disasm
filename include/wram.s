@@ -909,6 +909,8 @@ wSwitchHookLevel: ; -/$c6ea
 	db
 wBraceletLevel: ; -/$c6eb
 	db
+wSelectedHarpSong:
+	db
 
 .else
 
