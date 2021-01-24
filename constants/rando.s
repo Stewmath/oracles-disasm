@@ -1,7 +1,3 @@
-; Since we're not doing "BUILD_VANILLA", we can at least use "FORCE_SECTIONS" to keep the overall
-; structure of the ROM somewhat close to the original
-.define FORCE_SECTIONS
-
 ; Configuration settings that can be checked with "checkRandoConfig"
 .define RANDO_CONFIG_KEYSANITY,         $00
 .define RANDO_CONFIG_TREEWARP,          $01

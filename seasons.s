@@ -189,9 +189,6 @@
 		.include "build/data/objectCollisionTable.s"
 	.ends
 
-	; RANDO: This can go anywhare
-	.include "code/rando/rando.s"
-
 
 .BANK $08 SLOT 1
 .ORG 0
@@ -537,3 +534,4 @@ oamData_15_4e0c:
 .include "code/rando/warningObject.s"
 .include "data/rando/fileSelectGfx.s"
 .include "data/rando/compassChimes.s"
+.include "code/rando/rando.s"

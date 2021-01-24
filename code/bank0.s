@@ -11546,6 +11546,7 @@ markEnemyAsKilledInRoom:
 	jp ++
 	.endif
 
+/*
 ;;
 ; Calls bank2._stub_02_77f4. (Unused)
 ;
@@ -11556,6 +11557,7 @@ func_3211:
 	.else
 	jp ++
 	.endif
+*/
 
 ;;
 ; Places the numbers $00-$ff into w4RandomBuffer in a random order.
@@ -11817,6 +11819,7 @@ brightenRoomLightly:
 	ld a,$01
 	jr _brightenRoomHelper
 
+/*
 ;;
 ; Unused?
 ;
@@ -11828,6 +11831,7 @@ func_333e:
 	ld (wPaletteThread_mode),a
 	ld a,$01
 	jr _setDarkeningVariables
+*/
 
 ;;
 ; @param	a	Speed of brightening
@@ -13977,6 +13981,7 @@ objectCreateSparkle:
 	ld (hl),$00
 	jp objectCopyPositionWithOffset
 
+/*
 ;;
 ; Create a sparkle at the current object's position that moves up briefly.
 ;
@@ -14004,6 +14009,7 @@ objectCreateRedBlueOrb:
 	inc l
 	ld (hl),$04
 	jp objectCopyPositionWithOffset
+*/
 
 ;;
 incMakuTreeState:
