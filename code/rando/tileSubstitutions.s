@@ -28,6 +28,12 @@
 ;        leave.
 ; - 056: Natzu region, Ricky/Moosh versions. Removed switch tile to prevent waterway from being
 ;        blocked (although really it's the removal of the interaction that prevents it).
+;
+; CROSSITEMS-related changes:
+;
+; - 5ca: Cave to Goron Mountain. Without any changes, it is possible to use the L-1 switch hook from
+;        the bottom side, but not from the top side. To prevent softlocks, extra bushes have been
+;        added.
 
 applyRandoTileChanges:
 	ld a,(wActiveGroup)
@@ -86,6 +92,8 @@ applyRandoTileChanges:
 	.db $00, $b0, $10, $51, $13 ; cont.
 	.db $00, $8d, $f3, $18, $04 ; D2 alt entrance removal (entrance rando only)
 	.db $00, $8e, $f3, $12, $04 ; D2 alt entrance removal (entrance rando only)
+	.db $05, $ca, $10, $84, $20 ; bushes in goron mountain cave
+	.db $05, $ca, $10, $88, $20 ; bushes in goron mountain cave
 	.db $ff
 
 .else
