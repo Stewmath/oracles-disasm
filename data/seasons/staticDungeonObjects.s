@@ -40,7 +40,7 @@ dungeon5StaticObjects:
 	.db $03, $89, INTERACID_DUNGEON_STUFF,          $05, $28, $88
 	.db $03, $94, INTERACID_DUNGEON_STUFF,          $05, $18, $c8
 	.db $03, $97, INTERACID_DUNGEON_STUFF,          $05, $78, $78
-	.db $03, $9a, INTERACID_D5_FALLING_MAGNET_BALL, $00, $38, $48
+	.db $03, $9a, INTERACID_D5_FALLING_MAGNET_BALL, $00, $38, $38
 	.db $ff
 
 dungeon6StaticObjects:
