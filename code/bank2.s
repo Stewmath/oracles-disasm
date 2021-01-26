@@ -3753,6 +3753,14 @@ _drawHeartDisplay:
 	rst_addAToHl
 	ldbc $00, :gfx_partial_hearts
 	ld de,$90b0
+
+	; On file select screen, the heart graphics are loaded in both bank 0 and bank 1, but only
+	; the bank 1 version seems to matter. (Partial hearts are only seen when erasing a file?)
+	ldh a,(<hFF8B)
+	or a
+	jr z,+
+	ld e,$b1 ; vram bank 1
++
 	call queueDmaTransfer
 
 	pop hl
