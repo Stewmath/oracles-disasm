@@ -54,6 +54,7 @@ randoInitializeFile:
 	ld a,(randovar_initialSeedType)
 	ld (wSatchelSelectedSeeds),a
 	ld (wShooterSelectedSeeds),a
+	ld (wSlingshotSelectedSeeds),a
 	
 	; give L-3 ring box
 	ld hl,wObtainedTreasureFlags + TREASURE_RING_BOX / 8
