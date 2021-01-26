@@ -219,6 +219,11 @@ progressiveUpgrades:
 	.db TREASURE_FEATHER,      $01, TREASURE_FEATHER,      $01 ; roc's cape
 	.db TREASURE_SEED_SATCHEL, $01, TREASURE_SEED_SATCHEL, $01 ; satchel upgrade 1
 	.db TREASURE_SEED_SATCHEL, $02, TREASURE_SEED_SATCHEL, $01 ; satchel upgrade 2 (same deal)
+
+	; Crossitems
+	.db TREASURE_BRACELET,     $01, TREASURE_BRACELET,     $01 ; power glove
+	.db TREASURE_SWITCH_HOOK,  $01, TREASURE_SWITCH_HOOK,  $01 ; long hook
+	.db TREASURE_FLIPPERS,     $00, TREASURE_MERMAID_SUIT, $00 ; mermaid suit
 	.db $ff
 
 .else; ROM_AGES
