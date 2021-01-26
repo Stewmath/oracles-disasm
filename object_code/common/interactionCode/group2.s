@@ -615,7 +615,7 @@ _shopkeeperCheckLinkHasItemAlready:
 	jr @checkObtained
 
 @flute:
-	ld a,TREASURE_FLUTE
+	ret ; RANDO: Don't prevent buying the "flute" item slot when you have a flute
 
 @checkObtained:
 	call checkTreasureObtained
