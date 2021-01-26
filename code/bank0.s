@@ -12849,8 +12849,6 @@ updateTilesetUniqueGfx:
 ;;
 ; Load just the first entry of a unique gfx header?
 ;
-; Unused?
-;
 ; @param	a	Unique gfx header index
 uniqueGfxFunc_380b:
 	ld b,a
