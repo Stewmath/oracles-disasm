@@ -4345,11 +4345,17 @@ _inventoryMenuState1:
 ;;
 ; Opening a submenu (seeds, harp songs)
 _inventoryMenuState2:
-
-.ifdef ROM_AGES
 	call @subStates
+
+	; CROSSITEMS: We're now drawing the "blank sprites" to hide the harp in Seasons. The check
+	; we're adding here prevents those "blank sprites" from being drawn for 1 frame too long and
+	; creating graphical garbage. This bug exists in Ages, but is more noticeable in Seasons due
+	; to the different palette colors.
+	ld a,(wMenuActiveState)
+	cp $02
+	ret nz
+
 	jp _createBlankSpritesForItemSubmenu
-.endif
 
 ; ROM_SEASONS just starts directly at @subStates.
 
@@ -5841,8 +5847,6 @@ _inventoryMenuDrawHarpSprites:
 	jp addSpritesToOam_withOffset
 
 
-.ifdef ROM_AGES
-
 ;;
 ; While an item submenu is up (for harp or satchel), this creates a bunch of "blank
 ; sprites" that will mask any sprites behind the submenu.
@@ -5891,32 +5895,39 @@ _createBlankSpritesForItemSubmenu:
 	.db @sprites1-CADDR
 	.db @sprites2-CADDR
 
+
+.ifdef ROM_AGES
+	.define PALETTE 0
+.else
+	.define PALETTE 6
+.endif
+
 @sprites0:
 	.db $08
-	.db $08 $48 $04 $88
-	.db $18 $48 $04 $88
-	.db $08 $50 $04 $88
-	.db $18 $50 $04 $88
-	.db $08 $68 $04 $88
-	.db $18 $68 $04 $88
-	.db $08 $70 $04 $88
-	.db $18 $70 $04 $88
+	.db $08 $48 $04 $88|PALETTE
+	.db $18 $48 $04 $88|PALETTE
+	.db $08 $50 $04 $88|PALETTE
+	.db $18 $50 $04 $88|PALETTE
+	.db $08 $68 $04 $88|PALETTE
+	.db $18 $68 $04 $88|PALETTE
+	.db $08 $70 $04 $88|PALETTE
+	.db $18 $70 $04 $88|PALETTE
 
 @sprites1:
 	.db $02
-	.db $08 $30 $04 $88
-	.db $18 $30 $04 $88
+	.db $08 $30 $04 $88|PALETTE
+	.db $18 $30 $04 $88|PALETTE
 
 @sprites2:
 	.db $06
-	.db $08 $28 $04 $88
-	.db $18 $28 $04 $88
-	.db $08 $88 $04 $88
-	.db $18 $88 $04 $88
-	.db $08 $90 $04 $88
-	.db $18 $90 $04 $88
+	.db $08 $28 $04 $88|PALETTE
+	.db $18 $28 $04 $88|PALETTE
+	.db $08 $88 $04 $88|PALETTE
+	.db $18 $88 $04 $88|PALETTE
+	.db $08 $90 $04 $88|PALETTE
+	.db $18 $90 $04 $88|PALETTE
 
-.endif ; ROM_AGES
+.undefine PALETTE
 
 
 ; This is a list of treasures that are displayed on subscreen 1 if the player has them.
