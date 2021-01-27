@@ -1607,42 +1607,42 @@ soundd4:
 
 ; RANDO: Sounds d5-dc are custom compass chimes
 soundd5:
-	.db $02
+	.db $b2
 	.dw soundd5Channel2
 	.db $ff
 
 soundd6:
-	.db $02
+	.db $b2
 	.dw soundd6Channel2
 	.db $ff
 
 soundd7:
-	.db $02
+	.db $b2
 	.dw soundd7Channel2
 	.db $ff
 
 soundd8:
-	.db $02
+	.db $b2
 	.dw soundd8Channel2
 	.db $ff
 
 soundd9:
-	.db $02
+	.db $b2
 	.dw soundd9Channel2
 	.db $ff
 
 soundda:
-	.db $02
+	.db $b2
 	.dw sounddaChannel2
 	.db $ff
 
 sounddb:
-	.db $02
+	.db $b2
 	.dw sounddbChannel2
 	.db $ff
 
 sounddc:
-	.db $02
+	.db $b2
 	.dw sounddcChannel2
 	.db $ff
 
