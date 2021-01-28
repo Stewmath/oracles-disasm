@@ -552,7 +552,10 @@ shopkeeperScript_purchaseItem:
 	showtextnonexitablelowindex <TX_0e1e
 	callscript _shopkeeperConfirmPurchase
 	ormemory wBoughtShopItems1, $08
-	showtextlowindex <TX_0e27
+
+	; RANDO: Don't show text about the treasure map
+	;showtextlowindex <TX_0e27
+
 	scriptend
 .endif
 
