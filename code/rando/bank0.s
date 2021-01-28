@@ -24,14 +24,6 @@ giveTreasureCustom_body:
 	ret
 
 
-giveTreasureCustomSilent:
-	push hl
-	call giveTreasureCustom_body
-	xor a
-	pop hl
-	ret
-
-
 giveTreasureCustom:
 	push hl
 	call giveTreasureCustom_body
@@ -43,12 +35,13 @@ giveTreasureCustom:
 
 @noSound:
 	ld a,e
-	cp a,$ff
-	ret z
+	inc a ; like "cp $ff"
+	jr z,@ret
 	ld b,>TX_0000
 	ld c,e
 	call showText
 	xor a
+@ret:
 	pop hl
 	ret
 
