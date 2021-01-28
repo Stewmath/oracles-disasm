@@ -225,6 +225,7 @@ paletteHeader0a: ; $644b
 	m_PaletteHeaderBg  0 2 paletteData4830 $80
 	m_PaletteHeaderBg  2 6 standardSpritePaletteData $80
 	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $80
+	m_PaletteHeaderSpr 6 1 paletteData4830+2 $80 ; CROSSITEMS: for "blank sprites" covering harp
 	m_PaletteHeaderSpr 7 1 paletteData5e48 $00
 paletteHeader0b: ; $6457
 	m_PaletteHeaderSpr 0 4 standardSpritePaletteData $80

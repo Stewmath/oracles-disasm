@@ -1404,12 +1404,7 @@ seasonsFunc_0d_73cd:
 	ret
 
 seasonsTable_0d_73d7:
-	add hl,bc
-	rla
-	rrca
-	ld de,$1f01
-	rlca
-	add hl,de
+	.db $09 $17 $0f $11 $01 $1f $07 $19
 
 seasonsFunc_0d_73df:
 	ld a,$2b

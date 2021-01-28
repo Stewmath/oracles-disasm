@@ -5424,7 +5424,7 @@ goronDanceScript_givePrize:
 @giveOldMermaidKey:
 	showtext TX_241a
 	wait 30
-	giveitem TREASURE_OLD_MERMAID_KEY_00
+	giveitem TREASURE_OBJECT_OLD_MERMAID_KEY_00
 	wait 30
 	showtext TX_241b
 	wait 30

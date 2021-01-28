@@ -4772,9 +4772,10 @@ interactionCodea9:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
-	cp l
-	ld l,b
-	bit 5,b
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01
 	ld (de),a
 	ld e,$50
@@ -4782,6 +4783,8 @@ interactionCodea9:
 	ld (de),a
 	call interactionInitGraphics
 	jp objectSetVisiblec0
+
+@state1:
 	call interactionAnimate
 	ld e,$42
 	ld a,(de)
@@ -4790,18 +4793,14 @@ interactionCodea9:
 	ld e,$45
 	ld a,(de)
 	rst_jumpTable
-.DB $e4
-	ld l,b
-.DB $f4
-	ld l,b
-	ld (bc),a
-	ld l,c
-	rrca
-	ld l,c
-	dec e
-	ld l,c
-	ldd (hl),a
-	ld l,c
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+
+@substate0:
 	ld a,($cfc0)
 	or a
 	ret z
@@ -4811,6 +4810,8 @@ interactionCodea9:
 	add a
 	inc a
 	jp interactionSetAnimation
+
+@substate1:
 	ld a,($cfc0)
 	cp $02
 	ret nz
@@ -4818,11 +4819,15 @@ interactionCodea9:
 	ld l,$46
 	ld (hl),$0a
 	ret
+
+@substate2:
 	call interactionDecCounter1
 	ret nz
 	call interactionIncSubstate
 	ld bc,$ff00
 	jp objectSetSpeedZ
+
+@substate3:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -4830,6 +4835,8 @@ interactionCodea9:
 	ld l,$46
 	ld (hl),$50
 	ret
+
+@substate4:
 	call interactionDecCounter1
 	ret nz
 	call interactionIncSubstate
@@ -4837,21 +4844,24 @@ interactionCodea9:
 	ld a,(hl)
 	cp $01
 	ld a,$04
-	jr z,_label_0a_256
+	jr z,+
 	xor a
-_label_0a_256:
++
 	ld l,$49
 	ld (hl),a
 	ret
+
+@substate5:
 	ld e,$42
 	ld a,(de)
 	cp $01
-	jr z,_label_0a_257
+	jr z,@applySpeed
 	cp $04
-	jr z,_label_0a_257
+	jr z,@applySpeed
 	cp $05
 	ret nz
-_label_0a_257:
+
+@applySpeed:
 	jp objectApplySpeed
 
 

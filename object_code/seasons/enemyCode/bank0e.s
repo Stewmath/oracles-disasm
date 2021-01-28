@@ -616,16 +616,17 @@ enemyCode71:
 	ld e,$85
 	ld a,(de)
 	rst_jumpTable
-	inc hl
-	ld c,c
-	ldi a,(hl)
-	ld c,c
-	ccf
-	ld c,c
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+
+@@substate0:
 	ld a,$01
 	ld (de),a
 	inc a
 	jp enemySetAnimation
+
+@@substate1:
 	ld h,d
 	ld l,$a1
 	bit 7,(hl)
@@ -637,6 +638,8 @@ enemyCode71:
 	ld l,$a4
 	res 7,(hl)
 	jp objectSetInvisible
+
+@@substate2:
 	call _ecom_decCounter1
 	jp z,@func_49e3
 	ld a,(hl)
