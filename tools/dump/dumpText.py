@@ -74,6 +74,21 @@ jpKanjiTable = """
 """.replace('\n', '')
 
 
+# Special characters table
+#   some ? values are réferences to graphics display
+#   0xb8 and 0xb9 are the abtn
+#   0xba and 0xbb are the bbtn
+#   0xbd is a small heart icon
+specCharTable = """
+ÀÂÄÆÇÈÉÊËÎÏÑÖŒÙÛ
+Üß??????¡¿??????
+àâäæçèéêëîïñöœùû
+ü´??????????????
+Ô°ÁÍÓÚÌÒÅ???????
+ôªáíóúìòå???????
+""".replace('\n', '')
+
+
 class HighIndexStruct:
 
     def __init__(self):
@@ -244,7 +259,6 @@ def getTextBase(index):
 # Converts a byte to a character.
 def lookupNormalCharacter(b):
     assert(isNormalCharacter(b))
-    c = chr(b)
     if region == "JP":
         if b < 0x20:
             if b == 0x1a: # LEFT quotation mark
@@ -270,10 +284,20 @@ def lookupNormalCharacter(b):
                 return chr(0xff00 + b - 0x20) # Fullwidth form
         else:
             return jpKanaTable[b-0x60]
+    if region == "EU":
+        if b == 0x1a: #for some reasons french, german, italian end spanish text uses the left quotation mark
+            return '“'
+        if b == 0x5c:
+            return '~'
+        return chr(b)
     else:
         if b == 0x5c:
             return '~'
         return chr(b)
+
+def lookupSpecialCharacter(b):
+    assert(isSpecialCharacter(b))
+    return specCharTable[b-0x80]
 
 def lookupSymbol(b):
     if b >= 0x60:
@@ -286,8 +310,17 @@ def lookupSymbol(b):
 def isNormalCharacter(b):
     if region == "JP":
         return b >= 0x20 or b == 0x1a or b == 0x1b or b == 0x1c or b == 0x1e
+    if region == "EU":
+        return (b >= 0x20 and b < 0x80) or b == 0x1a
     else:
         return b >= 0x20 and b < 0x80
+
+def isSpecialCharacter(b):
+    if region == "JP":
+        return False #no special characters in japanese rom
+    if (region == "EU") and (b == 0x91 or b == 0x98 or b == 0x99 or b == 0xb1 or (b >= 0xc0 and b < 0xc9) or (b >= 0xd0 and b < 0xd9)):
+        return True
+    return (b >= 0x80 and b < 0x91) or (b >= 0xa0 and b < 0xb1)
 
 highIndexList = []
 
@@ -445,6 +478,8 @@ def parseTextData(data):
             textData += "'"
         elif isNormalCharacter(b):
             textData += lookupNormalCharacter(b)
+        elif isSpecialCharacter(b):
+            textData += lookupSpecialCharacter(b)
         elif b == 0x1:
             fixTrailingSpace()
             textData += '\n'
