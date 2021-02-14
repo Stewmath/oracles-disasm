@@ -628,6 +628,117 @@ def parseTextFile(textFile, isDictionary):
 
                         assert(param != -1)
                         i = y+1
+
+                    #adding special characters (natively handled by the game)
+                    elif 0xc0 <= ord(c) <= 0x153: #(range of handled unicode chars)
+                        knownChar = False
+                        if c == 'À':
+                            knownChar = True
+                            c = 0x80
+                        elif c == 'Â':
+                            knownChar = True
+                            c = 0x81
+                        elif c == 'Ä':
+                            knownChar = True
+                            c = 0x82
+                        elif c == 'Æ':
+                            knownChar = True
+                            c = 0x83
+                        elif c == 'Ç':
+                            knownChar = True
+                            c = 0x84
+                        elif c == 'È':
+                            knownChar = True
+                            c = 0x85
+                        elif c == 'É':
+                            knownChar = True
+                            c = 0x86
+                        elif c == 'Ê':
+                            knownChar = True
+                            c = 0x87
+                        elif c == 'Ë':
+                            knownChar = True
+                            c = 0x88
+                        elif c == 'Î':
+                            knownChar = True
+                            c = 0x89
+                        elif c == 'Ï':
+                            knownChar = True
+                            c = 0x8a
+                        elif c == 'Ñ':
+                            knownChar = True
+                            c = 0x8b
+                        elif c == 'Ö':
+                            knownChar = True
+                            c = 0x8c
+                        elif c == 'Œ':
+                            knownChar = True
+                            c = 0x8d
+                        elif c == 'Ù':
+                            knownChar = True
+                            c = 0x8e
+                        elif c == 'Û':
+                            knownChar = True
+                            c = 0x8f
+                        elif c == 'Ü':
+                            knownChar = True
+                            c = 0x90
+                        elif c == 'à':
+                            knownChar = True
+                            c = 0xa0
+                        elif c == 'â':
+                            knownChar = True
+                            c = 0xa1
+                        elif c == 'ä':
+                            knownChar = True
+                            c = 0xa2
+                        elif c == 'æ':
+                            knownChar = True
+                            c = 0xa3
+                        elif c == 'ç':
+                            knownChar = True
+                            c = 0xa4
+                        elif c == 'è':
+                            knownChar = True
+                            c = 0xa5
+                        elif c == 'é':
+                            knownChar = True
+                            c = 0xa6
+                        elif c == 'ê':
+                            knownChar = True
+                            c = 0xa7
+                        elif c == 'ë':
+                            knownChar = True
+                            c = 0xa8
+                        elif c == 'î':
+                            knownChar = True
+                            c = 0xa9
+                        elif c == 'ï':
+                            knownChar = True
+                            c = 0xaa
+                        elif c == 'ñ':
+                            knownChar = True
+                            c = 0xab
+                        elif c == 'ö':
+                            knownChar = True
+                            c = 0xac
+                        elif c == 'œ':
+                            knownChar = True
+                            c = 0xad
+                        elif c == 'ù':
+                            knownChar = True
+                            c = 0xae
+                        elif c == 'û':
+                            knownChar = True
+                            c = 0xaf
+                        elif c == 'ü':
+                            knownChar = True
+                            c = 0xb0
+
+                        if knownChar == True:
+                            textStruct.data.append(c)
+                            addWidth(state, characterSpacing[c])
+                        i+=1
                     else:
                         c = text[i]
                         textStruct.data.append(ord(c))
