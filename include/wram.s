@@ -3411,7 +3411,13 @@ w4Filler8:			dsb $20
 w4SavedVramTiles:		dsb $180	; $d800
 
 w4Filler1:			dsb $0d		; $d980
-w4RingFortuneStuff:		dsb $16*3	; $d98d: $16 bytes per file?
+
+; $16 bytes per file.
+; First 8 bytes are c600-c607 (GameID and link name). Used to check for consecutive ring fortunes
+; with another file?
+w4RingFortuneStuff:		dsb $16*3	; $d98d
+
+
 w4Filler2:			dsb $231
 w4GfxBuf1:			dsb $200	; $dc00
 w4GfxBuf2:			dsb $200	; $de00
