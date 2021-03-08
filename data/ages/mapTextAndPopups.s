@@ -75,7 +75,11 @@ presentMinimapPopups:
 	.db $5d $77
 	.db $63 $aa
 	.db $66 $11
+.ifdef REGION_JP
+	.db $68 $cc
+.else
 	.db $68 $ac
+.endif
 	.db $76 $ee
 	.db $7b $99
 	.db $90 $99

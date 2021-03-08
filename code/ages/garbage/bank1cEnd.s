@@ -1,4 +1,4 @@
-.ifdef BUILD_VANILLA
+.ifdef INCLUDE_GARBAGE
 
 	; Leftovers from seasons - part of its text dictionary
 	; $73dc0

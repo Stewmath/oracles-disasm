@@ -1,6 +1,6 @@
 ; Garbage data follows
 
-.IFDEF BUILD_VANILLA
+.IFDEF INCLUDE_GARBAGE
 
 ; Partial copy of @shipDirectionsPresent. The first few entries are missing.
 @shipDirectionsPresentCopy:
@@ -82,4 +82,4 @@ func_7fb5:
 	call $1ae4
 	jp $34c7
 
-.endif ; BUILD_VANILLA
+.endif ; INCLUDE_GARBAGE

@@ -1,8 +1,8 @@
 ; Main file for Oracle of Ages, US version
 
+.include "include/constants.s"
 .include "include/rominfo.s"
 .include "include/emptyfill.s"
-.include "include/constants.s"
 .include "include/structs.s"
 .include "include/wram.s"
 .include "include/hram.s"

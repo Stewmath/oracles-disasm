@@ -1042,7 +1042,8 @@ wMenuUnionStart:
 	textInputMaxCursorPos: ; $cbb8
 	; The number of characters that can be entered on a text input screen (minus one)
 		db
-	cbb9:
+	kanaMode: ; $cbb9
+	; 0: hiragana, 1: katakana (japanese version only)
 		db
 	fontXor: ; $cbba
 		db

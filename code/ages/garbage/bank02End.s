@@ -1,4 +1,4 @@
-.ifdef BUILD_VANILLA
+.ifdef INCLUDE_GARBAGE
 
 ; From here on are corrupted repeats of functions starting from
 ; "readParametersForRectangleDrawing".
@@ -168,4 +168,4 @@ _fake_rectangleData_02_7de1:
 	.db $06 $06
 	.dw w3VramTiles+8 w2TmpGfxBuffer
 
-.endif ; BUILD_VANILLA
+.endif ; INCLUDE_GARBAGE
