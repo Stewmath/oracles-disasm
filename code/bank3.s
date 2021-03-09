@@ -831,11 +831,31 @@ _getNumCharactersForSecretType:
 ; (The bits corresponding to the cipher index in the secret are not xored, though, so that
 ; it can be deciphered properly.)
 _secretXorCipher:
+
+.ifdef REGION_JP
+	.db $31 $09 $29 $3b $18 $3c $17 $33
+	.db $35 $01 $0b $0a $30 $21 $2d $25
+	.db $20 $3a $2f $1e $39 $19 $2a $06
+	.db $04 $15 $23 $2e $32 $28 $13 $34
+	.db $10 $0d $3f $1a $37 $0f $3e $36
+	.db $38 $02 $16 $3d $2c $0e $1b $12
+
+	; TODO: what is this? Is the cipher in the japanese version just unnecessarily longer?
+	.db $63 $65 $67 $30 $68 $71 $31 $6b
+	.db $75 $77 $6e $ae $32 $6f $6d $61
+	.db $72 $7f $7d $6c $62 $64 $86 $78
+	.db $33 $7b $6a $9c $66 $7a $8b $83
+	.db $69 $79 $84 $85 $7c $88 $74 $73
+	.db $35 $36 $37 $8c $ad $82 $81 $87
+	.db $70 $7e $60 $8d $a0 $89 $38 $9b
+	.db $a5 $80 $ac $39 $34 $aa $97 $a1
+.else
 	.db $15 $23 $2e $04 $0d $3f $1a $10
 	.db $3a $2f $1e $20 $0f $3e $36 $37
 	.db $09 $29 $3b $31 $02 $16 $3d $38
 	.db $28 $13 $34 $32 $01 $0b $0a $35
 	.db $0e $1b $12 $2c $21 $2d $25 $30
 	.db $19 $2a $06 $39 $3c $17 $33 $18
+.endif
 
 .ends

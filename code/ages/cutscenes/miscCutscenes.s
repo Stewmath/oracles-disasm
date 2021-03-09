@@ -1511,7 +1511,9 @@ _twinrovaRevealCutsceneHandler:
 	call _cutscene_incCutsceneState
 	xor a
 	ld (wPaletteThread_mode),a
+.ifndef REGION_JP
 	ldh (<hVBlankFunctionQueueTail),a
+.endif
 	inc a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
@@ -2395,8 +2397,10 @@ func_03_7244:
 	call clearDynamicInteractions
 	ld de,$d100
 	call objectDelete_de
-	ld a,$d0
+.ifndef REGION_JP
+	ld a,>w1Link
 	ld (wLinkObjectIndex),a
+.endif
 	call refreshObjectGfx
 	xor a
 	ld ($cc20),a
