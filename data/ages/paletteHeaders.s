@@ -547,8 +547,10 @@ paletteHeadera5: ; $66c3
 paletteHeadera6: ; $66c6
 	m_PaletteHeaderSpr 6 2 paletteData41d0 $00
 paletteHeadera7: ; $66c9
+.ifndef REGION_JP
 	m_PaletteHeaderBg  0 6 paletteData48b0 $80
 	m_PaletteHeaderSpr 0 6 paletteData48b0 $00
+.endif
 paletteHeadera8: ; $66cf
 	m_PaletteHeaderBg  2 4 paletteData58c8 $80
 	m_PaletteHeaderSpr 0 8 paletteData4138 $00
