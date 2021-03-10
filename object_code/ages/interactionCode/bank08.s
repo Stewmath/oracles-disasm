@@ -2619,7 +2619,12 @@ shootingGalleryNpc:
 ; State 3: waiting for "game wrapup" script to finish, then asks you to try again
 @state3:
 	call interactionRunScript
+
+.ifdef REGION_JP
+	jr c,@loadRetryScriptAndGotoState1
+.else
 	call c,@loadRetryScriptAndGotoState1
+.endif
 
 @updateAnimation:
 	ld e,Interaction.subid

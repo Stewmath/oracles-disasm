@@ -176,9 +176,15 @@ specialObjectCode_raft:
 	or a
 	jr nz,@notDismounting
 
-	; Disable menu, force Link to walk for 14 frames
+.ifdef REGION_JP
+	ld e,SpecialObject.enabled
+	inc a
+	ld (de),a
+.else
 	inc a
 	ld (wMenuDisabled),a
+.endif
+	; Force Link to walk for 14 frames
 	ld a,LINK_STATE_FORCE_MOVEMENT
 	ld (wLinkForceState),a
 	ld a,14
@@ -219,11 +225,14 @@ specialObjectCode_raft:
 	call itemDecCounter1
 	ret nz
 
+.ifndef REGION_JP
 	xor a
 	ld (wMenuDisabled),a
 	ld e,SpecialObject.enabled
 	inc a
 	ld (de),a
+.endif
+
 	call updateLinkLocalRespawnPosition
 	call itemIncState
 
