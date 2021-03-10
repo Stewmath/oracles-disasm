@@ -1,6 +1,5 @@
 ;;
 specialObjectCode_raft:
-.ifdef ROM_AGES
 	ld a,d
 	ld (wLinkRidingObject),a
 	ld e,Item.state
@@ -348,4 +347,3 @@ specialObjectCode_raft:
 	inc e
 	ld (de),a
 	ret
-.endif

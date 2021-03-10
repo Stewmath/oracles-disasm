@@ -147,7 +147,6 @@
 	.include "build/data/itemUsageTables.s"
 
 	.include "object_code/common/specialObjects/minecart.s"
-	.include "object_code/common/specialObjects/raft.s"
 
 	.include "build/data/specialObjectAnimationData.s"
 	.include "code/seasons/cutscenes/companionCutscenes.s"
