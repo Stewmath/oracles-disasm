@@ -1272,6 +1272,7 @@ interactionCodeb6:
 	call unsetFlag
 
 .ifdef ROM_AGES
+.ifndef REGION_JP
 	; Overwrite the 4 tiles making up the gasha tree in wRoomLayout
 	ld a,TILEINDEX_GASHA_TREE_TL
 	call findTileInRoom
@@ -1293,12 +1294,15 @@ interactionCodeb6:
 	ldi (hl),a
 	ld (hl),a
 .endif
+.endif
 	jp interactionDelete
 
 .ifdef ROM_AGES
+.ifndef REGION_JP
 @tileReplacements:
 	.db $3a $1b $1b $3a $3a $bf $3a $bf
 	.db $1b $3a $3a $1b $3a $3a $3a $bf
+.endif
 .endif
 
 

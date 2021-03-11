@@ -229,6 +229,12 @@ interactionCode9a:
 	ld a,$10
 	cp (hl)
 	ret c
+
+.ifdef REGION_JP
+	add $02
+	ld (hl),a
+.endif
+
 	ld a,$01 ; [substate] = $01
 	ld (de),a
 	ld bc,TX_2307
@@ -238,14 +244,14 @@ interactionCode9a:
 	call retIfTextIsActive
 	ld a,(wSelectedTextOption)
 	dec a
-	jr z,++
+	jr z,@option0
 	ld hl,wTmpcfc0.carpenterSearch.cfd0
 	ld b,$10
 	call clearMemory
 @delete:
 	jp interactionDelete
 
-++
+@option0:
 	call resetLinkInvincibility
 	ld a,-60
 	ld (w1Link.invincibilityCounter),a
@@ -260,17 +266,31 @@ interactionCode9a:
 	ld (de),a
 	ld a,(wLinkObjectIndex)
 	ld h,a
+
+.ifndef REGION_JP
 	ld l,SpecialObject.xh
 	ld (hl),$12
+.endif
+
 	rrca
 	ret nc
 
 	ld l,SpecialObject.id
 	ld a,(hl)
+
+.ifdef REGION_JP
+	cp SPECIALOBJECTID_DIMITRI
+	ret nz
+	ld l,SpecialObject.state
+	; Fall through to @@dimitri label below
+
+.else
+
 	ld l,SpecialObject.state
 	cp SPECIALOBJECTID_RICKY
 	jr nz,++
 
+@@ricky:
 	; Do something with Ricky's state?
 	ldi a,(hl)
 	cp $05
@@ -278,10 +298,14 @@ interactionCode9a:
 	ld a,$03
 	ld (hl),a
 	ret
+
 ++
 	cp SPECIALOBJECTID_DIMITRI
 	ret nz
 
+.endif
+
+@@dimitri:
 	; Do something with Dimitri's state?
 	ld a,(hl)
 	cp $08
@@ -4024,6 +4048,21 @@ interactionCodeaf:
 	jp interactionFunc_3e6d
 
 @data_66bc:
+.ifdef REGION_JP
+	.dw $0020
+	.dw $00e0
+	.dw $0120
+	.dw $0110
+	.dw $00e0
+	.dw $0160
+	.dw $00e0
+	.dw $0100
+	.dw $0140
+	.dw $0150
+	.dw $0130
+	.dw $0180
+	.db $ff
+.else
 	.dw $0020
 	.dw $00e0
 	.dw $0120
@@ -4042,6 +4081,7 @@ interactionCodeaf:
 	.dw $0160
 	.dw $01a0
 	.db $ff
+.endif
 
 
 ; ==============================================================================
@@ -6574,7 +6614,9 @@ interactionCodec6:
 	jr nc,@noMakuSeed
 
 	; Time to start the cutscene.
+.ifndef REGION_JP
 	call clearAllItemsAndPutLinkOnGround
+.endif
 	call resetLinkInvincibility
 
 	ld a,LINK_STATE_FORCE_MOVEMENT
