@@ -140,12 +140,18 @@ blossomScript0:
 
 @invalidName:
 	showtextlowindex <TX_440a
+.ifdef REGION_JP
+	enableallobjects
+.else
 	enableinput
+.endif
 	scriptjump @loop
 
 @validName:
 	showtextlowindex <TX_4407
+.ifndef REGION_JP
 	disableinput
+.endif
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @nameConfirmed
 	.dw @askForName
@@ -156,7 +162,11 @@ blossomScript0:
 	asm15 scriptHelp.setNextChildStage, $01
 	wait 30
 	showtextlowindex <TX_4408
+.ifdef REGION_JP
+	enableallobjects
+.else
 	enableinput
+.endif
 
 @nameAlreadyGiven:
 	checkabutton
@@ -853,6 +863,10 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	showtext TX_3139
 	enableinput
 
+.ifdef REGION_JP
+	scriptjump shootingGalleryScript_goronElderNpc@alreadyGaveSecret
+.else
+
 ; If you talk to him, he asks if you want to play again
 @npcLoop:
 	checkabutton
@@ -876,6 +890,9 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	jumpiftextoptioneq $01, @giveExplanation
 @end1:
 	scriptend
+
+.endif ; REGION_US, REGION_EU
+
 
 @giveBiggoronSword:
 	showtext TX_313a
@@ -4184,7 +4201,9 @@ forestFairyScript_heartContainerSecret:
 	scriptjump @enableInput
 
 @alreadyGaveSecret:
+.ifndef REGION_JP
 	generatesecret FAIRY_RETURN_SECRET
+.endif
 	showtext TX_114d
 
 @enableInput:
@@ -6548,8 +6567,10 @@ _goron_subid0e_pressedAFromNappingLoop:
 	scriptjump _goron_notNappingLoop
 
 
-; Clairvoyant goron who gives you tips
+; Clairvoyant goron who gives you tips (doesn't exist in JP version)
+; TODO: Wrap the label in an ifdef for JP region
 goron_subid10Script:
+.ifndef REGION_JP
 	initcollisions
 	writeobjectbyte Interaction.oamFlags, $00
 @npcLoop:
@@ -6559,6 +6580,7 @@ goron_subid10Script:
 	wait 1
 	enableinput
 	scriptjump @npcLoop
+.endif
 
 
 ; ==============================================================================
@@ -7254,7 +7276,12 @@ companionScript_subid06Script:
 	; Dimitri state $0a, with var03 = $03, triggers his "leaving" cutscene
 	writememory w1Companion.var03, $03
 
+.ifndef REGION_JP
+	; This looks like it's supposed to be part of the bugfix for the softlock caused by screen
+	; transitioning after dismounting Dimitri. But this line of code runs too early, rendering
+	; that fix useless?
 	writememory wDisableScreenTransitions, $00
+.endif
 	scriptend
 
 companionScript_subid08Script:
@@ -8369,7 +8396,9 @@ kingZoraScript_present_postGame:
 	scriptjump @loop
 
 @alreadyGotUpgrade:
+.ifndef REGION_JP
 	generatesecret KING_ZORA_RETURN_SECRET
+.endif
 	showtext TX_343a
 @loop:
 	enableinput
@@ -8947,7 +8976,9 @@ pirateSubid4Script_insertEyeball:
 ; INTERACID_TINGLE
 ; ==============================================================================
 tingleScript:
+.ifndef REGION_JP
 	enableinput
+.endif
 @loop:
 	checkabutton
 	jumpifitemobtained TREASURE_ISLAND_CHART, @alreadyGotChart
@@ -8990,7 +9021,11 @@ tingleScript:
 	scriptjump @loop
 
 @alreadyGotChart:
+.ifdef REGION_JP
+	setdisabledobjectsto11
+.else
 	disableinput
+.endif
 	jumpifobjectbyteeq Interaction.var3e, $00, @notEnoughSeedTypes
 	jumptable_objectbyte Interaction.var3d
 	.dw @haveLevel1Satchel
