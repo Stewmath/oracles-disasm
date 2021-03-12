@@ -3356,7 +3356,43 @@ _vineSprout_state0:
 	ld l,Enemy.speed
 	ld (hl),SPEED_c0
 
+.ifdef REGION_JP
+	; JP version of "_vineSprout_getPosition" function. Instead of checking for certain specific
+	; respawning tiles, this checks for solidity at the vine sprout's position. If the tile
+	; there is solid, the sprout respawns back at its initial position.
+	;
+	; The only apparent difference this code makes (along with the other changes to vines in
+	; general) is that when a vine is placed on the staircase in talus peaks using the switch
+	; hook, in the japanese version, it will be forced to respawn back to its original position.
+	; They "fixed" this in the US version.
+	;
+	; An apparent unintentional side-effect of the change to the US version is that, because
+	; it always writes collision value "$00" back to the tile when the vine is pushed off, the
+	; staircase values are set to collision "$00" instead of "SPECIALCOLLISION_STAIRS". This
+	; doesn't seem to have any practical significance except that you can then use the cane of
+	; somaria on the stair tiles, while normally you could not.
+	;
+	; (AFAIK, the staircases are the only things with a non-zero collision value that vines can
+	; be put onto. If there is anything else like that, then those other things may also be
+	; affected by these changes.)
+	ld e,Enemy.subid
+	ld a,(de)
+	ld hl,wVinePositions
+	rst_addAToHl
+	ld c,(hl)
+
+	ld b,>wRoomLayout
+	ld a,(bc)
+	or a
+	jr z,++
+	call _vineSprout_getDefaultPosition
+	ld c,a
+++
+
+.else
 	call _vineSprout_getPosition
+.endif
+
 	call objectSetShortPosition
 	jp objectSetVisiblec2
 
@@ -3405,10 +3441,12 @@ _vineSprout_state1:
 	and BTN_A|BTN_B
 	jr nz,@notPushingSprout
 
+.ifndef REGION_JP
 	; Must not be holding anything
 	ld a,(wLinkGrabState)
 	or a
 	jr nz,@notPushingSprout
+.endif
 
 	; Must be close enough
 	ld c,$12
@@ -3590,8 +3628,17 @@ _vineSprout_updateTileAtPosition:
 	ret nz
 
 	call objectGetTileCollisions
+
+.ifdef REGION_JP
+	ld e,Enemy.var30
+	ld (de),a
+	ld (hl),$0f
+	inc e
+.else
 	ld (hl),$0f
 	ld e,Enemy.var31
+.endif
+
 	ld h,>wRoomLayout
 	ld a,(hl)
 	ld (de),a ; [var31] = tile index
@@ -3660,8 +3707,16 @@ _vineSprout_restoreTileAtPosition:
 	ld a,(de) ; [var31]
 	ld h,>wRoomLayout
 	ld (hl),a
+
+.ifdef REGION_JP
+	dec e ; [var30]
+	ld a,(de)
+	ld h,>wRoomCollisions
+	ld (hl),a
+.else
 	ld h,>wRoomCollisions
 	ld (hl),$00
+.endif
 	ret
 
 
@@ -3701,6 +3756,8 @@ _vineSprout_getDefaultPosition:
 	.include "build/data/defaultVinePositions.s"
 
 
+.ifndef REGION_JP
+
 ;;
 ; @param[out]	c	Sprout's position
 _vineSprout_getPosition:
@@ -3730,6 +3787,8 @@ _vineSprout_getPosition:
 @respawnableTiles:
 	.db $c0 $c1 $c2 $c3 $c4 $c5 $c6 $c7
 	.db $c8 $c9 $ca $00
+
+.endif ; !REGION_JP
 
 
 ; ==============================================================================

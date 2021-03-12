@@ -929,7 +929,7 @@ wGroup5Flags: ; $ca00
 .endif
 
 .ifdef ROM_AGES
-	; Steal 6 of the past room flags for vine seed positions
+	; Steal 5 of the past room flags for vine seed positions
 	.define wVinePositions wPastRoomFlags+$f0
 .else; ROM_SEASONS
 	; Steal 16 of subrosia's room flags for rupee room rupees gotten
