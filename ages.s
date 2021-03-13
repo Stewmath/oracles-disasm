@@ -322,10 +322,13 @@ specialObjectLoadAnimationFrameToBuffer:
 
 
 .ifdef BUILD_VANILLA
-
-; Some blank space here ($6e1f-$6eff)
-.ORGA $6f00
-
+.ifdef REGION_JP
+	; 3 garbage bytes, which round out the data following this to start at $6e00
+	.db $be $28 $1e
+.else
+	; Some blank space here ($6e1f-$6eff)
+	.ORGA $6f00
+.endif
 .endif
 
 	.include "object_code/common/interactionCode/group8.s"

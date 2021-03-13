@@ -276,9 +276,11 @@ agesFunc_10_7298:
 	.dw @substate6
 	.dw @substate7
 	.dw @substate8
+.ifndef REGION_JP
 	.dw @substate9
 	.dw @substateA
 	.dw @substateB
+.endif
 @substate0:
 	call checkIsLinkedGame
 	call nz,agesFunc_10_70f6@func_71fd
@@ -468,6 +470,10 @@ agesFunc_10_7298:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
+
+.ifdef REGION_JP
+	jp resetGame
+.else
 	call checkIsLinkedGame
 	jp nz,resetGame
 	call disableLcd
@@ -515,5 +521,7 @@ agesFunc_10_7298:
 	or a
 	ret nz
 	jp resetGame
+
+.endif ; !REGION_JP
 
 .ends
