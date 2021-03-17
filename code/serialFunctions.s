@@ -16,7 +16,7 @@ func_4000:
 	rlca
 	jr c,++
 	ldh a,(<hSerialInterruptBehaviour)
-	cp $e0
+	cp SERIAL_UPPER_NIBBLE + $d0
 	jr z,+
 	ld a,($d98b)
 	or a
@@ -302,9 +302,9 @@ _func_4186:
 	dec b
 	jr nz,--
 .ifdef ROM_AGES
-	ld a,$a1
+	ld a,SERIAL_UPPER_NIBBLE + $91
 .else
-	ld a,$a0
+	ld a,SERIAL_UPPER_NIBBLE + $90
 .endif
 	ldi (hl),a		; hl = $da04
 	add c
@@ -613,7 +613,7 @@ _func_439a:
 	
 _func_43ab:
 	ld a,($d9e6)
-	cp $b1
+	cp SERIAL_UPPER_NIBBLE + $a1
 	jr nz,_func_43bd
 	xor a
 	ld ($d986),a
@@ -624,7 +624,7 @@ _func_43ab:
 	
 	
 _func_43bd:
-	cp $b0
+	cp SERIAL_UPPER_NIBBLE + $a0
 	ret z
 	ld a,$82
 	ldh (<hFFBD),a
@@ -749,9 +749,9 @@ _func_4459:
 _func_447c:
 	ld a,($da04)
 .ifdef ROM_AGES
-	cp $a0
+	cp SERIAL_UPPER_NIBBLE + $90
 .else
-	cp $a1
+	cp SERIAL_UPPER_NIBBLE + $91
 .endif
 	jr nz,_func_448c
 	ld a,($da02)
@@ -801,7 +801,7 @@ func_44ac:
 	ldh (<hFFBD),a
 	call _set_d989to00b4
 
-	ld a,$e1
+	ld a,SERIAL_UPPER_NIBBLE + $d1
 	ldh (<R_SB),a
 	ld a,$80
 	ld (w4Filler1+8),a
@@ -848,10 +848,10 @@ _func_44ef:
 
 _table_44fd:
 	; bytes to copy to $d9e5, incl itself
-	.db $03 $b0 $b3
+	.db $03, SERIAL_UPPER_NIBBLE + $a0, SERIAL_UPPER_NIBBLE + $a3
 
 _table_4500:
-	.db $03 $b1 $b4
+	.db $03, SERIAL_UPPER_NIBBLE + $a1, SERIAL_UPPER_NIBBLE + $a4
 
 _table_4503:
 	.db _table_4506-CADDR

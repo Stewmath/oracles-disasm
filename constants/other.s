@@ -97,3 +97,10 @@
 .define DISABLE_COMPANION		$20
 .define DISABLE_40			$40
 .define DISABLE_ALL_BUT_INTERACTIONS	$80
+
+; Data sent over link cable is slightly different depending on region?
+.ifdef REGION_JP
+	.define SERIAL_UPPER_NIBBLE $00
+.else
+	.define SERIAL_UPPER_NIBBLE $10
+.endif

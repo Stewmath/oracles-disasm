@@ -2555,13 +2555,6 @@ data_0bfd:
 	.dw bank4.b4VBlankFunction31
 
 
-; Data sent over link cable is slightly different depending on region?
-.ifdef REGION_JP
-	.define REGION_UPPER_NIBBLE $d0
-.else
-	.define REGION_UPPER_NIBBLE $e0
-.endif
-
 ;;
 serialInterrupt:
 	ldh a,(<hSerialInterruptBehaviour)
@@ -2578,10 +2571,10 @@ serialInterrupt:
 	reti
 +
 	ld a,($ff00+R_SB)
-	cp REGION_UPPER_NIBBLE | $1
+	cp $d1 + SERIAL_UPPER_NIBBLE
 	jr z,+
 
-	cp REGION_UPPER_NIBBLE | $0
+	cp $d0 + SERIAL_UPPER_NIBBLE
 	jr nz,++
 +
 	ldh (<hSerialInterruptBehaviour),a
@@ -2590,7 +2583,7 @@ serialInterrupt:
 	pop af
 	reti
 ++
-	ld a,REGION_UPPER_NIBBLE | $01
+	ld a,$d1 + SERIAL_UPPER_NIBBLE
 	ld ($ff00+R_SB),a
 	ld a,$80
 	call writeToSC
@@ -2612,14 +2605,10 @@ writeToSC:
 serialFunc_0c73:
 	xor a
 	ldh (<hFFBD),a
-	ld a,REGION_UPPER_NIBBLE | $0
+	ld a,$d0 + SERIAL_UPPER_NIBBLE
 	ld ($ff00+R_SB),a
 	ld a,$81
 	jr writeToSC
-
-
-.undefine REGION_UPPER_NIBBLE
-
 
 ;;
 serialFunc_0c7e:
