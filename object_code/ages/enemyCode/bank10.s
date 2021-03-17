@@ -2062,7 +2062,7 @@ _ramrockArm_subid4_substate2:
 	rlca
 	jr c,_ramrockArm_subid4_collisionOccurred
 
-	ld a,$02
+	ld a,Object.subid
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	cp $0d

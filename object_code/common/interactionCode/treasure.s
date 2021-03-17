@@ -590,9 +590,11 @@ interactionCode60:
 	or a
 	ret nz
 
+.ifndef REGION_JP
 	ld a,(wLinkPlayingInstrument)
 	or a
 	ret nz
+.endif
 
 	ld a,(w1Link.state)
 	cp LINK_STATE_NORMAL

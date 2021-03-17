@@ -633,7 +633,7 @@ _getNextValueFromRandomBuffer:
 	ld hl,wEnemyPlacement.randomBufferIndex
 	inc (hl)
 
-	ld a,:w4TileMap
+	ld a,:w4RandomBuffer
 	ld ($ff00+R_SVBK),a
 	ld l,(hl)
 	ld h,>w4RandomBuffer
@@ -672,7 +672,7 @@ _getCandidatePositionForEnemy:
 
 @dungeon:
 	call _getNextValueFromRandomBuffer
-	cp $b0
+	cp LARGE_ROOM_HEIGHT<<4
 	jr nc,@dungeon
 
 	ld b,a
