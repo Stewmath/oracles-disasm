@@ -2559,17 +2559,20 @@ data_0bfd:
 serialInterrupt:
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
-	jr z,+
+	jr z,@internalClock
 
+@externalClock:
 	ld a,($ff00+R_SB)
 	ldh (<hSerialByte),a
 	xor a
 	ld ($ff00+R_SB),a
 	inc a
-	ldh (<hSerialRead),a
+	ldh (<hReceivedSerialByte),a
 	pop af
 	reti
-+
+
+@internalClock:
+	; If received $d0 or $d1 ($e0 or $e1 for US region), switch to external clock
 	ld a,($ff00+R_SB)
 	cp $d1 + SERIAL_UPPER_NIBBLE
 	jr z,+
@@ -2591,7 +2594,7 @@ serialInterrupt:
 	reti
 
 ;;
-; Writes A to SC. Also writes $01 beforehand which might just be to reset any active
+; Writes A to SC. Also writes $00 or $01 beforehand which might just be to reset any active
 ; transfers?
 writeToSC:
 	push af
@@ -2611,7 +2614,7 @@ serialFunc_0c73:
 	jr writeToSC
 
 ;;
-serialFunc_0c7e:
+disableSerialPort:
 	xor a
 	ldh (<hSerialInterruptBehaviour),a
 	ld ($ff00+R_SB),a

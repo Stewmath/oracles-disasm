@@ -381,7 +381,7 @@ wUnappraisedRingsEnd: ; $c600
 wc600Block: ; $c600
 	.db
 
-; $c600-c615 treated as a block in at least one place (game link)
+; Addresses $c600-c615 are copied across the link cable when a "game link" is performed.
 
 wGameID: ; $c600
 ; The unique game ID that is used to make secrets exclusive to a particular set of files.
@@ -432,6 +432,10 @@ wObtainedRingBox: ; $c615
 ; There's also a global flag for this, so its only purpose may be keeping track of it for
 ; linked games?
 	db
+
+
+; END of $16 byte "file header" that gets copied over from file linking.
+
 
 wRingsObtained: ; $c616
 ; Bitset of rings obtained
@@ -1058,6 +1062,8 @@ wMenuUnionStart:
 		db
 	linkTimer: ; $cbbf
 		db
+	cbc0: ; $cbc0
+		db
 
 .nextu wMapMenu
 
@@ -1424,8 +1430,8 @@ wOpenedMenuType: ; $cbcb
 ;  $04: ring appraisal
 ;  $05: warp menu
 ;  $06: secret input
-;  $07: name input
-;  $08: linking
+;  $07: child name input
+;  $08: ring linking
 ;  $09: fake reset
 ;  $0a: farore's secret list
 	db
@@ -1699,7 +1705,7 @@ wActiveGroup: ; $cc2d/$cc49
 ;   6-7: Dungeons in sidescrolling mode?
 	db
 
-wRoomIsLarge: ; $cc2e
+wRoomIsLarge: ; $cc2e/$cc4a
 ; $00 for normal-size rooms, $01 for large rooms
 	db
 
@@ -3379,6 +3385,8 @@ wxSeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; 2:d900/3:dfc0
 ; Bank 4
 ; ========================================================================================
 
+.define SERIAL_WRAM_BANK 4
+
 .RAMSECTION Ram_4 BANK 4 SLOT 3
 
 .union
@@ -3401,26 +3409,53 @@ w4ItemIconGfx:			dsb $80		; $d680
 
 w4Filler5:			dsb $80
 
+; File info for file select screen, either from this cartridge or copied over from another one
 w4FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3	; $d780
 
 w4Filler7:			dsb 8
 
-w4NameBuffer:			dsb 6		; $d7a0
-w4Filler6:			dsb $1a
+; Used as a buffer for up to 3 names? (3 * 6 bytes)
+w4NameBuffer:			dsb $20		; $d7a0
+
 w4SecretBuffer:			dsb $20		; $d7c0
 w4Filler8:			dsb $20
 
 w4SavedVramTiles:		dsb $180	; $d800
 
-w4Filler1:			dsb $0d		; $d980
+w4d980:				db		; $d980
 
-; $16 bytes per file.
-; First 8 bytes are c600-c607 (GameID and link name). Used to check for consecutive ring fortunes
-; with another file?
+; Index of next byte to send in the packet being sent
+w4PacketByteIndex:		db		; $d981
+
+w4PacketChecksum:		db		; $d982
+
+w4d983:				db		; $d983
+
+w4d984:				db		; $d984
+
+w4DisableLinkTimeout:		db		; $d985
+
+; When this reaches 5, the game gives up trying to communicate.
+w4LinkRetryCounter:		db		; $d986
+
+; Number of bytes left to be sent/received in the packet
+w4NumPacketBytes:		db		; $d987
+
+; Can be $00 (not sending), $01 (sending), or $80?
+w4WaitingForNextByte:		db		; $d988
+w4FileLinkTimer:		dw		; $d989
+w4d98b:				db		; $d98b
+w4d98c:				db		; $d98c
+
+; TODO: Rename this? It seems to be a temporary buffer. Sometimes it consists of the first $16 bytes
+; of a file ($c600-$c615) copied across the link cable.
 w4RingFortuneStuff:		dsb $16*3	; $d98d
 
+w4Filler1:			dsb $16		; $d9cf
 
-w4Filler2:			dsb $231
+; First byte should be the length of the packet (including itself).
+w4PacketBuffer:			dsb $21b	; $d9e5
+
 w4GfxBuf1:			dsb $200	; $dc00
 w4GfxBuf2:			dsb $200	; $de00
 

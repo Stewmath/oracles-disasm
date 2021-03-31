@@ -48,7 +48,7 @@ checkDisplayDmgModeScreen:
 	ld a,$03
 	ldh (<hFFBE),a
 	xor a
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	jr @vblankLoop
 
 ;;
@@ -201,8 +201,9 @@ _decFileSelectMode2:
 
 ;;
 ; Gets the address for the given file's DisplayVariables.
-; @param a File index
-; @param d Value to add to address
+;
+; @param	a	File index
+; @param	d	Value to add to address
 _getFileDisplayVariableAddress:
 	ld e,a
 _getFileDisplayVariableAddress_paramE:
@@ -652,7 +653,7 @@ _fileSelectMode4:
 	jp _func_02_4149
 
 @mode3:
-	ld hl,wInventory.itemSubmenuMaxWidth
+	ld hl,wFileSelect.linkTimer
 	dec (hl)
 	bit 0,(hl)
 	ret nz
@@ -952,7 +953,7 @@ _fileSelect_printError:
 	ld a,SND_ERROR
 	call playSound
 	ld a,$10
-	ld (wInventory.itemSubmenuMaxWidth),a
+	ld (wFileSelect.linkTimer),a
 	ld a,$04
 	ld (wFileSelect.mode2),a
 	ld a,GFXH_ad
@@ -963,7 +964,7 @@ _fileSelect_printError:
 ;;
 ; Wait for input while showing "That's Wrong" text.
 _textInput_waitForInput:
-	ld hl,wInventory.itemSubmenuMaxWidth
+	ld hl,wFileSelect.linkTimer
 	ld a,(hl)
 	or a
 	jr z,+
@@ -2207,7 +2208,7 @@ _fileSelectMode7:
 	ld a,$04
 	ldh (<hFFBE),a
 	xor a
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld ($cbc2),a
 
 	ld hl,wFileSelect.linkTimer
@@ -2238,12 +2239,12 @@ _fileSelectMode7:
 +
 	jp serialFunc_0c73
 ++
-	ld a,(wInventory.itemSubmenuWidth)
+	ld a,(wFileSelect.cbc0)
 	or a
 	jr z,+
 
 	dec a
-	ld (wInventory.itemSubmenuWidth),a
+	ld (wFileSelect.cbc0),a
 	ret
 +
 	call serialFunc_0c8d
@@ -2256,7 +2257,7 @@ _fileSelectMode7:
 
 	jp nz,@func_02_4c55
 +
-	ldh a,(<hFFBF)
+	ldh a,(<hSerialLinkState)
 	cp $07
 	ret nz
 	ld e,$03
@@ -2280,6 +2281,7 @@ _fileSelectMode7:
 	jp _loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
+; State 2: Reloading graphics to show other files
 @state2:
 	call serialFunc_0c8d
 	ld a,$06
@@ -2296,59 +2298,73 @@ _fileSelectMode7:
 	jp _loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
+; State 3: Selecting file from other game
 @state3:
 	call serialFunc_0c8d
 	call _fileSelectUpdateInput
-	jr nz,+
+	jr nz,@selectedSomething
 
 	ld a,(wKeysJustPressed)
-	bit 1,a
+	bit BTN_BIT_B,a
 	ret z
--
+
+.ifdef REGION_JP
+
+@moveCursorToQuit:
 	ld a,$03
 	ld (wFileSelect.cursorPos),a
 	ld a,$8f
 	ld ($cbc2),a
 
-.ifdef REGION_JP
-+
+@selectedSomething:
 	ld a,(wFileSelect.cursorPos)
 	cp $03
 	jr z,@func_02_4c4b
+
 .else
+
+@moveCursorToQuit:
+	ld a,$03
+	ld (wFileSelect.cursorPos),a
+	ld a,$8f
+	ld ($cbc2),a
 	jr @func_02_4c4b
-+
+
+@selectedSomething:
 	ld a,(wFileSelect.cursorPos)
 	cp $03
-	jr z,-
+	jr z,@moveCursorToQuit
+
 .endif
 
-	ld d,$00
+	ld d,FileDisplayStruct.b0
 	call _getFileDisplayVariableAddress
-	bit 7,(hl)
+	bit 7,(hl) ; Check if file is blank
 	jr z,+
 
 	ld a,SND_ERROR
 	jp playSound
 +
 	ld a,(wOpenedMenuType)
-	cp $08
+	cp MENU_RING_LINK
 	jr nz,+
 
+	; Link menu from blue snake
 	ld a,$0c
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld a,$05
 	ld (wFileSelect.mode2),a
 	ret
 +
+	; Linking from file select screen
 	ld a,$08
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	jp _loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 @func_02_4c4b:
 	ld a,$08
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld a,$05
 	ld (wFileSelect.mode2),a
 	ret
@@ -2360,22 +2376,26 @@ _fileSelectMode7:
 	call loadGfxHeader
 	call _loadGfxRegisterState5AndIncFileSelectMode2
 	ld a,$08
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld a,$06
 	ld (wFileSelect.mode2),a
-	ld a,$b4
+	ld a,180
 	ld (wFileSelect.linkTimer),a
 	ldh a,(<hFFBD)
-	ld (wInventory.itemSubmenuWidth),a
+	ld (wFileSelect.cbc0),a
 	ret
 
 ;;
+; Selected a file from the file select screen
 @state4:
 	call serialFunc_0c8d
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
 	ret nz
+
 	call loadFile
+
+	; set hl = wRingFortuneStuff + fileIndex * $16
 	ld a,(wFileSelect.cursorPos)
 	inc a
 	ld hl,w4RingFortuneStuff
@@ -2387,6 +2407,8 @@ _fileSelectMode7:
 	add hl,bc
 	jr -
 +
+	; Copy to the first $16 bytes of the new file to create ($c600-$c615). Includes link/child
+	; name, animal companion, etc.
 	ld b,$16
 	ld de,wc600Block
 	call copyMemory
@@ -2400,14 +2422,16 @@ _fileSelectMode7:
 	jp _setFileSelectModeTo1
 
 ;;
+; State 5: Connected successfully, waiting for data?
 @state5:
 	call serialFunc_0c8d
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
 	ret nz
--
+
+@cancelLink:
 	ld a,(wOpenedMenuType)
-	cp $08
+	cp MENU_RING_LINK
 	jp z,_closeMenu
 
 	ld a,$00
@@ -2421,16 +2445,16 @@ _fileSelectMode7:
 	or a
 	ret nz
 
-	ld a,(wInventory.itemSubmenuWidth)
+	ld a,(wFileSelect.cbc0)
 	ldh (<hFFBD),a
 	ld a,(wKeysJustPressed)
 	or a
-	jr nz,-
+	jr nz,@cancelLink
 
 	ld hl,wFileSelect.linkTimer
 	dec (hl)
 	ret nz
-	jr -
+	jr @cancelLink
 
 ;;
 ; Clears the OAM, draws vines and stuff, sets wram bank 4
@@ -2897,7 +2921,7 @@ _showStatusBar:
 	ret
 
 ;;
-; @param c Value for wOpenedMenuType
+; @param	c	Value for wOpenedMenuType
 _openMenu:
 	ld a,c
 	ld hl,wOpenedMenuType
@@ -2960,7 +2984,7 @@ _closeMenu:
 	ld hl,wMenuLoadState
 	inc (hl)
 	ld a,(wOpenedMenuType)
-	cp $03
+	cp MENU_SAVEQUIT
 	ld a,SND_CLOSEMENU
 	call nz,playSound
 	xor a
@@ -3059,7 +3083,7 @@ _menuStateFadeIntoMenu:
 	cp BTN_START | BTN_SELECT
 	jr nz,+
 
-	ld a,$03
+	ld a,MENU_SAVEQUIT
 	ld (wOpenedMenuType),a
 +
 	ld a,(wPaletteThread_mode)
@@ -3075,7 +3099,7 @@ _menuStateFadeIntoMenu:
 ; Loads menu graphics and stuff
 @openMenu:
 	ld a,(wOpenedMenuType)
-	cp $03
+	cp MENU_SAVEQUIT
 	ld a,SND_OPENMENU
 	call nz,playSound
 	ld a,$02
@@ -4560,7 +4584,7 @@ _inventoryMenuState1:
 	jr nz,+
 
 	; Save button selected
-	inc a
+	inc a ; MENU_SAVEQUIT ($03)
 	ld (wOpenedMenuType),a
 	ld a,SND_SELECTITEM
 	call playSound
@@ -6436,7 +6460,7 @@ _galeSeedMenu_state2:
 	ld a,(wSelectedTextOption)
 	or a
 	jr nz,_galeSeedMenu_gotoState1
-	ld (wOpenedMenuType),a
+	ld (wOpenedMenuType),a ; $00
 	ld a,(wActiveGroup)
 	or $80
 	ld (wWarpDestGroup),a

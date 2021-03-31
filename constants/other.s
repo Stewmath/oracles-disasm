@@ -104,3 +104,17 @@
 .else
 	.define SERIAL_UPPER_NIBBLE $10
 .endif
+
+; Menu types (for "openMenu" function & "wOpenedMenuType" variable)
+.enum $01
+	MENU_INVENTORY		db ; $01
+	MENU_MAP		db ; $02
+	MENU_SAVEQUIT		db ; $03
+	MENU_RING_APPRAISAL	db ; $04
+	MENU_WARP		db ; $05
+	MENU_SECRET_INPUT	db ; $06
+	MENU_CHILD_NAME_INPUT	db ; $07
+	MENU_RING_LINK		db ; $08
+	MENU_FAKE_RESET		db ; $09
+	MENU_FARORES_SECRETS	db ; $0a
+.ende

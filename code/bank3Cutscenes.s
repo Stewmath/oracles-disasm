@@ -348,7 +348,7 @@ runIntro:
 	ld a,$03
 	ldh (<hFFBE),a
 	xor a
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld a,(wKeysJustPressed)
 	and BTN_START
 	jr z,_intro_runStage
@@ -604,7 +604,7 @@ _intro_titlescreen_state1:
 @pressedStart:
 	ld a,SND_SELECTITEM
 	call playSound
-	call serialFunc_0c7e
+	call disableSerialPort
 	ld a,$03
 @gotoState:
 	ld (wIntroVar),a
