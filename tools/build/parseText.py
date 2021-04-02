@@ -33,11 +33,15 @@ argIndex+=1
 
 useVwf = False
 
+EUText = False
+
 while len(sys.argv) > argIndex:
     s = sys.argv[argIndex]
     argIndex+=1
     if s == '--vwf':
         useVwf = True
+    if s == '--EU':
+        EUText = True
 
 
 
@@ -257,6 +261,56 @@ else:
         characterSpacing.append(8)
 
 MAX_LINE_WIDTH = 16*8+1
+
+
+# special chars talbes (EU rom can handle both)
+US_available = "ÀÂÄÆÇÈÉÊËÎÏÑÖŒÙÛÜàâäæçèéêëîïñöœùûü"
+US_values = [0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x90,
+0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb0]
+EU_additional = "ß¡¿´Ô°ÁÍÓÚÌÒÅôªáíóúìòå"
+EU_values = [0x91, 0x98, 0x99, 0xb1, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8]
+
+#special chars functions
+def isHandledSpecialChar(c):
+    # JP (characters carried from jp text engine but still available)
+    if (c in ['“', '「', '」', '、', '”', '〜', '。']):
+        return True
+    # US and EU
+    if (c in US_available):
+        return True
+    # EU only
+    elif EUText and (c in EU_additional):
+        return True
+    return False
+
+#returns the encoding value of a special character from UNICODE
+def specialCharValue(c):
+    assert(isHandledSpecialChar(c))
+    if c == '“':
+        return 0x1a
+    if c == '「':
+        return 0x1b
+    if c == '」':
+        return 0x1c
+    if c == '、':
+        return 0x1e
+    if c == '”':
+        return 0x22
+    if c == '〜':
+        return 0x5c
+    if c == '。':
+        return 0x5f
+
+    ind = US_available.find(c)
+    if (ind != -1):
+        return US_values[ind]
+
+    ind = EU_additional.find(c)
+    if (ind != -1):
+        return EU_values[ind]
+    return '?' #default case if character not found (should not happend)
+
+
 
 
 groupDict = {}
@@ -630,115 +684,12 @@ def parseTextFile(textFile, isDictionary):
                         i = y+1
 
                     #adding special characters (natively handled by the game)
-                    elif 0xc0 <= ord(c) <= 0x153: #(range of handled unicode chars)
-                        knownChar = False
-                        if c == 'À':
-                            knownChar = True
-                            c = 0x80
-                        elif c == 'Â':
-                            knownChar = True
-                            c = 0x81
-                        elif c == 'Ä':
-                            knownChar = True
-                            c = 0x82
-                        elif c == 'Æ':
-                            knownChar = True
-                            c = 0x83
-                        elif c == 'Ç':
-                            knownChar = True
-                            c = 0x84
-                        elif c == 'È':
-                            knownChar = True
-                            c = 0x85
-                        elif c == 'É':
-                            knownChar = True
-                            c = 0x86
-                        elif c == 'Ê':
-                            knownChar = True
-                            c = 0x87
-                        elif c == 'Ë':
-                            knownChar = True
-                            c = 0x88
-                        elif c == 'Î':
-                            knownChar = True
-                            c = 0x89
-                        elif c == 'Ï':
-                            knownChar = True
-                            c = 0x8a
-                        elif c == 'Ñ':
-                            knownChar = True
-                            c = 0x8b
-                        elif c == 'Ö':
-                            knownChar = True
-                            c = 0x8c
-                        elif c == 'Œ':
-                            knownChar = True
-                            c = 0x8d
-                        elif c == 'Ù':
-                            knownChar = True
-                            c = 0x8e
-                        elif c == 'Û':
-                            knownChar = True
-                            c = 0x8f
-                        elif c == 'Ü':
-                            knownChar = True
-                            c = 0x90
-                        elif c == 'à':
-                            knownChar = True
-                            c = 0xa0
-                        elif c == 'â':
-                            knownChar = True
-                            c = 0xa1
-                        elif c == 'ä':
-                            knownChar = True
-                            c = 0xa2
-                        elif c == 'æ':
-                            knownChar = True
-                            c = 0xa3
-                        elif c == 'ç':
-                            knownChar = True
-                            c = 0xa4
-                        elif c == 'è':
-                            knownChar = True
-                            c = 0xa5
-                        elif c == 'é':
-                            knownChar = True
-                            c = 0xa6
-                        elif c == 'ê':
-                            knownChar = True
-                            c = 0xa7
-                        elif c == 'ë':
-                            knownChar = True
-                            c = 0xa8
-                        elif c == 'î':
-                            knownChar = True
-                            c = 0xa9
-                        elif c == 'ï':
-                            knownChar = True
-                            c = 0xaa
-                        elif c == 'ñ':
-                            knownChar = True
-                            c = 0xab
-                        elif c == 'ö':
-                            knownChar = True
-                            c = 0xac
-                        elif c == 'œ':
-                            knownChar = True
-                            c = 0xad
-                        elif c == 'ù':
-                            knownChar = True
-                            c = 0xae
-                        elif c == 'û':
-                            knownChar = True
-                            c = 0xaf
-                        elif c == 'ü':
-                            knownChar = True
-                            c = 0xb0
-
-                        if knownChar == True:
-                            textStruct.data.append(c)
-                            addWidth(state, characterSpacing[c])
+                    elif isHandledSpecialChar(c):
+                        b = specialCharValue(c)
+                        textStruct.data.append(b)
+                        addWidth(state, characterSpacing[b])
                         i+=1
+
                     else:
                         c = text[i]
                         textStruct.data.append(ord(c))
