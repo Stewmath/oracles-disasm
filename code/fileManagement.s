@@ -18,7 +18,7 @@ _initializeFile:
 	ld hl,wFileIsHeroGame
 	ldd a,(hl)
 	add a
-	add (hl)
+	add (hl) ; wFileIsLinkedGame
 	push af
 
 	; Initialize data differently based on whether it's a linked or hero game
