@@ -7702,7 +7702,9 @@ interactionCode66:
 	.dw _goronSubid0d
 	.dw _goronSubid0e
 	.dw _goronSubid0f
+.ifndef REGION_JP
 	.dw _goronSubid10
+.endif
 
 
 ; Graceful goron
@@ -8199,13 +8201,20 @@ _goronSubid06:
 	ld (hl),$0a
 	ld e,Interaction.var03
 	ld a,(de)
+
+.ifdef REGION_JP
+	cp $01
+	jr nz,++
+.else
 	or a
 	jr nz,+
 	ld (wTmpcfc0.goronCutscenes.elderVar_cfdd),a
 	jr ++
 +
+.endif
+
 	ld b,wTmpcfc0.goronCutscenes.dataEnd - wTmpcfc0.goronCutscenes
-	ld hl,wTmpcfc0.bigBangGame
+	ld hl,wTmpcfc0.goronCutscenes
 	call clearMemory
 ++
 	call interactionRunScript
@@ -8840,8 +8849,10 @@ _goron_scriptTable:
 	.dw mainScripts.goron_subid0cScript
 	.dw mainScripts.goron_subid0dScript
 	.dw mainScripts.goron_subid0eScript
+.ifndef REGION_JP
 	.dw mainScripts.stubScript
 	.dw mainScripts.goron_subid10Script
+.endif
 
 @subid05ScriptTable:
 	.dw mainScripts.goron_subid05Script_A

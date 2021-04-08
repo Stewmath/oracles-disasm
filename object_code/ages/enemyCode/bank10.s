@@ -110,6 +110,15 @@ _veranFinal_turtleForm_state0:
 	ret nz
 	call _ecom_incState
 
+.ifdef REGION_JP
+	ld l,Enemy.health
+	ld a,(hl)
+	ld l,Enemy.var30
+	ldi (hl),a
+	ld (hl),$0c ; [var31]
+	inc l
+	ld (hl),$18 ; [var32]
+.else
 	call checkIsLinkedGame
 	ld l,Enemy.health
 	ld a,(hl)
@@ -126,6 +135,7 @@ _veranFinal_turtleForm_state0:
 	ld (hl),b ; [var31]
 	inc l
 	ld (hl),c ; [var32]
+.endif
 	jp objectSetVisible83
 
 
@@ -2039,18 +2049,20 @@ _ramrockArm_subid4_substate1:
 
 
 _ramrockArm_subid4_substate2:
+.ifndef REGION_JP
 	ld a,Object.substate
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	dec a
 	jr z,@updateXPosition
+.endif
 
 	ld e,Enemy.var2a
 	ld a,(de)
 	rlca
 	jr c,_ramrockArm_subid4_collisionOccurred
 
-	ld a,$02
+	ld a,Object.subid
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	cp $0d
@@ -3263,12 +3275,14 @@ _ramrock_bombPhase_substate4:
 ; "Seed" phase
 _ramrock_seedPhase:
 	ld h,d
+.ifndef REGION_JP
 	ld l,Enemy.substate
 	ld a,(hl)
 	or a
 	jr z,@runSubstate
 	dec a
 	jr z,@runSubstate
+.endif
 
 	ld e,Enemy.var2a
 	ld a,(de)

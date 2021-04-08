@@ -1,9 +1,8 @@
-; "AGES_ENGINE" is like "ROM_AGES", but anything wrapped in this define could potentially be used in
-; Seasons as well. Generally this enables extra engine features added in Ages. However, it could
-; also cause subtle differences in how certain things work.
-; I might enable this by default in the hack-base branch for seasons.
-.ifdef ROM_AGES
-	.define AGES_ENGINE
+; "Garbage" files get included in the vanilla, US version of Ages only
+.ifdef BUILD_VANILLA
+.ifdef REGION_US
+	.define INCLUDE_GARBAGE
+.endif
 .endif
 
 ; Room sizes (in 16x16 tiles)
@@ -98,3 +97,24 @@
 .define DISABLE_COMPANION		$20
 .define DISABLE_40			$40
 .define DISABLE_ALL_BUT_INTERACTIONS	$80
+
+; Data sent over link cable is slightly different depending on region?
+.ifdef REGION_JP
+	.define SERIAL_UPPER_NIBBLE $00
+.else
+	.define SERIAL_UPPER_NIBBLE $10
+.endif
+
+; Menu types (for "openMenu" function & "wOpenedMenuType" variable)
+.enum $01
+	MENU_INVENTORY		db ; $01
+	MENU_MAP		db ; $02
+	MENU_SAVEQUIT		db ; $03
+	MENU_RING_APPRAISAL	db ; $04
+	MENU_WARP		db ; $05
+	MENU_SECRET_INPUT	db ; $06
+	MENU_CHILD_NAME_INPUT	db ; $07
+	MENU_RING_LINK		db ; $08
+	MENU_FAKE_RESET		db ; $09
+	MENU_FARORES_SECRETS	db ; $0a
+.ende

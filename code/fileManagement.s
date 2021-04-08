@@ -18,7 +18,7 @@ _initializeFile:
 	ld hl,wFileIsHeroGame
 	ldd a,(hl)
 	add a
-	add (hl)
+	add (hl) ; wFileIsLinkedGame
 	push af
 
 	; Initialize data differently based on whether it's a linked or hero game
@@ -63,7 +63,7 @@ _initializeFile:
 ; In addition to saving, this is called after creating a file, as well as when it's about
 ; to be loaded (for some reason)
 _saveFile:
-	; Write $01 here for "ages"
+	; Write $01 here for "ages", $00 for "seasons"
 	ld hl,wWhichGame
 .ifdef ROM_AGES
 	ld (hl),$01

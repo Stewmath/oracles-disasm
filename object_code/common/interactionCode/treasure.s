@@ -438,8 +438,12 @@ interactionCode60:
 	call retIfTextIsActive
 	ld hl,wDisabledObjects
 	res 0,(hl)
+
+.ifndef REGION_JP
 	ld a,$0f
 	ld (wInstrumentsDisabledCounter),a
+.endif
+
 	jp interactionDelete
 
 
@@ -586,9 +590,11 @@ interactionCode60:
 	or a
 	ret nz
 
+.ifndef REGION_JP
 	ld a,(wLinkPlayingInstrument)
 	or a
 	ret nz
+.endif
 
 	ld a,(w1Link.state)
 	cp LINK_STATE_NORMAL

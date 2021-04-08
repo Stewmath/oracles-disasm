@@ -1,8 +1,8 @@
 ; Main file for Oracle of Seasons, US version
 
+.include "include/constants.s"
 .include "include/rominfo.s"
 .include "include/emptyfill.s"
-.include "include/constants.s"
 .include "include/structs.s"
 .include "include/wram.s"
 .include "include/hram.s"
@@ -147,7 +147,6 @@
 	.include "build/data/itemUsageTables.s"
 
 	.include "object_code/common/specialObjects/minecart.s"
-	.include "object_code/common/specialObjects/raft.s"
 
 	.include "build/data/specialObjectAnimationData.s"
 	.include "code/seasons/cutscenes/companionCutscenes.s"

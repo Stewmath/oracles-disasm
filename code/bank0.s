@@ -165,13 +165,15 @@ jpHl:
 	jp hl
 
 
+secretSymbols: ; TODO
+.ifndef REGION_JP
+
 ; Symbol list for secrets:
 ;	BDFGHJLM♠♥♦♣#
 ;	NQRSTWY!●▲■+-
 ;	bdfghj m$*/:~
 ;	nqrstwy?%&<=>
 ;	23456789↑↓←→@
-secretSymbols:
 	.asc "BDFGHJLM"
 	.db $13 $bd $12 $11 $23
 	.asc "NQRSTWY!"
@@ -182,10 +184,18 @@ secretSymbols:
 	.db $15 $16 $17 $18 $40
 
 	.db $00 ; Null terminator
+.endif
 
-	; This is probably nothing...?
-	.db $00 $00 $00 $00 $00 $ff
 .ENDS
+
+
+; ???
+.ifdef REGION_JP
+	.ORGA $e1
+.else
+	.ORGA $e7
+.endif
+	.db $ff
 
 
 .ORGA $00f8
@@ -210,10 +220,20 @@ bitTable:
 
 .ifdef ROM_SEASONS
 	.asc "ZELDA DIN" 0 0
-	.asc "AZ7E"
+
+	.ifdef REGION_JP
+		.ASC "AZ7J"
+	.else
+		.asc "AZ7E"
+	.endif
 .else ; ROM_AGES
 	.asc "ZELDA NAYRU"
-	.asc "AZ8E"
+
+	.ifdef REGION_JP
+		.ASC "AZ8J"
+	.else
+		.asc "AZ8E"
+	.endif
 .endif
 
 
@@ -2534,26 +2554,30 @@ data_0bfd:
 	.dw bank4.b4VBlankFunction30
 	.dw bank4.b4VBlankFunction31
 
+
 ;;
 serialInterrupt:
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
-	jr z,+
+	jr z,@internalClock
 
+@externalClock:
 	ld a,($ff00+R_SB)
 	ldh (<hSerialByte),a
 	xor a
 	ld ($ff00+R_SB),a
 	inc a
-	ldh (<hSerialRead),a
+	ldh (<hReceivedSerialByte),a
 	pop af
 	reti
-+
+
+@internalClock:
+	; If received $d0 or $d1 ($e0 or $e1 for US region), switch to external clock
 	ld a,($ff00+R_SB)
-	cp $e1
+	cp $d1 + SERIAL_UPPER_NIBBLE
 	jr z,+
 
-	cp $e0
+	cp $d0 + SERIAL_UPPER_NIBBLE
 	jr nz,++
 +
 	ldh (<hSerialInterruptBehaviour),a
@@ -2562,7 +2586,7 @@ serialInterrupt:
 	pop af
 	reti
 ++
-	ld a,$e1
+	ld a,$d1 + SERIAL_UPPER_NIBBLE
 	ld ($ff00+R_SB),a
 	ld a,$80
 	call writeToSC
@@ -2570,7 +2594,7 @@ serialInterrupt:
 	reti
 
 ;;
-; Writes A to SC. Also writes $01 beforehand which might just be to reset any active
+; Writes A to SC. Also writes $00 or $01 beforehand which might just be to reset any active
 ; transfers?
 writeToSC:
 	push af
@@ -2584,13 +2608,13 @@ writeToSC:
 serialFunc_0c73:
 	xor a
 	ldh (<hFFBD),a
-	ld a,$e0
+	ld a,$d0 + SERIAL_UPPER_NIBBLE
 	ld ($ff00+R_SB),a
 	ld a,$81
 	jr writeToSC
 
 ;;
-serialFunc_0c7e:
+disableSerialPort:
 	xor a
 	ldh (<hSerialInterruptBehaviour),a
 	ld ($ff00+R_SB),a
@@ -5523,7 +5547,13 @@ readByteFromW7ActiveBank:
 readByteFromW7TextTableBank:
 	ldh a,(<hRomBank)
 	push af
+
+.ifdef REGION_JP
+	ld a,:textTableENG
+.else
 	ld a,(w7TextTableBank)
+.endif
+
 	bit 7,h
 	jr z,+
 

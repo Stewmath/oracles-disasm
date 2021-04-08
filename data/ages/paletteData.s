@@ -1446,6 +1446,7 @@ paletteData4890:
 	m_RGB16 $08 $15 $1f
 	m_RGB16 $19 $1e $1f
 
+.ifndef REGION_JP
 paletteData48b0:
 	m_RGB16 $1f $1f $1f
 	m_RGB16 $17 $12 $00
@@ -1476,6 +1477,7 @@ paletteData48b0:
 	m_RGB16 $0d $16 $1c
 	m_RGB16 $0b $10 $15
 	m_RGB16 $06 $0a $0e
+.endif
 
 paletteData48e0:
 	m_RGB16 $0d $01 $05

@@ -1,8 +1,8 @@
 ; Main file for Oracle of Ages, US version
 
+.include "include/constants.s"
 .include "include/rominfo.s"
 .include "include/emptyfill.s"
-.include "include/constants.s"
 .include "include/structs.s"
 .include "include/wram.s"
 .include "include/hram.s"
@@ -323,10 +323,13 @@ specialObjectLoadAnimationFrameToBuffer:
 
 
 .ifdef BUILD_VANILLA
-
-; Some blank space here ($6e1f-$6eff)
-.ORGA $6f00
-
+.ifdef REGION_JP
+	; 3 garbage bytes, which round out the data following this to start at $6e00
+	.db $be $28 $1e
+.else
+	; Some blank space here ($6e1f-$6eff)
+	.ORGA $6f00
+.endif
 .endif
 
 	.include "object_code/common/interactionCode/group8.s"
