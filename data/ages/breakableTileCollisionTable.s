@@ -163,7 +163,7 @@ _breakableTileModes:
 	m_BreakableTileData %00000010 %00000000 %0000 $0 $ca $d2 ; $12
 	m_BreakableTileData %00000010 %00000000 %0000 $0 $0a $d7 ; $13
 	m_BreakableTileData %00000100 %10000000 %0000 $0 $06 $3a ; $14
-	m_BreakableTileData %01101000 %00001001 %1111 $0 $00 $3b ; $15
+	m_BreakableTileData %01101001 %00001001 %1111 $0 $00 $3b ; $15
 	m_BreakableTileData %10110101 %10001000 %0000 $7 $0c $a0 ; $16
 	m_BreakableTileData %11101101 %10001100 %0010 $1 $00 $a0 ; $17
 	m_BreakableTileData %11101101 %10001100 %0010 $0 $00 $a0 ; $18
