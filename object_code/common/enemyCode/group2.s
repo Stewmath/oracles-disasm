@@ -3949,11 +3949,7 @@ _swordEnemy_updateEnemyCollisionMode:
 	cp ENEMYID_SWORD_SHROUDED_STALFOS
 	ld a,ENEMYCOLLISION_BURNABLE_ENEMY
 	jr nz,@setVars
-.ifdef ROM_AGES
-	ld a,ENEMYCOLLISION_BURNABLE_ENEMY
-.else
 	ld a,ENEMYCOLLISION_BURNABLE_UNDEAD
-.endif
 
 @setVars:
 	ld e,Enemy.enemyCollisionMode
