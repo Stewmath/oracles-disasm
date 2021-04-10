@@ -88,7 +88,7 @@ treasureObjectData:
 	/* $1b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1b_00
 	/* $1c */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1c_00
 	/* $1d */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MINECART_COLLISION_00
-	/* $1e */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_FOOLS_ORE_00
+	/* $1e */ m_TreasureSubid   $38, $00, <TX_00_GET_FOOLSORE, $82, TREASURE_OBJECT_FOOLS_ORE_00
 	/* $1f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1f_00
 	/* $20 */ m_TreasurePointer treasureObjectData20
 	/* $21 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SCENT_SEEDS_00

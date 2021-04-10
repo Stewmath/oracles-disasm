@@ -70,6 +70,7 @@ uncmpGfxHeaderTable:
 	.dw uncmpGfxHeader_l1Boomerang
 	.dw uncmpGfxHeader_l2Boomerang
 	.dw uncmpGfxHeader_rodOfSeasons
+	.dw uncmpGfxHeader_foolsOre
 
 
 
@@ -249,3 +250,6 @@ uncmpGfxHeader_l2Boomerang:
 
 uncmpGfxHeader_rodOfSeasons:
 	m_GfxHeader spr_rod_of_seasons, $8521, $09
+
+uncmpGfxHeader_foolsOre:
+	m_GfxHeader spr_item_icons_2, $8521, $01, $140

@@ -49,7 +49,7 @@ _itemUsageParameterTable:
 	.db $00 <wGameKeysJustPressed	; ITEMID_1b
 	.db $00 <wGameKeysJustPressed	; ITEMID_1c
 	.db $00 <wGameKeysJustPressed	; ITEMID_MINECART_COLLISION
-	.db $00 <wGameKeysJustPressed	; ITEMID_FOOLS_ORE
+	.db $03 <wGameKeysJustPressed   ; ITEMID_FOOLS_ORE
 	.db $00 <wGameKeysJustPressed	; ITEMID_1f
 
 
