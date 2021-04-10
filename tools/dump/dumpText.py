@@ -75,7 +75,7 @@ jpKanjiTable = """
 
 
 # Special characters table
-#   some ? values are réferences to graphics display
+#   some ? values are references to graphics display
 #   0xb8 and 0xb9 are the abtn
 #   0xba and 0xbb are the bbtn
 #   0xbd is a small heart icon
@@ -285,7 +285,7 @@ def lookupNormalCharacter(b):
         else:
             return jpKanaTable[b-0x60]
     if region == "EU":
-        if b == 0x1a: #for some reasons french, german, italian end spanish text uses the left quotation mark
+        if b == 0x1a: # For some reason french, german, italian use the left quotation mark
             return '“'
         if b == 0x5c:
             return '~'
@@ -317,9 +317,11 @@ def isNormalCharacter(b):
 
 def isSpecialCharacter(b):
     if region == "JP":
-        return False #no special characters in japanese rom
-    if (region == "EU") and (b == 0x91 or b == 0x98 or b == 0x99 or b == 0xb1 or (b >= 0xc0 and b < 0xc9) or (b >= 0xd0 and b < 0xd9)):
+        return False # No special characters in japanese rom
+    if (region == "EU") and (b == 0x91 or b == 0x98 or b == 0x99 or b == 0xb1 \
+            or (b >= 0xc0 and b < 0xc9) or (b >= 0xd0 and b < 0xd9)):
         return True
+    # Special characters that exist in both US/EU versions
     return (b >= 0x80 and b < 0x91) or (b >= 0xa0 and b < 0xb1)
 
 highIndexList = []

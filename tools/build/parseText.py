@@ -263,14 +263,18 @@ else:
 MAX_LINE_WIDTH = 16*8+1
 
 
-# special chars talbes (EU rom can handle both)
+# Special chars tables. US version has some unused special characters, EU rom has more.
+# (EU rom can handle values in both tables.)
 US_available = "ÀÂÄÆÇÈÉÊËÎÏÑÖŒÙÛÜàâäæçèéêëîïñöœùûü"
-US_values = [0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x90,
-0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb0]
-EU_additional = "ß¡¿´Ô°ÁÍÓÚÌÒÅôªáíóúìòå"
-EU_values = [0x91, 0x98, 0x99, 0xb1, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8]
+US_values = [0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d,
+        0x8e, 0x8f, 0x90, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab,
+        0xac, 0xad, 0xae, 0xaf, 0xb0]
 
-#special chars functions
+EU_additional = "ß¡¿´Ô°ÁÍÓÚÌÒÅôªáíóúìòå"
+EU_values = [0x91, 0x98, 0x99, 0xb1, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xd0,
+        0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8]
+
+# Return True if the special character is handled in this version
 def isHandledSpecialChar(c):
     # JP (characters carried from jp text engine but still available)
     if (c in ['“', '「', '」', '、', '”', '〜', '。']):
@@ -283,9 +287,11 @@ def isHandledSpecialChar(c):
         return True
     return False
 
-#returns the encoding value of a special character from UNICODE
+# Returns the encoding value of a special character from UNICODE
 def specialCharValue(c):
     assert(isHandledSpecialChar(c))
+
+    # JP characters
     if c == '“':
         return 0x1a
     if c == '「':
@@ -308,7 +314,8 @@ def specialCharValue(c):
     ind = EU_additional.find(c)
     if (ind != -1):
         return EU_values[ind]
-    return '?' #default case if character not found (should not happend)
+
+    assert(False) # Character not found (should not happen)
 
 
 
@@ -683,7 +690,7 @@ def parseTextFile(textFile, isDictionary):
                         assert(param != -1)
                         i = y+1
 
-                    #adding special characters (natively handled by the game)
+                    # Adding special characters (natively handled by the game)
                     elif isHandledSpecialChar(c):
                         b = specialCharValue(c)
                         textStruct.data.append(b)
