@@ -32,7 +32,7 @@
 .else
 	ITEMCOLLISION_ROD_OF_SEASONS		db ; $0c: Rod of Seasons
 	ITEMCOLLISION_SHOVEL			db ; $0d: Shovel (bumps enemies)
-	ITEMCOLLISION_SWITCH_HOOK		db ; $0e: Switch hook
+	ITEMCOLLISION_SWITCH_HOOK		db ; $0e: Formerly unused
 .endif
 
 	ITEMCOLLISION_DIMITRI_MOUTH		db ; $0f: Eaten by Dimitri
@@ -46,7 +46,7 @@
 
 .ifdef ROM_AGES
 	ITEMCOLLISION_L2_BOOMERANG		db ; $13: Formerly unused
-	ITEMCOLLISION_AG_14			db ; $14: Unused?
+	ITEMCOLLISION_ROD_OF_SEASONS		db ; $14: Formerly unused
 	ITEMCOLLISION_SOMARIA_BLOCK		db ; $15: Cane of Somaria block
 	ITEMCOLLISION_THROWN_OBJECT		db ; $16: Object being thrown (ie. sign)
 	ITEMCOLLISION_L1_BOOMERANG		db ; $17: Boomerang
