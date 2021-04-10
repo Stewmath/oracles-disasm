@@ -2415,7 +2415,7 @@ _greatFairy_state1:
 
 	ld l,Enemy.counter1
 	ld (hl),$11
-	ld a,MUS_FAIRY
+	ld a,MUS_FAIRY_FOUNTAIN
 	ld (wActiveMusic),a
 	ret
 

@@ -155,7 +155,7 @@
 
 	.if NARGS >= 2
 	.if \1 == r
-		wait1 \2
+		rest \2
 		.shift
 		.shift
 	.else
@@ -193,7 +193,7 @@
 
 	.if NARGS >= 2
 	.if \1 == r
-		wait1 \2*BEAT
+		rest \2*BEAT
 		.shift
 		.shift
 	.else
@@ -206,7 +206,7 @@
 
 		.if NOTE_END_WAIT != 0
 			.db \2*BEAT - NOTE_END_WAIT
-			wait1 NOTE_END_WAIT
+			rest NOTE_END_WAIT
 		.else
 			.db \2*BEAT
 		.endif

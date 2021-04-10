@@ -6537,8 +6537,8 @@ interactionCodec5:
 	jp playSound
 
 @sounds:
-	.db SND_ECHO
-	.db SND_CURRENT
+	.db SND_ECHOES
+	.db SND_CURRENTS
 	.db SND_AGES
 
 
@@ -7360,7 +7360,7 @@ _greatFairy_subid1:
 	jr nz,@state1
 
 @state0:
-	ld a,SND_POP
+	ld a,SND_PIECE_OF_POWER
 	call playSound
 
 	call _greatFairy_initialize
@@ -7630,7 +7630,7 @@ interactiond7_makuSeed:
 	ld (hl),$58
 	ld l,Interaction.xh
 	ld (hl),$78
-	ld a,SND_POP
+	ld a,SND_PIECE_OF_POWER
 	call playSound
 	ld a,$03
 	call fadeinFromWhiteWithDelay

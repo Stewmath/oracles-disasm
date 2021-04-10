@@ -2851,7 +2851,7 @@ func_03_7619:
 	call clearMemory
 	call clearScreenVariablesAndWramBank1
 	call refreshObjectGfx
-	ld a,MUS_FAIRY
+	ld a,MUS_FAIRY_FOUNTAIN
 	call playSound
 	call _cleanSeas_incState
 	xor a

@@ -319,7 +319,7 @@ updateTextbox:
 	add $04
 	ld (wTextIndexH),a
 	call _checkInitialTextCommands
-	ld a,SND_CRANEGAME
+	ld a,SND_FILLED_HEART_CONTAINER
 	call playSound
 	ld a,TREASURE_HEART_CONTAINER
 	ld c,$04

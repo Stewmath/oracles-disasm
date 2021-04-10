@@ -1154,7 +1154,7 @@ nayruScript07:
 
 	setanimation $07
 	writeobjectbyte Interaction.direction, $07
-	asm15 playSound, SND_ECHO
+	asm15 playSound, SND_ECHOES
 	wait 210
 
 	xorcfc0bit 0
@@ -1350,7 +1350,7 @@ ralph_updateGravity:
 
 ;;
 ralph_restoreMusic:
-	ld a,MUS_OVERWORLD_PRES
+	ld a,MUS_OVERWORLD
 	ld (wActiveMusic2),a
 	ld (wActiveMusic),a
 	jp playSound

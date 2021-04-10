@@ -3,7 +3,7 @@
 	MUS_NONE                  db ; $00
 	MUS_TITLESCREEN           db ; $01
 	MUS_MINIGAME              db ; $02
-	MUS_OVERWORLD_PRES        db ; $03
+	MUS_OVERWORLD             db ; $03
 
 .ifdef ROM_AGES
 	MUS_OVERWORLD_PAST        db ; $04
@@ -37,7 +37,7 @@
 
 	MUS_ESSENCE_ROOM          db ; $0d
 	MUS_INDOORS               db ; $0e
-	MUS_FAIRY                 db ; $0f
+	MUS_FAIRY_FOUNTAIN        db ; $0f
 	MUS_GET_ESSENCE           db ; $10
 	MUS_FILE_SELECT           db ; $11
 
@@ -174,7 +174,7 @@
 	SND_DAMAGE_LINK         db ; $5f
 	SND_HEARTBEEP           db ; $60
 	SND_RUPEE               db ; $61
-	SND_HEART_LADX          db ; $62 ; Definitely sounds like the LADX sound effect
+	SND_GOHMA_SPAWN_GEL     db ; $62 ; Similar to LADX heart sound effect
 	SND_BOSS_DAMAGE         db ; $63 ; When a boss takes damage
 	SND_LINK_DEAD           db ; $64
 	SND_LINK_FALL           db ; $65
@@ -194,7 +194,7 @@
 	SND_KILLENEMY           db ; $73
 	SND_SWORDSLASH          db ; $74
 	SND_UNKNOWN5            db ; $75 ; A type of sword slash, blade trap, ricky punch
-	SND_SWITCHHOOK          db ; $76 ; Also played when using shield
+	SND_SHIELD              db ; $76 ; Also played when using shield
 	SND_DROPESSENCE         db ; $77
 	SND_BOOMERANG           db ; $78
 	SND_BIG_EXPLOSION       db ; $79
@@ -238,8 +238,8 @@
 	SND_SPLASH              db ; $87
 	SND_LINK_SWIM           db ; $88
 	SND_TEXT_2              db ; $89
-	SND_POP                 db ; $8a ; Again no PoP in this game, but a similar sound
-	SND_CRANEGAME           db ; $8b ; From LADX, obtained something in crane game
+	SND_PIECE_OF_POWER      db ; $8a ; Again no PoP in this game, but a similar sound
+	SND_FILLED_HEART_CONTAINER db ; $8b ; Plays after getting 4 heart pieces
 	SND_UNKNOWN7            db ; $8c
 	SND_TELEPORT            db ; $8d
 
@@ -283,20 +283,20 @@
 .endif
 
 	SND_COMPASS             db ; $a2
-	SND_LAND                db ; $a3 ; Probably used for PEGASUS SEEDS
+	SND_LAND                db ; $a3
 	SND_BEAM                db ; $a4
 	SND_BREAK_ROCK          db ; $a5
-	SND_STRIKE              db ; $a6 ; Might be wrong here
+	SND_STRIKE              db ; $a6
 	SND_SWITCH_HOOK         db ; $a7
 	SND_VERAN_FAIRY_ATTACK  db ; $a8
 	SND_DIG                 db ; $a9
 	SND_WAVE                db ; $aa
-	SND_SWORD_OBTAINED      db ; $ab ; Used when you get your sword in Seasons
+	SND_SWORD_OBTAINED      db ; $ab
 	SND_SHOCK               db ; $ac
 
 .ifdef ROM_AGES
-	SND_ECHO                db ; $ad ; Tune of echos
-	SND_CURRENT             db ; $ae
+	SND_ECHOES              db ; $ad ; Tune of echos
+	SND_CURRENTS            db ; $ae
 	SND_AGES                db ; $af
 .else
 	SND_ad                  db ; $ad (blank)
@@ -324,7 +324,7 @@
 	SND_ENDLESS             db ; $b9 ; B4 but endless
 	SND_BEAM1               db ; $ba ; Sounds like the Beamos shooting but isn't
 	SND_BEAM2               db ; $bb ; Not sure. Kinda sounds like another beam
-	SND_BIG_EXPLOSION_2     db ; $bc ;Something massive getting destroyed
+	SND_BIG_EXPLOSION_2     db ; $bc ; Something massive getting destroyed
 
 .ifdef ROM_AGES
 	SND_bd                  db ; $bd (blank)
@@ -333,7 +333,7 @@
 .endif
 
 	SND_VERAN_PROJECTILE    db ; $be ; Used for Veran's projectile attack in her possessed forms
-	SND_CHARGE              db ; $bf ; Might be unused; sounds similar to SND_TINGLE
+	SND_BLUE_STALFOS_CHARGE db ; $bf ; Ages D8 miniboss charging its projectile
 	SND_TRANSFORM           db ; $c0 ; LADX sound where nightmare transforms into Dethyl
 	SND_RESTORE             db ; $c1 ; Used in ie. the ending Seasons cutscene when seasons are restored
 	SND_FLOODGATES          db ; $c2 ; Floodgates outside d3 in Seasons

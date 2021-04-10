@@ -52316,3 +52316,8 @@ musicfbf0a:
 	note b2  $0f
 	goto musicfbf0a
 	cmdff
+
+
+.ifdef BUILD_VANILLA
+	.dsb 10 $ff
+.endif
