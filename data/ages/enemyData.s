@@ -126,7 +126,7 @@ enemyData:
 	/* 0x6d */ m_EnemyData $00 $00 $00 $00
 	/* 0x6e */ m_EnemyData $00 $00 $00 $00
 	/* 0x6f */ m_EnemyData $00 $00 $00 $00
-	/* 0x70 */ m_EnemyData $ad $c4 $1c $50
+	/* 0x70 */ m_EnemyData $ad $ff $1c $50
 	/* 0x71 */ m_EnemyData $af $c4 $1d $20
 	/* 0x72 */ m_EnemyData $b1 $c4 $1e $10
 	/* 0x73 */ m_EnemyData $b4 $c4 enemy73SubidData

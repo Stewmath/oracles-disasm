@@ -239,9 +239,10 @@
 	ENEMYCOLLISION_GANON_TRIDENT			db ; $7b/-
 	ENEMYCOLLISION_VERAN_SPIDERWEB			db ; $7c/-
 
-	; Added for CROSSITEMS branch
+	; Added for CROSSITEMS branch (undead enemies damaged by the rod)
 	ENEMYCOLLISION_UNDEAD				db ; $7d/-: Stalfos
 	ENEMYCOLLISION_BURNABLE_UNDEAD			db ; $7e/- (shrouded stalfos)
+	ENEMYCOLLISION_GIANT_GHINI			db ; $7f/-
 
 .else; ROM_SEASONS
 	ENEMYCOLLISION_POE_SISTER_FLAME			db ; -/$6c

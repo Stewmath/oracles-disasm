@@ -537,3 +537,7 @@ objectCollisionTable:
 	; ENEMYCOLLISION_BURNABLE_UNDEAD (0x7e)
 	.db $02 $10 $0f $0f $08 $09 $09 $0a $0a $08 $08 $0a $0d $2e $08 $25
 	.db $00 $00 $00 $22 $08 $2f $09 $22 $0a $09 $20 $34 $08 $28 $29 $00
+
+	; ENEMYCOLLISION_GIANT_GHINI (0x7f)
+	.db $02 $06 $05 $05 $21 $21 $21 $21 $21 $21 $21 $21 $00 $21 $1c $00
+	.db $00 $00 $00 $1c $21 $2d $21 $1c $21 $21 $20 $20 $21 $20 $20 $00
