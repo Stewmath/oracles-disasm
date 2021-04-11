@@ -38,3 +38,9 @@ soundbbChannel7:
 	cmdf0 $10
 	note $36 $02
 	cmdff
+
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff $ff
+.endif
+.endif

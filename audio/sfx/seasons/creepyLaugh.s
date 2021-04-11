@@ -1,4 +1,5 @@
 soundcfStart:
+
 soundcfChannel2:
 	duty $00
 	env $0 $01

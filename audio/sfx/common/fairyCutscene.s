@@ -80,3 +80,9 @@ sound91Channel2:
 	vol $1
 	.db $07 $bf $02
 	cmdff
+
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff
+.endif
+.endif

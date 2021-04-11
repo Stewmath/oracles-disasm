@@ -371,7 +371,7 @@
 .endif
 
 	SND_LIGHTNING           db ; $d2
-	SND_WIND                db ; $d3 ; Used in the raft cutscene before d3
+	SND_WIND                db ; $d3 ; This is a bit different in Ages/Seasons.
 
 .ifdef ROM_AGES
 	SND_TIMEWARP_COMPLETED  db ; $d4

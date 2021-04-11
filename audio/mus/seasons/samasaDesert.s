@@ -1,6 +1,5 @@
 sound35Start:
-; $efa38
-; @addr{efa38}
+
 sound35Channel1:
 	vibrato $00
 	env $0 $00
@@ -373,8 +372,7 @@ musicefa3e:
 	env $0 $00
 	goto musicefa3e
 	cmdff
-; $efcb4
-; @addr{efcb4}
+
 sound35Channel4:
 musicefcb4:
 	duty $0c
@@ -621,8 +619,7 @@ musicefcb4:
 	rest $21
 	goto musicefcb4
 	cmdff
-; $efe8d
-; @addr{efe8d}
+
 sound35Channel0:
 musicefe8d:
 	duty $02
@@ -702,5 +699,6 @@ musicefe8d:
 	env $0 $04
 	note a3  $48
 	goto musicefe8d
-sound35Channel6:
 	cmdff
+
+.define sound35Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

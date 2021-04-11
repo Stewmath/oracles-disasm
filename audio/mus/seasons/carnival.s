@@ -1,6 +1,5 @@
 sound08Start:
-; $eeb61
-; @addr{eeb61}
+
 sound08Channel1:
 	vibrato $00
 	env $0 $03
@@ -101,8 +100,7 @@ musiceeb67:
 	env $0 $03
 	goto musiceeb67
 	cmdff
-; $eec24
-; @addr{eec24}
+
 sound08Channel0:
 	vibrato $00
 	env $0 $03
@@ -175,8 +173,7 @@ musiceec2a:
 	note b2  $0e
 	goto musiceec2a
 	cmdff
-; $eecaf
-; @addr{eecaf}
+
 sound08Channel4:
 	duty $0c
 musiceecb1:
@@ -238,13 +235,12 @@ musiceecb1:
 	note d6  $1c
 	rest $1c
 	goto musiceecb1
-sound08Channel6:
 	cmdff
 
+.define sound08Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
 
-    
-; $eed26
-; GAP
+	; Unused data?
+
 	note c1  $6a
 	.db $6e ; ???
 	note cs1 $33

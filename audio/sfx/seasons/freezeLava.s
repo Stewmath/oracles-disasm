@@ -1,4 +1,5 @@
 sound7aStart:
+
 sound7aChannel7:
 	cmdf0 $f0
 	note $75 $09

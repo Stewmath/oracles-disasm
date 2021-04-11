@@ -1,5 +1,5 @@
 sound0bStart:
-; @addr{ed6d8}
+
 sound0bChannel1:
 	vibrato $32
 	env $0 $00
@@ -383,5 +383,6 @@ musiced8d1:
 	note g2  $07
 	rest $15
 	goto musiced8d1
-sound0bChannel6:
 	cmdff
+
+.define sound0bChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

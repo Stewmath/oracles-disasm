@@ -1,4 +1,5 @@
 soundb5Start:
+
 soundb5Channel7:
 	cmdf0 $00
 	note $00 $01

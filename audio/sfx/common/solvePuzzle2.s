@@ -28,6 +28,8 @@ sound5bChannel3:
 	note b6  $23
 	cmdff
 
+.ifdef ROM_AGES
 .ifdef BUILD_VANILLA
 	cmdff
+.endif
 .endif

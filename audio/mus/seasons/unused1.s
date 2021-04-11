@@ -1,4 +1,5 @@
 sound07Start:
+
 sound07Channel1:
 	vibrato $f1
 	env $0 $00

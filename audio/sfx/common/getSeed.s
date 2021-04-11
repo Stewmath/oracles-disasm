@@ -25,3 +25,9 @@ sound5eChannel2:
 	vol $2
 	note as7 $04
 	cmdff
+
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff
+.endif
+.endif

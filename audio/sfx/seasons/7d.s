@@ -1,4 +1,5 @@
 sound7dStart:
+
 sound7dChannel2:
 	duty $02
 	vol $f

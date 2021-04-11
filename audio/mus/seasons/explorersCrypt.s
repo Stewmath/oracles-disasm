@@ -1,6 +1,5 @@
-; $f0dab
 sound19Start:
-; @addr{f0dab}
+
 sound19Channel1:
 	vibrato $f1
 	env $0 $00
@@ -234,8 +233,7 @@ musicf0db2:
 	env $0 $00
 	goto musicf0db2
 	cmdff
-; $f0f43
-; @addr{f0f43}
+
 sound19Channel0:
 	vibrato $f1
 	env $0 $00
@@ -456,8 +454,7 @@ musicf0f4a:
 	env $0 $00
 	goto musicf0f4a
 	cmdff
-; $f10cb
-; @addr{f10cb}
+
 sound19Channel4:
 	cmdf2
 musicf10cc:
@@ -714,8 +711,7 @@ musicf10cc:
 	note cs2 $0a
 	goto musicf10cc
 	cmdff
-; $f12c4
-; @addr{f12c4}
+
 sound19Channel6:
 	cmdf2
 musicf12c5:

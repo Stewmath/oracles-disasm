@@ -1,6 +1,5 @@
-; $f212a
 sound16Start:
-; @addr{f212a}
+
 sound16Channel1:
 	vibrato $f1
 	env $0 $00
@@ -415,8 +414,7 @@ musicf2144:
 	note g4  $09
 	goto musicf2144
 	cmdff
-; $f2437
-; @addr{f2437}
+
 sound16Channel0:
 	vol $0
 	note gs3 $3f
@@ -655,8 +653,7 @@ musicf2441:
 	rest $3f
 	goto musicf2441
 	cmdff
-; $f25d9
-; @addr{f25d9}
+
 sound16Channel4:
 	rest $3f
 	cmdf2
@@ -1018,8 +1015,7 @@ musicf25dc:
 	rest $3f
 	goto musicf25dc
 	cmdff
-; $f28a6
-; @addr{f28a6}
+
 sound16Channel6:
 	rest $3f
 	cmdf2

@@ -1,6 +1,5 @@
-; $f1408
 sound17Start:
-; @addr{f1408}
+
 sound17Channel1:
 	vibrato $e1
 	env $0 $00
@@ -410,8 +409,7 @@ musicf1423:
 	note fs3 $03
 	goto musicf1423
 	cmdff
-; $f169d
-; @addr{f169d}
+
 sound17Channel0:
 	vol $0
 	note gs3 $1c
@@ -827,8 +825,7 @@ musicf16a7:
 	rest $2a
 	goto musicf16a7
 	cmdff
-; $f193e
-; @addr{f193e}
+
 sound17Channel4:
 	rest $1c
 	cmdf2
@@ -1227,8 +1224,7 @@ musicf1941:
 	rest $19
 	goto musicf1941
 	cmdff
-; $f1c55
-; @addr{f1c55}
+
 sound17Channel6:
 	rest $1c
 	cmdf2

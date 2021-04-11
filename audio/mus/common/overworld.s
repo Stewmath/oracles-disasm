@@ -1585,4 +1585,10 @@ musiced0a3:
 	goto musiced0a3
 	cmdff
 
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff $ff $ff
+.endif
+.endif
+
 .define sound03Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

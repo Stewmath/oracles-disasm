@@ -1,4 +1,5 @@
 sound05Start:
+
 sound05Channel1:
 ; Measure 1-2
 	vol $0
@@ -845,5 +846,6 @@ musiceeac7:
 	note e5  $10
 	note d5  $10
 	goto musiceeac7
-sound05Channel6:
 	cmdff
+
+.define sound05Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

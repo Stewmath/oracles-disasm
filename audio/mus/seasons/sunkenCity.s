@@ -1,6 +1,5 @@
 sound0cStart:
-; $ed985
-; @addr{ed985}
+
 sound0cChannel1:
 	vibrato $e1
 	env $0 $00
@@ -127,8 +126,7 @@ musiced98b:
 	duty $02
 	goto musiced98b
 	cmdff
-; $eda5a
-; @addr{eda5a}
+
 sound0cChannel0:
 	vibrato $00
 	env $0 $03
@@ -210,9 +208,7 @@ musiceda60:
 	duty $02
 	goto musiceda60
 	cmdff
-; $edaef
-; BACKWARD GAP
-; @addr{edaef}
+
 sound0cChannel4:
 musicedaef:
 	rest $ff
@@ -252,5 +248,6 @@ musicedaef:
 	note g2  $07
 	rest $07
 	goto musicedaef
-sound0cChannel6:
 	cmdff
+
+.define sound0cChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

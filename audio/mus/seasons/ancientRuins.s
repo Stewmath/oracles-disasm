@@ -1,6 +1,5 @@
 sound18Start:
-; $f340c
-; @addr{f340c}
+
 sound18Channel1:
 	vibrato $f1
 	env $0 $00
@@ -213,8 +212,7 @@ musicf3418:
 	note cs4 $0e
 	goto musicf3418
 	cmdff
-; $f358e
-; @addr{f358e}
+
 sound18Channel0:
 	vol $0
 	note gs3 $1c
@@ -471,8 +469,7 @@ musicf3598:
 	rest $0b
 	goto musicf3598
 	cmdff
-; $f3750
-; @addr{f3750}
+
 sound18Channel4:
 	rest $1c
 	cmdf2
@@ -727,5 +724,6 @@ musicf3753:
 	note ds2 $07
 	note e2  $1c
 	goto musicf3753
-sound18Channel6:
 	cmdff
+
+.define sound18Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

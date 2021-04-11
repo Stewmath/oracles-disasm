@@ -1,4 +1,5 @@
 soundd1Start:
+
 soundd1Channel2:
 	duty $00
 	vol $9

@@ -1,6 +1,5 @@
-; $ebfe9
 sounda6Start:
-; @addr{ebfe9}
+
 sounda6Channel7:
 	cmdf0 $80
 	note $54 $01

@@ -1,6 +1,5 @@
 sound14Start:
-; $f09b4
-; @addr{f09b4}
+
 sound14Channel1:
 	vibrato $00
 	env $0 $00
@@ -154,8 +153,7 @@ musicf09bb:
 	rest $08
 	goto musicf09bb
 	cmdff
-; $f0ad4
-; @addr{f0ad4}
+
 sound14Channel0:
 	vibrato $00
 	env $0 $00
@@ -319,8 +317,7 @@ musicf0adb:
 	rest $08
 	goto musicf0adb
 	cmdff
-; $f0bff
-; @addr{f0bff}
+
 sound14Channel4:
 	cmdf2
 musicf0c00:
@@ -393,3 +390,5 @@ musicf0c00:
 	note c2  $10
 	goto musicf0c00
 	cmdff
+
+.define sound14Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

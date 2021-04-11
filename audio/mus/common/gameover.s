@@ -301,4 +301,10 @@ musice92cc:
 	goto musice92cc
 	cmdff
 
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff $ff
+.endif
+.endif
+
 .define sound09Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

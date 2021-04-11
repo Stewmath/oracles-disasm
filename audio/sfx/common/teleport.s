@@ -168,6 +168,8 @@ sound8dChannel2:
 	note d6  $01
 	cmdff
 
+.ifdef ROM_AGES
 .ifdef BUILD_VANILLA
 	cmdff
+.endif
 .endif

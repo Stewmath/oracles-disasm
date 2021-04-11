@@ -662,4 +662,10 @@ musice8357:
 	goto musice8357
 	cmdff
 
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff $ff $ff
+.endif
+.endif
+
 .define sound0eChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

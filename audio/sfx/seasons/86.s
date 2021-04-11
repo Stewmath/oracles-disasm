@@ -1,4 +1,5 @@
 sound86Start:
+
 sound86Channel2:
 	duty $02
 	vol $7

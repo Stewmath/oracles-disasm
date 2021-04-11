@@ -17,3 +17,9 @@ sound88Channel2:
 	cmdf8 $16
 	note b3  $05
 	cmdff
+
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff
+.endif
+.endif

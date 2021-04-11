@@ -1,4 +1,5 @@
 sound12Start:
+
 sound12Channel1:
 	vibrato $00
 	env $0 $03
@@ -155,5 +156,6 @@ musicf0d5b:
 	note e4  $2a
 	rest $62
 	goto musicf0d5b
-sound12Channel6:
 	cmdff
+
+.define sound12Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

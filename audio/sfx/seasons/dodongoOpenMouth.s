@@ -1,4 +1,5 @@
 sound7fStart:
+
 sound7fChannel2:
 	duty $00
 	vol $9

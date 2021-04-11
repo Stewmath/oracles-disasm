@@ -1,6 +1,5 @@
-; $f02f4
 sound1aStart:
-; @addr{f02f4}
+
 sound1aChannel1:
 musicf02f4:
 	vibrato $e1
@@ -168,8 +167,7 @@ musicf02f4:
 	rest $24
 	goto musicf02f4
 	cmdff
-; $f0415
-; @addr{f0415}
+
 sound1aChannel0:
 	vibrato $e1
 	env $0 $00
@@ -336,8 +334,7 @@ musicf041c:
 	rest $57
 	goto musicf041c
 	cmdff
-; $f0535
-; @addr{f0535}
+
 sound1aChannel4:
 	cmdf2
 musicf0536:
@@ -411,8 +408,7 @@ musicf0536:
 	rest $8a
 	goto musicf0536
 	cmdff
-; $f05c2
-; @addr{f05c2}
+
 sound1aChannel6:
 	cmdf2
 musicf05c3:

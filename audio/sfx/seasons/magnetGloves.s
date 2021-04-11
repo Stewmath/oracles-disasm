@@ -1,4 +1,5 @@
 soundafStart:
+
 soundafChannel2:
 	vol $9
 	note f6  $01

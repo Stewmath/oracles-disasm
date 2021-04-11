@@ -1,6 +1,5 @@
 sound04Start:
-; $edce4
-; @addr{edce4}
+
 sound04Channel1:
 	vibrato $00
 	env $0 $00
@@ -68,8 +67,7 @@ musicedce8:
 	env $0 $00
 	goto musicedce8
 	cmdff
-; $edd65
-; @addr{edd65}
+
 sound04Channel0:
 	vibrato $00
 	env $0 $00
@@ -144,8 +142,7 @@ musicedd69:
 	env $0 $00
 	goto musicedd69
 	cmdff
-; $eddee
-; @addr{eddee}
+
 sound04Channel4:
 musiceddee:
 	duty $0e
@@ -238,5 +235,10 @@ musiceddee:
 	note a2  $09
 	rest $24
 	goto musiceddee
-sound04Channel6:
 	cmdff
+
+.ifdef BUILD_VANILLA
+	.dsb 6 $ff
+.endif
+
+.define sound04Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,5 @@
-; $f2e82
 sound22Start:
-; @addr{f2e82}
+
 sound22Channel1:
 	vibrato $00
 	env $0 $04
@@ -264,8 +263,7 @@ musicf2e89:
 	note e4  $0e
 	goto musicf2e89
 	cmdff
-; $f3045
-; @addr{f3045}
+
 sound22Channel0:
 	vibrato $00
 	env $0 $03
@@ -456,8 +454,7 @@ musicf304c:
 	note as3 $0e
 	goto musicf304c
 	cmdff
-; $f3193
-; @addr{f3193}
+
 sound22Channel4:
 	cmdf2
 musicf3194:
@@ -683,8 +680,7 @@ musicf3194:
 	note fs2 $07
 	goto musicf3194
 	cmdff
-; $f3350
-; @addr{f3350}
+
 sound22Channel6:
 	cmdf2
 musicf3351:

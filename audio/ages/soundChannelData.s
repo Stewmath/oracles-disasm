@@ -64,7 +64,7 @@ soundbdChannel2:
 .include "audio/mus/common/essence.s"
 .include "audio/sfx/ages/echoes.s"
 .include "audio/mus/ages/underwater.s"
-.include "audio/mus/common/makuTree.s"
+.include "audio/mus/ages/makuTree.s"
 
 .ifdef BUILD_VANILLA
 	.dsb 162 $ff
@@ -81,9 +81,9 @@ bank3aChannelFallback:
 
 
 .include "audio/mus/common/indoors.s"
-.include "audio/mus/common/titleScreen.s"
+.include "audio/mus/common/titlescreen.s"
 .include "audio/mus/common/miniboss.s"
-.include "audio/mus/common/gameOver.s"
+.include "audio/mus/common/gameover.s"
 .include "audio/mus/common/cave.s"
 .include "audio/mus/common/getEssence.s"
 .include "audio/sfx/common/swordSlash.s"
@@ -109,7 +109,7 @@ bank3aChannelFallback:
 .include "audio/sfx/common/unknown4.s"
 .include "audio/sfx/common/bossDead.s"
 .include "audio/sfx/common/lightning.s"
-.include "audio/sfx/common/wind.s"
+.include "audio/sfx/ages/wind.s"
 .include "audio/sfx/common/pirateBell.s"
 .include "audio/sfx/common/magicPowder.s"
 .include "audio/sfx/common/menuMove.s"
