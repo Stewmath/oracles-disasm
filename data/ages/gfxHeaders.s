@@ -489,9 +489,17 @@ gfxHeader6f:
 gfxHeader70:
 gfxHeader71:
 gfxHeader72:
+	m_GfxHeader unk_067e91 $d002 $23|$80
+	m_GfxHeader unk_067eab $d402 $23
 gfxHeader73:
+	m_GfxHeader unk_067ec0 $d002 $17|$80
+	m_GfxHeader unk_067ed5 $d402 $17
 gfxHeader74:
+	m_GfxHeader unk_067ee5 $d8e3 $07|$80
+	m_GfxHeader unk_067f7f $dce3 $07
 gfxHeader75:
+	m_GfxHeader unk_067f2e $d8e3 $07|$80
+	m_GfxHeader unk_067fa5 $dce3 $07
 gfxHeader76:
 gfxHeader77:
 gfxHeader78:
