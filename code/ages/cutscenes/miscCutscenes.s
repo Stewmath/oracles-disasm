@@ -3062,7 +3062,7 @@ func_03_7619:
 	ld (wRoomPack),a
 	ld a,(wActiveRoom)
 	ld (wLoadingRoom),a
-	ld a,MUS_CAVE
+	ld a,$36
 	ld (wEnteredWarpPosition),a
 	ld a,(wActiveMusic2)
 	ld (wActiveMusic),a
