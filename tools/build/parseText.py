@@ -40,6 +40,8 @@ while len(sys.argv) > argIndex:
     argIndex+=1
     if s == '--vwf':
         useVwf = True
+        spacingFilename = sys.argv[argIndex]
+        argIndex+=1
     if s == '--EU':
         EUText = True
 
@@ -252,7 +254,7 @@ class TextState:
 
 # vwf stuff
 if useVwf:
-    spacingFile = open('text/spacing.bin', 'rb')
+    spacingFile = open(spacingFilename, 'rb')
     characterSpacing = bytearray(spacingFile.read())
     spacingFile.close()
 else:
