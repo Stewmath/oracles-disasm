@@ -40,6 +40,8 @@ while len(sys.argv) > argIndex:
     argIndex+=1
     if s == '--vwf':
         useVwf = True
+        spacingFilename = sys.argv[argIndex]
+        argIndex+=1
     if s == '--EU':
         EUText = True
 
@@ -252,7 +254,7 @@ class TextState:
 
 # vwf stuff
 if useVwf:
-    spacingFile = open('text/spacing.bin', 'rb')
+    spacingFile = open(spacingFilename, 'rb')
     characterSpacing = bytearray(spacingFile.read())
     spacingFile.close()
 else:
@@ -437,7 +439,7 @@ def parseTextFile(textFile, isDictionary):
                             validToken = True
                             textStruct.data.append(0x0c)
                             textStruct.data.append(1<<3)
-                            addWidth(state, 8*2)
+                            addWidth(state, 8*2) # Could actually be up to 3 digits so be careful
                         elif textEq('opt'):
                             validToken = True
                             textStruct.data.append(0x0c)
@@ -456,7 +458,7 @@ def parseTextFile(textFile, isDictionary):
                             validToken = True
                             textStruct.data.append(0x0c)
                             textStruct.data.append(6<<3)
-                            addWidth(state, 8*2)
+                            addWidth(state, 8*2) # Could actually be up to 3 digits so be careful
                         elif textEq('slow'):
                             validToken = True
                             textStruct.data.append(0x0c)
@@ -591,7 +593,7 @@ def parseTextFile(textFile, isDictionary):
                                     textStruct.data.pop()
 
                                     state.lineWidth -= characterSpacing[ord(' ')]
-                                    print('Trimming space for item in ' + textStruct.name)
+                                    print('Trimming space for item in ' + textStruct.getPrimaryName())
 
                                 # Align to the next tile
                                 if state.lineWidth & 7 != 0:
@@ -628,9 +630,9 @@ def parseTextFile(textFile, isDictionary):
                                 # Check if separate colors are too close
                                 # together
                                 if colorCmp(state.currentTileColor,p):
-                                    print('Red/blue colors too close together in "' + textStruct.name + '", adding extra space')
+                                    print('Red/blue colors too close together in "' + textStruct.getPrimaryName() + '", adding extra space')
                                     addWidth(state, characterSpacing[ord(' ')])
-                                    textStruct.data.append(' ')
+                                    textStruct.data.append(ord(' '))
 
                                 # Special behaviour for vwf: in order to
                                 # prevent colors from "leaking", after using

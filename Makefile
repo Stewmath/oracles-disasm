@@ -1,3 +1,7 @@
+# VWF Edition: I leave "BUILD_VANILLA" set to true to minimize the patch size
+# and any possible side-effects. Stuff that must be changed (text) is removed
+# from those checks.
+
 # If this is true, certain precompressed assets will be used from the
 # "precompressed" folder, and sections will be marked with "FORCE" instead of
 # "FREE" or "SUPERFREE". This is all to make sure the rom builds as an exact
@@ -97,6 +101,12 @@ OPTIMIZE := -o
 endif
 
 
+# VWF stuff
+FONT_NAME         = $(shell cat fontfile.txt)
+FONT_FILE         = fonts/$(FONT_NAME).bin
+FONT_SPACING_FILE = fonts/$(FONT_NAME)_spacing.bin
+
+
 # Removal of temporary files is annoying, disable it.
 .PRECIOUS:
 
@@ -137,6 +147,7 @@ build/$(GAME).o: $(MAIN_ASM_FILES)
 build/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(COMMONDATAFILES) $(GAMEDATAFILES)
 build/$(GAME).o: build/tileset_layouts/tileMappingTable.bin build/tileset_layouts/tileMappingIndexData.bin build/tileset_layouts/tileMappingAttributeData.bin
 build/$(GAME).o: rooms/$(GAME)/*.bin
+build/$(GAME).o: build/gfx/gfx_font.cmp build/font_spacing.bin
 
 build/audio.o: $(AUDIO_FILES)
 build/*.o: $(COMMON_INCLUDE_FILES) Makefile
@@ -232,14 +243,6 @@ build/rooms/room%.cmp: precompressed/rooms/$(GAME)/room%.cmp | build/rooms
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textData.s: precompressed/text/$(GAME)/textData.s | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
-build/textDefines.s: precompressed/text/$(GAME)/textDefines.s | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
 else
 
 # The parseTilesetLayouts script generates all of these files.
@@ -281,14 +284,26 @@ build/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
 
+endif
+
 # Parse & compress text
 build/textData.s: text/$(GAME)/text.yaml text/$(GAME)/dict.yaml tools/build/parseText.py | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.yaml $< $@ $$(($(TEXT_INSERT_ADDRESS)))
+	@$(PYTHON) tools/build/parseText.py text/$(GAME)/dict.yaml $< $@ $$(($(TEXT_INSERT_ADDRESS))) --vwf $(FONT_SPACING_FILE)
 
 build/textDefines.s: build/textData.s
 
-endif
+
+# VWF stuff: managing font selection
+
+build/textData.s: fontfile.txt
+
+build/gfx/gfx_font.cmp: $(FONT_FILE) fontfile.txt
+	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
+	@cat $(FONT_FILE) >> $@
+
+build/font_spacing.bin: $(FONT_SPACING_FILE) fontfile.txt
+	cp $(FONT_SPACING_FILE) $@
 
 
 build/data: | build

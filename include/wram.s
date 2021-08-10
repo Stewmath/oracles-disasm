@@ -3724,6 +3724,21 @@ w7SecretGenerationBuffer: ; $d478
 ; causing all existing data to be shifted forward by one bit.
 	dsb 20
 
+
+; VWF variables
+w7TmpBuf:
+	dsb $20
+w7TextBufPosition:
+	db
+w7TextCharOffset:
+	db
+w7TextCharIndex:
+	db
+w7InvTextUnfinishedCharacter:
+	db
+w7InvTextHaltOnNewline:
+	db
+
 .ENDS
 
 

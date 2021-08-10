@@ -527,3 +527,12 @@ oamData_15_4e0c:
 	.include "build/data/treasureDisplayData.s"
 
 .ends
+
+
+; VWF: This doesn't fit in Bank 3f, so put it in a superfree section
+.SECTION TextSpacing SUPERFREE
+
+textSpacing:
+	.incbin "build/font_spacing.bin"
+
+.ENDS
