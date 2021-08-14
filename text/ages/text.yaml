@@ -3833,6 +3833,12 @@ groups:
       \pos(2)\call(TX_0a31)\stop\n
     null_terminator: False
 
+  - name: TX_0a3c
+    index: 0x3c
+    text: >-
+      10 \col(1)Scent Seeds\col(0)
+        \opt()Trade   \opt()Don't
+
   - name: TX_0a33
     index: 0x33
     text: >-
@@ -3889,12 +3895,6 @@ groups:
     index: 0x3b
     text: >-
       You've got all your items!!!
-
-  - name: TX_0a3c
-    index: 0x3c
-    text: >-
-      10 \col(1)Scent Seeds\col(0)
-        \opt()Trade   \opt()Don't
 
   - name:
     - TX_0a3d
