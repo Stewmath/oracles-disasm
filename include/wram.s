@@ -3515,6 +3515,7 @@ w7TextDisplayState: ; $d0c0
 
 w7d0c1: ; $d0c1
 ; When bit 0 is set, text skips to the end of a line (A or B was pressed)
+; When bit 2 is set, an "\opt()" command has been encountered.
 ; When bit 3 is set, an option prompt has already been shown?
 ; When bit 4 is set, an extra text index will be shown when this text is done.
 ; See _getExtraTextIndex.
