@@ -4633,6 +4633,7 @@ groups:
       \pos(2)\col(1)Gasha Seed\col(0)
 
       300 Rupees each!
+
         \opt()OK   \opt()No thanks\cmd8(0x0e)
 
   - name: TX_0d06
@@ -4770,9 +4771,7 @@ groups:
     index: 0x0f
     text: >-
       One out of two chests will have treasure. You'll get a nice gift if you can
-      open the right chest three times in
-
-      a row!
+      open the right chest three times in a row!
 
       Each try costs 10 Rupees.
         \opt()OK   \opt()No thanks
