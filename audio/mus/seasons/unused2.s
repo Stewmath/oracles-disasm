@@ -1,6 +1,5 @@
 sound25Start:
-; $fbd7a
-; @addr{fbd7a}
+
 sound25Channel1:
 	vibrato $00
 	env $0 $04
@@ -135,8 +134,7 @@ musicfbd80:
 	env $0 $04
 	goto musicfbd80
 	cmdff
-; $fbe7a
-; @addr{fbe7a}
+
 sound25Channel0:
 	vibrato $00
 	env $0 $00
@@ -215,8 +213,7 @@ musicfbe80:
 	env $0 $00
 	goto musicfbe80
 	cmdff
-; $fbf0a
-; @addr{fbf0a}
+
 sound25Channel4:
 musicfbf0a:
 	duty $0e
@@ -336,5 +333,6 @@ musicfbf0a:
 	duty $0f
 	note b2  $0f
 	goto musicfbf0a
-sound25Channel6:
 	cmdff
+
+.define sound25Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

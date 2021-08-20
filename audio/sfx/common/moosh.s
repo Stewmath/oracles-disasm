@@ -1,5 +1,4 @@
 soundc5Start:
-; @addr{eb849}
 soundc5Channel5:
 	duty $0a
 	cmdf8 $1e

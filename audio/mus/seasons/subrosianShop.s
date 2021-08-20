@@ -1,6 +1,5 @@
 sound26Start:
-; $f59c2
-; @addr{f59c2}
+
 sound26Channel1:
 	vibrato $00
 	env $0 $00
@@ -246,8 +245,7 @@ musicf59c8:
 	duty $01
 	goto musicf59c8
 	cmdff
-; $f5b55
-; @addr{f5b55}
+
 sound26Channel0:
 	vibrato $00
 	env $0 $00
@@ -437,8 +435,7 @@ musicf5b5b:
 	duty $01
 	goto musicf5b5b
 	cmdff
-; $f5c94
-; @addr{f5c94}
+
 sound26Channel4:
 musicf5c94:
 	duty $0e
@@ -602,5 +599,6 @@ musicf5c94:
 	note e3  $0e
 	rest $07
 	goto musicf5c94
-sound26Channel6:
 	cmdff
+
+.define sound26Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -3,6 +3,9 @@ sound39Start:
 sound39Channel1:
 	vibrato $00
 	env $0 $00
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	duty $00
 musicf800f:
 	vol $6
@@ -122,6 +125,9 @@ musicf800f:
 	cmdff
 
 sound39Channel0:
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	env $0 $02
 	vol $9
 musicf80d6:
@@ -213,6 +219,9 @@ musicf80d6:
 	cmdff
 
 sound39Channel4:
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 musicf8182:
 	duty $17
 	note g3  $48

@@ -3,6 +3,9 @@ sound3eStart:
 sound3eChannel1:
 	vibrato $00
 	env $0 $00
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	duty $02
 musicf83e8:
 	vol $0
@@ -586,6 +589,9 @@ musicf83e8:
 sound3eChannel0:
 	vibrato $00
 	env $0 $00
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	duty $02
 musicf87b3:
 	vol $6
@@ -1044,6 +1050,9 @@ musicf87b3:
 	cmdff
 
 sound3eChannel4:
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 musicf8b3e:
 	duty $17
 	rest $30
@@ -1220,6 +1229,9 @@ musicf8b3e:
 	cmdff
 
 sound3eChannel6:
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 musicf8c98:
 	vol $6
 	note $24 $10
@@ -1339,3 +1351,9 @@ musicf8c98:
 	note $24 $10
 	goto musicf8c98
 	cmdff
+
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff $ff $ff $ff
+.endif
+.endif

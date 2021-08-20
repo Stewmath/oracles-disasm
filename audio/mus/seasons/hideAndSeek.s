@@ -210,8 +210,7 @@ musiced6de:
 	env $0 $00
 	goto musiced6de
 	cmdff
-; $ed845
-; @addr{ed845}
+
 sound0bChannel0:
 	vibrato $00
 	env $0 $02
@@ -285,8 +284,7 @@ musiced84b:
 	note ds4 $1c
 	goto musiced84b
 	cmdff
-; $ed8cf
-; @addr{ed8cf}
+
 sound0bChannel4:
 	duty $0e
 musiced8d1:

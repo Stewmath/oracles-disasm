@@ -1,6 +1,4 @@
-; $ebf3a
 soundd4Start:
-; @addr{ebf3a}
 soundd4Channel2:
 	duty $02
 	vol $4

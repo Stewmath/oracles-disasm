@@ -1,5 +1,5 @@
 sound28Start:
-; @addr{faff6}
+
 sound28Channel1:
 	vibrato $00
 	env $0 $00
@@ -158,8 +158,7 @@ musicfaffc:
 	rest $24
 	goto musicfaffc
 	cmdff
-; $fb105
-; @addr{fb105}
+
 sound28Channel0:
 	vibrato $00
 	env $0 $00
@@ -243,8 +242,7 @@ musicfb10b:
 	duty $01
 	goto musicfb10b
 	cmdff
-; $fb193
-; @addr{fb193}
+
 sound28Channel4:
 musicfb193:
 	duty $0e
@@ -317,5 +315,6 @@ musicfb193:
 	rest $0f
 	duty $0e
 	goto musicfb193
-sound28Channel6:
 	cmdff
+
+.define sound28Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

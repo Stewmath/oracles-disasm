@@ -3,6 +3,9 @@ sound2fStart:
 sound2fChannel1:
 	vibrato $00
 	env $0 $00
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	duty $02
 musicf8204:
 	vol $c
@@ -55,6 +58,12 @@ musicf8204:
 	rest $f8
 	goto musicf8204
 	cmdff
+
+.ifdef ROM_SEASONS
+.ifdef BUILD_VANILLA
+	.db $ff $ff $ff
+.endif
+.endif
 
 .define sound2fChannel0 MUSIC_CHANNEL_FALLBACK EXPORT
 .define sound2fChannel4 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -765,6 +765,180 @@ musicf5280:
 	cmdff
 
 sound23Channel6:
+
+.ifdef ROM_SEASONS
+musicf5403:
+	rest $ff
+	rest $ff
+	rest $28
+	vol $4
+	vol $3
+	note $2a $2c
+	vol $3
+	note $2a $2c
+	vol $3
+	note $2a $24
+	vol $3
+	note $2a $08
+	vol $2
+	note $2e $16
+	vol $3
+	note $2a $42
+	vol $3
+	note $2a $2c
+	vol $2
+	note $2e $0e
+	vol $3
+	note $2a $16
+	vol $3
+	note $2a $08
+	vol $2
+	note $2e $16
+	vol $0
+	vol $3
+	note $2a $16
+	vol $4
+	vol $3
+	note $2a $2c
+	vol $3
+	note $2a $2c
+	vol $2
+	note $2e $0e
+	vol $3
+	note $2a $16
+	vol $3
+	vol $3
+	note $2a $08
+	vol $4
+	vol $2
+	note $2e $16
+	rest $16
+	vol $4
+	vol $3
+	note $2a $2c
+	vol $3
+	note $2a $2c
+	vol $2
+	note $2e $0e
+	vol $3
+	note $2a $16
+	vol $3
+	vol $3
+	note $2a $08
+	vol $4
+	vol $2
+	note $2e $16
+	rest $16
+	vol $4
+	vol $3
+	note $2a $2c
+	vol $3
+	note $2a $2c
+	vol $2
+	note $2e $0e
+	vol $3
+	note $2a $16
+	vol $3
+	vol $3
+	note $2a $08
+	vol $4
+	vol $2
+	note $2e $16
+	rest $16
+	vol $4
+	vol $3
+	note $2a $2c
+	vol $3
+	note $2a $2c
+	vol $2
+	note $2e $0e
+	vol $3
+	note $2a $16
+	vol $3
+	vol $3
+	note $2a $08
+	vol $4
+	vol $2
+	note $2e $16
+	rest $16
+	vol $4
+	vol $3
+	note $2a $2c
+	vol $3
+	note $2a $2c
+	vol $2
+	note $2e $0e
+	vol $3
+	note $2a $16
+	vol $3
+	vol $3
+	note $2a $08
+	vol $4
+	vol $2
+	note $2e $16
+	vol $2
+	note $2e $16
+	vol $3
+	note $2a $0e
+	vol $3
+	note $2a $08
+	vol $2
+	note $2e $16
+	vol $3
+	note $2a $0e
+	vol $3
+	note $2a $08
+	vol $2
+	note $2e $16
+	vol $3
+	note $2a $0e
+	vol $3
+	note $2a $08
+	vol $2
+	note $2e $16
+	vol $3
+	note $2a $0e
+	vol $3
+	note $2a $08
+	vol $2
+	note $2e $0e
+	vol $3
+	note $2a $08
+	vol $3
+	note $2a $0e
+	vol $3
+	note $2a $08
+	vol $3
+	note $2a $0e
+	vol $3
+	note $2a $16
+	vol $3
+	note $2a $16
+	vol $3
+	note $2a $08
+	vol $3
+	note $2a $07
+	vol $3
+	note $2a $07
+	vol $3
+	note $2a $08
+	vol $3
+	note $2a $07
+	vol $3
+	note $2a $07
+	vol $3
+	note $2a $08
+	vol $3
+	note $2a $07
+	vol $3
+	note $2a $07
+	vol $3
+	note $2a $08
+	goto musicf5403
+	cmdff
+
+.else ; ROM_AGES
+
 musicf5400:
 	rest $ff
 	rest $ff
@@ -886,3 +1060,4 @@ musicf5400:
 	note $2a $08
 	goto musicf5400
 	cmdff
+.endif

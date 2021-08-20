@@ -1,6 +1,5 @@
-; $f84b8
 sound3dStart:
-; @addr{f84b8}
+
 sound3dChannel1:
 ; Measure 1-4
 	vol $0
@@ -120,8 +119,7 @@ musicf84c2:
 	rest $70
 	goto musicf84c2
 	cmdff
-; $f8576
-; @addr{f8576}
+
 sound3dChannel0:
 ; Measure 1
 	vol $0
@@ -333,8 +331,7 @@ musicf85ca:
 	note b3  $08
 	goto musicf85ca
 	cmdff
-; $f8716
-; @addr{f8716}
+
 sound3dChannel4:
 	cmdf2
 ; Measure 1
@@ -445,8 +442,7 @@ musicf8741:
 	note g3  $20
 	goto musicf8741
 	cmdff
-; $f87c3
-; @addr{f87c3}
+
 sound3dChannel6:
 ; Measure 1
 	rest $10

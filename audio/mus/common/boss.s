@@ -3,6 +3,9 @@ sound2eStart:
 sound2eChannel1:
 	vibrato $00
 	env $0 $00
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	duty $02
 musicf9f6b:
 	vol $6
@@ -169,6 +172,9 @@ musicf9f6b:
 sound2eChannel0:
 	vibrato $00
 	env $0 $00
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	duty $02
 musicfa087:
 	vol $6
@@ -316,6 +322,9 @@ musicfa087:
 	cmdff
 
 sound2eChannel4:
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 musicfa18c:
 	duty $12
 	note e2  $04
@@ -1060,6 +1069,9 @@ musicfa18c:
 	cmdff
 
 sound2eChannel6:
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 musicfa756:
 	vol $5
 	vol $8

@@ -4,6 +4,9 @@ sound3cChannel1:
 musicf8251:
 	vibrato $00
 	env $0 $05
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	duty $00
 	vol $8
 	note g6  $1e
@@ -82,6 +85,9 @@ sound3cChannel0:
 musicf82e1:
 	vibrato $00
 	env $0 $02
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 	duty $02
 	vol $6
 	note g3  $0a
@@ -178,6 +184,9 @@ musicf82e1:
 	cmdff
 
 sound3cChannel4:
+.ifdef ROM_SEASONS
+	cmdf2
+.endif
 musicf8380:
 	duty $17
 	rest $28
