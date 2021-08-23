@@ -1212,12 +1212,14 @@ sound91:
 	.dw sound91Channel2
 	.db $ff
 
+.ifdef BUILD_VANILLA
 	; Unused data?
 	.db $02
 	.dw $5a87
 	.db $07
 	.dw $5a87
 	.db $ff
+.endif
 
 sound93:
 	.db $02
@@ -1271,6 +1273,7 @@ sound9c:
 	.dw sound9cChannel2
 	.db $ff
 
+.ifdef BUILD_VANILLA
 	; Unused data?
 	.db $f3
 	.dw $5a87
@@ -1301,6 +1304,7 @@ sound9c:
 	.db $f7
 	.dw $5a87
 	.db $ff
+.endif
 
 sounda0:
 	.db $02
@@ -1673,6 +1677,7 @@ soundde:
 	.dw sounddeChannel6
 	.db $ff
 
+.ifdef BUILD_VANILLA
 	; Unused data?
 	.db $02
 	.dw $5a86
@@ -1683,6 +1688,7 @@ soundde:
 	.db $07
 	.dw $5a86
 	.db $ff
+.endif
 
 .ifdef BUILD_VANILLA
 .ORGA $57cf
