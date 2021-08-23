@@ -1,6 +1,6 @@
-sound2bStart:
+musMapleThemeStart:
 
-sound2bChannel1:
+musMapleThemeChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -231,7 +231,7 @@ musicf69b1:
 	goto musicf69b1
 	cmdff
 
-sound2bChannel0:
+musMapleThemeChannel0:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -367,7 +367,7 @@ musicf6b33:
 	goto musicf6b33
 	cmdff
 
-sound2bChannel4:
+musMapleThemeChannel4:
 	rest $ee
 	duty $0e
 	note g2  $03
@@ -508,7 +508,7 @@ musicf6bd2:
 	goto musicf6bd2
 	cmdff
 
-sound2bChannel6:
+musMapleThemeChannel6:
 	rest $fc
 musicf6cdc:
 	vol $2

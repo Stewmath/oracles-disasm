@@ -1,6 +1,6 @@
-soundc1Start:
+sndRestoreStart:
 
-soundc1Channel2:
+sndRestoreChannel2:
 	duty $02
 	vol $1
 	note f7  $01

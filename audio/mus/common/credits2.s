@@ -1,6 +1,6 @@
-sound2aStart:
+musCredits2Start:
 
-sound2aChannel1:
+musCredits2Channel1:
 	vibrato $e1
 	env $0 $00
 	duty $01
@@ -592,7 +592,7 @@ musicf8e5b:
 	goto musicf8e5b
 	cmdff
 
-sound2aChannel0:
+musCredits2Channel0:
 	vol $0
 	note gs3 $5a
 	vibrato $e1
@@ -1201,7 +1201,7 @@ musicf923f:
 	goto musicf923f
 	cmdff
 
-sound2aChannel4:
+musCredits2Channel4:
 	rest $09
 	duty $0f
 	note c4  $04
@@ -1983,7 +1983,7 @@ musicf969f:
 	goto musicf969f
 	cmdff
 
-sound2aChannel6:
+musCredits2Channel6:
 	rest $ff
 	rest $ff
 	rest $ff

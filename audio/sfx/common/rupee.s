@@ -1,6 +1,6 @@
-sound61Start:
+sndRupeeStart:
 
-sound61Channel2:
+sndRupeeChannel2:
 	duty $00
 	env $0 $03
 	vol $d

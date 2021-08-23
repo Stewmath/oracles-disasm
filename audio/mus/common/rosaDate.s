@@ -1,6 +1,6 @@
-sound27Start:
+musRosaDateStart:
 
-sound27Channel1:
+musRosaDateChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $01
@@ -254,7 +254,7 @@ musicf5995:
 	goto musicf5995
 	cmdff
 
-sound27Channel0:
+musRosaDateChannel0:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -406,7 +406,7 @@ musicf5b54:
 	goto musicf5b54
 	cmdff
 
-sound27Channel4:
+musRosaDateChannel4:
 musicf5c55:
 	duty $0e
 	note e3  $1c
@@ -527,4 +527,4 @@ musicf5c55:
 	goto musicf5c55
 	cmdff
 
-.define sound27Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musRosaDateChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

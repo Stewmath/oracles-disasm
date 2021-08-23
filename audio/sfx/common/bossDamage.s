@@ -1,6 +1,6 @@
-sound63Start:
+sndBossDamageStart:
 
-sound63Channel2:
+sndBossDamageChannel2:
 	cmdf0 $3c
 	vol $f
 	.db $04 $16 $01

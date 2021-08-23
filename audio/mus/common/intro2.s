@@ -1,6 +1,6 @@
-sound40Start:
+musIntro2Start:
 
-sound40Channel1:
+musIntro2Channel1:
 	vol $0
 	note gs3 $10
 	vibrato $e1
@@ -121,7 +121,7 @@ sound40Channel1:
 	note a5  $16
 	cmdff
 
-sound40Channel0:
+musIntro2Channel0:
 	vol $0
 	note gs3 $10
 	vibrato $e1
@@ -228,7 +228,7 @@ sound40Channel0:
 	note c5  $16
 	cmdff
 
-sound40Channel4:
+musIntro2Channel4:
 	rest $10
 	duty $0e
 	note as2 $20
@@ -328,7 +328,7 @@ sound40Channel4:
 	note a3  $16
 	cmdff
 
-sound40Channel6:
+musIntro2Channel6:
 	vol $5
 	note $26 $05
 	vol $4

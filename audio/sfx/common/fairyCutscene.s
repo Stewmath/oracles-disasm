@@ -1,6 +1,6 @@
-sound91Start:
+sndFairyCutsceneStart:
 
-sound91Channel2:
+sndFairyCutsceneChannel2:
 	cmdf0 $d1
 	.db $07 $d1 $04
 	vol $1

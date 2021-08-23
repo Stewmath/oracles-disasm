@@ -1,6 +1,6 @@
-sound80Start:
+sndMinecartStart:
 
-sound80Channel7:
+sndMinecartChannel7:
 	cmdf0 $91
 	note $44 $01
 	cmdf0 $70

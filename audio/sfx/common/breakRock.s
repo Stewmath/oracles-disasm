@@ -1,6 +1,6 @@
-sounda5Start:
+sndBreakRockStart:
 
-sounda5Channel7:
+sndBreakRockChannel7:
 	cmdf0 $a0
 	note $64 $03
 	cmdf0 $00

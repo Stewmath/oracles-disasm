@@ -1,6 +1,6 @@
-sound72Start:
+sndLightTorchStart:
 
-sound72Channel7:
+sndLightTorchChannel7:
 	cmdf0 $30
 	note $67 $01
 	cmdf0 $40

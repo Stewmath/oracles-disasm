@@ -1,6 +1,6 @@
-sound89Start:
+sndText2Start:
 
-sound89Channel2:
+sndText2Channel2:
 	duty $02
 	env $1 $00
 	vol $d

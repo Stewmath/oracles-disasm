@@ -1,6 +1,6 @@
-soundb1Start:
+sndBigSwordStart:
 
-soundb1Channel7:
+sndBigSwordChannel7:
 	cmdf0 $90
 	note $54 $01
 	note $47 $01

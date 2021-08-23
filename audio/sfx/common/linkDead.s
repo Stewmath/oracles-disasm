@@ -1,6 +1,6 @@
-sound64Start:
+sndLinkDeadStart:
 
-sound64Channel5:
+sndLinkDeadChannel5:
 	duty $03
 	vibrato $08
 	vol $9

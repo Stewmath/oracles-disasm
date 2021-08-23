@@ -1,6 +1,6 @@
-sound1bStart:
+musFinalDungeonStart:
 
-sound1bChannel1:
+musFinalDungeonChannel1:
 musicf54c8:
 	vibrato $00
 	env $0 $05
@@ -236,7 +236,7 @@ musicf54c8:
 	goto musicf54c8
 	cmdff
 
-sound1bChannel0:
+musFinalDungeonChannel0:
 musicf567e:
 	vibrato $00
 	env $0 $05
@@ -478,7 +478,7 @@ musicf567e:
 	goto musicf567e
 	cmdff
 
-sound1bChannel4:
+musFinalDungeonChannel4:
 musicf5837:
 	duty $0e
 	note gs2 $a5
@@ -653,4 +653,4 @@ musicf5837:
 	goto musicf5837
 	cmdff
 
-.define sound1bChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musFinalDungeonChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

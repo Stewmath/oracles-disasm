@@ -1,6 +1,6 @@
-sound6aStart:
+sndSlashStart:
 
-sound6aChannel7:
+sndSlashChannel7:
 	cmdf0 $b0
 	note $17 $01
 	note $25 $01

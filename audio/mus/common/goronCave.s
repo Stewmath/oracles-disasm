@@ -1,6 +1,6 @@
-sound3eStart:
+musGoronCaveStart:
 
-sound3eChannel1:
+musGoronCaveChannel1:
 	vibrato $00
 	env $0 $00
 .ifdef ROM_SEASONS
@@ -586,7 +586,7 @@ musicf83e8:
 	goto musicf83e8
 	cmdff
 
-sound3eChannel0:
+musGoronCaveChannel0:
 	vibrato $00
 	env $0 $00
 .ifdef ROM_SEASONS
@@ -1049,7 +1049,7 @@ musicf87b3:
 	goto musicf87b3
 	cmdff
 
-sound3eChannel4:
+musGoronCaveChannel4:
 .ifdef ROM_SEASONS
 	cmdf2
 .endif
@@ -1228,7 +1228,7 @@ musicf8b3e:
 	goto musicf8b3e
 	cmdff
 
-sound3eChannel6:
+musGoronCaveChannel6:
 .ifdef ROM_SEASONS
 	cmdf2
 .endif

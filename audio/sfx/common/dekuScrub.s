@@ -1,6 +1,6 @@
-soundc6Start:
+sndDekuScrubStart:
 
-soundc6Channel2:
+sndDekuScrubChannel2:
 	duty $00
 	vol $d
 	env $1 $00

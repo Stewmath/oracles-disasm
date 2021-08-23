@@ -1,6 +1,6 @@
-sound69Start:
+sndUnknown4Start:
 
-sound69Channel2:
+sndUnknown4Channel2:
 	duty $02
 	vol $d
 	note c4  $01

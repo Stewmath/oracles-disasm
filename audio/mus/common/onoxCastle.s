@@ -1,6 +1,6 @@
-sound1cStart:
+musOnoxCastleStart:
 
-sound1cChannel1:
+musOnoxCastleChannel1:
 	vibrato $c1
 	env $0 $00
 	cmdf2
@@ -188,7 +188,7 @@ musicf0453:
 	goto musicf0453
 	cmdff
 
-sound1cChannel0:
+musOnoxCastleChannel0:
 	vibrato $c1
 	env $0 $00
 	cmdf2
@@ -590,7 +590,7 @@ musicf059e:
 	goto musicf059e
 	cmdff
 
-sound1cChannel4:
+musOnoxCastleChannel4:
 	duty $0e
 musicf0818:
 	note d2  $09
@@ -694,4 +694,4 @@ musicf0818:
 	goto musicf0818
 	cmdff
 
-.define sound1cChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musOnoxCastleChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,6 @@
-sound87Start:
+sndSplashStart:
 
-sound87Channel2:
+sndSplashChannel2:
 	duty $02
 	env $1 $00
 	vol $3

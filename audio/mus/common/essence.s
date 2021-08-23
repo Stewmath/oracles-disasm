@@ -1,6 +1,6 @@
-sound06Start:
+musEssenceStart:
 
-sound06Channel1:
+musEssenceChannel1:
 ; Measure 1
 	vibrato $d1
 	env $0 $00
@@ -160,7 +160,7 @@ sound06Channel1:
 	note fs6 $04
 	cmdff
 
-sound06Channel0:
+musEssenceChannel0:
 ; Measure 1
 	vol $0
 	note gs3 $03
@@ -312,7 +312,7 @@ sound06Channel0:
 	note ds5 $03
 	cmdff
 
-sound06Channel4:
+musEssenceChannel4:
 ; Measure 1
 	duty $0e
 	note g2  $60
@@ -342,4 +342,4 @@ sound06Channel4:
 	note b2  $07
 	cmdff
 
-.define sound06Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musEssenceChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

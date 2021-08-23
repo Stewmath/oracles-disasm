@@ -1,6 +1,6 @@
-sound74Start:
+sndSwordSlashStart:
 
-sound74Channel7:
+sndSwordSlashChannel7:
 	cmdf0 $20
 	note $47 $01
 	cmdf0 $20

@@ -1,6 +1,6 @@
-sound53Start:
+sndJumpStart:
 
-sound53Channel2:
+sndJumpChannel2:
 	duty $02
 	vol $c
 	env $0 $02

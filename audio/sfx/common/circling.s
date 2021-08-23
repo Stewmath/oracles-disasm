@@ -1,6 +1,6 @@
-soundc9Start:
+sndCirclingStart:
 
-soundc9Channel2:
+sndCirclingChannel2:
 	duty $00
 	vol $1
 	cmdf8 $02

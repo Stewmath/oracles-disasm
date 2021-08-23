@@ -1,6 +1,6 @@
-soundc3Start:
+sndRickyStart:
 
-soundc3Channel5:
+sndRickyChannel5:
 	duty $03
 	cmdf8 $0c
 	note g5  $05

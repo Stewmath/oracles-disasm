@@ -1,6 +1,6 @@
-sound6cStart:
+sndOpenChestStart:
 
-sound6cChannel7:
+sndOpenChestChannel7:
 	cmdf0 $f0
 	note $37 $01
 	cmdf0 $f0

@@ -1,6 +1,6 @@
-soundbeStart:
+sndVeranProjectileStart:
 
-soundbeChannel2:
+sndVeranProjectileChannel2:
 	cmdf0 $00
 	vol $0
 	.db $00 $00 $01

@@ -1,6 +1,6 @@
-sounda9Start:
+sndDigStart:
 
-sounda9Channel7:
+sndDigChannel7:
 	cmdf0 $20
 	note $46 $01
 	cmdf0 $40

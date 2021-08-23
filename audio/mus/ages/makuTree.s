@@ -1,6 +1,6 @@
-sound1eStart:
+musMakuTreeStart:
 
-sound1eChannel1:
+musMakuTreeChannel1:
 	vol $0
 	note gs3 $14
 musice7c68:
@@ -194,7 +194,7 @@ musice7c68:
 	goto musice7c68
 	cmdff
 
-sound1eChannel0:
+musMakuTreeChannel0:
 	vol $0
 	note gs3 $14
 musice7dbf:
@@ -390,7 +390,7 @@ musice7dbf:
 	goto musice7dbf
 	cmdff
 
-sound1eChannel4:
+musMakuTreeChannel4:
 	rest $14
 musice7f16:
 	duty $17
@@ -430,4 +430,4 @@ musice7f16:
 	goto musice7f16
 	cmdff
 
-.define sound1eChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musMakuTreeChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

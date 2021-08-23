@@ -1,6 +1,6 @@
-sound4eStart:
+sndDamageEnemyStart:
 
-sound4eChannel2:
+sndDamageEnemyChannel2:
 	duty $00
 	vol $d
 	cmdf8 $81

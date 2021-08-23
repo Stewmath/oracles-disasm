@@ -1,224 +1,227 @@
+; If adding/removing any music, remember to update soundChannelPointers.s, soundChannelData.s, and
+; constants/music.s.
 _soundPointers:
-	m_soundPointer sound00
-	m_soundPointer sound01
-	m_soundPointer sound02
-	m_soundPointer sound03
-	m_soundPointer sound04
-	m_soundPointer sound05
-	m_soundPointer sound06
-	m_soundPointer sound07
-	m_soundPointer sound08
-	m_soundPointer sound09
-	m_soundPointer sound0a
-	m_soundPointer sound0b
-	m_soundPointer sound0c
-	m_soundPointer sound0d
-	m_soundPointer sound0e
-	m_soundPointer sound0f
-	m_soundPointer sound10
-	m_soundPointer sound11
-	m_soundPointer sound12
-	m_soundPointer sound13
-	m_soundPointer sound14
-	m_soundPointer sound15
-	m_soundPointer sound16
-	m_soundPointer sound17
-	m_soundPointer sound18
-	m_soundPointer sound19
-	m_soundPointer sound1a
-	m_soundPointer sound1b
-	m_soundPointer sound1c
-	m_soundPointer sound1d
-	m_soundPointer sound1e
-	m_soundPointer sound1f
-	m_soundPointer sound20
-	m_soundPointer sound21
-	m_soundPointer sound22
-	m_soundPointer sound23
-	m_soundPointer sound24
-	m_soundPointer sound25
-	m_soundPointer sound26
-	m_soundPointer sound27
-	m_soundPointer sound28
-	m_soundPointer sound29
-	m_soundPointer sound2a
-	m_soundPointer sound2b
-	m_soundPointer sound2c
-	m_soundPointer sound2d
-	m_soundPointer sound2e
-	m_soundPointer sound2f
-	m_soundPointer sound30
-	m_soundPointer sound31
-	m_soundPointer sound32
-	m_soundPointer sound33
-	m_soundPointer sound34
-	m_soundPointer sound35
-	m_soundPointer sound36
-	m_soundPointer sound37
-	m_soundPointer sound38
-	m_soundPointer sound39
-	m_soundPointer sound3a
-	m_soundPointer sound3b
-	m_soundPointer sound3c
-	m_soundPointer sound3d
-	m_soundPointer sound3e
-	m_soundPointer sound3f
-	m_soundPointer sound40
-	m_soundPointer sound41
-	m_soundPointer sound42
-	m_soundPointer sound43
-	m_soundPointer sound44
-	m_soundPointer sound45
-	m_soundPointer sound46
-	m_soundPointer sound47
-	m_soundPointer sound48
-	m_soundPointer sound49
-	m_soundPointer sound4a
-	m_soundPointer sound4b
-	m_soundPointer sound4c
-	m_soundPointer sound4d
-	m_soundPointer sound4e
-	m_soundPointer sound4f
-	m_soundPointer sound50
-	m_soundPointer sound51
-	m_soundPointer sound52
-	m_soundPointer sound53
-	m_soundPointer sound54
-	m_soundPointer sound55
-	m_soundPointer sound56
-	m_soundPointer sound57
-	m_soundPointer sound58
-	m_soundPointer sound59
-	m_soundPointer sound5a
-	m_soundPointer sound5b
-	m_soundPointer sound5c
-	m_soundPointer sound5d
-	m_soundPointer sound5e
-	m_soundPointer sound5f
-	m_soundPointer sound60
-	m_soundPointer sound61
-	m_soundPointer sound62
-	m_soundPointer sound63
-	m_soundPointer sound64
-	m_soundPointer sound65
-	m_soundPointer sound66
-	m_soundPointer sound67
-	m_soundPointer sound68
-	m_soundPointer sound69
-	m_soundPointer sound6a
-	m_soundPointer sound6b
-	m_soundPointer sound6c
-	m_soundPointer sound6d
-	m_soundPointer sound6e
-	m_soundPointer sound6f
-	m_soundPointer sound70
-	m_soundPointer sound71
-	m_soundPointer sound72
-	m_soundPointer sound73
-	m_soundPointer sound74
-	m_soundPointer sound75
-	m_soundPointer sound76
-	m_soundPointer sound77
-	m_soundPointer sound78
-	m_soundPointer sound79
-	m_soundPointer sound7a
-	m_soundPointer sound7b
-	m_soundPointer sound7c
-	m_soundPointer sound7d
-	m_soundPointer sound7e
-	m_soundPointer sound7f
-	m_soundPointer sound80
-	m_soundPointer sound81
-	m_soundPointer sound82
-	m_soundPointer sound83
-	m_soundPointer sound84
-	m_soundPointer sound85
-	m_soundPointer sound86
-	m_soundPointer sound87
-	m_soundPointer sound88
-	m_soundPointer sound89
-	m_soundPointer sound8a
-	m_soundPointer sound8b
-	m_soundPointer sound8c
-	m_soundPointer sound8d
-	m_soundPointer sound8e
-	m_soundPointer sound8f
-	m_soundPointer sound90
-	m_soundPointer sound91
-	m_soundPointer sound92
-	m_soundPointer sound93
-	m_soundPointer sound94
-	m_soundPointer sound95
-	m_soundPointer sound96
-	m_soundPointer sound97
-	m_soundPointer sound98
-	m_soundPointer sound99
-	m_soundPointer sound9a
-	m_soundPointer sound9b
-	m_soundPointer sound9c
-	m_soundPointer sound9d
-	m_soundPointer sound9e
-	m_soundPointer sound9f
-	m_soundPointer sounda0
-	m_soundPointer sounda1
-	m_soundPointer sounda2
-	m_soundPointer sounda3
-	m_soundPointer sounda4
-	m_soundPointer sounda5
-	m_soundPointer sounda6
-	m_soundPointer sounda7
-	m_soundPointer sounda8
-	m_soundPointer sounda9
-	m_soundPointer soundaa
-	m_soundPointer soundab
-	m_soundPointer soundac
-	m_soundPointer soundad
-	m_soundPointer soundae
-	m_soundPointer soundaf
-	m_soundPointer soundb0
-	m_soundPointer soundb1
-	m_soundPointer soundb2
-	m_soundPointer soundb3
-	m_soundPointer soundb4
-	m_soundPointer soundb5
-	m_soundPointer soundb6
-	m_soundPointer soundb7
-	m_soundPointer soundb8
-	m_soundPointer soundb9
-	m_soundPointer soundba
-	m_soundPointer soundbb
-	m_soundPointer soundbc
-	m_soundPointer soundbd
-	m_soundPointer soundbe
-	m_soundPointer soundbf
-	m_soundPointer soundc0
-	m_soundPointer soundc1
-	m_soundPointer soundc2
-	m_soundPointer soundc3
-	m_soundPointer soundc4
-	m_soundPointer soundc5
-	m_soundPointer soundc6
-	m_soundPointer soundc7
-	m_soundPointer soundc8
-	m_soundPointer soundc9
-	m_soundPointer soundca
-	m_soundPointer soundcb
-	m_soundPointer soundcc
-	m_soundPointer soundcd
-	m_soundPointer soundce
-	m_soundPointer soundcf
-	m_soundPointer soundd0
-	m_soundPointer soundd1
-	m_soundPointer soundd2
-	m_soundPointer soundd3
-	m_soundPointer soundd4
-	m_soundPointer soundd5
-	m_soundPointer soundd6
-	m_soundPointer soundd7
-	m_soundPointer soundd8
-	m_soundPointer soundd9
-	m_soundPointer soundda
-	m_soundPointer sounddb
-	m_soundPointer sounddc
-	m_soundPointer sounddd
-	m_soundPointer soundde
+	/* 0x00 */ m_soundPointer musNone
+	/* 0x01 */ m_soundPointer musTitlescreen
+	/* 0x02 */ m_soundPointer musOverworld
+	/* 0x03 */ m_soundPointer sound03
+	/* 0x04 */ m_soundPointer sound04
+	/* 0x05 */ m_soundPointer sound05
+	/* 0x06 */ m_soundPointer musEssence
+	/* 0x07 */ m_soundPointer sound07
+	/* 0x08 */ m_soundPointer sound08
+	/* 0x09 */ m_soundPointer musGameover
+	/* 0x0a */ m_soundPointer sound0a
+	/* 0x0b */ m_soundPointer sound0b
+	/* 0x0c */ m_soundPointer sound0c
+	/* 0x0d */ m_soundPointer musEssenceRoom
+	/* 0x0e */ m_soundPointer musIndoors
+	/* 0x0f */ m_soundPointer musFairyFountain
+	/* 0x10 */ m_soundPointer musGetEssence
+	/* 0x11 */ m_soundPointer musFileSelect
+	/* 0x12 */ m_soundPointer sound12
+	/* 0x13 */ m_soundPointer sound13
+	/* 0x14 */ m_soundPointer sound14
+	/* 0x15 */ m_soundPointer sound15
+	/* 0x16 */ m_soundPointer sound16
+	/* 0x17 */ m_soundPointer sound17
+	/* 0x18 */ m_soundPointer sound18
+	/* 0x19 */ m_soundPointer sound19
+	/* 0x1a */ m_soundPointer sound1a
+	/* 0x1b */ m_soundPointer musFinalDungeon
+	/* 0x1c */ m_soundPointer musOnoxCastle
+	/* 0x1d */ m_soundPointer musRoomOfRites
+	/* 0x1e */ m_soundPointer musMakuTree
+	/* 0x1f */ m_soundPointer musSadness
+	/* 0x20 */ m_soundPointer musTriumphant
+	/* 0x21 */ m_soundPointer musDisaster
+	/* 0x22 */ m_soundPointer sound22
+	/* 0x23 */ m_soundPointer musPirates
+	/* 0x24 */ m_soundPointer sound24
+	/* 0x25 */ m_soundPointer sound25
+	/* 0x26 */ m_soundPointer sound26
+	/* 0x27 */ m_soundPointer musRosaDate
+	/* 0x28 */ m_soundPointer sound28
+	/* 0x29 */ m_soundPointer musCredits1
+	/* 0x2a */ m_soundPointer musCredits2
+	/* 0x2b */ m_soundPointer musMapleTheme
+	/* 0x2c */ m_soundPointer musMapleGame
+	/* 0x2d */ m_soundPointer musMiniboss
+	/* 0x2e */ m_soundPointer musBoss
+	/* 0x2f */ m_soundPointer musLadxSideview
+	/* 0x30 */ m_soundPointer sound30
+	/* 0x31 */ m_soundPointer musCrazyDance
+	/* 0x32 */ m_soundPointer musFinalBoss
+	/* 0x33 */ m_soundPointer musTwinrova
+	/* 0x34 */ m_soundPointer musGanon
+	/* 0x35 */ m_soundPointer sound35
+	/* 0x36 */ m_soundPointer musCave
+	/* 0x37 */ m_soundPointer mus37
+	/* 0x38 */ m_soundPointer musZeldaSaved
+	/* 0x39 */ m_soundPointer musGreatMoblin
+	/* 0x3a */ m_soundPointer mus3a
+	/* 0x3b */ m_soundPointer mus3b
+	/* 0x3c */ m_soundPointer musSyrup
+	/* 0x3d */ m_soundPointer sound3d
+	/* 0x3e */ m_soundPointer musGoronCave
+	/* 0x3f */ m_soundPointer musIntro1
+	/* 0x40 */ m_soundPointer musIntro2
+	/* 0x41 */ m_soundPointer mus41
+	/* 0x42 */ m_soundPointer mus42
+	/* 0x43 */ m_soundPointer mus43
+	/* 0x44 */ m_soundPointer mus44
+	/* 0x45 */ m_soundPointer mus45
+	/* 0x46 */ m_soundPointer musBlackTowerEntrance
+	/* 0x47 */ m_soundPointer mus47
+	/* 0x48 */ m_soundPointer mus48
+	/* 0x49 */ m_soundPointer mus49
+	/* 0x4a */ m_soundPointer musPrecredits
+	/* 0x4b */ m_soundPointer mus4b
+
+	/* 0x4c */ m_soundPointer sndGetItem
+	/* 0x4d */ m_soundPointer sndSolvePuzzle
+	/* 0x4e */ m_soundPointer sndDamageEnemy
+	/* 0x4f */ m_soundPointer sndChargeSword
+	/* 0x50 */ m_soundPointer sndClink
+	/* 0x51 */ m_soundPointer sndThrow
+	/* 0x52 */ m_soundPointer sndBombLand
+	/* 0x53 */ m_soundPointer sndJump
+	/* 0x54 */ m_soundPointer sndOpenMenu
+	/* 0x55 */ m_soundPointer sndCloseMenu
+	/* 0x56 */ m_soundPointer sndSelectItem
+	/* 0x57 */ m_soundPointer sndGainHeart
+	/* 0x58 */ m_soundPointer sndClink2
+	/* 0x59 */ m_soundPointer sndFallInHole
+	/* 0x5a */ m_soundPointer sndError
+	/* 0x5b */ m_soundPointer sndSolvePuzzle2
+	/* 0x5c */ m_soundPointer sndEnergyThing
+	/* 0x5d */ m_soundPointer sndSwordBeam
+	/* 0x5e */ m_soundPointer sndGetSeed
+	/* 0x5f */ m_soundPointer sndDamageLink
+	/* 0x60 */ m_soundPointer sndHeartBeep
+	/* 0x61 */ m_soundPointer sndRupee
+	/* 0x62 */ m_soundPointer sndGohmaSpawnGel
+	/* 0x63 */ m_soundPointer sndBossDamage
+	/* 0x64 */ m_soundPointer sndLinkDead
+	/* 0x65 */ m_soundPointer sndLinkFall
+	/* 0x66 */ m_soundPointer sndText
+	/* 0x67 */ m_soundPointer sndBossDead
+	/* 0x68 */ m_soundPointer sndUnknown3
+	/* 0x69 */ m_soundPointer sndUnknown4
+	/* 0x6a */ m_soundPointer sndSlash
+	/* 0x6b */ m_soundPointer sndSwordSpin
+	/* 0x6c */ m_soundPointer sndOpenChest
+	/* 0x6d */ m_soundPointer sndCutGrass
+	/* 0x6e */ m_soundPointer sndEnterCave
+	/* 0x6f */ m_soundPointer sndExplosion
+	/* 0x70 */ m_soundPointer sndDoorClose
+	/* 0x71 */ m_soundPointer sndMoveBlock
+	/* 0x72 */ m_soundPointer sndLightTorch
+	/* 0x73 */ m_soundPointer sndKillEnemy
+	/* 0x74 */ m_soundPointer sndSwordSlash
+	/* 0x75 */ m_soundPointer sndUnknown5
+	/* 0x76 */ m_soundPointer sndShield
+	/* 0x77 */ m_soundPointer sndDropEssence
+	/* 0x78 */ m_soundPointer sndBoomerang
+	/* 0x79 */ m_soundPointer sndBigExplosion
+	/* 0x7a */ m_soundPointer sound7a
+	/* 0x7b */ m_soundPointer sndMysterySeed
+	/* 0x7c */ m_soundPointer sndAquamentusHover
+	/* 0x7d */ m_soundPointer sound7d
+	/* 0x7e */ m_soundPointer sndSwitch
+	/* 0x7f */ m_soundPointer sound7f
+	/* 0x80 */ m_soundPointer sndMinecart
+	/* 0x81 */ m_soundPointer sndStrongPound
+	/* 0x82 */ m_soundPointer sndRoller
+	/* 0x83 */ m_soundPointer sndMagicPowder
+	/* 0x84 */ m_soundPointer sndMenuMove
+	/* 0x85 */ m_soundPointer sndScentSeed
+	/* 0x86 */ m_soundPointer sound86
+	/* 0x87 */ m_soundPointer sndSplash
+	/* 0x88 */ m_soundPointer sndLinkSwim
+	/* 0x89 */ m_soundPointer sndText2
+	/* 0x8a */ m_soundPointer sndPieceOfPower
+	/* 0x8b */ m_soundPointer sndFilledHeartContainer
+	/* 0x8c */ m_soundPointer sndUnknown7
+	/* 0x8d */ m_soundPointer sndTeleport
+	/* 0x8e */ m_soundPointer sound8e
+	/* 0x8f */ m_soundPointer sndEnemyJump
+	/* 0x90 */ m_soundPointer sndGaleSeed
+	/* 0x91 */ m_soundPointer sndFairyCutscene
+	/* 0x92 */ m_soundPointer sound92
+	/* 0x93 */ m_soundPointer sound93
+	/* 0x94 */ m_soundPointer sound94
+	/* 0x95 */ m_soundPointer sndWarpStart
+	/* 0x96 */ m_soundPointer sndGhost
+	/* 0x97 */ m_soundPointer snd97
+	/* 0x98 */ m_soundPointer sndPoof
+	/* 0x99 */ m_soundPointer sndBaseball
+	/* 0x9a */ m_soundPointer sndBecomeBaby
+	/* 0x9b */ m_soundPointer sndJingle
+	/* 0x9c */ m_soundPointer sndPickup
+	/* 0x9d */ m_soundPointer sndFluteRicky
+	/* 0x9e */ m_soundPointer sndFluteDimitri
+	/* 0x9f */ m_soundPointer sndFluteMoosh
+	/* 0xa0 */ m_soundPointer sndChicken
+	/* 0xa1 */ m_soundPointer sounda1
+	/* 0xa2 */ m_soundPointer sndCompass
+	/* 0xa3 */ m_soundPointer sndLand
+	/* 0xa4 */ m_soundPointer sndBeam
+	/* 0xa5 */ m_soundPointer sndBreakRock
+	/* 0xa6 */ m_soundPointer sndStrike
+	/* 0xa7 */ m_soundPointer sndSwitchHook
+	/* 0xa8 */ m_soundPointer sndVeranFairyAttack
+	/* 0xa9 */ m_soundPointer sndDig
+	/* 0xaa */ m_soundPointer sndWave
+	/* 0xab */ m_soundPointer sndSwordObtained
+	/* 0xac */ m_soundPointer sndShock
+	/* 0xad */ m_soundPointer soundad
+	/* 0xae */ m_soundPointer soundae
+	/* 0xaf */ m_soundPointer soundaf
+	/* 0xb0 */ m_soundPointer sndOpening
+	/* 0xb1 */ m_soundPointer sndBigSword
+	/* 0xb2 */ m_soundPointer sndMakuDisappear
+	/* 0xb3 */ m_soundPointer sndRumble
+	/* 0xb4 */ m_soundPointer sndFadeout
+	/* 0xb5 */ m_soundPointer soundb5
+	/* 0xb6 */ m_soundPointer soundb6
+	/* 0xb7 */ m_soundPointer soundb7
+	/* 0xb8 */ m_soundPointer sndRumble2
+	/* 0xb9 */ m_soundPointer sndEndless
+	/* 0xba */ m_soundPointer sndBeam1
+	/* 0xbb */ m_soundPointer sndBeam2
+	/* 0xbc */ m_soundPointer sndBigExplosion2
+	/* 0xbd */ m_soundPointer soundbd
+	/* 0xbe */ m_soundPointer sndVeranProjectile
+	/* 0xbf */ m_soundPointer sndBlueStalfosCharge
+	/* 0xc0 */ m_soundPointer sndTransform
+	/* 0xc1 */ m_soundPointer sndRestore
+	/* 0xc2 */ m_soundPointer sndFloodgates
+	/* 0xc3 */ m_soundPointer sndRicky
+	/* 0xc4 */ m_soundPointer sndDimitri
+	/* 0xc5 */ m_soundPointer sndMoosh
+	/* 0xc6 */ m_soundPointer sndDekuScrub
+	/* 0xc7 */ m_soundPointer sndGoron
+	/* 0xc8 */ m_soundPointer sndDing
+	/* 0xc9 */ m_soundPointer sndCircling
+	/* 0xca */ m_soundPointer soundca
+	/* 0xcb */ m_soundPointer sndSeedShooter
+	/* 0xcc */ m_soundPointer sndWhistle
+	/* 0xcd */ m_soundPointer sndGoronDanceB
+	/* 0xce */ m_soundPointer sndMakuTreePast
+	/* 0xcf */ m_soundPointer soundcf
+	/* 0xd0 */ m_soundPointer sndPirateBell
+	/* 0xd1 */ m_soundPointer soundd1
+	/* 0xd2 */ m_soundPointer sndLightning
+	/* 0xd3 */ m_soundPointer sndWind
+	/* 0xd4 */ m_soundPointer soundd4
+	/* 0xd5 */ m_soundPointer sndd5
+	/* 0xd6 */ m_soundPointer sndd6
+	/* 0xd7 */ m_soundPointer sndd7
+	/* 0xd8 */ m_soundPointer sndd8
+	/* 0xd9 */ m_soundPointer sndd9
+	/* 0xda */ m_soundPointer sndda
+	/* 0xdb */ m_soundPointer snddb
+	/* 0xdc */ m_soundPointer snddc
+	/* 0xdd */ m_soundPointer snddd
+	/* 0xde */ m_soundPointer sndde

@@ -1,6 +1,6 @@
-soundbbStart:
+sndBeam2Start:
 
-soundbbChannel7:
+sndBeam2Channel7:
 	cmdf0 $10
 	note $24 $01
 	cmdf0 $20

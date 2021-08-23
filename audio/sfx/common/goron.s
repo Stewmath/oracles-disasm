@@ -1,6 +1,6 @@
-soundc7Start:
+sndGoronStart:
 
-soundc7Channel2:
+sndGoronChannel2:
 	duty $00
 	vol $d
 	cmdf8 $c4

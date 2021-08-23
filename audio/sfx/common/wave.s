@@ -1,6 +1,6 @@
-soundaaStart:
+sndWaveStart:
 
-soundaaChannel7:
+sndWaveChannel7:
 	cmdf0 $20
 	note $15 $03
 	cmdf0 $30

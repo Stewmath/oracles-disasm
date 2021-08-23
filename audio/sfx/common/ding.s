@@ -1,6 +1,6 @@
-soundc8Start:
+sndDingStart:
 
-soundc8Channel2:
+sndDingChannel2:
 	duty $01
 	vol $f
 	note ds6 $03
@@ -9,7 +9,7 @@ soundc8Channel2:
 	note ds6 $3c
 	cmdff
 
-soundc8Channel7:
+sndDingChannel7:
 	cmdf0 $41
 	note $15 $01
 	cmdff

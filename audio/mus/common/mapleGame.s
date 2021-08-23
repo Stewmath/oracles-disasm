@@ -1,6 +1,6 @@
-sound2cStart:
+musMapleGameStart:
 
-sound2cChannel1:
+musMapleGameChannel1:
 	duty $01
 musice628f:
 ; Measure 1
@@ -341,7 +341,7 @@ musice628f:
 	goto musice628f
 	cmdff
 
-sound2cChannel0:
+musMapleGameChannel0:
 	duty $01
 musice64ab:
 ; Measure 1
@@ -679,7 +679,7 @@ musice64ab:
 	goto musice64ab
 	cmdff
 
-sound2cChannel4:
+musMapleGameChannel4:
 musice66c0:
 ; Measure 1
 	duty $0e
@@ -1196,7 +1196,7 @@ musice66c0:
 	goto musice66c0
 	cmdff
 
-sound2cChannel6:
+musMapleGameChannel6:
 musice6a48:
 ; Measure 1
 	vol $3

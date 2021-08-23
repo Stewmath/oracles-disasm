@@ -1,6 +1,6 @@
-sound33Start:
+musTwinrovaStart:
 
-sound33Channel1:
+musTwinrovaChannel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -257,7 +257,7 @@ musiceacd8:
 	goto musiceacd8
 	cmdff
 
-sound33Channel0:
+musTwinrovaChannel0:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -514,7 +514,7 @@ musiceae93:
 	goto musiceae93
 	cmdff
 
-sound33Channel4:
+musTwinrovaChannel4:
 	cmdf2
 musiceb047:
 	duty $12
@@ -955,7 +955,7 @@ musiceb047:
 	goto musiceb047
 	cmdff
 
-sound33Channel6:
+musTwinrovaChannel6:
 	cmdf2
 musiceb3b2:
 	vol $5

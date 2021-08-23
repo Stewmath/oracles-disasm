@@ -1,6 +1,6 @@
-sound1fStart:
+musSadnessStart:
 
-sound1fChannel1:
+musSadnessChannel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -157,7 +157,7 @@ musicf08e7:
 	goto musicf08e7
 	cmdff
 
-sound1fChannel0:
+musSadnessChannel0:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -253,7 +253,7 @@ musicf09ee:
 	goto musicf09ee
 	cmdff
 
-sound1fChannel4:
+musSadnessChannel4:
 	cmdf2
 	duty $08
 musicf0a95:
@@ -323,4 +323,4 @@ musicf0a95:
 	goto musicf0a95
 	cmdff
 
-.define sound1fChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musSadnessChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

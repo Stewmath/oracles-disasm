@@ -1,6 +1,6 @@
-sound4fStart:
+sndChargeSwordStart:
 
-sound4fChannel2:
+sndChargeSwordChannel2:
 	duty $02
 	vol $b
 	note g4  $02

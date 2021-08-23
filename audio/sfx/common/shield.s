@@ -1,6 +1,6 @@
-sound76Start:
+sndShieldStart:
 
-sound76Channel2:
+sndShieldChannel2:
 	duty $00
 	vol $0
 	cmdf8 $00
@@ -18,7 +18,7 @@ sound76Channel2:
 	note c7  $02
 	cmdff
 
-sound76Channel7:
+sndShieldChannel7:
 	cmdf0 $10
 	note $26 $01
 	cmdf0 $70

@@ -1,6 +1,6 @@
-sound02Start:
+musOverworldStart:
 
-sound02Channel1:
+musOverworldChannel1:
 musicec001:
 	duty $02
 	vol $a
@@ -212,7 +212,7 @@ musicec001:
 	note a2  $01
 	goto musicec001
 	cmdff
-sound02Channel0:
+musOverworldChannel0:
 musicec174:
 	duty $02
 	vol $0
@@ -376,7 +376,7 @@ musicec174:
 	rest $14
 	goto musicec174
 	cmdff
-sound02Channel4:
+musOverworldChannel4:
 musicec29a:
 	duty $01
 	note as4 $06
@@ -441,4 +441,4 @@ musicec29a:
 	goto musicec29a
 	cmdff
 
-.define sound02Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musOverworldChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,6 @@
-sounda3Start:
+sndLandStart:
 
-sounda3Channel7:
+sndLandChannel7:
 	cmdf0 $90
 	note $14 $01
 	cmdf0 $00

@@ -1,6 +1,6 @@
-sound83Start:
+sndMagicPowderStart:
 
-sound83Channel2:
+sndMagicPowderChannel2:
 	duty $00
 	cmdf0 $df
 	.db $07 $d8 $05

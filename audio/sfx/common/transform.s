@@ -1,6 +1,6 @@
-soundc0Start:
+sndTransformStart:
 
-soundc0Channel2:
+sndTransformChannel2:
 	duty $00
 	vol $3
 	note b6  $02

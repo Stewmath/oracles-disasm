@@ -1,6 +1,6 @@
-soundb8Start:
+sndRumble2Start:
 
-soundb8Channel2:
+sndRumble2Channel2:
 	vol $3
 	note c2  $14
 	note c2  $14
@@ -10,7 +10,7 @@ soundb8Channel2:
 	note c2  $0a
 	cmdff
 
-soundb8Channel7:
+sndRumble2Channel7:
 	cmdf0 $f0
 	note $75 $14
 	cmdf0 $f0

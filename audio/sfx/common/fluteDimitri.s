@@ -1,11 +1,11 @@
-sound9eStart:
+sndFluteDimitriStart:
 
-sound9eChannel3:
+sndFluteDimitriChannel3:
 	vol $0
 	rest $f1
 	cmdff
 
-sound9eChannel2:
+sndFluteDimitriChannel2:
 	vol $0
 	rest $1f
 	duty $02
@@ -22,7 +22,7 @@ sound9eChannel2:
 	note a5  $54
 	cmdff
 
-sound9eChannel5:
+sndFluteDimitriChannel5:
 	duty $16
 	note d5  $04
 	note g5  $05
@@ -37,7 +37,7 @@ sound9eChannel5:
 	rest $1f
 	cmdff
 
-sound9eChannel7:
+sndFluteDimitriChannel7:
 	cmdf0 $00
 	note $00 $f1
 	cmdff

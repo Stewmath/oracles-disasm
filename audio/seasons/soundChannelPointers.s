@@ -1,24 +1,24 @@
-sound00:
-sound01:
+musNone:
+musTitlescreen:
 	.db $00
-	.dw sound00Channel0
+	.dw musNoneChannel0
 	.db $01
-	.dw sound00Channel1
+	.dw musNoneChannel1
 	.db $04
-	.dw sound00Channel4
+	.dw musNoneChannel4
 	.db $06
-	.dw sound00Channel6
+	.dw musNoneChannel6
 	.db $ff
 
-sound02:
+musOverworld:
 	.db $00
-	.dw sound02Channel0
+	.dw musOverworldChannel0
 	.db $01
-	.dw sound02Channel1
+	.dw musOverworldChannel1
 	.db $04
-	.dw sound02Channel4
+	.dw musOverworldChannel4
 	.db $06
-	.dw sound02Channel6
+	.dw musOverworldChannel6
 	.db $ff
 
 sound03:
@@ -54,22 +54,22 @@ sound05:
 	.dw sound05Channel6
 	.db $ff
 
-soundd6:
-soundd7:
-soundd8:
-soundd9:
-soundda:
-sounddb:
-sounddc:
-sounddd:
+sndd6:
+sndd7:
+sndd8:
+sndd9:
+sndda:
+snddb:
+snddc:
+snddd:
 	.db $00
-	.dw soundd6Channel0
+	.dw sndd6Channel0
 	.db $01
-	.dw soundd6Channel1
+	.dw sndd6Channel1
 	.db $04
-	.dw soundd6Channel4
+	.dw sndd6Channel4
 	.db $06
-	.dw soundd6Channel6
+	.dw sndd6Channel6
 	.db $ff
 
 sound07:
@@ -94,15 +94,15 @@ sound08:
 	.dw sound08Channel6
 	.db $ff
 
-sound09:
+musGameover:
 	.db $00
-	.dw sound09Channel0
+	.dw musGameoverChannel0
 	.db $01
-	.dw sound09Channel1
+	.dw musGameoverChannel1
 	.db $04
-	.dw sound09Channel4
+	.dw musGameoverChannel4
 	.db $06
-	.dw sound09Channel6
+	.dw musGameoverChannel6
 	.db $ff
 
 sound0a:
@@ -138,59 +138,59 @@ sound0c:
 	.dw sound0cChannel6
 	.db $ff
 
-sound0d:
+musEssenceRoom:
 	.db $00
-	.dw sound0dChannel0
+	.dw musEssenceRoomChannel0
 	.db $01
-	.dw sound0dChannel1
+	.dw musEssenceRoomChannel1
 	.db $04
-	.dw sound0dChannel4
+	.dw musEssenceRoomChannel4
 	.db $06
-	.dw sound0dChannel6
+	.dw musEssenceRoomChannel6
 	.db $ff
 
-sound0e:
+musIndoors:
 	.db $00
-	.dw sound0eChannel0
+	.dw musIndoorsChannel0
 	.db $01
-	.dw sound0eChannel1
+	.dw musIndoorsChannel1
 	.db $04
-	.dw sound0eChannel4
+	.dw musIndoorsChannel4
 	.db $06
-	.dw sound0eChannel6
+	.dw musIndoorsChannel6
 	.db $ff
 
-sound0f:
+musFairyFountain:
 	.db $00
-	.dw sound0fChannel0
+	.dw musFairyFountainChannel0
 	.db $01
-	.dw sound0fChannel1
+	.dw musFairyFountainChannel1
 	.db $04
-	.dw sound0fChannel4
+	.dw musFairyFountainChannel4
 	.db $06
-	.dw sound0fChannel6
+	.dw musFairyFountainChannel6
 	.db $ff
 
-sound10:
+musGetEssence:
 	.db $00
-	.dw sound10Channel0
+	.dw musGetEssenceChannel0
 	.db $01
-	.dw sound10Channel1
+	.dw musGetEssenceChannel1
 	.db $04
-	.dw sound10Channel4
+	.dw musGetEssenceChannel4
 	.db $06
-	.dw sound10Channel6
+	.dw musGetEssenceChannel6
 	.db $ff
 
-sound11:
+musFileSelect:
 	.db $00
-	.dw sound11Channel0
+	.dw musFileSelectChannel0
 	.db $01
-	.dw sound11Channel1
+	.dw musFileSelectChannel1
 	.db $04
-	.dw sound11Channel4
+	.dw musFileSelectChannel4
 	.db $06
-	.dw sound11Channel6
+	.dw musFileSelectChannel6
 	.db $ff
 
 sound12:
@@ -292,81 +292,81 @@ sound1a:
 	.dw sound1aChannel6
 	.db $ff
 
-sound1b:
+musFinalDungeon:
 	.db $00
-	.dw sound1bChannel0
+	.dw musFinalDungeonChannel0
 	.db $01
-	.dw sound1bChannel1
+	.dw musFinalDungeonChannel1
 	.db $04
-	.dw sound1bChannel4
+	.dw musFinalDungeonChannel4
 	.db $06
-	.dw sound1bChannel6
+	.dw musFinalDungeonChannel6
 	.db $ff
 
-sound1c:
+musOnoxCastle:
 	.db $00
-	.dw sound1cChannel0
+	.dw musOnoxCastleChannel0
 	.db $01
-	.dw sound1cChannel1
+	.dw musOnoxCastleChannel1
 	.db $04
-	.dw sound1cChannel4
+	.dw musOnoxCastleChannel4
 	.db $06
-	.dw sound1cChannel6
+	.dw musOnoxCastleChannel6
 	.db $ff
 
-sound1d:
+musRoomOfRites:
 	.db $00
-	.dw sound1dChannel0
+	.dw musRoomOfRitesChannel0
 	.db $01
-	.dw sound1dChannel1
+	.dw musRoomOfRitesChannel1
 	.db $04
-	.dw sound1dChannel4
+	.dw musRoomOfRitesChannel4
 	.db $06
-	.dw sound1dChannel6
+	.dw musRoomOfRitesChannel6
 	.db $ff
 
-sound1e:
+musMakuTree:
 	.db $00
-	.dw sound1eChannel0
+	.dw musMakuTreeChannel0
 	.db $01
-	.dw sound1eChannel1
+	.dw musMakuTreeChannel1
 	.db $04
-	.dw sound1eChannel4
+	.dw musMakuTreeChannel4
 	.db $06
-	.dw sound1eChannel6
+	.dw musMakuTreeChannel6
 	.db $ff
 
-sound1f:
+musSadness:
 	.db $00
-	.dw sound1fChannel0
+	.dw musSadnessChannel0
 	.db $01
-	.dw sound1fChannel1
+	.dw musSadnessChannel1
 	.db $04
-	.dw sound1fChannel4
+	.dw musSadnessChannel4
 	.db $06
-	.dw sound1fChannel6
+	.dw musSadnessChannel6
 	.db $ff
 
-sound20:
+musTriumphant:
 	.db $00
-	.dw sound20Channel0
+	.dw musTriumphantChannel0
 	.db $01
-	.dw sound20Channel1
+	.dw musTriumphantChannel1
 	.db $04
-	.dw sound20Channel4
+	.dw musTriumphantChannel4
 	.db $06
-	.dw sound20Channel6
+	.dw musTriumphantChannel6
 	.db $ff
 
-sound21:
+musDisaster:
 	.db $00
-	.dw sound21Channel0
+	.dw musDisasterChannel0
 	.db $01
-	.dw sound21Channel1
+	.dw musDisasterChannel1
 	.db $04
-	.dw sound21Channel4
+	.dw musDisasterChannel4
 	.db $06
-	.dw sound21Channel6
+	.dw musDisasterChannel6
 	.db $ff
 
 sound22:
@@ -380,15 +380,15 @@ sound22:
 	.dw sound22Channel6
 	.db $ff
 
-sound23:
+musPirates:
 	.db $00
-	.dw sound23Channel0
+	.dw musPiratesChannel0
 	.db $01
-	.dw sound23Channel1
+	.dw musPiratesChannel1
 	.db $04
-	.dw sound23Channel4
+	.dw musPiratesChannel4
 	.db $06
-	.dw sound23Channel6
+	.dw musPiratesChannel6
 	.db $ff
 
 sound24:
@@ -424,15 +424,15 @@ sound26:
 	.dw sound26Channel6
 	.db $ff
 
-sound27:
+musRosaDate:
 	.db $00
-	.dw sound27Channel0
+	.dw musRosaDateChannel0
 	.db $01
-	.dw sound27Channel1
+	.dw musRosaDateChannel1
 	.db $04
-	.dw sound27Channel4
+	.dw musRosaDateChannel4
 	.db $06
-	.dw sound27Channel6
+	.dw musRosaDateChannel6
 	.db $ff
 
 sound28:
@@ -446,81 +446,81 @@ sound28:
 	.dw sound28Channel6
 	.db $ff
 
-sound29:
+musCredits1:
 	.db $00
-	.dw sound29Channel0
+	.dw musCredits1Channel0
 	.db $01
-	.dw sound29Channel1
+	.dw musCredits1Channel1
 	.db $04
-	.dw sound29Channel4
+	.dw musCredits1Channel4
 	.db $06
-	.dw sound29Channel6
+	.dw musCredits1Channel6
 	.db $ff
 
-sound2a:
+musCredits2:
 	.db $00
-	.dw sound2aChannel0
+	.dw musCredits2Channel0
 	.db $01
-	.dw sound2aChannel1
+	.dw musCredits2Channel1
 	.db $04
-	.dw sound2aChannel4
+	.dw musCredits2Channel4
 	.db $06
-	.dw sound2aChannel6
+	.dw musCredits2Channel6
 	.db $ff
 
-sound2b:
+musMapleTheme:
 	.db $00
-	.dw sound2bChannel0
+	.dw musMapleThemeChannel0
 	.db $01
-	.dw sound2bChannel1
+	.dw musMapleThemeChannel1
 	.db $04
-	.dw sound2bChannel4
+	.dw musMapleThemeChannel4
 	.db $06
-	.dw sound2bChannel6
+	.dw musMapleThemeChannel6
 	.db $ff
 
-sound2c:
+musMapleGame:
 	.db $00
-	.dw sound2cChannel0
+	.dw musMapleGameChannel0
 	.db $01
-	.dw sound2cChannel1
+	.dw musMapleGameChannel1
 	.db $04
-	.dw sound2cChannel4
+	.dw musMapleGameChannel4
 	.db $06
-	.dw sound2cChannel6
+	.dw musMapleGameChannel6
 	.db $ff
 
-sound2d:
+musMiniboss:
 	.db $00
-	.dw sound2dChannel0
+	.dw musMinibossChannel0
 	.db $01
-	.dw sound2dChannel1
+	.dw musMinibossChannel1
 	.db $04
-	.dw sound2dChannel4
+	.dw musMinibossChannel4
 	.db $06
-	.dw sound2dChannel6
+	.dw musMinibossChannel6
 	.db $ff
 
-sound2e:
+musBoss:
 	.db $00
-	.dw sound2eChannel0
+	.dw musBossChannel0
 	.db $01
-	.dw sound2eChannel1
+	.dw musBossChannel1
 	.db $04
-	.dw sound2eChannel4
+	.dw musBossChannel4
 	.db $06
-	.dw sound2eChannel6
+	.dw musBossChannel6
 	.db $ff
 
-sound2f:
+musLadxSideview:
 	.db $00
-	.dw sound2fChannel0
+	.dw musLadxSideviewChannel0
 	.db $01
-	.dw sound2fChannel1
+	.dw musLadxSideviewChannel1
 	.db $04
-	.dw sound2fChannel4
+	.dw musLadxSideviewChannel4
 	.db $06
-	.dw sound2fChannel6
+	.dw musLadxSideviewChannel6
 	.db $ff
 
 sound30:
@@ -534,48 +534,48 @@ sound30:
 	.dw sound30Channel6
 	.db $ff
 
-sound31:
+musCrazyDance:
 	.db $00
-	.dw sound31Channel0
+	.dw musCrazyDanceChannel0
 	.db $01
-	.dw sound31Channel1
+	.dw musCrazyDanceChannel1
 	.db $04
-	.dw sound31Channel4
+	.dw musCrazyDanceChannel4
 	.db $06
-	.dw sound31Channel6
+	.dw musCrazyDanceChannel6
 	.db $ff
 
-sound32:
+musFinalBoss:
 	.db $00
-	.dw sound32Channel0
+	.dw musFinalBossChannel0
 	.db $01
-	.dw sound32Channel1
+	.dw musFinalBossChannel1
 	.db $04
-	.dw sound32Channel4
+	.dw musFinalBossChannel4
 	.db $06
-	.dw sound32Channel6
+	.dw musFinalBossChannel6
 	.db $ff
 
-sound33:
+musTwinrova:
 	.db $00
-	.dw sound33Channel0
+	.dw musTwinrovaChannel0
 	.db $01
-	.dw sound33Channel1
+	.dw musTwinrovaChannel1
 	.db $04
-	.dw sound33Channel4
+	.dw musTwinrovaChannel4
 	.db $06
-	.dw sound33Channel6
+	.dw musTwinrovaChannel6
 	.db $ff
 
-sound34:
+musGanon:
 	.db $00
-	.dw sound34Channel0
+	.dw musGanonChannel0
 	.db $01
-	.dw sound34Channel1
+	.dw musGanonChannel1
 	.db $04
-	.dw sound34Channel4
+	.dw musGanonChannel4
 	.db $06
-	.dw sound34Channel6
+	.dw musGanonChannel6
 	.db $ff
 
 sound35:
@@ -589,81 +589,81 @@ sound35:
 	.dw sound35Channel6
 	.db $ff
 
-sound36:
+musCave:
 	.db $00
-	.dw sound36Channel0
+	.dw musCaveChannel0
 	.db $01
-	.dw sound36Channel1
+	.dw musCaveChannel1
 	.db $04
-	.dw sound36Channel4
+	.dw musCaveChannel4
 	.db $06
-	.dw sound36Channel6
+	.dw musCaveChannel6
 	.db $ff
 
-sound37:
+mus37:
 	.db $00
-	.dw sound37Channel0
+	.dw mus37Channel0
 	.db $01
-	.dw sound37Channel1
+	.dw mus37Channel1
 	.db $04
-	.dw sound37Channel4
+	.dw mus37Channel4
 	.db $06
-	.dw sound37Channel6
+	.dw mus37Channel6
 	.db $ff
 
-sound38:
+musZeldaSaved:
 	.db $00
-	.dw sound38Channel0
+	.dw musZeldaSavedChannel0
 	.db $01
-	.dw sound38Channel1
+	.dw musZeldaSavedChannel1
 	.db $04
-	.dw sound38Channel4
+	.dw musZeldaSavedChannel4
 	.db $06
-	.dw sound38Channel6
+	.dw musZeldaSavedChannel6
 	.db $ff
 
-sound39:
+musGreatMoblin:
 	.db $00
-	.dw sound39Channel0
+	.dw musGreatMoblinChannel0
 	.db $01
-	.dw sound39Channel1
+	.dw musGreatMoblinChannel1
 	.db $04
-	.dw sound39Channel4
+	.dw musGreatMoblinChannel4
 	.db $06
-	.dw sound39Channel6
+	.dw musGreatMoblinChannel6
 	.db $ff
 
-sound3a:
+mus3a:
 	.db $00
-	.dw sound3aChannel0
+	.dw mus3aChannel0
 	.db $01
-	.dw sound3aChannel1
+	.dw mus3aChannel1
 	.db $04
-	.dw sound3aChannel4
+	.dw mus3aChannel4
 	.db $06
-	.dw sound3aChannel6
+	.dw mus3aChannel6
 	.db $ff
 
-sound3b:
+mus3b:
 	.db $00
-	.dw sound3bChannel0
+	.dw mus3bChannel0
 	.db $01
-	.dw sound3bChannel1
+	.dw mus3bChannel1
 	.db $04
-	.dw sound3bChannel4
+	.dw mus3bChannel4
 	.db $06
-	.dw sound3bChannel6
+	.dw mus3bChannel6
 	.db $ff
 
-sound3c:
+musSyrup:
 	.db $00
-	.dw sound3cChannel0
+	.dw musSyrupChannel0
 	.db $01
-	.dw sound3cChannel1
+	.dw musSyrupChannel1
 	.db $04
-	.dw sound3cChannel4
+	.dw musSyrupChannel4
 	.db $06
-	.dw sound3cChannel6
+	.dw musSyrupChannel6
 	.db $ff
 
 sound3d:
@@ -677,415 +677,415 @@ sound3d:
 	.dw sound3dChannel6
 	.db $ff
 
-sound3e:
+musGoronCave:
 	.db $00
-	.dw sound3eChannel0
+	.dw musGoronCaveChannel0
 	.db $01
-	.dw sound3eChannel1
+	.dw musGoronCaveChannel1
 	.db $04
-	.dw sound3eChannel4
+	.dw musGoronCaveChannel4
 	.db $06
-	.dw sound3eChannel6
+	.dw musGoronCaveChannel6
 	.db $ff
 
-sound3f:
+musIntro1:
 	.db $00
-	.dw sound3fChannel0
+	.dw musIntro1Channel0
 	.db $01
-	.dw sound3fChannel1
+	.dw musIntro1Channel1
 	.db $04
-	.dw sound3fChannel4
+	.dw musIntro1Channel4
 	.db $06
-	.dw sound3fChannel6
+	.dw musIntro1Channel6
 	.db $ff
 
-sound40:
+musIntro2:
 	.db $00
-	.dw sound40Channel0
+	.dw musIntro2Channel0
 	.db $01
-	.dw sound40Channel1
+	.dw musIntro2Channel1
 	.db $04
-	.dw sound40Channel4
+	.dw musIntro2Channel4
 	.db $06
-	.dw sound40Channel6
+	.dw musIntro2Channel6
 	.db $ff
 
-sound41:
+mus41:
 	.db $00
-	.dw sound41Channel0
+	.dw mus41Channel0
 	.db $01
-	.dw sound41Channel1
+	.dw mus41Channel1
 	.db $04
-	.dw sound41Channel4
+	.dw mus41Channel4
 	.db $06
-	.dw sound41Channel6
+	.dw mus41Channel6
 	.db $ff
 
-sound42:
+mus42:
 	.db $00
-	.dw sound42Channel0
+	.dw mus42Channel0
 	.db $01
-	.dw sound42Channel1
+	.dw mus42Channel1
 	.db $04
-	.dw sound42Channel4
+	.dw mus42Channel4
 	.db $06
-	.dw sound42Channel6
+	.dw mus42Channel6
 	.db $ff
 
-sound43:
+mus43:
 	.db $00
-	.dw sound43Channel0
+	.dw mus43Channel0
 	.db $01
-	.dw sound43Channel1
+	.dw mus43Channel1
 	.db $04
-	.dw sound43Channel4
+	.dw mus43Channel4
 	.db $06
-	.dw sound43Channel6
+	.dw mus43Channel6
 	.db $ff
 
-sound44:
+mus44:
 	.db $00
-	.dw sound44Channel0
+	.dw mus44Channel0
 	.db $01
-	.dw sound44Channel1
+	.dw mus44Channel1
 	.db $04
-	.dw sound44Channel4
+	.dw mus44Channel4
 	.db $06
-	.dw sound44Channel6
+	.dw mus44Channel6
 	.db $ff
 
-sound45:
+mus45:
 	.db $00
-	.dw sound45Channel0
+	.dw mus45Channel0
 	.db $01
-	.dw sound45Channel1
+	.dw mus45Channel1
 	.db $04
-	.dw sound45Channel4
+	.dw mus45Channel4
 	.db $06
-	.dw sound45Channel6
+	.dw mus45Channel6
 	.db $ff
 
-sound46:
+musBlackTowerEntrance:
 	.db $00
-	.dw sound46Channel0
+	.dw musBlackTowerEntranceChannel0
 	.db $01
-	.dw sound46Channel1
+	.dw musBlackTowerEntranceChannel1
 	.db $04
-	.dw sound46Channel4
+	.dw musBlackTowerEntranceChannel4
 	.db $06
-	.dw sound46Channel6
+	.dw musBlackTowerEntranceChannel6
 	.db $ff
 
-sound47:
+mus47:
 	.db $00
-	.dw sound47Channel0
+	.dw mus47Channel0
 	.db $01
-	.dw sound47Channel1
+	.dw mus47Channel1
 	.db $04
-	.dw sound47Channel4
+	.dw mus47Channel4
 	.db $06
-	.dw sound47Channel6
+	.dw mus47Channel6
 	.db $ff
 
-sound48:
+mus48:
 	.db $00
-	.dw sound48Channel0
+	.dw mus48Channel0
 	.db $01
-	.dw sound48Channel1
+	.dw mus48Channel1
 	.db $04
-	.dw sound48Channel4
+	.dw mus48Channel4
 	.db $06
-	.dw sound48Channel6
+	.dw mus48Channel6
 	.db $ff
 
-sound49:
+mus49:
 	.db $00
-	.dw sound49Channel0
+	.dw mus49Channel0
 	.db $01
-	.dw sound49Channel1
+	.dw mus49Channel1
 	.db $04
-	.dw sound49Channel4
+	.dw mus49Channel4
 	.db $06
-	.dw sound49Channel6
+	.dw mus49Channel6
 	.db $ff
 
-sound4a:
+musPrecredits:
 	.db $00
-	.dw sound4aChannel0
+	.dw musPrecreditsChannel0
 	.db $01
-	.dw sound4aChannel1
+	.dw musPrecreditsChannel1
 	.db $04
-	.dw sound4aChannel4
+	.dw musPrecreditsChannel4
 	.db $06
-	.dw sound4aChannel6
+	.dw musPrecreditsChannel6
 	.db $ff
 
-sound4b:
+mus4b:
 	.db $00
-	.dw sound4bChannel0
+	.dw mus4bChannel0
 	.db $01
-	.dw sound4bChannel1
+	.dw mus4bChannel1
 	.db $04
-	.dw sound4bChannel4
+	.dw mus4bChannel4
 	.db $06
-	.dw sound4bChannel6
+	.dw mus4bChannel6
 	.db $ff
 
-sound06:
+musEssence:
 	.db $00
-	.dw sound06Channel0
+	.dw musEssenceChannel0
 	.db $01
-	.dw sound06Channel1
+	.dw musEssenceChannel1
 	.db $04
-	.dw sound06Channel4
+	.dw musEssenceChannel4
 	.db $06
-	.dw sound06Channel6
+	.dw musEssenceChannel6
 	.db $ff
 
-sound4c:
+sndGetItem:
 	.db $72
-	.dw sound4cChannel2
+	.dw sndGetItemChannel2
 	.db $73
-	.dw sound4cChannel3
+	.dw sndGetItemChannel3
 	.db $75
-	.dw sound4cChannel5
+	.dw sndGetItemChannel5
 	.db $77
-	.dw sound4cChannel7
+	.dw sndGetItemChannel7
 	.db $ff
 
-sound4d:
+sndSolvePuzzle:
 	.db $b2
-	.dw sound4dChannel2
+	.dw sndSolvePuzzleChannel2
 	.db $ff
 
-sound4e:
+sndDamageEnemy:
 	.db $02
-	.dw sound4eChannel2
+	.dw sndDamageEnemyChannel2
 	.db $ff
 
-sound4f:
+sndChargeSword:
 	.db $92
-	.dw sound4fChannel2
+	.dw sndChargeSwordChannel2
 	.db $ff
 
-sound50:
+sndClink:
 	.db $92
-	.dw sound50Channel2
+	.dw sndClinkChannel2
 	.db $ff
 
-sound51:
+sndThrow:
 	.db $02
-	.dw sound51Channel2
+	.dw sndThrowChannel2
 	.db $ff
 
-sound52:
+sndBombLand:
 	.db $02
-	.dw sound52Channel2
+	.dw sndBombLandChannel2
 	.db $ff
 
-sound53:
+sndJump:
 	.db $62
-	.dw sound53Channel2
+	.dw sndJumpChannel2
 	.db $ff
 
-sound54:
+sndOpenMenu:
 	.db $02
-	.dw sound54Channel2
+	.dw sndOpenMenuChannel2
 	.db $03
-	.dw sound54Channel3
+	.dw sndOpenMenuChannel3
 	.db $ff
 
-sound55:
+sndCloseMenu:
 	.db $02
-	.dw sound55Channel2
+	.dw sndCloseMenuChannel2
 	.db $03
-	.dw sound55Channel3
+	.dw sndCloseMenuChannel3
 	.db $ff
 
-sound56:
+sndSelectItem:
 	.db $02
-	.dw sound56Channel2
+	.dw sndSelectItemChannel2
 	.db $ff
 
-sound57:
+sndGainHeart:
 	.db $02
-	.dw sound57Channel2
+	.dw sndGainHeartChannel2
 	.db $ff
 
-sound58:
+sndClink2:
 	.db $32
-	.dw sound58Channel2
+	.dw sndClink2Channel2
 	.db $ff
 
-sound59:
+sndFallInHole:
 	.db $02
-	.dw sound59Channel2
+	.dw sndFallInHoleChannel2
 	.db $ff
 
-sound5a:
+sndError:
 	.db $92
-	.dw sound5aChannel2
+	.dw sndErrorChannel2
 	.db $ff
 
-sound5b:
+sndSolvePuzzle2:
 	.db $b2
-	.dw sound5bChannel2
+	.dw sndSolvePuzzle2Channel2
 	.db $b3
-	.dw sound5bChannel3
+	.dw sndSolvePuzzle2Channel3
 	.db $ff
 
-sound5c:
+sndEnergyThing:
 	.db $72
-	.dw sound5cChannel2
+	.dw sndEnergyThingChannel2
 	.db $ff
 
-sound5d:
+sndSwordBeam:
 	.db $22
-	.dw sound5dChannel2
+	.dw sndSwordBeamChannel2
 	.db $ff
 
-sound5e:
+sndGetSeed:
 	.db $a2
-	.dw sound5eChannel2
+	.dw sndGetSeedChannel2
 	.db $ff
 
-sound5f:
+sndDamageLink:
 	.db $05
-	.dw sound5fChannel5
+	.dw sndDamageLinkChannel5
 	.db $ff
 
-sound60:
+sndHeartBeep:
 	.db $52
-	.dw sound60Channel2
+	.dw sndHeartBeepChannel2
 	.db $ff
 
-sound61:
+sndRupee:
 	.db $02
-	.dw sound61Channel2
+	.dw sndRupeeChannel2
 	.db $ff
 
-sound62:
+sndGohmaSpawnGel:
 	.db $02
-	.dw sound62Channel2
+	.dw sndGohmaSpawnGelChannel2
 	.db $ff
 
-sound63:
+sndBossDamage:
 	.db $b2
-	.dw sound63Channel2
+	.dw sndBossDamageChannel2
 	.db $ff
 
-sound64:
+sndLinkDead:
 	.db $05
-	.dw sound64Channel5
+	.dw sndLinkDeadChannel5
 	.db $ff
 
-sound65:
+sndLinkFall:
 	.db $05
-	.dw sound65Channel5
+	.dw sndLinkFallChannel5
 	.db $ff
 
-sound66:
+sndText:
 	.db $02
-	.dw sound66Channel2
+	.dw sndTextChannel2
 	.db $ff
 
-sound67:
+sndBossDead:
 	.db $b2
-	.dw sound67Channel2
+	.dw sndBossDeadChannel2
 	.db $ff
 
-sound68:
+sndUnknown3:
 	.db $02
-	.dw sound68Channel2
+	.dw sndUnknown3Channel2
 	.db $ff
 
-sound69:
+sndUnknown4:
 	.db $02
-	.dw sound69Channel2
+	.dw sndUnknown4Channel2
 	.db $ff
 
-sound6a:
+sndSlash:
 	.db $07
-	.dw sound6aChannel7
+	.dw sndSlashChannel7
 	.db $ff
 
-sound6b:
+sndSwordSpin:
 	.db $07
-	.dw sound6bChannel7
+	.dw sndSwordSpinChannel7
 	.db $ff
 
-sound6c:
+sndOpenChest:
 	.db $07
-	.dw sound6cChannel7
+	.dw sndOpenChestChannel7
 	.db $ff
 
-sound6d:
+sndCutGrass:
 	.db $07
-	.dw sound6dChannel7
+	.dw sndCutGrassChannel7
 	.db $ff
 
-sound6e:
+sndEnterCave:
 	.db $07
-	.dw sound6eChannel7
+	.dw sndEnterCaveChannel7
 	.db $ff
 
-sound6f:
+sndExplosion:
 	.db $a7
-	.dw sound6fChannel7
+	.dw sndExplosionChannel7
 	.db $ff
 
-sound70:
+sndDoorClose:
 	.db $92
-	.dw sound70Channel2
+	.dw sndDoorCloseChannel2
 	.db $97
-	.dw sound70Channel7
+	.dw sndDoorCloseChannel7
 	.db $ff
 
-sound71:
+sndMoveBlock:
 	.db $07
-	.dw sound71Channel7
+	.dw sndMoveBlockChannel7
 	.db $ff
 
-sound72:
+sndLightTorch:
 	.db $07
-	.dw sound72Channel7
+	.dw sndLightTorchChannel7
 	.db $ff
 
-sound73:
+sndKillEnemy:
 	.db $37
-	.dw sound73Channel7
+	.dw sndKillEnemyChannel7
 	.db $ff
 
-sound74:
+sndSwordSlash:
 	.db $07
-	.dw sound74Channel7
+	.dw sndSwordSlashChannel7
 	.db $ff
 
-sound75:
+sndUnknown5:
 	.db $07
-	.dw sound75Channel7
+	.dw sndUnknown5Channel7
 	.db $ff
 
-sound76:
+sndShield:
 	.db $02
-	.dw sound76Channel2
+	.dw sndShieldChannel2
 	.db $07
-	.dw sound76Channel7
+	.dw sndShieldChannel7
 	.db $ff
 
-sound77:
+sndDropEssence:
 	.db $02
-	.dw sound77Channel2
+	.dw sndDropEssenceChannel2
 	.db $ff
 
-sound78:
+sndBoomerang:
 	.db $07
-	.dw sound78Channel7
+	.dw sndBoomerangChannel7
 	.db $ff
 
-sound79:
+sndBigExplosion:
 	.db $97
-	.dw sound79Channel7
+	.dw sndBigExplosionChannel7
 	.db $ff
 
 sound7a:
@@ -1093,14 +1093,14 @@ sound7a:
 	.dw sound7aChannel7
 	.db $ff
 
-sound7b:
+sndMysterySeed:
 	.db $02
-	.dw sound7bChannel2
+	.dw sndMysterySeedChannel2
 	.db $ff
 
-sound7c:
+sndAquamentusHover:
 	.db $02
-	.dw sound7cChannel2
+	.dw sndAquamentusHoverChannel2
 	.db $ff
 
 sound7d:
@@ -1108,9 +1108,9 @@ sound7d:
 	.dw sound7dChannel2
 	.db $ff
 
-sound7e:
+sndSwitch:
 	.db $92
-	.dw sound7eChannel2
+	.dw sndSwitchChannel2
 	.db $ff
 
 sound7f:
@@ -1118,38 +1118,38 @@ sound7f:
 	.dw sound7fChannel2
 	.db $ff
 
-sound80:
+sndMinecart:
 	.db $07
-	.dw sound80Channel7
+	.dw sndMinecartChannel7
 	.db $ff
 
-sound81:
+sndStrongPound:
 	.db $02
-	.dw sound81Channel2
+	.dw sndStrongPoundChannel2
 	.db $07
-	.dw sound81Channel7
+	.dw sndStrongPoundChannel7
 	.db $ff
 
-sound82:
+sndRoller:
 	.db $02
-	.dw sound82Channel2
+	.dw sndRollerChannel2
 	.db $07
-	.dw sound82Channel7
+	.dw sndRollerChannel7
 	.db $ff
 
-sound83:
+sndMagicPowder:
 	.db $02
-	.dw sound83Channel2
+	.dw sndMagicPowderChannel2
 	.db $ff
 
-sound84:
+sndMenuMove:
 	.db $02
-	.dw sound84Channel2
+	.dw sndMenuMoveChannel2
 	.db $ff
 
-sound85:
+sndScentSeed:
 	.db $02
-	.dw sound85Channel2
+	.dw sndScentSeedChannel2
 	.db $ff
 
 sound86:
@@ -1157,39 +1157,39 @@ sound86:
 	.dw sound86Channel2
 	.db $ff
 
-sound87:
+sndSplash:
 	.db $42
-	.dw sound87Channel2
+	.dw sndSplashChannel2
 	.db $ff
 
-sound88:
+sndLinkSwim:
 	.db $02
-	.dw sound88Channel2
+	.dw sndLinkSwimChannel2
 	.db $ff
 
-sound89:
+sndText2:
 	.db $42
-	.dw sound89Channel2
+	.dw sndText2Channel2
 	.db $ff
 
-sound8a:
+sndPieceOfPower:
 	.db $02
-	.dw sound8aChannel2
+	.dw sndPieceOfPowerChannel2
 	.db $ff
 
-sound8b:
+sndFilledHeartContainer:
 	.db $a2
-	.dw sound8bChannel2
+	.dw sndFilledHeartContainerChannel2
 	.db $ff
 
-sound8c:
+sndUnknown7:
 	.db $02
-	.dw sound8cChannel2
+	.dw sndUnknown7Channel2
 	.db $ff
 
-sound8d:
+sndTeleport:
 	.db $a2
-	.dw sound8dChannel2
+	.dw sndTeleportChannel2
 	.db $ff
 
 sound8e:
@@ -1197,19 +1197,19 @@ sound8e:
 	.dw sound8eChannel2
 	.db $ff
 
-sound8f:
+sndEnemyJump:
 	.db $02
-	.dw sound8fChannel2
+	.dw sndEnemyJumpChannel2
 	.db $ff
 
-sound90:
+sndGaleSeed:
 	.db $02
-	.dw sound90Channel2
+	.dw sndGaleSeedChannel2
 	.db $ff
 
-sound91:
+sndFairyCutscene:
 	.db $02
-	.dw sound91Channel2
+	.dw sndFairyCutsceneChannel2
 	.db $ff
 
 .ifdef BUILD_VANILLA
@@ -1231,46 +1231,46 @@ sound94:
 	.dw sound94Channel2
 	.db $ff
 
-sound95:
+sndWarpStart:
 	.db $b2
-	.dw sound95Channel2
+	.dw sndWarpStartChannel2
 	.db $ff
 
-sound96:
+sndGhost:
 	.db $02
-	.dw sound96Channel2
+	.dw sndGhostChannel2
 	.db $ff
 
-sound97:
+snd97:
 	.db $02
-	.dw sound97Channel2
+	.dw snd97Channel2
 	.db $07
-	.dw sound97Channel7
+	.dw snd97Channel7
 	.db $ff
 
-sound98:
+sndPoof:
 	.db $02
-	.dw sound98Channel2
+	.dw sndPoofChannel2
 	.db $ff
 
-sound99:
+sndBaseball:
 	.db $02
-	.dw sound99Channel2
+	.dw sndBaseballChannel2
 	.db $ff
 
-sound9a:
+sndBecomeBaby:
 	.db $a2
-	.dw sound9aChannel2
+	.dw sndBecomeBabyChannel2
 	.db $ff
 
-sound9b:
+sndJingle:
 	.db $b2
-	.dw sound9bChannel2
+	.dw sndJingleChannel2
 	.db $ff
 
-sound9c:
+sndPickup:
 	.db $02
-	.dw sound9cChannel2
+	.dw sndPickupChannel2
 	.db $ff
 
 .ifdef BUILD_VANILLA
@@ -1306,9 +1306,9 @@ sound9c:
 	.db $ff
 .endif
 
-sounda0:
+sndChicken:
 	.db $02
-	.dw sounda0Channel2
+	.dw sndChickenChannel2
 	.db $ff
 
 sounda1:
@@ -1318,67 +1318,67 @@ sounda1:
 	.dw sounda1Channel7
 	.db $ff
 
-sounda2:
+sndCompass:
 	.db $b2
-	.dw sounda2Channel2
+	.dw sndCompassChannel2
 	.db $ff
 
-sounda3:
+sndLand:
 	.db $07
-	.dw sounda3Channel7
+	.dw sndLandChannel7
 	.db $ff
 
-sounda4:
+sndBeam:
 	.db $a2
-	.dw sounda4Channel2
+	.dw sndBeamChannel2
 	.db $a7
-	.dw sounda4Channel7
+	.dw sndBeamChannel7
 	.db $ff
 
-sounda5:
+sndBreakRock:
 	.db $07
-	.dw sounda5Channel7
+	.dw sndBreakRockChannel7
 	.db $ff
 
-sounda6:
+sndStrike:
 	.db $07
-	.dw sounda6Channel7
+	.dw sndStrikeChannel7
 	.db $ff
 
-sounda7:
+sndSwitchHook:
 	.db $02
-	.dw sounda7Channel2
+	.dw sndSwitchHookChannel2
 	.db $ff
 
-sounda8:
+sndVeranFairyAttack:
 	.db $02
-	.dw sounda8Channel2
+	.dw sndVeranFairyAttackChannel2
 	.db $07
-	.dw sounda8Channel7
+	.dw sndVeranFairyAttackChannel7
 	.db $ff
 
-sounda9:
+sndDig:
 	.db $07
-	.dw sounda9Channel7
+	.dw sndDigChannel7
 	.db $ff
 
-soundaa:
+sndWave:
 	.db $07
-	.dw soundaaChannel7
+	.dw sndWaveChannel7
 	.db $ff
 
-soundab:
+sndSwordObtained:
 	.db $02
-	.dw soundabChannel2
+	.dw sndSwordObtainedChannel2
 	.db $07
-	.dw soundabChannel7
+	.dw sndSwordObtainedChannel7
 	.db $ff
 
-soundac:
+sndShock:
 	.db $02
-	.dw soundacChannel2
+	.dw sndShockChannel2
 	.db $07
-	.dw soundacChannel7
+	.dw sndShockChannel7
 	.db $ff
 
 soundad:
@@ -1400,35 +1400,35 @@ soundaf:
 	.dw soundafChannel2
 	.db $ff
 
-soundb0:
+sndOpening:
 	.db $02
-	.dw soundb0Channel2
+	.dw sndOpeningChannel2
 	.db $07
-	.dw soundb0Channel7
+	.dw sndOpeningChannel7
 	.db $ff
 
-soundb1:
+sndBigSword:
 	.db $17
-	.dw soundb1Channel7
+	.dw sndBigSwordChannel7
 	.db $ff
 
-soundb2:
+sndMakuDisappear:
 	.db $02
-	.dw soundb2Channel2
+	.dw sndMakuDisappearChannel2
 	.db $07
-	.dw soundb2Channel7
+	.dw sndMakuDisappearChannel7
 	.db $ff
 
-soundb3:
+sndRumble:
 	.db $02
-	.dw soundb3Channel2
+	.dw sndRumbleChannel2
 	.db $07
-	.dw soundb3Channel7
+	.dw sndRumbleChannel7
 	.db $ff
 
-soundb4:
+sndFadeout:
 	.db $07
-	.dw soundb4Channel7
+	.dw sndFadeoutChannel7
 	.db $ff
 
 soundb5:
@@ -1450,31 +1450,31 @@ soundb7:
 	.dw soundb7Channel7
 	.db $ff
 
-soundb8:
+sndRumble2:
 	.db $02
-	.dw soundb8Channel2
+	.dw sndRumble2Channel2
 	.db $07
-	.dw soundb8Channel7
+	.dw sndRumble2Channel7
 	.db $ff
 
-soundb9:
+sndEndless:
 	.db $c7
-	.dw soundb9Channel7
+	.dw sndEndlessChannel7
 	.db $ff
 
-soundba:
+sndBeam1:
 	.db $07
-	.dw soundbaChannel7
+	.dw sndBeam1Channel7
 	.db $ff
 
-soundbb:
+sndBeam2:
 	.db $07
-	.dw soundbbChannel7
+	.dw sndBeam2Channel7
 	.db $ff
 
-soundbc:
+sndBigExplosion2:
 	.db $87
-	.dw soundbcChannel7
+	.dw sndBigExplosion2Channel7
 	.db $ff
 
 soundbd:
@@ -1482,66 +1482,66 @@ soundbd:
 	.dw soundbdChannel2
 	.db $ff
 
-soundbe:
+sndVeranProjectile:
 	.db $02
-	.dw soundbeChannel2
+	.dw sndVeranProjectileChannel2
 	.db $ff
 
-soundbf:
+sndBlueStalfosCharge:
 	.db $02
-	.dw soundbfChannel2
+	.dw sndBlueStalfosChargeChannel2
 	.db $ff
 
-soundc0:
+sndTransform:
 	.db $02
-	.dw soundc0Channel2
+	.dw sndTransformChannel2
 	.db $ff
 
-soundc1:
+sndRestore:
 	.db $b2
-	.dw soundc1Channel2
+	.dw sndRestoreChannel2
 	.db $ff
 
-soundc2:
+sndFloodgates:
 	.db $07
-	.dw soundc2Channel7
+	.dw sndFloodgatesChannel7
 	.db $ff
 
-soundc3:
+sndRicky:
 	.db $05
-	.dw soundc3Channel5
+	.dw sndRickyChannel5
 	.db $ff
 
-soundc4:
+sndDimitri:
 	.db $05
-	.dw soundc4Channel5
+	.dw sndDimitriChannel5
 	.db $ff
 
-soundc5:
+sndMoosh:
 	.db $05
-	.dw soundc5Channel5
+	.dw sndMooshChannel5
 	.db $ff
 
-soundc6:
+sndDekuScrub:
 	.db $a2
-	.dw soundc6Channel2
+	.dw sndDekuScrubChannel2
 	.db $ff
 
-soundc7:
+sndGoron:
 	.db $a2
-	.dw soundc7Channel2
+	.dw sndGoronChannel2
 	.db $ff
 
-soundc8:
+sndDing:
 	.db $02
-	.dw soundc8Channel2
+	.dw sndDingChannel2
 	.db $07
-	.dw soundc8Channel7
+	.dw sndDingChannel7
 	.db $ff
 
-soundc9:
+sndCircling:
 	.db $02
-	.dw soundc9Channel2
+	.dw sndCirclingChannel2
 	.db $ff
 
 soundca:
@@ -1551,34 +1551,34 @@ soundca:
 	.dw soundcaChannel7
 	.db $ff
 
-soundcb:
+sndSeedShooter:
 	.db $02
-	.dw soundcbChannel2
+	.dw sndSeedShooterChannel2
 	.db $07
-	.dw soundcbChannel7
+	.dw sndSeedShooterChannel7
 	.db $ff
 
-soundcc:
+sndWhistle:
 	.db $a2
-	.dw soundccChannel2
+	.dw sndWhistleChannel2
 	.db $ff
 
-soundcd:
+sndGoronDanceB:
 	.db $02
-	.dw soundcdChannel2
+	.dw sndGoronDanceBChannel2
 	.db $03
-	.dw soundcdChannel3
+	.dw sndGoronDanceBChannel3
 	.db $07
-	.dw soundcdChannel7
+	.dw sndGoronDanceBChannel7
 	.db $ff
 
-soundce:
+sndMakuTreePast:
 	.db $02
-	.dw soundceChannel2
+	.dw sndMakuTreePastChannel2
 	.db $05
-	.dw soundceChannel5
+	.dw sndMakuTreePastChannel5
 	.db $07
-	.dw soundceChannel7
+	.dw sndMakuTreePastChannel7
 	.db $ff
 
 soundcf:
@@ -1586,11 +1586,11 @@ soundcf:
 	.dw soundcfChannel2
 	.db $ff
 
-soundd0:
+sndPirateBell:
 	.db $02
-	.dw soundd0Channel2
+	.dw sndPirateBellChannel2
 	.db $07
-	.dw soundd0Channel7
+	.dw sndPirateBellChannel7
 	.db $ff
 
 soundd1:
@@ -1600,14 +1600,14 @@ soundd1:
 	.dw soundd1Channel7
 	.db $ff
 
-soundd2:
+sndLightning:
 	.db $87
-	.dw soundd2Channel7
+	.dw sndLightningChannel7
 	.db $ff
 
-soundd3:
+sndWind:
 	.db $07
-	.dw soundd3Channel7
+	.dw sndWindChannel7
 	.db $ff
 
 soundd4:
@@ -1617,9 +1617,9 @@ soundd4:
 	.dw soundd4Channel7
 	.db $ff
 
-soundd5:
+sndd5:
 	.db $02
-	.dw soundd5Channel2
+	.dw sndd5Channel2
 	.db $ff
 
 sound92:
@@ -1627,37 +1627,37 @@ sound92:
 	.dw sound92Channel2
 	.db $ff
 
-sound9d:
+sndFluteRicky:
 	.db $f3
-	.dw sound9dChannel3
+	.dw sndFluteRickyChannel3
 	.db $f2
-	.dw sound9dChannel2
+	.dw sndFluteRickyChannel2
 	.db $f5
-	.dw sound9dChannel5
+	.dw sndFluteRickyChannel5
 	.db $f7
-	.dw sound9dChannel7
+	.dw sndFluteRickyChannel7
 	.db $ff
 
-sound9e:
+sndFluteDimitri:
 	.db $f3
-	.dw sound9eChannel3
+	.dw sndFluteDimitriChannel3
 	.db $f2
-	.dw sound9eChannel2
+	.dw sndFluteDimitriChannel2
 	.db $f5
-	.dw sound9eChannel5
+	.dw sndFluteDimitriChannel5
 	.db $f7
-	.dw sound9eChannel7
+	.dw sndFluteDimitriChannel7
 	.db $ff
 
-sound9f:
+sndFluteMoosh:
 	.db $f3
-	.dw sound9fChannel3
+	.dw sndFluteMooshChannel3
 	.db $f2
-	.dw sound9fChannel2
+	.dw sndFluteMooshChannel2
 	.db $f5
-	.dw sound9fChannel5
+	.dw sndFluteMooshChannel5
 	.db $f7
-	.dw sound9fChannel7
+	.dw sndFluteMooshChannel7
 	.db $ff
 
 
@@ -1666,15 +1666,15 @@ sound9f:
 .endif
 
 
-soundde:
+sndde:
 	.db $00
-	.dw sounddeChannel0
+	.dw snddeChannel0
 	.db $01
-	.dw sounddeChannel1
+	.dw snddeChannel1
 	.db $04
-	.dw sounddeChannel4
+	.dw snddeChannel4
 	.db $06
-	.dw sounddeChannel6
+	.dw snddeChannel6
 	.db $ff
 
 .ifdef BUILD_VANILLA

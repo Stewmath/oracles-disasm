@@ -1,6 +1,6 @@
-sound4cStart:
+sndGetItemStart:
 
-sound4cChannel2:
+sndGetItemChannel2:
 	duty $01
 	vol $b
 	note c5  $0a
@@ -9,7 +9,7 @@ sound4cChannel2:
 	note ds5 $32
 	cmdff
 
-sound4cChannel3:
+sndGetItemChannel3:
 	duty $01
 	vol $9
 	note a5  $0a
@@ -18,7 +18,7 @@ sound4cChannel3:
 	note c6  $32
 	cmdff
 
-sound4cChannel5:
+sndGetItemChannel5:
 	duty $01
 	note f4  $0a
 	note fs4 $0a
@@ -26,7 +26,7 @@ sound4cChannel5:
 	note gs4 $32
 	cmdff
 
-sound4cChannel7:
+sndGetItemChannel7:
 	cmdf0 $00
 	note $00 $50
 	cmdff

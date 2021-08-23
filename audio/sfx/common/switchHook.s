@@ -1,6 +1,6 @@
-sounda7Start:
+sndSwitchHookStart:
 
-sounda7Channel2:
+sndSwitchHookChannel2:
 	vol $d
 	note c7  $01
 	vol $0

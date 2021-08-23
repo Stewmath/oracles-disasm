@@ -1,6 +1,6 @@
-sound6eStart:
+sndEnterCaveStart:
 
-sound6eChannel7:
+sndEnterCaveChannel7:
 	cmdf0 $71
 	note $24 $04
 	cmdf0 $00

@@ -1,6 +1,6 @@
-sound6bStart:
+sndSwordSpinStart:
 
-sound6bChannel7:
+sndSwordSpinChannel7:
 	cmdf0 $40
 	note $07 $01
 	cmdf0 $50

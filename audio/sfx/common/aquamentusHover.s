@@ -1,6 +1,6 @@
-sound7cStart:
+sndAquamentusHoverStart:
 
-sound7cChannel2:
+sndAquamentusHoverChannel2:
 	duty $01
 musice9a8c:
 	vol $9

@@ -1,6 +1,6 @@
-sound82Start:
+sndRollerStart:
 
-sound82Channel2:
+sndRollerChannel2:
 	duty $00
 	vol $0
 	rest $05
@@ -34,7 +34,7 @@ sound82Channel2:
 	note ds2 $01
 	cmdff
 
-sound82Channel7:
+sndRollerChannel7:
 	cmdf0 $f1
 	note $52 $01
 	note $56 $03

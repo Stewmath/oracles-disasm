@@ -1,6 +1,6 @@
-sound58Start:
+sndClink2Start:
 
-sound58Channel2:
+sndClink2Channel2:
 	duty $00
 	vol $9
 	env $0 $01

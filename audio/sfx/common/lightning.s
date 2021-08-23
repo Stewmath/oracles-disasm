@@ -1,6 +1,6 @@
-soundd2Start:
+sndLightningStart:
 
-soundd2Channel7:
+sndLightningChannel7:
 	cmdf0 $f0
 	note $00 $01
 	cmdf0 $80

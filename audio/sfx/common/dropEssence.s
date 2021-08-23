@@ -1,6 +1,6 @@
-sound77Start:
+sndDropEssenceStart:
 
-sound77Channel2:
+sndDropEssenceChannel2:
 	duty $00
 	vol $d
 	cmdf8 $00

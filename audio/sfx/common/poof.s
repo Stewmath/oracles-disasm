@@ -1,6 +1,6 @@
-sound98Start:
+sndPoofStart:
 
-sound98Channel2:
+sndPoofChannel2:
 	vol $d
 	cmdf0 $80
 	cmdf8 $61

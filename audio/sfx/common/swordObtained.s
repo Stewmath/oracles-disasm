@@ -1,6 +1,6 @@
-soundabStart:
+sndSwordObtainedStart:
 
-soundabChannel2:
+sndSwordObtainedChannel2:
 	cmdf0 $00
 	vol $0
 	.db $00 $00 $09
@@ -9,7 +9,7 @@ soundabChannel2:
 	.db $07 $c0 $55
 	cmdff
 
-soundabChannel7:
+sndSwordObtainedChannel7:
 	cmdf0 $80
 	note $27 $01
 	note $37 $01

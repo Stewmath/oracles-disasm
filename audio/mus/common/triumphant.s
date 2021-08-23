@@ -1,6 +1,6 @@
-sound20Start:
+musTriumphantStart:
 
-sound20Channel1:
+musTriumphantChannel1:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -402,7 +402,7 @@ musicf4007:
 	goto musicf4007
 	cmdff
 
-sound20Channel0:
+musTriumphantChannel0:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -785,7 +785,7 @@ musicf4298:
 	goto musicf4298
 	cmdff
 
-sound20Channel4:
+musTriumphantChannel4:
 musicf4503:
 	duty $0e
 	note a2  $20
@@ -922,7 +922,7 @@ musicf4503:
 	goto musicf4503
 	cmdff
 
-sound20Channel6:
+musTriumphantChannel6:
 musicf460f:
 	vol $5
 	note $26 $10

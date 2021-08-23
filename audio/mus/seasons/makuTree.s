@@ -1,6 +1,6 @@
-sound1eStart:
+musMakuTreeStart:
 
-sound1eChannel1:
+musMakuTreeChannel1:
 musicf0001:
 	vibrato $e1
 	env $0 $00
@@ -193,7 +193,7 @@ musicf0001:
 	goto musicf0001
 	cmdff
 
-sound1eChannel0:
+musMakuTreeChannel0:
 musicf0156:
 	vibrato $e1
 	env $0 $00
@@ -388,7 +388,7 @@ musicf0156:
 	goto musicf0156
 	cmdff
 
-sound1eChannel4:
+musMakuTreeChannel4:
 musicf02ac:
 	duty $17
 	note a3  $1c
@@ -427,4 +427,4 @@ musicf02ac:
 	goto musicf02ac
 	cmdff
 
-.define sound1eChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musMakuTreeChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

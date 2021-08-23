@@ -1,6 +1,6 @@
-sound71Start:
+sndMoveBlockStart:
 
-sound71Channel7:
+sndMoveBlockChannel7:
 	cmdf0 $60
 	note $65 $02
 	cmdf0 $80

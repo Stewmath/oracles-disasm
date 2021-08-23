@@ -1,6 +1,6 @@
-sound11Start:
+musFileSelectStart:
 
-sound11Channel1:
+musFileSelectChannel1:
 	vibrato $00
 	duty $02
 	env $0 $00
@@ -119,7 +119,7 @@ musicec37c:
 	goto musicec37c
 	cmdff
 
-sound11Channel0:
+musFileSelectChannel0:
 	vol $0
 	note gs3 $70
 	vibrato $00
@@ -260,7 +260,7 @@ musicec44d:
 	goto musicec44d
 	cmdff
 
-sound11Channel4:
+musFileSelectChannel4:
 	duty $0a
 	note as2 $03
 	duty $0d
@@ -505,7 +505,7 @@ musicec5ac:
 	goto musicec5ac
 	cmdff
 
-sound11Channel6:
+musFileSelectChannel6:
 	vol $5
 	note $2a $0e
 	note $2a $07

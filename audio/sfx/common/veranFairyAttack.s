@@ -1,6 +1,6 @@
-sounda8Start:
+sndVeranFairyAttackStart:
 
-sounda8Channel2:
+sndVeranFairyAttackChannel2:
 	cmdf0 $34
 	vol $9
 	.db $06 $46 $04
@@ -22,7 +22,7 @@ sounda8Channel2:
 	.db $06 $46 $04
 	cmdff
 
-sounda8Channel7:
+sndVeranFairyAttackChannel7:
 	cmdf0 $90
 	note $36 $01
 	note $34 $01

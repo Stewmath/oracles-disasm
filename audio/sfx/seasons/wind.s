@@ -1,6 +1,6 @@
-soundd3Start:
+sndWindStart:
 
-soundd3Channel7:
+sndWindChannel7:
 	cmdf0 $40
 	note $37 $01
 	note $36 $01

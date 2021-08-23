@@ -1,6 +1,6 @@
-sound29Start:
+musCredits1Start:
 
-sound29Channel1:
+musCredits1Channel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -435,7 +435,7 @@ musicfaba1:
 	goto musicfaba1
 	cmdff
 
-sound29Channel0:
+musCredits1Channel0:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -801,7 +801,7 @@ musicfae87:
 	goto musicfae87
 	cmdff
 
-sound29Channel4:
+musCredits1Channel4:
 	duty $0e
 	rest $ff
 	rest $ff
@@ -1104,7 +1104,7 @@ musicfb0de:
 	goto musicfb0de
 	cmdff
 
-sound29Channel6:
+musCredits1Channel6:
 	vol $6
 	note $26 $38
 	vol $4

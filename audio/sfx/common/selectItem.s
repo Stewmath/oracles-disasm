@@ -1,6 +1,6 @@
-sound56Start:
+sndSelectItemStart:
 
-sound56Channel2:
+sndSelectItemChannel2:
 	duty $02
 	vol $8
 	note b5  $04

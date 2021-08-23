@@ -1,6 +1,6 @@
-sound50Start:
+sndClinkStart:
 
-sound50Channel2:
+sndClinkChannel2:
 	duty $00
 	vol $d
 	note gs7 $01

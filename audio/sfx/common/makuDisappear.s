@@ -1,6 +1,6 @@
-soundb2Start:
+sndMakuDisappearStart:
 
-soundb2Channel2:
+sndMakuDisappearChannel2:
 	duty $02
 	vol $3
 	note c2  $1c
@@ -10,7 +10,7 @@ soundb2Channel2:
 	note c2  $1c
 	cmdff
 
-soundb2Channel7:
+sndMakuDisappearChannel7:
 	cmdf0 $f0
 	note $75 $1c
 	cmdf0 $f0

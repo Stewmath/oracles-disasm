@@ -127,8 +127,15 @@
 .endm
 
 .macro m_soundPointer
-	.db :\1Start - :b39_initSound
-	.dw \1
+	.db :\1Start - :b39_initSound ; Bank number
+	.dw \1 ; Pointer
+.endm
+
+.macro m_soundPointer2
+	.db :\2Start - :b39_initSound ; Bank number
+	.dw \2 ; Pointer
+	.define \1, MUSIC_INDEX EXPORT
+	.redefine MUSIC_INDEX, MUSIC_INDEX+1
 .endm
 
 ; Byte 1: frequency

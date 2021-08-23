@@ -1,6 +1,6 @@
-soundc2Start:
+sndFloodgatesStart:
 
-soundc2Channel7:
+sndFloodgatesChannel7:
 	cmdf0 $10
 	note $25 $02
 	cmdf0 $20

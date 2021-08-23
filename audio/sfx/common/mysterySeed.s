@@ -1,6 +1,6 @@
-sound7bStart:
+sndMysterySeedStart:
 
-sound7bChannel2:
+sndMysterySeedChannel2:
 	duty $00
 	vol $6
 	note b4  $04

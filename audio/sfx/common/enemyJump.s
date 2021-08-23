@@ -1,6 +1,6 @@
-sound8fStart:
+sndEnemyJumpStart:
 
-sound8fChannel2:
+sndEnemyJumpChannel2:
 	duty $02
 	vol $b
 	env $0 $02

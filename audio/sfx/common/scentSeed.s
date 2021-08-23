@@ -1,6 +1,6 @@
-sound85Start:
+sndScentSeedStart:
 
-sound85Channel2:
+sndScentSeedChannel2:
 	duty $02
 	vol $f
 	cmdf8 $ce

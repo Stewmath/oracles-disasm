@@ -1,6 +1,6 @@
-sound8bStart:
+sndFilledHeartContainerStart:
 
-sound8bChannel2:
+sndFilledHeartContainerChannel2:
 	duty $02
 	vol $a
 	env $0 $02

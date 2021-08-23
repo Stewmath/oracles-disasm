@@ -1,6 +1,6 @@
-soundceStart:
+sndMakuTreePastStart:
 
-soundceChannel2:
+sndMakuTreePastChannel2:
 	duty $02
 	vol $5
 	env $1 $00
@@ -14,7 +14,7 @@ soundceChannel2:
 	note c7  $37
 	cmdff
 
-soundceChannel5:
+sndMakuTreePastChannel5:
 	duty $08
 	vibrato $00
 	cmdf8 $04
@@ -24,7 +24,7 @@ soundceChannel5:
 	note c7  $28
 	cmdff
 
-soundceChannel7:
+sndMakuTreePastChannel7:
 	cmdf0 $20
 	note $16 $12
 	note $17 $01

@@ -1,6 +1,6 @@
-sound5fStart:
+sndDamageLinkStart:
 
-sound5fChannel5:
+sndDamageLinkChannel5:
 	cmdfd $fd
 	duty $2d
 	note f2  $01

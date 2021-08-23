@@ -1,6 +1,6 @@
-sound7eStart:
+sndSwitchStart:
 
-sound7eChannel2:
+sndSwitchChannel2:
 	duty $02
 	vol $d
 	note e5  $01

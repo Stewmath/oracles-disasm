@@ -1,6 +1,6 @@
-sound79Start:
+sndBigExplosionStart:
 
-sound79Channel7:
+sndBigExplosionChannel7:
 	cmdf0 $c0
 	note $24 $03
 	note $25 $01

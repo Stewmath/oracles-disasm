@@ -1,6 +1,6 @@
-soundb3Start:
+sndRumbleStart:
 
-soundb3Channel2:
+sndRumbleChannel2:
 	cmdf0 $df
 	.db $00 $45 $03
 	vol $8
@@ -8,7 +8,7 @@ soundb3Channel2:
 	.db $00 $45 $32
 	cmdff
 
-soundb3Channel7:
+sndRumbleChannel7:
 	cmdf0 $f5
 	note $75 $3c
 	cmdff

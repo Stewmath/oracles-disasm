@@ -1,6 +1,6 @@
-sound95Start:
+sndWarpStartStart:
 
-sound95Channel2:
+sndWarpStartChannel2:
 	cmdf0 $d2
 	.db $07 $07 $03
 	.db $06 $e7 $01

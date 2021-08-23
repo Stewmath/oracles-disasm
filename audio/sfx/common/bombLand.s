@@ -1,6 +1,6 @@
-sound52Start:
+sndBombLandStart:
 
-sound52Channel2:
+sndBombLandChannel2:
 	duty $02
 	vol $d
 	cmdf8 $7f

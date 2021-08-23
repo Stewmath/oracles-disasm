@@ -1,6 +1,6 @@
-sound2dStart:
+musMinibossStart:
 
-sound2dChannel1:
+musMinibossChannel1:
 	duty $02
 	vol $7
 	note g6  $03
@@ -195,7 +195,7 @@ musice89a1:
 	goto musice89a1
 	cmdff
 
-sound2dChannel0:
+musMinibossChannel0:
 	duty $02
 	vol $7
 	note d6  $03
@@ -393,7 +393,7 @@ musice8b04:
 	goto musice8b04
 	cmdff
 
-sound2dChannel4:
+musMinibossChannel4:
 	duty $12
 	rest $30
 	note b2  $06
@@ -570,7 +570,7 @@ musice8c51:
 	goto musice8c51
 	cmdff
 
-sound2dChannel6:
+musMinibossChannel6:
 	rest $30
 	vol $3
 	note $52 $04

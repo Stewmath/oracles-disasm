@@ -1,6 +1,6 @@
-sound5cStart:
+sndEnergyThingStart:
 
-sound5cChannel2:
+sndEnergyThingChannel2:
 	duty $00
 	vol $1
 	note e7  $01

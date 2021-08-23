@@ -1,6 +1,6 @@
-soundb0Start:
+sndOpeningStart:
 
-soundb0Channel2:
+sndOpeningChannel2:
 	duty $02
 	vol $3
 	note c2  $1f
@@ -19,7 +19,7 @@ soundb0Channel2:
 	note c2  $32
 	cmdff
 
-soundb0Channel7:
+sndOpeningChannel7:
 	cmdf0 $f0
 	note $76 $1f
 	cmdf0 $f0

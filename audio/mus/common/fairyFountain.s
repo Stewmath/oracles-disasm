@@ -1,6 +1,6 @@
-sound0fStart:
+musFairyFountainStart:
 
-sound0fChannel1:
+musFairyFountainChannel1:
 	vibrato $00
 	env $0 $02
 	duty $02
@@ -41,7 +41,7 @@ musicec76b:
 	goto musicec76b
 	cmdff
 
-sound0fChannel0:
+musFairyFountainChannel0:
 	vol $1
 	note b3  $06
 	vibrato $00
@@ -84,7 +84,7 @@ musicec7b9:
 	goto musicec7b9
 	cmdff
 
-sound0fChannel4:
+musFairyFountainChannel4:
 	duty $0f
 	rest $09
 musicec802:
@@ -123,4 +123,4 @@ musicec802:
 	goto musicec802
 	cmdff
 
-.define sound0fChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musFairyFountainChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,6 @@
-sound57Start:
+sndGainHeartStart:
 
-sound57Channel2:
+sndGainHeartChannel2:
 	duty $02
 	vol $9
 	note d5  $01

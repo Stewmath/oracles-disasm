@@ -1,6 +1,6 @@
-sound66Start:
+sndTextStart:
 
-sound66Channel2:
+sndTextChannel2:
 	duty $02
 	vol $2
 	note f6  $02

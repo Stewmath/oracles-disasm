@@ -1,6 +1,6 @@
-sound62Start:
+sndGohmaSpawnGelStart:
 
-sound62Channel2:
+sndGohmaSpawnGelChannel2:
 	duty $00
 	vol $b
 	cmdf8 $05

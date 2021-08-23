@@ -1,6 +1,6 @@
-soundcbStart:
+sndSeedShooterStart:
 
-soundcbChannel2:
+sndSeedShooterChannel2:
 	duty $02
 	vol $c
 	cmdf8 $28
@@ -14,7 +14,7 @@ soundcbChannel2:
 	note ds5 $0c
 	cmdff
 
-soundcbChannel7:
+sndSeedShooterChannel7:
 	cmdf0 $b1
 	note $25 $01
 	cmdf0 $41

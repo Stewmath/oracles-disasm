@@ -1,6 +1,6 @@
-sound68Start:
+sndUnknown3Start:
 
-sound68Channel2:
+sndUnknown3Channel2:
 	duty $01
 	vibrato $0b
 	vol $c

@@ -1,6 +1,6 @@
-sound73Start:
+sndKillEnemyStart:
 
-sound73Channel7:
+sndKillEnemyChannel7:
 	cmdf0 $d3
 	note $37 $01
 	note $44 $01

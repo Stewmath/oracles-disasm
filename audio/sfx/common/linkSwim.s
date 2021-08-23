@@ -1,6 +1,6 @@
-sound88Start:
+sndLinkSwimStart:
 
-sound88Channel2:
+sndLinkSwimChannel2:
 	duty $02
 	env $2 $00
 	vol $9

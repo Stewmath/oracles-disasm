@@ -1,6 +1,6 @@
-sound32Start:
+musFinalBossStart:
 
-sound32Channel1:
+musFinalBossChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -206,7 +206,7 @@ musice6c42:
 	goto musice6c42
 	cmdff
 
-sound32Channel0:
+musFinalBossChannel0:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -481,7 +481,7 @@ musice6da9:
 	goto musice6da9
 	cmdff
 
-sound32Channel4:
+musFinalBossChannel4:
 musice6f81:
 	duty $12
 	note gs2 $04
@@ -934,7 +934,7 @@ musice6f81:
 	goto musice6f81
 	cmdff
 
-sound32Channel6:
+musFinalBossChannel6:
 musice7305:
 	vol $5
 	note $24 $18

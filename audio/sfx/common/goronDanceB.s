@@ -1,6 +1,6 @@
-soundcdStart:
+sndGoronDanceBStart:
 
-soundcdChannel2:
+sndGoronDanceBChannel2:
 	duty $01
 	vol $0
 	rest $03
@@ -15,7 +15,7 @@ soundcdChannel2:
 	note c6  $08
 	cmdff
 
-soundcdChannel3:
+sndGoronDanceBChannel3:
 	duty $00
 	vol $0
 	rest $03
@@ -26,7 +26,7 @@ soundcdChannel3:
 	note g5  $08
 	cmdff
 
-soundcdChannel7:
+sndGoronDanceBChannel7:
 	cmdf0 $a1
 	note $07 $01
 	cmdf0 $91

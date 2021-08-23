@@ -1,6 +1,6 @@
-sound1dStart:
+musRoomOfRitesStart:
 
-sound1dChannel1:
+musRoomOfRitesChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -253,7 +253,7 @@ musicf5d7e:
 	goto musicf5d7e
 	cmdff
 
-sound1dChannel0:
+musRoomOfRitesChannel0:
 	vol $0
 	note gs3 $09
 	vibrato $e1
@@ -453,7 +453,7 @@ musicf5f2e:
 	goto musicf5f2e
 	cmdff
 
-sound1dChannel4:
+musRoomOfRitesChannel4:
 	duty $0e
 	note b1  $70
 musicf606c:
@@ -703,7 +703,7 @@ musicf606c:
 	goto musicf606c
 	cmdff
 
-sound1dChannel6:
+musRoomOfRitesChannel6:
 	rest $70
 musicf6258:
 	vol $5

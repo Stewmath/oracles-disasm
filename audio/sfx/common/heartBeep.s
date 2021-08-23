@@ -1,6 +1,6 @@
-sound60Start:
+sndHeartBeepStart:
 
-sound60Channel2:
+sndHeartBeepChannel2:
 	duty $02
 	vol $b
 	note b5  $02

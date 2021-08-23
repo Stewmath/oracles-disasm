@@ -1,6 +1,6 @@
-sound5bStart:
+sndSolvePuzzle2Start:
 
-sound5bChannel2:
+sndSolvePuzzle2Channel2:
 	duty $02
 	env $0 $02
 	vol $d
@@ -12,7 +12,7 @@ sound5bChannel2:
 	note g6  $18
 	cmdff
 
-sound5bChannel3:
+sndSolvePuzzle2Channel3:
 	duty $02
 	env $0 $02
 	vol $0

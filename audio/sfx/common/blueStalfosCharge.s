@@ -1,6 +1,6 @@
-soundbfStart:
+sndBlueStalfosChargeStart:
 
-soundbfChannel2:
+sndBlueStalfosChargeChannel2:
 	duty $00
 	cmdf0 $d9
 	.db $06 $0b $01

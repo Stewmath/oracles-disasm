@@ -1,6 +1,6 @@
-sound10Start:
+musGetEssenceStart:
 
-sound10Channel1:
+musGetEssenceChannel1:
 	duty $00
 	vol $b
 	note a5  $06
@@ -28,7 +28,7 @@ sound10Channel1:
 	note d6  $52
 	cmdff
 
-sound10Channel0:
+musGetEssenceChannel0:
 	duty $00
 	vol $c
 	note c5  $06
@@ -56,7 +56,7 @@ sound10Channel0:
 	note f5  $52
 	cmdff
 
-sound10Channel4:
+musGetEssenceChannel4:
 	duty $0a
 	note f3  $06
 	rest $04
@@ -71,7 +71,7 @@ sound10Channel4:
 	note as3 $4b
 	cmdff
 
-sound10Channel6:
+musGetEssenceChannel6:
 	vol $0
 	note $30 $1b
 	vol $5

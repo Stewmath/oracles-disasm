@@ -1,6 +1,6 @@
-soundc4Start:
+sndDimitriStart:
 
-soundc4Channel5:
+sndDimitriChannel5:
 	duty $0b
 	note c3  $02
 	cmdf8 $1e

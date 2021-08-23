@@ -1,6 +1,6 @@
-sound4aStart:
+musPrecreditsStart:
 
-sound4aChannel1:
+musPrecreditsChannel1:
 	vol $0
 	note gs3 $07
 	vibrato $e1
@@ -326,7 +326,7 @@ musicea200:
 	goto musicea200
 	cmdff
 
-sound4aChannel0:
+musPrecreditsChannel0:
 	vol $0
 	note gs3 $07
 	vibrato $e1
@@ -664,7 +664,7 @@ musicea42f:
 	goto musicea42f
 	cmdff
 
-sound4aChannel4:
+musPrecreditsChannel4:
 	rest $07
 	cmdf2
 musicea678:
@@ -940,7 +940,7 @@ musicea678:
 	goto musicea678
 	cmdff
 
-sound4aChannel6:
+musPrecreditsChannel6:
 	cmdf2
 	vol $3
 	note $26 $02

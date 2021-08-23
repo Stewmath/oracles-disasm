@@ -1,6 +1,6 @@
-sound96Start:
+sndGhostStart:
 
-sound96Channel2:
+sndGhostChannel2:
 	duty $02
 	vol $1
 	note a6  $08

@@ -35,7 +35,7 @@ b39_updateMusicVolume:
 
 
 ; This is pointless?
-.dw sound00
+.dw musNone
 
 
 ;;

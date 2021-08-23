@@ -1,6 +1,6 @@
-sound54Start:
+sndOpenMenuStart:
 
-sound54Channel2:
+sndOpenMenuChannel2:
 	duty $01
 	vol $f
 	env $3 $00
@@ -8,7 +8,7 @@ sound54Channel2:
 	note c3  $16
 	cmdff
 
-sound54Channel3:
+sndOpenMenuChannel3:
 	duty $02
 	vol $f
 	env $3 $00

@@ -1,6 +1,6 @@
-sound39Start:
+musGreatMoblinStart:
 
-sound39Channel1:
+musGreatMoblinChannel1:
 	vibrato $00
 	env $0 $00
 .ifdef ROM_SEASONS
@@ -124,7 +124,7 @@ musicf800f:
 	goto musicf800f
 	cmdff
 
-sound39Channel0:
+musGreatMoblinChannel0:
 .ifdef ROM_SEASONS
 	cmdf2
 .endif
@@ -218,7 +218,7 @@ musicf80d6:
 	goto musicf80d6
 	cmdff
 
-sound39Channel4:
+musGreatMoblinChannel4:
 .ifdef ROM_SEASONS
 	cmdf2
 .endif
@@ -286,4 +286,4 @@ musicf8182:
 	goto musicf8182
 	cmdff
 
-.define sound39Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musGreatMoblinChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

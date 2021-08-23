@@ -1,6 +1,6 @@
-sound65Start:
+sndLinkFallStart:
 
-sound65Channel5:
+sndLinkFallChannel5:
 	duty $03
 	note c6  $02
 	note b5  $02

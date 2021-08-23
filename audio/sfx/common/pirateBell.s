@@ -1,6 +1,6 @@
-soundd0Start:
+sndPirateBellStart:
 
-soundd0Channel2:
+sndPirateBellChannel2:
 	duty $00
 	vol $c
 	cmdf8 $20
@@ -29,7 +29,7 @@ soundd0Channel2:
 	note fs5 $01
 	cmdff
 
-soundd0Channel7:
+sndPirateBellChannel7:
 	cmdf0 $f0
 	note $34 $01
 	cmdf0 $e0

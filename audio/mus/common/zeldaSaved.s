@@ -1,6 +1,6 @@
-sound38Start:
+musZeldaSavedStart:
 
-sound38Channel1:
+musZeldaSavedChannel1:
 musicf65f2:
 	vibrato $f1
 	env $0 $00
@@ -264,7 +264,7 @@ musicf65f2:
 	rest $45
 	goto musicf65f2
 	cmdff
-sound38Channel0:
+musZeldaSavedChannel0:
 musicf67c7:
 	vibrato $00
 	env $0 $04
@@ -365,7 +365,7 @@ musicf67c7:
 	note gs3 $16
 	goto musicf67c7
 	cmdff
-sound38Channel4:
+musZeldaSavedChannel4:
 musicf688a:
 	duty $0f
 	rest $0b
@@ -470,4 +470,4 @@ musicf688a:
 	goto musicf688a
 	cmdff
 
-.define sound38Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musZeldaSavedChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

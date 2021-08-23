@@ -1,6 +1,6 @@
-soundacStart:
+sndShockStart:
 
-soundacChannel2:
+sndShockChannel2:
 	cmdf0 $db
 	.db $06 $0b $02
 	vol $b
@@ -29,7 +29,7 @@ soundacChannel2:
 	.db $06 $0b $02
 	cmdff
 
-soundacChannel7:
+sndShockChannel7:
 	cmdf0 $d0
 	note $24 $02
 	cmdf0 $d0

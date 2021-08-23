@@ -1,6 +1,6 @@
-soundb9Start:
+sndEndlessStart:
 
-soundb9Channel7:
+sndEndlessChannel7:
 	cmdf0 $30
 	note $67 $07
 	cmdf0 $40

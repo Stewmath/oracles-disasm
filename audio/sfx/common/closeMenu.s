@@ -1,6 +1,6 @@
-sound55Start:
+sndCloseMenuStart:
 
-sound55Channel2:
+sndCloseMenuChannel2:
 	duty $02
 	vol $d
 	env $1 $00
@@ -8,7 +8,7 @@ sound55Channel2:
 	note g4  $09
 	cmdff
 
-sound55Channel3:
+sndCloseMenuChannel3:
 	duty $01
 	vol $d
 	env $1 $00

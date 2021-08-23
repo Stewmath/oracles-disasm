@@ -1,6 +1,6 @@
-sound34Start:
+musGanonStart:
 
-sound34Channel1:
+musGanonChannel1:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -182,7 +182,7 @@ musiced6c3:
 	goto musiced6c3
 	cmdff
 
-sound34Channel0:
+musGanonChannel0:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -394,7 +394,7 @@ musiced7fa:
 	goto musiced7fa
 	cmdff
 
-sound34Channel4:
+musGanonChannel4:
 	cmdf2
 musiced957:
 	duty $12
@@ -1320,7 +1320,7 @@ musiced957:
 	goto musiced957
 	cmdff
 
-sound34Channel6:
+musGanonChannel6:
 	cmdf2
 musicee08c:
 	vol $6

@@ -1,6 +1,6 @@
-sound23Start:
+musPiratesStart:
 
-sound23Channel1:
+musPiratesChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -286,7 +286,7 @@ musicf4e9d:
 	goto musicf4e9d
 	cmdff
 
-sound23Channel0:
+musPiratesChannel0:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -569,7 +569,7 @@ musicf5098:
 	goto musicf5098
 	cmdff
 
-sound23Channel4:
+musPiratesChannel4:
 musicf5280:
 	duty $0e
 	note a1  $07
@@ -764,7 +764,7 @@ musicf5280:
 	goto musicf5280
 	cmdff
 
-sound23Channel6:
+musPiratesChannel6:
 
 .ifdef ROM_SEASONS
 musicf5403:

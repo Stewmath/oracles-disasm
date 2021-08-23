@@ -1,6 +1,6 @@
-sounda6Start:
+sndStrikeStart:
 
-sounda6Channel7:
+sndStrikeChannel7:
 	cmdf0 $80
 	note $54 $01
 	cmdf0 $80

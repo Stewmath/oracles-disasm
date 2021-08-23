@@ -1,6 +1,6 @@
-sound99Start:
+sndBaseballStart:
 
-sound99Channel2:
+sndBaseballChannel2:
 	cmdf0 $80
 	cmdf8 $1e
 	vol $d

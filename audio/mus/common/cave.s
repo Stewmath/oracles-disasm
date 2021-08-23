@@ -1,6 +1,6 @@
-sound36Start:
+musCaveStart:
 
-sound36Channel1:
+musCaveChannel1:
 	duty $02
 musice932a:
 ; Measure 1
@@ -106,7 +106,7 @@ musice932a:
 	goto musice932a
 	cmdff
 
-sound36Channel0:
+musCaveChannel0:
 	duty $02
 musice93c4:
 ; Measure 1
@@ -232,5 +232,5 @@ musice93c4:
 	goto musice93c4
 	cmdff
 
-.define sound36Channel4 MUSIC_CHANNEL_FALLBACK EXPORT
-.define sound36Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musCaveChannel4 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musCaveChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

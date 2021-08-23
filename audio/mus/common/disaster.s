@@ -1,6 +1,6 @@
-sound21Start:
+musDisasterStart:
 
-sound21Channel1:
+musDisasterChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -240,7 +240,7 @@ musicf47e4:
 	goto musicf47e4
 	cmdff
 
-sound21Channel0:
+musDisasterChannel0:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -570,7 +570,7 @@ musicf497c:
 	goto musicf497c
 	cmdff
 
-sound21Channel4:
+musDisasterChannel4:
 musicf4b82:
 	duty $0e
 	note d2  $0e
@@ -731,7 +731,7 @@ musicf4b82:
 	goto musicf4b82
 	cmdff
 
-sound21Channel6:
+musDisasterChannel6:
 musicf4cbe:
 	vol $2
 	note $2a $07

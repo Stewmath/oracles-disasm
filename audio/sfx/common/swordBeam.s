@@ -1,6 +1,6 @@
-sound5dStart:
+sndSwordBeamStart:
 
-sound5dChannel2:
+sndSwordBeamChannel2:
 	duty $00
 	vol $d
 	note b5  $01

@@ -1,6 +1,6 @@
-sound6dStart:
+sndCutGrassStart:
 
-sound6dChannel7:
+sndCutGrassChannel7:
 	cmdf0 $60
 	note $34 $04
 	cmdf0 $00

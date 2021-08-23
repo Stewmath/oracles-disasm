@@ -1,6 +1,6 @@
-soundbaStart:
+sndBeam1Start:
 
-soundbaChannel7:
+sndBeam1Channel7:
 	cmdf0 $20
 	note $36 $02
 	cmdf0 $50

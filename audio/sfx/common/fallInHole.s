@@ -1,6 +1,6 @@
-sound59Start:
+sndFallInHoleStart:
 
-sound59Channel2:
+sndFallInHoleChannel2:
 	duty $02
 	vol $9
 	cmdf8 $f6

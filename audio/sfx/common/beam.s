@@ -1,6 +1,6 @@
-sounda4Start:
+sndBeamStart:
 
-sounda4Channel2:
+sndBeamChannel2:
 	cmdf0 $3c
 	vol $9
 	.db $06 $0b $02
@@ -30,7 +30,7 @@ sounda4Channel2:
 	.db $06 $0b $02
 	cmdff
 
-sounda4Channel7:
+sndBeamChannel7:
 	cmdf0 $b0
 	note $37 $02
 	cmdf0 $83

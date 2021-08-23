@@ -1,6 +1,6 @@
-sound9cStart:
+sndPickupStart:
 
-sound9cChannel2:
+sndPickupChannel2:
 	cmdf0 $80
 	vol $9
 	cmdf8 $1e

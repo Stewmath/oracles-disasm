@@ -1,6 +1,6 @@
-sound0dStart:
+musEssenceRoomStart:
 
-sound0dChannel1:
+musEssenceRoomChannel1:
 	vibrato $00
 	env $0 $03
 	duty $02
@@ -74,7 +74,7 @@ musiced519:
 	goto musiced519
 	cmdff
 
-sound0dChannel0:
+musEssenceRoomChannel0:
 	vibrato $00
 	env $0 $03
 	duty $02
@@ -151,7 +151,7 @@ musiced5aa:
 	goto musiced5aa
 	cmdff
 
-sound0dChannel4:
+musEssenceRoomChannel4:
 	duty $08
 	note a2  $09
 	note e3  $09
@@ -224,4 +224,4 @@ musiced638:
 	goto musiced638
 	cmdff
 
-.define sound0dChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musEssenceRoomChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

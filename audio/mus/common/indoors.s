@@ -1,6 +1,6 @@
-sound0eStart:
+musIndoorsStart:
 
-sound0eChannel1:
+musIndoorsChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -184,7 +184,7 @@ musice8007:
 	goto musice8007
 	cmdff
 
-sound0eChannel4:
+musIndoorsChannel4:
 	duty $08
 musice812e:
 	note g5  $0b
@@ -513,7 +513,7 @@ musice812e:
 	goto musice812e
 	cmdff
 
-sound0eChannel0:
+musIndoorsChannel0:
 	duty $02
 musice8357:
 	vol $6
@@ -668,4 +668,4 @@ musice8357:
 .endif
 .endif
 
-.define sound0eChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musIndoorsChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

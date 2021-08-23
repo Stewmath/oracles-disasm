@@ -1,6 +1,6 @@
-sound78Start:
+sndBoomerangStart:
 
-sound78Channel7:
+sndBoomerangChannel7:
 	cmdf0 $20
 	note $16 $02
 	cmdf0 $50

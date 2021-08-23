@@ -1,6 +1,6 @@
-sound81Start:
+sndStrongPoundStart:
 
-sound81Channel2:
+sndStrongPoundChannel2:
 	duty $00
 	vol $f
 	note ds2 $03
@@ -17,7 +17,7 @@ sound81Channel2:
 	note c2  $0a
 	cmdff
 
-sound81Channel7:
+sndStrongPoundChannel7:
 	cmdf0 $f1
 	note $55 $03
 	cmdf0 $01

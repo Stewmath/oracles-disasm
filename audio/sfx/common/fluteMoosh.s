@@ -1,11 +1,11 @@
-sound9fStart:
+sndFluteMooshStart:
 
-sound9fChannel3:
+sndFluteMooshChannel3:
 	vol $0
 	rest $e5
 	cmdff
 
-sound9fChannel2:
+sndFluteMooshChannel2:
 	vol $0
 	rest $0d
 	duty $02
@@ -21,7 +21,7 @@ sound9fChannel2:
 	note as6 $48
 	cmdff
 
-sound9fChannel5:
+sndFluteMooshChannel5:
 	duty $16
 	note ds6 $12
 	note as5 $12
@@ -35,7 +35,7 @@ sound9fChannel5:
 	rest $0d
 	cmdff
 
-sound9fChannel7:
+sndFluteMooshChannel7:
 	cmdf0 $00
 	note $00 $e5
 	cmdff

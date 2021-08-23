@@ -1,6 +1,6 @@
-sound4dStart:
+sndSolvePuzzleStart:
 
-sound4dChannel2:
+sndSolvePuzzleChannel2:
 	duty $02
 	vol $f
 	env $0 $01

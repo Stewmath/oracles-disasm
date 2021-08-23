@@ -1,6 +1,6 @@
-sound9bStart:
+sndJingleStart:
 
-sound9bChannel2:
+sndJingleChannel2:
 	vol $8
 	env $0 $02
 	note b5  $0a

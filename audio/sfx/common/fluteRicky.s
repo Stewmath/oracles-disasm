@@ -1,11 +1,11 @@
-sound9dStart:
+sndFluteRickyStart:
 
-sound9dChannel3:
+sndFluteRickyChannel3:
 	vol $0
 	rest $f1
 	cmdff
 
-sound9dChannel2:
+sndFluteRickyChannel2:
 	vol $0
 	duty $02
 	rest $1f
@@ -29,7 +29,7 @@ sound9dChannel2:
 	note c6  $38
 	cmdff
 
-sound9dChannel5:
+sndFluteRickyChannel5:
 	duty $16
 	note c6  $04
 	note f6  $05
@@ -47,7 +47,7 @@ sound9dChannel5:
 	rest $1f
 	cmdff
 
-sound9dChannel7:
+sndFluteRickyChannel7:
 	cmdf0 $00
 	note $00 $f1
 	cmdff

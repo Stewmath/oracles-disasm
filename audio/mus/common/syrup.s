@@ -1,6 +1,6 @@
-sound3cStart:
+musSyrupStart:
 
-sound3cChannel1:
+musSyrupChannel1:
 musicf8251:
 	vibrato $00
 	env $0 $05
@@ -81,7 +81,7 @@ musicf8251:
 	goto musicf8251
 	cmdff
 
-sound3cChannel0:
+musSyrupChannel0:
 musicf82e1:
 	vibrato $00
 	env $0 $02
@@ -183,7 +183,7 @@ musicf82e1:
 	goto musicf82e1
 	cmdff
 
-sound3cChannel4:
+musSyrupChannel4:
 .ifdef ROM_SEASONS
 	cmdf2
 .endif
@@ -238,4 +238,4 @@ musicf8380:
 	goto musicf8380
 	cmdff
 
-.define sound3cChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musSyrupChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,6 @@
-sound6fStart:
+sndExplosionStart:
 
-sound6fChannel7:
+sndExplosionChannel7:
 	cmdf0 $f1
 	note $64 $01
 	cmdf0 $f1

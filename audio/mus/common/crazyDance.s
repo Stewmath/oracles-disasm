@@ -1,6 +1,6 @@
-sound31Start:
+musCrazyDanceStart:
 
-sound31Channel1:
+musCrazyDanceChannel1:
 	vibrato $00
 	env $0 $02
 	cmdf2
@@ -138,7 +138,7 @@ musicf79ae:
 	goto musicf79ae
 	cmdff
 
-sound31Channel0:
+musCrazyDanceChannel0:
 	vibrato $00
 	env $0 $02
 	cmdf2
@@ -244,5 +244,5 @@ musicf7a98:
 	goto musicf7a98
 	cmdff
 
-.define sound31Channel4 MUSIC_CHANNEL_FALLBACK EXPORT
-.define sound31Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musCrazyDanceChannel4 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musCrazyDanceChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

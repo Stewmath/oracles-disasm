@@ -1,6 +1,6 @@
-sound75Start:
+sndUnknown5Start:
 
-sound75Channel7:
+sndUnknown5Channel7:
 	cmdf0 $30
 	note $27 $01
 	cmdf0 $60

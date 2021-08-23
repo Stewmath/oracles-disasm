@@ -1,5 +1,5 @@
-soundc5Start:
-soundc5Channel5:
+sndMooshStart:
+sndMooshChannel5:
 	duty $0a
 	cmdf8 $1e
 	note c3  $05

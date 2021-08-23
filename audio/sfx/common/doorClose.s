@@ -1,6 +1,6 @@
-sound70Start:
+sndDoorCloseStart:
 
-sound70Channel2:
+sndDoorCloseChannel2:
 	duty $01
 	vol $0
 	rest $02
@@ -11,7 +11,7 @@ sound70Channel2:
 	cmdf8 $00
 	cmdff
 
-sound70Channel7:
+sndDoorCloseChannel7:
 	cmdf0 $d0
 	note $24 $02
 	cmdf0 $b0

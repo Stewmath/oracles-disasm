@@ -1,6 +1,6 @@
-soundbcStart:
+sndBigExplosion2Start:
 
-soundbcChannel7:
+sndBigExplosion2Channel7:
 	cmdf0 $90
 	note $24 $02
 	cmdf0 $90

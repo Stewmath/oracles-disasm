@@ -1,6 +1,6 @@
-sounda0Start:
+sndChickenStart:
 
-sounda0Channel2:
+sndChickenChannel2:
 	cmdf0 $80
 	vol $9
 	.db $07 $2b $01

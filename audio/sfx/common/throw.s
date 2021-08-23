@@ -1,6 +1,6 @@
-sound51Start:
+sndThrowStart:
 
-sound51Channel2:
+sndThrowChannel2:
 	duty $02
 	vol $d
 	env $1 $00

@@ -1,6 +1,6 @@
-soundccStart:
+sndWhistleStart:
 
-soundccChannel2:
+sndWhistleChannel2:
 	duty $00
 	vol $c
 	note g7  $02

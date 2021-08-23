@@ -1,6 +1,6 @@
-sound84Start:
+sndMenuMoveStart:
 
-sound84Channel2:
+sndMenuMoveChannel2:
 	duty $02
 	cmdf0 $d9
 	.db $07 $a0 $03

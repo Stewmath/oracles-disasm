@@ -1,6 +1,6 @@
-sound67Start:
+sndBossDeadStart:
 
-sound67Channel2:
+sndBossDeadChannel2:
 	duty $00
 	vol $f
 	note c3  $01

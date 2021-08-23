@@ -1,19 +1,19 @@
-sounddeStart:
+snddeStart:
 
-sounddeChannel0:
-sounddeChannel1:
-sounddeChannel4:
-sounddeChannel6:
+snddeChannel0:
+snddeChannel1:
+snddeChannel4:
+snddeChannel6:
 	cmdff
 
 
-sound97Start:
+snd97Start:
 sounda1Start:
 soundadStart:
 soundb6Start:
 
-sound97Channel2:
-sound97Channel7:
+snd97Channel2:
+snd97Channel7:
 sounda1Channel2:
 sounda1Channel7:
 soundadChannel2:
@@ -73,17 +73,17 @@ bank39ChannelFallback:
 .BANK $3a SLOT 1
 .ORG 0
 
-sound41Start:
-sound42Start:
+mus41Start:
+mus42Start:
 
-sound41Channel0:
-sound41Channel1:
-sound41Channel4:
-sound41Channel6:
-sound42Channel0:
-sound42Channel1:
-sound42Channel4:
-sound42Channel6:
+mus41Channel0:
+mus41Channel1:
+mus41Channel4:
+mus41Channel6:
+mus42Channel0:
+mus42Channel1:
+mus42Channel4:
+mus42Channel6:
 bank3aChannelFallback:
 	cmdff
 
@@ -167,8 +167,8 @@ soundd4Channel2:
 soundd4Channel7:
 	cmdff
 
-soundd5Start:
-soundd5Channel2:
+sndd5Start:
+sndd5Channel2:
 	cmdff
 
 .include "audio/sfx/common/transform.s"
@@ -198,22 +198,22 @@ soundd5Channel2:
 .BANK $3b SLOT 1
 .ORG 0
 
-sound43Start:
-sound44Start:
-sound45Start:
+mus43Start:
+mus44Start:
+mus45Start:
 
-sound43Channel0:
-sound43Channel1:
-sound43Channel4:
-sound43Channel6:
-sound44Channel0:
-sound44Channel1:
-sound44Channel4:
-sound44Channel6:
-sound45Channel0:
-sound45Channel1:
-sound45Channel4:
-sound45Channel6:
+mus43Channel0:
+mus43Channel1:
+mus43Channel4:
+mus43Channel6:
+mus44Channel0:
+mus44Channel1:
+mus44Channel4:
+mus44Channel6:
+mus45Channel0:
+mus45Channel1:
+mus45Channel4:
+mus45Channel6:
 bank3bChannelFallback:
 	cmdff
 
@@ -327,38 +327,38 @@ sound24Channel4:
 .ORG 0
 
 sound30Start:
-sound37Start:
-sound3aStart:
-sound3bStart:
-sound47Start:
-sound48Start:
-sound49Start:
-sound4bStart:
+mus37Start:
+mus3aStart:
+mus3bStart:
+mus47Start:
+mus48Start:
+mus49Start:
+mus4bStart:
 
 sound30Channel4:
 sound30Channel6:
-sound37Channel4:
-sound3aChannel6:
-sound3bChannel0:
-sound3bChannel1:
-sound3bChannel4:
-sound3bChannel6:
-sound47Channel0:
-sound47Channel1:
-sound47Channel4:
-sound47Channel6:
-sound48Channel0:
-sound48Channel1:
-sound48Channel4:
-sound48Channel6:
-sound49Channel0:
-sound49Channel1:
-sound49Channel4:
-sound49Channel6:
-sound4bChannel0:
-sound4bChannel1:
-sound4bChannel4:
-sound4bChannel6:
+mus37Channel4:
+mus3aChannel6:
+mus3bChannel0:
+mus3bChannel1:
+mus3bChannel4:
+mus3bChannel6:
+mus47Channel0:
+mus47Channel1:
+mus47Channel4:
+mus47Channel6:
+mus48Channel0:
+mus48Channel1:
+mus48Channel4:
+mus48Channel6:
+mus49Channel0:
+mus49Channel1:
+mus49Channel4:
+mus49Channel6:
+mus4bChannel0:
+mus4bChannel1:
+mus4bChannel4:
+mus4bChannel6:
 bank3eChannelFallback:
 	cmdff
 
@@ -370,62 +370,62 @@ bank3eChannelFallback:
 .include "audio/sfx/common/goronDanceB.s"
 
 ; Undefined sounds
-soundd6Start:
-soundd7Start:
-soundd8Start:
-soundd9Start:
-sounddaStart:
-sounddbStart:
-sounddcStart:
-soundddStart:
+sndd6Start:
+sndd7Start:
+sndd8Start:
+sndd9Start:
+snddaStart:
+snddbStart:
+snddcStart:
+sndddStart:
 
-soundd6Channel1:
-soundd7Channel1:
-soundd8Channel1:
-soundd9Channel1:
-sounddaChannel1:
-sounddbChannel1:
-sounddcChannel1:
-soundddChannel1:
+sndd6Channel1:
+sndd7Channel1:
+sndd8Channel1:
+sndd9Channel1:
+snddaChannel1:
+snddbChannel1:
+snddcChannel1:
+sndddChannel1:
 	cmdff
 
-soundd6Channel0:
-soundd7Channel0:
-soundd8Channel0:
-soundd9Channel0:
-sounddaChannel0:
-sounddbChannel0:
-sounddcChannel0:
-soundddChannel0:
+sndd6Channel0:
+sndd7Channel0:
+sndd8Channel0:
+sndd9Channel0:
+snddaChannel0:
+snddbChannel0:
+snddcChannel0:
+sndddChannel0:
 	cmdff
 
-soundd6Channel4:
-soundd7Channel4:
-soundd8Channel4:
-soundd9Channel4:
-sounddaChannel4:
-sounddbChannel4:
-sounddcChannel4:
-soundddChannel4:
+sndd6Channel4:
+sndd7Channel4:
+sndd8Channel4:
+sndd9Channel4:
+snddaChannel4:
+snddbChannel4:
+snddcChannel4:
+sndddChannel4:
 	cmdff
 
-soundd6Channel6:
-soundd7Channel6:
-soundd8Channel6:
-soundd9Channel6:
-sounddaChannel6:
-sounddbChannel6:
-sounddcChannel6:
-soundddChannel6:
+sndd6Channel6:
+sndd7Channel6:
+sndd8Channel6:
+sndd9Channel6:
+snddaChannel6:
+snddbChannel6:
+snddcChannel6:
+sndddChannel6:
 	cmdff
 
 .include "audio/mus/common/greatMoblin.s"
 
-sound37Channel1:
+mus37Channel1:
 	cmdff
-sound37Channel0:
+mus37Channel0:
 	cmdff
-sound37Channel6:
+mus37Channel6:
 	cmdff
 
 sound30Channel1:
@@ -440,11 +440,11 @@ sound30Channel0:
 .include "audio/mus/common/credits2.s"
 .include "audio/mus/common/boss.s"
 
-sound3aChannel1:
+mus3aChannel1:
 	cmdff
-sound3aChannel0:
+mus3aChannel0:
 	cmdff
-sound3aChannel4:
+mus3aChannel4:
 	cmdff
 
 .ifdef BUILD_VANILLA

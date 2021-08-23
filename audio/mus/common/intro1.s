@@ -1,6 +1,6 @@
-sound3fStart:
+musIntro1Start:
 
-sound3fChannel1:
+musIntro1Channel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -906,7 +906,7 @@ musicf6ed3:
 	goto musicf6ed3
 	cmdff
 
-sound3fChannel0:
+musIntro1Channel0:
 	vol $0
 	note gs3 $62
 	vibrato $e1
@@ -1260,7 +1260,7 @@ musicf74a6:
 	goto musicf74a6
 	cmdff
 
-sound3fChannel4:
+musIntro1Channel4:
 	cmdf2
 	duty $0e
 	note g3  $07
@@ -1673,7 +1673,7 @@ musicf77c0:
 	goto musicf77c0
 	cmdff
 
-sound3fChannel6:
+musIntro1Channel6:
 	cmdf2
 	vol $2
 	note $2e $70

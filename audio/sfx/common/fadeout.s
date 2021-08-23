@@ -1,6 +1,6 @@
-soundb4Start:
+sndFadeoutStart:
 
-soundb4Channel7:
+sndFadeoutChannel7:
 	cmdf0 $60
 	note $37 $06
 	cmdf0 $60

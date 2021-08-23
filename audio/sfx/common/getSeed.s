@@ -1,6 +1,6 @@
-sound5eStart:
+sndGetSeedStart:
 
-sound5eChannel2:
+sndGetSeedChannel2:
 	duty $01
 	vol $d
 	note ds7 $04

@@ -1,6 +1,6 @@
-sound8aStart:
+sndPieceOfPowerStart:
 
-sound8aChannel2:
+sndPieceOfPowerChannel2:
 	duty $02
 	vol $d
 	note a5  $01

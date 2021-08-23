@@ -1,6 +1,6 @@
-sound5aStart:
+sndErrorStart:
 
-sound5aChannel2:
+sndErrorChannel2:
 	duty $01
 	vol $e
 	note ds3 $02

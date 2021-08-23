@@ -1,6 +1,6 @@
-sound46Start:
+musBlackTowerEntranceStart:
 
-sound46Channel1:
+musBlackTowerEntranceChannel1:
 	vibrato $00
 	env $0 $00
 	duty $01
@@ -192,7 +192,7 @@ musicf6412:
 	goto musicf6412
 	cmdff
 
-sound46Channel0:
+musBlackTowerEntranceChannel0:
 	vibrato $00
 	env $0 $00
 	duty $01
@@ -252,7 +252,7 @@ musicf6550:
 	goto musicf6550
 	cmdff
 
-sound46Channel4:
+musBlackTowerEntranceChannel4:
 musicf65b0:
 	duty $0e
 	note g2  $2c
@@ -288,4 +288,4 @@ musicf65b0:
 	goto musicf65b0
 	cmdff
 
-.define sound46Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musBlackTowerEntranceChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

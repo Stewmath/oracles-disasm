@@ -1,6 +1,6 @@
-sound8cStart:
+sndUnknown7Start:
 
-sound8cChannel2:
+sndUnknown7Channel2:
 	duty $02
 	vol $5
 	note d6  $01

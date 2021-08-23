@@ -1,7 +1,7 @@
-sound00Start:
-sound00Channel1:
-sound01Start:
-sound01Channel1:
+musNoneStart:
+musNoneChannel1:
+musTitlescreenStart:
+musTitlescreenChannel1:
 	duty $02
 	vol $8
 	note as4 $18
@@ -339,8 +339,8 @@ musice8526:
 	goto musice8526
 	cmdff
 
-sound00Channel0:
-sound01Channel0:
+musNoneChannel0:
+musTitlescreenChannel0:
 	duty $02
 	vol $8
 	note d4  $18
@@ -634,8 +634,8 @@ musice8762:
 	goto musice8762
 	cmdff
 
-sound00Channel4:
-sound01Channel4:
+musNoneChannel4:
+musTitlescreenChannel4:
 	rest $24
 	duty $0e
 	note as2 $05
@@ -750,5 +750,5 @@ musice88ca:
 	goto musice88ca
 	cmdff
 
-.define sound00Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
-.define sound01Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musNoneChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musTitlescreenChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,6 @@
-sound90Start:
+sndGaleSeedStart:
 
-sound90Channel2:
+sndGaleSeedChannel2:
 	duty $02
 	vol $b
 	note c5  $02

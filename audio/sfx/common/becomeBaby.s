@@ -1,6 +1,6 @@
-sound9aStart:
+sndBecomeBabyStart:
 
-sound9aChannel2:
+sndBecomeBabyChannel2:
 	vol $9
 	note f7  $08
 	note gs7 $08

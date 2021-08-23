@@ -1,6 +1,6 @@
-sounda2Start:
+sndCompassStart:
 
-sounda2Channel2:
+sndCompassChannel2:
 	duty $02
 	vol $9
 	note gs5 $06

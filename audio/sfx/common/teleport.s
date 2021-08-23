@@ -1,6 +1,6 @@
-sound8dStart:
+sndTeleportStart:
 
-sound8dChannel2:
+sndTeleportChannel2:
 	duty $01
 	vol $1
 	note as3 $01

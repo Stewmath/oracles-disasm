@@ -1,6 +1,6 @@
-sound09Start:
+musGameoverStart:
 
-sound09Channel1:
+musGameoverChannel1:
 	duty $02
 	env $0 $03
 musice9124:
@@ -190,7 +190,7 @@ musice9124:
 	goto musice9124
 	cmdff
 
-sound09Channel0:
+musGameoverChannel0:
 	duty $02
 	env $0 $03
 musice925c:
@@ -252,7 +252,7 @@ musice925c:
 	goto musice925c
 	cmdff
 
-sound09Channel4:
+musGameoverChannel4:
 musice92cc:
 	rest $09
 	duty $08
@@ -307,4 +307,4 @@ musice92cc:
 .endif
 .endif
 
-.define sound09Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musGameoverChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
