@@ -176,7 +176,7 @@ uncmpGfxHeader2e:
 	m_GfxHeaderRam w3VramTiles,          $98c0, $13|$80
 	m_GfxHeaderRam w3TileMappingIndices, $98c1, $13
 uncmpGfxHeader2f:
-	m_GfxHeaderRam w3Filler1+$40,             $9a00, $0d|$80
+	m_GfxHeaderRam w3VramTiles+$140,          $9a00, $0d|$80
 	m_GfxHeaderRam w3TileMappingIndices+$140, $9a01, $0d
 uncmpGfxHeader30:
 	m_GfxHeaderRam w6d3c0, $9f60, $03|$80

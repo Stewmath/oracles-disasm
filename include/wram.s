@@ -3353,9 +3353,7 @@ w3TileMappingData:	dsb $800	; $d000
 
 ; Room tiles in a format which can be written straight to vram. Each row is $20 bytes.
 ; TODO: Contrast with w4TileMap
-w3VramTiles:		dsb $100	; $d800
-
-w3Filler1:		dsb $200
+w3VramTiles:		dsb $300	; $d800
 
 ; Each byte is the collision mode for that tile.
 ; The lower 4 bits seem to indicate which quarters are solid.
@@ -3370,6 +3368,7 @@ w3VramAttributes:	.db		; $dc00
 w3TileMappingIndices:	dsb $200	; $dc00
 
 
+; Most likely unused
 w3Filler2:		dsb $100
 
 w3RoomLayoutBuffer:	dsb $c0	; $df00
