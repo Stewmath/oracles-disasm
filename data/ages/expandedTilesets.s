@@ -1,4 +1,4 @@
-; Expanded GFX, tilemap, and collision data for tilesets are stored here. (expanded-tilesets branch)
+; HACK-BASE: Expanded GFX, tilemap, and collision data for tilesets are stored here.
 
 .BANK $18 SLOT 1
 .ORG 0

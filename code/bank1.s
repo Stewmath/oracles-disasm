@@ -596,7 +596,7 @@ _screenTransitionState3:
 	bit 7,a
 	jr nz,+
 
-	call loadTilesetGfx
+	call loadTilesetGfxIfChanged
 	ld b,$05
 +
 	ld hl,wScreenTransitionState
@@ -1074,7 +1074,7 @@ _screenTransitionState5Substate2:
 	inc (hl)
 	ld a,(wTilesetIndex)
 	and $80
-	call nz,loadTilesetGfx
+	call nz,loadTilesetGfxIfChanged
 	ret
 
 ;;
@@ -1262,7 +1262,7 @@ _screenTransitionState5Substate1:
 	inc (hl)
 	ld a,(wTilesetIndex)
 	and $80
-	call nz,loadTilesetGfx
+	call nz,loadTilesetGfxIfChanged
 	ret
 
 ;;
