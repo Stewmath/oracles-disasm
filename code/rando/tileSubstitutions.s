@@ -47,22 +47,29 @@ applyRandoTileChanges:
 	call searchDoubleKey
 	ret nc
 
+	; Bit 4 ($10) = always do the substitution (ROOMFLAG_VISITED). In theory we wouldn't need to
+	; check this manually. But there are rare instances where this function runs before
+	; ROOMFLAG_VISITED gets set.
 	ld a,(hl)
+	cp $10
+	jr z,@applyChange
+
+	; $f3 = dungeon entrance Rando only
 	cp $f3
 	jr nz,+
-
-	; Entrance Rando only
 	ld a,RANDO_CONFIG_DUNGEON_ENTRANCES
 	call checkRandoConfig
 	ret z
-	jr ++
+	jr @applyChange
 +
+	; Any other case: treat it as a bitmask against the room flags
 	push hl
 	call getThisRoomFlags
 	pop hl
 	and (hl)
 	ret z
-++
+
+@applyChange:
 	inc hl
 	ld d,>wRoomLayout
 	ld e,(hl)
