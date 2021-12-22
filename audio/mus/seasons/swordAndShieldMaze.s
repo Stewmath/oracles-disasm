@@ -1,6 +1,6 @@
-sound1aStart:
+musSwordAndShieldMazeStart:
 
-sound1aChannel1:
+musSwordAndShieldMazeChannel1:
 musicf02f4:
 	vibrato $e1
 	env $0 $00
@@ -168,7 +168,7 @@ musicf02f4:
 	goto musicf02f4
 	cmdff
 
-sound1aChannel0:
+musSwordAndShieldMazeChannel0:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -335,7 +335,7 @@ musicf041c:
 	goto musicf041c
 	cmdff
 
-sound1aChannel4:
+musSwordAndShieldMazeChannel4:
 	cmdf2
 musicf0536:
 	duty $07
@@ -409,7 +409,7 @@ musicf0536:
 	goto musicf0536
 	cmdff
 
-sound1aChannel6:
+musSwordAndShieldMazeChannel6:
 	cmdf2
 musicf05c3:
 	vol $6

@@ -1,6 +1,6 @@
-sound13Start:
+musSpiritsGraveStart:
 
-sound13Channel1:
+musSpiritsGraveChannel1:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -215,7 +215,7 @@ musicf2d27:
 	goto musicf2d27
 	cmdff
 
-sound13Channel0:
+musSpiritsGraveChannel0:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -423,7 +423,7 @@ musicf2e8d:
 	goto musicf2e8d
 	cmdff
 
-sound13Channel4:
+musSpiritsGraveChannel4:
 musicf2fe0:
 	rest $c4
 	duty $0e
@@ -452,7 +452,7 @@ musicf2fe0:
 	goto musicf2fe0
 	cmdff
 
-sound13Channel6:
+musSpiritsGraveChannel6:
 musicf3014:
 	rest $38
 	vol $2

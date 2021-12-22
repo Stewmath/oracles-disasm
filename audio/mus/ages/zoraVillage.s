@@ -1,6 +1,6 @@
-sound0cStart:
+musZoraVillageStart:
 
-sound0cChannel1:
+musZoraVillageChannel1:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -245,7 +245,7 @@ musicfbb21:
 	goto musicfbb21
 	cmdff
 
-sound0cChannel0:
+musZoraVillageChannel0:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -567,5 +567,5 @@ musicfbcac:
 	goto musicfbcac
 	cmdff
 
-.define sound0cChannel4 MUSIC_CHANNEL_FALLBACK EXPORT
-.define sound0cChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musZoraVillageChannel4 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musZoraVillageChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

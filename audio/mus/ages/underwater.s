@@ -1,5 +1,5 @@
-sound22Start:
-sound22Channel1:
+musUnderwaterStart:
+musUnderwaterChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -178,7 +178,7 @@ musice776c:
 	goto musice776c
 	cmdff
 
-sound22Channel0:
+musUnderwaterChannel0:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -435,7 +435,7 @@ musice789b:
 	goto musice789b
 	cmdff
 
-sound22Channel4:
+musUnderwaterChannel4:
 musice7a42:
 	duty $0e
 	note d2  $18
@@ -547,7 +547,7 @@ musice7a42:
 	goto musice7a42
 	cmdff
 
-sound22Channel6:
+musUnderwaterChannel6:
 musice7b1c:
 	vol $6
 	note $24 $03

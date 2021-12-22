@@ -1,6 +1,6 @@
-sound05Start:
+musTarmRuinsStart:
 
-sound05Channel1:
+musTarmRuinsChannel1:
 ; Measure 1-2
 	vol $0
 	note gs3 $ff
@@ -252,7 +252,7 @@ musicee549:
 	goto musicee549
 	cmdff
 
-sound05Channel0:
+musTarmRuinsChannel0:
 	vibrato $00		;pointless?
 	env $0 $00		;pointless?
 	duty $02
@@ -753,7 +753,7 @@ musicee701:
 	goto musicee701
 	cmdff
 	
-sound05Channel4:
+musTarmRuinsChannel4:
 	duty $08
 ; Measure 1-3a 		2 measures + 1.125 beats
 	rest $ff
@@ -848,4 +848,4 @@ musiceeac7:
 	goto musiceeac7
 	cmdff
 
-.define sound05Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musTarmRuinsChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

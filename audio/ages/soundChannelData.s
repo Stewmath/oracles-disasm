@@ -328,7 +328,7 @@ bank3eChannelFallback:
 mus37Start:
 mus3aStart:
 mus3bStart:
-sound3dStart:
+mus3dStart:
 mus41Start:
 mus42Start:
 mus43Start:
@@ -350,7 +350,7 @@ sndddStart:
 mus37Channel1:
 mus3aChannel1:
 mus3bChannel1:
-sound3dChannel1:
+mus3dChannel1:
 mus41Channel1:
 mus42Channel1:
 mus43Channel1:
@@ -373,7 +373,7 @@ sndddChannel1:
 mus37Channel0:
 mus3aChannel0:
 mus3bChannel0:
-sound3dChannel0:
+mus3dChannel0:
 mus41Channel0:
 mus42Channel0:
 mus43Channel0:
@@ -396,7 +396,7 @@ sndddChannel0:
 mus37Channel4:
 mus3aChannel4:
 mus3bChannel4:
-sound3dChannel4:
+mus3dChannel4:
 mus41Channel4:
 mus42Channel4:
 mus43Channel4:
@@ -419,7 +419,7 @@ sndddChannel4:
 mus37Channel6:
 mus3aChannel6:
 mus3bChannel6:
-sound3dChannel6:
+mus3dChannel6:
 mus41Channel6:
 mus42Channel6:
 mus43Channel6:

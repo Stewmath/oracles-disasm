@@ -1,6 +1,6 @@
-sound19Start:
+musExplorersCryptStart:
 
-sound19Channel1:
+musExplorersCryptChannel1:
 	vibrato $f1
 	env $0 $00
 	cmdf2
@@ -234,7 +234,7 @@ musicf0db2:
 	goto musicf0db2
 	cmdff
 
-sound19Channel0:
+musExplorersCryptChannel0:
 	vibrato $f1
 	env $0 $00
 	cmdf2
@@ -455,7 +455,7 @@ musicf0f4a:
 	goto musicf0f4a
 	cmdff
 
-sound19Channel4:
+musExplorersCryptChannel4:
 	cmdf2
 musicf10cc:
 	duty $0e
@@ -712,7 +712,7 @@ musicf10cc:
 	goto musicf10cc
 	cmdff
 
-sound19Channel6:
+musExplorersCryptChannel6:
 	cmdf2
 musicf12c5:
 	vol $4

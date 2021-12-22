@@ -1,6 +1,6 @@
-sound03Start:
+musOverworldStart:
 
-sound03Channel1:
+musOverworldChannel1:
 ; Measure 1
 	vibrato $00         ;useless?
 	duty $02
@@ -420,7 +420,7 @@ musiceca67:
 	goto musiceca67
 	cmdff
 
-sound03Channel0:
+musOverworldChannel0:
 ; Measure 1
 	vibrato $00         ;useless?
 	duty $02
@@ -869,7 +869,7 @@ musicecd1c:
 	goto musicecd1c
 	cmdff
 
-sound03Channel4:
+musOverworldChannel4:
 ; Measure 1
 	duty $0e
 	note g3  $04
@@ -1591,4 +1591,4 @@ musiced0a3:
 .endif
 .endif
 
-.define sound03Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musOverworldChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

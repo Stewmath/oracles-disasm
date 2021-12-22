@@ -1,5 +1,5 @@
-sound08Start:
-sound08Channel1:
+musNayruStart:
+musNayruChannel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -57,7 +57,7 @@ musicee9ec:
 	goto musicee9ec
 	cmdff
 
-sound08Channel0:
+musNayruChannel0:
 musiceea48:
 	vibrato $00
 	env $0 $05
@@ -213,7 +213,7 @@ musiceea48:
 	goto musiceea48
 	cmdff
 
-sound08Channel4:
+musNayruChannel4:
 musiceeb4d:
 	duty $0f
 	rest $16
@@ -239,4 +239,4 @@ musiceeb4d:
 	goto musiceeb4d
 	cmdff
 
-.define sound08Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musNayruChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

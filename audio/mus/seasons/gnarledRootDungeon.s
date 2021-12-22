@@ -1,6 +1,6 @@
-sound13Start:
+musGnarledRootDungeonStart:
 
-sound13Channel1:
+musGnarledRootDungeonChannel1:
 	vibrato $f1
 	env $0 $00
 	cmdf2
@@ -155,7 +155,7 @@ musicf06be:
 	goto musicf06be
 	cmdff
 
-sound13Channel0:
+musGnarledRootDungeonChannel0:
 	cmdf2
 	vibrato $f1
 	env $0 $00
@@ -318,7 +318,7 @@ musicf07ce:
 	goto musicf07ce
 	cmdff
 
-sound13Channel4:
+musGnarledRootDungeonChannel4:
 musicf08ce:
 	duty $0e
 	note b2  $09
@@ -436,4 +436,4 @@ musicf08ce:
 	goto musicf08ce
 	cmdff
 
-.define sound13Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musGnarledRootDungeonChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

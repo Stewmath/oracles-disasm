@@ -1,6 +1,6 @@
-sound05Start:
+musCrescentStart:
 
-sound05Channel1:
+musCrescentChannel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -220,7 +220,7 @@ musiceeb82:
 	goto musiceeb82
 	cmdff
 
-sound05Channel0:
+musCrescentChannel0:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -393,7 +393,7 @@ musiceece7:
 	goto musiceece7
 	cmdff
 
-sound05Channel4:
+musCrescentChannel4:
 musiceee03:
 	duty $0e
 	note c3  $09
@@ -649,7 +649,7 @@ musiceee03:
 	goto musiceee03
 	cmdff
 
-sound05Channel6:
+musCrescentChannel6:
 musiceeffd:
 	vol $6
 	note $24 $24

@@ -3,31 +3,31 @@
 _soundPointers:
 	/* 0x00 */ m_soundPointer musNone
 	/* 0x01 */ m_soundPointer musTitlescreen
-	/* 0x02 */ m_soundPointer musOverworld
-	/* 0x03 */ m_soundPointer sound03
-	/* 0x04 */ m_soundPointer sound04
-	/* 0x05 */ m_soundPointer sound05
+	/* 0x02 */ m_soundPointer musMinigame
+	/* 0x03 */ m_soundPointer musOverworld
+	/* 0x04 */ m_soundPointer musTempleRemains
+	/* 0x05 */ m_soundPointer musTarmRuins
 	/* 0x06 */ m_soundPointer musEssence
-	/* 0x07 */ m_soundPointer sound07
-	/* 0x08 */ m_soundPointer sound08
+	/* 0x07 */ m_soundPointer musUnused1
+	/* 0x08 */ m_soundPointer musCarnival
 	/* 0x09 */ m_soundPointer musGameover
-	/* 0x0a */ m_soundPointer sound0a
-	/* 0x0b */ m_soundPointer sound0b
-	/* 0x0c */ m_soundPointer sound0c
+	/* 0x0a */ m_soundPointer musHoronVillage
+	/* 0x0b */ m_soundPointer musHideAndSeek
+	/* 0x0c */ m_soundPointer musSunkenCity
 	/* 0x0d */ m_soundPointer musEssenceRoom
 	/* 0x0e */ m_soundPointer musIndoors
 	/* 0x0f */ m_soundPointer musFairyFountain
 	/* 0x10 */ m_soundPointer musGetEssence
 	/* 0x11 */ m_soundPointer musFileSelect
-	/* 0x12 */ m_soundPointer sound12
-	/* 0x13 */ m_soundPointer sound13
-	/* 0x14 */ m_soundPointer sound14
-	/* 0x15 */ m_soundPointer sound15
-	/* 0x16 */ m_soundPointer sound16
-	/* 0x17 */ m_soundPointer sound17
-	/* 0x18 */ m_soundPointer sound18
-	/* 0x19 */ m_soundPointer sound19
-	/* 0x1a */ m_soundPointer sound1a
+	/* 0x12 */ m_soundPointer musHerosCave
+	/* 0x13 */ m_soundPointer musGnarledRootDungeon
+	/* 0x14 */ m_soundPointer musSnakesRemains
+	/* 0x15 */ m_soundPointer musPoisonMothsLair
+	/* 0x16 */ m_soundPointer musDancingDragonDungeon
+	/* 0x17 */ m_soundPointer musUnicornsCave
+	/* 0x18 */ m_soundPointer musAncientRuins
+	/* 0x19 */ m_soundPointer musExplorersCrypt
+	/* 0x1a */ m_soundPointer musSwordAndShieldMaze
 	/* 0x1b */ m_soundPointer musFinalDungeon
 	/* 0x1c */ m_soundPointer musOnoxCastle
 	/* 0x1d */ m_soundPointer musRoomOfRites
@@ -35,7 +35,7 @@ _soundPointers:
 	/* 0x1f */ m_soundPointer musSadness
 	/* 0x20 */ m_soundPointer musTriumphant
 	/* 0x21 */ m_soundPointer musDisaster
-	/* 0x22 */ m_soundPointer sound22
+	/* 0x22 */ m_soundPointer musSubrosianDance
 	/* 0x23 */ m_soundPointer musPirates
 	/* 0x24 */ m_soundPointer sound24
 	/* 0x25 */ m_soundPointer sound25

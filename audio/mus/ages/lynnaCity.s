@@ -1,6 +1,6 @@
-sound0aStart:
+musLynnaCityStart:
 
-sound0aChannel1:
+musLynnaCityChannel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -146,7 +146,7 @@ musicef079:
 	goto musicef079
 	cmdff
 
-sound0aChannel0:
+musLynnaCityChannel0:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -344,7 +344,7 @@ musicef173:
 	goto musicef173
 	cmdff
 
-sound0aChannel4:
+musLynnaCityChannel4:
 	cmdf2
 musicef2b0:
 	rest $0d
@@ -483,4 +483,4 @@ musicef2b0:
 	goto musicef2b0
 	cmdff
 
-.define sound0aChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musLynnaCityChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

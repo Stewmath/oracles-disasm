@@ -1,6 +1,6 @@
-sound15Start:
+musMoonlitGrottoStart:
 
-sound15Channel1:
+musMoonlitGrottoChannel1:
 	cmdf2
 	vibrato $e1
 	env $0 $00
@@ -199,7 +199,7 @@ musicf0008:
 	goto musicf0008
 	cmdff
 
-sound15Channel0:
+musMoonlitGrottoChannel0:
 	cmdf2
 	vibrato $e1
 	env $0 $00
@@ -429,7 +429,7 @@ musicf0144:
 	goto musicf0144
 	cmdff
 
-sound15Channel4:
+musMoonlitGrottoChannel4:
 	cmdf2
 musicf02b1:
 	duty $0e
@@ -569,7 +569,7 @@ musicf02b1:
 	goto musicf02b1
 	cmdff
 
-sound15Channel6:
+musMoonlitGrottoChannel6:
 	cmdf2
 musicf03c2:
 	vol $6

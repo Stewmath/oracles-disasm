@@ -1,6 +1,6 @@
-sound18Start:
+musAncientRuinsStart:
 
-sound18Channel1:
+musAncientRuinsChannel1:
 	vibrato $f1
 	env $0 $00
 	cmdf2
@@ -213,7 +213,7 @@ musicf3418:
 	goto musicf3418
 	cmdff
 
-sound18Channel0:
+musAncientRuinsChannel0:
 	vol $0
 	note gs3 $1c
 	vibrato $f1
@@ -470,7 +470,7 @@ musicf3598:
 	goto musicf3598
 	cmdff
 
-sound18Channel4:
+musAncientRuinsChannel4:
 	rest $1c
 	cmdf2
 musicf3753:
@@ -726,4 +726,4 @@ musicf3753:
 	goto musicf3753
 	cmdff
 
-.define sound18Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musAncientRuinsChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

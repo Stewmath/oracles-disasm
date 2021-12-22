@@ -1,6 +1,6 @@
-sound0aStart:
+musHoronVillageStart:
 
-sound0aChannel1:
+musHoronVillageChannel1:
 	vibrato $00
 	env $0 $03
 	duty $02
@@ -118,7 +118,7 @@ musicec007:
 	goto musicec007
 	cmdff
 
-sound0aChannel0:
+musHoronVillageChannel0:
 	vibrato $00
 	env $0 $03
 	duty $02
@@ -187,7 +187,7 @@ musicec0d8:
 	goto musicec0d8
 	cmdff
 
-sound0aChannel4:
+musHoronVillageChannel4:
 	duty $0c
 musicec157:
 	note ds5 $0e
@@ -245,4 +245,4 @@ musicec157:
 	goto musicec157
 	cmdff
 
-.define sound0aChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musHoronVillageChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

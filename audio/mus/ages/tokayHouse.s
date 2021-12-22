@@ -1,6 +1,6 @@
-sound26Start:
+musTokayHouseStart:
 
-sound26Channel1:
+musTokayHouseChannel1:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -195,7 +195,7 @@ musicf1239:
 	goto musicf1239
 	cmdff
 
-sound26Channel0:
+musTokayHouseChannel0:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -377,7 +377,7 @@ musicf1383:
 	goto musicf1383
 	cmdff
 
-sound26Channel4:
+musTokayHouseChannel4:
 	cmdf2
 musicf14ba:
 	duty $0e
@@ -441,4 +441,4 @@ musicf14ba:
 	goto musicf14ba
 	cmdff
 
-.define sound26Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musTokayHouseChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

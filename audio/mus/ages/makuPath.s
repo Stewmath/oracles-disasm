@@ -1,6 +1,6 @@
-sound12Start:
+musMakuPathStart:
 
-sound12Channel1:
+musMakuPathChannel1:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -205,7 +205,7 @@ musicef646:
 	goto musicef646
 	cmdff
 
-sound12Channel0:
+musMakuPathChannel0:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -367,7 +367,7 @@ musicef79b:
 	goto musicef79b
 	cmdff
 
-sound12Channel4:
+musMakuPathChannel4:
 	cmdf2
 musicef89e:
 	rest $20
@@ -527,4 +527,4 @@ musicef89e:
 	goto musicef89e
 	cmdff
 
-.define sound12Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musMakuPathChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

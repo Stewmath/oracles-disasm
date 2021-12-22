@@ -1,6 +1,6 @@
-sound04Start:
+musTempleRemainsStart:
 
-sound04Channel1:
+musTempleRemainsChannel1:
 	vibrato $00
 	env $0 $00
 musicedce8:
@@ -68,7 +68,7 @@ musicedce8:
 	goto musicedce8
 	cmdff
 
-sound04Channel0:
+musTempleRemainsChannel0:
 	vibrato $00
 	env $0 $00
 musicedd69:
@@ -143,7 +143,7 @@ musicedd69:
 	goto musicedd69
 	cmdff
 
-sound04Channel4:
+musTempleRemainsChannel4:
 musiceddee:
 	duty $0e
 	note a2  $24
@@ -241,4 +241,4 @@ musiceddee:
 	.dsb 6 $ff
 .endif
 
-.define sound04Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musTempleRemainsChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,6 @@
-sound25Start:
+musSymmetryPastStart:
 
-sound25Channel1:
+musSymmetryPastChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $01
@@ -262,7 +262,7 @@ musicfb6a3:
 	goto musicfb6a3
 	cmdff
 
-sound25Channel0:
+musSymmetryPastChannel0:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -580,7 +580,7 @@ musicfb85d:
 	goto musicfb85d
 	cmdff
 
-sound25Channel4:
+musSymmetryPastChannel4:
 musicfba6b:
 	duty $0e
 	note f3  $2c
@@ -671,4 +671,4 @@ musicfba6b:
 	goto musicfba6b
 	cmdff
 
-.define sound25Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musSymmetryPastChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

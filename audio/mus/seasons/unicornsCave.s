@@ -1,6 +1,6 @@
-sound17Start:
+musUnicornsCaveStart:
 
-sound17Channel1:
+musUnicornsCaveChannel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -410,7 +410,7 @@ musicf1423:
 	goto musicf1423
 	cmdff
 
-sound17Channel0:
+musUnicornsCaveChannel0:
 	vol $0
 	note gs3 $1c
 	vibrato $00
@@ -826,7 +826,7 @@ musicf16a7:
 	goto musicf16a7
 	cmdff
 
-sound17Channel4:
+musUnicornsCaveChannel4:
 	rest $1c
 	cmdf2
 musicf1941:
@@ -1225,7 +1225,7 @@ musicf1941:
 	goto musicf1941
 	cmdff
 
-sound17Channel6:
+musUnicornsCaveChannel6:
 	rest $1c
 	cmdf2
 musicf1c58:

@@ -1,6 +1,6 @@
-sound30Start:
+musFairyForestStart:
 
-sound30Channel1:
+musFairyForestChannel1:
 	cmdf2
 	vibrato $e1
 	env $0 $00
@@ -110,7 +110,7 @@ musicf23a1:
 	goto musicf23a1
 	cmdff
 
-sound30Channel0:
+musFairyForestChannel0:
 	cmdf2
 	vibrato $e1
 	env $0 $00
@@ -308,7 +308,7 @@ musicf2461:
 	goto musicf2461
 	cmdff
 
-sound30Channel4:
+musFairyForestChannel4:
 musicf25a9:
 	duty $18
 	note e3  $07
@@ -399,7 +399,7 @@ musicf25a9:
 	goto musicf25a9
 	cmdff
 
-sound30Channel6:
+musFairyForestChannel6:
 musicf2659:
 	vol $6
 	note $24 $09

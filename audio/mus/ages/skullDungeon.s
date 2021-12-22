@@ -1,6 +1,6 @@
-sound16Start:
+musSkullDungeonStart:
 
-sound16Channel1:
+musSkullDungeonChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -135,7 +135,7 @@ musicf1a32:
 	goto musicf1a32
 	cmdff
 
-sound16Channel0:
+musSkullDungeonChannel0:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -351,7 +351,7 @@ musicf1b2a:
 	goto musicf1b2a
 	cmdff
 
-sound16Channel4:
+musSkullDungeonChannel4:
 musicf1c9f:
 	duty $0e
 	note ds2 $2c
@@ -483,7 +483,7 @@ musicf1c9f:
 	goto musicf1c9f
 	cmdff
 
-sound16Channel6:
+musSkullDungeonChannel6:
 musicf1da1:
 	vol $6
 	note $24 $16

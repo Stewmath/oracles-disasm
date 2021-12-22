@@ -1,6 +1,6 @@
-sound19Start:
+musJabuJabusBellyStart:
 
-sound19Channel1:
+musJabuJabusBellyChannel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -71,7 +71,7 @@ musicf3770:
 	goto musicf3770
 	cmdff
 
-sound19Channel0:
+musJabuJabusBellyChannel0:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -332,7 +332,7 @@ musicf37ec:
 	goto musicf37ec
 	cmdff
 
-sound19Channel4:
+musJabuJabusBellyChannel4:
 	cmdf2
 musicf396d:
 	duty $0e
@@ -482,4 +482,4 @@ musicf396d:
 	goto musicf396d
 	cmdff
 
-.define sound19Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musJabuJabusBellyChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

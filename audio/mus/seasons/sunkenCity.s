@@ -1,6 +1,6 @@
-sound0cStart:
+musSunkenCityStart:
 
-sound0cChannel1:
+musSunkenCityChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $02
@@ -127,7 +127,7 @@ musiced98b:
 	goto musiced98b
 	cmdff
 
-sound0cChannel0:
+musSunkenCityChannel0:
 	vibrato $00
 	env $0 $03
 	duty $02
@@ -209,7 +209,7 @@ musiceda60:
 	goto musiceda60
 	cmdff
 
-sound0cChannel4:
+musSunkenCityChannel4:
 musicedaef:
 	rest $ff
 	rest $5f
@@ -250,4 +250,4 @@ musicedaef:
 	goto musicedaef
 	cmdff
 
-.define sound0cChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musSunkenCityChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

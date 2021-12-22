@@ -1,6 +1,6 @@
-sound1aStart:
+musAncientTombStart:
 
-sound1aChannel1:
+musAncientTombChannel1:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -184,7 +184,7 @@ musicf7b58:
 	goto musicf7b58
 	cmdff
 
-sound1aChannel0:
+musAncientTombChannel0:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -441,7 +441,7 @@ musicf7c85:
 	goto musicf7c85
 	cmdff
 
-sound1aChannel4:
+musAncientTombChannel4:
 	cmdf2
 musicf7e2a:
 	duty $0e
@@ -482,4 +482,4 @@ musicf7e2a:
 	goto musicf7e2a
 	cmdff
 
-.define sound1aChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musAncientTombChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

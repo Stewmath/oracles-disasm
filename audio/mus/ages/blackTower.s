@@ -1,6 +1,6 @@
-sound28Start:
+musBlackTowerStart:
 
-sound28Channel1:
+musBlackTowerChannel1:
 	cmdf2
 	vibrato $e1
 	env $0 $00
@@ -98,7 +98,7 @@ musicf1ece:
 	goto musicf1ece
 	cmdff
 
-sound28Channel0:
+musBlackTowerChannel0:
 	cmdf2
 	vibrato $e1
 	env $0 $00
@@ -265,7 +265,7 @@ musicf1f85:
 	goto musicf1f85
 	cmdff
 
-sound28Channel4:
+musBlackTowerChannel4:
 musicf20b0:
 	duty $18
 	note cs2 $09
@@ -507,7 +507,7 @@ musicf20b0:
 	goto musicf20b0
 	cmdff
 
-sound28Channel6:
+musBlackTowerChannel6:
 musicf2286:
 	vol $6
 	note $24 $12

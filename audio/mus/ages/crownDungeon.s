@@ -1,6 +1,6 @@
-sound17Start:
+musCrownDungeonStart:
 
-sound17Channel1:
+musCrownDungeonChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $01
@@ -165,7 +165,7 @@ musicf33aa:
 	goto musicf33aa
 	cmdff
 
-sound17Channel0:
+musCrownDungeonChannel0:
 	vibrato $e1
 	env $0 $00
 	duty $01
@@ -354,7 +354,7 @@ musicf34d1:
 	goto musicf34d1
 	cmdff
 
-sound17Channel4:
+musCrownDungeonChannel4:
 musicf361a:
 	duty $0e
 	note c3  $0d
@@ -497,7 +497,7 @@ musicf361a:
 	goto musicf361a
 	cmdff
 
-sound17Channel6:
+musCrownDungeonChannel6:
 musicf3732:
 	rest $ff
 	rest $ff

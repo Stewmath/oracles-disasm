@@ -43,18 +43,26 @@
 
 .ifdef ROM_AGES
 	MUS_MAKU_PATH             db ; $12
+	MUS_SPIRITS_GRAVE         db ; $13
+	MUS_WING_DUNGEON          db ; $14
+	MUS_MOONLIT_GROTTO        db ; $15
+	MUS_SKULL_DUNGEON         db ; $16
+	MUS_CROWN_DUNGEON         db ; $17
+	MUS_MERMAIDS_CAVE         db ; $18
+	MUS_JABU_JABUS_BELLY      db ; $19
+	MUS_ANCIENT_TOMB          db ; $1a
 .else
-	MUS_HEROS_CAVE            db ; $12
+	MUS_HEROS_CAVE             db ; $12
+	MUS_GNARLED_ROOT_DUNGEON   db ; $13
+	MUS_SNAKES_REMAINS         db ; $14
+	MUS_POISON_MOTHS_LAIR      db ; $15
+	MUS_DANCING_DRAGON_DUNGEON db ; $16
+	MUS_UNICORNS_CAVE          db ; $17
+	MUS_ANCIENT_RUINS          db ; $18
+	MUS_EXPLORERS_CRYPT        db ; $19
+	MUS_SWORD_AND_SHIELD_MAZE  db ; $1a
 .endif
 
-	MUS_LEVEL1                db ; $13
-	MUS_LEVEL2                db ; $14
-	MUS_LEVEL3                db ; $15
-	MUS_LEVEL4                db ; $16
-	MUS_LEVEL5                db ; $17
-	MUS_LEVEL6                db ; $18
-	MUS_LEVEL7                db ; $19
-	MUS_LEVEL8                db ; $1a
 	MUS_FINAL_DUNGEON         db ; $1b
 	MUS_ONOX_CASTLE           db ; $1c
 	MUS_ROOM_OF_RITES         db ; $1d

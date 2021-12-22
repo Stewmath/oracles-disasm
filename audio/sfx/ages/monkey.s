@@ -1,6 +1,6 @@
-sounda1Start:
+sndMonkeyStart:
 
-sounda1Channel2:
+sndMonkeyChannel2:
 	duty $00
 	vol $a
 	cmdf8 $0a
@@ -8,4 +8,4 @@ sounda1Channel2:
 	cmdf8 $00
 	cmdff
 
-.define sounda1Channel7 MUSIC_CHANNEL_FALLBACK EXPORT
+.define sndMonkeyChannel7 MUSIC_CHANNEL_FALLBACK EXPORT

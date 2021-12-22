@@ -1,6 +1,6 @@
-sound14Start:
+musWingDungeonStart:
 
-sound14Channel1:
+musWingDungeonChannel1:
 	cmdf2
 	vibrato $00
 	env $0 $00
@@ -220,7 +220,7 @@ musicf306e:
 	goto musicf306e
 	cmdff
 
-sound14Channel0:
+musWingDungeonChannel0:
 	cmdf2
 	vibrato $00
 	env $0 $00
@@ -440,7 +440,7 @@ musicf31d1:
 	goto musicf31d1
 	cmdff
 
-sound14Channel4:
+musWingDungeonChannel4:
 musicf332d:
 	rest $ff
 	rest $c1
@@ -481,7 +481,7 @@ musicf332d:
 	goto musicf332d
 	cmdff
 
-sound14Channel6:
+musWingDungeonChannel6:
 musicf3379:
 	rest $ff
 	rest $89

@@ -1,6 +1,6 @@
-sound35Start:
+musRalphStart:
 
-sound35Channel1:
+musRalphChannel1:
 	vibrato $e1
 	env $0 $00
 	duty $01
@@ -306,7 +306,7 @@ musicf275f:
 	goto musicf275f
 	cmdff
 
-sound35Channel0:
+musRalphChannel0:
 	vol $0
 	note gs3 $07
 	vibrato $e1
@@ -608,7 +608,7 @@ musicf294f:
 	goto musicf294f
 	cmdff
 
-sound35Channel4:
+musRalphChannel4:
 	rest $70
 musicf2b0e:
 	duty $0e
@@ -717,7 +717,7 @@ musicf2b0e:
 	goto musicf2b0e
 	cmdff
 
-sound35Channel6:
+musRalphChannel6:
 	rest $69
 	vol $6
 	note $26 $03

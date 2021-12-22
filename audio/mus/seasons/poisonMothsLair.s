@@ -1,6 +1,6 @@
-sound15Start:
+musPoisonMothsLairStart:
 
-sound15Channel1:
+musPoisonMothsLairChannel1:
 	vibrato $f1
 	env $0 $00
 	cmdf2
@@ -334,7 +334,7 @@ musicf1dc1:
 	goto musicf1dc1
 	cmdff
 
-sound15Channel0:
+musPoisonMothsLairChannel0:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -521,5 +521,5 @@ musicf1ffc:
 	goto musicf1ffc
 	cmdff
 
-.define sound15Channel4 MUSIC_CHANNEL_FALLBACK EXPORT
-.define sound15Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musPoisonMothsLairChannel4 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musPoisonMothsLairChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

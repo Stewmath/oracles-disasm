@@ -1,6 +1,6 @@
-sound22Start:
+musSubrosianDanceStart:
 
-sound22Channel1:
+musSubrosianDanceChannel1:
 	vibrato $00
 	env $0 $04
 	cmdf2
@@ -264,7 +264,7 @@ musicf2e89:
 	goto musicf2e89
 	cmdff
 
-sound22Channel0:
+musSubrosianDanceChannel0:
 	vibrato $00
 	env $0 $03
 	cmdf2
@@ -455,7 +455,7 @@ musicf304c:
 	goto musicf304c
 	cmdff
 
-sound22Channel4:
+musSubrosianDanceChannel4:
 	cmdf2
 musicf3194:
 	duty $0e
@@ -681,7 +681,7 @@ musicf3194:
 	goto musicf3194
 	cmdff
 
-sound22Channel6:
+musSubrosianDanceChannel6:
 	cmdf2
 musicf3351:
 	vol $3

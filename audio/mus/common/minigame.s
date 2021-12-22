@@ -1,6 +1,6 @@
-musOverworldStart:
+musMinigameStart:
 
-musOverworldChannel1:
+musMinigameChannel1:
 musicec001:
 	duty $02
 	vol $a
@@ -212,7 +212,7 @@ musicec001:
 	note a2  $01
 	goto musicec001
 	cmdff
-musOverworldChannel0:
+musMinigameChannel0:
 musicec174:
 	duty $02
 	vol $0
@@ -376,7 +376,7 @@ musicec174:
 	rest $14
 	goto musicec174
 	cmdff
-musOverworldChannel4:
+musMinigameChannel4:
 musicec29a:
 	duty $01
 	note as4 $06
@@ -441,4 +441,4 @@ musicec29a:
 	goto musicec29a
 	cmdff
 
-.define musOverworldChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musMinigameChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

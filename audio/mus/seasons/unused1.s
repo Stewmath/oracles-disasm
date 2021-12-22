@@ -1,6 +1,6 @@
-sound07Start:
+musUnused1Start:
 
-sound07Channel1:
+musUnused1Channel1:
 	vibrato $f1
 	env $0 $00
 	duty $01
@@ -271,7 +271,7 @@ musicedeb0:
 	goto musicedeb0
 	cmdff
 
-sound07Channel0:
+musUnused1Channel0:
 	vibrato $f1
 	env $0 $00
 	duty $02
@@ -611,7 +611,7 @@ musicee08a:
 	goto musicee08a
 	cmdff
 
-sound07Channel4:
+musUnused1Channel4:
 musicee2da:
 	duty $11
 	note f2  $07
@@ -882,7 +882,7 @@ musicee2da:
 	note e2  $1c
 	goto musicee2da
 	cmdff
-sound07Channel6:
+musUnused1Channel6:
 musicee4f4:
 	vol $5
 	note $26 $0e

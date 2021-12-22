@@ -1,6 +1,6 @@
-sound24Start:
+musSymmetryPresentStart:
 
-sound24Channel1:
+musSymmetryPresentChannel1:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -208,7 +208,7 @@ musicef9db:
 	goto musicef9db
 	cmdff
 
-sound24Channel0:
+musSymmetryPresentChannel0:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -496,7 +496,7 @@ musicefb34:
 	goto musicefb34
 	cmdff
 
-sound24Channel4:
+musSymmetryPresentChannel4:
 	cmdf2
 musicefd1a:
 	duty $0e
@@ -661,4 +661,4 @@ musicefd1a:
 	goto musicefd1a
 	cmdff
 
-.define sound24Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musSymmetryPresentChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

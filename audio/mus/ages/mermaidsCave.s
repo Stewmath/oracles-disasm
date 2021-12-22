@@ -1,6 +1,6 @@
-sound18Start:
+musMermaidsCaveStart:
 
-sound18Channel1:
+musMermaidsCaveChannel1:
 	cmdf2
 	vibrato $00
 	env $0 $00
@@ -147,7 +147,7 @@ musicf1539:
 	goto musicf1539
 	cmdff
 
-sound18Channel0:
+musMermaidsCaveChannel0:
 	cmdf2
 	vibrato $00
 	env $0 $00
@@ -633,7 +633,7 @@ musicf1623:
 	goto musicf1623
 	cmdff
 
-sound18Channel4:
+musMermaidsCaveChannel4:
 musicf1905:
 	duty $0e
 	note as3 $2c
@@ -670,7 +670,7 @@ musicf1905:
 	goto musicf1905
 	cmdff
 
-sound18Channel6:
+musMermaidsCaveChannel6:
 musicf1949:
 	vol $3
 	note $2a $0b

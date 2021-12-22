@@ -1,6 +1,6 @@
-sound0bStart:
+musHideAndSeekStart:
 
-sound0bChannel1:
+musHideAndSeekChannel1:
 	vibrato $32
 	env $0 $00
 	duty $01
@@ -211,7 +211,7 @@ musiced6de:
 	goto musiced6de
 	cmdff
 
-sound0bChannel0:
+musHideAndSeekChannel0:
 	vibrato $00
 	env $0 $02
 	duty $01
@@ -285,7 +285,7 @@ musiced84b:
 	goto musiced84b
 	cmdff
 
-sound0bChannel4:
+musHideAndSeekChannel4:
 	duty $0e
 musiced8d1:
 	vol $b
@@ -383,4 +383,4 @@ musiced8d1:
 	goto musiced8d1
 	cmdff
 
-.define sound0bChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musHideAndSeekChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,6 @@
-soundadStart:
+sndEchoesStart:
 
-soundadChannel2:
+sndEchoesChannel2:
 	duty $02
 	env $0 $03
 	vol $9
@@ -26,7 +26,7 @@ soundadChannel2:
 	rest $14
 	cmdff
 
-soundadChannel3:
+sndEchoesChannel3:
 	duty $02
 	env $0 $03
 	vol $0
@@ -53,13 +53,13 @@ soundadChannel3:
 	note g6  $3f
 	cmdff
 
-soundadChannel5:
+sndEchoesChannel5:
 	duty $0e
 	rest $fa
 	rest $08
 	cmdff
 
-soundadChannel7:
+sndEchoesChannel7:
 	cmdf0 $00
 	note $00 $fa
 	note $00 $08

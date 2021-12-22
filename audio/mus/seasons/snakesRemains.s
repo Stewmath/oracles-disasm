@@ -1,6 +1,6 @@
-sound14Start:
+musSnakesRemainsStart:
 
-sound14Channel1:
+musSnakesRemainsChannel1:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -154,7 +154,7 @@ musicf09bb:
 	goto musicf09bb
 	cmdff
 
-sound14Channel0:
+musSnakesRemainsChannel0:
 	vibrato $00
 	env $0 $00
 	cmdf2
@@ -318,7 +318,7 @@ musicf0adb:
 	goto musicf0adb
 	cmdff
 
-sound14Channel4:
+musSnakesRemainsChannel4:
 	cmdf2
 musicf0c00:
 	duty $0e
@@ -391,4 +391,4 @@ musicf0c00:
 	goto musicf0c00
 	cmdff
 
-.define sound14Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musSnakesRemainsChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

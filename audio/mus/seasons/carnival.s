@@ -1,6 +1,6 @@
-sound08Start:
+musCarnivalStart:
 
-sound08Channel1:
+musCarnivalChannel1:
 	vibrato $00
 	env $0 $03
 	duty $02
@@ -101,7 +101,7 @@ musiceeb67:
 	goto musiceeb67
 	cmdff
 
-sound08Channel0:
+musCarnivalChannel0:
 	vibrato $00
 	env $0 $03
 	duty $02
@@ -174,7 +174,7 @@ musiceec2a:
 	goto musiceec2a
 	cmdff
 
-sound08Channel4:
+musCarnivalChannel4:
 	duty $0c
 musiceecb1:
 	vol $3
@@ -237,7 +237,7 @@ musiceecb1:
 	goto musiceecb1
 	cmdff
 
-.define sound08Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musCarnivalChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
 
 	; Unused data?
 

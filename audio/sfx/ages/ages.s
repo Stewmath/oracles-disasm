@@ -1,6 +1,6 @@
-soundafStart:
+sndAgesStart:
 
-soundafChannel2:
+sndAgesChannel2:
 	duty $02
 	env $0 $02
 	vol $9
@@ -43,7 +43,7 @@ soundafChannel2:
 	rest $0a
 	cmdff
 
-soundafChannel3:
+sndAgesChannel3:
 	duty $02
 	env $0 $02
 	vol $0
@@ -87,13 +87,13 @@ soundafChannel3:
 	note e6  $2d
 	cmdff
 
-soundafChannel5:
+sndAgesChannel5:
 	duty $0e
 	rest $c8
 	rest $3a
 	cmdff
 
-soundafChannel7:
+sndAgesChannel7:
 	cmdf0 $00
 	note $00 $c8
 	note $00 $3a

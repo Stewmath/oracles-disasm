@@ -1,6 +1,6 @@
-sound07Start:
+musAmbiPalaceStart:
 
-sound07Channel1:
+musAmbiPalaceChannel1:
 	cmdf2
 	vibrato $e1
 	env $0 $00
@@ -154,7 +154,7 @@ musicf0f36:
 	note a4  $06
 	goto musicf0f36
 	cmdff
-sound07Channel0:
+musAmbiPalaceChannel0:
 	vol $0
 	note gs3 $18
 	cmdf2
@@ -334,7 +334,7 @@ musicf1037:
 	goto musicf1037
 	cmdff
 
-sound07Channel4:
+musAmbiPalaceChannel4:
 	rest $18
 musicf115f:
 	duty $0e
@@ -444,4 +444,4 @@ musicf115f:
 	goto musicf115f
 	cmdff
 
-.define sound07Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musAmbiPalaceChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

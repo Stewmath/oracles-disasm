@@ -1,6 +1,6 @@
-sound16Start:
+musDancingDragonDungeonStart:
 
-sound16Channel1:
+musDancingDragonDungeonChannel1:
 	vibrato $f1
 	env $0 $00
 	cmdf2
@@ -415,7 +415,7 @@ musicf2144:
 	goto musicf2144
 	cmdff
 
-sound16Channel0:
+musDancingDragonDungeonChannel0:
 	vol $0
 	note gs3 $3f
 	vibrato $00
@@ -654,7 +654,7 @@ musicf2441:
 	goto musicf2441
 	cmdff
 
-sound16Channel4:
+musDancingDragonDungeonChannel4:
 	rest $3f
 	cmdf2
 musicf25dc:
@@ -1016,7 +1016,7 @@ musicf25dc:
 	goto musicf25dc
 	cmdff
 
-sound16Channel6:
+musDancingDragonDungeonChannel6:
 	rest $3f
 	cmdf2
 musicf28a9:

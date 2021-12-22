@@ -1,6 +1,6 @@
-sound04Start:
+musOverworldPastStart:
 
-sound04Channel1:
+musOverworldPastChannel1:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -299,7 +299,7 @@ musicee3c8:
 	goto musicee3c8
 	cmdff
 
-sound04Channel0:
+musOverworldPastChannel0:
 	vibrato $e1
 	env $0 $00
 	cmdf2
@@ -653,7 +653,7 @@ musicee57d:
 	goto musicee57d
 	cmdff
 
-sound04Channel4:
+musOverworldPastChannel4:
 musicee79b:
 ; Measure 1
 .rept 4
@@ -821,4 +821,4 @@ musicee79b:
 	goto musicee79b
 	cmdff
 
-.define sound04Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musOverworldPastChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

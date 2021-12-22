@@ -1,6 +1,6 @@
-sound12Start:
+musHerosCaveStart:
 
-sound12Channel1:
+musHerosCaveChannel1:
 	vibrato $00
 	env $0 $03
 	cmdf2
@@ -79,7 +79,7 @@ musicf0c91:
 	env $0 $03
 	goto musicf0c91
 	cmdff
-sound12Channel0:
+musHerosCaveChannel0:
 	vibrato $00
 	env $0 $03
 	cmdf2
@@ -114,7 +114,7 @@ musicf0d21:
 	rest $46
 	goto musicf0d21
 	cmdff
-sound12Channel4:
+musHerosCaveChannel4:
 	cmdf2
 musicf0d5b:
 	duty $17
@@ -158,4 +158,4 @@ musicf0d5b:
 	goto musicf0d5b
 	cmdff
 
-.define sound12Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musHerosCaveChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

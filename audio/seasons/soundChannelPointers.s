@@ -10,6 +10,17 @@ musTitlescreen:
 	.dw musNoneChannel6
 	.db $ff
 
+musMinigame:
+	.db $00
+	.dw musMinigameChannel0
+	.db $01
+	.dw musMinigameChannel1
+	.db $04
+	.dw musMinigameChannel4
+	.db $06
+	.dw musMinigameChannel6
+	.db $ff
+
 musOverworld:
 	.db $00
 	.dw musOverworldChannel0
@@ -21,37 +32,26 @@ musOverworld:
 	.dw musOverworldChannel6
 	.db $ff
 
-sound03:
+musTempleRemains:
 	.db $00
-	.dw sound03Channel0
+	.dw musTempleRemainsChannel0
 	.db $01
-	.dw sound03Channel1
+	.dw musTempleRemainsChannel1
 	.db $04
-	.dw sound03Channel4
+	.dw musTempleRemainsChannel4
 	.db $06
-	.dw sound03Channel6
+	.dw musTempleRemainsChannel6
 	.db $ff
 
-sound04:
+musTarmRuins:
 	.db $00
-	.dw sound04Channel0
+	.dw musTarmRuinsChannel0
 	.db $01
-	.dw sound04Channel1
+	.dw musTarmRuinsChannel1
 	.db $04
-	.dw sound04Channel4
+	.dw musTarmRuinsChannel4
 	.db $06
-	.dw sound04Channel6
-	.db $ff
-
-sound05:
-	.db $00
-	.dw sound05Channel0
-	.db $01
-	.dw sound05Channel1
-	.db $04
-	.dw sound05Channel4
-	.db $06
-	.dw sound05Channel6
+	.dw musTarmRuinsChannel6
 	.db $ff
 
 sndd6:
@@ -72,26 +72,26 @@ snddd:
 	.dw sndd6Channel6
 	.db $ff
 
-sound07:
+musUnused1:
 	.db $00
-	.dw sound07Channel0
+	.dw musUnused1Channel0
 	.db $01
-	.dw sound07Channel1
+	.dw musUnused1Channel1
 	.db $04
-	.dw sound07Channel4
+	.dw musUnused1Channel4
 	.db $06
-	.dw sound07Channel6
+	.dw musUnused1Channel6
 	.db $ff
 
-sound08:
+musCarnival:
 	.db $00
-	.dw sound08Channel0
+	.dw musCarnivalChannel0
 	.db $01
-	.dw sound08Channel1
+	.dw musCarnivalChannel1
 	.db $04
-	.dw sound08Channel4
+	.dw musCarnivalChannel4
 	.db $06
-	.dw sound08Channel6
+	.dw musCarnivalChannel6
 	.db $ff
 
 musGameover:
@@ -105,37 +105,37 @@ musGameover:
 	.dw musGameoverChannel6
 	.db $ff
 
-sound0a:
+musHoronVillage:
 	.db $00
-	.dw sound0aChannel0
+	.dw musHoronVillageChannel0
 	.db $01
-	.dw sound0aChannel1
+	.dw musHoronVillageChannel1
 	.db $04
-	.dw sound0aChannel4
+	.dw musHoronVillageChannel4
 	.db $06
-	.dw sound0aChannel6
+	.dw musHoronVillageChannel6
 	.db $ff
 
-sound0b:
+musHideAndSeek:
 	.db $00
-	.dw sound0bChannel0
+	.dw musHideAndSeekChannel0
 	.db $01
-	.dw sound0bChannel1
+	.dw musHideAndSeekChannel1
 	.db $04
-	.dw sound0bChannel4
+	.dw musHideAndSeekChannel4
 	.db $06
-	.dw sound0bChannel6
+	.dw musHideAndSeekChannel6
 	.db $ff
 
-sound0c:
+musSunkenCity:
 	.db $00
-	.dw sound0cChannel0
+	.dw musSunkenCityChannel0
 	.db $01
-	.dw sound0cChannel1
+	.dw musSunkenCityChannel1
 	.db $04
-	.dw sound0cChannel4
+	.dw musSunkenCityChannel4
 	.db $06
-	.dw sound0cChannel6
+	.dw musSunkenCityChannel6
 	.db $ff
 
 musEssenceRoom:
@@ -193,103 +193,103 @@ musFileSelect:
 	.dw musFileSelectChannel6
 	.db $ff
 
-sound12:
+musHerosCave:
 	.db $00
-	.dw sound12Channel0
+	.dw musHerosCaveChannel0
 	.db $01
-	.dw sound12Channel1
+	.dw musHerosCaveChannel1
 	.db $04
-	.dw sound12Channel4
+	.dw musHerosCaveChannel4
 	.db $06
-	.dw sound12Channel6
+	.dw musHerosCaveChannel6
 	.db $ff
 
-sound13:
+musGnarledRootDungeon:
 	.db $00
-	.dw sound13Channel0
+	.dw musGnarledRootDungeonChannel0
 	.db $01
-	.dw sound13Channel1
+	.dw musGnarledRootDungeonChannel1
 	.db $04
-	.dw sound13Channel4
+	.dw musGnarledRootDungeonChannel4
 	.db $06
-	.dw sound13Channel6
+	.dw musGnarledRootDungeonChannel6
 	.db $ff
 
-sound14:
+musSnakesRemains:
 	.db $00
-	.dw sound14Channel0
+	.dw musSnakesRemainsChannel0
 	.db $01
-	.dw sound14Channel1
+	.dw musSnakesRemainsChannel1
 	.db $04
-	.dw sound14Channel4
+	.dw musSnakesRemainsChannel4
 	.db $06
-	.dw sound14Channel6
+	.dw musSnakesRemainsChannel6
 	.db $ff
 
-sound15:
+musPoisonMothsLair:
 	.db $00
-	.dw sound15Channel0
+	.dw musPoisonMothsLairChannel0
 	.db $01
-	.dw sound15Channel1
+	.dw musPoisonMothsLairChannel1
 	.db $04
-	.dw sound15Channel4
+	.dw musPoisonMothsLairChannel4
 	.db $06
-	.dw sound15Channel6
+	.dw musPoisonMothsLairChannel6
 	.db $ff
 
-sound16:
+musDancingDragonDungeon:
 	.db $00
-	.dw sound16Channel0
+	.dw musDancingDragonDungeonChannel0
 	.db $01
-	.dw sound16Channel1
+	.dw musDancingDragonDungeonChannel1
 	.db $04
-	.dw sound16Channel4
+	.dw musDancingDragonDungeonChannel4
 	.db $06
-	.dw sound16Channel6
+	.dw musDancingDragonDungeonChannel6
 	.db $ff
 
-sound17:
+musUnicornsCave:
 	.db $00
-	.dw sound17Channel0
+	.dw musUnicornsCaveChannel0
 	.db $01
-	.dw sound17Channel1
+	.dw musUnicornsCaveChannel1
 	.db $04
-	.dw sound17Channel4
+	.dw musUnicornsCaveChannel4
 	.db $06
-	.dw sound17Channel6
+	.dw musUnicornsCaveChannel6
 	.db $ff
 
-sound18:
+musAncientRuins:
 	.db $00
-	.dw sound18Channel0
+	.dw musAncientRuinsChannel0
 	.db $01
-	.dw sound18Channel1
+	.dw musAncientRuinsChannel1
 	.db $04
-	.dw sound18Channel4
+	.dw musAncientRuinsChannel4
 	.db $06
-	.dw sound18Channel6
+	.dw musAncientRuinsChannel6
 	.db $ff
 
-sound19:
+musExplorersCrypt:
 	.db $00
-	.dw sound19Channel0
+	.dw musExplorersCryptChannel0
 	.db $01
-	.dw sound19Channel1
+	.dw musExplorersCryptChannel1
 	.db $04
-	.dw sound19Channel4
+	.dw musExplorersCryptChannel4
 	.db $06
-	.dw sound19Channel6
+	.dw musExplorersCryptChannel6
 	.db $ff
 
-sound1a:
+musSwordAndShieldMaze:
 	.db $00
-	.dw sound1aChannel0
+	.dw musSwordAndShieldMazeChannel0
 	.db $01
-	.dw sound1aChannel1
+	.dw musSwordAndShieldMazeChannel1
 	.db $04
-	.dw sound1aChannel4
+	.dw musSwordAndShieldMazeChannel4
 	.db $06
-	.dw sound1aChannel6
+	.dw musSwordAndShieldMazeChannel6
 	.db $ff
 
 musFinalDungeon:
@@ -369,15 +369,15 @@ musDisaster:
 	.dw musDisasterChannel6
 	.db $ff
 
-sound22:
+musSubrosianDance:
 	.db $00
-	.dw sound22Channel0
+	.dw musSubrosianDanceChannel0
 	.db $01
-	.dw sound22Channel1
+	.dw musSubrosianDanceChannel1
 	.db $04
-	.dw sound22Channel4
+	.dw musSubrosianDanceChannel4
 	.db $06
-	.dw sound22Channel6
+	.dw musSubrosianDanceChannel6
 	.db $ff
 
 musPirates:

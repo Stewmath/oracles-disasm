@@ -1,6 +1,6 @@
-soundaeStart:
+sndCurrentsStart:
 
-soundaeChannel2:
+sndCurrentsChannel2:
 	duty $02
 	env $0 $02
 	vol $9
@@ -44,7 +44,7 @@ soundaeChannel2:
 	note as6 $2a
 	cmdff
 
-soundaeChannel3:
+sndCurrentsChannel3:
 	duty $02
 	env $0 $02
 	vol $0
@@ -90,13 +90,13 @@ soundaeChannel3:
 	note as6 $20
 	cmdff
 
-soundaeChannel5:
+sndCurrentsChannel5:
 	duty $0e
 	rest $c8
 	rest $3a
 	cmdff
 
-soundaeChannel7:
+sndCurrentsChannel7:
 	cmdf0 $00
 	note $00 $c8
 	note $00 $3a
