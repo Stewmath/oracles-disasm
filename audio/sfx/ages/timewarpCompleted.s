@@ -1,5 +1,5 @@
-soundd4Start:
-soundd4Channel2:
+sndTimewarpCompletedStart:
+sndTimewarpCompletedChannel2:
 	duty $02
 	vol $4
 	note ds6 $02

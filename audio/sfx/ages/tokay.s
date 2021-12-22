@@ -1,6 +1,6 @@
-soundb6Start:
+sndTokayStart:
 
-soundb6Channel2:
+sndTokayChannel2:
 	duty $00
 	cmdf8 $ba
 	vol $7

@@ -43,10 +43,10 @@ snd97Channel2:
 .include "audio/sfx/common/makuDisappear.s"
 .include "audio/sfx/common/beam2.s"
 
-soundb7Start:
-soundb7Channel2:
+sndb7Start:
+sndb7Channel2:
 	cmdff
-soundb7Channel7:
+sndb7Channel7:
 	cmdff
 
 .include "audio/sfx/common/veranFairyAttack.s"
@@ -55,8 +55,8 @@ soundb7Channel7:
 .include "audio/sfx/common/endless.s"
 .include "audio/sfx/common/bigExplosion2.s"
 
-soundbdStart:
-soundbdChannel2:
+sndbdStart:
+sndbdChannel2:
 	cmdff
 
 .include "audio/mus/common/mapleGame.s"
@@ -115,8 +115,8 @@ bank3aChannelFallback:
 .include "audio/sfx/common/menuMove.s"
 .include "audio/sfx/common/scentSeed.s"
 
-sound86Start:
-sound86Channel2:
+snd86Start:
+snd86Channel2:
 	cmdff
 
 .include "audio/sfx/common/teleport.s"
@@ -129,8 +129,8 @@ sndd5Channel2:
 .include "audio/sfx/common/transform.s"
 .include "audio/sfx/common/blueStalfosCharge.s"
 
-sound92Start:
-sound92Channel2:
+snd92Start:
+snd92Channel2:
 	cmdff
 
 .include "audio/sfx/common/fluteRicky.s"
@@ -141,8 +141,8 @@ sound92Channel2:
 .include "audio/sfx/common/makuTreePast.s"
 .include "audio/sfx/common/restore.s"
 
-soundcfStart:
-soundcfChannel2:
+sndcfStart:
+sndcfChannel2:
 	cmdff
 
 .include "audio/sfx/common/moosh.s"
@@ -153,8 +153,8 @@ soundcfChannel2:
 .include "audio/sfx/common/circling.s"
 .include "audio/sfx/common/dig.s"
 
-sound7aStart:
-sound7aChannel2:
+snd7aStart:
+snd7aChannel2:
 	cmdff
 	cmdff
 
@@ -213,10 +213,10 @@ bank3bChannelFallback:
 .include "audio/sfx/common/enemyJump.s"
 .include "audio/sfx/common/galeSeed.s"
 
-soundcaStart:
-soundcaChannel2:
+sndcaStart:
+sndcaChannel2:
 	cmdff
-soundcaChannel7:
+sndcaChannel7:
 	cmdff
 
 .include "audio/sfx/common/selectItem.s"
@@ -291,12 +291,12 @@ bank3dChannelFallback:
 .include "audio/mus/common/crazyDance.s"
 .include "audio/mus/ages/ancientTomb.s"
 
-sound93Start:
-sound93Channel2:
+snd93Start:
+snd93Channel2:
 	cmdff
 
-sound94Start:
-sound94Channel2:
+snd94Start:
+snd94Channel2:
 	cmdff
 
 .include "audio/sfx/common/compass.s"

@@ -1,6 +1,6 @@
-soundb5Start:
+sndTingleStart:
 
-soundb5Channel2:
+sndTingleChannel2:
 	duty $01
 	cmdf8 $fc
 	vol $b

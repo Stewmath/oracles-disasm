@@ -1,6 +1,6 @@
-sound7fStart:
+sndMoveBlock2Start:
 
-sound7fChannel2:
+sndMoveBlock2Channel2:
 	duty $02
 	vol $b
 	note d6  $01

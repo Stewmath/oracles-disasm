@@ -1,6 +1,6 @@
-sound8eStart:
+sndSwitch2Start:
 
-sound8eChannel2:
+sndSwitch2Channel2:
 	duty $02
 	vol $d
 	env $1 $00

@@ -1020,9 +1020,9 @@ sndScentSeed:
 	.dw sndScentSeedChannel2
 	.db $ff
 
-sound86:
+snd86:
 	.db $f2
-	.dw sound86Channel2
+	.dw snd86Channel2
 	.db $ff
 
 sndSplash:
@@ -1084,14 +1084,14 @@ sndFairyCutscene:
 	.db $ff
 .endif
 
-sound93:
+snd93:
 	.db $02
-	.dw sound93Channel2
+	.dw snd93Channel2
 	.db $ff
 
-sound94:
+snd94:
 	.db $02
-	.dw sound94Channel2
+	.dw snd94Channel2
 	.db $ff
 
 sndWarpStart:
@@ -1271,11 +1271,11 @@ sndFadeout:
 	.dw sndFadeoutChannel7
 	.db $ff
 
-soundb7:
+sndb7:
 	.db $02
-	.dw soundb7Channel2
+	.dw sndb7Channel2
 	.db $07
-	.dw soundb7Channel7
+	.dw sndb7Channel7
 	.db $ff
 
 sndRumble2:
@@ -1305,9 +1305,9 @@ sndBigExplosion2:
 	.dw sndBigExplosion2Channel7
 	.db $ff
 
-soundbd:
+sndbd:
 	.db $02
-	.dw soundbdChannel2
+	.dw sndbdChannel2
 	.db $ff
 
 sndVeranProjectile:
@@ -1372,11 +1372,11 @@ sndCircling:
 	.dw sndCirclingChannel2
 	.db $ff
 
-soundca:
+sndca:
 	.db $02
-	.dw soundcaChannel2
+	.dw sndcaChannel2
 	.db $07
-	.dw soundcaChannel7
+	.dw sndcaChannel7
 	.db $ff
 
 sndSeedShooter:
@@ -1409,9 +1409,9 @@ sndMakuTreePast:
 	.dw sndMakuTreePastChannel7
 	.db $ff
 
-soundcf:
+sndcf:
 	.db $02
-	.dw soundcfChannel2
+	.dw sndcfChannel2
 	.db $ff
 
 sndPirateBell:
@@ -1436,9 +1436,9 @@ sndd5:
 	.dw sndd5Channel2
 	.db $ff
 
-sound92:
+snd92:
 	.db $02
-	.dw sound92Channel2
+	.dw snd92Channel2
 	.db $ff
 
 sndFluteRicky:
@@ -1507,52 +1507,52 @@ sndAges:
 	.dw sndAgesChannel7
 	.db $ff
 
-sound7a:
+snd7a:
 	.db $02
-	.dw sound7aChannel2
+	.dw snd7aChannel2
 	.db $ff
 
-sound8e:
+sndSwitch2:
 	.db $a2
-	.dw sound8eChannel2
+	.dw sndSwitch2Channel2
 	.db $ff
 
-sound7d:
+sndOpenGate:
 	.db $a2
-	.dw sound7dChannel2
+	.dw sndOpenGateChannel2
 	.db $a7
-	.dw sound7dChannel7
+	.dw sndOpenGateChannel7
 	.db $ff
 
-sound7f:
+sndMoveBlock2:
 	.db $92
-	.dw sound7fChannel2
+	.dw sndMoveBlock2Channel2
 	.db $ff
 
-soundb5:
+sndTingle:
 	.db $a2
-	.dw soundb5Channel2
+	.dw sndTingleChannel2
 	.db $ff
 
-soundb6:
+sndTokay:
 	.db $a2
-	.dw soundb6Channel2
+	.dw sndTokayChannel2
 	.db $ff
 
-soundd1:
+sndTimewarpInitiated:
 	.db $a2
-	.dw soundd1Channel2
+	.dw sndTimewarpInitiatedChannel2
 	.db $a3
-	.dw soundd1Channel3
+	.dw sndTimewarpInitiatedChannel3
 	.db $a5
-	.dw soundd1Channel5
+	.dw sndTimewarpInitiatedChannel5
 	.db $a7
-	.dw soundd1Channel7
+	.dw sndTimewarpInitiatedChannel7
 	.db $ff
 
-soundd4:
+sndTimewarpCompleted:
 	.db $a2
-	.dw soundd4Channel2
+	.dw sndTimewarpCompletedChannel2
 	.db $ff
 
 

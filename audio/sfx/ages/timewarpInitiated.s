@@ -1,6 +1,6 @@
-soundd1Start:
+sndTimewarpInitiatedStart:
 
-soundd1Channel2:
+sndTimewarpInitiatedChannel2:
 	duty $01
 	vol $2
 	note cs5 $02
@@ -344,7 +344,7 @@ soundd1Channel2:
 	note e6  $01
 	cmdff
 
-soundd1Channel3:
+sndTimewarpInitiatedChannel3:
 	duty $01
 	cmdfd $ff
 	vol $0
@@ -399,11 +399,11 @@ soundd1Channel3:
 	rest $18
 	cmdff
 
-soundd1Channel5:
+sndTimewarpInitiatedChannel5:
 	rest $cc
 	cmdff
 
-soundd1Channel7:
+sndTimewarpInitiatedChannel7:
 	cmdf0 $00
 	note $15 $30
 	cmdf0 $10

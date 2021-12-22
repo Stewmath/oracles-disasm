@@ -124,19 +124,19 @@ _soundPointers:
 	/* 0x77 */ m_soundPointer sndDropEssence
 	/* 0x78 */ m_soundPointer sndBoomerang
 	/* 0x79 */ m_soundPointer sndBigExplosion
-	/* 0x7a */ m_soundPointer sound7a
+	/* 0x7a */ m_soundPointer snd7a
 	/* 0x7b */ m_soundPointer sndMysterySeed
 	/* 0x7c */ m_soundPointer sndAquamentusHover
-	/* 0x7d */ m_soundPointer sound7d
+	/* 0x7d */ m_soundPointer sndOpenGate
 	/* 0x7e */ m_soundPointer sndSwitch
-	/* 0x7f */ m_soundPointer sound7f
+	/* 0x7f */ m_soundPointer sndMoveBlock2
 	/* 0x80 */ m_soundPointer sndMinecart
 	/* 0x81 */ m_soundPointer sndStrongPound
 	/* 0x82 */ m_soundPointer sndRoller
 	/* 0x83 */ m_soundPointer sndMagicPowder
 	/* 0x84 */ m_soundPointer sndMenuMove
 	/* 0x85 */ m_soundPointer sndScentSeed
-	/* 0x86 */ m_soundPointer sound86
+	/* 0x86 */ m_soundPointer snd86
 	/* 0x87 */ m_soundPointer sndSplash
 	/* 0x88 */ m_soundPointer sndLinkSwim
 	/* 0x89 */ m_soundPointer sndText2
@@ -144,13 +144,13 @@ _soundPointers:
 	/* 0x8b */ m_soundPointer sndFilledHeartContainer
 	/* 0x8c */ m_soundPointer sndUnknown7
 	/* 0x8d */ m_soundPointer sndTeleport
-	/* 0x8e */ m_soundPointer sound8e
+	/* 0x8e */ m_soundPointer sndSwitch2
 	/* 0x8f */ m_soundPointer sndEnemyJump
 	/* 0x90 */ m_soundPointer sndGaleSeed
 	/* 0x91 */ m_soundPointer sndFairyCutscene
-	/* 0x92 */ m_soundPointer sound92
-	/* 0x93 */ m_soundPointer sound93
-	/* 0x94 */ m_soundPointer sound94
+	/* 0x92 */ m_soundPointer snd92
+	/* 0x93 */ m_soundPointer snd93
+	/* 0x94 */ m_soundPointer snd94
 	/* 0x95 */ m_soundPointer sndWarpStart
 	/* 0x96 */ m_soundPointer sndGhost
 	/* 0x97 */ m_soundPointer snd97
@@ -183,15 +183,15 @@ _soundPointers:
 	/* 0xb2 */ m_soundPointer sndMakuDisappear
 	/* 0xb3 */ m_soundPointer sndRumble
 	/* 0xb4 */ m_soundPointer sndFadeout
-	/* 0xb5 */ m_soundPointer soundb5
-	/* 0xb6 */ m_soundPointer soundb6
-	/* 0xb7 */ m_soundPointer soundb7
+	/* 0xb5 */ m_soundPointer sndTingle
+	/* 0xb6 */ m_soundPointer sndTokay
+	/* 0xb7 */ m_soundPointer sndb7
 	/* 0xb8 */ m_soundPointer sndRumble2
 	/* 0xb9 */ m_soundPointer sndEndless
 	/* 0xba */ m_soundPointer sndBeam1
 	/* 0xbb */ m_soundPointer sndBeam2
 	/* 0xbc */ m_soundPointer sndBigExplosion2
-	/* 0xbd */ m_soundPointer soundbd
+	/* 0xbd */ m_soundPointer sndbd
 	/* 0xbe */ m_soundPointer sndVeranProjectile
 	/* 0xbf */ m_soundPointer sndBlueStalfosCharge
 	/* 0xc0 */ m_soundPointer sndTransform
@@ -204,17 +204,17 @@ _soundPointers:
 	/* 0xc7 */ m_soundPointer sndGoron
 	/* 0xc8 */ m_soundPointer sndDing
 	/* 0xc9 */ m_soundPointer sndCircling
-	/* 0xca */ m_soundPointer soundca
+	/* 0xca */ m_soundPointer sndca
 	/* 0xcb */ m_soundPointer sndSeedShooter
 	/* 0xcc */ m_soundPointer sndWhistle
 	/* 0xcd */ m_soundPointer sndGoronDanceB
 	/* 0xce */ m_soundPointer sndMakuTreePast
-	/* 0xcf */ m_soundPointer soundcf
+	/* 0xcf */ m_soundPointer sndcf
 	/* 0xd0 */ m_soundPointer sndPirateBell
-	/* 0xd1 */ m_soundPointer soundd1
+	/* 0xd1 */ m_soundPointer sndTimewarpInitiated
 	/* 0xd2 */ m_soundPointer sndLightning
 	/* 0xd3 */ m_soundPointer sndWind
-	/* 0xd4 */ m_soundPointer soundd4
+	/* 0xd4 */ m_soundPointer sndTimewarpCompleted
 	/* 0xd5 */ m_soundPointer sndd5
 	/* 0xd6 */ m_soundPointer sndd6
 	/* 0xd7 */ m_soundPointer sndd7

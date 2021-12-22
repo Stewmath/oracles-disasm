@@ -1,13 +1,13 @@
-sound7dStart:
+sndOpenGateStart:
 
-sound7dChannel2:
+sndOpenGateChannel2:
 	duty $01
 	vol $a
 	cmdf8 $ce
 	note cs3 $05
 	cmdff
 
-sound7dChannel7:
+sndOpenGateChannel7:
 	cmdf0 $f0
 	note $37 $02
 	cmdf0 $f0
