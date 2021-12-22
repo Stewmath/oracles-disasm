@@ -1,6 +1,6 @@
-soundb7Start:
+sndUnknownb7Start:
 
-soundb7Channel2:
+sndUnknownb7Channel2:
 	cmdf0 $00
 	vol $6
 	.db $07 $06 $01
@@ -40,7 +40,7 @@ soundb7Channel2:
 	.db $06 $0b $01
 	cmdff
 
-soundb7Channel7:
+sndUnknownb7Channel7:
 	cmdf0 $90
 	note $27 $03
 	cmdf0 $90

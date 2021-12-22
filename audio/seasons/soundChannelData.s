@@ -8,18 +8,18 @@ snddeChannel6:
 
 
 snd97Start:
-sounda1Start:
-soundadStart:
-soundb6Start:
+snda1Start:
+sndadStart:
+sndb6Start:
 
 snd97Channel2:
 snd97Channel7:
-sounda1Channel2:
-sounda1Channel7:
-soundadChannel2:
-soundadChannel7:
-soundb6Channel2:
-soundb6Channel7:
+snda1Channel2:
+snda1Channel7:
+sndadChannel2:
+sndadChannel7:
+sndb6Channel2:
+sndb6Channel7:
 bank39ChannelFallback:
 	cmdff
 
@@ -161,10 +161,10 @@ bank3aChannelFallback:
 .include "audio/sfx/seasons/86.s" ; TODO
 .include "audio/sfx/common/teleport.s"
 
-soundd4Start:
-soundd4Channel2:
+sndd4Start:
+sndd4Channel2:
 	cmdff
-soundd4Channel7:
+sndd4Channel7:
 	cmdff
 
 sndd5Start:
@@ -286,7 +286,7 @@ bank3cChannelFallback:
 .ORG 0
 
 bank3dChannelFallback:
-sound24Channel6:
+mus24Channel6:
 	cmdff
 
 .redefine MUSIC_CHANNEL_FALLBACK bank3dChannelFallback
@@ -294,12 +294,12 @@ sound24Channel6:
 .include "audio/mus/common/triumphant.s"
 .include "audio/mus/common/disaster.s"
 
-sound24Start:
-sound24Channel1:
+mus24Start:
+mus24Channel1:
 	cmdff
-sound24Channel0:
+mus24Channel0:
 	cmdff
-sound24Channel4:
+mus24Channel4:
 	cmdff
 
 .include "audio/mus/common/pirates.s"
@@ -326,7 +326,7 @@ sound24Channel4:
 .BANK $3e SLOT 1
 .ORG 0
 
-sound30Start:
+mus30Start:
 mus37Start:
 mus3aStart:
 mus3bStart:
@@ -335,8 +335,8 @@ mus48Start:
 mus49Start:
 mus4bStart:
 
-sound30Channel4:
-sound30Channel6:
+mus30Channel4:
+mus30Channel6:
 mus37Channel4:
 mus3aChannel6:
 mus3bChannel0:
@@ -428,9 +428,9 @@ mus37Channel0:
 mus37Channel6:
 	cmdff
 
-sound30Channel1:
+mus30Channel1:
 	cmdff
-sound30Channel0:
+mus30Channel0:
 	cmdff
 
 .include "audio/mus/common/ladxSideview.s"

@@ -1,6 +1,6 @@
-sound25Start:
+musUnused2Start:
 
-sound25Channel1:
+musUnused2Channel1:
 	vibrato $00
 	env $0 $04
 	duty $02
@@ -135,7 +135,7 @@ musicfbd80:
 	goto musicfbd80
 	cmdff
 
-sound25Channel0:
+musUnused2Channel0:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -214,7 +214,7 @@ musicfbe80:
 	goto musicfbe80
 	cmdff
 
-sound25Channel4:
+musUnused2Channel4:
 musicfbf0a:
 	duty $0e
 	note d4  $05
@@ -335,4 +335,4 @@ musicfbf0a:
 	goto musicfbf0a
 	cmdff
 
-.define sound25Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musUnused2Channel6 MUSIC_CHANNEL_FALLBACK EXPORT

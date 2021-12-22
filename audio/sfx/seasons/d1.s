@@ -1,6 +1,6 @@
-soundd1Start:
+sndUnknownd1Start:
 
-soundd1Channel2:
+sndUnknownd1Channel2:
 	duty $00
 	vol $9
 	cmdf8 $7f
@@ -13,7 +13,7 @@ soundd1Channel2:
 	cmdf8 $ef
 	note a2  $32
 	cmdff
-soundd1Channel7:
+sndUnknownd1Channel7:
 	cmdf0 $40
 	note $44 $02
 	note $45 $02

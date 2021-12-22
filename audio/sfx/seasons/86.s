@@ -1,6 +1,6 @@
-sound86Start:
+sndUnknown86Start:
 
-sound86Channel2:
+sndUnknown86Channel2:
 	duty $02
 	vol $7
 	note a4  $01

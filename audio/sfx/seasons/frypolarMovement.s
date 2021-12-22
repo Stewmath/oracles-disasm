@@ -1,6 +1,6 @@
-soundaeStart:
+sndFrypolarMovementStart:
 
-soundaeChannel2:
+sndFrypolarMovementChannel2:
 	cmdf0 $d3
 	.db $07 $08 $01
 	vol $3
@@ -78,7 +78,7 @@ soundaeChannel2:
 	vol $3
 	.db $06 $0e $01
 	cmdff
-soundaeChannel7:
+sndFrypolarMovementChannel7:
 	cmdf0 $10
 	note $15 $01
 	cmdf0 $20

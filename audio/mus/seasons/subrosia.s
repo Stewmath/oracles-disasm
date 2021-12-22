@@ -1,6 +1,6 @@
-sound28Start:
+musSubrosiaStart:
 
-sound28Channel1:
+musSubrosiaChannel1:
 	vibrato $00
 	env $0 $00
 	duty $01
@@ -159,7 +159,7 @@ musicfaffc:
 	goto musicfaffc
 	cmdff
 
-sound28Channel0:
+musSubrosiaChannel0:
 	vibrato $00
 	env $0 $00
 	duty $01
@@ -243,7 +243,7 @@ musicfb10b:
 	goto musicfb10b
 	cmdff
 
-sound28Channel4:
+musSubrosiaChannel4:
 musicfb193:
 	duty $0e
 	note b2  $24
@@ -317,4 +317,4 @@ musicfb193:
 	goto musicfb193
 	cmdff
 
-.define sound28Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musSubrosiaChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

@@ -1,6 +1,6 @@
-sound7fStart:
+sndDodongoOpenMouthStart:
 
-sound7fChannel2:
+sndDodongoOpenMouthChannel2:
 	duty $00
 	vol $9
 	note fs2 $01

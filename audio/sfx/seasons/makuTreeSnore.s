@@ -1,5 +1,5 @@
-sound92Start:
-sound92Channel2:
+sndMakuTreeSnoreStart:
+sndMakuTreeSnoreChannel2:
 	duty $01
 	env $2 $04
 	vol $7

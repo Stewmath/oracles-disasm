@@ -1,6 +1,6 @@
-soundbdStart:
+sndUnknownbdStart:
 
-soundbdChannel2:
+sndUnknownbdChannel2:
 	duty $02
 	cmdf0 $d2
 	.db $07 $ec $01

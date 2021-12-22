@@ -1,5 +1,5 @@
-soundcaStart:
-soundcaChannel2:
+sndDanceMoveStart:
+sndDanceMoveChannel2:
 	duty $02
 	vol $f
 	cmdf8 $ee
@@ -13,7 +13,7 @@ soundcaChannel2:
 	note as2 $0c
 	cmdf8 $f6
 	cmdff
-soundcaChannel7:
+sndDanceMoveChannel7:
 	cmdf0 $f1
 	note $54 $02
 	cmdf0 $51

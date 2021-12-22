@@ -1,6 +1,6 @@
-sound35Start:
+musSamasaDesertStart:
 
-sound35Channel1:
+musSamasaDesertChannel1:
 	vibrato $00
 	env $0 $00
 	duty $02
@@ -373,7 +373,7 @@ musicefa3e:
 	goto musicefa3e
 	cmdff
 
-sound35Channel4:
+musSamasaDesertChannel4:
 musicefcb4:
 	duty $0c
 	rest $0c
@@ -620,7 +620,7 @@ musicefcb4:
 	goto musicefcb4
 	cmdff
 
-sound35Channel0:
+musSamasaDesertChannel0:
 musicefe8d:
 	duty $02
 	vol $8
@@ -701,4 +701,4 @@ musicefe8d:
 	goto musicefe8d
 	cmdff
 
-.define sound35Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define musSamasaDesertChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

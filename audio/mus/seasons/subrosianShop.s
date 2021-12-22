@@ -1,6 +1,6 @@
-sound26Start:
+sndSubrosianShopStart:
 
-sound26Channel1:
+sndSubrosianShopChannel1:
 	vibrato $00
 	env $0 $00
 	duty $01
@@ -246,7 +246,7 @@ musicf59c8:
 	goto musicf59c8
 	cmdff
 
-sound26Channel0:
+sndSubrosianShopChannel0:
 	vibrato $00
 	env $0 $00
 	duty $01
@@ -436,7 +436,7 @@ musicf5b5b:
 	goto musicf5b5b
 	cmdff
 
-sound26Channel4:
+sndSubrosianShopChannel4:
 musicf5c94:
 	duty $0e
 	note e3  $05
@@ -601,4 +601,4 @@ musicf5c94:
 	goto musicf5c94
 	cmdff
 
-.define sound26Channel6 MUSIC_CHANNEL_FALLBACK EXPORT
+.define sndSubrosianShopChannel6 MUSIC_CHANNEL_FALLBACK EXPORT

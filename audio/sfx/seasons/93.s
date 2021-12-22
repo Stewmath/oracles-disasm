@@ -1,5 +1,5 @@
-sound93Start:
-sound93Channel2:
+sndUnknown93Start:
+sndUnknown93Channel2:
 	duty $02
 	vol $b
 	note c8  $01

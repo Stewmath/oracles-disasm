@@ -1,6 +1,6 @@
-sound3dStart:
+musSongOfStormsStart:
 
-sound3dChannel1:
+musSongOfStormsChannel1:
 ; Measure 1-4
 	vol $0
 	note gs3 $c0
@@ -120,7 +120,7 @@ musicf84c2:
 	goto musicf84c2
 	cmdff
 
-sound3dChannel0:
+musSongOfStormsChannel0:
 ; Measure 1
 	vol $0
 	note gs3 $10
@@ -332,7 +332,7 @@ musicf85ca:
 	goto musicf85ca
 	cmdff
 
-sound3dChannel4:
+musSongOfStormsChannel4:
 	cmdf2
 ; Measure 1
 	duty $17
@@ -443,7 +443,7 @@ musicf8741:
 	goto musicf8741
 	cmdff
 
-sound3dChannel6:
+musSongOfStormsChannel6:
 ; Measure 1
 	rest $10
 	cmdf2

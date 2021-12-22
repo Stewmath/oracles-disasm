@@ -1,5 +1,5 @@
-sound8eStart:
-sound8eChannel2:
+sndUnknown8eStart:
+sndUnknown8eChannel2:
 	duty $02
 	vol $c
 	cmdf8 $e8

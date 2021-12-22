@@ -1,6 +1,6 @@
-soundcfStart:
+sndCreepyLaughStart:
 
-soundcfChannel2:
+sndCreepyLaughChannel2:
 	duty $00
 	env $0 $01
 	vol $b

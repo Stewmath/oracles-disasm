@@ -219,7 +219,7 @@
 .ifdef ROM_AGES
 	SND_OPEN_GATE           db ; $7d ; When a colored cube opens a gate
 .else
-	SND_7d                  db ; $7d ; Not blank, but unknown
+	SND_UNKNOWN_7d          db ; $7d ; Not blank, but unknown
 .endif
 
 	SND_SWITCH              db ; $7e
@@ -240,7 +240,7 @@
 .ifdef ROM_AGES
 	SND_86                  db ; $86 (blank)
 .else
-	SND_86                  db ; $86 (not blank in Seasons...)
+	SND_UNKNOWN_86          db ; $86 (not blank in Seasons...)
 .endif
 
 	SND_SPLASH              db ; $87
@@ -254,7 +254,7 @@
 .ifdef ROM_AGES
 	SND_SWITCH2             db ; $8e
 .else
-	SND_8e                  db ; $8e ; Not blank, but unknown
+	SND_UNKNOWN_8e          db ; $8e ; Not blank, but unknown
 .endif
 
 	SND_ENEMY_JUMP          db ; $8f
@@ -267,7 +267,7 @@
 	SND_94                  db ; $94 (blank)
 .else
 	SND_MAKU_TREE_SNORE     db ; $92
-	SND_93                  db ; $93 ; Stalfos boss from ladx D5?
+	SND_UNKNOWN_93          db ; $93 ; Stalfos boss from ladx D5?
 	SND_DODONGO_EAT         db ; $94 ; Snake's Remains boss uses this?
 .endif
 
@@ -323,9 +323,9 @@
 	SND_TOKAY               db ; $b6
 	SND_b7                  db ; $b7 (blank)
 .else
-	SND_b5                  db ; $b5 ; Not blank, but unknown
+	SND_UNKNOWN_b5          db ; $b5 ; Not blank, but unknown
 	SND_b6                  db ; $b6 (blank)
-	SND_b7                  db ; $b7 ; Not blank, but unknown
+	SND_UNKNOWN_b7          db ; $b7 ; Not blank, but unknown
 .endif
 
 	SND_RUMBLE2             db ; $b8 ; Screen shaking; Shorter than B2, Longer than B3
@@ -337,7 +337,7 @@
 .ifdef ROM_AGES
 	SND_bd                  db ; $bd (blank)
 .else
-	SND_bd                  db ; $bd ; A single sound slowly lowering in pitch
+	SND_UNKNOWN_bd          db ; $bd ; A single sound slowly lowering in pitch
 .endif
 
 	SND_VERAN_PROJECTILE    db ; $be ; Used for Veran's projectile attack in her possessed forms
@@ -375,7 +375,7 @@
 .ifdef ROM_AGES
 	SND_TIMEWARP_INITIATED  db ; $d1
 .else
-	SND_d1                  db ; $d1 ; Not blank, but unknown
+	SND_UNKNOWN_d1          db ; $d1 ; Not blank, but unknown
 .endif
 
 	SND_LIGHTNING           db ; $d2
