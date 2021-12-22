@@ -35,7 +35,7 @@ b39_updateMusicVolume:
 
 
 ; This is pointless?
-.dw sound00
+.dw musNone
 
 
 ;;
@@ -2414,10 +2414,6 @@ _waveformTable:
 
 	.include "audio/ages/soundChannelData.s"
 
-	.ifdef BUILD_VANILLA
-		.db $ff $ff $ff
-	.endif
-
 .else; ROM_SEASONS
 	.include "audio/seasons/soundChannelPointers.s"
 	.include "audio/seasons/soundPointers.s"
@@ -2427,8 +2423,4 @@ _waveformTable:
 	.endif
 
 	.include "audio/seasons/soundChannelData.s"
-
-	.ifdef BUILD_VANILLA
-		.dsb 10 $ff
-	.endif
 .endif

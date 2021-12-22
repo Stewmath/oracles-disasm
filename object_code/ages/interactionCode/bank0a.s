@@ -2034,7 +2034,7 @@ interactionCode70:
 	jr z,@@lostGame
 
 @@wonGame:
-	ld a,SND_CRANEGAME
+	ld a,SND_FILLED_HEART_CONTAINER
 	call playSound
 	jr ++
 

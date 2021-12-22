@@ -20,7 +20,7 @@ _parentItemCode_shield:
 	ld a,$01
 	ld (de),a
 
-	ld a,SND_SWITCHHOOK
+	ld a,SND_SHIELD
 	call playSound
 
 @state1:

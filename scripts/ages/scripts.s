@@ -9233,7 +9233,7 @@ greatFairySubid0Script:
 	playsound SND_KILLENEMY ; Why?
 	createpuff
 	wait 32
-	setmusic MUS_FAIRY
+	setmusic MUS_FAIRY_FOUNTAIN
 	asm15 objectSetVisible
 	writeobjectbyte Interaction.var3e, $00
 	scriptjump linkedGameNpcScript

@@ -527,25 +527,3 @@ oamData_15_4e0c:
 	.include "build/data/treasureDisplayData.s"
 
 .ends
-
- m_section_free Crossitem_Sounds
-
-; Switch hook noise
-switchHookSoundStart:
-switchHookSoundChannel2:
-	duty $02
-	vol $d
-	env $1 $00
-	cmdf8 $00
-	note $30 $04
-	vol $c
-	note $34 $04
-	vol $d
-	note $38 $04
-	vibrato $51
-	env $1 $01
-	vol $b
-	note $3c $14
-	cmdff
-
-.ends
