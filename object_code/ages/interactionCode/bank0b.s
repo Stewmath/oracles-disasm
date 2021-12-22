@@ -6537,9 +6537,9 @@ interactionCodec5:
 	jp playSound
 
 @sounds:
-	.db SND_ECHOES
-	.db SND_CURRENTS
-	.db SND_AGES
+	.db SND_TUNE_OF_ECHOES
+	.db SND_TUNE_OF_CURRENTS
+	.db SND_TUNE_OF_AGES
 
 
 ; Facing left

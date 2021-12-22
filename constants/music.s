@@ -303,9 +303,9 @@
 	SND_SHOCK               db ; $ac
 
 .ifdef ROM_AGES
-	SND_ECHOES              db ; $ad ; Tune of echos
-	SND_CURRENTS            db ; $ae
-	SND_AGES                db ; $af
+	SND_TUNE_OF_ECHOES      db ; $ad ; Tune of echos
+	SND_TUNE_OF_CURRENTS    db ; $ae
+	SND_TUNE_OF_AGES        db ; $af
 .else
 	SND_ad                  db ; $ad (blank)
 	SND_FRYPOLAR_MOVEMENT   db ; $ae

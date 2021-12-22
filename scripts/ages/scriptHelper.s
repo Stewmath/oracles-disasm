@@ -1091,7 +1091,7 @@ nayruScript02_part2:
 	writememory wTmpcfc0.genericCutscene.cfd0, $06
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
-	playsound SND_AGES
+	playsound SND_TUNE_OF_AGES
 	wait 260
 
 	spawninteraction INTERACID_PLAY_HARP_SONG, $02, $00, $00
@@ -1154,7 +1154,7 @@ nayruScript07:
 
 	setanimation $07
 	writeobjectbyte Interaction.direction, $07
-	asm15 playSound, SND_ECHOES
+	asm15 playSound, SND_TUNE_OF_ECHOES
 	wait 210
 
 	xorcfc0bit 0

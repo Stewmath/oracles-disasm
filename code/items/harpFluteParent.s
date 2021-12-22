@@ -168,9 +168,9 @@ _parentItemCode_harp:
 	.db SND_FLUTE_DIMITRI
 	.db SND_FLUTE_MOOSH
 .ifdef ROM_AGES
-	.db SND_ECHOES
-	.db SND_CURRENTS
-	.db SND_AGES
+	.db SND_TUNE_OF_ECHOES
+	.db SND_TUNE_OF_CURRENTS
+	.db SND_TUNE_OF_AGES
 .endif
 
 ;;
