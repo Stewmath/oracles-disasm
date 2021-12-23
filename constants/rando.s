@@ -1,7 +1,11 @@
 ; Configuration settings that can be checked with "checkRandoConfig"
-.define RANDO_CONFIG_KEYSANITY,         $00
-.define RANDO_CONFIG_TREEWARP,          $01
-.define RANDO_CONFIG_DUNGEON_ENTRANCES, $02 ; Dungeon entrances randomized
+.enum 0 EXPORT
+	RANDO_CONFIG_KEYSANITY          db
+	RANDO_CONFIG_TREEWARP           db
+	RANDO_CONFIG_DUNGEON_ENTRANCES  db ; Dungeon entrances randomized
+	RANDO_CONFIG_MERMAID_AUTO       db ; Simpler mermaid suit movement
+	; Remember to expand the space used if more than 8 options are added
+.ende
 
 ; Size of an item slot (data/rando/itemSlots.s)
 .define ITEM_SLOT_SIZE, 7

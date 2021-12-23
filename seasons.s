@@ -11,6 +11,8 @@
 .include "include/simplescript_commands.s"
 .include "include/movementscript_commands.s"
 
+.include "constants/rando.s"
+
 .include "objects/macros.s"
 .include "include/gfxDataMacros.s"
 .include "include/musicMacros.s"

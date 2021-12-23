@@ -5777,12 +5777,24 @@ _linkUpdateVelocity:
 	ld h,d
 	ld a,(wLinkImmobilized)
 	or a
-	jr nz,+
+	jr nz,@directionButtonNotPressed
 
 	ld a,(wGameKeysJustPressed)
 	and (BTN_UP | BTN_RIGHT | BTN_DOWN | BTN_LEFT)
 	jr nz,@directionButtonPressed
-+
+
+	; RANDO: If config option is set, do "auto-mashing" with the mermaid suit
+	ld a,RANDO_CONFIG_MERMAID_AUTO
+	call checkRandoConfig
+	jr z,@directionButtonNotPressed
+	ld a,(wGameKeysPressed)
+	and (BTN_UP | BTN_RIGHT | BTN_DOWN | BTN_LEFT)
+	jr z,@directionButtonNotPressed
+	ld a,(wFrameCounter)
+	and 7
+	jr z,@directionButtonPressed
+
+@directionButtonNotPressed:
 	ld l,SpecialObject.var3e
 	dec (hl)
 	bit 7,(hl)
