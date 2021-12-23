@@ -185,7 +185,12 @@ interactionCode39_body:
 	.db $30 $68 $50 $05
 	.db $34 $88 $8c $02
 	.db $50 $46 $b4 $02
+.ifdef REGION_JP
+	; Monkey was moved to prevent it from making Link clip into a tree
+	.db $64 $18 $b8 $08
+.else
 	.db $64 $28 $b8 $08
+.endif
 
 @subid4Init:
 	call objectSetInvisible
@@ -900,7 +905,11 @@ _monkeyAnimateAndRunScript:
 _monkeySubid5State1_monkey9:
 	call interactionRunScript
 	call _monkeyCheckChangeAnimation
+.ifdef REGION_JP
+	call objectPreventLinkFromPassing
+.else
 	call objectPushLinkAwayOnCollision
+.endif
 	call objectSetPriorityRelativeToLink_withTerrainEffects
 	ld e,Interaction.substate
 	ld a,(de)

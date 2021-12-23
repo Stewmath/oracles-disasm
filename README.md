@@ -99,3 +99,14 @@ python3 tools/gfx/gfx.py png gfx/common/spr_link.bin
 
 Both of these commands will check the `.properties` file, if it exists, to
 decode and encode the image properly.
+
+# Disclaimer
+
+The reverse-engineered code and assets in this repository belong largely to
+Capcom and Nintendo. While I don't claim to have any legal standing to dictate
+how it may be used, I strongly disavow its use for any commercial purposes. The
+purpose of this project is to research the inner workings of the Zelda Oracle
+games and facilitate the creation of non-commercial ROM hacks.
+
+Scripts which do not contain any Nintendo/Capcom code (ie. python scripts in the
+"tools/" folder) may be considered "public domain" unless stated otherwise.

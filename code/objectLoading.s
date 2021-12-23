@@ -324,10 +324,30 @@ _objectDataOp6:
 	ld a,h
 	ldh (<hFF91),a
 	push de
-
 	call _assignRandomPositionToEnemy
-
 	pop de
+
+.ifdef REGION_JP
+	; JP BUG: 'h' register not restored to point to the enemy object. This is only a problem
+	; when a random-position enemy fails to be placed somewhere.
+	; In this case, "hl" will point to wEnemyPlacement.randomPlacementAttemptCounter. This won't
+	; really affect anything. The real problem is that, by not deleting the enemy, it will have
+	; the default position 0,0 (top-left corner of the screen).
+	; This should be very rare, because it's unlikely that the game will fail to place the enemy
+	; anywhere at all, unless the room is full of walls.
+	jr nc,++
+	ld l,Enemy.enabled
+	ld (hl),$00
+	jr +++
+.else
+	; US BUG(?): If the enemy is not successfully placed, this does not clear the ID/SubID
+	; values. This shouldn't matter in most cases because they will usually be overwritten when
+	; an enemy is spawned. But, supposing there is a case where the game expects the subid to be
+	; 0 and doesn't write the value explicitly, maybe this could affect something?
+	;
+	; ALSO (and this appies to both regions), this does not decrement "wNumEnemies", which could
+	; make it impossible to clear certain rooms where you're supposed to kill all enemies, if
+	; one of the enemies fails to spawn! (But again, this is rare)
 	ldh a,(<hFF91)
 	ld h,a
 	jr nc,++
@@ -335,6 +355,8 @@ _objectDataOp6:
 	ld l,Enemy.enabled
 	ld (hl),$00
 	jr +++
+.endif
+
 ++
 	ld l,Enemy.enabled
 	ldh a,(<hFF8D)

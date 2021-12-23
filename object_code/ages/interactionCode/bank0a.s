@@ -2406,6 +2406,7 @@ _companionScript_subid0d:
 	ret nc
 
 	; Check if the companion is roughly at this object's position
+.ifndef REGION_JP
 	ld l,SpecialObject.xh
 	ld e,Interaction.xh
 	ld a,(de)
@@ -2413,6 +2414,7 @@ _companionScript_subid0d:
 	add $05
 	cp $0b
 	ret nc
+.endif
 	ld l,SpecialObject.yh
 	ld e,Interaction.yh
 	ld a,(de)
@@ -2512,7 +2514,12 @@ _companionScript_subid06:
 
 	ld a,$01
 	ld (de),a
+
+.ifndef REGION_JP
+	; This is supposed to prevent a softlock that occurs by doing a screen transition before
+	; Dimitri talks. But it doesn't work! Something else resets this back to 0.
 	ld (wDisableScreenTransitions),a
+.endif
 
 	; Manipulate Dimitri's state to force a dismount
 	ld l,SpecialObject.var03
@@ -6351,7 +6358,9 @@ _miscPuzzles_subid0a:
 	inc a
 	or b
 	ld (hl),a
+.ifndef REGION_JP
 	ld a,<TX_1209
+.endif
 	jr @beginCutscene
 
 @drainWater:
@@ -6361,11 +6370,15 @@ _miscPuzzles_subid0a:
 	xor a
 	ld (wJabuWaterLevel),a
 	ld (wSwitchState),a
+.ifndef REGION_JP
 	ld a,<TX_1208
+.endif
 
 @beginCutscene:
+.ifndef REGION_JP
 	ld e,Interaction.var31
 	ld (de),a
+.endif
 
 	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK
 	ld (wDisabledObjects),a
@@ -6400,9 +6413,13 @@ _miscPuzzles_subid0a:
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 
+.ifdef REGION_JP
+	ld bc,TX_1209
+.else
 	ld b,>TX_1200
 	ld l,Interaction.var31
 	ld c,(hl)
+.endif
 	call showText
 
 	ld a,SNDCTRL_STOPSFX
@@ -8139,12 +8156,18 @@ _patch_subid01:
 
 	; Failed minigame
 
+.ifndef REGION_JP
+	; This code fixes minor bugs with Patch. In the japanese version, it's possible to open the
+	; menu and then move around after the minecart hits the tuni nut. Also, dying as the tuni
+	; nut gets hit by the minecart causes graphical glitches.
 	call checkLinkCollisionsEnabled
 	ret nc
-
 	ld a,DISABLE_LINK
 	ld (wDisabledObjects),a
+
 	ld e,Interaction.state
+.endif
+
 	ld a,$05
 	ld (de),a
 	dec a

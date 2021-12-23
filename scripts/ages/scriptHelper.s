@@ -4914,6 +4914,7 @@ goron_checkGracefulGoronQuestStatus:
 	ld (de),a
 	ret
 
+.ifndef REGION_JP
 ;;
 goron_showTextForClairvoyantGoron:
 	ld b,$00
@@ -4985,6 +4986,8 @@ goron_showTextForClairvoyantGoron:
 	.db TREASURE_GORON_VASE
 	.db TREASURE_ROCK_BRISKET
 	.db TREASURE_BROTHER_EMBLEM
+
+.endif ; REGION_US, REGION_EU
 
 ;;
 ; Big bang npc: set collision radius to 0 and make him invisible.

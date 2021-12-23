@@ -1,4 +1,4 @@
-.ifdef BUILD_VANILLA
+.ifdef INCLUDE_GARBAGE
 
 	; Leftovers from seasons. No clue what it actually is though.
 	; @addr{6ee3}

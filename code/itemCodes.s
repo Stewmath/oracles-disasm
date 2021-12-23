@@ -4744,7 +4744,6 @@ itemCode08:
 
 ; ITEMID_FOOLS_ORE
 itemCode1e:
-.ifdef ROM_SEASONS
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -4752,13 +4751,16 @@ itemCode1e:
 	.dw foolsOreRet
 
 @state0:
+.ifdef ROM_AGES
+	ld a,UNCMP_GFXH_AGES_FOOLS_ORE
+.else
 	ld a,UNCMP_GFXH_SEASONS_1f
+.endif
 	call loadWeaponGfx
 	call _loadAttributesAndGraphicsAndIncState
 	xor a
 	call itemSetAnimation
 	jp objectSetVisible82
-.endif
 
 ;;
 ; ITEMID_BIGGORON_SWORD

@@ -48,7 +48,7 @@ enemyData:
 	/* 0x1f */ m_EnemyData $da $9f $0e $68
 	/* 0x20 */ m_EnemyData $90 $91 enemy20SubidData
 	/* 0x21 */ m_EnemyData $98 $a0 enemy21SubidData
-	/* 0x22 */ m_EnemyData $9c $91 $0e $00
+	/* 0x22 */ m_EnemyData $9c $fe $0e $00
 	/* 0x23 */ m_EnemyData $8c $a1 $0c $30
 	/* 0x24 */ m_EnemyData $99 $22 $11 $36
 	/* 0x25 */ m_EnemyData $94 $a3 $0a $28
@@ -63,7 +63,7 @@ enemyData:
 	/* 0x2e */ m_EnemyData $a3 $a7 $03 $1d
 	/* 0x2f */ m_EnemyData $a3 $a8 $3c $40
 	/* 0x30 */ m_EnemyData $8f $91 enemy30SubidData
-	/* 0x31 */ m_EnemyData $9b $90 enemy31SubidData
+	/* 0x31 */ m_EnemyData $9b $fd enemy31SubidData
 	/* 0x32 */ m_EnemyData $9d $9f $07 $00
 	/* 0x33 */ m_EnemyData $4c $00 $01 $37
 	/* 0x34 */ m_EnemyData $97 $29 enemy34SubidData
@@ -87,7 +87,7 @@ enemyData:
 	/* 0x46 */ m_EnemyData $00 $00 $00 $00
 	/* 0x47 */ m_EnemyData $97 $ee $06 $2e
 	/* 0x48 */ m_EnemyData $98 $a0 enemy48SubidData
-	/* 0x49 */ m_EnemyData $9c $91 $0e $00
+	/* 0x49 */ m_EnemyData $9c $fe $0e $00
 	/* 0x4a */ m_EnemyData $90 $b6 enemy4aSubidData
 	/* 0x4b */ m_EnemyData $99 $b7 $16 $20
 	/* 0x4c */ m_EnemyData $93 $31 $11 $14
@@ -126,7 +126,7 @@ enemyData:
 	/* 0x6d */ m_EnemyData $00 $00 $00 $00
 	/* 0x6e */ m_EnemyData $00 $00 $00 $00
 	/* 0x6f */ m_EnemyData $00 $00 $00 $00
-	/* 0x70 */ m_EnemyData $ad $c4 $1c $50
+	/* 0x70 */ m_EnemyData $ad $ff $1c $50
 	/* 0x71 */ m_EnemyData $af $c4 $1d $20
 	/* 0x72 */ m_EnemyData $b1 $c4 $1e $10
 	/* 0x73 */ m_EnemyData $b4 $c4 enemy73SubidData

@@ -1,3 +1,19 @@
+; OAM data for each animation of an interaction.
+;
+; The first line of each entry is the number of OAM blocks. The following lines are the OAM blocks themselves.
+;
+; OAM Block Format:
+;  b0: Y Position of the tile
+;  b1: X Position of the tile
+;  b2: Tile Number (In 8x16 mode, the lower bit of the tile number is ignored. IE: the upper 8x8 tile is "NN AND FEh", and the lower 8x8 tile is "NN OR 01h".)
+;  b3:
+;    bits 0-2: GBC Palette Number (palettes 0-7)
+;    bit 3: Tile VRAM-Bank (should probably be 0 for most things)
+;    bit 4: GB Palette Number (palettes 0-1, probably unused in GBC?)
+;    bit 5: X Flip (0=Normal, 1=Horizontally mirrored)
+;    bit 6: Y Flip (0=Normal, 1=Vertically mirrored)
+;    bit 7: OBJ-to-BG Priority (0=OBJ Above BG, 1=OBJ Behind BG color 1-3); Used for both BG and Window. BG color 0 is always behind OBJ
+
 interactionOamData50067:
 	.db $00
 
@@ -3597,6 +3613,15 @@ interactionOamData51f0b:
 	.db $10 $fe $1a $00
 
 interactionOamData51f24:
+.ifdef REGION_JP
+	.db $06
+	.db $10 $c7 $40 $01
+	.db $10 $d5 $42 $01
+	.db $10 $e4 $44 $01
+	.db $10 $f2 $46 $01
+	.db $10 $00 $48 $01
+	.db $10 $0e $4a $01
+.else
 	.db $0a
 	.db $10 $c8 $40 $01
 	.db $10 $d0 $42 $01
@@ -3608,8 +3633,18 @@ interactionOamData51f24:
 	.db $10 $00 $4e $01
 	.db $10 $08 $50 $01
 	.db $10 $10 $52 $01
+.endif
 
 interactionOamData51f4d:
+.ifdef REGION_JP
+	.db $06
+	.db $10 $c7 $4c $01
+	.db $10 $d5 $4e $01
+	.db $10 $e4 $50 $01
+	.db $10 $f2 $52 $01
+	.db $10 $00 $54 $01
+	.db $10 $0e $56 $01
+.else
 	.db $0a
 	.db $10 $c8 $40 $01
 	.db $10 $d0 $42 $01
@@ -3621,6 +3656,7 @@ interactionOamData51f4d:
 	.db $10 $00 $5e $01
 	.db $10 $08 $50 $01
 	.db $10 $10 $52 $01
+.endif
 
 interactionOamData51f76:
 	.db $06
@@ -3785,6 +3821,16 @@ interactionOamData5211f:
 	.db $08 $08 $94 $61
 
 interactionOamData52138:
+.ifdef REGION_JP
+	.db $07
+	.db $0c $c8 $40 $01
+	.db $0c $d4 $42 $01
+	.db $0c $e0 $44 $01
+	.db $0c $ec $46 $01
+	.db $0c $f8 $46 $01
+	.db $0c $04 $48 $01
+	.db $0c $10 $4a $01
+.else
 	.db $08
 	.db $0c $c8 $40 $01
 	.db $0c $d1 $42 $01
@@ -3794,6 +3840,7 @@ interactionOamData52138:
 	.db $0c $f9 $48 $01
 	.db $0c $02 $4a $01
 	.db $0c $0d $60 $01
+.endif
 
 interactionOamData52159:
 	.db $07
@@ -4449,9 +4496,15 @@ interactionOamData528e4:
 	.db $0c $e8 $68 $01
 	.db $0c $f0 $6a $01
 	.db $0c $f8 $6c $01
+.ifdef REGION_JP
+	.db $0c $08 $6e $01
+	.db $0c $00 $6c $01
+	.db $0c $10 $68 $01
+.else
 	.db $0c $00 $6e $01
 	.db $0c $08 $70 $01
 	.db $0c $10 $72 $01
+.endif
 
 interactionOamData5290d:
 	.db $0a
@@ -4523,6 +4576,20 @@ interactionOamData529bd:
 	.db $20 $07 $06 $00
 
 interactionOamData529ea:
+.ifdef REGION_JP
+	.db $0b
+	.db $08 $ce $44 $01
+	.db $08 $dc $4a $01
+	.db $08 $eb $42 $01
+	.db $08 $fa $4c $01
+	.db $08 $09 $4e $01
+	.db $18 $c8 $50 $01
+	.db $18 $d6 $52 $01
+	.db $18 $e5 $52 $01
+	.db $18 $10 $54 $01
+	.db $18 $f4 $50 $01
+	.db $18 $03 $56 $01
+.else
 	.db $0c
 	.db $08 $d1 $44 $01
 	.db $08 $df $4a $01
@@ -4536,6 +4603,7 @@ interactionOamData529ea:
 	.db $18 $ec $50 $01
 	.db $18 $f8 $56 $01
 	.db $18 $11 $58 $01
+.endif
 
 interactionOamData52a1b:
 	.db $0b

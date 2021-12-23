@@ -1079,6 +1079,15 @@ groups:
       change the
       seasons!
 
+  - name: TX_00_GET_FOOLSORE
+    index: auto
+    text: |-
+      You got
+      \col(1)Fool's Ore\col(0)!\stop
+      But that's no
+      good! Get your
+      \col(1)feather\col(0) back!
+
   # RANDO: Some custom text below here.
 
   # Getting ember seeds from a tree for the first time
@@ -4654,6 +4663,13 @@ groups:
       Rod of Seasons
       Best used from
       atop a stump.
+
+  - name: TX_09_FOOLSORE
+    index: auto
+    text: |-
+      Traded Ore
+      Not as useful
+      as a feather.
 
 - group: 0x0a
   data:

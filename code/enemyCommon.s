@@ -859,6 +859,7 @@ _ecom_spawnUncountedEnemyWithSubid01:
 
 ;;
 ; @param	b	Enemy type
+; @param[out]	a	$00 on success (but could be anything if not successful)
 ; @param[out]	hl	Enemy.subid
 ; @param[out]	zflag	z if successfully spawned
 _ecom_spawnEnemyWithSubid01:

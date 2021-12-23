@@ -88,7 +88,7 @@ treasureObjectData:
 	/* $1b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1b_00
 	/* $1c */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1c_00
 	/* $1d */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MINECART_COLLISION_00
-	/* $1e */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_FOOLS_ORE_00
+	/* $1e */ m_TreasureSubid   $38, $00, <TX_00_GET_FOOLSORE, $82, TREASURE_OBJECT_FOOLS_ORE_00
 	/* $1f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1f_00
 	/* $20 */ m_TreasurePointer treasureObjectData20
 	/* $21 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SCENT_SEEDS_00
@@ -312,7 +312,12 @@ treasureObjectData2c:
 	m_TreasureSubid $02, $02, $34, $34, TREASURE_OBJECT_RING_BOX_01
 	m_TreasureSubid $02, $03, $34, $35, TREASURE_OBJECT_RING_BOX_02
 	m_TreasureSubid $02, $02, $58, $34, TREASURE_OBJECT_RING_BOX_03
+.ifdef REGION_JP
+	; BUG: Ring box from some source (farore?) gives L-2 ring box instead of L-3
+	m_TreasureSubid $02, $02, $59, $35, TREASURE_OBJECT_RING_BOX_04
+.else
 	m_TreasureSubid $02, $03, $59, $35, TREASURE_OBJECT_RING_BOX_04
+.endif
 
 treasureObjectData2d:
 	m_BeginTreasureSubids TREASURE_RING

@@ -348,7 +348,7 @@ runIntro:
 	ld a,$03
 	ldh (<hFFBE),a
 	xor a
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld a,(wKeysJustPressed)
 	and BTN_START
 	jr z,_intro_runStage
@@ -366,7 +366,7 @@ runIntro:
 _intro_runStage:
 	ld a,(wIntroStage)
 	rst_jumpTable
-	.dw _intro_uninitialized
+	.dw _intro_japaneseOnlyScreen
 	.dw _intro_capcomScreen
 	.dw intro_cinematic
 	.dw _intro_titlescreen
@@ -411,10 +411,54 @@ _intro_incState:
 	ret
 
 ;;
-_intro_uninitialized:
+_intro_japaneseOnlyScreen:
+.ifndef REGION_JP
 	ld hl,wIntroStage
 	inc (hl)
+.else
+	ld a,(wIntroVar)
+	rst_jumpTable
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+;;
+@state0:
+	call clearVram
+	call restartSound
+
+	ld a,GFXH_04
+	call loadGfxHeader
+	ld a,PALH_00
+	call loadPaletteHeader
+
+	ld a,60
+	ld (wTmpcbb3),a
+
+	call _intro_incState
+	xor a
+	jp loadGfxRegisterStateIndex
+
+;;
+; Fading in, waiting
+@state1:
+	ld hl,wTmpcbb3
+	dec (hl)
+	ret nz
+
+	call _intro_incState
+	jp fadeoutToWhite
+
+;;
+; Fading out
+@state2:
+	ld a,(wPaletteThread_mode)
+	or a
+	ret nz
+
+	jr _intro_gotoNextStage
+
+.endif ; REGION_JP
 
 ;;
 _intro_capcomScreen:
@@ -429,7 +473,7 @@ _intro_capcomScreen:
 	call restartSound
 
 	call clearVram
-	ld a,$01
+	ld a,GFXH_01
 	call loadGfxHeader
 	ld a,PALH_01
 	call loadPaletteHeader
@@ -473,7 +517,12 @@ _intro_capcomScreen:
 	inc l
 	ld (hl),a ; [wIntroVar] = 0
 	ld (wIntro.cinematicState),a
+
+.ifdef REGION_JP
+	ret
+.else
 	jp enableIntroInputs
+.endif
 
 ;;
 _intro_titlescreen:
@@ -561,7 +610,7 @@ _intro_titlescreen_state1:
 @pressedStart:
 	ld a,SND_SELECTITEM
 	call playSound
-	call serialFunc_0c7e
+	call disableSerialPort
 	ld a,$03
 @gotoState:
 	ld (wIntroVar),a
@@ -1973,10 +2022,17 @@ _createInteraction:
 	ld (hl),c
 	ret
 
+.ifdef REGION_JP
+
+; TODO: Properly update the label to be here instead of elsewhere
+;data_5951:
+	.db $3c $b4 $3c $50 $78 $b4 $3c $3c
+	.db $3c $70 $78 $78
 .endif
 
 
-.ifdef ROM_SEASONS
+.else ; ROM_SEASONS
+
 
 ; In Ages these sprites are located elsewhere
 

@@ -1,3 +1,5 @@
+.include "constants/version.s"
+
 .include "constants/breakableTileSources.s"
 .include "constants/directions.s"
 .include "constants/collisionEffects.s"

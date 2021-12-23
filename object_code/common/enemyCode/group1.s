@@ -2471,10 +2471,21 @@ enemyCode13:
 	ld e,Enemy.var2a
 	ld a,(de)
 	res 7,a
+
+.ifdef ROM_AGES
+	; CROSSITEMS: In Ages, the boomerang collisions aren't adjacent values, so this code must be
+	; changed.
+	cp ITEMCOLLISION_L1_BOOMERANG
+	jr z,@boomerangCollision
+	cp ITEMCOLLISION_L2_BOOMERANG
+	jr nz,@normalStatus
+.else
 	sub ITEMCOLLISION_L1_BOOMERANG
 	cp MAX_BOOMERANG_LEVEL
 	jr nc,@normalStatus
+.endif
 
+@boomerangCollision:
 	; Collision with boomerang occurred. Go to state 9.
 	ld e,Enemy.state
 	ld a,(de)
@@ -2564,10 +2575,21 @@ enemyCode19:
 	ld e,Enemy.var2a
 	ld a,(de)
 	res 7,a
+
+.ifdef ROM_AGES
+	; CROSSITEMS: In Ages, the boomerang collisions aren't adjacent values, so this code must be
+	; changed.
+	cp ITEMCOLLISION_L1_BOOMERANG
+	jr z,@boomerangCollision
+	cp ITEMCOLLISION_L2_BOOMERANG
+	jr nz,@normalStatus
+.else
 	sub ITEMCOLLISION_L1_BOOMERANG
 	cp MAX_BOOMERANG_LEVEL
 	jr nc,@normalStatus
+.endif
 
+@boomerangCollision:
 	; Hit with boomerang
 	ld e,Enemy.state
 	ld a,(de)

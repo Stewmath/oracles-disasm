@@ -14,7 +14,7 @@ itemAttributes:
 	.db $92 $44 $fc $00 ; $04: ITEMID_CANE_OF_SOMARIA
 	.db $84 $00 $fe $7e ; $05: ITEMID_SWORD
 	.db $97 $66 $fe $00 ; $06: ITEMID_BOOMERANG
-	.db $90 $00 $ff $7e ; $07: ITEMID_ROD_OF_SEASONS
+	.db $94 $00 $ff $7e ; $07: ITEMID_ROD_OF_SEASONS
 	.db $12 $00 $00 $00 ; $08: ITEMID_MAGNET_GLOVES
 	.db $12 $00 $00 $00 ; $09: ITEMID_SWITCH_HOOK_HELPER
 	.db $8d $66 $fe $7e ; $0a: ITEMID_SWITCH_HOOK

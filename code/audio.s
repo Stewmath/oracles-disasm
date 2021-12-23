@@ -1,7 +1,6 @@
+.include "include/constants.s"
 .include "include/rominfo.s"
 .include "include/musicMacros.s"
-
-.include "include/constants.s"
 
 .BANK $39 SLOT 1
 .ORG 0

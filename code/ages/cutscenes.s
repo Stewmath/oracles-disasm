@@ -81,6 +81,10 @@ cutscene0e:
 	or a
 	jr nz,applyWarpTransition2
 
+.ifdef REGION_JP
+	callab animationAndUniqueGfxData.updateAnimations
+.endif
+
 	ld c,$05
 	jpab bank3Cutscenes.miscCutsceneHandler
 

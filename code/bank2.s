@@ -14,6 +14,12 @@ checkDisplayDmgModeScreen:
 	lda GFXH_00
 	call loadGfxHeader
 
+.ifdef REGION_JP
+	ld de,$8800
+	xor a
+	call _copyTextCharactersFromSecretTextTable
+.endif
+
 	xor a
 	call loadGfxRegisterStateIndex
 
@@ -42,7 +48,7 @@ checkDisplayDmgModeScreen:
 	ld a,$03
 	ldh (<hFFBE),a
 	xor a
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	jr @vblankLoop
 
 ;;
@@ -195,8 +201,9 @@ _decFileSelectMode2:
 
 ;;
 ; Gets the address for the given file's DisplayVariables.
-; @param a File index
-; @param d Value to add to address
+;
+; @param	a	File index
+; @param	d	Value to add to address
 _getFileDisplayVariableAddress:
 	ld e,a
 _getFileDisplayVariableAddress_paramE:
@@ -654,7 +661,7 @@ _fileSelectMode4:
 	jp _func_02_4149
 
 @mode3:
-	ld hl,wInventory.itemSubmenuMaxWidth
+	ld hl,wFileSelect.linkTimer
 	dec (hl)
 	bit 0,(hl)
 	ret nz
@@ -957,7 +964,7 @@ _fileSelect_printError:
 	ld a,SND_ERROR
 	call playSound
 	ld a,$10
-	ld (wInventory.itemSubmenuMaxWidth),a
+	ld (wFileSelect.linkTimer),a
 	ld a,$04
 	ld (wFileSelect.mode2),a
 	ld a,GFXH_ad
@@ -968,7 +975,7 @@ _fileSelect_printError:
 ;;
 ; Wait for input while showing "That's Wrong" text.
 _textInput_waitForInput:
-	ld hl,wInventory.itemSubmenuMaxWidth
+	ld hl,wFileSelect.linkTimer
 	ld a,(hl)
 	or a
 	jr z,+
@@ -1155,24 +1162,87 @@ _runTextInput:
 	add a
 	call multiplyABy16
 	add hl,bc
+
+.ifdef REGION_JP
+
+	ld a,(hl)
+	rrca
+	and $3f
+	ld c,a
+	ld a,(wFileSelect.textInputMode)
+	rlca
+	jr nc,@notEnteringSecret
+
+	ld a,c
+	sub $2e
+	cp $0a
+	jr nc,@notEnteringSecret
+	add $30
+	ld c,a
+	jr @gotCharacter
+
+@notEnteringSecret:
+	ld a,c
+	sub $37
+	jr c,@label_02_046
+	ld c,$2d
+	jr z,@gotCharacter
+	ld c,$20
+	dec a
+	jr z,@gotCharacter
+	dec a
+	ld e,a
+	call _textInput_getOutputAddress
+	ld a,(hl)
+	call _func_02_494a
+	jr c,@gotCharacter
+	ld a,(wFileSelect.textInputCursorPos)
+	or a
+	jr z,++
+	dec hl
+	ld a,(hl)
+	call _func_02_494a
+	jr nc,++
+	ld hl,wFileSelect.textInputCursorPos
+	dec (hl)
+	jr @gotCharacter
+++
+	ld a,SND_ERROR
+	jp playSound
+
+@label_02_046:
+	ld a,(wFileSelect.kanaMode)
+	or a
+	ld a,$60
+	jr z,+
+	ld a,$b0
++
+	add c
+	ld c,a
+
+.else ; REGION_US, REGION_EU
+
 	ld c,$20
 	ld a,(hl)
 	cp $02
-	jr z,++
+	jr z,@gotCharacter
 
 	rrca
 	and $3f
 	add $40
+
 	ld c,a
 	ld a,(wFileSelect.textInputMode)
 	rlca
-	jr nc,++
+	jr nc,@gotCharacter
 
 	ld a,c
 	ld hl,secretSymbols-$40
 	rst_addAToHl
 	ld c,(hl)
-++
+.endif
+
+@gotCharacter:
 	call _textInput_getOutputAddress
 	ld (hl),c
 @selectionRight:
@@ -1195,6 +1265,10 @@ _runTextInput:
 	rst_jumpTable
 	.dw @selectionLeft
 	.dw @selectionRight
+.ifdef REGION_JP
+	.dw @selectKatakana
+	.dw @selectHiragana
+.endif
 	.dw @startButton
 
 @secretTable:
@@ -1215,6 +1289,45 @@ _runTextInput:
 
 	ld (hl),$00
 	jr @updateEntryCursor
+
+
+.ifdef REGION_JP
+
+@selectButton:
+	ld a,(wFileSelect.kanaMode)
+	xor $01
+	jr ++
+
+@selectKatakana:
+	ld a,$01
+	jr ++
+
+@selectHiragana:
+@back:
+	xor a
+++
+	ld (wFileSelect.kanaMode),a
+	ld a,(wFileSelect.textInputMode)
+	rlca
+	jr c,++
+	call _textInput_loadCharacterGfx
+	ld a,UNCMP_GFXH_0b
+	jp loadUncompressedGfxHeader
+++
+	xor a
+	ld (wFileSelect.kanaMode),a
+	ld hl,wFileSelect.cursorPos
+	ld a,$57
+	ldi (hl),a
+	ld a,$02
+	cp (hl)
+	ldd (hl),a
+	ret nz
+	ld a,$03
+	ld (wFileSelect.mode2),a
+	ret
+
+.else ; REGION_US, REGION_EU
 
 @selectButton:
 	ret
@@ -1237,12 +1350,51 @@ _runTextInput:
 	ld a,$03
 	ld (wFileSelect.mode2),a
 	ret
+.endif
+
 
 @rightButton:
 	ld c,$01
 	jr @leftOrRight
 @leftButton:
 	ld c,$ff
+
+.ifdef REGION_JP
+
+@leftOrRight:
+	ld hl,wFileSelect.cursorPos
+	ld a,(hl)
+	cp $50
+	jr nc,@label_02_056
+@label_02_055:
+	add c
+	and $0f
+	cp $0c
+	jr nc,@label_02_055
+	ld c,a
+	ld a,(hl)
+	and $f0
+	add c
+	ldi (hl),a
+	ld (hl),$80
+	ret
+@label_02_056:
+	inc l
+	ld b,$05
+	ld a,(wFileSelect.textInputMode)
+	rlca
+	ld a,(hl)
+	jr nc,@label_02_057
+	dec b
+@label_02_057:
+	add c
+	and $0f
+	cp b
+	jr nc,@label_02_057
+	ld (hl),a
+	jp _textInput_lowerOption_updateFileSelectCursorPos
+
+.else ; REGION_US, REGION_EU
 
 @leftOrRight:
 	ldde $04, $0d
@@ -1280,6 +1432,7 @@ _runTextInput:
 
 	ld (hl),a
 	jp _textInput_lowerOption_updateFileSelectCursorPos
+.endif
 
 @upButton:
 	ld c,$f0
@@ -1312,7 +1465,12 @@ _runTextInput:
 	ldi (hl),a
 	ld a,(wFileSelect.textInputMode)
 	rlca
+
+.ifdef REGION_JP
+	ld a,$04
+.else
 	ld a,$02
+.endif
 	jr nc,+
 	ld a,$03
 +
@@ -1331,6 +1489,22 @@ _textInput_getCursorPosition:
 	ld b,a
 	ld a,c
 	and $0f
+
+.ifdef REGION_JP
+	ld c,$02
+	cp $0a
+	jr nc,++
+	dec c
+	cp $05
+	jr nc,++
+	dec c
+++
+	add c
+	add b
+	ret
+
+.else
+
 	ld c,a
 	push de
 	ldde $08, $01
@@ -1349,6 +1523,7 @@ _textInput_getCursorPosition:
 	add c
 	add b
 	ret
+.endif
 
 ;;
 ; Draws cursors for the currently selected character, and the position in the
@@ -1375,6 +1550,11 @@ _drawNameInputCursors:
 
 ; Extra options like cursor left, cursor right, back, OK
 @lowerOptions:
+
+.ifdef REGION_JP
+	ld a,(wFileSelect.cursorPos2)
+	ld hl,@jpInputOffsets
+.else
 	ld a,(wFileSelect.textInputMode)
 	rlca
 	ld hl,@secretInputOffsets
@@ -1382,6 +1562,7 @@ _drawNameInputCursors:
 	ld hl,@nameInputOffsets
 +
 	ld a,(wFileSelect.cursorPos2)
+.endif
 	rst_addAToHl
 	ld c,(hl)
 	ld b,$00
@@ -1403,10 +1584,15 @@ _drawNameInputCursors:
 	.db $3a $20 $2c $02 ; Cursor
 	.db $38 $20 $2a $81 ; Blue highlight
 
-@nameInputOffsets:
-	.db $18 $30 $78
-@secretInputOffsets:
-	.db $18 $30 $48 $60
+.ifdef REGION_JP
+	@jpInputOffsets:
+		.db $18 $30 $48 $60 $78
+.else
+	@nameInputOffsets:
+		.db $18 $30 $78
+	@secretInputOffsets:
+		.db $18 $30 $48 $60
+.endif
 
 ; The cursor for the bottom options
 @lowerOptionCursorSprites:
@@ -1531,40 +1717,74 @@ _textInput_mapUpperXToLowerX:
 	jr nz,@label
 	ret
 
-@nameTable:
-	.db $50 $00
-	.db $51 $00
-	.db $52 $00
-	.db $53 $01
-	.db $54 $01
-	.db $55 $01
-	.db $56 $02
-	.db $57 $02
-	.db $58 $02
-	.db $59 $02
-	.db $5a $02
-	.db $5b $02
-	.db $5c $02
-	.db $ff $ff
+.ifdef REGION_JP
+	@nameTable:
+		.db $50 $00
+		.db $51 $00
+		.db $52 $00
+		.db $53 $01
+		.db $54 $01
+		.db $55 $02
+		.db $56 $02
+		.db $57 $02
+		.db $58 $03
+		.db $59 $03
+		.db $5a $04
+		.db $5b $04
+		.db $ff $ff
 
-@secretTable:
-	.db $50 $00
-	.db $51 $00
-	.db $52 $00
-	.db $53 $01
-	.db $54 $01
-	.db $55 $02
-	.db $56 $02
-	.db $57 $02
-	.db $58 $02
-	.db $59 $03
-	.db $5a $03
-	.db $5b $03
-	.db $5c $03
-	.db $ff $ff
+	@secretTable:
+		.db $50 $00
+		.db $51 $00
+		.db $52 $00
+		.db $53 $01
+		.db $54 $01
+		.db $55 $02
+		.db $56 $02
+		.db $57 $02
+		.db $58 $02
+		.db $59 $03
+		.db $5a $03
+		.db $5b $03
+		.db $ff $ff
+
+.else ; REGION_US, REGION_EU
+
+	@nameTable:
+		.db $50 $00
+		.db $51 $00
+		.db $52 $00
+		.db $53 $01
+		.db $54 $01
+		.db $55 $01
+		.db $56 $02
+		.db $57 $02
+		.db $58 $02
+		.db $59 $02
+		.db $5a $02
+		.db $5b $02
+		.db $5c $02
+		.db $ff $ff
+
+	@secretTable:
+		.db $50 $00
+		.db $51 $00
+		.db $52 $00
+		.db $53 $01
+		.db $54 $01
+		.db $55 $02
+		.db $56 $02
+		.db $57 $02
+		.db $58 $02
+		.db $59 $03
+		.db $5a $03
+		.db $5b $03
+		.db $5c $03
+		.db $ff $ff
+.endif
 
 ;;
-; Unused?
+; Used only in japanese version
 _func_02_494a:
 	push hl
 	ld hl,@table2
@@ -1642,6 +1862,29 @@ _textInput_loadCharacterGfx:
 	xor a
 	ld (wFileSelect.fontXor),a
 	ld de,w5NameEntryCharacterGfx
+
+.ifdef REGION_JP
+	ldbc $2e, $60
+	ld a,(wFileSelect.kanaMode)
+	or a
+	jr z,+
+	ld c,$b0
++
+	call _copyTextCharacters
+	ld hl,data_02_4a28
+	ld b,$09
+	ld a,(wFileSelect.textInputMode)
+	rlca
+	jr nc,++
+	inc hl
+	inc b
+	ld c,$30
+++
+	call _copyTextCharacters
+	call _copyTextCharactersFromHlUntilNull
+
+.else
+
 	ld a,(wFileSelect.textInputMode)
 	rlca
 	jr c,+
@@ -1654,6 +1897,8 @@ _textInput_loadCharacterGfx:
 	ld b,$40
 	call _copyTextCharactersFromHlUntilNull
 ++
+.endif
+
 	pop af
 	ld ($ff00+R_SVBK),a
 	ret
@@ -1673,6 +1918,14 @@ _copyTextCharacters:
 	dec b
 	jr nz,_copyTextCharacters
 	ret
+
+
+.ifdef REGION_JP
+
+data_02_4a28:
+	.db $2d $20 $0e $0f $00
+
+.endif
 
 ;;
 ; Loads variables related to each of the 3 files (heart display, etc)
@@ -1968,7 +2221,7 @@ _fileSelectMode7:
 	ld a,$04
 	ldh (<hFFBE),a
 	xor a
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld ($cbc2),a
 
 	ld hl,wFileSelect.linkTimer
@@ -1999,12 +2252,12 @@ _fileSelectMode7:
 +
 	jp serialFunc_0c73
 ++
-	ld a,(wInventory.itemSubmenuWidth)
+	ld a,(wFileSelect.cbc0)
 	or a
 	jr z,+
 
 	dec a
-	ld (wInventory.itemSubmenuWidth),a
+	ld (wFileSelect.cbc0),a
 	ret
 +
 	call serialFunc_0c8d
@@ -2017,7 +2270,7 @@ _fileSelectMode7:
 
 	jp nz,@func_02_4c55
 +
-	ldh a,(<hFFBF)
+	ldh a,(<hSerialLinkState)
 	cp $07
 	ret nz
 	ld e,$03
@@ -2041,6 +2294,7 @@ _fileSelectMode7:
 	jp _loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
+; State 2: Reloading graphics to show other files
 @state2:
 	call serialFunc_0c8d
 	ld a,$06
@@ -2057,51 +2311,73 @@ _fileSelectMode7:
 	jp _loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
+; State 3: Selecting file from other game
 @state3:
 	call serialFunc_0c8d
 	call _fileSelectUpdateInput
-	jr nz,+
+	jr nz,@selectedSomething
 
 	ld a,(wKeysJustPressed)
-	bit 1,a
+	bit BTN_BIT_B,a
 	ret z
--
+
+.ifdef REGION_JP
+
+@moveCursorToQuit:
+	ld a,$03
+	ld (wFileSelect.cursorPos),a
+	ld a,$8f
+	ld ($cbc2),a
+
+@selectedSomething:
+	ld a,(wFileSelect.cursorPos)
+	cp $03
+	jr z,@func_02_4c4b
+
+.else
+
+@moveCursorToQuit:
 	ld a,$03
 	ld (wFileSelect.cursorPos),a
 	ld a,$8f
 	ld ($cbc2),a
 	jr @func_02_4c4b
-+
+
+@selectedSomething:
 	ld a,(wFileSelect.cursorPos)
 	cp $03
-	jr z,-
+	jr z,@moveCursorToQuit
 
-	ld d,$00
+.endif
+
+	ld d,FileDisplayStruct.b0
 	call _getFileDisplayVariableAddress
-	bit 7,(hl)
+	bit 7,(hl) ; Check if file is blank
 	jr z,+
 
 	ld a,SND_ERROR
 	jp playSound
 +
 	ld a,(wOpenedMenuType)
-	cp $08
+	cp MENU_RING_LINK
 	jr nz,+
 
+	; Link menu from blue snake
 	ld a,$0c
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld a,$05
 	ld (wFileSelect.mode2),a
 	ret
 +
+	; Linking from file select screen
 	ld a,$08
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	jp _loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 @func_02_4c4b:
 	ld a,$08
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld a,$05
 	ld (wFileSelect.mode2),a
 	ret
@@ -2113,22 +2389,26 @@ _fileSelectMode7:
 	call loadGfxHeader
 	call _loadGfxRegisterState5AndIncFileSelectMode2
 	ld a,$08
-	ldh (<hFFBF),a
+	ldh (<hSerialLinkState),a
 	ld a,$06
 	ld (wFileSelect.mode2),a
-	ld a,$b4
+	ld a,180
 	ld (wFileSelect.linkTimer),a
 	ldh a,(<hFFBD)
-	ld (wInventory.itemSubmenuWidth),a
+	ld (wFileSelect.cbc0),a
 	ret
 
 ;;
+; Selected a file from the file select screen
 @state4:
 	call serialFunc_0c8d
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
 	ret nz
+
 	call loadFile
+
+	; set hl = wRingFortuneStuff + fileIndex * $16
 	ld a,(wFileSelect.cursorPos)
 	inc a
 	ld hl,w4RingFortuneStuff
@@ -2140,6 +2420,8 @@ _fileSelectMode7:
 	add hl,bc
 	jr -
 +
+	; Copy to the first $16 bytes of the new file to create ($c600-$c615). Includes link/child
+	; name, animal companion, etc.
 	ld b,$16
 	ld de,wc600Block
 	call copyMemory
@@ -2153,14 +2435,16 @@ _fileSelectMode7:
 	jp _setFileSelectModeTo1
 
 ;;
+; State 5: Connected successfully, waiting for data?
 @state5:
 	call serialFunc_0c8d
 	ldh a,(<hSerialInterruptBehaviour)
 	or a
 	ret nz
--
+
+@cancelLink:
 	ld a,(wOpenedMenuType)
-	cp $08
+	cp MENU_RING_LINK
 	jp z,_closeMenu
 
 	ld a,$00
@@ -2174,16 +2458,16 @@ _fileSelectMode7:
 	or a
 	ret nz
 
-	ld a,(wInventory.itemSubmenuWidth)
+	ld a,(wFileSelect.cbc0)
 	ldh (<hFFBD),a
 	ld a,(wKeysJustPressed)
 	or a
-	jr nz,-
+	jr nz,@cancelLink
 
 	ld hl,wFileSelect.linkTimer
 	dec (hl)
 	ret nz
-	jr -
+	jr @cancelLink
 
 ;;
 ; Clears the OAM, draws vines and stuff, sets wram bank 4
@@ -2417,10 +2701,97 @@ _secretTextTable:
 	.dw @text19
 
 
+.ifdef REGION_JP
+
+@text0: ; TODO: what is this?
+	.db $1f $2d $61 $62 $67 $69 $6a $6b
+	.db $6c $6d $a1 $72 $a4 $78 $79 $85
+	.db $01 $8d $b1 $b5 $ea $ed $e3 $c3
+	.db $fa $d0 $d6 $d7 $00
+
+@text1:
+	.asc "--------" 0
+
+; WLA doesn't currently support non-ascii characters
+
+@text2: ; の　あいことば
+	.db $78 $20 $60 $61 $69 $73 $a6 $00
+
+@text3: ; ホロドラムへ
+	.db $cd $da $f5 $d6 $d0 $7c $00
+
+@text4: ; ラブレンヌへ
+	.db $d6 $f8 $d9 $dd $c6 $7c $00
+
+@text5: ; ゆびわ
+	.db $84 $a7 $8b $00
+
+@text6: ; とけいやウラ
+	.db $73 $68 $61 $83 $b2 $d6 $00
+
+@text7: ; ギーニ
+	.db $e8 $2d $c5 $00
+
+@text8: ; ウーラ
+	.db $b2 $2d $d6 $00
+
+@text9: ; すもぐりめいじん
+	.db $6c $82 $99 $87 $81 $61 $9d $8d $00
+
+@texta: ; ウーラコクホウ
+	.db $b2 $2d $d6 $b9 $b7 $cd $b2 $00
+
+@textb: ; かいぞく
+	.db $65 $61 $a0 $67 $00
+
+@textc: ; 大ようせい
+	.db $06 $27 $85 $62 $6d $61 $00
+
+@textd: ; デクナッツ
+	.db $f4 $b7 $c4 $e3 $c1 $00
+
+@texte: ; ダイゴロン
+	.db $f1 $b1 $eb $da $dd $00
+
+@textf: ; ルール村ちょう
+	.db $d8 $2d $d8 $06 $01 $70 $96 $62 $00
+
+@text10: ; キングゾーラ
+	.db $b6 $dd $e9 $f0 $2d $d6 $00
+
+@text11: ; ヤンチャようせい
+	.db $d3 $dd $c0 $e4 $85 $62 $6d $61 $00
+
+@text12: ; トカゲ人
+	.db $c3 $b5 $ea $06 $31 $00
+
+@text13: ; プレンちょうちょう
+	.db $fd $d9 $dd $70 $96 $62 $70 $96 $62 $00
+
+@text14: ; としょかん
+	.db $73 $6b $96 $65 $8d $00
+
+@text15: ; トロイ
+	.db $c3 $da $b1 $00
+
+@text16: ; ママム●ヤン
+	.db $ce $ce $d0 $5f $d3 $dd $00
+
+@text17: ; チングル
+	.db $c0 $dd $b7 $d8 $00
+
+@text18: ; ゴロンちょうろう
+	.db $eb $da $dd $70 $96 $62 $8a $62 $00
+
+@text19: ; シメトリ村
+	.db $bb $d1 $c3 $d7 $06 $01 $00
+
+.else ; REGION_US, REGION_EU
+
 @text0:
-	.ifdef ROM_SEASONS
+.ifdef ROM_SEASONS
 	.db 0
-	.endif
+.endif
 
 @text1:
 	.asc "--------" 0
@@ -2497,6 +2868,8 @@ _secretTextTable:
 @text19:
 	.asc "Symmetry" 0
 
+.endif ; REGION_US, REGION_EU
+
 ;;
 ; @param h Index of function to run
 ; @param l Parameter to function
@@ -2561,7 +2934,7 @@ _showStatusBar:
 	ret
 
 ;;
-; @param c Value for wOpenedMenuType
+; @param	c	Value for wOpenedMenuType
 _openMenu:
 	ld a,c
 	ld hl,wOpenedMenuType
@@ -2624,7 +2997,7 @@ _closeMenu:
 	ld hl,wMenuLoadState
 	inc (hl)
 	ld a,(wOpenedMenuType)
-	cp $03
+	cp MENU_SAVEQUIT
 	ld a,SND_CLOSEMENU
 	call nz,playSound
 	xor a
@@ -2723,7 +3096,7 @@ _menuStateFadeIntoMenu:
 	cp BTN_START | BTN_SELECT
 	jr nz,+
 
-	ld a,$03
+	ld a,MENU_SAVEQUIT
 	ld (wOpenedMenuType),a
 +
 	ld a,(wPaletteThread_mode)
@@ -2739,7 +3112,7 @@ _menuStateFadeIntoMenu:
 ; Loads menu graphics and stuff
 @openMenu:
 	ld a,(wOpenedMenuType)
-	cp $03
+	cp MENU_SAVEQUIT
 	ld a,SND_OPENMENU
 	call nz,playSound
 	ld a,$02
@@ -4363,7 +4736,7 @@ _inventoryMenuState1:
 	jr nz,+
 
 	; Save button selected
-	inc a
+	inc a ; MENU_SAVEQUIT ($03)
 	ld (wOpenedMenuType),a
 	ld a,SND_SELECTITEM
 	call playSound
@@ -6214,7 +6587,7 @@ _galeSeedMenu_state2:
 	ld a,(wSelectedTextOption)
 	or a
 	jr nz,_galeSeedMenu_gotoState1
-	ld (wOpenedMenuType),a
+	ld (wOpenedMenuType),a ; $00
 	ld a,(wActiveGroup)
 
 _galeSeedMenu_activateWarp:

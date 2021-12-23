@@ -1895,8 +1895,12 @@ enemyCode36:
 	cp $80|ITEMCOLLISION_MYSTERY_SEED
 	jp z,_cucco_hitWithMysterySeed
 
+.ifdef REGION_JP
+	jp _cucco_attacked
+.else
 	cp $80|ITEMCOLLISION_GALE_SEED
 	jp nz,_cucco_attacked
+.endif
 
 @normalStatus:
 	call _cucco_checkSpawnCuccoAttacker
@@ -3945,11 +3949,7 @@ _swordEnemy_updateEnemyCollisionMode:
 	cp ENEMYID_SWORD_SHROUDED_STALFOS
 	ld a,ENEMYCOLLISION_BURNABLE_ENEMY
 	jr nz,@setVars
-.ifdef ROM_AGES
-	ld a,ENEMYCOLLISION_BURNABLE_ENEMY
-.else
 	ld a,ENEMYCOLLISION_BURNABLE_UNDEAD
-.endif
 
 @setVars:
 	ld e,Enemy.enemyCollisionMode
