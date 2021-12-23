@@ -7,8 +7,8 @@
 ; spawned, and when it is time to give the treasure to Link.
 ;
 ; Note that this is only called by treasure objects, and that the "giveTreasureCustom" function is
-; an alternate method of giving treasure; so, certain things (like modifying text to be shown) need
-; to be done in place that works for both.
+; an alternate method of giving treasure (which bypasses creating a treasure object); so, certain
+; things (like modifying text to be shown) need to be done in a place that works for both.
 ;
 ; @param	d	Interaction to modify
 modifyTreasureInteraction:
@@ -22,6 +22,7 @@ modifyTreasureInteraction:
 	call @upgradeTreasure
 	call @modifyText
 	call @modifyKeys
+	call @modifyChestSpawnMode
 	pop hl
 	ret
 
@@ -75,6 +76,23 @@ modifyTreasureInteraction:
 	ld (de),a
 	ret
 
+; Maps and compasses use a different spawn mode when obtained from chests. (Normally items rise up
+; out of the chest, but maps & compasses appear in Link's hands instead.)
+@modifyChestSpawnMode:
+	ld a,b
+	cp TREASURE_COMPASS
+	jr z,++
+	cp TREASURE_MAP
+	ret nz
+++
+	ld e,Interaction.var31
+	ld a,(de)
+	cp TREASURE_SPAWN_MODE_FROM_CHEST_A
+	ret nz
+	ld a,TREASURE_SPAWN_MODE_FROM_CHEST_B
+	ld (de),a
+	ret
+
 ;;
 ; Looks up data for a treasure object, no rando-adjustments made.
 ;
@@ -102,7 +120,7 @@ getTreasureData_noAdjust:
 	ret
 
 ;;
-; Call through getTreasureDataBCE or getTreasureDataSprite.
+; Call through getTreasureDataBCE or getTreasureDataSprite. Accounts for progressive upgrades.
 ;
 ; @param	bc	Treasure object ID to look up (may be modified)
 ; @param[out]	hl	The address of the treasure with ID b and subID c, accounting for

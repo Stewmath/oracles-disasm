@@ -23,7 +23,8 @@
 	.define STARTING_TREE_MAP_INDEX $f8
 .endif
 
-; Values for "collect mode" (override for the 1st byte in the treasure object data)
+; Values for "collect mode" (override for the 1st byte in the treasure object data).
+; This is a combination of the "spawn mode" and "grab mode" (see constants/treasureSpawnModes.s).
 .define COLLECT_MODE_PICKUP_NOANIM,        $08
 .define COLLECT_MODE_PICKUP_1HAND,         $09
 .define COLLECT_MODE_PICKUP_1HAND_NOFLAG,  $01

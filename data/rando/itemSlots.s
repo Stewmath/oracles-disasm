@@ -21,8 +21,10 @@
 ;
 ; Misc notes:
 ; - COLLECT_MODE_FALL will be changed to COLLECT_MODE_FALL_KEY if the item in the slot is a small
-;   key (uses "TREASURE_COLLECT_MODE_NO_CHANGE"). Also, the key won't have its text shown. This is
-;   done in the disassembly code.
+;   key (uses "TREASURE_GRAB_MODE_NO_CHANGE"). Also, the key won't have its text shown. This is
+;   done in the disassembly code ("modifyTreasureInteraction" function).
+; - COLLECT_MODE_CHEST becomes COLLECT_MODE_CHEST_MAP_OR_COMPASS if the contents are a map or
+;   compass. Also done in the "modifyTreasureInteraction" function.
 ; - There must not be any extra data between slots. The data is both referenced directly by label,
 ;   and searched through like an array, depending on the context (hence the "slotsStart" and
 ;   "slotsEnd" labels).
@@ -453,7 +455,7 @@ seasonsSlot_d1_stalfosDrop:
 
 seasonsSlot_d1_stalfosChest:
 	dwbe TREASURE_OBJECT_MAP_01
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $0419
 	.dw  $0000
 
@@ -465,7 +467,7 @@ seasonsSlot_d1_blockPushingRoom:
 
 seasonsSlot_d1_leverRoom:
 	dwbe TREASURE_OBJECT_COMPASS_01
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $040f
 	.dw  $0000
 
@@ -523,7 +525,7 @@ seasonsSlot_d2_ropeDrop:
 
 seasonsSlot_d2_ropeChest:
 	dwbe TREASURE_OBJECT_COMPASS_02
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $0436
 	.dw  $0000
 
@@ -535,7 +537,7 @@ seasonsSlot_d2_moblinChest:
 
 seasonsSlot_d2_potChest:
 	dwbe TREASURE_OBJECT_MAP_02
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $042b
 	.dw  $0000
 
@@ -587,7 +589,7 @@ seasonsSlot_d3_moldormChest:
 
 seasonsSlot_d3_bombedWallChest:
 	dwbe TREASURE_OBJECT_MAP_03
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $0451
 	.dw  $0000
 
@@ -599,7 +601,7 @@ seasonsSlot_d3_mimicChest:
 
 seasonsSlot_d3_trampolineChest:
 	dwbe TREASURE_OBJECT_COMPASS_03
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $044d
 	.dw  $0000
 
@@ -651,7 +653,7 @@ seasonsSlot_d4_potPuzzle:
 
 seasonsSlot_d4_mazeChest:
 	dwbe TREASURE_OBJECT_MAP_04
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $0469
 	.dw  $0000
 
@@ -663,7 +665,7 @@ seasonsSlot_d4_darkRoom:
 
 seasonsSlot_d4_waterRingRoom:
 	dwbe TREASURE_OBJECT_COMPASS_04
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $0483
 	.dw  $0000
 
@@ -715,7 +717,7 @@ seasonsSlot_d5_leftChest:
 
 seasonsSlot_d5_spiralChest:
 	dwbe TREASURE_OBJECT_COMPASS_05
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $049d
 	.dw  $0000
 
@@ -751,7 +753,7 @@ seasonsSlot_d5_stalfosChest:
 
 seasonsSlot_d5_gibdoZolChest:
 	dwbe TREASURE_OBJECT_MAP_05
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $048f
 	.dw  $0000
 
@@ -785,7 +787,7 @@ seasonsSlot_d6_1fEast:
 
 seasonsSlot_d6_1fTerrace:
 	dwbe TREASURE_OBJECT_MAP_06
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $04b0
 	.dw  $0000
 
@@ -803,7 +805,7 @@ seasonsSlot_d6_magnetBallDrop:
 
 seasonsSlot_d6_beamosRoom:
 	dwbe TREASURE_OBJECT_COMPASS_06
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $04ad
 	.dw  $0000
 
@@ -855,7 +857,7 @@ seasonsSlot_d6_boss:
 
 seasonsSlot_d7_bombedWallChest:
 	dwbe TREASURE_OBJECT_COMPASS_07
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $0552
 	.dw  $0000
 
@@ -891,7 +893,7 @@ seasonsSlot_d7_magunesuChest:
 
 seasonsSlot_d7_quicksandChest:
 	dwbe TREASURE_OBJECT_MAP_07
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $0558
 	.dw  $0000
 
@@ -949,7 +951,7 @@ seasonsSlot_d8_hardhatDrop:
 
 seasonsSlot_d8_spikeRoom:
 	dwbe TREASURE_OBJECT_COMPASS_08
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $058b
 	.dw  $0000
 
@@ -961,7 +963,7 @@ seasonsSlot_d8_armosChest:
 
 seasonsSlot_d8_magnetBallRoom:
 	dwbe TREASURE_OBJECT_MAP_08
-	.db  COLLECT_MODE_CHEST_MAP_OR_COMPASS
+	.db  COLLECT_MODE_CHEST
 	dwbe $058e
 	.dw  $0000
 

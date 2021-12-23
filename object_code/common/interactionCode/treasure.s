@@ -22,7 +22,7 @@
 ;
 ; RANDO-SPECIFIC:
 ;   var3d: Collect mode override (can write to here while spawning the object)
-;   var3e-var3f: Item slot pointer
+;   var3e-var3f: Item slot pointer (see data/rando/itemSlots.s)
 ; ==============================================================================
 interactionCode60:
 	ld e,Interaction.state
