@@ -3,7 +3,7 @@
 	MUS_NONE                  db ; $00
 	MUS_TITLESCREEN           db ; $01
 	MUS_MINIGAME              db ; $02
-	MUS_OVERWORLD_PRES        db ; $03
+	MUS_OVERWORLD             db ; $03
 
 .ifdef ROM_AGES
 	MUS_OVERWORLD_PAST        db ; $04
@@ -37,24 +37,32 @@
 
 	MUS_ESSENCE_ROOM          db ; $0d
 	MUS_INDOORS               db ; $0e
-	MUS_FAIRY                 db ; $0f
+	MUS_FAIRY_FOUNTAIN        db ; $0f
 	MUS_GET_ESSENCE           db ; $10
 	MUS_FILE_SELECT           db ; $11
 
 .ifdef ROM_AGES
 	MUS_MAKU_PATH             db ; $12
+	MUS_SPIRITS_GRAVE         db ; $13
+	MUS_WING_DUNGEON          db ; $14
+	MUS_MOONLIT_GROTTO        db ; $15
+	MUS_SKULL_DUNGEON         db ; $16
+	MUS_CROWN_DUNGEON         db ; $17
+	MUS_MERMAIDS_CAVE         db ; $18
+	MUS_JABU_JABUS_BELLY      db ; $19
+	MUS_ANCIENT_TOMB          db ; $1a
 .else
-	MUS_HEROS_CAVE            db ; $12
+	MUS_HEROS_CAVE             db ; $12
+	MUS_GNARLED_ROOT_DUNGEON   db ; $13
+	MUS_SNAKES_REMAINS         db ; $14
+	MUS_POISON_MOTHS_LAIR      db ; $15
+	MUS_DANCING_DRAGON_DUNGEON db ; $16
+	MUS_UNICORNS_CAVE          db ; $17
+	MUS_ANCIENT_RUINS          db ; $18
+	MUS_EXPLORERS_CRYPT        db ; $19
+	MUS_SWORD_AND_SHIELD_MAZE  db ; $1a
 .endif
 
-	MUS_LEVEL1                db ; $13
-	MUS_LEVEL2                db ; $14
-	MUS_LEVEL3                db ; $15
-	MUS_LEVEL4                db ; $16
-	MUS_LEVEL5                db ; $17
-	MUS_LEVEL6                db ; $18
-	MUS_LEVEL7                db ; $19
-	MUS_LEVEL8                db ; $1a
 	MUS_FINAL_DUNGEON         db ; $1b
 	MUS_ONOX_CASTLE           db ; $1c
 	MUS_ROOM_OF_RITES         db ; $1d
@@ -174,7 +182,7 @@
 	SND_DAMAGE_LINK         db ; $5f
 	SND_HEARTBEEP           db ; $60
 	SND_RUPEE               db ; $61
-	SND_HEART_LADX          db ; $62 ; Definitely sounds like the LADX sound effect
+	SND_GOHMA_SPAWN_GEL     db ; $62 ; Similar to LADX heart sound effect
 	SND_BOSS_DAMAGE         db ; $63 ; When a boss takes damage
 	SND_LINK_DEAD           db ; $64
 	SND_LINK_FALL           db ; $65
@@ -194,13 +202,13 @@
 	SND_KILLENEMY           db ; $73
 	SND_SWORDSLASH          db ; $74
 	SND_UNKNOWN5            db ; $75 ; A type of sword slash, blade trap, ricky punch
-	SND_SWITCHHOOK          db ; $76 ; Also played when using shield
+	SND_SHIELD              db ; $76 ; Also played when using shield
 	SND_DROPESSENCE         db ; $77
 	SND_BOOMERANG           db ; $78
 	SND_BIG_EXPLOSION       db ; $79
 
 .ifdef ROM_AGES
-	SND_MAGNET_GLOVES       db ; $7a
+	SND_MAGNET_GLOVES       db ; $7a (CROSSITEMS: Added magnet glove sound to ages)
 .else
 	SND_FREEZE_LAVA         db ; $7a (used in Sword & Shield dungeon)
 .endif
@@ -211,7 +219,7 @@
 .ifdef ROM_AGES
 	SND_OPEN_GATE           db ; $7d ; When a colored cube opens a gate
 .else
-	SND_7d                  db ; $7d ; Not blank, but unknown
+	SND_UNKNOWN_7d          db ; $7d ; Not blank, but unknown
 .endif
 
 	SND_SWITCH              db ; $7e
@@ -232,21 +240,21 @@
 .ifdef ROM_AGES
 	SND_86                  db ; $86 (blank)
 .else
-	SND_86                  db ; $86 (not blank in Seasons...)
+	SND_UNKNOWN_86          db ; $86 (not blank in Seasons...)
 .endif
 
 	SND_SPLASH              db ; $87
 	SND_LINK_SWIM           db ; $88
 	SND_TEXT_2              db ; $89
-	SND_POP                 db ; $8a ; Again no PoP in this game, but a similar sound
-	SND_CRANEGAME           db ; $8b ; From LADX, obtained something in crane game
+	SND_PIECE_OF_POWER      db ; $8a ; Again no PoP in this game, but a similar sound
+	SND_FILLED_HEART_CONTAINER db ; $8b ; Plays after getting 4 heart pieces
 	SND_UNKNOWN7            db ; $8c
 	SND_TELEPORT            db ; $8d
 
 .ifdef ROM_AGES
 	SND_SWITCH2             db ; $8e
 .else
-	SND_8e                  db ; $8e ; Not blank, but unknown
+	SND_UNKNOWN_8e          db ; $8e ; Not blank, but unknown
 .endif
 
 	SND_ENEMY_JUMP          db ; $8f
@@ -259,7 +267,7 @@
 	SND_94                  db ; $94 (blank)
 .else
 	SND_MAKU_TREE_SNORE     db ; $92
-	SND_93                  db ; $93 ; Stalfos boss from ladx D5?
+	SND_UNKNOWN_93          db ; $93 ; Stalfos boss from ladx D5?
 	SND_DODONGO_EAT         db ; $94 ; Snake's Remains boss uses this?
 .endif
 
@@ -279,25 +287,25 @@
 .ifdef ROM_AGES
 	SND_MONKEY              db ; $a1 ; Monkey from LADX?
 .else
-	SND_SWITCH2             db ; $a1
+	SND_SWITCH2             db ; $a1 (CROSSITEMS: Added switch hook sound to seasons)
 .endif
 
 	SND_COMPASS             db ; $a2
-	SND_LAND                db ; $a3 ; Probably used for PEGASUS SEEDS
+	SND_LAND                db ; $a3
 	SND_BEAM                db ; $a4
 	SND_BREAK_ROCK          db ; $a5
-	SND_STRIKE              db ; $a6 ; Might be wrong here
+	SND_STRIKE              db ; $a6
 	SND_SWITCH_HOOK         db ; $a7
 	SND_VERAN_FAIRY_ATTACK  db ; $a8
 	SND_DIG                 db ; $a9
 	SND_WAVE                db ; $aa
-	SND_SWORD_OBTAINED      db ; $ab ; Used when you get your sword in Seasons
+	SND_SWORD_OBTAINED      db ; $ab
 	SND_SHOCK               db ; $ac
 
 .ifdef ROM_AGES
-	SND_ECHO                db ; $ad ; Tune of echos
-	SND_CURRENT             db ; $ae
-	SND_AGES                db ; $af
+	SND_TUNE_OF_ECHOES      db ; $ad ; Tune of echos
+	SND_TUNE_OF_CURRENTS    db ; $ae
+	SND_TUNE_OF_AGES        db ; $af
 .else
 	SND_ad                  db ; $ad (blank)
 	SND_FRYPOLAR_MOVEMENT   db ; $ae
@@ -315,25 +323,25 @@
 	SND_TOKAY               db ; $b6
 	SND_b7                  db ; $b7 (blank)
 .else
-	SND_b5                  db ; $b5 ; Not blank, but unknown
+	SND_UNKNOWN_b5          db ; $b5 ; Not blank, but unknown
 	SND_b6                  db ; $b6 (blank)
-	SND_b7                  db ; $b7 ; Not blank, but unknown
+	SND_UNKNOWN_b7          db ; $b7 ; Not blank, but unknown
 .endif
 
 	SND_RUMBLE2             db ; $b8 ; Screen shaking; Shorter than B2, Longer than B3
 	SND_ENDLESS             db ; $b9 ; B4 but endless
 	SND_BEAM1               db ; $ba ; Sounds like the Beamos shooting but isn't
 	SND_BEAM2               db ; $bb ; Not sure. Kinda sounds like another beam
-	SND_BIG_EXPLOSION_2     db ; $bc ;Something massive getting destroyed
+	SND_BIG_EXPLOSION_2     db ; $bc ; Something massive getting destroyed
 
 .ifdef ROM_AGES
 	SND_bd                  db ; $bd (blank)
 .else
-	SND_bd                  db ; $bd ; A single sound slowly lowering in pitch
+	SND_UNKNOWN_bd          db ; $bd ; A single sound slowly lowering in pitch
 .endif
 
 	SND_VERAN_PROJECTILE    db ; $be ; Used for Veran's projectile attack in her possessed forms
-	SND_CHARGE              db ; $bf ; Might be unused; sounds similar to SND_TINGLE
+	SND_BLUE_STALFOS_CHARGE db ; $bf ; Ages D8 miniboss charging its projectile
 	SND_TRANSFORM           db ; $c0 ; LADX sound where nightmare transforms into Dethyl
 	SND_RESTORE             db ; $c1 ; Used in ie. the ending Seasons cutscene when seasons are restored
 	SND_FLOODGATES          db ; $c2 ; Floodgates outside d3 in Seasons
@@ -367,11 +375,11 @@
 .ifdef ROM_AGES
 	SND_TIMEWARP_INITIATED  db ; $d1
 .else
-	SND_d1                  db ; $d1 ; Not blank, but unknown
+	SND_UNKNOWN_d1          db ; $d1 ; Not blank, but unknown
 .endif
 
 	SND_LIGHTNING           db ; $d2
-	SND_WIND                db ; $d3 ; Used in the raft cutscene before d3
+	SND_WIND                db ; $d3 ; This is a bit different in Ages/Seasons.
 
 .ifdef ROM_AGES
 	SND_TIMEWARP_COMPLETED  db ; $d4

@@ -157,19 +157,19 @@ _parentItemCode_harp:
 
 
 @sfxList:
-	.db SND_CRANEGAME
+	.db SND_FILLED_HEART_CONTAINER
 	.db SND_FLUTE_RICKY
 	.db SND_FLUTE_DIMITRI
 	.db SND_FLUTE_MOOSH
 .ifdef ROM_AGES
-	.db SND_ECHO
-	.db SND_CURRENT
-	.db SND_AGES
+	.db SND_TUNE_OF_ECHOES
+	.db SND_TUNE_OF_CURRENTS
+	.db SND_TUNE_OF_AGES
 .else
-	; For now we're putting placeholder sounds for the harp songs in seasons
-	.db SND_CRANEGAME
-	.db SND_CRANEGAME
-	.db SND_CRANEGAME
+	; CROSSITEMS: For now we're putting placeholder sounds for the harp songs in seasons
+	.db SND_FILLED_HEART_CONTAINER
+	.db SND_FILLED_HEART_CONTAINER
+	.db SND_FILLED_HEART_CONTAINER
 .endif
 
 ;;

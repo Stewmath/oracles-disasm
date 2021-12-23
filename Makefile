@@ -126,7 +126,6 @@ seasons:
 
 $(GAME).gbc: $(OBJS) linkfile_$(GAME)
 	$(LD) -S linkfile_$(GAME) $@
-	@tools/misc/fixSymbols.sh $(GAME).sym
 
 
 $(MAPPINGINDICESFILES): build/tileset_layouts/mappingsDictionary.bin

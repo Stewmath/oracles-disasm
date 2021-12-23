@@ -2,8 +2,8 @@
 
 .ifdef ROM_SEASONS
 
-soundd5Start:
-soundd5Channel2: ; D1 Chime
+sndd5Start:
+sndd5Channel2: ; D1 Chime
 	duty 2
 
 	vol 9
@@ -59,8 +59,8 @@ soundd5Channel2: ; D1 Chime
 	note ds4 $01
 	cmdff
 
-soundd6Start:
-soundd6Channel2: ; D2 Chime
+sndd6Start:
+sndd6Channel2: ; D2 Chime
 	duty 2
   
 	vol 9
@@ -91,8 +91,8 @@ soundd6Channel2: ; D2 Chime
 	note c5 $06
 	cmdff
 
-soundd7Start:
-soundd7Channel2: ; D3 Chime
+sndd7Start:
+sndd7Channel2: ; D3 Chime
 	duty 2
 
 	vol 9
@@ -134,8 +134,8 @@ soundd7Channel2: ; D3 Chime
 	cmdff
 
 
-soundd8Start:
-soundd8Channel2: ; D4 Chime
+sndd8Start:
+sndd8Channel2: ; D4 Chime
 	duty 2
 
 	vol 9
@@ -175,8 +175,8 @@ soundd8Channel2: ; D4 Chime
 	cmdff
 
 
-soundd9Start:
-soundd9Channel2: ; D5 Chime
+sndd9Start:
+sndd9Channel2: ; D5 Chime
 	duty 2
 	vol 9
 	note fs3 $06
@@ -221,8 +221,8 @@ soundd9Channel2: ; D5 Chime
 	cmdff
 
 
-sounddaStart:
-sounddaChannel2: ; D6 Chime
+snddaStart:
+snddaChannel2: ; D6 Chime
 	duty 2
 
 	vol 9
@@ -269,8 +269,8 @@ sounddaChannel2: ; D6 Chime
 	cmdff
 
 
-sounddbStart:
-sounddbChannel2: ; D7 Chime
+snddbStart:
+snddbChannel2: ; D7 Chime
 	duty 2
 
 	vol 9
@@ -302,8 +302,8 @@ sounddbChannel2: ; D7 Chime
 	cmdff
 
 
-sounddcStart:
-sounddcChannel2: ; D8 Chime
+snddcStart:
+snddcChannel2: ; D8 Chime
 	duty 2
 
 	vol 9

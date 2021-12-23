@@ -8413,7 +8413,7 @@ _gohma_phase2_spawnGelChild:
 	ld h,d
 	ld l,Enemy.var32
 	inc (hl)
-	ld a,SND_HEART_LADX
+	ld a,SND_GOHMA_SPAWN_GEL
 	jp playSound
 
 _gohma_counter1Vals:

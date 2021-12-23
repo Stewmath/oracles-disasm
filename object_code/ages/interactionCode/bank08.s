@@ -3389,7 +3389,7 @@ _impaSubid0:
 	jr nc,+
 
 	ld hl,wActiveMusic
-	ld a,MUS_FAIRY
+	ld a,MUS_FAIRY_FOUNTAIN
 	cp (hl)
 	jr z,+
 
@@ -3399,7 +3399,7 @@ _impaSubid0:
 	cp $49
 	jr z,+
 
-	ld a,MUS_FAIRY
+	ld a,MUS_FAIRY_FOUNTAIN
 	ld (hl),a
 	call playSound
 	ld a,$03
@@ -6134,7 +6134,7 @@ nayruState0:
 	ld a,>TX_1d00
 	call interactionSetHighTextIndex
 
-	ld a,MUS_OVERWORLD_PRES
+	ld a,MUS_OVERWORLD
 	ld (wActiveMusic2),a
 	ld a,$ff
 	ld (wActiveMusic),a

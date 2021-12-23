@@ -319,7 +319,7 @@ updateTextbox:
 	add $04
 	ld (wTextIndexH),a
 	call _checkInitialTextCommands
-	ld a,SND_CRANEGAME
+	ld a,SND_FILLED_HEART_CONTAINER
 	call playSound
 	ld a,TREASURE_HEART_CONTAINER
 	ld c,$04
@@ -2899,11 +2899,12 @@ _handleTextControlCode:
 ; b0: attribute byte (which palette to use)
 ; b1: Value for wTextGfxColorIndex
 @textColorData:
-	.db $80 $02
-	.db $80 $01
-	.db $81 $00
-	.db $81 $01
-	.db $81 $02
+	.db $80 $02 ; White (palette 0)
+	.db $80 $01 ; Red (palette 0)
+	.db $81 $00 ; Red (palette 1, color 0, appears behind sprites)
+	.db $81 $01 ; Blue (palette 1)
+	.db $81 $02 ; White (palette 1)
+
 
 ;;
 ; Link or kid name

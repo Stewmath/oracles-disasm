@@ -6411,7 +6411,7 @@ impaScript_afterOnoxTakesDin:
 	setangleandanimation $18
 	setcounter1 $06
 	applyspeed $30
-	setmusic MUS_OVERWORLD_PRES
+	setmusic MUS_OVERWORLD
 	setangleandanimation $00
 	setcounter1 $06
 	applyspeed $20

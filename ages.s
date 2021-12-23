@@ -889,15 +889,3 @@ oamData_7249:
 .include "code/ages/garbage/bank3fEnd.s"
 
 .ends
-
- m_section_free Crossitem_Sounds
-
-; Magnet glove noise
-magnetGloveSoundStart:
-magnetGloveSoundChannel2:
-	vol $9
-	note f6  $01
-	note c6  $01
-	cmdff
-
-.ends
