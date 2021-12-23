@@ -20,7 +20,8 @@ randoInitializeFile:
 	ld (wAnimalCompanion),a
 	ld a,$ff
 	ld (wCompanionTutorialTextShown),a
-	
+
+.ifdef ROM_SEASONS
 	; room flags 4 | 6
 	ld a,$50
 	ld (wPresentRoomFlags+$a7),a ; start
@@ -73,7 +74,11 @@ randoInitializeFile:
 	;ld a,(wIsLinkedGame)
 	;or a
 	;call nz,giveLinkedStartItem
-	
+
+.else ; ROM_AGES
+	; RANDO-TODO
+.endif
+
 	ret
 
 

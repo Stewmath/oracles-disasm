@@ -888,4 +888,11 @@ oamData_7249:
 
 .include "code/ages/garbage/bank3fEnd.s"
 
+.include "code/rando/bank3f.s"
 .ends
+
+
+; Randomizer stuff that sets the section on its own
+.include "data/rando/fileSelectGfx.s"
+.include "data/rando/compassChimes.s"
+.include "code/rando/rando.s"

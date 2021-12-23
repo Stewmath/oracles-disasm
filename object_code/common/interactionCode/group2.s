@@ -1246,7 +1246,7 @@ shopItemTreasureToGive:
 	/* $0b */ .db  TREASURE_BOMBCHUS      $05
 	/* $0c */ .db  $00                    $00
 .ifdef ROM_AGES
-	/* $0d */ dwbe agesRandoSlot_shop150Rupees
+	/* $0d */ dwbe rando.agesSlot_shop150Rupees
 	/* $0e */ .db  TREASURE_GASHA_SEED    $01
 	/* $0f */ .db  TREASURE_RING          GBA_TIME_RING
 .else

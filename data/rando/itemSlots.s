@@ -1052,4 +1052,19 @@ seasonsSlot_herosCave_orbAcrossPits:
 
 slotsEnd:
 
+
+.else ; ROM_AGES
+
+
+slotsStart:
+
+agesSlot_shop150Rupees:
+	dwbe TREASURE_OBJECT_FLUTE_00
+	.db  $00
+	dwbe $025e
+	.dw  $0000
+
+
+slotsEnd:
+
 .endif
