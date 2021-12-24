@@ -444,8 +444,8 @@ treasureCollectionBehaviourTable:
 	.db SND_GETITEM
 
 	; TREASURE_CHEVAL_ROPE (0x52)
-	.db <wDeathRespawnBuffer.rememberedCompanionId
-	.db $05
+	.db $00 ; RANDO: Used to be "<wDeathRespawnBuffer.rememberedCompanionId".
+	.db $05 ;        This was changed because we don't want to despawn the companion.
 	.db SND_NONE
 
 	; TREASURE_MEMBERS_CARD (0x53)

@@ -6863,7 +6863,10 @@ interaction6b_subid0aScript:
 
 @chevalRope:
 	giveitem TREASURE_CHEVAL_ROPE, $00
-	writememory wRememberedCompanionId, $00
+
+	; RANDO: Don't erase animal companion
+	;writememory wRememberedCompanionId, $00
+
 	wait 30
 	scriptend
 
