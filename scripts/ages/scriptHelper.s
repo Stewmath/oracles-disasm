@@ -602,8 +602,10 @@ shootingGalleryScript_humanNpc_gameDone:
 
 	asm15 shootingGallery_checkIsNotLinkedGame
 	jumpifmemoryset wcddb, $80, @checkScoreForNormalGame
-	jumpifitemobtained TREASURE_FLUTE, @normalGame
-	jumpifglobalflagset GLOBALFLAG_CAN_BUY_FLUTE, @checkScoreForFluteGame
+
+	; RANDO: Don't allow getting flute from shooting gallery
+	;jumpifitemobtained TREASURE_FLUTE, @normalGame
+	;jumpifglobalflagset GLOBALFLAG_CAN_BUY_FLUTE, @checkScoreForFluteGame
 
 @normalGame:
 	scriptjump @checkScoreForNormalGame
