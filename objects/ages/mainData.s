@@ -1123,7 +1123,8 @@ group0Map6aObjectData:
 
 group0Map6bObjectData:
 	obj_Interaction $71 $01 $38 $08
-	obj_Interaction $67 $01
+	; RANDO: Prevent Moosh from spawning after visiting Cheval's Grave
+	;obj_Interaction $67 $01
 	obj_End
 
 group0Map6cObjectData:
