@@ -2262,7 +2262,10 @@ _companionScript_subid00:
 	jp nz,_companionScript_deleteSelf
 
 	ld a,$01
-	ld (wDisableScreenTransitions),a
+
+	; RANDO: Allow leaving the screen without killing the ghosts
+	;ld (wDisableScreenTransitions),a
+
 	ld (wDiggingUpEnemiesForbidden),a
 	ld hl,mainScripts.companionScript_subid00Script
 	jp interactionSetScript
