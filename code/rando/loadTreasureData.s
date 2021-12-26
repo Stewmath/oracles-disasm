@@ -189,7 +189,7 @@ getUpgradedTreasure:
 	push bc
 	ld c,a ; "related variable" (item level)
 
-	; RANDO-TODO: Check this harp stuff when ages is implemented
+	; Special case for harp, it uses multiple treasure IDs so it's more complex
 	ld a,b
 	cp TREASURE_TUNE_OF_ECHOES
 	jr nz,@harpDone
@@ -227,29 +227,33 @@ getUpgradedTreasure:
 ; - New ID
 ; - New SubID (will use this data from the treasureObjectData table)
 progressiveUpgrades:
-
-.ifdef ROM_SEASONS
 	.db TREASURE_SHIELD,       $02, TREASURE_SHIELD,       $02 ; mirror shield
 	.db TREASURE_SWORD,        $01, TREASURE_SWORD,        $01 ; noble sword
 	.db TREASURE_SWORD,        $02, TREASURE_SWORD,        $02 ; master sword
-	.db TREASURE_BOOMERANG,    $01, TREASURE_BOOMERANG,    $01 ; magic boomerang
-	.db TREASURE_SLINGSHOT,    $01, TREASURE_SLINGSHOT,    $01 ; hyper slingshot
-	.db TREASURE_FEATHER,      $01, TREASURE_FEATHER,      $01 ; roc's cape
-	.db TREASURE_SEED_SATCHEL, $01, TREASURE_SEED_SATCHEL, $01 ; satchel upgrade 1
-	.db TREASURE_SEED_SATCHEL, $02, TREASURE_SEED_SATCHEL, $01 ; satchel upgrade 2 (same deal)
+	.db TREASURE_SEED_SATCHEL, $01, TREASURE_SEED_SATCHEL, <TREASURE_OBJECT_SEED_SATCHEL_UPGRADE
+	.db TREASURE_SEED_SATCHEL, $02, TREASURE_SEED_SATCHEL, <TREASURE_OBJECT_SEED_SATCHEL_UPGRADE
 
-	; Crossitems
+	; Seasons items (available in both through crossitems)
+	.db TREASURE_SLINGSHOT,    $01, TREASURE_SLINGSHOT,    $01 ; hyper slingshot
+
+.ifdef ROM_SEASONS
+	.db TREASURE_BOOMERANG,    $01, TREASURE_BOOMERANG,    $01 ; magic boomerang
+	.db TREASURE_FEATHER,      $01, TREASURE_FEATHER,      $01 ; roc's cape
+.else
+	.db TREASURE_BOOMERANG,    $01, TREASURE_BOOMERANG,    $03 ; magic boomerang
+	.db TREASURE_FEATHER,      $01, TREASURE_FEATHER,      $03 ; roc's cape
+.endif
+
+	; Ages items (available in both through crossitems)
 	.db TREASURE_BRACELET,     $01, TREASURE_BRACELET,     $01 ; power glove
 	.db TREASURE_SWITCH_HOOK,  $01, TREASURE_SWITCH_HOOK,  $01 ; long hook
 	.db TREASURE_FLIPPERS,     $00, TREASURE_MERMAID_SUIT, $00 ; mermaid suit
-	.db $ff
 
-.else; ROM_AGES
+	; Ages-only, but that could change later. No harm leaving it for Seasons.
+	.db TREASURE_TUNE_OF_ECHOES,   $00, TREASURE_TUNE_OF_CURRENTS, $00 ; tune of currents
+	.db TREASURE_TUNE_OF_CURRENTS, $00, TREASURE_TUNE_OF_AGES,     $00 ; tune of ages
 
-	; RANDO-TODO
-	.db $ff
-
-.endif
+	.db $ff ; Terminator
 
 
 ;;
