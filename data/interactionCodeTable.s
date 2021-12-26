@@ -38,7 +38,7 @@ interactionCodeTable: ; $3b8b
 	.dw agesInteractionsBank08.interactionCode23 ; 0x23
 	.dw agesInteractionsBank08.interactionCode24 ; 0x24
 	.dw agesInteractionsBank08.interactionCode25 ; 0x25
-	.dw                        interactionDelete ; 0x26
+	.dw agesInteractionsBank08.interactionCodeStartingTreasure ; 0x26 ; RANDO
 	.dw                        interactionDelete ; 0x27
 	.dw agesInteractionsBank08.interactionCode28 ; 0x28
 	.dw agesInteractionsBank08.interactionCode29 ; 0x29

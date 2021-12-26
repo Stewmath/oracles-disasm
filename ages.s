@@ -893,6 +893,7 @@ oamData_7249:
 
 
 ; Randomizer stuff that sets the section on its own
+.include "code/rando/agesStartingTreasure.s"
 .include "data/rando/fileSelectGfx.s"
 .include "data/rando/compassChimes.s"
 .include "code/rando/rando.s"

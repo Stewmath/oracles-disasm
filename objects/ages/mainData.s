@@ -939,6 +939,10 @@ group0Map39ObjectData:
 	obj_Interaction $e1 $01 $28 $28
 	obj_Interaction $37 $0d $28 $18
 	obj_Interaction $5d $02 $18 $68 $00
+
+	; RANDO: Starting item just standing there
+	obj_Interaction $26 $00 $30 $68
+
 	obj_End
 
 group0Map3aObjectData:

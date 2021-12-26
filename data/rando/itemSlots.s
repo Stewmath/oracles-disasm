@@ -1058,12 +1058,17 @@ slotsEnd:
 
 slotsStart:
 
+agesSlot_startingItem:
+	dwbe TREASURE_OBJECT_SWORD_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $0039
+	.dw  $0000
+
 agesSlot_shop150Rupees:
 	dwbe TREASURE_OBJECT_FLUTE_00
 	.db  $00
 	dwbe $025e
 	.dw  $0000
-
 
 slotsEnd:
 

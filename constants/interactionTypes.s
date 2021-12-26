@@ -2908,3 +2908,13 @@
 .define INTERACID_RANDO_WARNING_MESSAGE $61
 
 .endif
+
+
+; RANDO: Extra objects for Ages
+.ifdef ROM_AGES
+
+;;
+; Item lying around at the start since the intro sequence doesn't happen
+.define INTERACID_STARTING_ITEM	$26
+
+.endif
