@@ -6467,12 +6467,10 @@ makuTree_dropSeedSatchel:
 	ret nz
 	set 7,(hl)
 
-	call getFreeInteractionSlot
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),TREASURE_SEED_SATCHEL
-	inc l
-	ld (hl),$02
+	; RANDO: Spawn randomized treasure
+	ld bc,rando.agesSlot_makuTree
+	call spawnRandomizedTreasure
+
 	ld l,Interaction.yh
 	ld (hl),$60
 
@@ -6502,12 +6500,15 @@ makuTree_checkSpawnSeedSatchel:
 	bit 7,a
 	ret z
 
-	call getFreeInteractionSlot
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),TREASURE_SEED_SATCHEL
-	inc l
-	ld (hl),$03
+	; RANDO: spawn randomized treasure
+	ld bc,rando.agesSlot_makuTree
+	call spawnRandomizedTreasure
+
+	; Rando collect mode override (doesn't fall from ceiling)
+	ld a,COLLECT_MODE_PICKUP_1HAND
+	ld l,Interaction.var3d
+	ld (hl),a
+
 	ld l,Interaction.yh
 	ld a,$58
 	ldi (hl),a

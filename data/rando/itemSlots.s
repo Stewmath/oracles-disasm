@@ -1070,6 +1070,12 @@ agesSlot_nayrusHouse:
 	dwbe $03ae
 	.dw  $0000
 
+agesSlot_makuTree:
+	dwbe TREASURE_OBJECT_SEED_SATCHEL_00
+	.db  COLLECT_MODE_FALL
+	dwbe $0038
+	.dw  $0000
+
 agesSlot_shop150Rupees:
 	dwbe TREASURE_OBJECT_FLUTE_00
 	.db  $00
