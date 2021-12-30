@@ -1064,6 +1064,12 @@ agesSlot_startingItem:
 	dwbe $0039
 	.dw  $0000
 
+agesSlot_nayrusHouse:
+	dwbe TREASURE_OBJECT_TUNE_OF_ECHOES_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $03ae
+	.dw  $0000
+
 agesSlot_shop150Rupees:
 	dwbe TREASURE_OBJECT_FLUTE_00
 	.db  $00

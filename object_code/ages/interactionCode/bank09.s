@@ -4502,9 +4502,11 @@ getImpaNpcState:
 	ld b,$ff
 	ret nz
 	inc b
-	ld a,(wPresentRoomFlags+$83)
-	rlca
-	ret nc
+
+	; RANDO: Impa is always moved out of the way to nayru's basement
+	;ld a,(wPresentRoomFlags+$83)
+	;rlca
+	;ret nc
 
 	ld a,TREASURE_HARP
 	call checkTreasureObtained

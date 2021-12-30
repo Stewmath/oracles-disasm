@@ -4317,11 +4317,9 @@ interactionCodeb3:
 	xor a
 	ld (wTmpcfc0.genericCutscene.state),a
 
-	call getFreeInteractionSlot
-	ret nz
-	ld (hl),INTERACID_TREASURE
-	inc l
-	ld (hl),TREASURE_HARP
+	; RANDO: Spawn the randomized treasure
+	ld bc,rando.agesSlot_nayrusHouse
+	call spawnRandomizedTreasure
 
 	ld l,Interaction.yh
 	ld (hl),$38
@@ -4346,9 +4344,13 @@ interactionCodeb3:
 
 
 @state1:
-	call getThisRoomFlags
-	bit ROOMFLAG_BIT_ITEM,(hl)
-	ret z
+	; RANDO: Delete this object to disable the cutscene that it would normally trigger after
+	; getting the harp.
+	jp interactionDelete
+
+	;call getThisRoomFlags
+	;bit ROOMFLAG_BIT_ITEM,(hl)
+	;ret z
 
 	; Got harp; start cutscene
 	ld a,SNDCTRL_STOPMUSIC
