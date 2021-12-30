@@ -5164,10 +5164,12 @@ _goron_subid00_npcLoop:
 	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 
 @past:
+	; Only check these in the past
 	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @danceForGenericItem
 	jumpifitemobtained TREASURE_GORON_LETTER, @danceForOldMermaidKey
 
 @present:
+	; Check this in past and present
 	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @danceForGenericItem
 
 	; Dance for brother emblem
@@ -5237,12 +5239,14 @@ _goron_subid00_npcLoop:
 
 _goronDance_begin:
 	asm15 scriptHelp.goron_checkInPresent
-	jumpifmemoryset wcddb, CPU_ZFLAG, ++
+	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 
-	; Only check these in present
+@past:
+	; Only check these in the past
 	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @selectDifficulty
 	jumpifitemobtained TREASURE_GORON_LETTER, @lowestDanceLevel
-++
+
+@present:
 	; Check this in past and present
 	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @selectDifficulty
 
@@ -5420,12 +5424,14 @@ goronDanceScript_givePrize:
 	wait 30
 	resetmusic
 	asm15 scriptHelp.goron_checkInPresent
-	jumpifmemoryset wcddb, CPU_ZFLAG, ++
+	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 
+@past:
 	; Only check these in the past
 	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @giveGenericPrize
 	jumpifitemobtained TREASURE_GORON_LETTER, @giveOldMermaidKey
-++
+
+@present:
 	; Check this in past and present
 	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @giveGenericPrize
 

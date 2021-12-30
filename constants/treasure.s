@@ -14,7 +14,7 @@
 
 	TREASURE_NONE			db ; $00
 	TREASURE_SHIELD			db ; $01
-	TREASURE_PUNCH			db ; $02 ; Set by default on the file
+	TREASURE_PUNCH			db ; $02 ; Set by default on the file, used as dummy value
 	TREASURE_BOMBS			db ; $03
 	TREASURE_CANE_OF_SOMARIA	db ; $04
 	TREASURE_SWORD			db ; $05
