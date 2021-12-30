@@ -1076,6 +1076,30 @@ agesSlot_makuTree:
 	dwbe $0038
 	.dw  $0000
 
+agesSlot_graveUnderTree:
+	dwbe TREASURE_OBJECT_GRAVEYARD_KEY_00
+	.db  COLLECT_MODE_FALL
+	dwbe $05ed
+	.dw  $0000
+
+agesSlot_graveyardPoe:
+	dwbe TREASURE_OBJECT_TRADEITEM_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $007c
+	.dw  $0000
+
+agesSlot_chevalsTest:
+	dwbe TREASURE_OBJECT_FLIPPERS_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $05bf
+	.dw  $0000
+
+agesSlot_chevalsInvention:
+	dwbe TREASURE_OBJECT_CHEVAL_ROPE_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $05b6
+	.dw  $0000
+
 agesSlot_shop150Rupees:
 	dwbe TREASURE_OBJECT_FLUTE_00
 	.db  $00

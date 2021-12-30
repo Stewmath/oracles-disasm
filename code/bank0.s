@@ -9098,9 +9098,8 @@ interactionSetAnimation:
 
 	; RANDO: Certain interactions that imitate treasures don't use the animation table of
 	; INTERACID_TREASURE. This must be fixed.
-	call interactionGetIDForAnimationTable
-	;ld e,Interaction.id
-	;ld a,(de)
+	callab bank3f.interactionGetIDForAnimationTable
+	ld a,e
 
 	ld hl,interactionAnimationTable
 	rst_addDoubleIndex
@@ -9153,9 +9152,8 @@ _interactionNextAnimationFrame:
 
 	; RANDO: Certain interactions that imitate treasures don't use the animation table of
 	; INTERACID_TREASURE. This must be fixed.
-	call interactionGetIDForAnimationTable
-	;ld e,Interaction.id
-	;ld a,(de)
+	callab bank3f.interactionGetIDForAnimationTable
+	ld a,e
 
 	ld hl,interactionOamDataTable
 	rst_addDoubleIndex

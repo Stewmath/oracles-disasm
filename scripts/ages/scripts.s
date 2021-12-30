@@ -6868,7 +6868,7 @@ interaction6b_subid0aScript:
 	scriptend
 
 @chevalRope:
-	giveitem TREASURE_CHEVAL_ROPE, $00
+	giverandomizeditem rando.agesSlot_chevalsInvention
 
 	; RANDO: Don't erase animal companion
 	;writememory wRememberedCompanionId, $00
@@ -6877,7 +6877,7 @@ interaction6b_subid0aScript:
 	scriptend
 
 @flippers:
-	giveitem TREASURE_FLIPPERS, $00
+	giverandomizeditem rando.agesSlot_chevalsTest
 	wait 30
 	scriptend
 

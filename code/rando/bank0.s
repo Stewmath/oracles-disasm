@@ -162,35 +162,3 @@ randoLookupRoomTreasure:
 	pop de
 	pop bc
 	ret
-
-
-;;
-; This is called from the "interactionSetAnimation" function. This gets the ID of the object,
-; modified for the purpose of using a different animation table. This is used for objects that
-; imitate the appearance of INTERACID_TREASURE, but which don't normally share its animation table.
-;
-; @param	d	Interaction object
-; @param[out]	a	Interaction ID, modified for the purpose of using a different animation table
-interactionGetIDForAnimationTable:
-	ld e,Interaction.id
-	ld a,(de)
-
-.ifdef ROM_SEASONS
-	cp INTERACID_LOST_WOODS_SWORD
-	jr z,@fake
-	cp INTERACID_GET_ROD_OF_SEASONS
-	jr nz,++
-	inc e
-	ld a,(de) ; subid
-	cp $02
-	jr nz,++
-
-@fake:
-	ld a,INTERACID_TREASURE
-	ret
-++
-	ld e,Interaction.id
-	ld a,(de)
-.endif
-
-	ret

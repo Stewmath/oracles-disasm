@@ -3493,7 +3493,7 @@ poeScript:
 @lastMeeting:
 	showtext TX_0b02
 	wait 30
-	giveitem TREASURE_TRADEITEM, $00
+	giverandomizeditem rando.agesSlot_graveyardPoe
 	scriptjump @disappear
 
 

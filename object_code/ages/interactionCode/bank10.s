@@ -94,8 +94,11 @@ interactiondc_subid00:
 	ld a,(wNumTorchesLit)
 	cp $02
 	ret nz
-	ld bc,TREASURE_OBJECT_GRAVEYARD_KEY_00
-	call createTreasure
+
+	; RANDO: Spawn randomized treasure
+	ld bc,rando.agesSlot_graveUnderTree
+	call spawnRandomizedTreasure
+
 	call objectCopyPosition
 	jp interactionDelete
 
