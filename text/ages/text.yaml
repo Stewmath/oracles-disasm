@@ -69,28 +69,13 @@ groups:
 
   - name: TX_000a
     index: 0x0a
-    text: |-
-      You learned the
-      \col(1)Currents Tune\col(0)!\stop
-      Play it to move
-      from the past to
-      the present!
-      Choose it when
-      you use the
-      \col(1)harp\col(0)!
+    text: >-
+      You got the \col(1)Tune of Currents\col(0)! Play it to move from the past to the present!
 
   - name: TX_000b
     index: 0x0b
-    text: |-
-      You learned the
-      \col(1)Tune of Time\col(0)!\stop
-      Play it to move
-      back and forth
-      between past
-      and present!
-      Choose it when
-      you use the
-      \col(1)harp\col(0).
+    text: >-
+      You got the \col(1)Tune of Ages\col(0)! Play it to move back and forth between past and present!
 
   - name: TX_000c
     index: 0x0c
@@ -914,11 +899,9 @@ groups:
 
   - name: TX_0072
     index: 0x72
-    text: |-
-      It's the \col(2)Echo
-      Tune\col(4)! It will
-      awaken sleeping
-      \col(3)Time Portals\col(4)!
+    text: >-
+      You got the \col(1)Tune of Echoes\col(0)! Play it to awaken sleeping \col(1)Time
+      Portals\col(0)!
 
   - name: TX_0073
     index: 0x73
