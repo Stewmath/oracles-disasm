@@ -5981,8 +5981,13 @@ companionScript_subid03Script_body:
 	jumpifmemoryset wRickyState, $01, @alreadyExplainedSituation
 
 	ormemory wRickyState, $01
+
+	; RANDO: Don't change text if ricky is the companion in an unlinked game
+	jumpifmemoryeq wIsLinkedGame, $00, @firstMeeting
+
 	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECTID_RICKY, @notFirstMeeting
 
+@firstMeeting:
 	; First meeting
 	showtext TX_2000
 	scriptjump @alreadyExplainedSituation
@@ -5999,7 +6004,11 @@ companionScript_subid03Script_body:
 
 @retrievedGloves:
 	showtext TX_2004
-	asm15 companionScript_loseRickyGloves
+
+	; RANDO: Don't remove ricky's gloves from inventory, because we're now using them to check
+	; whether to spawn ricky near the tingle area.
+	;asm15 companionScript_loseRickyGloves
+
 	writememory w1Companion.var03, $01
 	enableallobjects
 	checkmemoryeq wLinkObjectIndex, >w1Companion ; Wait for Link to mount

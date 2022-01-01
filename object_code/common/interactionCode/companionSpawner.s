@@ -274,9 +274,12 @@ interactionCode5f:
 
 ; Ricky looking for gloves
 @subid02:
-	ld a,GLOBALFLAG_GAVE_ROPE_TO_RAFTON
-	call checkGlobalFlag
+	; RANDO: Make Ricky spawn in if you have his gloves, instead of checking if you gave the
+	; rope to rafton.
+	ld a,(wObtainedTreasureFlags + TREASURE_RICKY_GLOVES/8)
+	and 1<<(TREASURE_RICKY_GLOVES&7)
 	jr z,@deleteSelf
+
 	ld hl,wRickyState
 	jr @loadCompanionPresetIfHasntLeft
 
