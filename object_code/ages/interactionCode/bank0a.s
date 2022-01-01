@@ -3183,18 +3183,24 @@ interactionCode73:
 interactionCode74:
 	; Delete self if already returned gloves, haven't talked to Ricky, or already got
 	; gloves
-	ld a,(wRickyState)
-	bit 5,a
-	jr nz,@delete
-	and $01
-	jr z,@delete
-	ld a,TREASURE_RICKY_GLOVES
-	call checkTreasureObtained
-	jr c,@delete
+	; RANDO: Ignore all of this, allow item to be dug up at any time.
+	;ld a,(wRickyState)
+	;bit 5,a
+	;jr nz,@delete
+	;and $01
+	;jr z,@delete
 
-	ldbc INTERACID_TREASURE, TREASURE_RICKY_GLOVES
-	call objectCreateInteraction
+	; RANDO: Instead of checking if TREASURE_RICKYS_GLOVES is obtained, check ROOMFLAG_ITEM to
+	; determine whether the item's been obtained.
+	call getThisRoomFlags
+	and ROOMFLAG_ITEM
+	jr nz,@delete
+
+	; RANDO: Spawn the randomized treasure
+	ld bc,rando.agesSlot_southShoreDirt
+	call spawnRandomizedTreasure
 	ret nz
+	call objectCopyPosition
 @delete:
 	jp interactionDelete
 

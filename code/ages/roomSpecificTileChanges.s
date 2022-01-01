@@ -1320,16 +1320,19 @@ tileReplacement_group4Mapea:
 ;;
 ; Present, room where you find ricky's gloves
 tileReplacement_group0Map98:
-	ld a,(wRickyState)
-	bit 5,a
-	jr nz,@removeDirt
+	; RANDO: Ignore ricky's state
+	;ld a,(wRickyState)
+	;bit 5,a
+	;jr nz,@removeDirt
 
-	and $01
-	jr z,@removeDirt
+	;and $01
+	;jr z,@removeDirt
 
-	ld a,TREASURE_RICKY_GLOVES
-	call checkTreasureObtained
-	ret nc
+	; RANDO: Instead of checking if ricky's gloves are obtained, check ROOMFLAG_ITEM to
+	; determine whether the treasure was obtained
+	call getThisRoomFlags
+	and ROOMFLAG_ITEM
+	ret z
 
 @removeDirt:
 	ld a,$3a

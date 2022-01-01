@@ -1100,6 +1100,12 @@ agesSlot_chevalsInvention:
 	dwbe $05b6
 	.dw  $0000
 
+agesSlot_southShoreDirt:
+	dwbe TREASURE_OBJECT_RICKY_GLOVES_00
+	.db  COLLECT_MODE_DIG
+	dwbe $0098
+	.dw  $0000
+
 agesSlot_shop150Rupees:
 	dwbe TREASURE_OBJECT_FLUTE_00
 	.db  $00
