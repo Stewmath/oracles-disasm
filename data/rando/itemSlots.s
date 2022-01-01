@@ -1106,6 +1106,18 @@ agesSlot_southShoreDirt:
 	dwbe $0098
 	.dw  $0000
 
+agesSlot_balloonGuysGift:
+	dwbe TREASURE_OBJECT_ISLAND_CHART_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $0079
+	.dw  agesSlotCallbackTable_balloonGuysGift
+
+agesSlot_balloonGuysUpgrade:
+	dwbe TREASURE_OBJECT_SEED_SATCHEL_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $0079
+	.dw  agesSlotCallbackTable_balloonGuysUpgrade
+
 agesSlot_shop150Rupees:
 	dwbe TREASURE_OBJECT_FLUTE_00
 	.db  $00

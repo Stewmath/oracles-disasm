@@ -8990,7 +8990,7 @@ tingleScript:
 .endif
 @loop:
 	checkabutton
-	jumpifitemobtained TREASURE_ISLAND_CHART, @alreadyGotChart
+	jumpifitemobtained RANDO_ISLAND_CHART_FLAG, @alreadyGotChart
 	jumpifglobalflagset GLOBALFLAG_MET_TINGLE, @notFirstMeeting
 
 	; First meeting
@@ -9015,17 +9015,22 @@ tingleScript:
 	disableinput
 	showtextlowindex <TX_1e02
 	checktext
-	giveitem TREASURE_OBJECT_ISLAND_CHART_00
+	giverandomizeditem rando.agesSlot_balloonGuysGift
 	wait 1
 	checktext
 	showtextlowindex <TX_1e04
 	callscript @koolooLimpah
-	wait 60
+
+	; RANDO: Don't make ricky go away, re-enable control immediately.
+	enableinput
+	enableallobjects
+
+	;wait 60
 
 	; Tell Ricky to go away?
-	writememory w1Companion.var03, $02
-	setdisabledobjectsto11
-	writememory w1Companion.state, $0a
+	;writememory w1Companion.var03, $02
+	;setdisabledobjectsto11
+	;writememory w1Companion.state, $0a
 
 	scriptjump @loop
 
@@ -9036,10 +9041,12 @@ tingleScript:
 	disableinput
 .endif
 	jumpifobjectbyteeq Interaction.var3e, $00, @notEnoughSeedTypes
-	jumptable_objectbyte Interaction.var3d
-	.dw @haveLevel1Satchel
-	.dw @haveLevel2Satchel
-	.dw @haveLevel3Satchel
+
+	; RANDO: Instead of deciding what to do based on the seed satchel level, check the flags to
+	; ensure that triggers are based on whether you've obtained the items.
+	jumpifglobalflagset GLOBALFLAG_BEGAN_TINGLE_SECRET, @haveLevel3Satchel
+	jumpifglobalflagset GLOBALFLAG_GOT_SATCHEL_UPGRADE, @haveLevel2Satchel
+	scriptjump @haveLevel1Satchel
 
 @alreadyGotSatchelUpgrade:
 	showtextlowindex <TX_1e08
@@ -9081,12 +9088,22 @@ tingleScript:
 ++
 	asm15 scriptHelp.tingle_createGlowAroundLink
 	wait 120
-	giveitem TREASURE_OBJECT_SEED_SATCHEL_UPGRADE
+
+	; RANDO: Give something different depending if this is supposed to be the first upgrade
+	; (randomized) or the second, linked game upgrade (non-randomized).
+	jumpifglobalflagset GLOBALFLAG_BEGAN_TINGLE_SECRET, @giveLinkedUpgrade
+
+	; 1st upgrade (randomized)
+	giverandomizeditem rando.agesSlot_balloonGuysUpgrade
 	checktext
-	asm15 refillSeedSatchel
-	jumpifobjectbyteeq Interaction.var3d, $02, @haveLevel3Satchel
 	enableallobjects
 	scriptjump tingleScript
+
+@giveLinkedUpgrade:
+	; Linked upgrade (non-randomized)
+	giveitem TREASURE_OBJECT_SEED_SATCHEL_UPGRADE
+	checktext
+	scriptjump @haveLevel3Satchel
 
 
 @haveLevel2Satchel:

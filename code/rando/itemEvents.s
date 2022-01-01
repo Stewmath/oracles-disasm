@@ -224,4 +224,30 @@ seasonsSlotCallbackTable_subrosiaMarket5thItem:
 	ld a,RANDO_SUBROSIA_MARKET_5_FLAG
 	jp checkRandoItemFlag
 
+
+.else ; ROM_AGES
+
+
+agesSlotCallbackTable_balloonGuysGift:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
+	ld a,RANDO_ISLAND_CHART_FLAG
+	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_ISLAND_CHART_FLAG
+	jp checkRandoItemFlag
+
+
+agesSlotCallbackTable_balloonGuysUpgrade:
+	.dw $0000
+	.dw @isItemObtained
+@isItemObtained:
+	ld a,GLOBALFLAG_GOT_SATCHEL_UPGRADE
+	call checkGlobalFlag
+	ret z
+	scf
+	ret
+
+
 .endif

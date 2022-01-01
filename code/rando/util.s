@@ -68,7 +68,8 @@ searchValue:
 ; they have been obtained.
 ;
 ; @param	a	Flag to check
-; @param[out]	z,cflag	Set if the flag is set
+; @param[out]	cflag	c if the flag is set
+; @param[out]	zflag	nz if the flag is set
 checkRandoItemFlag:
 	push hl
 	ld hl,wObtainedTreasureFlags
