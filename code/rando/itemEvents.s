@@ -96,8 +96,11 @@ seasonsSlotCallbackTable_makuTree:
 
 
 seasonsSlotCallbackTable_shop150Rupees:
-	.dw $0000
+	.dw @onItemObtained
 	.dw @isItemObtained
+@onItemObtained:
+	ld a,RANDO_SHOP_FLUTE_FLAG
+	jp setRandoItemFlag
 @isItemObtained:
 	ld a,RANDO_SHOP_FLUTE_FLAG
 	jp checkRandoItemFlag
@@ -249,5 +252,15 @@ agesSlotCallbackTable_balloonGuysUpgrade:
 	scf
 	ret
 
+
+agesSlotCallbackTable_shop150Rupees:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
+	ld a,RANDO_SHOP_FLUTE_FLAG
+	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_SHOP_FLUTE_FLAG
+	jp checkRandoItemFlag
 
 .endif

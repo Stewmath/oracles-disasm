@@ -747,7 +747,7 @@ shopItemState0:
 @checkFlutePurchasable:
 	; Decide whether the flute is purchasable (update bit 3 of wBoughtShopItems2)
 	ld a,RANDO_SHOP_FLUTE_FLAG
-	call checkTreasureObtained
+	call checkRandoItemFlag
 	jr c,@fluteNotPurchasable
 
 	; RANDO: "Flute" item is always available (both games).
@@ -1004,13 +1004,6 @@ shopItemState3:
 @randomizedTreasure:
 	ld b,a
 	call giveTreasureCustom
-	ld e,Interaction.subid
-	ld a,(de)
-	cp a,$0d ; Flute item slot
-	jr nz,++
-	ld hl,wObtainedTreasureFlags
-	ld a,RANDO_SHOP_FLUTE_FLAG
-	call setFlag
 ++
 
 .ifdef ROM_SEASONS

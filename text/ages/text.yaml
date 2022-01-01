@@ -6539,10 +6539,11 @@ groups:
     text: |-
       Hurry up!
 
+  # RANDO: Substituting item name with special "call" opcode (see "data/rando/text.s").
   - name: TX_0e1b
     index: 0x1b
     text: |-
-      \col(1)Strange Flute\col(0)\stop
+      \col(1)\call(0xf0)\col(0)\stop
        \num1 Rupees
       \jump(TX_0e2b)
     null_terminator: False

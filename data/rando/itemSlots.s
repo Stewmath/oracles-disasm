@@ -1122,7 +1122,7 @@ agesSlot_shop150Rupees:
 	dwbe TREASURE_OBJECT_FLUTE_00
 	.db  $00
 	dwbe $025e
-	.dw  $0000
+	.dw  agesSlotCallbackTable_shop150Rupees
 
 slotsEnd:
 
