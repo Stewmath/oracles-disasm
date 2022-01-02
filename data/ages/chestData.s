@@ -16,6 +16,13 @@
 .endm
 
 
+; RANDO: Chest whose contents refer to an item slot
+.macro m_ChestDataRando
+	.db \1 \2
+	dwbe \3 | $8000
+.endm
+
+
 chestDataGroupTable:
 	.dw chestGroup0Data
 	.dw chestGroup1Data
@@ -28,7 +35,7 @@ chestDataGroupTable:
 
 chestGroup0Data:
 	m_ChestData $49, $51, TREASURE_OBJECT_RUPEES_04
-	m_ChestData $51, $49, TREASURE_OBJECT_RUPEES_04
+	m_ChestDataRando $51, $49, rando.agesSlot_lynnaCityChest
 	m_ChestData $36, $84, TREASURE_OBJECT_RUPEES_05
 	m_ChestData $35, $91, TREASURE_OBJECT_RING_21
 	m_ChestData $25, $d4, TREASURE_OBJECT_RING_23
@@ -57,7 +64,7 @@ chestGroup3Data:
 	m_ChestData $18, $1f, TREASURE_OBJECT_RUPEES_06
 	m_ChestData $35, $e8, TREASURE_OBJECT_NONE_00
 	m_ChestData $35, $ff, TREASURE_OBJECT_NONE_00
-	m_ChestData $18, $f9, TREASURE_OBJECT_RING_20
+	m_ChestDataRando $18, $f9, rando.agesSlot_mayorPlensHouse
 	m_ChestData $34, $fd, TREASURE_OBJECT_HEART_PIECE_01
 	.db $ff
 

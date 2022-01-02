@@ -1108,6 +1108,18 @@ agesSlot_shop150Rupees:
 	dwbe $025e
 	.dw  agesSlotCallbackTable_shop150Rupees
 
+agesSlot_mayorPlensHouse:
+	dwbe TREASURE_OBJECT_RING_20
+	.db  COLLECT_MODE_CHEST
+	dwbe $03f9
+	.dw  $0000
+
+agesSlot_lynnaCityChest:
+	dwbe TREASURE_OBJECT_RUPEES_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $0049
+	.dw  $0000
+
 ; ==============================================================================
 ; Yoll Graveyard
 ; ==============================================================================
