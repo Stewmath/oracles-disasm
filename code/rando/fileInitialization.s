@@ -124,6 +124,12 @@ randoInitializeFile:
 	ld (wPastRoomFlags    + <ROOM_AGES_183),a ; d2 entrance (past)
 	ld (wPastRoomFlags    + <ROOM_AGES_197),a ; ralph encounter near rafton
 	ld (wPastRoomFlags    + <ROOM_AGES_1f6),a ; top of black tower, south of stairs
+	ld (wPastRoomFlags    + <ROOM_AGES_1aa),a ; tokays mugging Link
+	ld (wPastRoomFlags    + <ROOM_AGES_1a8),a ; "raftwreck" cutscene
+
+	; room flag 5
+	ld a,$20
+	ld (wGroup2Flags      + <ROOM_AGES_2e3),a ; remove link's stolen bombs in tokay hut
 
 	; room flag 3
 	ld a,$08
@@ -156,6 +162,8 @@ randoInitializeFile:
 	.db GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY
 	.db GLOBALFLAG_GOT_FLUTE
 	.db GLOBALFLAG_FOREST_UNSCRAMBLED
+	.db GLOBALFLAG_BOUGHT_BRACELET_FROM_TOKAY
+	.db GLOBALFLAG_BOUGHT_FEATHER_FROM_TOKAY
 	.db GLOBALFLAG_3d
 	.db GLOBALFLAG_RALPH_ENTERED_PORTAL
 	.db GLOBALFLAG_ENTER_PAST_CUTSCENE_DONE

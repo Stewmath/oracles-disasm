@@ -1863,10 +1863,13 @@ interactionCode48:
 	ld (hl),a
 
 	; Check if the item has been retrieved already
-	ld c,$00
-	call getThisRoomFlags
-	bit 6,a
-	jr z,@@endLoop
+	; RANDO: Consider the item to already have been retrieved.
+	ld c,$02
+	jr @@endLoop
+	;ld c,$00
+	;call getThisRoomFlags
+	;bit 6,a
+	;jr z,@@endLoop
 
 	; Check if Link is still missing any items.
 	inc c
