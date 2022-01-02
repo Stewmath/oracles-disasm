@@ -1158,6 +1158,58 @@ agesSlot_fairiesWoodsChest:
 	dwbe $0084
 	.dw  $0000
 
+; ==============================================================================
+; Zora Seas Present
+; ==============================================================================
+
+agesSlot_fairiesCoastChest:
+	dwbe TREASURE_OBJECT_RING_21
+	.db  COLLECT_MODE_CHEST
+	dwbe $0091
+	.dw  $0000
+
+agesSlot_kingZora:
+	dwbe TREASURE_OBJECT_LIBRARY_KEY_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $05ab
+	.dw  agesSlotCallbackTable_kingZora
+
+agesSlot_zoraPalaceChest:
+	dwbe TREASURE_OBJECT_RUPEES_08
+	.db  COLLECT_MODE_CHEST
+	dwbe $05ac
+	.dw  $0000
+
+agesSlot_zoraNWCave:
+	dwbe TREASURE_OBJECT_RING_1a
+	.db  COLLECT_MODE_CHEST
+	dwbe $05c7
+	.dw  $0000
+
+agesSlot_zoraVillagePresent:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $02c0
+	.dw  $0000
+
+agesSlot_zoraSeasChest:
+	dwbe TREASURE_OBJECT_RING_25
+	.db  COLLECT_MODE_CHEST
+	dwbe $00d5
+	.dw  $0000
+
+agesSlot_zorasReward:
+	dwbe TREASURE_OBJECT_ZORA_SCALE_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $02a0
+	.dw  $0000
+
+agesSlot_libraryPresent:
+	dwbe TREASURE_OBJECT_BOOK_OF_SEALS_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $05c8
+	.dw  $0000
+
 
 slotsEnd:
 

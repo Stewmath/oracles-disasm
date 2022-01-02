@@ -2781,7 +2781,7 @@ oldManScript_givesBookOfSeals:
 	orroomflag $20
 	setangleandanimation $10
 	wait 30
-	giveitem TREASURE_BOOK_OF_SEALS, $00
+	giverandomizeditem rando.agesSlot_libraryPresent
 	wait 1
 	checktext
 	enableinput

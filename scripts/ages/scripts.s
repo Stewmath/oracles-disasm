@@ -8344,10 +8344,15 @@ kingZoraScript_present_giveKey:
 kingZoraScript_present_justAcceptedTask:
 	disableinput
 	showtext TX_340b
-	giveitem TREASURE_OBJECT_LIBRARY_KEY_00
+	giverandomizeditem rando.agesSlot_kingZora
 	wait 60
 	showtext TX_340c
 	enableinput
+
+	; RANDO: Add a conditional jump here to allow talking to King Zora to open Jabu-Jabu
+	; immediately after he gives you an item. Without this extra code, one would need to exit
+	; and re-enter the room in order to do that.
+	jumpifglobalflagset GLOBALFLAG_WATER_POLLUTION_FIXED, kingZoraScript_present_justCleanedWater
 
 kingZoraScript_present_acceptedTask:
 	checkabutton
@@ -8626,7 +8631,7 @@ zoraSubid10Script:
 	showtext TX_3430
 	wait 30
 
-	giveitem TREASURE_OBJECT_ZORA_SCALE_00
+	giverandomizeditem rando.agesSlot_zorasReward
 	movedown $80
 	enableinput
 	scriptend

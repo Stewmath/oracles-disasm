@@ -761,9 +761,21 @@ interactionCode9c:
 
 
 @choosePresentKingZoraScript:
+	; RANDO: Add this check to force King Zora to give you an item even if you've already fixed
+	; the pollution.
+	ld a,RANDO_KING_ZORA_FLAG
+	call checkRandoItemFlag
+	jr nc,@@pollutionNotFixed
+
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED
 	call checkGlobalFlag
 	jr z,@@pollutionNotFixed
+
+	; RANDO: Add this check to force King Zora to give permission to enter Jabu even if D7 isn't
+	; beaten yet (ie. with dungeon shuffle)
+	ld a,GLOBALFLAG_GOT_PERMISSION_TO_ENTER_JABU
+	call checkGlobalFlag
+	jr z,@@justCleanedWater
 
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
@@ -784,8 +796,10 @@ interactionCode9c:
 	ret
 
 @@pollutionNotFixed:
-	ld a,TREASURE_LIBRARY_KEY
-	call checkTreasureObtained
+	; RANDO: Check the flag for the item slot instead of TREASURE_LIBRARY_KEY to determine
+	; whether to give the item
+	ld a,RANDO_KING_ZORA_FLAG
+	call checkRandoItemFlag
 	ld hl,mainScripts.kingZoraScript_present_acceptedTask
 	ret c
 

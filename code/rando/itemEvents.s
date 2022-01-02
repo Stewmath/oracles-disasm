@@ -269,4 +269,15 @@ agesSlotCallbackTable_shop150Rupees:
 	ld a,RANDO_SHOP_FLUTE_FLAG
 	jp checkRandoItemFlag
 
+
+agesSlotCallbackTable_kingZora:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
+	ld a,RANDO_KING_ZORA_FLAG
+	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_KING_ZORA_FLAG
+	jp checkRandoItemFlag
+
 .endif
