@@ -2268,15 +2268,12 @@ tokayMakeLinkJump:
 
 ;;
 tokayGiveShieldUpgradeToLink:
-	ld b,$01
-	ld c,$01
-	ld a,(wShieldLevel)
-	cp $02
-	jr c,+
-	inc c
-+
-	call createTreasure
+	; RANDO: Spawn the randomized treasure (and ignore everything about checking the shield
+	; level to determine whether to give iron or mirror shield because it's irrelevant)
+	ld bc,rando.agesSlot_hiddenTokayCave
+	call spawnRandomizedTreasure
 	ret nz
+
 	ld de,w1Link.yh
 	jp objectCopyPosition_rawAddress
 
@@ -2325,6 +2322,14 @@ tokayGame_givePrizeToLink:
 	cp $05
 	jr z,@randomRing
 
+	; RANDO: Added a hardcoded check for the 1st prize which is randomized
+	or a
+	jr nz,@unrandomized
+	ld bc,rando.agesSlot_wildTokayGame
+	call spawnRandomizedTreasure
+	jr @spawnedTreasure
+
+@unrandomized:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_TREASURE
@@ -2338,6 +2343,7 @@ tokayGame_givePrizeToLink:
 	ld a,(bc)
 	ld (hl),a
 
+@spawnedTreasure:
 	ld e,Interaction.counter1
 	ld a,$03
 	ld (de),a
@@ -2362,7 +2368,7 @@ tokayGame_givePrizeToLink:
 
 ; List of prizes for each level of the tokay game. (You'll either get this, or a ring?)
 @prizes:
-	.db TREASURE_SCENT_SEEDLING, $00
+	.db TREASURE_SCENT_SEEDLING, $00 ; RANDO: This is ignored, rando stuff is hardcoded
 	.db TREASURE_RUPEES, $0e
 	.db TREASURE_RUPEES, $0f
 	.db TREASURE_GASHA_SEED, $00

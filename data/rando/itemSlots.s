@@ -1238,6 +1238,52 @@ agesSlot_piratianCaptain:
 	dwbe $05f8
 	.dw $0000
 
+; ==============================================================================
+; Crescent Island & Sea of No Return
+; ==============================================================================
+
+agesSlot_seaOfNoReturn:
+	dwbe TREASURE_OBJECT_RING_27
+	.db  COLLECT_MODE_CHEST
+	dwbe $016d
+	.dw  $0000
+
+agesSlot_wildTokayGame:
+	dwbe TREASURE_OBJECT_SCENT_SEEDLING_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $02de
+	.dw  $0000
+
+agesSlot_tokayPotCave:
+	dwbe TREASURE_OBJECT_RING_1b
+	.db  COLLECT_MODE_CHEST
+	dwbe $05f7
+	.dw  $0000
+
+agesSlot_tokayBombCave:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $02ce
+	.dw  $0000
+
+agesSlot_tokayCrystalCave:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $05ca
+	.dw  $0000
+
+agesSlot_hiddenTokayCave:
+	dwbe TREASURE_OBJECT_SHIELD_01
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $05e9
+	.dw  $0000
+
+agesSlot_underCrescentIsland:
+	dwbe TREASURE_OBJECT_HEART_PIECE_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $03fd
+	.dw  $0000
+
 
 slotsEnd:
 

@@ -4900,11 +4900,12 @@ groups:
       10 Rupees.
         \opt()OK \opt()No thanks
 
+  # RANDO: Substituting item name with special "call" opcode (see "data/rando/text.s").
   - name: TX_0a13
     index: 0x13
     text: |-
       If you want this
-      \col(1)Scent Seedling\col(0),
+      \col(1)\call(0xf1)\col(0),
       \jump(TX_0a12)
     null_terminator: False
 

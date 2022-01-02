@@ -44,7 +44,7 @@ chestGroup0Data:
 	.db $ff
 
 chestGroup1Data:
-	m_ChestData $43, $6d, TREASURE_OBJECT_RING_27
+	m_ChestDataRando $43, $6d, rando.agesSlot_seaOfNoReturn
 	.db $ff
 
 chestGroup2Data:
@@ -52,7 +52,7 @@ chestGroup2Data:
 	m_ChestData $16, $f7, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $45, $be, TREASURE_OBJECT_RING_17
 	m_ChestData $22, $fc, TREASURE_OBJECT_RUPEES_06
-	m_ChestData $15, $ce, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $15, $ce, rando.agesSlot_tokayBombCave
 	m_ChestData $34, $ec, TREASURE_OBJECT_RING_19
 	m_ChestData $34, $f4, TREASURE_OBJECT_RING_19
 	m_ChestDataRando $18, $4f, rando.agesSlot_fishersIslandCave
@@ -65,7 +65,7 @@ chestGroup3Data:
 	m_ChestData $35, $e8, TREASURE_OBJECT_NONE_00
 	m_ChestDataRando $35, $ff, rando.agesSlot_seaOfStormsPast
 	m_ChestDataRando $18, $f9, rando.agesSlot_mayorPlensHouse
-	m_ChestData $34, $fd, TREASURE_OBJECT_HEART_PIECE_01
+	m_ChestDataRando $34, $fd, rando.agesSlot_underCrescentIsland
 	.db $ff
 
 chestGroup4Data:
@@ -178,10 +178,10 @@ chestGroup5Data:
 	m_ChestData $47, $b3, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $57, $cb, TREASURE_OBJECT_RING_1c
 	m_ChestDataRando $43, $c7, rando.agesSlot_zoraNWCave
-	m_ChestData $12, $ca, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $12, $ca, rando.agesSlot_tokayCrystalCave
 	m_ChestData $22, $b8, TREASURE_OBJECT_RING_19
 	m_ChestDataRando $14, $ac, rando.agesSlot_zoraPalaceChest
-	m_ChestData $12, $f7, TREASURE_OBJECT_RING_1b
+	m_ChestDataRando $12, $f7, rando.agesSlot_tokayPotCave
 chestGroup6Data:
 chestGroup7Data:
 	.db $ff

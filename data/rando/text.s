@@ -1,5 +1,9 @@
 ; Text for shops which should be overwritten by the randomizer. In namespace "bank3f".
 ;
+; This works by treating \call() opcodes with a value between 0xf0-0xfb as special cases which will
+; read the corresponding piece of text from here. All text here is uncompressed for easy
+; modification by the randomizer.
+;
 ; Make sure that all of these are 17 characters long (including the null terminator). The randomizer
 ; assumes it has that much space.
 
@@ -45,7 +49,12 @@ randoTextSubstitutionTable:
 
 .else; ROM_AGES
 
+randoText_wildTokayGame:
+	.db "Scent Seedling\0.."
+
+
 randoTextSubstitutionTable:
 	.dw randoText_shop150Rupees ; 0xf0
+	.dw randoText_wildTokayGame ; 0xf1
 
 .endif
