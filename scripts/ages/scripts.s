@@ -4737,7 +4737,7 @@ hardhatWorkerSubid00Script:
 	jumpifroomflagset $20, @alreadyGaveShovel
 	showtextlowindex <TX_1001
 	wait 30
-	giveitem TREASURE_SHOVEL, $00
+	giverandomizeditem rando.agesSlot_blackTowerWorker
 	wait 30
 
 @alreadyGaveShovel:

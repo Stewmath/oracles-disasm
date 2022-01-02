@@ -1093,7 +1093,7 @@ agesSlot_southShoreDirt:
 	.dw  $0000
 
 ; ==============================================================================
-; Lynna City
+; Lynna City / Village
 ; ==============================================================================
 
 agesSlot_makuTree:
@@ -1118,6 +1118,12 @@ agesSlot_lynnaCityChest:
 	dwbe TREASURE_OBJECT_RUPEES_04
 	.db  COLLECT_MODE_CHEST
 	dwbe $0049
+	.dw  $0000
+
+agesSlot_blackTowerWorker:
+	dwbe TREASURE_OBJECT_SHOVEL_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $04e1
 	.dw  $0000
 
 ; ==============================================================================

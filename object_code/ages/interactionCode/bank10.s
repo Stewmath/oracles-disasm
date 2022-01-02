@@ -751,6 +751,13 @@ interactiondc_subid10:
 	call checkLinkVulnerable
 	ret nc
 
+	; RANDO: Add an extra check to ensure that you always enter the initial uncompleted version
+	; of the black tower before you get the item from there.
+	ld a,(wGroup4Flags + <ROOM_AGES_4e1)
+	and ROOMFLAG_ITEM
+	ld hl,@warp1
+	jr z,+
+
 	call getThisRoomFlags
 	and $01
 	ld hl,@warp1

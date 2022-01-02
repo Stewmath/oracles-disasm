@@ -3298,16 +3298,19 @@ hardhatWorkerSubid02Script:
 	wait 30
 
 	orroomflag $40
-	asm15 hardhatWorker_storeLinkVarsSomewhere
-	writememory wGenericCutscene.cbb8, $00
-	writememory wCutsceneTrigger, CUTSCENE_BLACK_TOWER_EXPLANATION
-	scriptend
+
+	; RANDO: Skip the cutscene.
+	;asm15 hardhatWorker_storeLinkVarsSomewhere
+	;writememory wGenericCutscene.cbb8, $00
+	;writememory wCutsceneTrigger, CUTSCENE_BLACK_TOWER_EXPLANATION
+	;scriptend
 
 @cutsceneAftermath:
-	disableinput
-	asm15 turnToFaceLink
-	checkpalettefadedone
-	wait 60
+	; RANDO: Skip the cutscene.
+	;disableinput
+	;asm15 turnToFaceLink
+	;checkpalettefadedone
+	;wait 60
 
 	showtextlowindex <TX_1006
 	asm15 hardhatWorker_moveLinkAway
