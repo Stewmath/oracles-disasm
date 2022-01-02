@@ -1058,6 +1058,10 @@ slotsEnd:
 
 slotsStart:
 
+; ==============================================================================
+; Forest of Time & Southern Shore
+; ==============================================================================
+
 agesSlot_startingItem:
 	dwbe TREASURE_OBJECT_SWORD_00
 	.db  COLLECT_MODE_PICKUP_2HAND
@@ -1070,11 +1074,43 @@ agesSlot_nayrusHouse:
 	dwbe $03ae
 	.dw  $0000
 
+agesSlot_balloonGuysGift:
+	dwbe TREASURE_OBJECT_ISLAND_CHART_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $0079
+	.dw  agesSlotCallbackTable_balloonGuysGift
+
+agesSlot_balloonGuysUpgrade:
+	dwbe TREASURE_OBJECT_SEED_SATCHEL_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $0079
+	.dw  agesSlotCallbackTable_balloonGuysUpgrade
+
+agesSlot_southShoreDirt:
+	dwbe TREASURE_OBJECT_RICKY_GLOVES_00
+	.db  COLLECT_MODE_DIG
+	dwbe $0098
+	.dw  $0000
+
+; ==============================================================================
+; Lynna City
+; ==============================================================================
+
 agesSlot_makuTree:
 	dwbe TREASURE_OBJECT_SEED_SATCHEL_00
 	.db  COLLECT_MODE_FALL
 	dwbe $0038
 	.dw  $0000
+
+agesSlot_shop150Rupees:
+	dwbe TREASURE_OBJECT_FLUTE_00
+	.db  $00
+	dwbe $025e
+	.dw  agesSlotCallbackTable_shop150Rupees
+
+; ==============================================================================
+; Yoll Graveyard
+; ==============================================================================
 
 agesSlot_graveUnderTree:
 	dwbe TREASURE_OBJECT_GRAVEYARD_KEY_00
@@ -1099,30 +1135,6 @@ agesSlot_chevalsInvention:
 	.db  COLLECT_MODE_PICKUP_2HAND
 	dwbe $05b6
 	.dw  $0000
-
-agesSlot_southShoreDirt:
-	dwbe TREASURE_OBJECT_RICKY_GLOVES_00
-	.db  COLLECT_MODE_DIG
-	dwbe $0098
-	.dw  $0000
-
-agesSlot_balloonGuysGift:
-	dwbe TREASURE_OBJECT_ISLAND_CHART_00
-	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
-	dwbe $0079
-	.dw  agesSlotCallbackTable_balloonGuysGift
-
-agesSlot_balloonGuysUpgrade:
-	dwbe TREASURE_OBJECT_SEED_SATCHEL_00
-	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
-	dwbe $0079
-	.dw  agesSlotCallbackTable_balloonGuysUpgrade
-
-agesSlot_shop150Rupees:
-	dwbe TREASURE_OBJECT_FLUTE_00
-	.db  $00
-	dwbe $025e
-	.dw  agesSlotCallbackTable_shop150Rupees
 
 slotsEnd:
 
