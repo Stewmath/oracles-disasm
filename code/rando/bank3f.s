@@ -145,6 +145,7 @@ setStolenFeatherSprite:
 	dbbw INTERACID_MISCELLANEOUS_1,    $0c, rando.agesSlot_chevalsTest
 	dbbw INTERACID_SHOP_ITEM,          $0d, rando.agesSlot_shop150Rupees
 	dbbw INTERACID_DECORATION,         $08, rando.agesSlot_libraryPresent
+	dbbw INTERACID_DECORATION,         $07, rando.agesSlot_libraryPast
 	.db $ff
 
 .endif

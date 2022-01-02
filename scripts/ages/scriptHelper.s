@@ -2808,7 +2808,7 @@ oldManScript_givesFairyPowder:
 	setangleandanimation $10
 	wait 30
 
-	giveitem TREASURE_FAIRY_POWDER, $00
+	giverandomizeditem rando.agesSlot_libraryPast
 	wait 1
 	checktext
 
@@ -8065,7 +8065,7 @@ pirateCaptainScript:
 	asm15 loseTreasure, TREASURE_ZORA_SCALE
 	showtext TX_3606
 	wait 30
-	giveitem TREASURE_OBJECT_TOKAY_EYEBALL_00
+	giverandomizeditem rando.agesSlot_piratianCaptain
 	wait 60
 	asm15 pirateCaptain_warpOut
 	setglobalflag GLOBALFLAG_PIRATES_GONE

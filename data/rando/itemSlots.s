@@ -1210,6 +1210,34 @@ agesSlot_libraryPresent:
 	dwbe $05c8
 	.dw  $0000
 
+; ==============================================================================
+; Zora Seas & Sea of Storms Past
+; ==============================================================================
+
+agesSlot_libraryPast:
+	dwbe TREASURE_OBJECT_FAIRY_POWDER_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $05e4
+	.dw $0000
+
+agesSlot_seaOfStormsPast:
+	dwbe TREASURE_OBJECT_RING_1e
+	.db  COLLECT_MODE_CHEST
+	dwbe $03ff
+	.dw $0000
+
+agesSlot_fishersIslandCave:
+	dwbe TREASURE_OBJECT_RING_22
+	.db  COLLECT_MODE_CHEST
+	dwbe $024f
+	.dw $0000
+
+agesSlot_piratianCaptain:
+	dwbe TREASURE_OBJECT_TOKAY_EYEBALL_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $05f8
+	.dw $0000
+
 
 slotsEnd:
 

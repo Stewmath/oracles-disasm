@@ -2277,7 +2277,9 @@ group3Mape9ObjectData:
 	obj_End
 
 group3MapffObjectData:
-	obj_Interaction $dc $16
+	; RANDO: Remove interaction that messes with chest contents in sea of storms depending on
+	; whether it's a linked or unlinked game.
+	;obj_Interaction $dc $16
 	obj_End
 
 group3Map5eObjectData:
