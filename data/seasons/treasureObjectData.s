@@ -288,6 +288,7 @@ treasureObjectData2c:
 	m_TreasureSubid $02, $02, $58, $34, TREASURE_OBJECT_RING_BOX_03
 	m_TreasureSubid $02, $03, $59, $35, TREASURE_OBJECT_RING_BOX_04
 
+; RANDO: Removed text from all rings since that is shown in the "giveTreasure" function instead.
 treasureObjectData2d:
 	m_BeginTreasureSubids TREASURE_RING
 	m_TreasureSubid $09, $ff, $ff, $0e, TREASURE_OBJECT_RING_00
