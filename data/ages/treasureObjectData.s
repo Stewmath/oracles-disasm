@@ -208,11 +208,13 @@ treasureObjectData0d:
 	m_TreasureSubid $30, $10, $32, $24, TREASURE_OBJECT_BOMBCHUS_01
 	m_TreasureSubid $02, $10, $32, $24, TREASURE_OBJECT_BOMBCHUS_02
 
+; RANDO: Changed graphics and text for flute objects so that they're not all generic "strange
+; flutes".
 treasureObjectData0e:
 	m_BeginTreasureSubids TREASURE_FLUTE
-	m_TreasureSubid $0a, $0b, $3b, $23, TREASURE_OBJECT_FLUTE_00
-	m_TreasureSubid $0a, $0c, $3b, $23, TREASURE_OBJECT_FLUTE_01
-	m_TreasureSubid $0a, $0d, $3b, $23, TREASURE_OBJECT_FLUTE_02
+	m_TreasureSubid $0a, $0b, $38, $6c, TREASURE_OBJECT_FLUTE_00
+	m_TreasureSubid $0a, $0c, $39, $6d, TREASURE_OBJECT_FLUTE_01
+	m_TreasureSubid $0a, $0d, $3a, $6e, TREASURE_OBJECT_FLUTE_02
 
 treasureObjectData11:
 	m_BeginTreasureSubids TREASURE_HARP

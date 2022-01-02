@@ -49,14 +49,16 @@ activateFlute:
 	cp a,TREASURE_FLUTE
 	ret nz
 
-.ifdef ROM_SEASONS
 	ld e,<wFluteIcon
 	ld a,c
 	sub $0a ; get animal index item parameter
 	ld (de),a
-	add <wRickyState - 1
-	ld h,>wRickyState
+
+	add <wCompanionStates - 1
+	ld h,>wCompanionStates
 	ld l,a ; hl = flags for relevant animal
+
+.ifdef ROM_SEASONS
 	cp <wMooshState
 	jr nz,@notMoosh
 
@@ -69,8 +71,12 @@ activateFlute:
 @done:
 	ret
 
-.else
-	; RANDO-TODO: Ages
+.else ; ROM_AGES
+	; Set bits for the companion's state (wRickyState / wDimitriState / wMooshState):
+	; - 7: You have their flute
+	; - 6: They disappear from their designated "event" area (ie. ricky helping with tingle)
+	; - 1/0: Animal-dependant?
+	ld (hl),$c3
 	ret
 .endif
 

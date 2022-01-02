@@ -369,9 +369,14 @@ interactiond7SubidData:
 	m_InteractionData $7e $06 $03
 	m_InteractionData $7e $0e $33
 	m_InteractionData $7e $16 $13
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
-	m_InteractionData $00 $00 $00
+
+	; RANDO: Using these formerly unused slots for flute graphics. The original game has all
+	; flutes using the generic green palette and does some weird trickery to change the color
+	; when needed; this simplifies things by creating distinct graphics for each flute type.
+	m_InteractionData $7c $16 $33 ; $6c: Ricky's flute
+	m_InteractionData $7c $16 $23 ; $6d: Dimitri's flute
+	m_InteractionData $7c $16 $13 ; $6e: Moosh's flute
+
 	m_InteractionData $00 $00 $00
 	m_InteractionData $80 $00 $53
 	m_InteractionData $80 $04 $22
