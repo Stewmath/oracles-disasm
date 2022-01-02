@@ -7375,7 +7375,7 @@ kingMoblinDefeated_goron3:
 	wait 60
 
 	showtext TX_3128
-	giveitem TREASURE_BOMB_FLOWER, $00
+	giverandomizeditem rando.agesSlot_defeatGreatMoblin
 	wait 30
 
 	showtext TX_3129
@@ -7789,45 +7789,10 @@ makuSprout_subid01Script:
 ; INTERACID_REMOTE_MAKU_CUTSCENE
 ; ==============================================================================
 remoteMakuCutsceneScript:
-	disableinput
-	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
-	setmusic MUS_MAKU_TREE
-	wait 40
-
-	writememory wDontUpdateStatusBar, $77
-	asm15 hideStatusBar
-	asm15 scriptHelp.remoteMakuCutscene_fadeoutToBlackWithDelay, $02
-	checkpalettefadedone
-
-	jumpifobjectbyteeq Interaction.subid, $01, @past
-
-@present:
-	spawninteraction INTERACID_MAKU_CONFETTI, $00, $00, $00
-	wait 240
-	wait 180
-	scriptjump ++
-@past:
-	spawninteraction INTERACID_MAKU_CONFETTI, $01, $00, $00
-	wait 240
-	wait 60
-++
-	asm15 scriptHelp.makuTree_showTextWithOffsetAndUpdateMapText, $00
-	wait 1
-	asm15 showStatusBar
-	asm15 clearFadingPalettes
-	asm15 scriptHelp.remoteMakuCutscene_checkinitUnderwaterWaves
-	asm15 fadeinFromWhiteWithDelay, $02
-	checkpalettefadedone
-
-	resetmusic
+	; RANDO: Deleted all the code relating to cutscenes after dungeons. This stub effectively
+	; disables all maku tree cutscenes after dungeons and moblin keep / bomb flower cutscene.
 	orroomflag $40
-	asm15 incMakuTreeState
-	jumpifobjectbyteeq Interaction.var03, $07, @spawnGoronAfterCrownDungeon
 	enableinput
-	scriptend
-
-@spawnGoronAfterCrownDungeon:
-	spawninteraction INTERACID_GORON, $03, $58, $a8
 	scriptend
 
 

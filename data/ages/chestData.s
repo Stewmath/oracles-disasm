@@ -50,7 +50,7 @@ chestGroup1Data:
 chestGroup2Data:
 	m_ChestData $14, $f7, TREASURE_OBJECT_RING_11
 	m_ChestData $16, $f7, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $45, $be, TREASURE_OBJECT_RING_17
+	m_ChestDataRando $45, $be, rando.agesSlot_underMoblinKeep
 	m_ChestData $22, $fc, TREASURE_OBJECT_RUPEES_06
 	m_ChestDataRando $15, $ce, rando.agesSlot_tokayBombCave
 	m_ChestDataRando $34, $ec, rando.agesSlot_nuunHighlandsCave
@@ -167,11 +167,11 @@ chestGroup5Data:
 	m_ChestData $37, $a6, TREASURE_OBJECT_BRACELET_02
 	m_ChestData $27, $91, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestDataRando $15, $b5, rando.agesSlot_dekuForestCaveWest
-	m_ChestData $74, $bd, TREASURE_OBJECT_RING_16
-	m_ChestData $47, $b9, TREASURE_OBJECT_RUPEES_05
+	m_ChestDataRando $74, $bd, rando.agesSlot_goronsHidingPlace
+	m_ChestDataRando $47, $b9, rando.agesSlot_ridgeBaseChest
 	m_ChestData $15, $ee, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $15, $dd, TREASURE_OBJECT_BOMBS_00
-	m_ChestData $81, $c0, TREASURE_OBJECT_RUPEES_04
+	m_ChestDataRando $81, $c0, rando.agesSlot_ridgeWestCave
 	m_ChestData $24, $c0, TREASURE_OBJECT_RUPEES_04
 	m_ChestData $83, $e1, TREASURE_OBJECT_RUPEES_05
 	m_ChestData $22, $e0, TREASURE_OBJECT_GASHA_SEED_01

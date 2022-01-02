@@ -106,8 +106,6 @@ randoInitializeFile:
 
 	; room flag 6
 	ld a,$40
-	ld (wPresentRoomFlags + <ROOM_AGES_003),a ; d4 entrance (present)
-	ld (wPresentRoomFlags + <ROOM_AGES_00a),a ; d5 entrance
 	ld (wPresentRoomFlags + <ROOM_AGES_02e),a ; inside graveyard poe's grave
 	ld (wPresentRoomFlags + <ROOM_AGES_03a),a ; nayru's house
 	ld (wPresentRoomFlags + <ROOM_AGES_059),a ; triangle stone
@@ -115,17 +113,13 @@ randoInitializeFile:
 	ld (wPresentRoomFlags + <ROOM_AGES_07a),a ; start
 	ld (wPresentRoomFlags + <ROOM_AGES_07b),a ; graveyard kids
 	ld (wPresentRoomFlags + <ROOM_AGES_07c),a ; graveyard poe
-	ld (wPresentRoomFlags + <ROOM_AGES_08d),a ; d1 entrance
-	ld (wPresentRoomFlags + <ROOM_AGES_090),a ; d7 entrance
-	ld (wPresentRoomFlags + <ROOM_AGES_0ba),a ; d3 entrance
-	ld (wPastRoomFlags    + <ROOM_AGES_10f),a ; d6 entrance (past)
 	ld (wPastRoomFlags    + <ROOM_AGES_120),a ; ralph encounter on talus peaks
-	ld (wPastRoomFlags    + <ROOM_AGES_15c),a ; d8 entrance
-	ld (wPastRoomFlags    + <ROOM_AGES_183),a ; d2 entrance (past)
 	ld (wPastRoomFlags    + <ROOM_AGES_197),a ; ralph encounter near rafton
 	ld (wPastRoomFlags    + <ROOM_AGES_1f6),a ; top of black tower, south of stairs
 	ld (wPastRoomFlags    + <ROOM_AGES_1aa),a ; tokays mugging Link
 	ld (wPastRoomFlags    + <ROOM_AGES_1a8),a ; "raftwreck" cutscene
+	; Note: Used to disable maku tree cutscenes here, but that's done by modifying the script
+	; instead ("remoteMakuCutsceneScript").
 
 	; room flag 5
 	ld a,$20

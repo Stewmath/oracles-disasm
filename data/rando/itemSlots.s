@@ -1211,6 +1211,40 @@ agesSlot_talusPeaksChest:
 	.dw  $0000
 
 ; ==============================================================================
+; Rolling Ridge West (D6 area)
+; ==============================================================================
+
+agesSlot_defeatGreatMoblin:
+	dwbe TREASURE_OBJECT_BOMB_FLOWER_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $0009
+	.dw  $0000
+
+agesSlot_underMoblinKeep:
+	dwbe TREASURE_OBJECT_RING_17
+	.db  COLLECT_MODE_CHEST
+	dwbe $02be
+	.dw  $0000
+
+agesSlot_ridgeBaseChest:
+	dwbe TREASURE_OBJECT_RUPEES_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $05b9
+	.dw  $0000
+
+agesSlot_goronsHidingPlace:
+	dwbe TREASURE_OBJECT_RING_16
+	.db  COLLECT_MODE_CHEST
+	dwbe $05bd
+	.dw  $0000
+
+agesSlot_ridgeWestCave:
+	dwbe TREASURE_OBJECT_RUPEES_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $05c0
+	.dw  $0000
+
+; ==============================================================================
 ; Zora Seas Present
 ; ==============================================================================
 

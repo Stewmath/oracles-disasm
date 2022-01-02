@@ -104,6 +104,6 @@ applyRandoTileChanges:
 	.db $ff
 
 .else
-	; RANDO-TODO: Ages might have a few of these
+	.db $05, $bc, $10, $7e, $31 ; goron's hiding place (make wall visibly bombable)
 	.db $ff
 .endif
