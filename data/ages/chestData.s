@@ -166,7 +166,7 @@ chestGroup5Data:
 	m_ChestData $6d, $a7, TREASURE_OBJECT_SMALL_KEY_03
 	m_ChestData $37, $a6, TREASURE_OBJECT_BRACELET_02
 	m_ChestData $27, $91, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $15, $b5, TREASURE_OBJECT_RUPEES_04
+	m_ChestDataRando $15, $b5, rando.agesSlot_dekuForestCaveWest
 	m_ChestData $74, $bd, TREASURE_OBJECT_RING_16
 	m_ChestData $47, $b9, TREASURE_OBJECT_RUPEES_05
 	m_ChestData $15, $ee, TREASURE_OBJECT_GASHA_SEED_01
@@ -175,7 +175,7 @@ chestGroup5Data:
 	m_ChestData $24, $c0, TREASURE_OBJECT_RUPEES_04
 	m_ChestData $83, $e1, TREASURE_OBJECT_RUPEES_05
 	m_ChestData $22, $e0, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $47, $b3, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $47, $b3, rando.agesSlot_dekuForestCaveEast
 	m_ChestData $57, $cb, TREASURE_OBJECT_RING_1c
 	m_ChestDataRando $43, $c7, rando.agesSlot_zoraNWCave
 	m_ChestDataRando $12, $ca, rando.agesSlot_tokayCrystalCave

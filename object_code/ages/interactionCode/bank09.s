@@ -717,6 +717,8 @@ soldierSubid08:
 
 
 ; Red soldier that brings you to Ambi (escorts you from deku forest)
+; RANDO: This has been completely overhauled to behave as an NPC who you talk to in order to get the
+; item, bypassing the cutscene. (Most changes are in the script though.)
 soldierSubid0a:
 	call checkInteractionState
 	jr nz,@state1
@@ -725,19 +727,13 @@ soldierSubid0a:
 	call soldierInitGraphicsAndLoadScript
 	ld l,Interaction.oamFlags
 	ld (hl),$02
-	ld bc,$68f0
-	jp interactionSetPosition
+	call objectSetVisible82
+
+	; Fall through
 
 @state1:
 	call soldierUpdateAnimationAndRunScript
-	ret nc
-	ld hl,wcc05
-	set 1,(hl)
-	ld hl,@warpDest
-	jp setWarpDestVariables
-
-@warpDest:
-	m_HardcodedWarpA ROOM_AGES_146, $00, $34, $03
+	jp interactionPushLinkAwayAndUpdateDrawPriority
 
 
 ; Red soldier that brings you to Ambi (just standing there after taking you)

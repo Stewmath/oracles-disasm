@@ -1823,6 +1823,9 @@ group1Map80ObjectData:
 
 group1Map81ObjectData:
 	obj_Interaction $ce $03 $38 $18
+
+	; RANDO: Added the red soldier who does the mystery seed exchange as an NPC
+	obj_Interaction $40 $0a $48 $38
 	obj_End
 
 group1Map82ObjectData:

@@ -22124,3 +22124,26 @@ groups:
       I never thought
       I'd actually get
       get to you!
+
+  # RANDO: Added text for the red soldier who does the mystery seed exchange
+  - name: TX_59_DONT_HAVE_MYSTERY_SEEDS
+    index: auto
+    text: >-
+      \col(3)Queen Ambi\col(0) desires \col(1)Mystery Seeds\col(0). If you find any, bring
+      them to me.
+
+  - name: TX_59_GOT_MYSTERY_SEEDS
+    index: auto
+    text: >-
+      Those are the \col(1)Mystery Seeds\col(0) \col(3)Queen Ambi\col(0) has been demanding! Nice
+      work, kid! Take this in exchange.
+
+  - name: TX_59_ALREADY_EXCHANGED_MYSTERY_SEEDS
+    index: auto
+    text: >-
+      \col(3)Queen Ambi\col(0) will be most pleased!
+
+  - name: TX_59_LINK_FALLING_INTO_HOLE
+    index: auto
+    text: >-
+      Hey kid, watch your step!

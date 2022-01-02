@@ -2159,27 +2159,45 @@ soldierSubid02Script:
 
 
 ; Red soldier that brings you to Ambi (escorts you from deku forest)
+; RANDO: This has been completely overhauled to behave like a normal NPC. Talk to him to perform the
+; exchange.
 soldierSubid0aScript:
-	checkmemoryeq w1Link.yh, $2a
-	asm15 objectSetVisible82
-	asm15 dropLinkHeldItem
-	writememory wDisabledObjects, $01
-	disablemenu
-	wait 30
-	setspeed SPEED_0c0
-	moveright $4b
-	wait 6
-	setanimation $00
-	wait 20
-	asm15 createExclamationMark, $28
-	wait 60
-	setspeed SPEED_180
-	moveup $1e
-	wait 30
-	showtext TX_590b
-	wait 30
-	orroomflag $40
-	scriptend
+	initcollisions
+
+@npcLoop:
+	setanimation $03 ; Face left
+	checkabutton
+	asm15 tokayTurnToFaceLink ; Use this instead of "turntofacelink" so that the angle gets set
+
+	; If facing right, that means the player tried to talk to the soldier at the same time as
+	; they're falling into a hole. This could break logic, so let's prevent it from working.
+	jumpifobjectbyteeq Interaction.angle, ANGLE_RIGHT, @exploitPrevention
+
+	jumpifroomflagset ROOMFLAG_ITEM, @alreadyGaveItem
+	jumpifitemobtained TREASURE_MYSTERY_SEEDS, @checkSeedCount
+	scriptjump @dontHaveMysterySeeds
+
+@checkSeedCount:
+	jumpifmemoryeq wNumMysterySeeds, $00, @dontHaveMysterySeeds
+
+	; Doing the exchange
+	showtext TX_59_GOT_MYSTERY_SEEDS
+	writememory wNumMysterySeeds, $00
+	asm15 scriptHelp.soldierGiveMysterySeeds ; Actually just refreshes the displayed count
+	giverandomizeditem rando.agesSlot_dekuForestSoldier
+	scriptjump @npcLoop
+
+@exploitPrevention:
+	showtext TX_59_LINK_FALLING_INTO_HOLE
+	scriptjump @npcLoop
+
+@dontHaveMysterySeeds:
+	showtext TX_59_DONT_HAVE_MYSTERY_SEEDS
+	scriptjump @npcLoop
+
+@alreadyGaveItem:
+	showtext TX_59_ALREADY_EXCHANGED_MYSTERY_SEEDS
+	scriptjump @npcLoop
 
 
 ; ==============================================================================

@@ -98,21 +98,9 @@ roomSpecificCode2:
 
 ;;
 roomSpecificCode3:
-	call getThisRoomFlags
-	bit 6,a
-	ret nz
-	ld a,TREASURE_MYSTERY_SEEDS
-	call checkTreasureObtained
-	ret nc
-	ld hl,wcc05
-	res 1,(hl)
-	call getFreeInteractionSlot
-	ret nz
-	ld (hl),$40
-	inc l
-	ld (hl),$0a
-	ld a,$01
-	ld (wDiggingUpEnemiesForbidden),a
+	; RANDO: Deleted all of the code that spawns the red soldier to start the ambi's palace
+	; cutscene. Instead, the soldier behaves like a normal NPC who you can talk to to trade your
+	; seeds.
 	ret
 
 ;;

@@ -1155,13 +1155,31 @@ agesSlot_chevalsInvention:
 	.dw  $0000
 
 ; ==============================================================================
-; Fairies' Woods
+; Fairies' Woods & Deku Forest
 ; ==============================================================================
 
 agesSlot_fairiesWoodsChest:
 	dwbe TREASURE_OBJECT_RUPEES_05
 	.db  COLLECT_MODE_CHEST
 	dwbe $0084
+	.dw  $0000
+
+agesSlot_dekuForestSoldier:
+	dwbe TREASURE_OBJECT_BOMBS_02
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $0181
+	.dw  $0000
+
+agesSlot_dekuForestCaveWest:
+	dwbe TREASURE_OBJECT_RUPEES_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $05b5
+	.dw  $0000
+
+agesSlot_dekuForestCaveEast:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $05b3
 	.dw  $0000
 
 ; ==============================================================================
