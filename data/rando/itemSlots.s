@@ -1148,6 +1148,17 @@ agesSlot_chevalsInvention:
 	dwbe $05b6
 	.dw  $0000
 
+; ==============================================================================
+; Fairies' Woods
+; ==============================================================================
+
+agesSlot_fairiesWoodsChest:
+	dwbe TREASURE_OBJECT_RUPEES_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $0084
+	.dw  $0000
+
+
 slotsEnd:
 
 .endif

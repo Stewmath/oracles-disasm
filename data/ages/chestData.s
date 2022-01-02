@@ -36,7 +36,7 @@ chestDataGroupTable:
 chestGroup0Data:
 	m_ChestData $49, $51, TREASURE_OBJECT_RUPEES_04
 	m_ChestDataRando $51, $49, rando.agesSlot_lynnaCityChest
-	m_ChestData $36, $84, TREASURE_OBJECT_RUPEES_05
+	m_ChestDataRando $36, $84, rando.agesSlot_fairiesWoodsChest
 	m_ChestData $35, $91, TREASURE_OBJECT_RING_21
 	m_ChestData $25, $d4, TREASURE_OBJECT_RING_23
 	m_ChestData $25, $d5, TREASURE_OBJECT_RING_25
