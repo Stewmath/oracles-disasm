@@ -278,7 +278,7 @@ playCompassSoundIfKeyInRoom_override:
 
 
 ; If in room X, check room Y for item slot data. Use this when an item slot can occupy multiple
-; rooms.
+; rooms. This is used for checking compass chimes.
 @roomSubstitutionTable:
 
 .ifdef ROM_SEASONS
@@ -297,8 +297,12 @@ playCompassSoundIfKeyInRoom_override:
 
 	;dwbe $052c, $0405 ; Linked variant of d0 rupee chest (idk what I'll do with this yet)
 	.db $ff
-.else
-	; RANDO-TODO: Ages may have a few of these
+.else; ROM_AGES
+	dwbe $036f, $036e ; Symmetry city brothers
+
+	dwbe $02ec, $02f4 ; Nuun highlands cave (ricky)
+	dwbe $05b8, $02f4 ; Nuun highlands cave (dimitri)
+
 	.db $ff
 .endif
 

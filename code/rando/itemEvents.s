@@ -280,4 +280,15 @@ agesSlotCallbackTable_kingZora:
 	ld a,RANDO_KING_ZORA_FLAG
 	jp checkRandoItemFlag
 
+
+agesSlotCallbackTable_symmetryCityBrother:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
+	ld a,RANDO_SYMMETRY_BROTHER_FLAG
+	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_SYMMETRY_BROTHER_FLAG
+	jp checkRandoItemFlag
+
 .endif

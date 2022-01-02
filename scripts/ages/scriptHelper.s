@@ -7502,75 +7502,15 @@ tokkayScript_justHeardTune_body:
 	wait 60
 
 	showtextlowindex <TX_2c02
-	setmusic SNDCTRL_STOPMUSIC
-	setspeed SPEED_100
-	moveright $10
 
-	asm15 tokkey_jump
-	movedown $0a
+	; RANDO: Deleted Tokkey's entire dance
 
-	setmusic MUS_CRAZY_DANCE
-	wait 125
-
-	setstate $02
-	xorcfc0bit 1
-	setspeed SPEED_180
-	moveleft $10
-	wait 15
-
-	callscript mainScripts.tokkeyScriptFunc_runAcrossDesk
-	callscript mainScripts.tokkeyScriptFunc_runAcrossDesk
-
-	setstate $04 ; Stop movement animation
-	wait 120
-
-	xorcfc0bit 1
-	setstate $02 ; Resume animation
-	moveright $10
-
-	setanimation $02
-	xorcfc0bit 1
-	wait 70
-
-	setstate $03 ; Faster animation
-	moveright $10
-	setanimation $02
-	wait 15
-
-	callscript mainScripts.tokkeyScriptFunc_hopAcrossDesk
-	callscript mainScripts.tokkeyScriptFunc_hopAcrossDesk
-
-	moveleft $10
-
-	setanimation $02
-	wait 90
-
-	playsound SNDCTRL_STOPMUSIC
-	playsound SND_BIG_EXPLOSION
-	xorcfc0bit 1
-	setstate $02
-	setspeed SPEED_100
-	asm15 tokkey_jump
-	movedown $18
-
-	setanimation $03
-	asm15 tokkey_centerLinkOnTile
-	wait 90
-
-	showtextlowindex <TX_2c03
-	wait 60
-
-	asm15 tokkey_makeLinkPlayTuneOfCurrents
-	checkcfc0bit 7 ; Wait for Link to finish
-	wait 60
-
-	playsound SNDCTRL_STOPSFX
-	giveitem TREASURE_OBJECT_TUNE_OF_CURRENTS_00
+	giverandomizeditem rando.agesSlot_tokkeysComposition
 	xorcfc0bit 0
 	orroomflag $40
 	enableinput
-	resetmusic
-	setcollisionradii $06, $06
+	;resetmusic
+	;setcollisionradii $06, $06
 	setstate $01
 	scriptjump mainScripts.tokkeyScript_alreadyTaughtTune
 
@@ -7805,16 +7745,24 @@ vire_activateMusic:
 ;   - 0: If haven't got tuni nut yet
 ;   - 1: If tuni nut isn't repaired yet
 ;   - 2: If tuni nut is repaired
+; RANDO: The implementation of this has been changed so that "0" is returned iff you haven't gotten
+; the item from the symmetry brothers (whatever that may be). Values "1" and "2" otherwise behave
+; the same as before.
 symmetryNpc_getTuniNutState:
+	ld a,RANDO_SYMMETRY_BROTHER_FLAG
+	call checkRandoItemFlag
+	ld b,$00
+	jr nc,@setValue
+
 	ld a,TREASURE_TUNI_NUT
 	call checkTreasureObtained
-	ld b,$00
-	jr nc,++
-	inc b
+	ld b,$01
+	jr nc,@setValue
 	or a
-	jr z,++
+	jr z,@setValue
 	inc b
-++
+
+@setValue:
 	ld a,b
 	ld (wTmpcfc0.genericCutscene.cfc1),a
 	ret
@@ -7878,6 +7826,12 @@ symmetryNpc_getUpgradeCapacityForText:
 
 ; Sisters in the tuni nut building
 symmetryNpcSubid8And9Script:
+	; RANDO: Add a check here to ensure that if the tuni nut has been placed (or the game has
+	; been finished), you can still talk to the sisters to begin the sequence to get the item
+	; from the brothers.
+	jumpifitemobtained RANDO_SYMMETRY_BROTHER_FLAG, +
+	scriptjump @loop
++
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @postgame
 	incstate ; [state] = 2
 	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, mainScripts.symmetryNpcSubid8And9Script_afterTuniNutRestored
@@ -7996,7 +7950,14 @@ symmetryNpcSubid6And7Script:
 	rungenericnpclowindex <TX_2d0b
 
 @talkedToSisters:
+	; RANDO: Add a check here to ensure that if the tuni nut has been placed, you can still talk
+	; to the brothers to get their item.
+	jumpifitemobtained RANDO_SYMMETRY_BROTHER_FLAG, +
+	scriptjump @tuniNutNotPlaced
++
 	jumpifglobalflagset GLOBALFLAG_TUNI_NUT_PLACED, @tuniNutPlaced
+
+@tuniNutNotPlaced:
 	jumpifroomflagset ROOMFLAG_40, @brotherWithoutTuniNut
 	jumpifglobalflagset GLOBALFLAG_TALKED_TO_SYMMETRY_BROTHER, @brotherWithTuniNut
 
@@ -8004,7 +7965,7 @@ symmetryNpcSubid6And7Script:
 	; Tells you to see his brother to get the tuni nut
 	orroomflag ROOMFLAG_40
 	setglobalflag GLOBALFLAG_TALKED_TO_SYMMETRY_BROTHER
-	jumpifitemobtained TREASURE_TUNI_NUT, ++
+	jumpifitemobtained RANDO_SYMMETRY_BROTHER_FLAG, ++
 	rungenericnpclowindex <TX_2d00
 ++
 	rungenericnpclowindex <TX_2d01
@@ -8026,9 +7987,9 @@ symmetryNpcSubid6And7Script:
 	initcollisions
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex <TX_2d02
+	;showtextlowindex <TX_2d02 ; RANDO: Disable this textbox
 	disableinput
-	wait 30
+	;wait 30
 	showtextlowindex <TX_2d04
 	scriptjump @respondToQuestion
 
@@ -8046,7 +8007,7 @@ symmetryNpcSubid6And7Script:
 @giveTuniNut:
 	showtextlowindex <TX_2d05
 	wait 30
-	giveitem TREASURE_OBJECT_TUNI_NUT_00
+	giverandomizeditem rando.agesSlot_symmetryCityBrother
 	enableinput
 	scriptjump @nutNotRepaired
 

@@ -1183,6 +1183,34 @@ agesSlot_dekuForestCaveEast:
 	.dw  $0000
 
 ; ==============================================================================
+; Symmetry City, Nuun, Talus Peaks
+; ==============================================================================
+
+agesSlot_symmetryCityBrother:
+	dwbe TREASURE_OBJECT_TUNI_NUT_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $036e
+	.dw  agesSlotCallbackTable_symmetryCityBrother
+
+agesSlot_nuunHighlandsCave:
+	dwbe TREASURE_OBJECT_RING_19
+	.db  COLLECT_MODE_CHEST
+	dwbe $02f4
+	.dw  $0000
+
+agesSlot_tokkeysComposition:
+	dwbe TREASURE_OBJECT_TUNE_OF_ECHOES_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $038f
+	.dw  $0000
+
+agesSlot_talusPeaksChest:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0063
+	.dw  $0000
+
+; ==============================================================================
 ; Zora Seas Present
 ; ==============================================================================
 
