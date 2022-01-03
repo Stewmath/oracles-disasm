@@ -126,7 +126,7 @@ treasureObjectData:
 	/* $41 */ m_TreasurePointer treasureObjectData41
 	/* $42 */ m_TreasureSubid   $29, $00, $23, $44, TREASURE_OBJECT_GRAVEYARD_KEY_00
 	/* $43 */ m_TreasureSubid   $09, $00, $3d, $45, TREASURE_OBJECT_CROWN_KEY_00
-	/* $44 */ m_TreasureSubid   $09, $00, $42, $46, TREASURE_OBJECT_OLD_MERMAID_KEY_00
+	/* $44 */ m_TreasureSubid   $09, $00, $42, $46, TREASURE_OBJECT_MERMAID_KEY_00
 	/* $45 */ m_TreasurePointer treasureObjectData45
 	/* $46 */ m_TreasureSubid   $02, $00, $44, $48, TREASURE_OBJECT_LIBRARY_KEY_00
 	/* $47 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_47_00
@@ -403,9 +403,9 @@ treasureObjectData41:
 	m_TreasureSubid $0a, $0b, $65, $7b, TREASURE_OBJECT_TRADEITEM_0b
 
 treasureObjectData45:
-	m_BeginTreasureSubids TREASURE_MERMAID_KEY
-	m_TreasureSubid $09, $00, $43, $47, TREASURE_OBJECT_MERMAID_KEY_00
-	m_TreasureSubid $19, $00, $43, $47, TREASURE_OBJECT_MERMAID_KEY_01
+	m_BeginTreasureSubids TREASURE_OLD_MERMAID_KEY
+	m_TreasureSubid $09, $00, $43, $47, TREASURE_OBJECT_OLD_MERMAID_KEY_00
+	m_TreasureSubid $19, $00, $43, $47, TREASURE_OBJECT_OLD_MERMAID_KEY_01
 
 treasureObjectData49:
 	m_BeginTreasureSubids TREASURE_BOMB_FLOWER

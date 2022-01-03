@@ -5165,7 +5165,7 @@ _goron_subid00_npcLoop:
 
 @past:
 	; Only check these in the past
-	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @danceForGenericItem
+	jumpifitemobtained TREASURE_MERMAID_KEY, @danceForGenericItem
 	jumpifitemobtained TREASURE_GORON_LETTER, @danceForOldMermaidKey
 
 @present:
@@ -5243,7 +5243,7 @@ _goronDance_begin:
 
 @past:
 	; Only check these in the past
-	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @selectDifficulty
+	jumpifitemobtained TREASURE_MERMAID_KEY, @selectDifficulty
 	jumpifitemobtained TREASURE_GORON_LETTER, @lowestDanceLevel
 
 @present:
@@ -5428,7 +5428,7 @@ goronDanceScript_givePrize:
 
 @past:
 	; Only check these in the past
-	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @giveGenericPrize
+	jumpifitemobtained TREASURE_MERMAID_KEY, @giveGenericPrize
 	jumpifitemobtained TREASURE_GORON_LETTER, @giveOldMermaidKey
 
 @present:
@@ -5449,7 +5449,7 @@ goronDanceScript_givePrize:
 @giveOldMermaidKey:
 	showtext TX_241a
 	wait 30
-	giveitem TREASURE_OBJECT_OLD_MERMAID_KEY_00
+	giveitem TREASURE_OBJECT_MERMAID_KEY_00
 	wait 30
 	showtext TX_241b
 	wait 30
@@ -6505,7 +6505,7 @@ _goron_bigBang_givePrize:
 	.dw @quicksandRing
 
 @mermaidKey:
-	giveitem TREASURE_MERMAID_KEY, $00
+	giveitem TREASURE_OLD_MERMAID_KEY, $00
 	retscript
 
 @hundredRupees:

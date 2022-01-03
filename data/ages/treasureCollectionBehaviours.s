@@ -373,12 +373,12 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_OLD_MERMAID_KEY (0x44)
+	; TREASURE_MERMAID_KEY (0x44)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_MERMAID_KEY (0x45)
+	; TREASURE_OLD_MERMAID_KEY (0x45)
 	.db $00
 	.db $00
 	.db SND_GETITEM

@@ -4635,12 +4635,12 @@ goron_bigBang_spawnPrize:
 	.db $02 $02 $02 $02 $02 $03 $03 $04
 
 @prizes:
-	.db TREASURE_MERMAID_KEY, $01
-	.db TREASURE_RUPEES,      $12
-	.db TREASURE_RUPEES,      $13
-	.db TREASURE_GASHA_SEED,  $06
-	.db TREASURE_RING,        $12
-	.db TREASURE_RING,        $13
+	.db TREASURE_OLD_MERMAID_KEY, $01
+	.db TREASURE_RUPEES,          $12
+	.db TREASURE_RUPEES,          $13
+	.db TREASURE_GASHA_SEED,      $06
+	.db TREASURE_RING,            $12
+	.db TREASURE_RING,            $13
 
 
 ;;
@@ -4896,7 +4896,7 @@ goron_checkGracefulGoronQuestStatus:
 	ld a,TREASURE_LAVA_JUICE
 	call checkTreasureObtained
 	jr nc,@noLavaJuice
-	ld a,TREASURE_MERMAID_KEY
+	ld a,TREASURE_OLD_MERMAID_KEY
 	call checkTreasureObtained
 	jr nc,@noMermaidKey
 
@@ -4979,9 +4979,9 @@ goron_showTextForClairvoyantGoron:
 	jp showText
 
 @treasures:
-	.db TREASURE_OLD_MERMAID_KEY
-	.db TREASURE_GORON_LETTER
 	.db TREASURE_MERMAID_KEY
+	.db TREASURE_GORON_LETTER
+	.db TREASURE_OLD_MERMAID_KEY
 	.db TREASURE_GORONADE
 	.db TREASURE_GORON_VASE
 	.db TREASURE_ROCK_BRISKET
