@@ -1644,8 +1644,10 @@ group1Map46ObjectData:
 	obj_Interaction $6b $02 $38 $50
 	obj_Interaction $40 $02 $28 $48
 	obj_Interaction $40 $09 $28 $58
-	obj_Interaction $37 $09 $48 $48
-	obj_Interaction $40 $0b $38 $38
+
+	; RANDO: Remove ralph & the red guard from outside ambi's palace
+	;obj_Interaction $37 $09 $48 $48
+	;obj_Interaction $40 $0b $38 $38
 	obj_End
 
 group1Map47ObjectData:

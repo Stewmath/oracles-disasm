@@ -843,14 +843,9 @@ linkExitPalaceSimulatedInput
 ;;
 ; @param[out]	cflag	nc if dungeon 6 is beaten (can enter the palace)
 soldierCheckBeatD6:
-	ld a,TREASURE_ESSENCE
-	call checkTreasureObtained
-	jr nc,++
-	call getHighestSetBit
-	cp $05
-	ret
-++
-	scf
+	; RANDO: This always returns "nc" (d6 beaten). This leaves the palace open immediately, but
+	; also has the fortunate side-effect of disabling a lot of cutscenes related to the palace.
+	or a
 	ret
 
 soldierScriptTable:
