@@ -1476,6 +1476,16 @@ agesSlot_underCrescentIsland:
 	dwbe $03fd
 	.dw  $0000
 
+; ==============================================================================
+; Ambi's Palace
+; ==============================================================================
+
+agesSlot_ambisPalaceChest:
+	dwbe TREASURE_OBJECT_RING_1c
+	.db  COLLECT_MODE_CHEST
+	dwbe $05cb
+	.dw  $0000
+
 
 slotsEnd:
 

@@ -176,7 +176,7 @@ chestGroup5Data:
 	m_ChestDataRando $83, $e1, rando.agesSlot_ridgeDiamondsPast
 	m_ChestDataRando $22, $e0, rando.agesSlot_ridgeBasePast
 	m_ChestDataRando $47, $b3, rando.agesSlot_dekuForestCaveEast
-	m_ChestData $57, $cb, TREASURE_OBJECT_RING_1c
+	m_ChestDataRando $57, $cb, rando.agesSlot_ambisPalaceChest
 	m_ChestDataRando $43, $c7, rando.agesSlot_zoraNWCave
 	m_ChestDataRando $12, $ca, rando.agesSlot_tokayCrystalCave
 	m_ChestDataRando $22, $b8, rando.agesSlot_nuunHighlandsCave
