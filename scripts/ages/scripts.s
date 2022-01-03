@@ -5687,10 +5687,16 @@ goron_notNappingLoop:
 
 ; Goron who's trying to break the elder out of rock (one on the left)
 goron_subid06Script_A:
+	; RANDO: Don't delete npc before goron elder has been saved
+	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @elderSaved
+	scriptjump @notDisappeared
+
+@elderSaved:
 	; Delete self if beaten d5
 	asm15 scriptHelp.checkEssenceObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 
+@notDisappeared:
 	initcollisions
 	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @alreadySavedElder
 
@@ -5744,10 +5750,16 @@ goron_subid06Script_A:
 
 ; Goron who's trying to break the elder out of rock (one on the right)
 goron_subid06Script_B:
+	; RANDO: Don't delete npc before goron elder has been saved
+	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @elderSaved
+	scriptjump @notDisappeared
+
+@elderSaved:
 	; Delete self if beaten d5
 	asm15 scriptHelp.checkEssenceObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, stubScript
 
+@notDisappeared:
 	initcollisions
 	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @alreadySavedElder
 

@@ -1244,6 +1244,12 @@ agesSlot_ridgeWestCave:
 	dwbe $05c0
 	.dw  $0000
 
+agesSlot_goronElder:
+	dwbe TREASURE_OBJECT_CROWN_KEY_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $05c3
+	.dw  $0000
+
 ; ==============================================================================
 ; Zora Seas Present
 ; ==============================================================================

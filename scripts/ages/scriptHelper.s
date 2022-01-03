@@ -6930,11 +6930,17 @@ goronElder_normalAnimation:
 
 ; Cutscene where goron elder is saved / NPC in that room after that
 goronElderScript_subid00_body:
+	; RANDO: Don't delete npc before goron elder has been saved
+	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @elderSaved
+	scriptjump @notDisappeared
+
+@elderSaved:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, mainScripts.stubScript
 
 	asm15 checkEssenceObtained, $04
 	jumpifmemoryset wcddb, CPU_ZFLAG, mainScripts.stubScript
 
+@notDisappeared:
 	initcollisions
 	jumpifroomflagset $40, @npcLoop
 
@@ -6957,7 +6963,7 @@ goronElderScript_subid00_body:
 	showtext TX_2488
 	wait 30
 
-	giveitem TREASURE_CROWN_KEY, $00
+	giverandomizeditem rando.agesSlot_goronElder
 	disableinput
 	setglobalflag GLOBALFLAG_SAVED_GORON_ELDER
 	orroomflag $40
