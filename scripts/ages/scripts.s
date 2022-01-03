@@ -6534,7 +6534,7 @@ goron_bigBang_givePrize:
 	.dw @quicksandRing
 
 @mermaidKey:
-	giveitem TREASURE_OLD_MERMAID_KEY, $00
+	giverandomizeditem rando.agesSlot_bigBangGame
 	retscript
 
 @hundredRupees:

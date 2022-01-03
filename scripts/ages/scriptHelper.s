@@ -4630,8 +4630,15 @@ goron_bigBang_spawnPrize:
 	bit 5,(hl)
 	jr nz,@alreadyGotMermaidKey
 
+	; RANDO: Special-case code for randomized "old mermaid key" prize.
 	xor a
-	jr @checkSpawnPrize
+	ld (wTmpcfc0.bigBangGame.prizeIndex),a
+	ld bc,rando.agesSlot_bigBangGame
+	call spawnRandomizedTreasure
+	ret nz
+	ld l,Interaction.var3d
+	ld (hl),COLLECT_MODE_POOF ; Collect mode override
+	jr @setPosition
 
 @alreadyGotMermaidKey:
 	call getRandomNumber
@@ -4663,6 +4670,8 @@ goron_bigBang_spawnPrize:
 	ld (hl),b
 	inc l
 	ld (hl),c
+
+@setPosition:
 	ld l,Interaction.yh
 	ld (hl),$38
 	ld l,Interaction.xh
@@ -4676,7 +4685,7 @@ goron_bigBang_spawnPrize:
 	.db $02 $02 $02 $02 $02 $03 $03 $04
 
 @prizes:
-	.db TREASURE_OLD_MERMAID_KEY, $01
+	.db TREASURE_OLD_MERMAID_KEY, $01 ; RANDO: This is ignored, rando stuff is hardcoded
 	.db TREASURE_RUPEES,          $12
 	.db TREASURE_RUPEES,          $13
 	.db TREASURE_GASHA_SEED,      $06

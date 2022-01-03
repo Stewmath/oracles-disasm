@@ -1344,6 +1344,12 @@ agesSlot_goronShootingGallery:
 	dwbe $03e7
 	.dw  $0000
 
+agesSlot_bigBangGame:
+	dwbe TREASURE_OBJECT_OLD_MERMAID_KEY_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $033e
+	.dw  $0000
+
 ; ==============================================================================
 ; Zora Seas Present
 ; ==============================================================================
