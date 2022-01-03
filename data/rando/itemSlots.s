@@ -1326,6 +1326,18 @@ agesSlot_ridgeBushCave:
 	dwbe $031f
 	.dw  $0000
 
+agesSlot_targetCarts1:
+	dwbe TREASURE_OBJECT_ROCK_BRISKET_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $05d8
+	.dw  $0000
+
+agesSlot_targetCarts2:
+	dwbe TREASURE_OBJECT_BOOMERANG_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $05d8
+	.dw  agesSlotCallbackTable_targetCarts2
+
 ; ==============================================================================
 ; Zora Seas Present
 ; ==============================================================================

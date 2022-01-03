@@ -324,4 +324,21 @@ agesSlotCallbackTable_tradeLavaJuice:
 	scf
 	ret
 
+
+agesSlotCallbackTable_targetCarts2:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
+	call getThisRoomFlags
+	ld a,(hl)
+	or $40
+	ld (hl),a
+	ret
+@isItemObtained:
+	call getThisRoomFlags
+	and $40
+	ret z
+	scf
+	ret
+
 .endif ; ROM_AGES

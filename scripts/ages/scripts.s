@@ -6211,7 +6211,7 @@ goron_subid09Script_B:
 	.dw @boomerang
 
 @rockBrisket:
-	giveitem TREASURE_ROCK_BRISKET, $00
+	giverandomizeditem rando.agesSlot_targetCarts1
 	retscript
 @fiftyRupees:
 	asm15 scriptHelp.giveRupees, RUPEEVAL_050
@@ -6225,7 +6225,7 @@ goron_subid09Script_B:
 	giveitem TREASURE_GASHA_SEED, $00
 	retscript
 @boomerang:
-	giveitem TREASURE_BOOMERANG, $02
+	giverandomizeditem rando.agesSlot_targetCarts2
 	retscript
 
 ; Pity prize

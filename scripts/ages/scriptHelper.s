@@ -4563,20 +4563,21 @@ goron_targetCarts_spawnPrize:
 	jr @spawnPrize
 
 @alreadyGotBrisket:
+	; RANDO: Always make "boomerang" (randomized item) the 2nd prize. Also, use bit 6 ($40) of
+	; room flags to determine if it's been obtained.
+	call getThisRoomFlags
+	and $40
+	ld a,$04 ; "boomerang"
+	jr z,@spawnPrize
+
 	call getRandomNumber
 	and $0f
 	ld hl,@possiblePrizes
 	rst_addAToHl
 	ld a,(hl)
 
-	; Only give boomerang if not obtained already
 	cp $04
 	jr nz,@spawnPrize
-	ld a,TREASURE_BOOMERANG
-	call checkTreasureObtained
-	ld a,$04
-	jr nc,@spawnPrize
-
 	ld a,$03
 
 @spawnPrize:
@@ -4586,6 +4587,18 @@ goron_targetCarts_spawnPrize:
 	ld b,(hl)
 	inc l
 	ld c,(hl)
+
+	; RANDO: Check for randomized prizes. These don't affect what you actually get, only the
+	; prize "preview" sprite.
+	bit 7,b
+	jr z,@unrandomized
+	res 7,b
+	call spawnRandomizedTreasure
+	ld l,Interaction.var3d
+	ld (hl),COLLECT_MODE_POOF ; Collect mode override
+	jr @setPrizePosition
+
+@unrandomized:
 	call getFreeInteractionSlot
 	ret nz
 
@@ -4594,6 +4607,8 @@ goron_targetCarts_spawnPrize:
 	ld (hl),b
 	inc l
 	ld (hl),c
+
+@setPrizePosition:
 	ld l,Interaction.yh
 	ld (hl),$78
 	ld l,Interaction.xh
@@ -4605,11 +4620,11 @@ goron_targetCarts_spawnPrize:
 	.db $02 $02 $02 $03 $03 $04 $04 $04
 
 @prizes:
-	.db TREASURE_ROCK_BRISKET, $01
+	dwbe $8000 | rando.agesSlot_targetCarts1
 	.db TREASURE_RUPEES,       $11
 	.db TREASURE_RUPEES,       $12
 	.db TREASURE_GASHA_SEED,   $06
-	.db TREASURE_BOOMERANG,    $01
+	dwbe $8000 | rando.agesSlot_targetCarts2
 
 ;;
 ; Spawns the prize shown by the goron just before starting the minigame.
