@@ -291,4 +291,37 @@ agesSlotCallbackTable_symmetryCityBrother:
 	ld a,RANDO_SYMMETRY_BROTHER_FLAG
 	jp checkRandoItemFlag
 
-.endif
+
+agesSlotCallbackTable_firstGoronDance:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
+	ld a,RANDO_FIRST_GORON_DANCE_FLAG
+	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_FIRST_GORON_DANCE_FLAG
+	jp checkRandoItemFlag
+
+
+agesSlotCallbackTable_goronDanceWithLetter:
+	.dw @onItemObtained
+	.dw @isItemObtained
+@onItemObtained:
+	ld a,RANDO_GORON_DANCE_WITH_LETTER_FLAG
+	jp setRandoItemFlag
+@isItemObtained:
+	ld a,RANDO_GORON_DANCE_WITH_LETTER_FLAG
+	jp checkRandoItemFlag
+
+
+agesSlotCallbackTable_tradeLavaJuice:
+	.dw $0000
+	.dw @isItemObtained
+@isItemObtained:
+	call getThisRoomFlags
+	and $40
+	ret z
+	scf
+	ret
+
+.endif ; ROM_AGES

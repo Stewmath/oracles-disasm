@@ -1251,6 +1251,82 @@ agesSlot_goronElder:
 	.dw  $0000
 
 ; ==============================================================================
+; Rolling Ridge East (D6 area)
+; ==============================================================================
+
+agesSlot_ridgeNECavePresent:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $05ee
+	.dw  $0000
+
+agesSlot_bombGoronHead:
+	dwbe TREASURE_OBJECT_RUPEES_06
+	.db  COLLECT_MODE_CHEST
+	dwbe $02fc
+	.dw  $0000
+
+agesSlot_poolInD6Entrance:
+	dwbe TREASURE_OBJECT_RING_26
+	.db  COLLECT_MODE_CHEST
+	dwbe $030e
+	.dw  $0000
+
+agesSlot_ridgeBasePast:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $05e0
+	.dw  $0000
+
+agesSlot_ridgeDiamondsPast:
+	dwbe TREASURE_OBJECT_RUPEES_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $05e1
+	.dw  $0000
+
+agesSlot_firstGoronDance:
+	dwbe TREASURE_OBJECT_BROTHER_EMBLEM_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $02ed
+	.dw  agesSlotCallbackTable_firstGoronDance
+
+agesSlot_goronDanceWithLetter:
+	dwbe TREASURE_OBJECT_MERMAID_KEY_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $02ef
+	.dw  agesSlotCallbackTable_goronDanceWithLetter
+
+agesSlot_tradeRockBrisket:
+	dwbe TREASURE_OBJECT_ROCK_BRISKET_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $02fd
+	.dw  $0000
+
+agesSlot_tradeGoronVase:
+	dwbe TREASURE_OBJECT_GORONADE_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $02ff
+	.dw  $0000
+
+agesSlot_goronDiamondCave:
+	dwbe TREASURE_OBJECT_BOMBS_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $05dd
+	.dw  $0000
+
+agesSlot_tradeLavaJuice:
+	dwbe TREASURE_OBJECT_GORON_LETTER_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $031f
+	.dw  agesSlotCallbackTable_tradeLavaJuice
+
+agesSlot_ridgeBushCave:
+	dwbe TREASURE_OBJECT_RUPEES_06
+	.db  COLLECT_MODE_CHEST
+	dwbe $031f
+	.dw  $0000
+
+; ==============================================================================
 ; Zora Seas Present
 ; ==============================================================================
 

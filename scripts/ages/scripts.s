@@ -5163,14 +5163,20 @@ goron_subid00_npcLoop:
 	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 
+	; RANDO: Add a check here to ensure that you can always get the "first goron dance" check in
+	; the past, even if you have the goron letter already. Not strictly necessary since it would
+	; still be available in the present, but this makes it less confusing.
+	jumpifitemobtained RANDO_FIRST_GORON_DANCE_FLAG, @past
+	scriptjump @present
+
 @past:
 	; Only check these in the past
-	jumpifitemobtained TREASURE_MERMAID_KEY, @danceForGenericItem
+	jumpifitemobtained RANDO_GORON_DANCE_WITH_LETTER_FLAG, @danceForGenericItem
 	jumpifitemobtained TREASURE_GORON_LETTER, @danceForOldMermaidKey
 
 @present:
 	; Check this in past and present
-	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @danceForGenericItem
+	jumpifitemobtained RANDO_FIRST_GORON_DANCE_FLAG, @danceForGenericItem
 
 	; Dance for brother emblem
 	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2400
@@ -5241,14 +5247,20 @@ goronDance_begin:
 	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 
+	; RANDO: Add a check here to ensure that you can always get the "first goron dance" check in
+	; the past, even if you have the goron letter already. Not strictly necessary since it would
+	; still be available in the present, but this makes it less confusing.
+	jumpifitemobtained RANDO_FIRST_GORON_DANCE_FLAG, @past
+	scriptjump @present
+
 @past:
 	; Only check these in the past
-	jumpifitemobtained TREASURE_MERMAID_KEY, @selectDifficulty
+	jumpifitemobtained RANDO_GORON_DANCE_WITH_LETTER_FLAG, @selectDifficulty
 	jumpifitemobtained TREASURE_GORON_LETTER, @lowestDanceLevel
 
 @present:
 	; Check this in past and present
-	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @selectDifficulty
+	jumpifitemobtained RANDO_FIRST_GORON_DANCE_FLAG, @selectDifficulty
 
 @lowestDanceLevel:
 	asm15 scriptHelp.goron_checkInPresent
@@ -5426,19 +5438,25 @@ goronDanceScript_givePrize:
 	asm15 scriptHelp.goron_checkInPresent
 	jumpifmemoryset wcddb, CPU_ZFLAG, @present
 
+	; RANDO: Add a check here to ensure that you can always get the "first goron dance" check in
+	; the past, even if you have the goron letter already. Not strictly necessary since it would
+	; still be available in the present, but this makes it less confusing.
+	jumpifitemobtained RANDO_FIRST_GORON_DANCE_FLAG, @past
+	scriptjump @present
+
 @past:
 	; Only check these in the past
-	jumpifitemobtained TREASURE_MERMAID_KEY, @giveGenericPrize
+	jumpifitemobtained RANDO_GORON_DANCE_WITH_LETTER_FLAG, @giveGenericPrize
 	jumpifitemobtained TREASURE_GORON_LETTER, @giveOldMermaidKey
 
 @present:
 	; Check this in past and present
-	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @giveGenericPrize
+	jumpifitemobtained RANDO_FIRST_GORON_DANCE_FLAG, @giveGenericPrize
 
 	; Give brother emblem
 	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2410
 	wait 30
-	giveitem TREASURE_BROTHER_EMBLEM, $00
+	giverandomizeditem rando.agesSlot_firstGoronDance
 	wait 30
 	asm15 scriptHelp.goron_showText_differentForPresent, <TX_2411
 	wait 30
@@ -5449,7 +5467,7 @@ goronDanceScript_givePrize:
 @giveOldMermaidKey:
 	showtext TX_241a
 	wait 30
-	giveitem TREASURE_OBJECT_MERMAID_KEY_00
+	giverandomizeditem rando.agesSlot_goronDanceWithLetter
 	wait 30
 	showtext TX_241b
 	wait 30
@@ -6245,11 +6263,10 @@ goron_subid0a_pressedAFromNappingLoop:
 	wait 30
 
 	jumpifroomflagset $40, @alreadyGaveIntroduction
-	asm15 scriptHelp.goron_checkGracefulGoronQuestStatus
-	jumptable_objectbyte Interaction.var3e
-	.dw @haveLavaJuiceAndMermaidKey
-	.dw @noMermaidKey
-	.dw @noLavaJuice
+
+	; RANDO: Allow trading lava juice without having old mermaid key.
+	jumpifitemobtained TREASURE_LAVA_JUICE, @haveLavaJuiceAndMermaidKey
+	scriptjump @noLavaJuice
 
 @haveLavaJuiceAndMermaidKey:
 	showtext TX_24c6
@@ -6267,7 +6284,7 @@ goron_subid0a_pressedAFromNappingLoop:
 @acceptedTrade:
 	asm15 loseTreasure, $5a
 	showtext TX_24c9
-	giveitem TREASURE_GORON_LETTER, $00
+	giverandomizeditem rando.agesSlot_tradeLavaJuice
 	orroomflag $40
 	showtext TX_24ca
 	writeobjectbyte Interaction.var3c, $01

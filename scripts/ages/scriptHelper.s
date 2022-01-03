@@ -5355,13 +5355,13 @@ goron_subid08_pressedAScript:
 
 ; Get goronade, lose goron vase
 	asm15 loseTreasure, TREASURE_GORON_VASE
-	giveitem TREASURE_GORONADE, $00
+	giverandomizeditem rando.agesSlot_tradeGoronVase
 	scriptjump ++
 
 ; Get vase, lose rock sirloin
 @giveVase:
 	asm15 loseTreasure, TREASURE_ROCK_BRISKET
-	giveitem TREASURE_GORON_VASE, $00
+	giverandomizeditem rando.agesSlot_tradeRockBrisket
 ++
 	orroomflag $40
 	wait 30

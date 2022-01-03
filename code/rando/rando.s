@@ -303,6 +303,8 @@ playCompassSoundIfKeyInRoom_override:
 	dwbe $02ec, $02f4 ; Nuun highlands cave (ricky)
 	dwbe $05b8, $02f4 ; Nuun highlands cave (dimitri)
 
+	dwbe $02ef, $02ed ; First goron dance
+
 	.db $ff
 .endif
 
