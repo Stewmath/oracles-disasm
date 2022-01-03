@@ -1078,6 +1078,7 @@ nayruScript01:
 
 
 ; Subid $02: Nayru on maku tree screen after being saved
+; RANDO: This is bypassed entirely as part of the "shortening" of the cutscene.
 nayruScript02_part2:
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
 	disableinput

@@ -341,4 +341,15 @@ agesSlotCallbackTable_targetCarts2:
 	scf
 	ret
 
+
+agesSlotCallbackTable_rescueNayru:
+	.dw $0000
+	.dw @isItemObtained
+@isItemObtained:
+	ld a,GLOBALFLAG_SAVED_NAYRU
+	call checkGlobalFlag
+	ret z
+	scf
+	ret
+
 .endif ; ROM_AGES

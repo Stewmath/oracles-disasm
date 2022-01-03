@@ -1486,6 +1486,12 @@ agesSlot_ambisPalaceChest:
 	dwbe $05cb
 	.dw  $0000
 
+agesSlot_rescueNayru:
+	dwbe TREASURE_OBJECT_TUNE_OF_ECHOES_00
+	.db  COLLECT_MODE_PICKUP_2HAND_NOFLAG
+	dwbe $0038
+	.dw  agesSlotCallbackTable_rescueNayru
+
 
 slotsEnd:
 

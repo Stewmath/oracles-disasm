@@ -1808,6 +1808,7 @@ nayruScript01:
 
 
 ; Subid $02: Nayru on maku tree screen after being saved
+; RANDO: Greatly shortened this cutscene. part1 jumps to part3, with "part2" bypassed entirely.
 nayruScript02_part1:
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
 	asm15 objectSetVisiblec2
@@ -1817,30 +1818,24 @@ nayruScript02_part1:
 	wait 90
 	showtext TX_1d06
 	wait 30
-	writememory wTmpcfc0.genericCutscene.cfd0, $02
-	scriptend
+
+	disableinput
+	giverandomizeditem rando.agesSlot_rescueNayru
+
+	setsubstate $02
+	scriptjump nayruScript02_part3
 
 nayruScript02_part2:
 	loadscript scriptHelp.nayruScript02_part2
 
 nayruScript02_part3:
-	wait 1
-	asm15 scriptHelp.turnToFaceSomethingAtInterval, $03
-	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $09, @sayGoodbye
-	scriptjump nayruScript02_part3
-
-@sayGoodbye:
-	wait 60
-	setanimation $02
-	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0a
-	wait 60
-
 	asm15 scriptHelp.forceLinkDirection, DIR_UP
 	wait 40
 
 	showtext TX_1d08
 	wait 20
 
+	writememory wTmpcfc0.genericCutscene.cfd0, $0a ; RANDO: Tell Ralph to leave
 	setspeed SPEED_0c0
 	moveright $14
 	wait 8
@@ -2118,6 +2113,13 @@ ralphSubid04Script_part1:
 	checkpalettefadedone
 	wait 30
 	setanimation $01
+
+	; RANDO: Make Ralph walk off the screen in the shortened version of the cutscene.
+	; Technically ralph doesn't get deleted after he walks off screen. Not really important
+	; though.
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0a
+	setspeed SPEED_100
+	movedown $40
 	scriptend
 
 ralphSubid04Script_part2:
@@ -7674,51 +7676,27 @@ makuTree_subid02Script:
 
 
 ; Cutscene after saving Nayru where Twinrova reveals themselves
+; RANDO: Modified substantially to shorten the cutscene.
 makuTree_subid03Script:
-	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $03, ++
-	checkmemoryeq  wTmpcfc0.genericCutscene.cfd0, $01
 	checkpalettefadedone
 	setanimation $01
-	scriptend
-++
-	checkpalettefadedone
-	wait 40
 
-	setanimation $04
-	showtextlowindex <TX_0553
-	wait 30
-
-	writememory   wTmpcfc0.genericCutscene.cfd0, $04
-	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
-
-	setanimation $00
-	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $06
-
-	setanimation $03
-	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $07
-
-	setanimation $02
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0b
 
-	wait 80
-	asm15 scriptHelp.forceLinkDirection, DIR_UP
 	wait 40
 
-	jumpifmemoryeq wIsLinkedGame, $00, @unlinked
+	; RANDO: Force the cutscene to end
+	writememory wTmpcfc0.genericCutscene.cfd0, $63
+	writememory wCutsceneState, $0c
 
-	; linked
-	showtextlowindex <TX_0557
-	scriptjump ++
-@unlinked:
-	showtextlowindex <TX_0554
-++
-	wait 80
 	setanimation $00
-	wait 40
 	setcollisionradii $08, $08
 	makeabuttonsensitive
 
 @npcLoop:
+	enableinput
+	checkabutton
+	disableinput
 	showtextlowindex <TX_0555
 	wait 20
 	setanimation $04
@@ -7728,9 +7706,6 @@ makuTree_subid03Script:
 	wait 20
 	setanimation $00
 	writememory wTmpcfc0.genericCutscene.cfd0, $63
-	enableinput
-	checkabutton
-	disableinput
 	scriptjump @npcLoop
 
 
