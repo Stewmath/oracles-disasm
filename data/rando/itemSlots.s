@@ -1338,6 +1338,12 @@ agesSlot_targetCarts2:
 	dwbe $05d8
 	.dw  agesSlotCallbackTable_targetCarts2
 
+agesSlot_goronShootingGallery:
+	dwbe TREASURE_OBJECT_LAVA_JUICE_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $03e7
+	.dw  $0000
+
 ; ==============================================================================
 ; Zora Seas Present
 ; ==============================================================================

@@ -696,7 +696,7 @@ shootingGalleryScript_goronNpc_gameDone:
 @lavaJuicePrize:
 	showtext TX_24d8
 	wait 30
-	giveitem TREASURE_LAVA_JUICE, $00
+	giverandomizeditem rando.agesSlot_goronShootingGallery
 	scriptjump @end
 
 ; Playing for normal prizes
@@ -718,11 +718,8 @@ shootingGalleryScript_goronNpc_gameDone:
 	scriptjump @end
 
 @boomerangPrize:
-	jumpifitemobtained TREASURE_BOOMERANG, @gashaSeedPrize
-	showtext TX_24da
-	wait 30
-	giveitem TREASURE_BOOMERANG, $02
-	scriptjump @end
+	; RANDO: Don't give a boomerang at the shooting gallery (get it from target carts instead).
+	; Get a gasha seed instead.
 
 @gashaSeedPrize:
 	showtext TX_24db
