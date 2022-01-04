@@ -1736,6 +1736,70 @@ agesSlot_d3_boss:
 	dwbe $044a
 	.dw  $0000
 
+; ==============================================================================
+; D4
+; ==============================================================================
+
+agesSlot_d4_largeFloorPuzzle:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $046f
+	.dw  $0000
+
+agesSlot_d4_secondCrystalSwitch:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $0474
+	.dw  $0000
+
+agesSlot_d4_lavaPotChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $047a
+	.dw  $0000
+
+agesSlot_d4_smallFloorPuzzle:
+	dwbe TREASURE_OBJECT_SWITCH_HOOK_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $0487
+	.dw  $0000
+
+agesSlot_d4_firstChest:
+	dwbe TREASURE_OBJECT_COMPASS_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $048b
+	.dw  $0000
+
+agesSlot_d4_minecartChest:
+	dwbe TREASURE_OBJECT_MAP_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $048f
+	.dw  $0000
+
+agesSlot_d4_cubeChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $0490
+	.dw  $0000
+
+agesSlot_d4_firstCrystalSwitch:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $0492
+	.dw  $0000
+
+agesSlot_d4_colorTileDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_04
+	.db  COLLECT_MODE_FALL
+	dwbe $047b
+	.dw  $0000
+
+agesSlot_d4_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	dwbe $046b
+	.dw  $0000
+
 
 slotsEnd:
 

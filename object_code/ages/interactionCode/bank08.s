@@ -1237,6 +1237,7 @@ interaction21_subid10:
 	call interactionDeleteAndRetIfEnabled02
 	call interactionDeleteAndRetIfItemFlagSet
 	ld hl,@tileData
+	ld bc,rando.agesSlot_d4_colorTileDrop
 	jp verifyTilesAndDropRandomizedTreasure
 
 @tileData:

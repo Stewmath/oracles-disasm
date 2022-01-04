@@ -92,14 +92,14 @@ chestGroup4Data:
 	m_ChestDataRando $27, $5c, rando.agesSlot_d3_bushBeetleRoom
 	m_ChestDataRando $57, $60, rando.agesSlot_d3_crossroads
 	m_ChestDataRando $58, $65, rando.agesSlot_d3_polsVoiceChest
-	m_ChestData $67, $6f, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $54, $74, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $39, $7a, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $65, $87, TREASURE_OBJECT_SWITCH_HOOK_00
-	m_ChestData $41, $8b, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $57, $8f, TREASURE_OBJECT_MAP_02
-	m_ChestData $84, $90, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $62, $92, TREASURE_OBJECT_SMALL_KEY_03
+	m_ChestDataRando $67, $6f, rando.agesSlot_d4_largeFloorPuzzle
+	m_ChestDataRando $54, $74, rando.agesSlot_d4_secondCrystalSwitch
+	m_ChestDataRando $39, $7a, rando.agesSlot_d4_lavaPotChest
+	m_ChestDataRando $65, $87, rando.agesSlot_d4_smallFloorPuzzle
+	m_ChestDataRando $41, $8b, rando.agesSlot_d4_firstChest
+	m_ChestDataRando $57, $8f, rando.agesSlot_d4_minecartChest
+	m_ChestDataRando $84, $90, rando.agesSlot_d4_cubeChest
+	m_ChestDataRando $62, $92, rando.agesSlot_d4_firstCrystalSwitch
 	m_ChestData $19, $99, TREASURE_OBJECT_RUPEES_05
 	m_ChestData $54, $9b, TREASURE_OBJECT_BOSS_KEY_03
 	m_ChestData $47, $9e, TREASURE_OBJECT_SMALL_KEY_03
