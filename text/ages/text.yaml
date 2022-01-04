@@ -1083,11 +1083,6 @@ groups:
       use them.
 
   # Dungeon names for text substitution
-  - name: TX_00_D0_NAME
-    index: auto
-    text: |-
-      Maku Road
-
   - name: TX_00_D1_NAME
     index: auto
     text: |-
@@ -1113,10 +1108,10 @@ groups:
     text: |-
       Crown Dungeon
 
-  - name: TX_00_D6_NAME
+  - name: TX_00_D6_PRESENT_NAME
     index: auto
     text: |-
-      Mermaid's Cave
+      Mermaid's Cave Present
 
   - name: TX_00_D7_NAME
     index: auto
@@ -1127,6 +1122,21 @@ groups:
     index: auto
     text: |-
       Ancient Tomb
+
+  - name: TX_00_HEROS_CAVE_NAME
+    index: auto
+    text: |-
+      Hero's Cave
+
+  - name: TX_00_D6_PAST_NAME
+    index: auto
+    text: |-
+      Mermaid's Cave Past
+
+  - name: TX_00_MAKU_PATH_NAME
+    index: auto
+    text: |-
+      Maku Path
 
   # Dungeon-specific item text used when keysanity is enabled
   - name: TX_00_KEYSANITY_KEY

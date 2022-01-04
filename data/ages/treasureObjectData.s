@@ -371,12 +371,24 @@ treasureObjectData2e:
 	m_TreasureSubid $0a, $00, $31, $31, TREASURE_OBJECT_FLIPPERS_00
 	m_TreasureSubid $0a, $00, $7a, $31, TREASURE_OBJECT_FLIPPERS_01
 
+; RANDO: Changed how dungeon items work so that their parameter corresponds to their dungeon. Added
+; many subid entries as a result.
 treasureObjectData30:
 	m_BeginTreasureSubids TREASURE_SMALL_KEY
-	m_TreasureSubid $18, $01, $ff, $42, TREASURE_OBJECT_SMALL_KEY_00
-	m_TreasureSubid $28, $01, $ff, $42, TREASURE_OBJECT_SMALL_KEY_01
-	m_TreasureSubid $49, $01, $1a, $42, TREASURE_OBJECT_SMALL_KEY_02
-	m_TreasureSubid $38, $01, $1a, $42, TREASURE_OBJECT_SMALL_KEY_03
+	m_TreasureSubid $00, $00, $1a, $42, TREASURE_OBJECT_SMALL_KEY_00 ; Unused
+	m_TreasureSubid $00, $01, $1a, $42, TREASURE_OBJECT_SMALL_KEY_01
+	m_TreasureSubid $00, $02, $1a, $42, TREASURE_OBJECT_SMALL_KEY_02
+	m_TreasureSubid $00, $03, $1a, $42, TREASURE_OBJECT_SMALL_KEY_03
+	m_TreasureSubid $00, $04, $1a, $42, TREASURE_OBJECT_SMALL_KEY_04
+	m_TreasureSubid $00, $05, $1a, $42, TREASURE_OBJECT_SMALL_KEY_05
+	m_TreasureSubid $00, $06, $1a, $42, TREASURE_OBJECT_SMALL_KEY_06
+	m_TreasureSubid $00, $07, $1a, $42, TREASURE_OBJECT_SMALL_KEY_07
+	m_TreasureSubid $00, $08, $1a, $42, TREASURE_OBJECT_SMALL_KEY_08
+	m_TreasureSubid $00, $09, $1a, $42, TREASURE_OBJECT_SMALL_KEY_09 ; Unused
+	m_TreasureSubid $00, $0a, $1a, $42, TREASURE_OBJECT_SMALL_KEY_0a ; Unused
+	m_TreasureSubid $00, $0b, $1a, $42, TREASURE_OBJECT_SMALL_KEY_0b ; Linked Hero's Cave
+	m_TreasureSubid $00, $0c, $1a, $42, TREASURE_OBJECT_SMALL_KEY_0c ; D6 Past
+	m_TreasureSubid $00, $0d, $1a, $42, TREASURE_OBJECT_SMALL_KEY_0d ; Maku Path
 
 treasureObjectData31:
 	m_BeginTreasureSubids TREASURE_BOSS_KEY

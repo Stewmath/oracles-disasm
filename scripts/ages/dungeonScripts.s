@@ -30,7 +30,7 @@ makuPathScript_spawnDownStairsWhenEnemiesKilled:
 
 makuPathScript_spawn30Rupees:
 	stopifitemflagset
-	spawnitem TREASURE_RUPEES, $0c
+	spawnrandomizeditem rando.agesSlot_d0_basement
 	scriptend
 
 makuPathScript_keyFallsFromCeilingWhen1TorchLit:

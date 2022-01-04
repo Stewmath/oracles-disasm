@@ -69,7 +69,7 @@ chestGroup3Data:
 	.db $ff
 
 chestGroup4Data:
-	m_ChestData $57, $08, TREASURE_OBJECT_SMALL_KEY_03
+	m_ChestDataRando $57, $08, rando.agesSlot_d0_keyChest
 	m_ChestData $5a, $15, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $17, $16, TREASURE_OBJECT_SMALL_KEY_03
 	m_ChestData $2c, $1a, TREASURE_OBJECT_SMALL_KEY_03

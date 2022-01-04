@@ -1492,6 +1492,22 @@ agesSlot_rescueNayru:
 	dwbe $0038
 	.dw  agesSlotCallbackTable_rescueNayru
 
+; ==============================================================================
+; Maku Path
+; ==============================================================================
+
+agesSlot_d0_keyChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0d
+	.db  COLLECT_MODE_CHEST
+	dwbe $0408
+	.dw  $0000
+
+agesSlot_d0_basement:
+	dwbe TREASURE_OBJECT_RUPEES_0c
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $0605
+	.dw  $0000
+
 
 slotsEnd:
 

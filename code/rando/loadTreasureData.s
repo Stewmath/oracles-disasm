@@ -306,6 +306,8 @@ getModifiedTreasureText:
 	.db TREASURE_BOSS_KEY,  <TX_00_KEYSANITY_BOSS_KEY
 	.db $00
 
+.ifdef ROM_SEASONS
+
 @dungeonTextTable:
 	.db <TX_00_D0_NAME
 	.db <TX_00_D1_NAME
@@ -319,3 +321,23 @@ getModifiedTreasureText:
 	.db $ff
 	.db $ff
 	.db <TX_00_D0_NAME ; Linked hero's cave
+
+.else; ROM_AGES
+
+@dungeonTextTable:
+	.db $ff
+	.db <TX_00_D1_NAME
+	.db <TX_00_D2_NAME
+	.db <TX_00_D3_NAME
+	.db <TX_00_D4_NAME
+	.db <TX_00_D5_NAME
+	.db <TX_00_D6_PRESENT_NAME
+	.db <TX_00_D7_NAME
+	.db <TX_00_D8_NAME
+	.db $ff
+	.db $ff
+	.db <TX_00_HEROS_CAVE_NAME ; Linked hero's cave
+	.db <TX_00_D6_PAST_NAME
+	.db <TX_00_MAKU_PATH_NAME
+
+.endif
