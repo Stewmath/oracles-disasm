@@ -78,12 +78,12 @@ chestGroup4Data:
 	m_ChestDataRando $73, $1f, rando.agesSlot_d1_westTerrace
 	m_ChestDataRando $16, $23, rando.agesSlot_d1_potChest
 	m_ChestDataRando $12, $25, rando.agesSlot_d1_eastTerrace
-	m_ChestData $57, $30, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $58, $3e, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $87, $40, TREASURE_OBJECT_MAP_02
-	m_ChestData $59, $41, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $1d, $45, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $57, $48, TREASURE_OBJECT_SMALL_KEY_03
+	m_ChestDataRando $57, $30, rando.agesSlot_d2_basementChest
+	m_ChestDataRando $58, $3e, rando.agesSlot_d2_colorRoom
+	m_ChestDataRando $87, $40, rando.agesSlot_d2_bombedTerrace
+	m_ChestDataRando $59, $41, rando.agesSlot_d2_moblinPlatform
+	m_ChestDataRando $1d, $45, rando.agesSlot_d2_ropeRoom
+	m_ChestDataRando $57, $48, rando.agesSlot_d2_ladderChest
 	m_ChestData $8c, $4e, TREASURE_OBJECT_RUPEES_03
 	m_ChestData $28, $50, TREASURE_OBJECT_BOSS_KEY_03
 	m_ChestData $4c, $55, TREASURE_OBJECT_GASHA_SEED_01

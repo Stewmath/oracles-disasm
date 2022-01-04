@@ -848,11 +848,20 @@ interactionCode21:
 interaction21_subid01:
 	call interactionDeleteAndRetIfItemFlagSet
 	ld hl,subid01_tileData
+	ld bc,rando.agesSlot_d2_basementDrop
 
-verifyTilesAndDropSmallKey:
+; RANDO: when calling this, set "bc" to the item slot. This function previously spawned a small key
+; from the ceiling, now spawns various things depending on the room.
+verifyTilesAndDropRandomizedTreasure:
+	push bc
 	call verifyTiles
+	pop bc
 	ret nz
-	jp spawnSmallKeyFromCeiling
+
+	call spawnRandomizedTreasure
+	ret nz
+	call objectCopyPosition
+	jp interactionDelete
 
 subid01_tileData:
 	.db TILEINDEX_YELLOW_TOGGLE_FLOOR  $67 $77 $ff ; Tiles at $67 and $77 must be red
@@ -947,7 +956,8 @@ interaction21_subid04:
 interaction21_subid05:
 	call interactionDeleteAndRetIfItemFlagSet
 	ld hl,@tileData
-	jp verifyTilesAndDropSmallKey
+	ld bc,rando.agesSlot_d2_statuePuzzle ; RANDO: Item slot to spawn
+	jp verifyTilesAndDropRandomizedTreasure
 
 @tileData:
 	.db TILEINDEX_RED_PUSHABLE_BLOCK     $49 $4b $69 $6b $ff
@@ -1027,7 +1037,7 @@ interaction21_subid08:
 interaction21_subid09:
 	call interactionDeleteAndRetIfItemFlagSet
 	ld hl,@tileData
-	jp verifyTilesAndDropSmallKey
+	jp verifyTilesAndDropRandomizedTreasure
 
 @tileData:
 	.db TILEINDEX_PUSHABLE_BLOCK $3b $59 $5d $00
@@ -1220,7 +1230,7 @@ interaction21_subid10:
 	call interactionDeleteAndRetIfEnabled02
 	call interactionDeleteAndRetIfItemFlagSet
 	ld hl,@tileData
-	jp verifyTilesAndDropSmallKey
+	jp verifyTilesAndDropRandomizedTreasure
 
 @tileData:
 	.db TILEINDEX_RED_TOGGLE_FLOOR  $54 $58 $ff

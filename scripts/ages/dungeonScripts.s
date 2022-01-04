@@ -127,12 +127,12 @@ spiritsGraveScript_stairsToBraceletRoom:
 
 wingDungeonScript_spawnFeather:
 	stopifitemflagset
-	spawnitem TREASURE_FEATHER, $00
+	spawnrandomizeditem rando.agesSlot_d2_thwompTunnel
 	scriptend
 
 wingDungeonScript_spawn30Rupees:
 	stopifitemflagset
-	spawnitem TREASURE_RUPEES, $0c
+	spawnrandomizeditem rando.agesSlot_d2_thwompShelf
 	scriptend
 
 moonlitGrottoScript_spawnChestWhen2TorchesLit:

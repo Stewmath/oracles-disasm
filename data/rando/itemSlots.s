@@ -1578,6 +1578,82 @@ agesSlot_d1_boss:
 	dwbe $0413
 	.dw  $0000
 
+; ==============================================================================
+; D2
+; ==============================================================================
+
+agesSlot_d2_basementChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_02
+	.db  COLLECT_MODE_CHEST
+	dwbe $0430
+	.dw  $0000
+
+agesSlot_d2_colorRoom:
+	dwbe TREASURE_OBJECT_BOSS_KEY_02
+	.db  COLLECT_MODE_CHEST
+	dwbe $043e
+	.dw  $0000
+
+agesSlot_d2_bombedTerrace:
+	dwbe TREASURE_OBJECT_MAP_02
+	.db  COLLECT_MODE_CHEST
+	dwbe $0440
+	.dw  $0000
+
+agesSlot_d2_moblinPlatform:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0441
+	.dw  $0000
+
+agesSlot_d2_ropeRoom:
+	dwbe TREASURE_OBJECT_COMPASS_02
+	.db  COLLECT_MODE_CHEST
+	dwbe $0445
+	.dw  $0000
+
+agesSlot_d2_ladderChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_02
+	.db  COLLECT_MODE_CHEST
+	dwbe $0448
+	.dw  $0000
+
+agesSlot_d2_basementDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_02
+	.db  COLLECT_MODE_FALL
+	dwbe $042e
+	.dw  $0000
+
+agesSlot_d2_moblinDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_02
+	.db  COLLECT_MODE_FALL
+	dwbe $0439
+	.dw  $0000
+
+agesSlot_d2_statuePuzzle:
+	dwbe TREASURE_OBJECT_SMALL_KEY_02
+	.db  COLLECT_MODE_FALL
+	dwbe $0442
+	.dw  $0000
+
+agesSlot_d2_thwompShelf:
+	dwbe TREASURE_OBJECT_RUPEES_0c
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $0627
+	.dw  $0000
+
+agesSlot_d2_thwompTunnel:
+	dwbe TREASURE_OBJECT_FEATHER_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $0628
+	.dw  $0000
+
+agesSlot_d2_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	dwbe $062b
+	.dw  $0000
+
 
 slotsEnd:
 
