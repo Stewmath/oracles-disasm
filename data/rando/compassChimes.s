@@ -3,7 +3,7 @@
 .ifdef ROM_SEASONS
 
 sndd5Start:
-sndd5Channel2: ; D1 Chime
+sndd5Channel2: ; Seasons D1 Chime
 	duty 2
 
 	vol 9
@@ -60,7 +60,7 @@ sndd5Channel2: ; D1 Chime
 	cmdff
 
 sndd6Start:
-sndd6Channel2: ; D2 Chime
+sndd6Channel2: ; Seasons D2 Chime
 	duty 2
   
 	vol 9
@@ -92,7 +92,7 @@ sndd6Channel2: ; D2 Chime
 	cmdff
 
 sndd7Start:
-sndd7Channel2: ; D3 Chime
+sndd7Channel2: ; Seasons D3 Chime
 	duty 2
 
 	vol 9
@@ -135,7 +135,7 @@ sndd7Channel2: ; D3 Chime
 
 
 sndd8Start:
-sndd8Channel2: ; D4 Chime
+sndd8Channel2: ; Seasons D4 Chime
 	duty 2
 
 	vol 9
@@ -176,7 +176,7 @@ sndd8Channel2: ; D4 Chime
 
 
 sndd9Start:
-sndd9Channel2: ; D5 Chime
+sndd9Channel2: ; Seasons D5 Chime
 	duty 2
 	vol 9
 	note fs3 $06
@@ -222,7 +222,7 @@ sndd9Channel2: ; D5 Chime
 
 
 snddaStart:
-snddaChannel2: ; D6 Chime
+snddaChannel2: ; Seasons D6 Chime
 	duty 2
 
 	vol 9
@@ -270,7 +270,7 @@ snddaChannel2: ; D6 Chime
 
 
 snddbStart:
-snddbChannel2: ; D7 Chime
+snddbChannel2: ; Seasons D7 Chime
 	duty 2
 
 	vol 9
@@ -303,7 +303,7 @@ snddbChannel2: ; D7 Chime
 
 
 snddcStart:
-snddcChannel2: ; D8 Chime
+snddcChannel2: ; Seasons D8 Chime
 	duty 2
 
 	vol 9
@@ -350,7 +350,236 @@ snddcChannel2: ; D8 Chime
 
 .else; ROM_AGES
 
-; RANDO-TODO
+sndd5Start:
+sndd5Channel2: ; Ages D1 Chime
+	duty $2
+	vol 9
+	note as4 $06
+	vol 3
+	note as4 $06
+	vol 9
+	note f5 $06
+	vol 3
+	note f5 $06
+	rest $0c
+	vol 9
+	note e5 $06
+	vol 3
+	note e5 $06
+	vol 9
+	note f5 $06
+	vol 3
+	note f5 $06
+	rest $0c
+	cmdff
+
+sndd6Start:
+sndd6Channel2: ; Ages D2 Chime
+	duty $2
+	vol 9
+	note ds4 $06
+	vol 3
+	note ds4 $06
+	vol 9
+	note ds4 $06
+	vol 3
+	note ds4 $06
+	vol 9
+	note fs4 $06
+	vol 3
+	note fs4 $06
+	rest $0c
+	vol 9
+	note ds4 $05
+	vol 3
+	note ds4 $01
+	vol 9
+	note ds4 $05
+	vol 3
+	note ds4 $01
+	vol 9
+	note ds4 $05
+	vol 3
+	note ds4 $01
+	vol 9
+	note ds4 $05
+	vol 3
+	note ds4 $01
+	vol 9
+	note fs4 $06
+	vol 3
+	note fs4 $06
+	rest $0c
+	cmdff
+
+sndd7Start:
+sndd7Channel2: ; Ages D3 Chime
+	duty $2
+	vol 9
+	note c5 $06
+	vol 3
+	note c5 $06
+	vol 9
+	note b4 $06
+	vol 3
+	note b4 $06
+	rest $06
+	vol 9
+	note b4 $05
+	vol 3
+	note b4 $01
+	vol 9
+	note c5 $06
+	vol 3
+	note c5 $06
+	vol 9
+	note b4 $06
+	vol 3
+	note b4 $06
+	cmdff
+
+sndd8Start:
+sndd8Channel2: ; Ages D4 Chime
+	duty $2
+	vol 9
+	note b4 $06
+	vol 3
+	note b4 $06
+	rest $0c
+	vol 9
+	note cs5 $06
+	vol 3
+	note cs5 $06
+	vol 9
+	note ds5 $05
+	vol 3
+	note ds5 $01
+	vol 9
+	note b4 $05
+	vol 3
+	note b4 $01
+	vol 9
+	note as4 $06
+	vol 3
+	note as4 $06
+	cmdff
+
+sndd9Start:
+sndd9Channel2: ; Ages D5 Chime
+	duty $2
+	vol 9
+	note a4 $06
+	vol 3
+	note a4 $06
+	vol 9
+	note gs4 $06
+	vol 3
+	note gs4 $06
+	vol 9
+	note g4 $06
+	vol 3
+	note g4 $06
+	vol 9
+	note cs5 $06
+	vol 3
+	note cs5 $06
+	vol 9
+	note c5 $06
+	vol 3
+	note c5 $06
+	cmdff
+
+snddaStart:
+snddaChannel2: ; Ages D6 Chime
+	duty $02
+	vol 9
+	note ds4 $06
+	vol 3
+	note ds4 $06
+	vol 9
+	note f4 $06
+	vol 3
+	note f4 $06
+	vol 9
+	note as4 $06
+	vol 3
+	note as4 $06
+	rest $0c
+	vol 9
+	note ds4 $06
+	vol 3
+	note ds4 $06
+	vol 9
+	note f4 $06
+	vol 3
+	note f4 $06
+	vol 9
+	note b4 $06
+	vol 3
+	note b4 $06
+	cmdff
+
+snddbStart:
+snddbChannel2: ; Ages D7 Chime
+	duty $2
+	vol 9
+	note e4 $06
+	vol 3
+	note e4 $06
+	vol 9
+	note ds4 $06
+	vol 3
+	note ds4 $06
+	vol 9
+	note f4 $06
+	vol 3
+	note f4 $06
+	vol 9
+	note e4 $06
+	vol 3
+	note e4 $06
+	vol 9
+	note d4 $06
+	vol 3
+	note d4 $06
+	cmdff
+
+snddcStart:
+snddcChannel2: ; Ages D8 Chime
+	duty $2
+	vol 9
+	note gs2 $06
+	vol 3
+	note gs2 $06
+	vol 9
+	note a2 $06
+	vol 3
+	note a2 $06
+	vol 9
+	note gs2 $06
+	vol 3
+	note gs2 $06
+	vol 9
+	note e2 $06
+	vol 3
+	note e2 $06
+	vol 9
+	note gs2 $06
+	vol 3
+	note gs2 $06
+	vol 9
+	note a2 $06
+	vol 3
+	note a2 $06
+	vol 9
+	note gs2 $06
+	vol 3
+	note gs2 $06
+	vol 9
+	note e2 $06
+	vol 3
+	note e2 $06
+	cmdff
 
 .endif
 

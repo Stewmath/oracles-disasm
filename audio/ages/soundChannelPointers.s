@@ -45,13 +45,6 @@ mus47:
 mus48:
 mus49:
 mus4b:
-sndd6:
-sndd7:
-sndd8:
-sndd9:
-sndda:
-snddb:
-snddc:
 snddd:
 	.db $00
 	.dw mus37Channel0
@@ -1431,9 +1424,45 @@ sndWind:
 	.dw sndWindChannel7
 	.db $ff
 
+; RANDO: Sounds d5-dc are custom compass chimes
 sndd5:
-	.db $02
+	.db $b2
 	.dw sndd5Channel2
+	.db $ff
+
+sndd6:
+	.db $b2
+	.dw sndd6Channel2
+	.db $ff
+
+sndd7:
+	.db $b2
+	.dw sndd7Channel2
+	.db $ff
+
+sndd8:
+	.db $b2
+	.dw sndd8Channel2
+	.db $ff
+
+sndd9:
+	.db $b2
+	.dw sndd9Channel2
+	.db $ff
+
+sndda:
+	.db $b2
+	.dw snddaChannel2
+	.db $ff
+
+snddb:
+	.db $b2
+	.dw snddbChannel2
+	.db $ff
+
+snddc:
+	.db $b2
+	.dw snddcChannel2
 	.db $ff
 
 snd92:

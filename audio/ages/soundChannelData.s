@@ -122,12 +122,6 @@ snd86Channel2:
 	cmdff
 
 .include "audio/sfx/common/teleport.s"
-
-sndd5Start:
-sndd5Channel2:
-	cmdff
-	cmdff
-
 .include "audio/sfx/common/transform.s"
 .include "audio/sfx/common/blueStalfosCharge.s"
 
@@ -334,13 +328,6 @@ mus47Start:
 mus48Start:
 mus49Start:
 mus4bStart:
-sndd6Start:
-sndd7Start:
-sndd8Start:
-sndd9Start:
-snddaStart:
-snddbStart:
-snddcStart:
 sndddStart:
 
 mus37Channel1:
@@ -356,13 +343,6 @@ mus47Channel1:
 mus48Channel1:
 mus49Channel1:
 mus4bChannel1:
-sndd6Channel1:
-sndd7Channel1:
-sndd8Channel1:
-sndd9Channel1:
-snddaChannel1:
-snddbChannel1:
-snddcChannel1:
 sndddChannel1:
 	cmdff
 
@@ -379,13 +359,6 @@ mus47Channel0:
 mus48Channel0:
 mus49Channel0:
 mus4bChannel0:
-sndd6Channel0:
-sndd7Channel0:
-sndd8Channel0:
-sndd9Channel0:
-snddaChannel0:
-snddbChannel0:
-snddcChannel0:
 sndddChannel0:
 	cmdff
 
@@ -402,13 +375,6 @@ mus47Channel4:
 mus48Channel4:
 mus49Channel4:
 mus4bChannel4:
-sndd6Channel4:
-sndd7Channel4:
-sndd8Channel4:
-sndd9Channel4:
-snddaChannel4:
-snddbChannel4:
-snddcChannel4:
 sndddChannel4:
 	cmdff
 
@@ -425,13 +391,6 @@ mus47Channel6:
 mus48Channel6:
 mus49Channel6:
 mus4bChannel6:
-sndd6Channel6:
-sndd7Channel6:
-sndd8Channel6:
-sndd9Channel6:
-snddaChannel6:
-snddbChannel6:
-snddcChannel6:
 sndddChannel6:
 	cmdff
 
