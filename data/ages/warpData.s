@@ -96,6 +96,9 @@ group0WarpDestTable:
 	m_WarpDest $e2 $54 $0 $1
 	m_WarpDest $f1 $43 $0 $1
 
+	; RANDO: Added destination warp for D2 present
+	m_WarpDest $83 $25 $0 $1 ; Index $4d
+
 group1WarpDestTable:
 	m_WarpDest $48 $21 $0 $1
 	m_WarpDest $83 $25 $0 $1
@@ -668,6 +671,9 @@ group0WarpSources: ; $135ae
 	m_StandardWarp $00 $5b $28 $5 $4
 	m_StandardWarp $00 $a0 $33 $5 $4
 	m_StandardWarp $00 $a5 $3e $5 $4
+
+	; RANDO: Added source warp for D2 present
+	m_StandardWarp $00 $83 $03 $c $4 ; Index $3a (fake group "$c" triggers special-case code)
 	m_WarpSourcesEnd
 
 warpSource769a:

@@ -92,8 +92,12 @@
 	GLOBALFLAG_RALPH_ENTERED_BLACK_TOWER	db ; $45
 	GLOBALFLAG_GOT_SATCHEL_UPGRADE		db ; $46
 
-	; Unused?
-	GLOBALFLAG_47				db ; $47
+	; RANDO: Because there are two D2 entrances, this flag must be used in order to track which
+	; entrance was used to enter the dungeon. However, if dungeon entrances are randomized, it
+	; may be a different dungeon with multiple entrances, and the location of that alternate
+	; entrance could be anywhere.
+	GLOBALFLAG_RANDO_ALT_DUNGEON_ENTRANCE	db ; $47
+
 	GLOBALFLAG_48				db ; $48
 	GLOBALFLAG_49				db ; $49
 	GLOBALFLAG_4a				db ; $4a

@@ -115,6 +115,22 @@ applyWarpDest_b04:
 	jr label_04_033
 .endif
 
+.ifdef ROM_AGES
+	; RANDO: If you're entering a dungeon through the alternate entrance, set the global flag so
+	; that we'll go back to that entrance when we leave the dungeon (activates the code a bit
+	; below here when exiting the dungeon).
+	bit 3,a ; Invalid group value is used as a special-case check for the alternate entrance
+	jr z,++
+	and $f7
+	ld (wWarpDestGroup),a
+	push af
+	ld a,GLOBALFLAG_RANDO_ALT_DUNGEON_ENTRANCE
+	call setGlobalFlag
+	pop af
+++
+.endif
+
+
 label_04_032:
 	ld hl,warpDestTable
 	rst_addDoubleIndex
@@ -138,6 +154,33 @@ label_04_033:
 +++
 
 .ifdef ROM_AGES
+	; RANDO: If you entered a dungeon from its alternate entrance (normally d2 present), change
+	; the warp destination so that you exit in the correct place. This applies to both exiting
+	; the dungeon normally and to essence warps.
+	ld a,GLOBALFLAG_RANDO_ALT_DUNGEON_ENTRANCE
+	call checkGlobalFlag
+	jr z,@doneAltEntranceCheck
+
+	; Assume any exits to the overworld mean we're exiting the dungeon
+	ld a,(wWarpDestGroup)
+	and $07
+	cp $04
+	jr nc,@doneAltEntranceCheck
+
+	ld a,GLOBALFLAG_RANDO_ALT_DUNGEON_ENTRANCE
+	call unsetGlobalFlag
+	ld hl,randoAltDungeonEntranceRoom
+	ldi a,(hl)
+	ld (wWarpDestGroup),a
+	ldi a,(hl)
+	ld (wWarpDestRoom),a
+	ldi a,(hl)
+	ld (wWarpDestPos),a
+	ld a,(hl)
+	ld (wWarpTransition),a
+	jr @doneAltEntranceCheck
+
+@doneAltEntranceCheck:
 	; RANDO: Special case for entering Jabu-Jabu's Belly. Must reset the water level whenever
 	; you enter, in order to prevent softlocks.
 	ld a,(wWarpDestRoom)
@@ -205,6 +248,18 @@ label_04_035:
 label_04_036:
 	jp loadScreenMusicAndSetRoomPack
 .endif
+
+
+.ifdef ROM_AGES
+
+; RANDO: group + room + position + transition type for the alternate dungeon entrance. This is
+; normally D2 present but can be modified by the randomizer. Data format is the same as essence
+; warps.
+randoAltDungeonEntranceRoom:
+	.db $00, $83, $25, TRANSITION_DEST_SET_RESPAWN
+
+.endif
+
 
 ;;
 ; Sets wWarpDestRoom, wWarpDestGroup, wWarpTransition with suitable warp data. If no

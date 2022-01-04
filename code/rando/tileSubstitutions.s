@@ -106,5 +106,6 @@ applyRandoTileChanges:
 .else
 	.db $01, $48, $10, $45, $d7 ; portal south of past maku tree
 	.db $05, $bc, $10, $7e, $31 ; goron's hiding place (make wall visibly bombable)
+	.db $00, $83, $10, $43, $a4 ; remove rock outside present D2
 	.db $ff
 .endif

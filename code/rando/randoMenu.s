@@ -235,6 +235,13 @@ randoMenu_state2:
 	call setMusicVolume
 	call fadeoutToWhite
 
+.ifdef ROM_AGES
+	; This is normally unset when exiting a dungeon, but must be done manually in this case. For
+	; D2 present dungeon entrance (or wherever it's randomized to).
+	ld a,GLOBALFLAG_RANDO_ALT_DUNGEON_ENTRANCE
+	call unsetGlobalFlag
+.endif
+
 	; Static dungeon objects normally don't get cleared by this warp type, so do it here
 	call clearStaticObjects
 
