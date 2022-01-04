@@ -1654,6 +1654,88 @@ agesSlot_d2_boss:
 	dwbe $062b
 	.dw  $0000
 
+; ==============================================================================
+; D3
+; ==============================================================================
+
+agesSlot_d3_bridgeChest:
+	dwbe TREASURE_OBJECT_RUPEES_03
+	.db  COLLECT_MODE_CHEST
+	dwbe $044e
+	.dw  $0000
+
+agesSlot_d3_b1fEast:
+	dwbe TREASURE_OBJECT_BOSS_KEY_03
+	.db  COLLECT_MODE_CHEST
+	dwbe $0450
+	.dw  $0000
+
+agesSlot_d3_torchChest:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0455
+	.dw  $0000
+
+agesSlot_d3_conveyorBeltRoom:
+	dwbe TREASURE_OBJECT_COMPASS_03
+	.db  COLLECT_MODE_CHEST
+	dwbe $0456
+	.dw  $0000
+
+agesSlot_d3_mimicRoom:
+	dwbe TREASURE_OBJECT_SHOOTER_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $0458
+	.dw  $0000
+
+agesSlot_d3_bushBeetleRoom:
+	dwbe TREASURE_OBJECT_RUPEES_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $045c
+	.dw  $0000
+
+agesSlot_d3_crossroads:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0460
+	.dw  $0000
+
+agesSlot_d3_polsVoiceChest:
+	dwbe TREASURE_OBJECT_MAP_03
+	.db  COLLECT_MODE_CHEST
+	dwbe $0465
+	.dw  $0000
+
+agesSlot_d3_moldormDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_FALL
+	dwbe $044b
+	.dw  $0000
+
+agesSlot_d3_armosDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_FALL
+	dwbe $045e
+	.dw  $0000
+
+agesSlot_d3_statueDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_FALL
+	dwbe $0461
+	.dw  $0000
+
+agesSlot_d3_sixBlockDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_03
+	.db  COLLECT_MODE_FALL
+	dwbe $0464
+	.dw  $0000
+
+agesSlot_d3_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	dwbe $044a
+	.dw  $0000
+
 
 slotsEnd:
 

@@ -1037,6 +1037,7 @@ interaction21_subid08:
 interaction21_subid09:
 	call interactionDeleteAndRetIfItemFlagSet
 	ld hl,@tileData
+	ld bc,rando.agesSlot_d3_sixBlockDrop ; RANDO: Item slot to spawn
 	jp verifyTilesAndDropRandomizedTreasure
 
 @tileData:
@@ -1204,7 +1205,13 @@ interaction21_subid0e:
 	ld a,(hl)
 	cp $2a
 	ret nz
-	jp spawnSmallKeyFromCeiling
+
+	; RANDO: Replace small key with randomized item
+	ld bc,rando.agesSlot_d3_statueDrop
+	call spawnRandomizedTreasure
+	ret nz
+	call objectCopyPosition
+	jp interactionDelete
 
 
 ; d4: A door opens when a certain floor pattern is achieved
