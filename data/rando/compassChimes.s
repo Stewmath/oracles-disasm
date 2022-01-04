@@ -362,6 +362,7 @@ sndd5Channel2: ; Ages D1 Chime
 	vol 3
 	note f5 $06
 	rest $0c
+
 	vol 9
 	note e5 $06
 	vol 3
@@ -371,6 +372,15 @@ sndd5Channel2: ; Ages D1 Chime
 	vol 3
 	note f5 $06
 	rest $0c
+
+	vol 9
+	note gs5 $06
+	vol 3
+	note gs5 $06
+	vol 9
+	note b6 $06
+	vol 3
+	note b6 $06
 	cmdff
 
 sndd6Start:
@@ -419,45 +429,82 @@ sndd7Channel2: ; Ages D3 Chime
 	note c5 $06
 	vol 3
 	note c5 $06
-	vol 9
-	note b4 $06
-	vol 3
-	note b4 $06
 	rest $06
+
 	vol 9
-	note b4 $05
+	note c5 $03
 	vol 3
-	note b4 $01
+	note c5 $03
+
+	vol 9
+	note ds5 $06
+	vol 3
+	note ds5 $06
+	vol 9
+	note d5 $06
+	vol 3
+	note d5 $06
+	vol 9
+	note cs5 $06
+	vol 3
+	note cs5 $06
 	vol 9
 	note c5 $06
 	vol 3
 	note c5 $06
-	vol 9
-	note b4 $06
-	vol 3
-	note b4 $06
 	cmdff
 
 sndd8Start:
 sndd8Channel2: ; Ages D4 Chime
 	duty $2
 	vol 9
-	note b4 $06
+	note d4  $05
 	vol 3
-	note b4 $06
-	rest $0c
+	note d4  $01
 	vol 9
-	note cs5 $06
+	note ds4 $05
 	vol 3
-	note cs5 $06
+	note ds4 $01
 	vol 9
-	note ds5 $05
+	note f4  $05
 	vol 3
-	note ds5 $01
+	note f4  $01
 	vol 9
-	note b4 $05
+	note fs4 $05
 	vol 3
-	note b4 $01
+	note fs4 $01
+	vol 9
+	note gs4 $05
+	vol 3
+	note gs4 $01
+	vol 9
+	note fs4 $05
+	vol 3
+	note fs4 $01
+	vol 9
+	note f4  $05
+	vol 3
+	note f4  $01
+	vol 9
+	note ds4 $05
+	vol 3
+	note ds4 $01
+	vol 9
+	note d4  $05
+	vol 3
+	note d4  $01
+	vol 9
+	note f4  $05
+	vol 3
+	note f4  $01
+	vol 9
+	note gs4 $05
+	vol 3
+	note gs4 $01
+	vol 9
+	note b4  $05
+	vol 3
+	note b4  $01
 	vol 9
 	note as4 $06
 	vol 3
@@ -487,6 +534,10 @@ sndd9Channel2: ; Ages D5 Chime
 	note c5 $06
 	vol 3
 	note c5 $06
+	vol 9
+	note fs4 $06
+	vol 3
+	note fs4 $06
 	cmdff
 
 snddaStart:
@@ -542,6 +593,21 @@ snddbChannel2: ; Ages D7 Chime
 	note d4 $06
 	vol 3
 	note d4 $06
+
+	rest $06
+	vol 9
+	note cs4 $03
+	note c4 $03
+
+	vol 9
+	note as3 $06
+	vol 3
+	note as3 $06
+
+	vol 9
+	note g3 $06
+	vol 3
+	note g3 $06
 	cmdff
 
 snddcStart:
