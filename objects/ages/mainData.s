@@ -1780,11 +1780,14 @@ group1Map74ObjectData:
 	obj_End
 
 group1Map75ObjectData:
-	obj_Interaction $37 $0a $58 $60
-	obj_Interaction $31 $04 $f8 $58
-	obj_Interaction $31 $05 $58 $60
-	obj_Interaction $36 $0a $58 $40
-	obj_Interaction $ad $04 $48 $50
+	; RANDO: Remove ralph, nayru, zelda, and impa objects responsible for the cutscenes that
+	; play outside the black tower where ralph's heritage is revealed.
+	;obj_Interaction $37 $0a $58 $60
+	;obj_Interaction $31 $04 $f8 $58
+	;obj_Interaction $31 $05 $58 $60
+	;obj_Interaction $36 $0a $58 $40
+	;obj_Interaction $ad $04 $48 $50
+
 	obj_Interaction $58 $01 $58 $48 $00
 	obj_Interaction $58 $01 $58 $28 $01
 	obj_End
