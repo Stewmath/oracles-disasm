@@ -894,9 +894,13 @@ interactionCode41:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	jp nz,interactionDelete
-	ld a,GLOBALFLAG_0b
-	call checkGlobalFlag
-	jp nz,interactionDelete
+
+	; RANDO: Make the guy in front of d2 disappear when you have bombs, instead of after seeing
+	; the cutscene in ambi's palace.
+	ld a,TREASURE_BOMBS
+	call checkTreasureObtained
+	jp c,interactionDelete
+
 	call @initGraphicsIncStateAndLoadScript
 ++
 	call interactionRunScript
