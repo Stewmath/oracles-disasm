@@ -1508,6 +1508,76 @@ agesSlot_d0_basement:
 	dwbe $0605
 	.dw  $0000
 
+; ==============================================================================
+; D1
+; ==============================================================================
+
+agesSlot_d1_oneButtonChest:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0415
+	.dw  $0000
+
+agesSlot_d1_twoButtonChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0416
+	.dw  $0000
+
+agesSlot_d1_wideRoom:
+	dwbe TREASURE_OBJECT_SMALL_KEY_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $041a
+	.dw  $0000
+
+agesSlot_d1_crystalRoom:
+	dwbe TREASURE_OBJECT_RING_0e
+	.db  COLLECT_MODE_CHEST
+	dwbe $041c
+	.dw  $0000
+
+agesSlot_d1_crossroads:
+	dwbe TREASURE_OBJECT_COMPASS_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $041d
+	.dw  $0000
+
+agesSlot_d1_westTerrace:
+	dwbe TREASURE_OBJECT_RING_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $041f
+	.dw  $0000
+
+agesSlot_d1_potChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0423
+	.dw  $0000
+
+agesSlot_d1_eastTerrace:
+	dwbe TREASURE_OBJECT_MAP_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0425
+	.dw  $0000
+
+agesSlot_d1_ghiniDrop:
+	dwbe TREASURE_OBJECT_SMALL_KEY_01
+	.db  COLLECT_MODE_FALL
+	dwbe $041e
+	.dw  $0000
+
+agesSlot_d1_basement:
+	dwbe TREASURE_OBJECT_BRACELET_00
+	.db  COLLECT_MODE_PICKUP_2HAND
+	dwbe $0610
+	.dw  $0000
+
+agesSlot_d1_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	dwbe $0413
+	.dw  $0000
+
 
 slotsEnd:
 

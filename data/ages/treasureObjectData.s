@@ -390,24 +390,56 @@ treasureObjectData30:
 	m_TreasureSubid $00, $0c, $1a, $42, TREASURE_OBJECT_SMALL_KEY_0c ; D6 Past
 	m_TreasureSubid $00, $0d, $1a, $42, TREASURE_OBJECT_SMALL_KEY_0d ; Maku Path
 
+; RANDO: Same deal as above
 treasureObjectData31:
 	m_BeginTreasureSubids TREASURE_BOSS_KEY
-	m_TreasureSubid $19, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_00
-	m_TreasureSubid $29, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_01
-	m_TreasureSubid $49, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_02
-	m_TreasureSubid $38, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_03
+	m_TreasureSubid $00, $00, $1b, $43, TREASURE_OBJECT_BOSS_KEY_00 ; Unused
+	m_TreasureSubid $00, $01, $1b, $43, TREASURE_OBJECT_BOSS_KEY_01
+	m_TreasureSubid $00, $02, $1b, $43, TREASURE_OBJECT_BOSS_KEY_02
+	m_TreasureSubid $00, $03, $1b, $43, TREASURE_OBJECT_BOSS_KEY_03
+	m_TreasureSubid $00, $04, $1b, $43, TREASURE_OBJECT_BOSS_KEY_04
+	m_TreasureSubid $00, $05, $1b, $43, TREASURE_OBJECT_BOSS_KEY_05
+	m_TreasureSubid $00, $06, $1b, $43, TREASURE_OBJECT_BOSS_KEY_06
+	m_TreasureSubid $00, $07, $1b, $43, TREASURE_OBJECT_BOSS_KEY_07
+	m_TreasureSubid $00, $08, $1b, $43, TREASURE_OBJECT_BOSS_KEY_08
+	m_TreasureSubid $00, $09, $1b, $43, TREASURE_OBJECT_BOSS_KEY_09 ; Unused
+	m_TreasureSubid $00, $0a, $1b, $43, TREASURE_OBJECT_BOSS_KEY_0a ; Unused
+	m_TreasureSubid $00, $0b, $1b, $43, TREASURE_OBJECT_BOSS_KEY_0b ; Unused
+	m_TreasureSubid $00, $0c, $1b, $43, TREASURE_OBJECT_BOSS_KEY_0c ; D6 Past
 
+; RANDO: Same deal as above
 treasureObjectData32:
 	m_BeginTreasureSubids TREASURE_COMPASS
-	m_TreasureSubid $1a, $00, $19, $41, TREASURE_OBJECT_COMPASS_00
-	m_TreasureSubid $2a, $00, $19, $41, TREASURE_OBJECT_COMPASS_01
-	m_TreasureSubid $68, $00, $19, $41, TREASURE_OBJECT_COMPASS_02
+	m_TreasureSubid $00, $00, $19, $41, TREASURE_OBJECT_COMPASS_00 ; Unused
+	m_TreasureSubid $00, $01, $19, $41, TREASURE_OBJECT_COMPASS_01
+	m_TreasureSubid $00, $02, $19, $41, TREASURE_OBJECT_COMPASS_02
+	m_TreasureSubid $00, $03, $19, $41, TREASURE_OBJECT_COMPASS_03
+	m_TreasureSubid $00, $04, $19, $41, TREASURE_OBJECT_COMPASS_04
+	m_TreasureSubid $00, $05, $19, $41, TREASURE_OBJECT_COMPASS_05
+	m_TreasureSubid $00, $06, $19, $41, TREASURE_OBJECT_COMPASS_06
+	m_TreasureSubid $00, $07, $19, $41, TREASURE_OBJECT_COMPASS_07
+	m_TreasureSubid $00, $08, $19, $41, TREASURE_OBJECT_COMPASS_08
+	m_TreasureSubid $00, $09, $19, $41, TREASURE_OBJECT_COMPASS_09 ; Unused
+	m_TreasureSubid $00, $0a, $19, $41, TREASURE_OBJECT_COMPASS_0a ; Unused
+	m_TreasureSubid $00, $0b, $19, $41, TREASURE_OBJECT_COMPASS_0b ; Unused
+	m_TreasureSubid $00, $0c, $19, $41, TREASURE_OBJECT_COMPASS_0c ; D6 Past
 
+; RANDO: Same deal as above
 treasureObjectData33:
 	m_BeginTreasureSubids TREASURE_MAP
-	m_TreasureSubid $1a, $00, $18, $40, TREASURE_OBJECT_MAP_00
-	m_TreasureSubid $2a, $00, $18, $40, TREASURE_OBJECT_MAP_01
-	m_TreasureSubid $68, $00, $18, $40, TREASURE_OBJECT_MAP_02
+	m_TreasureSubid $00, $00, $18, $40, TREASURE_OBJECT_MAP_00 ; Unused
+	m_TreasureSubid $00, $01, $18, $40, TREASURE_OBJECT_MAP_01
+	m_TreasureSubid $00, $02, $18, $40, TREASURE_OBJECT_MAP_02
+	m_TreasureSubid $00, $03, $18, $40, TREASURE_OBJECT_MAP_03
+	m_TreasureSubid $00, $04, $18, $40, TREASURE_OBJECT_MAP_04
+	m_TreasureSubid $00, $05, $18, $40, TREASURE_OBJECT_MAP_05
+	m_TreasureSubid $00, $06, $18, $40, TREASURE_OBJECT_MAP_06
+	m_TreasureSubid $00, $07, $18, $40, TREASURE_OBJECT_MAP_07
+	m_TreasureSubid $00, $08, $18, $40, TREASURE_OBJECT_MAP_08
+	m_TreasureSubid $00, $09, $18, $40, TREASURE_OBJECT_MAP_09 ; Unused
+	m_TreasureSubid $00, $0a, $18, $40, TREASURE_OBJECT_MAP_0a ; Unused
+	m_TreasureSubid $00, $0b, $18, $40, TREASURE_OBJECT_MAP_0b ; Unused
+	m_TreasureSubid $00, $0c, $18, $40, TREASURE_OBJECT_MAP_0c ; D6 Past
 
 treasureObjectData41:
 	m_BeginTreasureSubids TREASURE_TRADEITEM

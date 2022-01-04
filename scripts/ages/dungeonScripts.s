@@ -64,7 +64,7 @@ spiritsGraveScript_spawnMovingPlatform:
 
 spiritsGraveScript_spawnBracelet:
 	stopifitemflagset
-	spawnitem TREASURE_BRACELET, $00
+	spawnrandomizeditem rando.agesSlot_d1_basement
 	scriptend
 
 

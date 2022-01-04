@@ -126,6 +126,8 @@ lookupRoomTreasure_body:
 	ret
 
 
+; Data format per row:
+;   dbbw group, room, itemslot
 @roomTreasureTable:
 
 .ifdef ROM_SEASONS
@@ -156,9 +158,12 @@ lookupRoomTreasure_body:
 	dbbw $05, $2a, seasonsSlot_herosCave_waterRoomDrop
 	.db $ff
 
-.else
-	; RANDO-TODO: Ages
+.else; ROM_AGES
+
+	dbbw $04, $1e, agesSlot_d1_ghiniDrop
+	dbbw $04, $13, agesSlot_d1_boss
 	.db $ff
+
 .endif
 
 

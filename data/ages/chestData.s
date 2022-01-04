@@ -70,14 +70,14 @@ chestGroup3Data:
 
 chestGroup4Data:
 	m_ChestDataRando $57, $08, rando.agesSlot_d0_keyChest
-	m_ChestData $5a, $15, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $17, $16, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $2c, $1a, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $59, $1c, TREASURE_OBJECT_RING_0e
-	m_ChestData $53, $1d, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $73, $1f, TREASURE_OBJECT_RING_04
-	m_ChestData $16, $23, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $12, $25, TREASURE_OBJECT_MAP_02
+	m_ChestDataRando $5a, $15, rando.agesSlot_d1_oneButtonChest
+	m_ChestDataRando $17, $16, rando.agesSlot_d1_twoButtonChest
+	m_ChestDataRando $2c, $1a, rando.agesSlot_d1_wideRoom
+	m_ChestDataRando $59, $1c, rando.agesSlot_d1_crystalRoom
+	m_ChestDataRando $53, $1d, rando.agesSlot_d1_crossroads
+	m_ChestDataRando $73, $1f, rando.agesSlot_d1_westTerrace
+	m_ChestDataRando $16, $23, rando.agesSlot_d1_potChest
+	m_ChestDataRando $12, $25, rando.agesSlot_d1_eastTerrace
 	m_ChestData $57, $30, TREASURE_OBJECT_SMALL_KEY_03
 	m_ChestData $58, $3e, TREASURE_OBJECT_BOSS_KEY_03
 	m_ChestData $87, $40, TREASURE_OBJECT_MAP_02
