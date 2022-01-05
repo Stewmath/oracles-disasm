@@ -1922,6 +1922,58 @@ agesSlot_d6_present_channelChest:
 	dwbe $0525
 	.dw  $0000
 
+; ==============================================================================
+; D6 Past
+; ==============================================================================
+
+agesSlot_d6_past_diamondChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0c
+	.db  COLLECT_MODE_CHEST
+	dwbe $052c
+	.dw  $0000
+
+agesSlot_d6_past_spearChest:
+	dwbe TREASURE_OBJECT_RUPEES_04
+	.db  COLLECT_MODE_CHEST
+	dwbe $052e
+	.dw  $0000
+
+agesSlot_d6_past_ropeChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0c
+	.db  COLLECT_MODE_CHEST
+	dwbe $0531
+	.dw  $0000
+
+agesSlot_d6_past_stalfosChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_0c
+	.db  COLLECT_MODE_CHEST
+	dwbe $053c
+	.dw  $0000
+
+agesSlot_d6_past_colorRoom:
+	dwbe TREASURE_OBJECT_COMPASS_0c
+	.db  COLLECT_MODE_CHEST
+	dwbe $053f
+	.dw  $0000
+
+agesSlot_d6_past_poolChest:
+	dwbe TREASURE_OBJECT_MAP_0c
+	.db  COLLECT_MODE_CHEST
+	dwbe $0541
+	.dw  $0000
+
+agesSlot_d6_past_wizzrobeChest:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0545
+	.dw  $0000
+
+agesSlot_d6_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	dwbe $0536
+	.dw  $0000
+
 
 slotsEnd:
 

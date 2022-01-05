@@ -133,13 +133,13 @@ chestGroup5Data:
 	m_ChestDataRando $13, $1f, rando.agesSlot_d6_present_beamosChest
 	m_ChestDataRando $67, $21, rando.agesSlot_d6_present_cubeChest
 	m_ChestDataRando $3d, $25, rando.agesSlot_d6_present_channelChest
-	m_ChestData $57, $2c, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $24, $2e, TREASURE_OBJECT_RUPEES_04
-	m_ChestData $57, $31, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $55, $3c, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $53, $3f, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $52, $41, TREASURE_OBJECT_MAP_02
-	m_ChestData $57, $45, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $57, $2c, rando.agesSlot_d6_past_diamondChest
+	m_ChestDataRando $24, $2e, rando.agesSlot_d6_past_spearChest
+	m_ChestDataRando $57, $31, rando.agesSlot_d6_past_ropeChest
+	m_ChestDataRando $55, $3c, rando.agesSlot_d6_past_stalfosChest
+	m_ChestDataRando $53, $3f, rando.agesSlot_d6_past_colorRoom
+	m_ChestDataRando $52, $41, rando.agesSlot_d6_past_poolChest
+	m_ChestDataRando $57, $45, rando.agesSlot_d6_past_wizzrobeChest
 	m_ChestData $31, $4c, TREASURE_OBJECT_RING_28
 	m_ChestData $18, $4d, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $12, $4e, TREASURE_OBJECT_SWITCH_HOOK_01
