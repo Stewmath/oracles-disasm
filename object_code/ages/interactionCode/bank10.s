@@ -1523,15 +1523,17 @@ interactionCodee1:
 	.dw @subid2Init
 
 @subid1Init:
-	ld a,GLOBALFLAG_MAKU_TREE_SAVED
-	call checkGlobalFlag
-	jr nz,@commonInit
+	; RANDO: Always keep the initial present -> past portal open
+	;ld a,GLOBALFLAG_MAKU_TREE_SAVED
+	;call checkGlobalFlag
+	;jr nz,@commonInit
 	jr @setSubidBit7
 
 @subid2Init:
-	ld a,TREASURE_SEED_SATCHEL
-	call checkTreasureObtained
-	jr c,@commonInit
+	; RANDO: Always keep the initial past -> present portal open
+	;ld a,TREASURE_SEED_SATCHEL
+	;call checkTreasureObtained
+	;jr c,@commonInit
 
 @setSubidBit7:
 	ld h,d
