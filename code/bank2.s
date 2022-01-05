@@ -3,7 +3,6 @@
 ;;
 ; This function checks if the game is run on a dmg (instead of a gbc) and, if so, displays
 ; the "only for gbc" screen.
-;
 checkDisplayDmgModeScreen:
 	ldh a,(<hGameboyType)
 	or a
@@ -59,7 +58,6 @@ checkDisplayDmgModeScreen:
 ; subrosia.
 ;
 ; Updates wTilesetFlags accordingly with TILESETFLAG_PAST (bit 7).
-;
 updateTilesetFlagsForIndoorRoomInAltWorld:
 	ld a,(wActiveGroup)
 	or a
@@ -288,8 +286,8 @@ _fileSelectMode1:
 
 ;;
 ; Called after selecting something.
-; Returns zero-flag unset with a value in A as the next file selection mode, or
-; zero-flag set for no mode change.
+;
+; Returns nz with a value in A as the next file selection mode, or z for no mode change.
 @getNextFileSelectMode:
 	ld a,(wFileSelect.cursorPos)
 	cp $03
@@ -5981,8 +5979,9 @@ _drawTreasureDisplayDataToBg:
 ;;
 ; Writes tile index to (de) and (de+$20).
 ; Writes tile attribute to (de+$400), (de+$420).
-; @param b Tile attribute
-; @param c Tile index
+;
+; @param	b	Tile attribute
+; @param	c	Tile index
 @writeTileHlpr:
 	ld a,c
 	ld (de),a
@@ -6002,7 +6001,6 @@ _drawTreasureDisplayDataToBg:
 ;;
 ; Handles drawing of the maku seed and harp sprites on the inventory subscreens. These are
 ; at least partly sprites, unlike everything else.
-;
 _inventoryMenuDrawSprites:
 
 .ifdef ROM_AGES
@@ -6148,7 +6146,6 @@ _inventoryMenuDrawHarpSprites:
 ;
 ; Doesn't exist in seasons since there are no items drawn with sprites on the inventory
 ; screen (only the harp of ages).
-;
 _createBlankSpritesForItemSubmenu:
 	ld hl,wInventory.cbc1
 	ldi a,(hl)
@@ -6222,7 +6219,6 @@ _createBlankSpritesForItemSubmenu:
 ;   b0: treasure index
 ;   b1: "position" to draw the treasure at
 ;   b2: the slot index this treasure occupies
-;
 _subscreen1TreasureData:
 
 	.ifdef ROM_AGES
@@ -6403,7 +6399,6 @@ _galeSeedMenu_state0:
 
 ;;
 ; State 1: waiting for input (direction buttons, A or B)
-;
 _galeSeedMenu_state1:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -6453,7 +6448,6 @@ _galeSeedMenu_state1:
 
 ;;
 ; State 2: selected a warp destination; waiting for confirmation
-;
 _galeSeedMenu_state2:
 	call retIfTextIsActive
 
@@ -6486,7 +6480,6 @@ _galeSeedMenu_gotoState1:
 
 ;;
 ; State 3: pressed B button; waiting for confirmation to exit
-;
 _galeSeedMenu_state3:
 	call retIfTextIsActive
 
@@ -6679,7 +6672,6 @@ _mapMenu_state0:
 ; Calculates values for wMapMenu.currentRoom and wMapMenu.mode.
 ;
 ; Determines where the cursor is and in what way the minimap is shown (overworld/dungeon)
-;
 _loadMinimapDisplayRoom:
 
 .ifdef ROM_AGES
@@ -6788,7 +6780,6 @@ _dungeonMap_drawSmallKeyCount:
 ; * wMapMenu.visitedFloors
 ; * wMapMenu.dungeonCursorIndex
 ; * wMapMenu.linkFloor
-;
 _dungeonMap_calculateVisitedFloorsAndLinkPosition:
 	ld a,(wDungeonIndex)
 	ld hl,wDungeonVisitedFloors
@@ -7136,7 +7127,6 @@ _mapGetRoomText:
 
 ;;
 ; Checks for popups that should appear? (ie. house, gasha spot)
-;
 _mapMenu_loadPopupData:
 	call _mapMenu_checkCursorRoomVisited
 	jr z,@noIcon
@@ -7597,7 +7587,6 @@ _maupMenu_drawPopup:
 
 ;;
 ; Checks if pressed up or down on dungeon map, updates accordingly.
-;
 _dungeonMap_checkDirectionButtons:
 	ld a,(wSubmenuState)
 	rst_jumpTable
@@ -7606,7 +7595,6 @@ _dungeonMap_checkDirectionButtons:
 
 ;;
 ; Dungeon map: waiting for input to scroll up/down
-;
 _dungeonMap_scrollingState0:
 	call getInputWithAutofire
 	bit BTN_BIT_DOWN,a
@@ -7820,7 +7808,6 @@ _mapMenu_drawSprites:
 
 ;;
 ; Draws small key, boss key, compass, and map on the map screen if Link has them.
-;
 _dungeonMap_drawItemSprites:
 	call _getNumSmallKeys
 	ld hl,@smallKeySprite
@@ -8036,7 +8023,6 @@ _dungeonMap_drawCursor:
 ;;
 ; Draws the up/down arrows on the dungeon map, assuming it's possible to scroll in those
 ; directions.
-;
 _dungeonMap_drawArrows:
 	; Return if map is scrolling
 	ld a,(wSubmenuState)
@@ -8326,7 +8312,6 @@ _getWarpTreeData:
 
 ;;
 ; Draws the time portal sprite on the map. (Ages only)
-;
 _mapMenu_drawTimePortal:
 	; Use wTmpcec0 as a place to store and modify the OAM data to be drawn
 	ld de,@portalSprite
@@ -8444,7 +8429,6 @@ _mapMenu_drawJewelLocations:
 
 ;;
 ; This blanks out all unvisited tiles when opening the map screen.
-;
 _mapMenu_clearUnvisitedTiles:
 	ld a,:w4TileMap
 	ld ($ff00+R_SVBK),a
@@ -8564,7 +8548,6 @@ _dungeonMap_getLinkIconPosition:
 ;;
 ; Draws the floor list on the left side of the dungeon map menu.
 ; Called once when opening the dungeon map.
-;
 _dungeonMap_drawFloorList:
 	ld a,:w4TileMap
 	ld ($ff00+R_SVBK),a
@@ -8639,7 +8622,6 @@ _drawTileABtoDE:
 ;;
 ; Generates the tilemap for the scrollable portion of the dungeon map and stores it in
 ; w4GfxBuf1. Called once when opening a dungeon map.
-;
 _dungeonMap_generateScrollableTilemap:
 	ld de,w4GfxBuf1
 	ld a,$28
@@ -8706,7 +8688,6 @@ _dungeonMap_generateScrollableTilemap:
 ; Redraws the tilemap for the dungeon map screen.
 ;
 ; Prior to calling this, w4GfxBuf stores the tilemap to be scrolled through.
-;
 _dungeonMap_updateScroll:
 	ld a,($ff00+R_SVBK)
 	push af
@@ -9424,7 +9405,6 @@ _runRingMenu:
 
 ;;
 ; State 0: initalization
-;
 _ringMenu_state0:
 	call loadCommonGraphics
 	xor a
@@ -9460,7 +9440,6 @@ _ringMenu_state0:
 ;;
 ; Uses an uncompressed gfx header (one of $12-$15, depending on variables) to copy the
 ; tilemap to vram.
-;
 _ringMenu_copyTilemapToVram:
 	ld hl,wRingMenu_mode
 	ld a,(wRingMenu.tileMapIndex)
@@ -9472,7 +9451,6 @@ _ringMenu_copyTilemapToVram:
 
 ;;
 ; Clears the textbox, and decides whether to draw ring list or unappraised rings.
-;
 _ringMenu_redrawRingListOrUnappraisedRings:
 	xor a
 	call _showItemText2
@@ -9510,7 +9488,6 @@ _ringMenu_drawRingBox:
 
 ;;
 ; State 1: "normal" state; processes input, etc.
-;
 _ringMenu_state1:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -9536,7 +9513,6 @@ _ringMenu_state1_unappraisedRings:
 
 ;;
 ; State 0: waiting for player to choose an unappraised ring
-;
 _ringMenu_unappraisedRings_state0:
 	ld a,(wTextIsActive)
 	or a
@@ -9578,7 +9554,6 @@ _ringMenu_unappraisedRings_state0:
 
 ;;
 ; State 1: selected a ring; waiting for confirmation
-;
 _ringMenu_unappraisedRings_state1:
 	call _ringMenu_retIfTextIsPrinting
 
@@ -9630,7 +9605,6 @@ _ringMenu_state1_restart:
 ;;
 ; State 2: just appraised a ring; after the "ring name" textbox closes, this will print
 ; the ring's description and go to state 3.
-;
 _ringMenu_unappraisedRings_state2:
 	call _ringMenu_retIfTextIsPrinting
 
@@ -9646,7 +9620,6 @@ _ringMenu_unappraisedRings_state2:
 ;;
 ; State 3: after printing the ring's description, check if Link has the ring, print the
 ; appropriate text, then go to state 4.
-;
 _ringMenu_unappraisedRings_state3:
 	call _ringMenu_retIfTextIsPrinting
 
@@ -9685,7 +9658,6 @@ _ringMenu_unappraisedRings_state3:
 ;;
 ; State 4: redraw ring list without the just-appraised ring, check whether to exit the
 ; ring menu or whether to keep going.
-;
 _ringMenu_unappraisedRings_state4:
 	call _ringMenu_retIfTextIsPrinting
 	call _ringMenu_retIfCounterNotFinished
@@ -9746,7 +9718,6 @@ _ringMenu_showExitableText:
 
 ;;
 ; State 5: exit ring menu after a delay.
-;
 _ringMenu_unappraisedRings_state5:
 	call _ringMenu_retIfTextIsPrinting
 	call _ringMenu_retIfCounterNotFinished
@@ -9791,7 +9762,6 @@ _ringMenu_state1_ringList:
 
 ;;
 ; Substate 0: cursor is on the ring box (selecting a slot in the ring box)
-;
 _ringMenu_ringList_substate0:
 	ld a,(wRingMenu.boxCursorFlickerCounter)
 	or a
@@ -9848,7 +9818,6 @@ _ringMenu_ringList_substate0:
 
 ;;
 ; Substate 1: cursor is on the ring list (selecting something to insert into the box)
-;
 _ringMenu_ringList_substate1:
 	ld a,(wKeysJustPressed)
 	bit BTN_BIT_A,a
@@ -9868,7 +9837,6 @@ _ringMenu_ringList_substate1:
 
 ;;
 ; The ring list (not appraisal screen) runs this to update the textbox at the bottom.
-;
 _ringMenu_updateRingText:
 	; Determine what text to show for the ring name
 	ld a,(wRingMenu.selectedRing)
@@ -9922,7 +9890,6 @@ _ringMenu_updateRingText:
 ;;
 ; Selected something from the ring list; put it into the ring box and move the cursor back
 ; there.
-;
 _ringMenu_selectedRingFromList:
 	ld a,SND_SELECTITEM
 	call playSound
@@ -9953,7 +9920,6 @@ _ringMenu_selectedRingFromList:
 
 ;;
 ; Sets the cursor to be at the ring box instead of ring list.
-;
 _ringMenu_moveCursorToRingBox:
 	xor a
 	ld (wSubmenuState),a
@@ -10032,7 +9998,6 @@ _ringMenu_setState:
 
 ;;
 ; State 2: scrolling between pages
-;
 _ringMenu_state2:
 	ld a,(wRingMenu_mode)
 	or a
@@ -10172,7 +10137,6 @@ _ringMenu_checkRingListCursorMoved:
 
 ;;
 ; Update the cursor position in the ring box by checking if a direction button is pressed
-;
 _ringMenu_checkRingBoxCursorMoved:
 	call _getRingBoxCapacity
 	ld e,a
@@ -10197,7 +10161,6 @@ _ringMenu_checkRingBoxCursorMoved:
 ;;
 ; Draw sprites for the cursor, and arrows indicating you can scroll between pages (if
 ; there's more than one page).
-;
 _ringMenu_drawSprites:
 	ld a,(wRingMenu.numPages)
 	dec a
@@ -10232,7 +10195,6 @@ _ringMenu_drawSprites:
 
 ;;
 ; Draws the "E" for equipped next to the equipped ring in the ring box.
-;
 _ringMenu_drawEquippedRingSprite:
 	ld a,(wActiveRing)
 	cp $ff
@@ -10284,7 +10246,6 @@ _ringMenu_drawRingBoxCursor:
 ;;
 ; For each ring in the ring box, this draws a sprite (the letter "C") on the corresponding
 ; ring in the ring list.
-;
 _ringMenu_drawSpritesForRingsInBox:
 	ld a,$05
 @loop:
@@ -10353,7 +10314,6 @@ _ringMenu_updateSelectedRingFromList:
 
 ;;
 ; Clear all ring icons in the selection area.
-;
 _ringMenu_clearRingSelectionArea:
 	ld hl,w4TileMap+$040
 	ldbc $05,$14
@@ -10412,7 +10372,6 @@ _ringMenu_drawPageCounter:
 
 ;;
 ; Draws the contents of the ring box for the ring list menu
-;
 _ringMenu_drawRingBoxContents:
 	ld hl,wRingBoxContents
 	ld b,$11 ; b = index for _ringMenu_drawRing function (cycles from $11-$15)
@@ -10597,7 +10556,6 @@ _ringMenu_setDisplayedText:
 
 ;;
 ; Returns from caller if text is still in the process of printing.
-;
 _ringMenu_retIfTextIsPrinting:
 	ld a,(wTextIsActive)
 	and $7f
@@ -10607,7 +10565,7 @@ _ringMenu_retIfTextIsPrinting:
 
 
 ;;
-; @param[out]	zflag	Set if we got here from a game over.
+; @param[out]	zflag	nz if we got here from a game over.
 _saveQuitMenu_checkIsGameOver:
 	ld a,(wSaveQuitMenu.gameOver)
 	or a
@@ -10685,7 +10643,6 @@ _saveQuitMenu_state0:
 
 ;;
 ; State 1: processing input
-;
 _saveQuitMenu_state1:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -10735,7 +10692,6 @@ _saveQuitMenu_state1:
 
 ;;
 ; State 2: selected an option; after a delay, decide whether to reset, etc.
-;
 _saveQuitMenu_state2:
 	ld hl,wSaveQuitMenu.delayCounter
 	dec (hl)
@@ -10781,7 +10737,6 @@ _saveQuitMenu_drawSprites:
 
 ;;
 ; Run the secret list menu from farore's book.
-;
 _runSecretListMenu:
 	call clearOam
 	ld a,TEXT_BANK
@@ -10995,7 +10950,6 @@ _secretListMenu_printSecret:
 
 ;;
 ; Loads gfx for all secret names directly to vram starting at $8a00.
-;
 _secretListMenu_loadAllSecretNames:
 	xor a
 	ld ($ff00+R_VBK),a
@@ -11136,7 +11090,6 @@ _secretListMenu_getSecretData:
 
 ;;
 ; Runs the fake reset that happens when getting the sign ring in Seasons.
-;
 _runFakeReset:
 	ld a,(wFakeResetMenu.state)
 	rst_jumpTable
