@@ -100,16 +100,16 @@ chestGroup4Data:
 	m_ChestDataRando $57, $8f, rando.agesSlot_d4_minecartChest
 	m_ChestDataRando $84, $90, rando.agesSlot_d4_cubeChest
 	m_ChestDataRando $62, $92, rando.agesSlot_d4_firstCrystalSwitch
-	m_ChestData $19, $99, TREASURE_OBJECT_RUPEES_05
-	m_ChestData $54, $9b, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $47, $9e, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $9f, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $a3, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $53, $a5, TREASURE_OBJECT_CANE_OF_SOMARIA_00
-	m_ChestData $8b, $ad, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $57, $ba, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $57, $bc, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $17, $be, TREASURE_OBJECT_MAP_02
+	m_ChestDataRando $19, $99, rando.agesSlot_d5_redPegChest
+	m_ChestDataRando $54, $9b, rando.agesSlot_d5_owlPuzzle
+	m_ChestDataRando $47, $9e, rando.agesSlot_d5_twoStatuePuzzle
+	m_ChestDataRando $57, $9f, rando.agesSlot_d5_likeLikeChest
+	m_ChestDataRando $57, $a3, rando.agesSlot_d5_darkRoom
+	m_ChestDataRando $53, $a5, rando.agesSlot_d5_sixStatuePuzzle
+	m_ChestDataRando $8b, $ad, rando.agesSlot_d5_diamondChest
+	m_ChestDataRando $57, $ba, rando.agesSlot_d5_eyesChest
+	m_ChestDataRando $57, $bc, rando.agesSlot_d5_threeStatuePuzzle
+	m_ChestDataRando $17, $be, rando.agesSlot_d5_bluePegChest
 	m_ChestData $47, $c1, TREASURE_OBJECT_SMALL_KEY_03
 	m_ChestData $27, $c3, TREASURE_OBJECT_GASHA_SEED_01
 	m_ChestData $47, $c4, TREASURE_OBJECT_SMALL_KEY_03

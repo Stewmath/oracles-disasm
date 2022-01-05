@@ -1800,6 +1800,76 @@ agesSlot_d4_boss:
 	dwbe $046b
 	.dw  $0000
 
+; ==============================================================================
+; D5
+; ==============================================================================
+
+agesSlot_d5_redPegChest:
+	dwbe TREASURE_OBJECT_RUPEES_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $0499
+	.dw  $0000
+
+agesSlot_d5_owlPuzzle:
+	dwbe TREASURE_OBJECT_BOSS_KEY_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $049b
+	.dw  $0000
+
+agesSlot_d5_twoStatuePuzzle:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $049e
+	.dw  $0000
+
+agesSlot_d5_likeLikeChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $049f
+	.dw  $0000
+
+agesSlot_d5_darkRoom:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $04a3
+	.dw  $0000
+
+agesSlot_d5_sixStatuePuzzle:
+	dwbe TREASURE_OBJECT_CANE_OF_SOMARIA_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $04a5
+	.dw  $0000
+
+agesSlot_d5_diamondChest:
+	dwbe TREASURE_OBJECT_COMPASS_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $04ad
+	.dw  $0000
+
+agesSlot_d5_eyesChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $04ba
+	.dw  $0000
+
+agesSlot_d5_threeStatuePuzzle:
+	dwbe TREASURE_OBJECT_SMALL_KEY_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $04bc
+	.dw  $0000
+
+agesSlot_d5_bluePegChest:
+	dwbe TREASURE_OBJECT_MAP_05
+	.db  COLLECT_MODE_CHEST
+	dwbe $04be
+	.dw  $0000
+
+agesSlot_d5_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	dwbe $04bf
+	.dw  $0000
+
 
 slotsEnd:
 
