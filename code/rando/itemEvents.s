@@ -9,6 +9,9 @@ randoGiveTreasureHook:
 	call satchelRefillSeeds
 	call giveInitialSeeds
 	call activateFlute
+.ifdef ROM_AGES
+	call handleD6BossKeys
+.endif
 	ret
 
 ;;
@@ -78,6 +81,29 @@ activateFlute:
 	; - 1/0: Animal-dependant?
 	ld (hl),$c3
 	ret
+.endif
+
+
+.ifdef ROM_AGES
+
+;;
+; Getting the D6 Past boss key also gives you the D6 Present boss key. Only matters for the display
+; on the map screen.
+handleD6BossKeys:
+	ld a,b
+	cp TREASURE_BOSS_KEY
+	ret nz
+	ld a,c
+	cp $0c
+	ret nz
+
+	push bc
+	ld a,TREASURE_BOSS_KEY
+	ld c,$06
+	call giveTreasure
+	pop bc
+	ret
+
 .endif
 
 
