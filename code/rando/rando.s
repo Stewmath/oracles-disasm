@@ -284,6 +284,17 @@ playCompassSoundIfKeyInRoom_override:
 	ld a,SND_COMPASS
 	ret z
 	ld a,e ; Dungeon index
+
+.ifdef ROM_AGES
+	; Special case for D6 past compass chime
+	cp $0c
+	jr nz,@notD6Past
+	ld a,$da
+	ret
+
+@notD6Past:
+.endif
+
 	add $d4 ; Sounds $d5-$dc are the compass chimes
 	ret
 
