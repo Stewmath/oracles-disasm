@@ -100,8 +100,7 @@ lookupItemSpriteWithProgression:
 +++
 	ld a,e
 	ld hl,interaction60SubidData
-	add a
-	rst_addAToHl
+	rst_addDoubleIndex
 	ld a,e
 	rst_addAToHl
 	ret
