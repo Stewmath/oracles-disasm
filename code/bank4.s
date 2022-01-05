@@ -136,6 +136,23 @@ label_04_033:
 	or $80
 	ld (wWarpTransition),a
 +++
+
+.ifdef ROM_AGES
+	; RANDO: Special case for entering Jabu-Jabu's Belly. Must reset the water level whenever
+	; you enter, in order to prevent softlocks.
+	ld a,(wWarpDestRoom)
+	cp <ROOM_AGES_556
+	jr nz,@doneRandoWarpChecks
+	ld a,(wWarpDestGroup)
+	and $07
+	cp >ROOM_AGES_556
+	jr nz,@doneRandoWarpChecks
+	ld a,$21
+	ld (wJabuWaterLevel),a ; Reset water level
+
+@doneRandoWarpChecks:
+.endif
+
 	ld a,LINK_STATE_WARPING
 	ld (wLinkForceState),a
 	ld a,(wActiveGroup)
