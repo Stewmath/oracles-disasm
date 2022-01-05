@@ -4502,10 +4502,12 @@ getImpaNpcState:
 	;rlca
 	;ret nc
 
-	ld a,TREASURE_HARP
-	call checkTreasureObtained
+	; RANDO: Check whether the item in nayru's basement was obtained (instead of whether you
+	; have the harp) to decide whether to advance to her next state.
+	ld a,(wPastRoomFlags + <ROOM_AGES_3ae)
+	and ROOMFLAG_ITEM
 	ld b,$01
-	ret nc
+	ret z
 
 	ld a,GLOBALFLAG_SAVED_NAYRU
 	call checkGlobalFlag
