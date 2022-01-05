@@ -152,20 +152,20 @@ chestGroup5Data:
 	m_ChestDataRando $57, $6c, rando.agesSlot_d7_postHallwayChest
 	m_ChestDataRando $6c, $72, rando.agesSlot_d7_3fTerrace
 	m_ChestDataRando $57, $50, rando.agesSlot_d7_boxedChest
-	m_ChestData $12, $79, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $16, $7b, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $27, $7c, TREASURE_OBJECT_SLATE_00
-	m_ChestData $27, $7e, TREASURE_OBJECT_SLATE_00
-	m_ChestData $1b, $85, TREASURE_OBJECT_MAP_02
-	m_ChestData $27, $92, TREASURE_OBJECT_SLATE_00
-	m_ChestData $25, $94, TREASURE_OBJECT_SLATE_00
-	m_ChestData $16, $97, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $2c, $9f, TREASURE_OBJECT_GASHA_SEED_01
-	m_ChestData $1d, $a3, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $1a, $a4, TREASURE_OBJECT_COMPASS_02
-	m_ChestData $6d, $a7, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $37, $a6, TREASURE_OBJECT_BRACELET_02
-	m_ChestData $27, $91, TREASURE_OBJECT_GASHA_SEED_01
+	m_ChestDataRando $12, $79, rando.agesSlot_d8_b3fChest
+	m_ChestDataRando $16, $7b, rando.agesSlot_d8_mazeChest
+	m_ChestDataRando $27, $7c, rando.agesSlot_d8_nwSlateChest
+	m_ChestDataRando $27, $7e, rando.agesSlot_d8_neSlateChest
+	m_ChestDataRando $1b, $85, rando.agesSlot_d8_ghiniChest
+	m_ChestDataRando $27, $92, rando.agesSlot_d8_seSlateChest
+	m_ChestDataRando $25, $94, rando.agesSlot_d8_swSlateChest
+	m_ChestDataRando $16, $97, rando.agesSlot_d8_b1fNwChest
+	m_ChestDataRando $2c, $9f, rando.agesSlot_d8_sarcophagusChest
+	m_ChestDataRando $1d, $a3, rando.agesSlot_d8_bladeTrapChest
+	m_ChestDataRando $1a, $a4, rando.agesSlot_d8_bluePegChest
+	m_ChestDataRando $6d, $a7, rando.agesSlot_d8_1fChest
+	m_ChestDataRando $37, $a6, rando.agesSlot_d8_floorPuzzle
+	m_ChestDataRando $27, $91, rando.agesSlot_d8_tileRoom
 	m_ChestDataRando $15, $b5, rando.agesSlot_dekuForestCaveWest
 	m_ChestDataRando $74, $bd, rando.agesSlot_goronsHidingPlace
 	m_ChestDataRando $47, $b9, rando.agesSlot_ridgeBaseChest

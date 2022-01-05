@@ -172,6 +172,7 @@ lookupRoomTreasure_body:
 	dbbw $05, $36, agesSlot_d6_boss
 	dbbw $05, $4b, agesSlot_d7_flowerRoom
 	dbbw $05, $62, agesSlot_d7_boss
+	dbbw $05, $78, agesSlot_d8_boss
 	.db $ff
 
 .endif

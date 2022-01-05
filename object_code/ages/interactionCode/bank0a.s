@@ -3609,8 +3609,11 @@ interactionCode77:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	ldbc TREASURE_SMALL_KEY,$00
-	call createTreasure
+
+	; RANDO: Spawn the randomized item slot instead of a small key. Since this object is only
+	; ever used in ancient tomb, we don't need to check the room or anything.
+	ld bc,rando.agesSlot_d8_stalfos
+	call spawnRandomizedTreasure
 	call objectCopyPosition
 	jp interactionDelete
 

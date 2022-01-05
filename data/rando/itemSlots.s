@@ -2068,6 +2068,106 @@ agesSlot_d7_boss:
 	dwbe $0562
 	.dw  $0000
 
+; ==============================================================================
+; D8
+; ==============================================================================
+
+agesSlot_d8_b3fChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_08
+	.db  COLLECT_MODE_CHEST
+	dwbe $0579
+	.dw  $0000
+
+agesSlot_d8_mazeChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_CHEST
+	dwbe $057b
+	.dw  $0000
+
+agesSlot_d8_nwSlateChest:
+	dwbe TREASURE_OBJECT_SLATE_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $057c
+	.dw  $0000
+
+agesSlot_d8_neSlateChest:
+	dwbe TREASURE_OBJECT_SLATE_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $057e
+	.dw  $0000
+
+agesSlot_d8_ghiniChest:
+	dwbe TREASURE_OBJECT_MAP_08
+	.db  COLLECT_MODE_CHEST
+	dwbe $0585
+	.dw  $0000
+
+agesSlot_d8_seSlateChest:
+	dwbe TREASURE_OBJECT_SLATE_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $0592
+	.dw  $0000
+
+agesSlot_d8_swSlateChest:
+	dwbe TREASURE_OBJECT_SLATE_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $0594
+	.dw  $0000
+
+agesSlot_d8_b1fNwChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_CHEST
+	dwbe $0597
+	.dw  $0000
+
+agesSlot_d8_sarcophagusChest:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $059f
+	.dw  $0000
+
+agesSlot_d8_bladeTrapChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_CHEST
+	dwbe $05a3
+	.dw  $0000
+
+agesSlot_d8_bluePegChest:
+	dwbe TREASURE_OBJECT_COMPASS_08
+	.db  COLLECT_MODE_CHEST
+	dwbe $05a4
+	.dw  $0000
+
+agesSlot_d8_1fChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_CHEST
+	dwbe $05a7
+	.dw  $0000
+
+agesSlot_d8_floorPuzzle:
+	dwbe TREASURE_OBJECT_BRACELET_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $05a6
+	.dw  $0000
+
+agesSlot_d8_tileRoom:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $0591
+	.dw  $0000
+
+agesSlot_d8_stalfos:
+	dwbe TREASURE_OBJECT_SMALL_KEY_08
+	.db  COLLECT_MODE_PICKUP_1HAND
+	dwbe $0598
+	.dw  $0000
+
+agesSlot_d8_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	dwbe $0578
+	.dw  $0000
+
 
 slotsEnd:
 

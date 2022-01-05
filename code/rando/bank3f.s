@@ -149,6 +149,7 @@ setStolenFeatherSprite:
 	dbbw INTERACID_ACCESSORY,          $3e, rando.agesSlot_wildTokayGame
 	dbbw INTERACID_ACCESSORY,          $14, rando.agesSlot_hiddenTokayCave
 	dbbw INTERACID_ACCESSORY,          $15, rando.agesSlot_hiddenTokayCave
+	dbbw INTERACID_SMALL_KEY_ON_ENEMY, $31, rando.agesSlot_d8_stalfos
 	.db $ff
 
 .endif
