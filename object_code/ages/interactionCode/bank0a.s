@@ -6512,10 +6512,13 @@ miscPuzzles_subid0c:
 	call miscPuzzles_verifyTilesAtPositions
 	ret nz
 
+	ld bc,rando.agesSlot_d7_diamondPuzzle ; RANDO: Replace small key drop
+
 ;;
+; RANDO: Changed this function to spawn a randomized item instead of a small key. Pass the item slot
+; in "bc" when calling this.
 miscPuzzles_dropSmallKeyHere:
-	ldbc TREASURE_SMALL_KEY, $01
-	call createTreasure
+	call spawnRandomizedTreasure
 	ret nz
 	call objectCopyPosition
 	jp interactionDelete

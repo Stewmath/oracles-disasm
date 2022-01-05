@@ -1974,6 +1974,100 @@ agesSlot_d6_boss:
 	dwbe $0536
 	.dw  $0000
 
+; ==============================================================================
+; D7
+; ==============================================================================
+
+agesSlot_d7_potIslandChest:
+	dwbe TREASURE_OBJECT_RING_28
+	.db  COLLECT_MODE_CHEST
+	dwbe $054c
+	.dw  $0000
+
+agesSlot_d7_stairwayChest:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $054d
+	.dw  $0000
+
+agesSlot_d7_minibossChest:
+	dwbe TREASURE_OBJECT_SWITCH_HOOK_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $054e
+	.dw  $0000
+
+agesSlot_d7_caneDiamondPuzzle:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_CHEST
+	dwbe $0553
+	.dw  $0000
+
+agesSlot_d7_crabChest:
+	dwbe TREASURE_OBJECT_COMPASS_07
+	.db  COLLECT_MODE_CHEST
+	dwbe $0554
+	.dw  $0000
+
+agesSlot_d7_leftWing:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_CHEST
+	dwbe $055f
+	.dw  $0000
+
+agesSlot_d7_rightWing:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_CHEST
+	dwbe $0564
+	.dw  $0000
+
+agesSlot_d7_spikeChest:
+	dwbe TREASURE_OBJECT_MAP_07
+	.db  COLLECT_MODE_CHEST
+	dwbe $0565
+	.dw  $0000
+
+agesSlot_d7_hallwayChest:
+	dwbe TREASURE_OBJECT_GASHA_SEED_01
+	.db  COLLECT_MODE_CHEST
+	dwbe $056a
+	.dw  $0000
+
+agesSlot_d7_postHallwayChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_07
+	.db  COLLECT_MODE_CHEST
+	dwbe $056c
+	.dw  $0000
+
+agesSlot_d7_3fTerrace:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_CHEST
+	dwbe $0572
+	.dw  $0000
+
+agesSlot_d7_boxedChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_CHEST
+	dwbe $0550
+	.dw  $0000
+
+agesSlot_d7_flowerRoom:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_FALL
+	dwbe $054b
+	.dw  $0000
+
+agesSlot_d7_diamondPuzzle:
+	dwbe TREASURE_OBJECT_SMALL_KEY_07
+	.db  COLLECT_MODE_FALL
+	dwbe $0555
+	.dw  $0000
+
+agesSlot_d7_boss:
+	dwbe TREASURE_OBJECT_HEART_CONTAINER_00
+	.db  COLLECT_MODE_POOF
+	dwbe $0562
+	.dw  $0000
+
 
 slotsEnd:
 
