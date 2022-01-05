@@ -125,14 +125,14 @@ chestGroup4Data:
 	.db $ff
 
 chestGroup5Data:
-	m_ChestData $17, $13, TREASURE_OBJECT_MERMAID_SUIT_00
-	m_ChestData $25, $14, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $53, $1b, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $17, $1c, TREASURE_OBJECT_BOSS_KEY_03
-	m_ChestData $13, $1d, TREASURE_OBJECT_MAP_02
-	m_ChestData $13, $1f, TREASURE_OBJECT_RUPEES_02
-	m_ChestData $67, $21, TREASURE_OBJECT_SMALL_KEY_03
-	m_ChestData $3d, $25, TREASURE_OBJECT_COMPASS_02
+	m_ChestDataRando $17, $13, rando.agesSlot_d6_present_vireChest
+	m_ChestDataRando $25, $14, rando.agesSlot_d6_present_spinnerChest
+	m_ChestDataRando $53, $1b, rando.agesSlot_d6_present_ropeChest
+	m_ChestDataRando $17, $1c, rando.agesSlot_d6_present_rngChest
+	m_ChestDataRando $13, $1d, rando.agesSlot_d6_present_diamondChest
+	m_ChestDataRando $13, $1f, rando.agesSlot_d6_present_beamosChest
+	m_ChestDataRando $67, $21, rando.agesSlot_d6_present_cubeChest
+	m_ChestDataRando $3d, $25, rando.agesSlot_d6_present_channelChest
 	m_ChestData $57, $2c, TREASURE_OBJECT_SMALL_KEY_03
 	m_ChestData $24, $2e, TREASURE_OBJECT_RUPEES_04
 	m_ChestData $57, $31, TREASURE_OBJECT_SMALL_KEY_03

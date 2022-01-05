@@ -1870,6 +1870,58 @@ agesSlot_d5_boss:
 	dwbe $04bf
 	.dw  $0000
 
+; ==============================================================================
+; D6 Present
+; ==============================================================================
+
+agesSlot_d6_present_vireChest:
+	dwbe TREASURE_OBJECT_FLIPPERS_00
+	.db  COLLECT_MODE_CHEST
+	dwbe $0513
+	.dw  $0000
+
+agesSlot_d6_present_spinnerChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_06
+	.db  COLLECT_MODE_CHEST
+	dwbe $0514
+	.dw  $0000
+
+agesSlot_d6_present_ropeChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_06
+	.db  COLLECT_MODE_CHEST
+	dwbe $051b
+	.dw  $0000
+
+agesSlot_d6_present_rngChest:
+	dwbe TREASURE_OBJECT_BOSS_KEY_0c
+	.db  COLLECT_MODE_CHEST
+	dwbe $051c
+	.dw  $0000
+
+agesSlot_d6_present_diamondChest:
+	dwbe TREASURE_OBJECT_MAP_06
+	.db  COLLECT_MODE_CHEST
+	dwbe $051d
+	.dw  $0000
+
+agesSlot_d6_present_beamosChest:
+	dwbe TREASURE_OBJECT_RUPEES_02
+	.db  COLLECT_MODE_CHEST
+	dwbe $051f
+	.dw  $0000
+
+agesSlot_d6_present_cubeChest:
+	dwbe TREASURE_OBJECT_SMALL_KEY_06
+	.db  COLLECT_MODE_CHEST
+	dwbe $0521
+	.dw  $0000
+
+agesSlot_d6_present_channelChest:
+	dwbe TREASURE_OBJECT_COMPASS_06
+	.db  COLLECT_MODE_CHEST
+	dwbe $0525
+	.dw  $0000
+
 
 slotsEnd:
 
