@@ -187,6 +187,8 @@ gfxHeaderTable:
 	.dw gfxHeaderb9
 	.dw gfxHeaderba
 
+	.dw gfxHeader_randoDungeonMenuGfx
+
 gfxHeader00:
 	m_GfxHeader gfx_dmg_text, $8800, $2f|$80
 	m_GfxHeader gfx_dmg_gametitle, $9000, $3d|$80
@@ -1001,3 +1003,19 @@ gfxHeaderb8:
 	m_GfxHeader unk_0e2aa2, $cf00, $0a
 gfxHeaderb9:
 	m_GfxHeader unk_0e2ad7, $cf00, $0a
+
+
+; RANDO: GFX header for dungeon item display menu
+gfxHeader_randoDungeonMenuGfx:
+	m_GfxHeader gfx_minimap_tiles_dungeon, $9500, $2f|$80
+	m_GfxHeader spr_map_compass_keys,      $8000, $1f|$80
+
+	m_GfxHeader gfx_blurb_heroscave, $8800, $27|$80
+	m_GfxHeader gfx_blurb_d1,        $8a80, $27|$80
+	m_GfxHeader gfx_blurb_d2,        $8d00, $27|$80
+	m_GfxHeader gfx_blurb_d3,        $8f80, $27|$80
+	m_GfxHeader gfx_blurb_d4,        $9200, $27|$80
+	m_GfxHeader gfx_blurb_d5,        $8801, $27|$80
+	m_GfxHeader gfx_blurb_d6,        $8a81, $27|$80
+	m_GfxHeader gfx_blurb_d7,        $8d01, $27|$80
+	m_GfxHeader gfx_blurb_d8,        $8f81, $27

@@ -117,4 +117,8 @@
 	MENU_RING_LINK		db ; $08
 	MENU_FAKE_RESET		db ; $09
 	MENU_FARORES_SECRETS	db ; $0a
+
+	; RANDO stuff
+	MENU_RANDO		db
+	MENU_RANDO_DUNGEONS	db
 .ende

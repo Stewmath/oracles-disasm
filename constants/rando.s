@@ -1,7 +1,6 @@
 ; Configuration settings that can be checked with "checkRandoConfig"
 .enum 0 EXPORT
 	RANDO_CONFIG_KEYSANITY          db
-	RANDO_CONFIG_TREEWARP           db
 	RANDO_CONFIG_DUNGEON_ENTRANCES  db ; Dungeon entrances randomized
 	RANDO_CONFIG_MERMAID_AUTO       db ; Simpler mermaid suit movement
 	; Remember to expand the space used if more than 8 options are added

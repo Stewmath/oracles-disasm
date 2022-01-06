@@ -3081,22 +3081,44 @@ menuSpecificCode:
 	.dw runGameLinkMenu
 	.dw runFakeReset
 	.dw runSecretListMenu
+	.dw @runRandoMenu
+	.dw @runRandoDungeonsMenu
+
+@runRandoMenu:
+	jpab randoMenu.runRandoMenu
+
+@runRandoDungeonsMenu:
+	jpab randoMenu.runRandoDungeonsMenu
+
 
 ;;
 ; Game is fading out just after initial start/select press
 menuStateFadeIntoMenu:
 	ld a,(wOpenedMenuType)
+	ld c,a
 	cp $03
-	jr nc,+
+	jr nc,@dontChangeMenu
 
 	ld a,(wKeysPressed)
 	and BTN_START | BTN_SELECT
 	cp BTN_START | BTN_SELECT
-	jr nz,+
-
+	jr nz,++
 	ld a,MENU_SAVEQUIT
 	ld (wOpenedMenuType),a
-+
+	jr @dontChangeMenu
+++
+	; RANDO: Press select twice to open the rando dungeon menu.
+	ld a,c
+	cp MENU_MAP
+	jr nz,++
+	ld a,(wKeysJustPressed)
+	and BTN_SELECT
+	jr z,++
+	ld a,MENU_RANDO
+	ld (wOpenedMenuType),a
+++
+
+@dontChangeMenu:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -6584,8 +6606,6 @@ galeSeedMenu_state2:
 	jr nz,galeSeedMenu_gotoState1
 	ld (wOpenedMenuType),a ; $00
 	ld a,(wActiveGroup)
-
-galeSeedMenu_activateWarp:
 	or $80
 	ld (wWarpDestGroup),a
 	ld a,(wMapMenu.warpIndex)
@@ -7054,32 +7074,8 @@ mapMenu_state1:
 	bit BTN_BIT_A,a
 	jr nz,@showRoomText
 	and (BTN_B | BTN_SELECT)
-	ret z
-
-	; RANDO: Enable "treewarp" (warp back to starting tree) by holding Start while closing the
-	; menu, if enabled.
-	; RANDO-TODO: Make this work in Ages too.
-.ifdef ROM_SEASONS
-	ld a,RANDO_CONFIG_TREEWARP
-	call checkRandoConfig
-	jr z,++
-	ld a,(wKeysPressed)
-	and BTN_START
-	jr z,++
-	ld a,(wTilesetFlags)
-	and TILESETFLAG_OUTDOORS
-	jr nz,@warp
-	ld a,SND_ERROR
-	jp playSound
-@warp:
-	ld hl,wMapMenu.warpIndex
-	ld (hl),$05
-	xor a
-	call galeSeedMenu_activateWarp
-++
-.endif
-
-	jp closeMenu
+	jp nz,closeMenu
+	ret
 
 @showRoomText:
 	call mapGetRoomTextOrReturn

@@ -194,4 +194,7 @@
 	GFXH_b8:                  db ; $b8
 	GFXH_b9:                  db ; $b9
 	GFXH_ba:                  db ; $ba
+
+	; RANDO
+	GFXH_RANDO_DUNGEON_MENU:  db
 .ENDE

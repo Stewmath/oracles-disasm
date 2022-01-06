@@ -1314,6 +1314,24 @@ wMenuUnionStart:
 	cbc1:
 		db
 
+; RANDO: Variables used for MENU_RANDO_DUNGEONS (see code/rando/randoMenu.s)
+.nextu wRandoMenu
+
+	state:
+		db
+
+	pageIndex:
+		db
+
+	nextPageIndex:
+		db
+
+	scrollSpeed:
+		db
+
+	scrollOffset:
+		db
+
 .nextu wGenericCutscene
 
 	cbb3: ; $cbb3

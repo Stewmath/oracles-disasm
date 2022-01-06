@@ -897,3 +897,4 @@ oamData_7249:
 .include "data/rando/fileSelectGfx.s"
 .include "data/rando/compassChimes.s"
 .include "code/rando/rando.s"
+.include "code/rando/randoMenu.s"

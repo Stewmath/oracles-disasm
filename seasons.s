@@ -539,3 +539,4 @@ oamData_15_4e0c:
 .include "data/rando/fileSelectGfx.s"
 .include "data/rando/compassChimes.s"
 .include "code/rando/rando.s"
+.include "code/rando/randoMenu.s"
