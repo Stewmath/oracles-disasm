@@ -225,3 +225,30 @@ _soundPointers:
 	/* 0xdc */ m_soundPointer snddc
 	/* 0xdd */ m_soundPointer snddd
 	/* 0xde */ m_soundPointer sndde
+
+
+; This should really be located in "soundChannelPointers.s" but it's positioned differently for
+; some reason.
+sndde:
+	.db $00
+	.dw snddeChannel0
+	.db $01
+	.dw snddeChannel1
+	.db $04
+	.dw snddeChannel4
+	.db $06
+	.dw snddeChannel6
+	.db $ff
+
+.ifdef BUILD_VANILLA
+	; Unused data?
+	.db $02
+	.dw $5a86
+	.db $03
+	.dw $5a86
+	.db $05
+	.dw $5a86
+	.db $07
+	.dw $5a86
+	.db $ff
+.endif

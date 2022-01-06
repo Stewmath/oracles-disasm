@@ -1659,37 +1659,3 @@ sndFluteMoosh:
 	.db $f7
 	.dw sndFluteMooshChannel7
 	.db $ff
-
-
-.ifdef BUILD_VANILLA
-.ORGA $5a6c
-.endif
-
-
-sndde:
-	.db $00
-	.dw snddeChannel0
-	.db $01
-	.dw snddeChannel1
-	.db $04
-	.dw snddeChannel4
-	.db $06
-	.dw snddeChannel6
-	.db $ff
-
-.ifdef BUILD_VANILLA
-	; Unused data?
-	.db $02
-	.dw $5a86
-	.db $03
-	.dw $5a86
-	.db $05
-	.dw $5a86
-	.db $07
-	.dw $5a86
-	.db $ff
-.endif
-
-.ifdef BUILD_VANILLA
-.ORGA $57cf
-.endif

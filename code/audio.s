@@ -1,9 +1,12 @@
 .include "include/constants.s"
+.include "include/macros.s"
 .include "include/rominfo.s"
 .include "include/musicMacros.s"
 
 .BANK $39 SLOT 1
 .ORG 0
+
+m_section_superfree AudioCode
 
 ;;
 b39_initSound:
@@ -1959,16 +1962,23 @@ _playSound:
 
 	ld hl,_soundPointers
 	add hl,de
+
+	; Wrapping this in a BUILD_VANILLA check because: A) it's unused, B) it can cause problems
+	; if audio data gets placed into an unexpected bank (which WLA could decide to do).
+.ifdef BUILD_VANILLA
 	ld a,(hl)
 	and $80
-	jr z,+
+	jr z,@skipWeirdCall
 
 	; What were the programmers on? Clearly this part of the code is unused
 	call _noiseFrequencyTable
 
 	jp @setVolumeAndEnd
 
-+
+@skipWeirdCall:
+
+.endif
+
 	ldi a,(hl)
 	ld c,a
 	ldh a,(<hSoundDataBaseBank)
@@ -2408,9 +2418,7 @@ _waveformTable:
 	.include "audio/ages/soundChannelPointers.s"
 	.include "audio/ages/soundPointers.s"
 
-	.ifdef BUILD_VANILLA
-	.ORGA $59ff
-	.endif
+	.ends ; End of section AudioCode
 
 	.include "audio/ages/soundChannelData.s"
 
@@ -2418,9 +2426,7 @@ _waveformTable:
 	.include "audio/seasons/soundChannelPointers.s"
 	.include "audio/seasons/soundPointers.s"
 
-	.ifdef BUILD_VANILLA
-	.ORGA $5a86
-	.endif
+	.ends ; End of section AudioCode
 
 	.include "audio/seasons/soundChannelData.s"
 .endif
