@@ -10878,7 +10878,7 @@ clearFadingPalettes:
 
 ;;
 ; This function causes the screen to flash white. Based on parameter 'b', which acts as
-; the "index" if the data to use, this will read through the predefined data to see on
+; the "index" of the data to use, this will read through the predefined data to see on
 ; what frames it should turn the screen white, and on what frames it should restore the
 ; screen to normal.
 ;
@@ -12285,7 +12285,7 @@ seasonsFunc_34a0:
 	callfrombank0 updateInteractions
 	callfrombank0 seasonsFunc_0f_7159
 
-	ld a,$06
+	ld a,:bank6.updateGrabbedObjectPosition
 	setrombank
 	ld a,(wLinkGrabState)
 	rlca
@@ -12355,7 +12355,7 @@ clearDynamicInteractions:
 	ldde FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Interaction.start
@@ -12373,7 +12373,7 @@ clearItems:
 	ldde FIRST_ITEM_INDEX, Item.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Item.start
@@ -12391,7 +12391,7 @@ clearEnemies:
 	ldde FIRST_ENEMY_INDEX, Enemy.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Enemy.start
@@ -12409,7 +12409,7 @@ clearParts:
 	ldde FIRST_PART_INDEX, Part.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Part.start
@@ -12672,7 +12672,6 @@ func_36f6:
 ;
 ; End result: w3TileMappingData is loaded with the tile indices and attributes for all
 ; tiles in the tileset.
-;
 loadTilesetLayout:
 	ld a,(wTilesetLayout)
 	call loadTileset

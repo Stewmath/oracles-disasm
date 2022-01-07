@@ -698,7 +698,7 @@ _getCandidatePositionForEnemy:
 
 ;;
 ; @param	b	Position to check
-; @param[out]	cflag	Set if an enemy has been placed at position 'b'.
+; @param[out]	cflag	c if an enemy has been placed at position 'b'.
 _checkEnemyPlacedAtPosition:
 	ld a,(wEnemyPlacement.numEnemies)
 	or a
@@ -757,7 +757,6 @@ _checkSpawnTimeportalInteraction:
 ; Determines the value for wRoomStateModifier. (For seasons, it's just the season; for
 ; ages, this indicates whether the room is underwater, or whether the room layout has been
 ; swapped.
-;
 calculateRoomStateModifier:
 	ld a,(wActiveGroup)
 	or a
@@ -796,7 +795,6 @@ calculateRoomStateModifier:
 ;;
 ; If there are whirlpools or pollution tiles on the screen, this creates a part of type
 ; PARTID_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
-;
 createSeaEffectsPartIfApplicable:
 	ld a,(wActiveCollisions)
 	ld hl,@table
