@@ -16,9 +16,9 @@ if len(sys.argv) < 3:
     print('\t-t: Tileset Mappings')
     print('\nExample: "%s rom.gbc -g -t" dumps tileset graphics and mappings from rom.gbc.' % sys.argv[0])
     print('\nOther things:\
-            \n\tWarps: Use tools/dumpWarps.py.\
-            \n\tObjects: Use tools/dumpObjects.py.\
-            \n\tPalettes: Use tools/dumpPalettes.py.')
+            \n\tWarps: Use tools/dump/dumpWarps.py.\
+            \n\tObjects: Use tools/dump/dumpObjects.py.\
+            \n\tPalettes: Use tools/dump/dumpPalettes.py.')
     print('\nStuff from ZOLE that\'s not (yet) dumped by this script:\
             \n\t- Chests\
             \n\t- Miniboss portal warps\
