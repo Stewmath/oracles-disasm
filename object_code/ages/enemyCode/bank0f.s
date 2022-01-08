@@ -13,31 +13,31 @@ enemyCode70:
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
 	jr nz,@normalStatus
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 @normalStatus:
-	call _giantGhini_updateZPos
+	call giantGhini_updateZPos
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _giantGhini_state_uninitialized
-	.dw _giantGhini_state_stub
-	.dw _giantGhini_state_stub
-	.dw _giantGhini_state_stub
-	.dw _giantGhini_state_stub
-	.dw _giantGhini_state_stub
-	.dw _giantGhini_state_stub
-	.dw _giantGhini_state_stub
-	.dw _giantGhini_state8
-	.dw _giantGhini_state9
-	.dw _giantGhini_stateA
+	.dw giantGhini_state_uninitialized
+	.dw giantGhini_state_stub
+	.dw giantGhini_state_stub
+	.dw giantGhini_state_stub
+	.dw giantGhini_state_stub
+	.dw giantGhini_state_stub
+	.dw giantGhini_state_stub
+	.dw giantGhini_state_stub
+	.dw giantGhini_state8
+	.dw giantGhini_state9
+	.dw giantGhini_stateA
 
 
-_giantGhini_state_uninitialized:
+giantGhini_state_uninitialized:
 	ld a,ENEMYID_GIANT_GHINI
 	ld b,$00
-	call _enemyBoss_initializeRoom
-	call _ecom_setSpeedAndState8
+	call enemyBoss_initializeRoom
+	call ecom_setSpeedAndState8
 
 	ld bc,$0040
 	call objectSetSpeedZ
@@ -53,15 +53,15 @@ _giantGhini_state_uninitialized:
 
 	ld l,Enemy.var33
 	ld (hl),$10
-	jp _giantGhini_spawnChildren
+	jp giantGhini_spawnChildren
 
 
-_giantGhini_state_stub:
+giantGhini_state_stub:
 	ret
 
 
 ; The ghini is spawning in before the fight starts
-_giantGhini_state8:
+giantGhini_state8:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -87,10 +87,10 @@ _giantGhini_state8:
 	ld a,30
 	ld (de),a ; [counter2]
 
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),60
@@ -100,8 +100,8 @@ _giantGhini_state8:
 
 	ld b,$01
 	ld c,$0c
-	call _enemyBoss_spawnShadow
-	jp _ecom_incSubstate
+	call enemyBoss_spawnShadow
+	jp ecom_incSubstate
 
 @substate2:
 	; Flicker visibility
@@ -110,18 +110,18 @@ _giantGhini_state8:
 	xor $80
 	ld (de),a
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	; Finally begin the fight
-	call _enemyBoss_beginMiniboss
+	call enemyBoss_beginMiniboss
 	call objectSetVisible80
 
-_giantGhini_gotoState9:
+giantGhini_gotoState9:
 	xor a
 	call enemySetAnimation
 
-	call _giantGhini_getTargetAngle
+	call giantGhini_getTargetAngle
 	ld h,d
 	ld e,Enemy.angle
 	ld (de),a
@@ -138,7 +138,7 @@ _giantGhini_gotoState9:
 	ld l,Enemy.var32
 	ld (hl),$00
 
-_giantGhini_setChildRespawnTimer:
+giantGhini_setChildRespawnTimer:
 	call getRandomNumber
 	and $03
 	ld c,60
@@ -150,7 +150,7 @@ _giantGhini_setChildRespawnTimer:
 
 
 ; "Normal" state during battle
-_giantGhini_state9:
+giantGhini_state9:
 	ld e,Enemy.var32
 	ld a,(de)
 	or a
@@ -160,35 +160,35 @@ _giantGhini_state9:
 	call objectApplySpeed
 
 	; Nudge angle toward target every other frame
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,++
 	ld (hl),$02
-	call _giantGhini_getTargetAngle
+	call giantGhini_getTargetAngle
 	call objectNudgeAngleTowards
 ++
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
-	call _giantGhini_setChildRespawnTimer
+	call giantGhini_setChildRespawnTimer
 	ld e,Enemy.var30
 	ld a,(de)
 	or a
 	ret nz
 	call getRandomNumber
 	and $03
-	jp nz,_giantGhini_spawnChildren
+	jp nz,giantGhini_spawnChildren
 
 @beginCharge:
 	ld a,$01
 	call enemySetAnimation
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.counter2
 	ld (hl),150
 	ld l,Enemy.speed
 	ld (hl),SPEED_20
 
-_giantGhini_updateChargeTargetPosition:
+giantGhini_updateChargeTargetPosition:
 	; Get Link's position, save that as the position we're charging toward
 	ld hl,w1Link.yh
 	ldi a,(hl)
@@ -208,11 +208,11 @@ _giantGhini_updateChargeTargetPosition:
 
 
 ; Charging toward Link
-_giantGhini_stateA:
+giantGhini_stateA:
 	call enemyAnimate
 
 	; Increase speed every 4 frames
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ld a,(hl)
 	and $03
 	jr nz,++
@@ -228,7 +228,7 @@ _giantGhini_stateA:
 	ld e,Enemy.var32
 	ld a,(de)
 	or a
-	call nz,_giantGhini_updateChargeTargetPosition
+	call nz,giantGhini_updateChargeTargetPosition
 
 	ld e,Enemy.var35
 	ld a,(de)
@@ -242,12 +242,12 @@ _giantGhini_stateA:
 	ld e,Enemy.var35
 	ld a,(de)
 	cp l
-	jp z,_giantGhini_gotoState9
+	jp z,giantGhini_gotoState9
 	ret
 
 
 ;;
-_giantGhini_updateZPos:
+giantGhini_updateZPos:
 	ld c,$00
 	call objectUpdateSpeedZ_paramC
 
@@ -273,11 +273,11 @@ _giantGhini_updateZPos:
 
 
 ;;
-_giantGhini_spawnChildren:
+giantGhini_spawnChildren:
 	ld c,$03
 @nextChild:
 	ld b,ENEMYID_GIANT_GHINI_CHILD
-	call _ecom_spawnEnemyWithSubid01
+	call ecom_spawnEnemyWithSubid01
 	ret nz
 
 	ld e,Enemy.var30
@@ -312,7 +312,7 @@ _giantGhini_spawnChildren:
 ; face directly away from Link before it slowly moves toward him again.
 ;
 ; @param[out]	a	angle
-_giantGhini_getTargetAngle:
+giantGhini_getTargetAngle:
 	ldh a,(<hCameraY)
 	ld c,a
 	ld a,(w1Link.yh)
@@ -340,7 +340,7 @@ _giantGhini_getTargetAngle:
 	ld e,Enemy.counter1
 	ld a,$0a
 	ld (de),a
-	jr _giantGhini_getTargetAngle
+	jr giantGhini_getTargetAngle
 ++
 	ld a,c
 	add b
@@ -364,42 +364,42 @@ enemyCode71:
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
 	jp nz,@normalStatus
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 @normalStatus:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _swoop_state_uninitialized
-	.dw _swoop_state_stub
-	.dw _swoop_state_stub
-	.dw _swoop_state_stub
-	.dw _swoop_state_stub
-	.dw _swoop_state_stub
-	.dw _swoop_state_stub
-	.dw _swoop_state_stub
-	.dw _swoop_state8
-	.dw _swoop_state9
-	.dw _swoop_stateA
-	.dw _swoop_stateB
+	.dw swoop_state_uninitialized
+	.dw swoop_state_stub
+	.dw swoop_state_stub
+	.dw swoop_state_stub
+	.dw swoop_state_stub
+	.dw swoop_state_stub
+	.dw swoop_state_stub
+	.dw swoop_state_stub
+	.dw swoop_state8
+	.dw swoop_state9
+	.dw swoop_stateA
+	.dw swoop_stateB
 
 
-_swoop_state_uninitialized:
+swoop_state_uninitialized:
 	ld a,ENEMYID_SWOOP
 	ld b,$00
-	call _enemyBoss_initializeRoom
-	call _ecom_setSpeedAndState8
+	call enemyBoss_initializeRoom
+	call ecom_setSpeedAndState8
 	ld b,$01
 	ld c,$08
-	jp _enemyBoss_spawnShadow
+	jp enemyBoss_spawnShadow
 
 
-_swoop_state_stub:
+swoop_state_stub:
 	ret
 
 
 ; Spawning in before the fight starts
-_swoop_state8:
+swoop_state8:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
@@ -418,9 +418,9 @@ _swoop_state8:
 	or a
 	ret nz
 
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld c,$08
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 
 	ld e,Enemy.counter1
 	ld a,60
@@ -461,20 +461,20 @@ _swoop_state8:
 	jp playSound
 
 @doneBouncing:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld bc,TX_2f00
 	call showText
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @substate2:
 	call retIfTextIsActive
-	call _enemyBoss_beginMiniboss
-	call _ecom_incSubstate
-	jp _swoop_beginFlyingUp
+	call enemyBoss_beginMiniboss
+	call ecom_incSubstate
+	jp swoop_beginFlyingUp
 
 @substate3:
-	call _swoop_state9
+	call swoop_state9
 
 	ld e,Enemy.state
 	ld a,(de)
@@ -488,8 +488,8 @@ _swoop_state8:
 
 
 ; Flying upward
-_swoop_state9:
-	call _swoop_animate
+swoop_state9:
+	call swoop_animate
 
 	; Set Z-speed if just flapped wings
 	ld a,(de)
@@ -499,11 +499,11 @@ _swoop_state9:
 
 	ld c,$08
 	call objectUpdateSpeedZ_paramC
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
-	call _ecom_decCounter1
-	jp nz,_swoop_flyFurtherUp
+	call ecom_decCounter1
+	jp nz,swoop_flyFurtherUp
 
 	ld (hl),60 ; [counter1]
 
@@ -512,8 +512,8 @@ _swoop_state9:
 	ldi (hl),a
 	ld (hl),$00 ; [substate]
 
-	call _swoop_getAngerLevel
-	ld hl,_swoop_framesBeforeAttacking
+	call swoop_getAngerLevel
+	ld hl,swoop_framesBeforeAttacking
 	rst_addAToHl
 	ld a,(hl)
 	ld e,Enemy.var30
@@ -528,11 +528,11 @@ _swoop_state9:
 
 
 ; Flying around, getting closer to Link before stomping
-_swoop_stateA:
-	call _swoop_animate
-	call _swoop_getAngerLevel
+swoop_stateA:
+	call swoop_animate
+	call swoop_getAngerLevel
 
-	ld hl,_swoop_speedVals
+	ld hl,swoop_speedVals
 	rst_addAToHl
 	ld a,(hl)
 	ld e,Enemy.speed
@@ -550,7 +550,7 @@ _swoop_stateA:
 	call objectCheckLinkWithinDistance
 	jr nc,@updatePosition
 
-	call _ecom_incState
+	call ecom_incState
 	inc l
 	ld (hl),$00 ; [substate]
 	ld l,Enemy.counter1
@@ -558,7 +558,7 @@ _swoop_stateA:
 	ret
 
 @updatePosition:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,++
 	call objectGetAngleTowardLink
 	ld e,Enemy.angle
@@ -567,24 +567,24 @@ _swoop_stateA:
 	ld a,60
 	ld (de),a
 ++
-	jp _ecom_applyVelocityForSideviewEnemy
+	jp ecom_applyVelocityForSideviewEnemy
 
 
 ; Stomping
-_swoop_stateB:
+swoop_stateB:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _swoop_stomp_substate2
-	.dw _swoop_stomp_substate3
+	.dw swoop_stomp_substate2
+	.dw swoop_stomp_substate3
 
 ; Flapping wings quickly, telegraphing stomp is about to begin
 @substate0:
-	call _swoop_animate
-	call _swoop_animate
-	call _ecom_decCounter1
+	call swoop_animate
+	call swoop_animate
+	call ecom_decCounter1
 	jr z,@beginStomp
 
 	ld a,(hl) ; [counter1]
@@ -620,7 +620,7 @@ _swoop_stateB:
 	ret
 
 @beginStomp:
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
 
@@ -658,19 +658,19 @@ _swoop_stateB:
 	call objectGetRelativeAngle
 	ld e,Enemy.angle
 	ld (de),a
-	call _ecom_applyVelocityForSideviewEnemy
+	call ecom_applyVelocityForSideviewEnemy
 +++
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
 	; Hit the ground.
-	call _swoop_hitGround
-	call _ecom_incSubstate
+	call swoop_hitGround
+	call ecom_incSubstate
 	ld e,Enemy.health
 	ld a,(de)
 	cp $0a
-	jr nc,_swoop_setVisible
+	jr nc,swoop_setVisible
 
 	; Health is low; will bounce either 2 or 3 times.
 	inc (hl) ; [substate] = 3
@@ -689,17 +689,17 @@ _swoop_stateB:
 	ld e,Enemy.angle
 	ld (de),a
 
-_swoop_setSpeedZForBounce:
+swoop_setSpeedZForBounce:
 	ld bc,-$100
 	jp objectSetSpeedZ
 
-_swoop_setVisible:
+swoop_setVisible:
 	jp objectSetVisible82
 
 
 ; Completed stomp, about to fly back up.
-_swoop_stomp_substate2:
-	call _swoop_animate
+swoop_stomp_substate2:
+	call swoop_animate
 
 	; Wait until animation signals to fly up again, or Link attacks
 	ld e,Enemy.invincibilityCounter
@@ -725,12 +725,12 @@ _swoop_stomp_substate2:
 	res 7,(hl)
 
 ;;
-_swoop_beginFlyingUp:
+swoop_beginFlyingUp:
 	ld l,Enemy.counter1
 	ld (hl),$03 ; 3 flaps before he goes to next state
 
 ;;
-_swoop_flyFurtherUp:
+swoop_flyFurtherUp:
 	ld l,Enemy.counter2
 	ld (hl),$30 ; $30 frames per wing flap
 	call objectSetVisible80
@@ -739,15 +739,15 @@ _swoop_flyFurtherUp:
 
 
 ; Bouncing
-_swoop_stomp_substate3:
-	call _ecom_applyVelocityForSideviewEnemy
+swoop_stomp_substate3:
+	call ecom_applyVelocityForSideviewEnemy
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call _swoop_hitGround
-	call _ecom_decCounter1
-	jr nz,_swoop_setSpeedZForBounce
+	call swoop_hitGround
+	call ecom_decCounter1
+	jr nz,swoop_setSpeedZForBounce
 
 	ld l,Enemy.substate
 	dec (hl)
@@ -756,7 +756,7 @@ _swoop_stomp_substate3:
 
 ;;
 ; @param[out]	a	Value from 0-2
-_swoop_getAngerLevel:
+swoop_getAngerLevel:
 	ld b,$00
 	ld e,Enemy.health
 	ld a,(de)
@@ -771,7 +771,7 @@ _swoop_getAngerLevel:
 	ret
 
 ;;
-_swoop_hitGround:
+swoop_hitGround:
 	ld a,$30
 	call setScreenShakeCounter
 	ld a,SND_DOORCLOSE
@@ -802,7 +802,7 @@ _swoop_hitGround:
 
 ;;
 ; @param[out]	de	animParameter (if nonzero, just flapped wings)
-_swoop_animate:
+swoop_animate:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -811,10 +811,10 @@ _swoop_animate:
 	ld a,SND_JUMP
 	jp playSound
 
-_swoop_speedVals:
+swoop_speedVals:
 	.db SPEED_80, SPEED_100, SPEED_180
 
-_swoop_framesBeforeAttacking:
+swoop_framesBeforeAttacking:
 	.db 255, 150, 60
 
 
@@ -830,36 +830,36 @@ enemyCode72:
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
 	jr nz,@normalStatus
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 @normalStatus:
 	ld e,Enemy.var30
 	ld a,(de)
 	or a
-	call nz,_subterror_spawnDirtEvery8Frames
+	call nz,subterror_spawnDirtEvery8Frames
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _subterror_state_uninitialized
-	.dw _subterror_state_stub
-	.dw _subterror_state_stub
-	.dw _subterror_state_stub
-	.dw _subterror_state_stub
-	.dw _subterror_state_stub
-	.dw _subterror_state_stub
-	.dw _subterror_state_stub
-	.dw _subterror_state8
-	.dw _subterror_state9
-	.dw _subterror_stateA
-	.dw _subterror_stateB
-	.dw _subterror_stateC
+	.dw subterror_state_uninitialized
+	.dw subterror_state_stub
+	.dw subterror_state_stub
+	.dw subterror_state_stub
+	.dw subterror_state_stub
+	.dw subterror_state_stub
+	.dw subterror_state_stub
+	.dw subterror_state_stub
+	.dw subterror_state8
+	.dw subterror_state9
+	.dw subterror_stateA
+	.dw subterror_stateB
+	.dw subterror_stateC
 
 
-_subterror_state_uninitialized:
+subterror_state_uninitialized:
 	ld a,ENEMYID_SUBTERROR
 	ld b,PALH_be
-	call _enemyBoss_initializeRoom
-	call _ecom_setSpeedAndState8
+	call enemyBoss_initializeRoom
+	call ecom_setSpeedAndState8
 
 	ld a,$07
 	ld l,Enemy.var31
@@ -876,12 +876,12 @@ _subterror_state_uninitialized:
 	ret
 
 
-_subterror_state_stub:
+subterror_state_stub:
 	ret
 
 
 ; Cutscene before fight
-_subterror_state8:
+subterror_state8:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
@@ -900,7 +900,7 @@ _subterror_state8:
 	or a
 	ret nz
 
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	; Move further down
@@ -919,7 +919,7 @@ _subterror_state8:
 	call enemySetAnimation
 	call objectSetVisiblec2
 
-	call _ecom_incSubstate
+	call ecom_incSubstate
 
 	; Disable dirt animation
 	ld l,Enemy.var30
@@ -931,12 +931,12 @@ _subterror_state8:
 	jp setTile
 
 @substate1:
-	call _subterror_retFromCallerIfAnimationUnfinished
+	call subterror_retFromCallerIfAnimationUnfinished
 
 	ld b,INTERACID_ROCKDEBRIS
 	call objectCreateInteractionWithSubid00
 
-	call _ecom_incSubstate
+	call ecom_incSubstate
 
 	ld l,Enemy.counter1
 	ld (hl),60
@@ -954,23 +954,23 @@ _subterror_state8:
 
 	ld a,$02
 	call enemySetAnimation
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld bc,TX_2f03
 	call showText
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @substate3:
 	call retIfTextIsActive
 
-	call _enemyBoss_beginMiniboss
+	call enemyBoss_beginMiniboss
 	xor a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 
 
-_subterror_digIntoGround:
+subterror_digIntoGround:
 	ld e,Enemy.state
 	ld a,$09
 	ld (de),a
@@ -980,11 +980,11 @@ _subterror_digIntoGround:
 
 
 ; Digging into ground
-_subterror_state9:
-	call _subterror_retFromCallerIfAnimationUnfinished
+subterror_state9:
+	call subterror_retFromCallerIfAnimationUnfinished
 
 	; Done digging, about to start moving around
-_subterror_beginUndergroundMovement:
+subterror_beginUndergroundMovement:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$0a
@@ -1005,8 +1005,8 @@ _subterror_beginUndergroundMovement:
 	ld l,Enemy.counter1
 	ld (hl),60
 
-	call _subterror_getAngerLevel
-	ld hl,_subterror_timeUntilDrillAttack
+	call subterror_getAngerLevel
+	ld hl,subterror_timeUntilDrillAttack
 	rst_addAToHl
 	ld a,(hl)
 	ld e,Enemy.counter2
@@ -1014,11 +1014,11 @@ _subterror_beginUndergroundMovement:
 
 	ld a,SND_DIG
 	call playSound
-	jp _subterror_spawnDirt
+	jp subterror_spawnDirt
 
 
 ; Currently in the ground, moving around
-_subterror_stateA:
+subterror_stateA:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
@@ -1028,10 +1028,10 @@ _subterror_stateA:
 
 ; Staying underground for [counter1] frames before moving
 @substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
-	call _ecom_incSubstate
+	call ecom_incSubstate
 
 @resetUndergroundMovement:
 	; Adjust angle toward Link?
@@ -1052,8 +1052,8 @@ _subterror_stateA:
 	ld a,30
 	ld (de),a
 
-	call _subterror_getAngerLevel
-	ld hl,_subterror_speedVals
+	call subterror_getAngerLevel
+	ld hl,subterror_speedVals
 	rst_addAToHl
 	ld a,(hl)
 	ld e,Enemy.speed
@@ -1061,7 +1061,7 @@ _subterror_stateA:
 
 	ld a,$0a
 	call objectSetCollideRadius
-	jp _subterror_spawnDirt
+	jp subterror_spawnDirt
 
 ; Moving around until shovel is used or he starts drilling
 @substate1:
@@ -1109,11 +1109,11 @@ _subterror_stateA:
 @noShovel:
 	call objectApplySpeed
 	ld a,$01
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	jr z,++
 
 	; Hit wall
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),90
 	ld l,Enemy.visible
@@ -1122,9 +1122,9 @@ _subterror_stateA:
 	ld (hl),$00
 	ret
 ++
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	call z,@resetUndergroundMovement
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	; If Link is close enough, drill him
@@ -1148,7 +1148,7 @@ _subterror_stateA:
 	ld a,c
 	ld (de),a
 
-	call _ecom_incState ; [state] = $0b
+	call ecom_incState ; [state] = $0b
 	inc l
 	xor a
 	ld (hl),a ; [substate] = 0
@@ -1169,8 +1169,8 @@ _subterror_stateA:
 
 ; Hit a wall; pause before resuming
 @substate2:
-	call _ecom_decCounter2
-	call _ecom_decCounter1
+	call ecom_decCounter2
+	call ecom_decCounter1
 	ret nz
 	ld l,Enemy.substate
 	dec (hl)
@@ -1178,7 +1178,7 @@ _subterror_stateA:
 
 
 ; Drilling
-_subterror_stateB:
+subterror_stateB:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
@@ -1205,18 +1205,18 @@ _subterror_stateB:
 
 @drilling:
 	call enemyAnimate
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld l,Enemy.counter1
 	ld (hl),60
 	ld a,$07
 	call enemySetAnimation
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @substate1:
-	call _subterror_retFromCallerIfAnimationUnfinished
-	call _subterror_beginUndergroundMovement
+	call subterror_retFromCallerIfAnimationUnfinished
+	call subterror_beginUndergroundMovement
 	ld e,Enemy.var30
 	xor a
 	ld (de),a
@@ -1224,7 +1224,7 @@ _subterror_stateB:
 
 
 ; Popping out of ground after shovel was used
-_subterror_stateC:
+subterror_stateC:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
@@ -1233,7 +1233,7 @@ _subterror_stateC:
 	.dw @substate2
 
 @substate0:
-	call _ecom_applyVelocityForSideviewEnemy
+	call ecom_applyVelocityForSideviewEnemy
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -1245,11 +1245,11 @@ _subterror_stateC:
 	ld a,ENEMYCOLLISION_STANDARD_MINIBOSS
 	ld (de),a
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,++
 	ld l,Enemy.counter1
 	ld (hl),180
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 ++
 	ld bc,-$80
 	jp objectSetSpeedZ
@@ -1260,10 +1260,10 @@ _subterror_stateC:
 	or a
 	jr nz,++
 	call enemyAnimate
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 ++
-	call _ecom_incSubstate
+	call ecom_incSubstate
 
 	call getRandomNumber
 	and $1c
@@ -1275,13 +1275,13 @@ _subterror_stateC:
 
 	call getRandomNumber
 	and $03
-	ld hl,_subterror_durationAboveGround
+	ld hl,subterror_durationAboveGround
 	rst_addAToHl
 	ldi a,(hl)
 	ld e,Enemy.counter1
 	ld (de),a
 
-	jp _subterror_setAnimationFromAngle
+	jp subterror_setAnimationFromAngle
 
 @substate2:
 	call enemyAnimate
@@ -1293,17 +1293,17 @@ _subterror_stateC:
 	call nz,playSound
 
 	call objectApplySpeed
-	call _ecom_bounceOffWallsAndHoles
-	call nz,_subterror_setAnimationFromAngle
+	call ecom_bounceOffWallsAndHoles
+	call nz,subterror_setAnimationFromAngle
 
 	; Dig back into ground when [counter1] reaches 0
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
-	jp _subterror_digIntoGround
+	jp subterror_digIntoGround
 
 
 ;;
-_subterror_spawnDirtEvery8Frames:
+subterror_spawnDirtEvery8Frames:
 	inc e
 	ld a,(de) ; [var31]
 	dec a
@@ -1311,7 +1311,7 @@ _subterror_spawnDirtEvery8Frames:
 	ret nz
 
 ;;
-_subterror_spawnDirt:
+subterror_spawnDirt:
 	ld e,Enemy.var31
 	ld a,$07
 	ld (de),a ; [var31] = 7
@@ -1319,7 +1319,7 @@ _subterror_spawnDirt:
 	ld (de),a ; [var30] = 7
 
 	ld b,PARTID_SUBTERROR_DIRT
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 
 	call objectGetTileAtPosition
 	ld c,l
@@ -1327,7 +1327,7 @@ _subterror_spawnDirt:
 	jp setTile
 
 ;;
-_subterror_retFromCallerIfAnimationUnfinished:
+subterror_retFromCallerIfAnimationUnfinished:
 	call enemyAnimate
 	ld h,d
 	ld l,Enemy.animParameter
@@ -1339,7 +1339,7 @@ _subterror_retFromCallerIfAnimationUnfinished:
 
 ;;
 ; @param[out]	a	Anger level (0-2)
-_subterror_getAngerLevel:
+subterror_getAngerLevel:
 	ld b,$00
 	ld e,Enemy.health
 	ld a,(de)
@@ -1354,7 +1354,7 @@ _subterror_getAngerLevel:
 	ret
 
 ;;
-_subterror_setAnimationFromAngle:
+subterror_setAnimationFromAngle:
 	ld h,d
 	ld l,Enemy.angle
 	ldd a,(hl)
@@ -1366,13 +1366,13 @@ _subterror_setAnimationFromAngle:
 	jp enemySetAnimation
 
 
-_subterror_speedVals: ; Chosen based on "anger level"
+subterror_speedVals: ; Chosen based on "anger level"
 	.db SPEED_80 SPEED_100 SPEED_180
 
-_subterror_timeUntilDrillAttack: ; Chosen based on "anger level"
+subterror_timeUntilDrillAttack: ; Chosen based on "anger level"
 	.db 120 90 60
 
-_subterror_durationAboveGround: ; Chosen randomly
+subterror_durationAboveGround: ; Chosen randomly
 	.db 60 90 120 180
 
 
@@ -1410,7 +1410,7 @@ enemyCode73:
 	ld e,Enemy.subid
 	ld a,(de)
 	dec a
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 
 	dec a
 	jr nz,@delete
@@ -1418,7 +1418,7 @@ enemyCode73:
 	; Subid 2 (shield) just destroyed
 
 	; Destroy sword
-	call _ecom_killRelatedObj2
+	call ecom_killRelatedObj2
 
 	; Set some variables on parent
 	ld a,Object.state
@@ -1435,31 +1435,31 @@ enemyCode73:
 	jp enemyDelete
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,@normalState
 	rst_jumpTable
-	.dw _armosWarrior_state_uninitialized
-	.dw _armosWarrior_state_spawner
-	.dw _armosWarrior_state_stub
-	.dw _armosWarrior_state_stub
-	.dw _armosWarrior_state_stub
-	.dw _armosWarrior_state_stub
-	.dw _armosWarrior_state_stub
-	.dw _armosWarrior_state_stub
+	.dw armosWarrior_state_uninitialized
+	.dw armosWarrior_state_spawner
+	.dw armosWarrior_state_stub
+	.dw armosWarrior_state_stub
+	.dw armosWarrior_state_stub
+	.dw armosWarrior_state_stub
+	.dw armosWarrior_state_stub
+	.dw armosWarrior_state_stub
 
 @normalState:
 	dec b
 	ld a,b
 	rst_jumpTable
-	.dw _armosWarrior_parent
-	.dw _armosWarrior_shield
-	.dw _armosWarrior_sword
+	.dw armosWarrior_parent
+	.dw armosWarrior_shield
+	.dw armosWarrior_sword
 
 
-_armosWarrior_state_uninitialized:
+armosWarrior_state_uninitialized:
 	ld a,b
 	or a
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 
 	; Spawner only
 
@@ -1469,24 +1469,24 @@ _armosWarrior_state_uninitialized:
 	ld (wMenuDisabled),a
 
 	ld a,ENEMYID_ARMOS_WARRIOR
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 
-_armosWarrior_state_spawner:
+armosWarrior_state_spawner:
 	ld b,$03
 	call checkBEnemySlotsAvailable
 	ret nz
 
 	ld c,$0c
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 
 	; Spawn parent
 	ld b,ENEMYID_ARMOS_WARRIOR
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld c,h
 
 	; Spawn shield
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc (hl) ; [shield.subid] = 2
 
 	; [shield.relatedObj1] = parent
@@ -1499,7 +1499,7 @@ _armosWarrior_state_spawner:
 	push hl
 
 	; Spawn sword
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),$03 ; [sword.subid] = 3
 
 	; [sword.relatedObj1] = parent
@@ -1531,33 +1531,33 @@ _armosWarrior_state_spawner:
 	jp enemyDelete
 
 
-_armosWarrior_state_stub:
+armosWarrior_state_stub:
 	ret
 
 
-_armosWarrior_parent:
+armosWarrior_parent:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _armosWarrior_parent_state8
-	.dw _armosWarrior_parent_state9
-	.dw _armosWarrior_parent_stateA
-	.dw _armosWarrior_parent_stateB
-	.dw _armosWarrior_parent_stateC
-	.dw _armosWarrior_parent_stateD
-	.dw _armosWarrior_parent_stateE
-	.dw _armosWarrior_parent_stateF
-	.dw _armosWarrior_parent_state10
+	.dw armosWarrior_parent_state8
+	.dw armosWarrior_parent_state9
+	.dw armosWarrior_parent_stateA
+	.dw armosWarrior_parent_stateB
+	.dw armosWarrior_parent_stateC
+	.dw armosWarrior_parent_stateD
+	.dw armosWarrior_parent_stateE
+	.dw armosWarrior_parent_stateF
+	.dw armosWarrior_parent_state10
 
 
 ; Waiting for door to close
-_armosWarrior_parent_state8:
+armosWarrior_parent_state8:
 	ld a,($cc93)
 	or a
 	ret nz
 
 	ldbc $01,$08
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
 	ld h,d
@@ -1573,7 +1573,7 @@ _armosWarrior_parent_state8:
 
 
 ; Cutscene before fight starts (falling from sky)
-_armosWarrior_parent_state9:
+armosWarrior_parent_state9:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -1611,7 +1611,7 @@ _armosWarrior_parent_state9:
 	jp playSound
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [substate]
@@ -1626,12 +1626,12 @@ _armosWarrior_parent_state9:
 	ld l,Enemy.counter1
 	ld (hl),30
 
-	call _enemyBoss_beginMiniboss
+	call enemyBoss_beginMiniboss
 	ld a,$02
 	jp enemySetAnimation
 
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),70 ; [counter1]
@@ -1658,7 +1658,7 @@ _armosWarrior_parent_state9:
 
 ; Sword moving up, parent moving down
 @substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,++
 
 	ld l,Enemy.state
@@ -1675,7 +1675,7 @@ _armosWarrior_parent_state9:
 
 
 ; Deciding which direction to move in next
-_armosWarrior_parent_stateA:
+armosWarrior_parent_stateA:
 	; If the armos is moving directly toward his sword, reverse direction
 	ld e,Enemy.var32
 	ld a,(de)
@@ -1702,22 +1702,22 @@ _armosWarrior_parent_stateA:
 	inc a
 	ld (de),a
 ++
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),75
-	jr _armosWarrior_parent_animate
+	jr armosWarrior_parent_animate
 
 
 ; Moving in "box" pattern for [counter1] frames
-_armosWarrior_parent_stateB:
-	call _ecom_decCounter1
-	jr nz,_armosWarrior_parent_updateBoxMovement
+armosWarrior_parent_stateB:
+	call ecom_decCounter1
+	jr nz,armosWarrior_parent_updateBoxMovement
 	ld l,e
 	dec (hl) ; [state]
 
-_armosWarrior_parent_updateBoxMovement:
-	call _armosWarrior_parent_checkReachedTurningPoint
-	jr nz,_armosWarrior_parent_animate
+armosWarrior_parent_updateBoxMovement:
+	call armosWarrior_parent_checkReachedTurningPoint
+	jr nz,armosWarrior_parent_animate
 
 	; Hit one of the turning points in his movement pattern; turn 90 degrees
 	ld h,d
@@ -1728,15 +1728,15 @@ _armosWarrior_parent_updateBoxMovement:
 	and $18
 	ld (de),a
 
-_armosWarrior_parent_animate:
+armosWarrior_parent_animate:
 	jp enemyAnimate
 
 
 ; Shield just hit
-_armosWarrior_parent_stateC:
+armosWarrior_parent_stateC:
 	call enemyAnimate
-	call _ecom_decCounter1
-	jr nz,_armosWarrior_parent_updateBoxMovement
+	call ecom_decCounter1
+	jr nz,armosWarrior_parent_updateBoxMovement
 
 	ld l,Enemy.state
 	ld (hl),$0a
@@ -1746,7 +1746,7 @@ _armosWarrior_parent_stateC:
 	ld h,(hl)
 	ld l,Enemy.var32
 	ld a,(hl)
-	ld hl,_armosWarrior_parent_speedVals
+	ld hl,armosWarrior_parent_speedVals
 	rst_addAToHl
 	ld e,Enemy.speed
 	ld a,(hl)
@@ -1755,8 +1755,8 @@ _armosWarrior_parent_stateC:
 
 
 ; Shield just destroyed
-_armosWarrior_parent_stateD:
-	call _ecom_decCounter1
+armosWarrior_parent_stateD:
+	call ecom_decCounter1
 	jr z,@gotoNextState
 
 	; Create debris at random offset every 8 frames
@@ -1797,25 +1797,25 @@ _armosWarrior_parent_stateD:
 
 
 ; Standing still before charging Link
-_armosWarrior_parent_stateE:
+armosWarrior_parent_stateE:
 	call enemyAnimate
-	call _ecom_decCounter1
-	jr nz,_armosWarrior_parent_animate
+	call ecom_decCounter1
+	jr nz,armosWarrior_parent_animate
 	ld l,Enemy.state
 	inc (hl)
-	jp _ecom_updateAngleTowardTarget
+	jp ecom_updateAngleTowardTarget
 
 
 ; Charging
-_armosWarrior_parent_stateF:
+armosWarrior_parent_stateF:
 	call enemyAnimate
 	ld a,$01
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	jp z,objectApplySpeed
 
 	; Hit wall
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.angle
 	ld a,(hl)
 	xor $10
@@ -1837,7 +1837,7 @@ _armosWarrior_parent_stateF:
 
 
 ; Recoiling from hitting wall
-_armosWarrior_parent_state10:
+armosWarrior_parent_state10:
 	call enemyAnimate
 	ld c,$16
 	call objectUpdateSpeedZ_paramC
@@ -1857,7 +1857,7 @@ _armosWarrior_parent_state10:
 	ret
 
 
-_armosWarrior_shield:
+armosWarrior_shield:
 	ld a,(de)
 	cp $08
 	jr z,@state8
@@ -1868,7 +1868,7 @@ _armosWarrior_shield:
 	ld l,Enemy.var32
 	ld a,(hl)
 	or a
-	jp z,_ecom_killObjectH
+	jp z,ecom_killObjectH
 
 	ld a,Object.animParameter
 	call objectGetRelatedObject1Var
@@ -1884,7 +1884,7 @@ _armosWarrior_shield:
 	add (hl)
 	call enemySetAnimation
 ++
-	jp _armosWarrior_shield_updatePosition
+	jp armosWarrior_shield_updatePosition
 
 ; Uninitialized
 @state8:
@@ -1918,29 +1918,29 @@ _armosWarrior_shield:
 	ld (de),a
 
 	call enemySetAnimation
-	call _armosWarrior_shield_updatePosition
+	call armosWarrior_shield_updatePosition
 	jp objectSetVisible81
 
 
-_armosWarrior_sword:
+armosWarrior_sword:
 	ld e,Enemy.state
 	ld a,(de)
 	cp $0b
-	call nc,_armosWarrior_sword_playSlashSound
+	call nc,armosWarrior_sword_playSlashSound
 
 	ld e,Enemy.state
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _armosWarrior_sword_state8
-	.dw _armosWarrior_sword_state9
-	.dw _armosWarrior_sword_stateA
-	.dw _armosWarrior_sword_stateB
-	.dw _armosWarrior_sword_stateC
+	.dw armosWarrior_sword_state8
+	.dw armosWarrior_sword_state9
+	.dw armosWarrior_sword_stateA
+	.dw armosWarrior_sword_stateB
+	.dw armosWarrior_sword_stateC
 
 
 ; Waiting for door to close
-_armosWarrior_sword_state8:
+armosWarrior_sword_state8:
 	ld a,($cc93)
 	or a
 	ret nz
@@ -1955,7 +1955,7 @@ _armosWarrior_sword_state8:
 	ld l,Enemy.speed
 	ld (hl),SPEED_20
 
-	call _armosWarrior_sword_setPositionAsHeld
+	call armosWarrior_sword_setPositionAsHeld
 
 	; [sword.relatedObj2] = shield (parent.var31)
 	ld l,Enemy.var31
@@ -1972,12 +1972,12 @@ _armosWarrior_sword_state8:
 
 
 ; Waiting for initial cutscene to end, then moving upward before fight starts
-_armosWarrior_sword_state9:
+armosWarrior_sword_state9:
 	ld a,Object.substate
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	or a
-	jp z,_armosWarrior_sword_setPositionAsHeld
+	jp z,armosWarrior_sword_setPositionAsHeld
 
 	sub $03
 	ret c
@@ -1987,7 +1987,7 @@ _armosWarrior_sword_state9:
 	ld a,(hl) ; [parent.state]
 	cp $0a
 	jr nc,@gotoStateA
-	call _armosWarrior_sword_playSlashSound
+	call armosWarrior_sword_playSlashSound
 	jp enemyAnimate
 
 @gotoStateA:
@@ -2023,8 +2023,8 @@ _armosWarrior_sword_state9:
 
 
 ; Staying still before charging toward Link
-_armosWarrior_sword_stateA:
-	call _ecom_decCounter1
+armosWarrior_sword_stateA:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -2043,14 +2043,14 @@ _armosWarrior_sword_stateA:
 	ldh a,(<hEnemyTargetX)
 	ld (hl),a
 
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call enemyAnimate
-	jp _armosWarrior_sword_updateCollisionBox
+	jp armosWarrior_sword_updateCollisionBox
 
 
 ; Charging toward target position
-_armosWarrior_sword_stateB:
-	call _armosWarrior_sword_checkCollisionWithShield
+armosWarrior_sword_stateB:
+	call armosWarrior_sword_checkCollisionWithShield
 	ld a,(wFrameCounter)
 	and $03
 	jr nz,++
@@ -2058,12 +2058,12 @@ _armosWarrior_sword_stateB:
 	; Update angle toward target position every 4 frames
 	ld h,d
 	ld l,Enemy.var30
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	call objectGetRelativeAngleWithTempVars
 	ld e,Enemy.angle
 	ld (de),a
 ++
-	call _armosWarrior_sword_checkWentTooFar
+	call armosWarrior_sword_checkWentTooFar
 	jr c,@beginSlowingDown
 
 	; If within 28 pixels of target position, start slowing down
@@ -2089,8 +2089,8 @@ _armosWarrior_sword_stateB:
 @notSlowingDown:
 	call enemyAnimate
 
-_armosWarrior_sword_updatePosition:
-	call _ecom_applyVelocityForTopDownEnemy
+armosWarrior_sword_updatePosition:
+	call ecom_applyVelocityForTopDownEnemy
 
 	; Save position
 	ld h,d
@@ -2103,20 +2103,20 @@ _armosWarrior_sword_updatePosition:
 	ld a,(hl)
 	ld (de),a
 
-	jp _armosWarrior_sword_updateCollisionBox
+	jp armosWarrior_sword_updateCollisionBox
 
 
 ; Slowing down
-_armosWarrior_sword_stateC:
-	call _armosWarrior_sword_checkCollisionWithShield
-	call _ecom_decCounter1
+armosWarrior_sword_stateC:
+	call armosWarrior_sword_checkCollisionWithShield
+	call ecom_decCounter1
 	jr z,@stoppedMoving
 
 	ld a,(hl) ; [counter1]
 	swap a
 	rrca
 	and $03
-	ld hl,_armosWarrior_sword_speedVals
+	ld hl,armosWarrior_sword_speedVals
 	rst_addAToHl
 	ld e,Enemy.speed
 	ld a,(hl)
@@ -2140,7 +2140,7 @@ _armosWarrior_sword_stateC:
 	rrca
 +
 	call nc,enemyAnimate
-	jr _armosWarrior_sword_updatePosition
+	jr armosWarrior_sword_updatePosition
 
 @stoppedMoving:
 	ld e,Enemy.animParameter
@@ -2172,7 +2172,7 @@ _armosWarrior_sword_stateC:
 
 ;;
 ; Shield copies parent's position plus an offset
-_armosWarrior_shield_updatePosition:
+armosWarrior_shield_updatePosition:
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
 	ldi a,(hl) ; [parent.yh]
@@ -2188,7 +2188,7 @@ _armosWarrior_shield_updatePosition:
 
 	ld e,Enemy.var30
 	ld a,(de)
-	ld hl,_armosWarrior_shield_YXOffsets
+	ld hl,armosWarrior_shield_YXOffsets
 	rst_addDoubleIndex
 	ld e,Enemy.yh
 	ldi a,(hl)
@@ -2203,11 +2203,11 @@ _armosWarrior_shield_updatePosition:
 
 ;;
 ; Updates collisionRadiusY/X based on animParameter, also adds an offset to Y/X position.
-_armosWarrior_sword_updateCollisionBox:
+armosWarrior_sword_updateCollisionBox:
 	ld e,Enemy.animParameter
 	ld a,(de)
 	add a
-	ld hl,_armosWarrior_sword_collisionBoxes
+	ld hl,armosWarrior_sword_collisionBoxes
 	rst_addDoubleIndex
 
 	ld e,Enemy.var32
@@ -2235,14 +2235,14 @@ _armosWarrior_sword_updateCollisionBox:
 
 ;;
 ; Sets the sword's position assuming it's being held by the parent.
-_armosWarrior_sword_setPositionAsHeld:
+armosWarrior_sword_setPositionAsHeld:
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
 	ld bc,$f4fa
 	jp objectTakePositionWithOffset
 
 ;;
-_armosWarrior_sword_checkCollisionWithShield:
+armosWarrior_sword_checkCollisionWithShield:
 	ld e,Enemy.var34
 	ld a,(de)
 	dec a
@@ -2325,7 +2325,7 @@ _armosWarrior_sword_checkCollisionWithShield:
 ; reached one of the "corners" of the box where he must turn.
 ;
 ; @param[out]	zflag	z if hit a turning point
-_armosWarrior_parent_checkReachedTurningPoint:
+armosWarrior_parent_checkReachedTurningPoint:
 	ld b,$31
 	ld e,Enemy.yh
 	ld a,(de)
@@ -2360,7 +2360,7 @@ _armosWarrior_parent_checkReachedTurningPoint:
 ;;
 ; @param[out]	bc	Position of sword
 ; @param[out]	cflag	c if the sword has gone to far and should stop now
-_armosWarrior_sword_checkWentTooFar:
+armosWarrior_sword_checkWentTooFar:
 	; Fix position, store it in bc
 	ld h,d
 	ld l,Enemy.yh
@@ -2380,7 +2380,7 @@ _armosWarrior_sword_checkWentTooFar:
 	add $02
 	and $1c
 	rrca
-	ld hl,_armosWarrior_sword_angleBoundaries
+	ld hl,armosWarrior_sword_angleBoundaries
 	rst_addAToHl
 
 	ldi a,(hl)
@@ -2407,7 +2407,7 @@ _armosWarrior_sword_checkWentTooFar:
 	ret
 
 
-_armosWarrior_shield_YXOffsets:
+armosWarrior_shield_YXOffsets:
 	.db $fb $03 ; Frame 0
 	.db $fb $07 ; Frame 1
 
@@ -2418,7 +2418,7 @@ _armosWarrior_shield_YXOffsets:
 ;   b1: X-offset
 ;   b2: collisionRadiusY
 ;   b3: collisionRadiusX
-_armosWarrior_sword_collisionBoxes:
+armosWarrior_sword_collisionBoxes:
 	.db $fc $00 $08 $03
 	.db $fe $fe $06 $06
 	.db $00 $fc $03 $08
@@ -2430,12 +2430,12 @@ _armosWarrior_sword_collisionBoxes:
 
 
 ; Sword decelerates based on these values
-_armosWarrior_sword_speedVals:
+armosWarrior_sword_speedVals:
 	.db SPEED_40, SPEED_80, SPEED_100, SPEED_140
 
 
 ; Parent chooses a speed from here based on how many hits the shield has taken
-_armosWarrior_parent_speedVals:
+armosWarrior_parent_speedVals:
 	.db SPEED_180, SPEED_140, SPEED_100
 
 
@@ -2443,7 +2443,7 @@ _armosWarrior_parent_speedVals:
 ; should stop.
 ;   b0: Y-boundary. (If bit 0 is set, it's an upper boundary.)
 ;   b1: X-boundary. (If bit 0 is set, it's a left boundary.)
-_armosWarrior_sword_angleBoundaries:
+armosWarrior_sword_angleBoundaries:
 	.db $51 $fe ; Up
 	.db $51 $98 ; Up-right
 	.db $fe $98 ; Right
@@ -2454,7 +2454,7 @@ _armosWarrior_sword_angleBoundaries:
 	.db $51 $51 ; Up-left
 
 ;;
-_armosWarrior_sword_playSlashSound:
+armosWarrior_sword_playSlashSound:
 	ld a,(wFrameCounter)
 	and $0f
 	ret nz
@@ -2481,7 +2481,7 @@ enemyCode74:
 	jr z,@dead
 	dec a
 	jr z,@normalStatus
-	jp _ecom_updateKnockback
+	jp ecom_updateKnockback
 
 @dead:
 	ld e,Enemy.subid
@@ -2490,7 +2490,7 @@ enemyCode74:
 	jr nz,@mainDead
 
 	; Ball dead
-	call _smasher_ball_makeLinkDrop
+	call smasher_ball_makeLinkDrop
 	call objectCreatePuff
 	jp enemyDelete
 
@@ -2498,31 +2498,31 @@ enemyCode74:
 	ld e,Enemy.collisionType
 	ld a,(de)
 	or a
-	call nz,_ecom_killRelatedObj1
-	jp _enemyBoss_dead
+	call nz,ecom_killRelatedObj1
+	jp enemyBoss_dead
 
 @normalStatus:
-	call _smasher_ball_updateRespawnTimer
-	call _ecom_getSubidAndCpStateTo08
+	call smasher_ball_updateRespawnTimer
+	call ecom_getSubidAndCpStateTo08
 	jr c,@commonState
 	ld a,b
 	or a
-	jp z,_smasher_ball
-	jp _smasher_parent
+	jp z,smasher_ball
+	jp smasher_parent
 
 @commonState:
 	rst_jumpTable
-	.dw _smasher_state_uninitialized
-	.dw _smasher_state_stub
-	.dw _smasher_state_grabbed
-	.dw _smasher_state_stub
-	.dw _smasher_state_stub
-	.dw _smasher_state_stub
-	.dw _smasher_state_stub
-	.dw _smasher_state_stub
+	.dw smasher_state_uninitialized
+	.dw smasher_state_stub
+	.dw smasher_state_grabbed
+	.dw smasher_state_stub
+	.dw smasher_state_stub
+	.dw smasher_state_stub
+	.dw smasher_state_stub
+	.dw smasher_state_stub
 
 
-_smasher_state_uninitialized:
+smasher_state_uninitialized:
 	ld a,b
 	or a
 	jr nz,@alreadySpawnedParent
@@ -2530,11 +2530,11 @@ _smasher_state_uninitialized:
 @initializeBall:
 	ld b,a
 	ld a,$ff
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 
 	; Spawn parent
 	ld b,ENEMYID_SMASHER
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 
 	; [parent.enabled] = [ball.enabled]
@@ -2579,7 +2579,7 @@ _smasher_state_uninitialized:
 
 @initialize:
 	ld a,$01
-	call _smasher_setOamFlags
+	call smasher_setOamFlags
 
 	ld l,Enemy.xh
 	ld a,(hl)
@@ -2590,10 +2590,10 @@ _smasher_state_uninitialized:
 	call enemySetAnimation
 
 @gotoState8:
-	jp _ecom_setSpeedAndState8AndVisible
+	jp ecom_setSpeedAndState8AndVisible
 
 
-_smasher_state_grabbed:
+smasher_state_grabbed:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -2614,7 +2614,7 @@ _smasher_state_grabbed:
 	ret
 
 @released:
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 	jr z,++
 
 	; Hit a wall; copy new angle to the "throw item" that's controlling this
@@ -2652,7 +2652,7 @@ _smasher_state_grabbed:
 	dec (hl)
 
 	; Calculate knockback angle for boss
-	call _smasher_ball_loadPositions
+	call smasher_ball_loadPositions
 	push hl
 	call objectGetRelativeAngleWithTempVars
 	pop hl
@@ -2674,26 +2674,26 @@ _smasher_state_grabbed:
 	jp objectSetVisiblec2
 
 
-_smasher_state_stub:
+smasher_state_stub:
 	ret
 
 
-_smasher_ball:
+smasher_ball:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _smasher_ball_state8
-	.dw _smasher_ball_state9
-	.dw _smasher_ball_stateA
-	.dw _smasher_ball_stateB
-	.dw _smasher_ball_stateC
-	.dw _smasher_ball_stateD
-	.dw _smasher_ball_stateE
-	.dw _smasher_ball_stateF
+	.dw smasher_ball_state8
+	.dw smasher_ball_state9
+	.dw smasher_ball_stateA
+	.dw smasher_ball_stateB
+	.dw smasher_ball_stateC
+	.dw smasher_ball_stateD
+	.dw smasher_ball_stateE
+	.dw smasher_ball_stateF
 
 
 ; Initialization (or just reappeared after disappearing)
-_smasher_ball_state8:
+smasher_ball_state8:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -2705,13 +2705,13 @@ _smasher_ball_state8:
 
 
 ; Lying on ground, waiting for parent or Link to pick it up
-_smasher_ball_state9:
+smasher_ball_state9:
 	call objectAddToGrabbableObjectBuffer
 	jp objectPushLinkAwayOnCollision
 
 
 ; Parent is picking up the ball
-_smasher_ball_stateA:
+smasher_ball_stateA:
 	ld h,d
 	ld l,Enemy.zh
 	ldd a,(hl)
@@ -2729,12 +2729,12 @@ _smasher_ball_stateA:
 	; Move toward parent on Y/X axis
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
-	call _smasher_ball_loadPositions
+	call smasher_ball_loadPositions
 	cp c
-	jp nz,_ecom_moveTowardPosition
+	jp nz,ecom_moveTowardPosition
 	ldh a,(<hFF8F)
 	cp b
-	jp nz,_ecom_moveTowardPosition
+	jp nz,ecom_moveTowardPosition
 
 	; Reached parent's Y/X position; wait for Z as well
 	ld e,Enemy.zh
@@ -2743,7 +2743,7 @@ _smasher_ball_stateA:
 	ret nz
 
 	; Reached position; go to next state
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.collisionType
 	set 7,(hl)
@@ -2755,12 +2755,12 @@ _smasher_ball_stateA:
 
 ; This state is a signal for the parent, which will update the ball's state when it gets
 ; released.
-_smasher_ball_stateB:
+smasher_ball_stateB:
 	ret
 
 
 ; Being thrown
-_smasher_ball_stateC:
+smasher_ball_stateC:
 	ld c,$20
 	call objectUpdateSpeedZAndBounce
 	jr c,@doneBouncing
@@ -2771,9 +2771,9 @@ _smasher_ball_stateC:
 	ld a,(de)
 	srl a
 	ld (de),a
-	call _smasher_ball_playLandSound
+	call smasher_ball_playLandSound
 ++
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 	jp objectApplySpeed
 
 @doneBouncing:
@@ -2785,13 +2785,13 @@ _smasher_ball_stateC:
 	res 7,(hl)
 	call objectSetVisiblec2
 
-_smasher_ball_playLandSound:
+smasher_ball_playLandSound:
 	ld a,SND_BOMB_LAND
 	jp playSound
 
 
 ; Disappearing (either after being thrown, or after a time limit)
-_smasher_ball_stateD:
+smasher_ball_stateD:
 	call objectCreatePuff
 	ret nz
 
@@ -2807,7 +2807,7 @@ _smasher_ball_stateD:
 	ldi (hl),a
 	ld (hl),a
 ++
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.collisionType
 	res 7,(hl)
@@ -2818,8 +2818,8 @@ _smasher_ball_stateD:
 
 
 ; Ball is gone, will reappear after [counter1] frames
-_smasher_ball_stateE:
-	call _ecom_decCounter1
+smasher_ball_stateE:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -2860,12 +2860,12 @@ _smasher_ball_stateE:
 
 
 ; Ball is falling to ground after reappearing
-_smasher_ball_stateF:
+smasher_ball_stateF:
 	ld c,$20
 	call objectUpdateSpeedZAndBounce
 	jr c,@doneBouncing
 	ret nz
-	jp _smasher_ball_playLandSound
+	jp smasher_ball_playLandSound
 
 @doneBouncing:
 	ld e,Enemy.state
@@ -2874,20 +2874,20 @@ _smasher_ball_stateF:
 	jp objectSetVisiblec2
 
 
-_smasher_parent:
+smasher_parent:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _smasher_parent_state8
-	.dw _smasher_parent_state9
-	.dw _smasher_parent_stateA
-	.dw _smasher_parent_stateB
-	.dw _smasher_parent_stateC
-	.dw _smasher_parent_stateD
+	.dw smasher_parent_state8
+	.dw smasher_parent_state9
+	.dw smasher_parent_stateA
+	.dw smasher_parent_stateB
+	.dw smasher_parent_stateC
+	.dw smasher_parent_stateD
 
 
 ; Initialization
-_smasher_parent_state8:
+smasher_parent_state8:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -2901,13 +2901,13 @@ _smasher_parent_state8:
 	; Don't do below function call if already initialized
 	ld l,Enemy.var32
 	bit 0,(hl)
-	jr nz,_smasher_parent_state9
+	jr nz,smasher_parent_state9
 
 	inc (hl) ; [var32]
-	call _enemyBoss_beginMiniboss
+	call enemyBoss_beginMiniboss
 
 
-_smasher_parent_state9:
+smasher_parent_state9:
 	ld a,Object.state
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -2916,7 +2916,7 @@ _smasher_parent_state9:
 
 	; Ball unavailable; moving aronund in random angles
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@updateMovement
 
 	; Time to choose a new angle
@@ -2929,15 +2929,15 @@ _smasher_parent_state9:
 	ld e,Enemy.angle
 	ld a,(hl)
 	ld (de),a
-	call _smasher_updateDirectionFromAngle
+	call smasher_updateDirectionFromAngle
 
 @updateMovement:
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jr nz,@updateAnim
 
-	call _smasher_hop
+	call smasher_hop
 	ld e,Enemy.direction
 	ld a,(de)
 	inc a
@@ -2995,8 +2995,8 @@ _smasher_parent_state9:
 	ld (hl),SPEED_100
 
 	ld l,Enemy.var30
-	call _ecom_readPositionVars
-	call _smasher_updateAngleTowardPosition
+	call ecom_readPositionVars
+	call smasher_updateAngleTowardPosition
 	jp enemySetAnimation
 
 
@@ -3005,17 +3005,17 @@ _smasher_parent_state9:
 
 
 ; Moving toward ball on the ground
-_smasher_parent_stateA:
+smasher_parent_stateA:
 	ld a,Object.state
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	cp $09
-	jr nz,_smasher_parent_linkPickedUpBall
+	jr nz,smasher_parent_linkPickedUpBall
 
 	; Check if we've reached the target position in front of the ball
 	ld h,d
 	ld l,Enemy.var30
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $02
 	cp $05
@@ -3035,7 +3035,7 @@ _smasher_parent_stateA:
 	ld (hl),$00
 
 	ld a,$02
-	call _smasher_setOamFlags
+	call smasher_setOamFlags
 
 	ld a,Object.state
 	call objectGetRelatedObject1Var
@@ -3044,25 +3044,25 @@ _smasher_parent_stateA:
 	; Face toward the ball? ('b' is still set to the y-position from before?)
 	ld l,Enemy.xh
 	ld c,(hl)
-	call _smasher_updateAngleTowardPosition
+	call smasher_updateAngleTowardPosition
 	inc a
 	jp enemySetAnimation
 
 @movingTowardBall:
-	call _ecom_moveTowardPosition
+	call ecom_moveTowardPosition
 
 	ld e,Enemy.angle
 	ld a,(de)
-	call _smasher_updateDirectionFromAngle
+	call smasher_updateDirectionFromAngle
 	call enemySetAnimation
 
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	jr _smasher_hop
+	jr smasher_hop
 
 
-_smasher_parent_linkPickedUpBall:
+smasher_parent_linkPickedUpBall:
 	; Stop chasing the ball
 	ld h,d
 	ld l,Enemy.state
@@ -3075,27 +3075,27 @@ _smasher_parent_linkPickedUpBall:
 	ld (hl),60
 
 	ld a,$03
-	call _smasher_setOamFlags
+	call smasher_setOamFlags
 
 	; Run away from Link
-	call _ecom_updateCardinalAngleAwayFromTarget
-	jp _smasher_updateDirectionFromAngle
+	call ecom_updateCardinalAngleAwayFromTarget
+	jp smasher_updateDirectionFromAngle
 
 
 ; About to pick up ball
-_smasher_parent_stateB:
+smasher_parent_stateB:
 	ld a,Object.state
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	cp ENEMYSTATE_GRABBED
-	jr z,_smasher_parent_linkPickedUpBall
+	jr z,smasher_parent_linkPickedUpBall
 
 	; Wait for ball's state to update
 	cp $0b
 	ret c
 
 	ld a,$03
-	call _smasher_setOamFlags
+	call smasher_setOamFlags
 
 	ld l,Enemy.state
 	inc (hl)
@@ -3107,7 +3107,7 @@ _smasher_parent_stateB:
 	ld (hl),SPEED_40
 
 ;;
-_smasher_hop:
+smasher_hop:
 	ld l,Enemy.speedZ
 	ld a,<(-$c0)
 	ldi (hl),a
@@ -3116,18 +3116,18 @@ _smasher_hop:
 
 
 ; Just picked up ball; hopping while moving slowly toward Link
-_smasher_parent_stateC:
-	call _smasher_updateAngleTowardLink
+smasher_parent_stateC:
+	call smasher_updateAngleTowardLink
 	inc a
 	call enemySetAnimation
 
-	call _ecom_decCounter2
+	call ecom_decCounter2
 
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jr z,@hitGround
 
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 
 	; Update ball's position
 	ld a,Object.enabled
@@ -3144,7 +3144,7 @@ _smasher_parent_stateC:
 	ld e,Enemy.counter2
 	ld a,(de)
 	or a
-	jp nz,_smasher_hop
+	jp nz,smasher_hop
 
 	; Done hopping; go to next state to leap into the air
 
@@ -3156,11 +3156,11 @@ _smasher_parent_stateC:
 	inc (hl)
 
 	ld a,$02
-	jp _smasher_setOamFlags
+	jp smasher_setOamFlags
 
 
 ; In midair just before throwing ball
-_smasher_parent_stateD:
+smasher_parent_stateD:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jr nz,@inMidair
@@ -3184,7 +3184,7 @@ _smasher_parent_stateD:
 	jr nc,@movingDown
 
 	; Moving up
-	call _smasher_updateAngleTowardLink
+	call smasher_updateAngleTowardLink
 	inc a
 	jp enemySetAnimation
 
@@ -3210,7 +3210,7 @@ _smasher_parent_stateD:
 	ld (hl),a
 
 	ld a,$03
-	call _smasher_setOamFlags
+	call smasher_setOamFlags
 
 	ld e,Enemy.direction
 	ld a,(de)
@@ -3219,14 +3219,14 @@ _smasher_parent_stateD:
 
 ;;
 ; @param[out]	a	direction value
-_smasher_updateAngleTowardPosition:
+smasher_updateAngleTowardPosition:
 	call objectGetRelativeAngleWithTempVars
 	ld e,Enemy.angle
 	ld (de),a
-	jr _smasher_updateDirectionFromAngle
+	jr smasher_updateDirectionFromAngle
 
 ;;
-_smasher_updateAngleTowardLink:
+smasher_updateAngleTowardLink:
 	call objectGetAngleTowardEnemyTarget
 	ld e,Enemy.angle
 	ld (de),a
@@ -3234,7 +3234,7 @@ _smasher_updateAngleTowardLink:
 ;;
 ; @param	a	angle
 ; @param[out]	a	direction value
-_smasher_updateDirectionFromAngle:
+smasher_updateDirectionFromAngle:
 	ld b,a
 	and $0f
 	ret z
@@ -3250,7 +3250,7 @@ _smasher_updateDirectionFromAngle:
 
 ;;
 ; @param	a	Value for oamFlags
-_smasher_setOamFlags:
+smasher_setOamFlags:
 	ld h,d
 	ld l,Enemy.oamFlagsBackup
 	ldi (hl),a
@@ -3262,7 +3262,7 @@ _smasher_setOamFlags:
 ; "objectGetRelativeAngleWithTempVars".
 ;
 ; @param	h	Parent object
-_smasher_ball_loadPositions:
+smasher_ball_loadPositions:
 	ld l,Enemy.yh
 	ld e,l
 	ld a,(de)
@@ -3279,7 +3279,7 @@ _smasher_ball_loadPositions:
 ;;
 ; Updates the ball's "respawn timer" and makes it disappear (goes to state $0d) when it
 ; hits zero.
-_smasher_ball_updateRespawnTimer:
+smasher_ball_updateRespawnTimer:
 	; Return if this isn't the ball
 	ld e,Enemy.subid
 	ld a,(de)
@@ -3302,7 +3302,7 @@ _smasher_ball_updateRespawnTimer:
 	ret c
 
 	ld (hl),$00
-	call _smasher_ball_makeLinkDrop
+	call smasher_ball_makeLinkDrop
 	ld e,Enemy.state
 	ld a,$0d
 	ld (de),a
@@ -3310,7 +3310,7 @@ _smasher_ball_updateRespawnTimer:
 
 
 ;;
-_smasher_ball_makeLinkDrop:
+smasher_ball_makeLinkDrop:
 	ld e,Enemy.state
 	ld a,(de)
 	cp $02
@@ -3390,7 +3390,7 @@ enemyCode75:
 	ld l,Enemy.state
 	ld a,(hl)
 	cp $0f
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 
 	ld (hl),$0f ; [state]
 	inc l
@@ -3407,31 +3407,31 @@ enemyCode75:
 	call enemySetAnimation
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr c,@commonState
 
 	ld a,b
 	or a
-	jp z,_vire_mainForm
-	jp _vire_batForm
+	jp z,vire_mainForm
+	jp vire_batForm
 
 @commonState:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _vire_state_uninitialized
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
+	.dw vire_state_uninitialized
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
 
 
-_vire_state_uninitialized:
+vire_state_uninitialized:
 	ld a,SPEED_c0
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 
 	ld a,b
 	or a
@@ -3443,14 +3443,14 @@ _vire_state_uninitialized:
 
 	dec a ; a = $ff
 	ld b,$00
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 
-_vire_state_stub:
+vire_state_stub:
 	ret
 
 
-_vire_mainForm:
+vire_mainForm:
 	ld e,Enemy.direction
 	ld a,(de)
 	or a
@@ -3475,18 +3475,18 @@ _vire_mainForm:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _vire_mainForm_state8
-	.dw _vire_mainForm_state9
-	.dw _vire_mainForm_stateA
-	.dw _vire_mainForm_stateB
-	.dw _vire_mainForm_stateC
-	.dw _vire_mainForm_stateD
-	.dw _vire_mainForm_stateE
-	.dw _vire_mainForm_stateF
+	.dw vire_mainForm_state8
+	.dw vire_mainForm_state9
+	.dw vire_mainForm_stateA
+	.dw vire_mainForm_stateB
+	.dw vire_mainForm_stateC
+	.dw vire_mainForm_stateD
+	.dw vire_mainForm_stateE
+	.dw vire_mainForm_stateF
 
 
 ; Mini-cutscene before starting fight
-_vire_mainForm_state8:
+vire_mainForm_state8:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -3546,7 +3546,7 @@ _vire_mainForm_state8:
 
 @substate2:
 	; Show text in 8 frames
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -3568,7 +3568,7 @@ _vire_mainForm_state8:
 	ld (wDisableLinkCollisionsAndMenu),a
 
 .ifdef ROM_AGES
-	call _ecom_incState
+	call ecom_incState
 .else
 	ld h,d
 	ld l,Enemy.state
@@ -3591,8 +3591,8 @@ _vire_mainForm_state8:
 
 
 ; Off-screen for [counter1] frames
-_vire_mainForm_state9:
-	call _ecom_decCounter1
+vire_mainForm_state9:
+	call ecom_decCounter1
 	ret nz
 
 	; Decide what to do next (health affects probability)
@@ -3625,7 +3625,7 @@ _vire_mainForm_state9:
 
 
 ; Charges across screen
-_vire_mainForm_stateA:
+vire_mainForm_stateA:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -3634,7 +3634,7 @@ _vire_mainForm_stateA:
 	.dw @substate2
 
 @substate0:
-	call _vire_spawnOutsideCamera
+	call vire_spawnOutsideCamera
 	inc l
 	ld (hl),20 ; [counter1]
 	ld l,Enemy.speed
@@ -3643,8 +3643,8 @@ _vire_mainForm_stateA:
 
 ; Moving slowly before charging
 @substate1:
-	call _ecom_decCounter1
-	jp nz,_vire_mainForm_applySpeedAndAnimate
+	call ecom_decCounter1
+	jp nz,vire_mainForm_applySpeedAndAnimate
 
 	; Begin charging
 	ld l,e
@@ -3652,7 +3652,7 @@ _vire_mainForm_stateA:
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call getRandomNumber_noPreserveVars
 	and $03
 	sub $02
@@ -3665,17 +3665,17 @@ _vire_mainForm_stateA:
 
 ; Charging across screen
 @substate2:
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	call _ecom_decCounter1
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	call ecom_decCounter1
 	ld a,(hl)
 	and $1f
-	call z,_vire_mainForm_fireProjectile
-	jp _vire_mainForm_applySpeedAndAnimate
+	call z,vire_mainForm_fireProjectile
+	jp vire_mainForm_applySpeedAndAnimate
 
 
 ; Circling Link, runs away if Link gets too close (similar to state D)
-_vire_mainForm_stateB:
+vire_mainForm_stateB:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -3685,7 +3685,7 @@ _vire_mainForm_stateB:
 	.dw @substate3
 
 @substate0: ; Also subid 0 for state D
-	call _vire_spawnOutsideCamera
+	call vire_spawnOutsideCamera
 	inc l
 	ld (hl),120 ; [counter1]
 	call getRandomNumber_noPreserveVars
@@ -3702,16 +3702,16 @@ _vire_mainForm_stateB:
 	and $03
 	jr nz,++
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@beginCharge
 
 	ld a,(hl)
 	and $1f
 	ld b,$01
-	call z,_vire_mainForm_fireProjectileWithSubid
+	call z,vire_mainForm_fireProjectileWithSubid
 ++
-	call _vire_mainForm_checkLinkTooClose
-	jp nc,_vire_mainForm_circleAroundScreen
+	call vire_mainForm_checkLinkTooClose
+	jp nc,vire_mainForm_circleAroundScreen
 
 ; Begin charging; initially toward Link, but will run away if he gets too close or Link
 ; attacks
@@ -3720,42 +3720,42 @@ _vire_mainForm_stateB:
 	inc (hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	jr @animate
 
 ; Charging toward Link
 @substate2:
-	call _vire_mainForm_checkLinkTooClose
+	call vire_mainForm_checkLinkTooClose
 	jr c,@updateAngleAway
 	ld a,(wLinkUsingItem1)
 	or a
 	jr nz,@updateAngleAway
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	jp _vire_mainForm_applySpeedAndAnimate
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	jp vire_mainForm_applySpeedAndAnimate
 
 ; Charging away from Link
 @updateAngleAway:
 	ld l,e
 	inc (hl) ; [substate]
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 @animate:
 	jp enemyAnimate
 
 @substate3:
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ld a,(hl)
 	and $1f
 	ld b,$01
-	call z,_vire_mainForm_fireProjectileWithSubid
-	jp _vire_mainForm_applySpeedAndAnimate
+	call z,vire_mainForm_fireProjectileWithSubid
+	jp vire_mainForm_applySpeedAndAnimate
 
 
 ; Vire creeps in from the screen edge to fire one projectile, then runs away
-_vire_mainForm_stateC:
+vire_mainForm_stateC:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -3765,7 +3765,7 @@ _vire_mainForm_stateC:
 	.dw @substate3
 
 @substate0:
-	call _vire_spawnOutsideCamera
+	call vire_spawnOutsideCamera
 	inc l
 	ld (hl),28 ; [counter1]
 	ld l,Enemy.speed
@@ -3773,19 +3773,19 @@ _vire_mainForm_stateC:
 	ret
 
 @substate1:
-	call _ecom_decCounter1
-	jp nz,_vire_mainForm_applySpeedAndAnimate
+	call ecom_decCounter1
+	jp nz,vire_mainForm_applySpeedAndAnimate
 
 	ld (hl),12 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
 
 	ld b,$03
-	call _vire_mainForm_fireProjectileWithSubid
+	call vire_mainForm_fireProjectileWithSubid
 	jr @animate
 
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 
 	ld l,e
@@ -3802,38 +3802,38 @@ _vire_mainForm_stateC:
 	jp enemyAnimate
 
 @substate3:
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	jp _vire_mainForm_applySpeedAndAnimate
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	jp vire_mainForm_applySpeedAndAnimate
 
 
 ; Circling Link, runs away if Link attempts to attack (similar to state B)
-_vire_mainForm_stateD:
+vire_mainForm_stateD:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _vire_mainForm_stateB@substate0
+	.dw vire_mainForm_stateB@substate0
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
 	.dw @substate4
-	.dw _vire_state_moveOffScreen
+	.dw vire_state_moveOffScreen
 
 @substate1:
 	ld a,(wFrameCounter)
 	and $03
 	jr nz,++
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@beginCharge
 
 	ld a,(hl)
 	and $1f
 	ld b,$01
-	call z,_vire_mainForm_fireProjectileWithSubid
+	call z,vire_mainForm_fireProjectileWithSubid
 ++
-	call _vire_mainForm_checkLinkTooClose
-	jp nc,_vire_mainForm_circleAroundScreen
+	call vire_mainForm_checkLinkTooClose
+	jp nc,vire_mainForm_circleAroundScreen
 
 ; Begin charging; initially toward Link, but will run away if he gets too close or Link
 ; attacks
@@ -3842,7 +3842,7 @@ _vire_mainForm_stateD:
 	inc (hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 @animate:
 	jp enemyAnimate
 
@@ -3859,31 +3859,31 @@ _vire_mainForm_stateD:
 	ld (hl),12 ; [counter1]
 	ld l,Enemy.speed
 	ld (hl),SPEED_300
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 	jr @animate
 
 @moveOffScreen:
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	jp _vire_mainForm_applySpeedAndAnimate
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	jp vire_mainForm_applySpeedAndAnimate
 
 @substate3:
-	call _ecom_decCounter1
-	jp nz,_vire_mainForm_applySpeedAndAnimate
+	call ecom_decCounter1
+	jp nz,vire_mainForm_applySpeedAndAnimate
 
 	ld (hl),12 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
 
 	ld b,PARTID_VIRE_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 
 	ld a,SND_SPLASH
 	call playSound
 	jr @animate
 
 @substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 
 	ld l,e
@@ -3892,24 +3892,24 @@ _vire_mainForm_stateD:
 	ld l,Enemy.speed
 	ld (hl),SPEED_1c0
 
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 	jr @animate
 
 
-_vire_state_moveOffScreen: ; Used by states D and E
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	jp _vire_mainForm_applySpeedAndAnimate
+vire_state_moveOffScreen: ; Used by states D and E
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	jp vire_mainForm_applySpeedAndAnimate
 
 
 ; Just took damage
-_vire_mainForm_stateE:
+vire_mainForm_stateE:
 	inc e
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _vire_state_moveOffScreen
+	.dw vire_state_moveOffScreen
 
 @substate0:
 	ld h,d
@@ -3921,7 +3921,7 @@ _vire_mainForm_stateE:
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_300
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 
 	ld e,Enemy.direction
 	xor a
@@ -3932,7 +3932,7 @@ _vire_mainForm_stateE:
 	jp enemySetAnimation
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -3962,7 +3962,7 @@ _vire_mainForm_stateE:
 
 
 ; "Main form" died, about to split into bats
-_vire_mainForm_stateF:
+vire_mainForm_stateF:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -3974,7 +3974,7 @@ _vire_mainForm_stateF:
 	.dw @substate5
 
 @substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [counter1]
@@ -3998,10 +3998,10 @@ _vire_mainForm_stateF:
 
 	; Spawn bats
 	ld b,ENEMYID_VIRE
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	call @initBat
 
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc a
 
 @initBat:
@@ -4026,7 +4026,7 @@ _vire_mainForm_stateF:
 	ld e,Enemy.var34
 	ld a,(de)
 	or a
-	jp nz,_ecom_decCounter2
+	jp nz,ecom_decCounter2
 
 	; Vire defeated
 	ld h,d
@@ -4038,8 +4038,8 @@ _vire_mainForm_stateF:
 	jp playSound
 
 @substate3:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	ld (hl),$10 ; [counter1]
 	ld l,e
@@ -4047,7 +4047,7 @@ _vire_mainForm_stateF:
 	jp objectSetVisiblec1
 
 @substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -4084,7 +4084,7 @@ _vire_mainForm_stateF:
 	inc a
 	ld (de),a
 	ld b,PARTID_ITEM_DROP
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 ++
 	call enemyAnimate
 
@@ -4097,7 +4097,7 @@ _vire_mainForm_stateF:
 	sbc >($0080)
 	ld (hl),a
 
-	call _vire_checkOffScreen
+	call vire_checkOffScreen
 	jp c,objectApplySpeed
 
 	; Vire is gone; cleanup
@@ -4109,19 +4109,19 @@ _vire_mainForm_stateF:
 	jp enemyDelete
 
 
-_vire_batForm:
+vire_batForm:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _vire_batForm_state8
-	.dw _vire_batForm_state9
-	.dw _vire_batForm_stateA
-	.dw _vire_batForm_stateB
-	.dw _vire_batForm_stateC
-	.dw _vire_batForm_stateD
+	.dw vire_batForm_state8
+	.dw vire_batForm_state9
+	.dw vire_batForm_stateA
+	.dw vire_batForm_stateB
+	.dw vire_batForm_stateC
+	.dw vire_batForm_stateD
 
 
-_vire_batForm_state8:
+vire_batForm_state8:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -4144,9 +4144,9 @@ _vire_batForm_state8:
 
 
 ; Moving upward after charging (or after spawning)
-_vire_batForm_state9:
-	call _ecom_decCounter1
-	jr z,_vire_batForm_gotoStateA
+vire_batForm_state9:
+	call ecom_decCounter1
+	jr z,vire_batForm_gotoStateA
 
 	; Move up while zh > -$10
 	ld l,Enemy.zh
@@ -4161,9 +4161,9 @@ _vire_batForm_state9:
 	ld (hl),a
 ++
 	call objectApplySpeed
-	jr _vire_batForm_animate
+	jr vire_batForm_animate
 
-_vire_batForm_gotoStateA:
+vire_batForm_gotoStateA:
 	ld l,e
 	ld (hl),$0a ; [state]
 
@@ -4181,11 +4181,11 @@ _vire_batForm_gotoStateA:
 	ld a,Object.counter2
 	call objectGetRelatedObject1Var
 	ld (hl),180
-	jr _vire_batForm_animate
+	jr vire_batForm_animate
 
 
-_vire_batForm_stateA:
-	call _vire_batForm_updateZPos
+vire_batForm_stateA:
+	call vire_batForm_updateZPos
 
 	ld a,Object.counter2
 	call objectGetRelatedObject1Var
@@ -4194,7 +4194,7 @@ _vire_batForm_stateA:
 	jr nz,++
 
 .ifdef ROM_AGES
-	call _ecom_incState
+	call ecom_incState
 .else
 	ld h,d
 	ld l,Enemy.state
@@ -4205,7 +4205,7 @@ _vire_batForm_stateA:
 	ld (hl),$08
 	ret
 ++
-	call _vire_batForm_moveAwayFromLinkIfTooClose
+	call vire_batForm_moveAwayFromLinkIfTooClose
 
 	call objectGetAngleTowardEnemyTarget
 	ld b,a
@@ -4217,16 +4217,16 @@ _vire_batForm_stateA:
 	ld (de),a
 
 	ld a,$02
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	call z,objectApplySpeed
 
-_vire_batForm_animate:
+vire_batForm_animate:
 	jp enemyAnimate
 
 
 ; About to charge toward Link in [counter1] frames
-_vire_batForm_stateB:
-	call _ecom_decCounter1
+vire_batForm_stateB:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -4244,10 +4244,10 @@ _vire_batForm_stateB:
 
 
 ; Charging toward target position in var35/var36
-_vire_batForm_stateC:
+vire_batForm_stateC:
 	ld h,d
 	ld l,Enemy.var35
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $08
 	cp $11
@@ -4270,7 +4270,7 @@ _vire_batForm_stateC:
 	inc (hl) ; [state]
 	ld l,Enemy.counter1
 	ld (hl),20
-	jr _vire_batForm_animate
+	jr vire_batForm_animate
 
 @notReachedPosition:
 	ld l,Enemy.zh
@@ -4279,14 +4279,14 @@ _vire_batForm_stateC:
 	jr nc,+
 	inc (hl)
 +
-	call _ecom_moveTowardPosition
-	jr _vire_batForm_animate
+	call ecom_moveTowardPosition
+	jr vire_batForm_animate
 
 
 ; Moving back up after charging
-_vire_batForm_stateD:
-	call _ecom_decCounter1
-	jp z,_vire_batForm_gotoStateA
+vire_batForm_stateD:
+	call ecom_decCounter1
+	jp z,vire_batForm_gotoStateA
 
 	ld l,Enemy.zh
 	ldd a,(hl)
@@ -4301,9 +4301,9 @@ _vire_batForm_stateD:
 	ld (hl),a
 ++
 	ld a,$02
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	call z,objectApplySpeed
-	jr _vire_batForm_animate
+	jr vire_batForm_animate
 
 
 ;;
@@ -4311,7 +4311,7 @@ _vire_batForm_stateD:
 ; increments substate.
 ;
 ; @param[out]	hl	Enemy.substate
-_vire_spawnOutsideCamera:
+vire_spawnOutsideCamera:
 	call getRandomNumber_noPreserveVars
 	and $07
 	ld b,a
@@ -4360,7 +4360,7 @@ _vire_spawnOutsideCamera:
 ;;
 ; Vire has left the screen; set state to 9, where he'll wait for 90 frames before
 ; attacking again.
-_vire_mainForm_leftScreen:
+vire_mainForm_leftScreen:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$09
@@ -4375,7 +4375,7 @@ _vire_mainForm_leftScreen:
 
 ;;
 ; @param[out]	cflag	c if left screen
-_vire_checkOffScreen:
+vire_checkOffScreen:
 	ld e,Enemy.yh
 	ld a,(de)
 	cp (LARGE_ROOM_HEIGHT<<4)+8
@@ -4387,7 +4387,7 @@ _vire_checkOffScreen:
 
 
 ;;
-_vire_mainForm_circleAroundScreen:
+vire_mainForm_circleAroundScreen:
 	ldh a,(<hCameraY)
 	add (SCREEN_HEIGHT<<3)+4
 	ld b,a
@@ -4459,13 +4459,13 @@ _vire_mainForm_circleAroundScreen:
 
 
 ;;
-_vire_mainForm_applySpeedAndAnimate:
+vire_mainForm_applySpeedAndAnimate:
 	call objectApplySpeed
 	jp enemyAnimate
 
 ;;
 ; @param[out]	cflag	c if Link is too close (Vire will flee)
-_vire_mainForm_checkLinkTooClose:
+vire_mainForm_checkLinkTooClose:
 	ld h,d
 	ld l,Enemy.yh
 	ldh a,(<hEnemyTargetY)
@@ -4482,7 +4482,7 @@ _vire_mainForm_checkLinkTooClose:
 
 
 ;;
-_vire_mainForm_fireProjectile:
+vire_mainForm_fireProjectile:
 	call getRandomNumber_noPreserveVars
 	and $01
 	inc a
@@ -4490,7 +4490,7 @@ _vire_mainForm_fireProjectile:
 
 ;;
 ; @param	b	Subid
-_vire_mainForm_fireProjectileWithSubid:
+vire_mainForm_fireProjectileWithSubid:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_VIRE_PROJECTILE
@@ -4512,7 +4512,7 @@ _vire_mainForm_fireProjectileWithSubid:
 	jp enemySetAnimation
 
 ;;
-_vire_batForm_moveAwayFromLinkIfTooClose:
+vire_batForm_moveAwayFromLinkIfTooClose:
 	ld h,d
 	ld l,Enemy.yh
 	ldh a,(<hEnemyTargetY)
@@ -4531,12 +4531,12 @@ _vire_batForm_moveAwayFromLinkIfTooClose:
 	xor $10
 	ld c,a
 	ld b,SPEED_200
-	jp _ecom_applyGivenVelocity
+	jp ecom_applyGivenVelocity
 
 
 ;;
-_vire_batForm_updateZPos:
-	call _ecom_decCounter1
+vire_batForm_updateZPos:
+	call ecom_decCounter1
 	ld a,(hl)
 	and $1c
 	rrca
@@ -4568,8 +4568,8 @@ enemyCode76:
 	ld e,Enemy.subid
 	ld a,(de)
 	or a
-	jp z,_enemyBoss_dead
-	call _ecom_killRelatedObj1
+	jp z,enemyBoss_dead
+	call ecom_killRelatedObj1
 	jp enemyDelete
 
 @justHit:
@@ -4610,29 +4610,29 @@ enemyCode76:
 	call objectCreateInteractionWithSubid00
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr c,@commonState
 	ld a,b
 	or a
 	jp z,anglerFish_main
-	jp _anglerFish_antenna
+	jp anglerFish_antenna
 
 @commonState:
 	rst_jumpTable
-	.dw _anglerFish_state_uninitialized
-	.dw _anglerFish_state_stub
-	.dw _anglerFish_state_stub
-	.dw _anglerFish_state_stub
-	.dw _anglerFish_state_stub
-	.dw _anglerFish_state_stub
-	.dw _anglerFish_state_stub
-	.dw _anglerFish_state_stub
+	.dw anglerFish_state_uninitialized
+	.dw anglerFish_state_stub
+	.dw anglerFish_state_stub
+	.dw anglerFish_state_stub
+	.dw anglerFish_state_stub
+	.dw anglerFish_state_stub
+	.dw anglerFish_state_stub
+	.dw anglerFish_state_stub
 
 
-_anglerFish_state_uninitialized:
+anglerFish_state_uninitialized:
 	ld a,$ff
 	ld b,$00
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 
 	; If bit 7 of subid is set, it's already been initialized
 	ld e,Enemy.subid
@@ -4648,7 +4648,7 @@ _anglerFish_state_uninitialized:
 
 	; Subid 0 initialization; spawn subid 1, set their relatedObj1 to each other
 	ld b,ENEMYID_ANGLER_FISH
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 	ld e,Enemy.relatedObj1
 	ld l,e
@@ -4670,10 +4670,10 @@ _anglerFish_state_uninitialized:
 	ld a,$01
 	ld (de),a
 @doneInit:
-	jp _ecom_setSpeedAndState8
+	jp ecom_setSpeedAndState8
 
 
-_anglerFish_state_stub:
+anglerFish_state_stub:
 	ret
 
 
@@ -4710,7 +4710,7 @@ anglerFish_main_state8:
 	ld c,$90
 	call setTile
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),30
 	ld a,SND_DOORCLOSE
@@ -4719,7 +4719,7 @@ anglerFish_main_state8:
 
 ; Delay before starting fight
 anglerFish_main_state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -4748,13 +4748,13 @@ anglerFish_main_stateA:
 	ret
 
 @hitGround:
-	call _enemyBoss_beginMiniboss
-	call _ecom_incState
+	call enemyBoss_beginMiniboss
+	call ecom_incState
 
 	ld l,Enemy.counter2
 	ld (hl),180
 
-_anglerFish_bounceOffGround:
+anglerFish_bounceOffGround:
 	ld h,d
 	ld l,Enemy.speedZ
 	ld a,<(-$320)
@@ -4767,17 +4767,17 @@ _anglerFish_bounceOffGround:
 
 ; Bouncing around normally
 anglerFish_main_stateB:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	call z,anglerFish_main_checkFireProjectile
 
-_anglerFish_updatePosition:
+anglerFish_updatePosition:
 	ld b,$0c
 	ld a,$10
 	call objectUpdateSpeedZ_sidescroll_givenYOffset
-	jr nc,_anglerFish_applySpeed
+	jr nc,anglerFish_applySpeed
 
 	; Hit ground
-	call _anglerFish_bounceOffGround
+	call anglerFish_bounceOffGround
 
 	call getRandomNumber_noPreserveVars
 	and $10
@@ -4793,14 +4793,14 @@ _anglerFish_updatePosition:
 	ld a,(de)
 	and $01
 	cp b
-	call nz,_anglerFish_updateAnimation
+	call nz,anglerFish_updateAnimation
 
-_anglerFish_applySpeed:
+anglerFish_applySpeed:
 	call objectApplySpeed
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 	jp z,enemyAnimate
 
-_anglerFish_updateAnimation:
+anglerFish_updateAnimation:
 	ld e,Enemy.direction
 	ld a,(de)
 	xor $01
@@ -4815,13 +4815,13 @@ anglerFish_main_stateC:
 	inc a
 	jr z,@doneFiring
 	dec a
-	jr z,_anglerFish_updatePosition
+	jr z,anglerFish_updatePosition
 
 	; Time to spawn the projectile
 	xor a
 	ld (de),a
 	call getFreeEnemySlot_uncounted
-	jr nz,_anglerFish_updatePosition
+	jr nz,anglerFish_updatePosition
 
 	ld (hl),ENEMYID_ANGLER_FISH_BUBBLE
 	ld l,Enemy.relatedObj1
@@ -4831,7 +4831,7 @@ anglerFish_main_stateC:
 
 	ld a,SND_FALLINHOLE
 	call playSound
-	jr _anglerFish_updatePosition
+	jr anglerFish_updatePosition
 
 @doneFiring:
 	ld h,d
@@ -4844,7 +4844,7 @@ anglerFish_main_stateC:
 	ld (hl),a
 	call enemySetAnimation
 
-	jr _anglerFish_updatePosition
+	jr anglerFish_updatePosition
 
 
 ; Just hit with a scent seed, falling to ground
@@ -4853,7 +4853,7 @@ anglerFish_main_stateD:
 	call objectUpdateSpeedZ_sidescroll
 	ret nc
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),150
 	ret
@@ -4861,7 +4861,7 @@ anglerFish_main_stateD:
 
 ; Vulnerable for [counter1] frames
 anglerFish_main_stateE:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -4882,7 +4882,7 @@ anglerFish_main_stateF:
 	ld l,Enemy.speedZ+1
 	ld a,(hl)
 	or a
-	jr nz,_anglerFish_applySpeed
+	jr nz,anglerFish_applySpeed
 
 	ld l,Enemy.state
 	ld (hl),$0b
@@ -4903,7 +4903,7 @@ anglerFish_main_stateF:
 	jp playSound
 
 
-_anglerFish_antenna:
+anglerFish_antenna:
 	ld a,(de)
 	cp $08
 	jr z,@state8
@@ -4930,7 +4930,7 @@ _anglerFish_antenna:
 	ld a,(wFrameCounter)
 	rrca
 	ret c
-	jp _ecom_flickerVisibility
+	jp ecom_flickerVisibility
 
 @positionOffsets:
 	.db $f0 $f6
@@ -5004,56 +5004,56 @@ enemyCode77:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 	dec a
 	jr nz,@normalStatus
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,@normalState
 	rst_jumpTable
-	.dw _blueStalfos_state_uninitialized
-	.dw _blueStalfos_state_spawner
-	.dw _blueStalfos_state_stub
-	.dw _blueStalfos_state_stub
-	.dw _blueStalfos_state_stub
-	.dw _blueStalfos_state_stub
-	.dw _blueStalfos_state_stub
-	.dw _blueStalfos_state_stub
+	.dw blueStalfos_state_uninitialized
+	.dw blueStalfos_state_spawner
+	.dw blueStalfos_state_stub
+	.dw blueStalfos_state_stub
+	.dw blueStalfos_state_stub
+	.dw blueStalfos_state_stub
+	.dw blueStalfos_state_stub
+	.dw blueStalfos_state_stub
 
 @normalState:
 	dec b
 	ld a,b
 	rst_jumpTable
-	.dw _blueStalfos_subid1
-	.dw _blueStalfos_subid2
-	.dw _blueStalfos_subid3
+	.dw blueStalfos_subid1
+	.dw blueStalfos_subid2
+	.dw blueStalfos_subid3
 
 
-_blueStalfos_state_uninitialized:
+blueStalfos_state_uninitialized:
 	ld a,b
 	sub $02
 	call c,objectSetVisible82
 	ld a,b
 	or a
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 
 	; Spawner (subid 0) only
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.zh
 	ld (hl),$ff
 	ld a,ENEMYID_BLUE_STALFOS
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 
-_blueStalfos_state_spawner:
+blueStalfos_state_spawner:
 	ld b,$03
 	call checkBEnemySlotsAvailable
 	ret nz
 
 	; Spawn subid 1
 	ld b,ENEMYID_BLUE_STALFOS
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	call objectCopyPosition
 	ld l,Enemy.enabled
 	ld e,l
@@ -5062,7 +5062,7 @@ _blueStalfos_state_spawner:
 
 	; Spawn subid 2
 	ld c,h
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc (hl)
 
 	; [subid2.relatedObj1] = subid1
@@ -5074,7 +5074,7 @@ _blueStalfos_state_spawner:
 	call objectCopyPosition
 
 	; Spawn subid 3
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),$03
 
 	; [subid3.relatedObj1] = subid1
@@ -5088,38 +5088,38 @@ _blueStalfos_state_spawner:
 	jp enemyDelete
 
 
-_blueStalfos_state_stub:
+blueStalfos_state_stub:
 	ret
 
 
-_blueStalfos_subid1:
+blueStalfos_subid1:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _blueStalfos_main_state08
-	.dw _blueStalfos_main_state09
-	.dw _blueStalfos_main_state0a
-	.dw _blueStalfos_main_state0b
-	.dw _blueStalfos_main_state0c
-	.dw _blueStalfos_main_state0d
-	.dw _blueStalfos_main_state0e
-	.dw _blueStalfos_main_state0f
-	.dw _blueStalfos_main_state10
-	.dw _blueStalfos_main_state11
-	.dw _blueStalfos_main_state12
-	.dw _blueStalfos_main_state13
-	.dw _blueStalfos_main_state14
-	.dw _blueStalfos_main_state15
-	.dw _blueStalfos_main_state16
-	.dw _blueStalfos_main_state17
+	.dw blueStalfos_main_state08
+	.dw blueStalfos_main_state09
+	.dw blueStalfos_main_state0a
+	.dw blueStalfos_main_state0b
+	.dw blueStalfos_main_state0c
+	.dw blueStalfos_main_state0d
+	.dw blueStalfos_main_state0e
+	.dw blueStalfos_main_state0f
+	.dw blueStalfos_main_state10
+	.dw blueStalfos_main_state11
+	.dw blueStalfos_main_state12
+	.dw blueStalfos_main_state13
+	.dw blueStalfos_main_state14
+	.dw blueStalfos_main_state15
+	.dw blueStalfos_main_state16
+	.dw blueStalfos_main_state17
 
 
-_blueStalfos_main_state08:
+blueStalfos_main_state08:
 	ld bc,$010b
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
@@ -5129,15 +5129,15 @@ _blueStalfos_main_state08:
 
 
 ; Moving down before fight starts
-_blueStalfos_main_state09:
+blueStalfos_main_state09:
 	call objectApplySpeed
 	ld e,Enemy.yh
 	ld a,(de)
 	cp $58
-	jr nz,_blueStalfos_main_animate
+	jr nz,blueStalfos_main_animate
 
 	; Fight starts now
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.counter1
 	ld (hl),$40
@@ -5150,16 +5150,16 @@ _blueStalfos_main_state09:
 
 	ld e,$0f
 	ld bc,$3030
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld a,e
-	jp _blueStalfos_main_moveToQuadrant
+	jp blueStalfos_main_moveToQuadrant
 
 
 ; Moving to position in var30/var31
-_blueStalfos_main_state0a:
+blueStalfos_main_state0a:
 	ld h,d
 	ld l,Enemy.var30
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $04
 	cp $09
@@ -5177,28 +5177,28 @@ _blueStalfos_main_state0a:
 	ld (hl),$0b
 	ld l,Enemy.counter1
 	ld (hl),$10
-	jr _blueStalfos_main_animate
+	jr blueStalfos_main_animate
 
 @moveToPosition:
-	call _blueStalfos_main_accelerate
-	call _ecom_moveTowardPosition
-	jr _blueStalfos_main_animate
+	call blueStalfos_main_accelerate
+	call ecom_moveTowardPosition
+	jr blueStalfos_main_animate
 
 
 ; Reached position, standing still for [counter1] frames
-_blueStalfos_main_state0b:
-	call _ecom_decCounter1
-	jr nz,_blueStalfos_main_animate
+blueStalfos_main_state0b:
+	call ecom_decCounter1
+	jr nz,blueStalfos_main_animate
 
 	ld l,e
 	inc (hl) ; [state]
 
-_blueStalfos_main_animate:
+blueStalfos_main_animate:
 	jp enemyAnimate
 
 
 ; Decide which attack to do
-_blueStalfos_main_state0c:
+blueStalfos_main_state0c:
 	ld e,Enemy.yh
 	ld a,(de)
 	add $10
@@ -5218,11 +5218,11 @@ _blueStalfos_main_state0c:
 	sub c
 	add $12
 	cp $25
-	jp c,_blueStalfos_main_beginSickleAttack
+	jp c,blueStalfos_main_beginSickleAttack
 
 @projectileAttack:
 	ld b,PARTID_BLUE_STALFOS_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	ld h,d
 	ld l,Enemy.counter1
@@ -5234,12 +5234,12 @@ _blueStalfos_main_state0c:
 
 
 ; Sickle attack
-_blueStalfos_main_state0d:
+blueStalfos_main_state0d:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
 	inc a
-	jr z,_blueStalfos_main_finishedAttack
+	jr z,blueStalfos_main_finishedAttack
 
 	dec a
 	ret nz
@@ -5252,9 +5252,9 @@ _blueStalfos_main_state0d:
 
 
 ; Charging a projectile
-_blueStalfos_main_state0e:
-	call _ecom_decCounter1
-	jr nz,_blueStalfos_main_animate
+blueStalfos_main_state0e:
+	call ecom_decCounter1
+	jr nz,blueStalfos_main_animate
 
 	ld (hl),60
 	ld l,e
@@ -5264,11 +5264,11 @@ _blueStalfos_main_state0e:
 
 
 ; Just fired projectile
-_blueStalfos_main_state0f:
-	call _ecom_decCounter1
+blueStalfos_main_state0f:
+	call ecom_decCounter1
 	ret nz
 
-_blueStalfos_main_finishedAttack:
+blueStalfos_main_finishedAttack:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$0a
@@ -5278,13 +5278,13 @@ _blueStalfos_main_finishedAttack:
 	ld (hl),SPEED_20
 	xor a
 	call enemySetAnimation
-	jp _blueStalfos_main_decideNextPosition
+	jp blueStalfos_main_decideNextPosition
 
 
 ; Link just turned into a baby; about to turn transparent and warp to top of room
-_blueStalfos_main_state10:
-	call _ecom_decCounter1
-	jr nz,_blueStalfos_main_animate
+blueStalfos_main_state10:
+	call ecom_decCounter1
+	jr nz,blueStalfos_main_animate
 
 	ld (hl),$10 ; [counter1]
 	ld l,e
@@ -5295,9 +5295,9 @@ _blueStalfos_main_state10:
 
 
 ; Now transparent; waiting for [counter1] frames before warping
-_blueStalfos_main_state11:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+blueStalfos_main_state11:
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	ld (hl),$08 ; [counter1]
 	ld l,e
@@ -5317,9 +5317,9 @@ _blueStalfos_main_state11:
 
 
 ; Just warped to top of room; standing in place
-_blueStalfos_main_state12:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+blueStalfos_main_state12:
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	ld l,Enemy.angle
 	ld (hl),$10
@@ -5342,7 +5342,7 @@ _blueStalfos_main_state12:
 
 
 ; Moving down toward baby Link before attacking with sickle
-_blueStalfos_main_state13:
+blueStalfos_main_state13:
 	ld h,d
 	ld l,Enemy.yh
 	ldh a,(<hEnemyTargetY)
@@ -5350,7 +5350,7 @@ _blueStalfos_main_state13:
 	cp $18
 	jp nc,objectApplySpeed
 
-_blueStalfos_main_beginSickleAttack:
+blueStalfos_main_beginSickleAttack:
 	ld e,Enemy.state
 	ld a,$0d
 	ld (de),a
@@ -5359,8 +5359,8 @@ _blueStalfos_main_beginSickleAttack:
 
 
 ; Just hit by PARTID_BLUE_STALFOS_PROJECTILE; turning into a small bat
-_blueStalfos_main_state14:
-	call _blueStalfos_createPuff
+blueStalfos_main_state14:
+	call blueStalfos_createPuff
 	ret nz
 
 	ld l,Enemy.state
@@ -5388,13 +5388,13 @@ _blueStalfos_main_state14:
 
 
 ; Transforming into bat
-_blueStalfos_main_state15:
+blueStalfos_main_state15:
 	ld a,Object.animParameter
 	call objectGetRelatedObject2Var
 	bit 7,(hl)
 	ret nz
 
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_BLUE_STALFOS_BAT
@@ -5406,14 +5406,14 @@ _blueStalfos_main_state15:
 
 
 ; Flying around as a bat
-_blueStalfos_main_state16:
-	call _ecom_decCounter1
+blueStalfos_main_state16:
+	call ecom_decCounter1
 	jr nz,@flyAround
 
 	; Time to transform back into stalfos
 
 	inc (hl) ; [counter1] = 1
-	call _blueStalfos_createPuff
+	call blueStalfos_createPuff
 	ret nz
 
 	ld l,Enemy.state
@@ -5426,18 +5426,18 @@ _blueStalfos_main_state16:
 	jp objectSetInvisible
 
 @flyAround:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr nz,++
 	ld (hl),30 ; [counter2]
-	call _ecom_setRandomAngle
+	call ecom_setRandomAngle
 ++
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 	call objectApplySpeed
 	jp enemyAnimate
 
 
 ; Transforming back into stalfos
-_blueStalfos_main_state17:
+blueStalfos_main_state17:
 	ld a,Object.animParameter
 	call objectGetRelatedObject2Var
 	bit 7,(hl)
@@ -5449,17 +5449,17 @@ _blueStalfos_main_state17:
 	inc e
 	ld (de),a
 
-	call _blueStalfos_main_finishedAttack
+	call blueStalfos_main_finishedAttack
 	ld a,SND_SCENT_SEED
 	call playSound
 	jp objectSetVisible82
 
 
 ; Hitbox for the sickle (invisible)
-_blueStalfos_subid2:
+blueStalfos_subid2:
 	ld a,(de)
 	sub $08
-	jr z,_blueStalfos_initSubid2Or3
+	jr z,blueStalfos_initSubid2Or3
 
 @state9:
 	ld a,Object.id
@@ -5532,7 +5532,7 @@ _blueStalfos_subid2:
 	.db $00 $00 $00 $00
 
 
-_blueStalfos_initSubid2Or3:
+blueStalfos_initSubid2Or3:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -5549,7 +5549,7 @@ _blueStalfos_initSubid2Or3:
 
 
 ; "Afterimage" of blue stalfos visible while moving
-_blueStalfos_subid3:
+blueStalfos_subid3:
 	ld a,(de)
 	sub $08
 	jr z,@state8
@@ -5564,7 +5564,7 @@ _blueStalfos_subid3:
 	ld l,Enemy.state
 	ld a,(hl)
 	cp $12
-	jp z,_blueStalfos_afterImage_resetPositionVars
+	jp z,blueStalfos_afterImage_resetPositionVars
 
 	cp $14
 	call nc,objectSetVisible82
@@ -5635,11 +5635,11 @@ _blueStalfos_subid3:
 	add (hl)
 	ld (hl),a
 
-	jp _ecom_flickerVisibility
+	jp ecom_flickerVisibility
 
 @state8:
-	call _blueStalfos_initSubid2Or3
-	call _blueStalfos_afterImage_resetPositionVars
+	call blueStalfos_initSubid2Or3
+	call blueStalfos_afterImage_resetPositionVars
 	ld l,Enemy.collisionType
 	res 7,(hl)
 	call objectSetVisible83
@@ -5649,10 +5649,10 @@ _blueStalfos_subid3:
 ;;
 ; Decides the next position for the blue stalfos. It will always choose a different
 ; quadrant of the screen from the one it's in already.
-_blueStalfos_main_decideNextPosition:
+blueStalfos_main_decideNextPosition:
 	ld e,$03
 	ld bc,$3030
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 
 	ld h,e
 	ld l,$00
@@ -5677,7 +5677,7 @@ _blueStalfos_main_decideNextPosition:
 ;;
 ; @param	a	Position index to use
 ; @param	bc	Offset to be added to target position
-_blueStalfos_main_moveToQuadrant:
+blueStalfos_main_moveToQuadrant:
 	ld hl,@quadrantList
 	rst_addAToHl
 	call @getLinkQuadrant
@@ -5740,7 +5740,7 @@ _blueStalfos_main_moveToQuadrant:
 
 
 ;;
-_blueStalfos_main_accelerate:
+blueStalfos_main_accelerate:
 	ld e,Enemy.counter1
 	ld a,(de)
 	or a
@@ -5760,7 +5760,7 @@ _blueStalfos_main_accelerate:
 
 
 ;;
-_blueStalfos_afterImage_resetPositionVars:
+blueStalfos_afterImage_resetPositionVars:
 	; [this.position] = [parent.position]
 	; (Also copy position to var30/var31)
 	ld l,Enemy.yh
@@ -5795,7 +5795,7 @@ _blueStalfos_afterImage_resetPositionVars:
 	ret
 
 ;;
-_blueStalfos_createPuff:
+blueStalfos_createPuff:
 	ldbc INTERACID_PUFF,$02
 	call objectCreateInteraction
 	ret nz
@@ -5833,45 +5833,45 @@ enemyCode78:
 	jr @normalStatus
 
 @dead:
-	call _pumpkinHead_noHealth
+	call pumpkinHead_noHealth
 	ret z
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr c,@commonState
 	dec b
 	ld a,b
 	rst_jumpTable
-	.dw _pumpkinHead_body
-	.dw _pumpkinHead_ghost
-	.dw _pumpkinHead_head
+	.dw pumpkinHead_body
+	.dw pumpkinHead_ghost
+	.dw pumpkinHead_head
 
 @commonState:
 	rst_jumpTable
-	.dw _pumpkinHead_state_uninitialized
-	.dw _pumpkinHead_state_spawner
-	.dw _pumpkinHead_state_grabbed
-	.dw _pumpkinHead_state_stub
-	.dw _pumpkinHead_state_stub
-	.dw _pumpkinHead_state_stub
-	.dw _pumpkinHead_state_stub
-	.dw _pumpkinHead_state_stub
+	.dw pumpkinHead_state_uninitialized
+	.dw pumpkinHead_state_spawner
+	.dw pumpkinHead_state_grabbed
+	.dw pumpkinHead_state_stub
+	.dw pumpkinHead_state_stub
+	.dw pumpkinHead_state_stub
+	.dw pumpkinHead_state_stub
+	.dw pumpkinHead_state_stub
 
 
-_pumpkinHead_state_uninitialized:
+pumpkinHead_state_uninitialized:
 	ld a,b
 	or a
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 
 	; Subid 0 (spawner)
 	inc a
 	ld (de),a ; [state] = 1
 	ld a,ENEMYID_PUMPKIN_HEAD
 	ld b,$00
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 
-_pumpkinHead_state_spawner:
+pumpkinHead_state_spawner:
 	; Wait for doors to close
 	ld a,($cc93)
 	or a
@@ -5883,12 +5883,12 @@ _pumpkinHead_state_spawner:
 
 	; Spawn body
 	ld b,ENEMYID_PUMPKIN_HEAD
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	call objectCopyPosition
 	ld c,h
 
 	; Spawn ghost
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	call @commonInit
 
 	ld l,Enemy.enabled
@@ -5904,7 +5904,7 @@ _pumpkinHead_state_spawner:
 	ld (hl),Enemy.start
 
 	; Spawn head
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc (hl)
 	call @commonInit
 
@@ -5930,7 +5930,7 @@ _pumpkinHead_state_spawner:
 	jp objectCopyPosition
 
 
-_pumpkinHead_state_grabbed:
+pumpkinHead_state_grabbed:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -6009,32 +6009,32 @@ _pumpkinHead_state_grabbed:
 	jp objectSetVisiblec2
 
 
-_pumpkinHead_state_stub:
+pumpkinHead_state_stub:
 	ret
 
 
-_pumpkinHead_body:
+pumpkinHead_body:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _pumpkinHead_body_state08
-	.dw _pumpkinHead_body_state09
-	.dw _pumpkinHead_body_state0a
-	.dw _pumpkinHead_body_state0b
-	.dw _pumpkinHead_body_state0c
-	.dw _pumpkinHead_body_state0d
-	.dw _pumpkinHead_body_state0e
-	.dw _pumpkinHead_body_state0f
-	.dw _pumpkinHead_body_state10
-	.dw _pumpkinHead_body_state11
-	.dw _pumpkinHead_body_state12
-	.dw _pumpkinHead_body_state13
+	.dw pumpkinHead_body_state08
+	.dw pumpkinHead_body_state09
+	.dw pumpkinHead_body_state0a
+	.dw pumpkinHead_body_state0b
+	.dw pumpkinHead_body_state0c
+	.dw pumpkinHead_body_state0d
+	.dw pumpkinHead_body_state0e
+	.dw pumpkinHead_body_state0f
+	.dw pumpkinHead_body_state10
+	.dw pumpkinHead_body_state11
+	.dw pumpkinHead_body_state12
+	.dw pumpkinHead_body_state13
 
 
 ; Initialization
-_pumpkinHead_body_state08:
+pumpkinHead_body_state08:
 	ld bc,$0106
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
 	ld h,d
@@ -6049,14 +6049,14 @@ _pumpkinHead_body_state08:
 	call objectSetVisible83
 
 	ld c,$08
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 
 	ld a,$0d
 	jp enemySetAnimation
 
 
 ; Falling from ceiling
-_pumpkinHead_body_state09:
+pumpkinHead_body_state09:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -6072,42 +6072,42 @@ _pumpkinHead_body_state09:
 
 	ld a,30
 
-_pumpkinHead_body_shakeScreen:
+pumpkinHead_body_shakeScreen:
 	call setScreenShakeCounter
 	ld a,SND_DOORCLOSE
 	jp playSound
 
 
 ; Waiting for head to catch up with body
-_pumpkinHead_body_state0a:
+pumpkinHead_body_state0a:
 	ld a,Object.zh
 	call objectGetRelatedObject2Var
 	ld a,(hl)
 	cp $f0
 	ret c
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
-	call _pumpkinHead_body_chooseRandomStompTimerAndCount
-	jr _pumpkinHead_body_beginMoving
+	call pumpkinHead_body_chooseRandomStompTimerAndCount
+	jr pumpkinHead_body_beginMoving
 
 
 ; Walking around
-_pumpkinHead_body_state0b:
+pumpkinHead_body_state0b:
 	call pumpkinHead_body_countdownUntilStomp
 	ret z
 
-	call _ecom_decCounter1
-	jr z,_pumpkinHead_body_chooseNextAction
+	call ecom_decCounter1
+	jr z,pumpkinHead_body_chooseNextAction
 
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
-	jr z,_pumpkinHead_body_chooseNextAction
+	call ecom_applyVelocityForSideviewEnemyNoHoles
+	jr z,pumpkinHead_body_chooseNextAction
 
 	jp enemyAnimate
 
 
-_pumpkinHead_body_chooseNextAction:
+pumpkinHead_body_chooseNextAction:
 	call objectGetAngleTowardEnemyTarget
 	add $04
 	and $18
@@ -6116,15 +6116,15 @@ _pumpkinHead_body_chooseNextAction:
 	ld e,Enemy.angle
 	ld a,(de)
 	cp b
-	jr nz,_pumpkinHead_body_beginMoving
+	jr nz,pumpkinHead_body_beginMoving
 
 	; Currently facing toward Link. 1 in 4 chance of head firing projectiles.
 	call getRandomNumber_noPreserveVars
 	cp $40
-	jr c,_pumpkinHead_body_beginMoving
+	jr c,pumpkinHead_body_beginMoving
 
 	; Head will fire projectiles.
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),$38
 
@@ -6133,15 +6133,15 @@ _pumpkinHead_body_chooseNextAction:
 	call objectGetRelatedObject2Var
 	inc (hl)
 
-	jr _pumpkinHead_body_updateAnimationFromAngle
+	jr pumpkinHead_body_updateAnimationFromAngle
 
 
 ; Head is firing projectiles; waiting for it to finish.
-_pumpkinHead_body_state0c:
-	call _ecom_decCounter1
+pumpkinHead_body_state0c:
+	call ecom_decCounter1
 	ret nz
 
-_pumpkinHead_body_beginMoving:
+pumpkinHead_body_beginMoving:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$0b
@@ -6152,22 +6152,22 @@ _pumpkinHead_body_beginMoving:
 	; Random duration of time to walk
 	call getRandomNumber_noPreserveVars
 	and $0f
-	ld hl,_pumpkinHead_body_walkDurations
+	ld hl,pumpkinHead_body_walkDurations
 	rst_addAToHl
 	ld e,Enemy.counter1
 	ld a,(hl)
 	ld (de),a
 
-	call _ecom_setRandomCardinalAngle
+	call ecom_setRandomCardinalAngle
 
-_pumpkinHead_body_updateAnimationFromAngle:
+pumpkinHead_body_updateAnimationFromAngle:
 	ld e,Enemy.angle
 	ld a,(de)
 	swap a
 	rlca
 	ld b,a
 
-	ld hl,_pumpkinHead_body_collisionRadiusXVals
+	ld hl,pumpkinHead_body_collisionRadiusXVals
 	rst_addAToHl
 	ld e,Enemy.collisionRadiusX
 	ld a,(hl)
@@ -6178,26 +6178,26 @@ _pumpkinHead_body_updateAnimationFromAngle:
 	jp enemySetAnimation
 
 
-_pumpkinHead_body_walkDurations:
+pumpkinHead_body_walkDurations:
 	.db 30, 30, 60, 60, 60, 60,  60,  90
 	.db 90, 90, 90, 90, 90, 120, 120, 120
 
-_pumpkinHead_body_collisionRadiusXVals:
+pumpkinHead_body_collisionRadiusXVals:
 	.db $0c $08 $0c $08
 
 
 ; Preparing to stomp
-_pumpkinHead_body_state0d:
-	call _ecom_decCounter1
-	jr z,_pumpkinHead_body_beginStomp
+pumpkinHead_body_state0d:
+	call ecom_decCounter1
+	jr z,pumpkinHead_body_beginStomp
 
 	ld a,(hl)
 	rrca
 	ret nc
-	call _ecom_updateCardinalAngleTowardTarget
-	jr _pumpkinHead_body_updateAnimationFromAngle
+	call ecom_updateCardinalAngleTowardTarget
+	jr pumpkinHead_body_updateAnimationFromAngle
 
-_pumpkinHead_body_beginStomp:
+pumpkinHead_body_beginStomp:
 	ld l,Enemy.state
 	ld (hl),$0e
 
@@ -6220,13 +6220,13 @@ _pumpkinHead_body_beginStomp:
 	ld (hl),$0e
 
 	; Update angle based on direction toward Link
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	add $04
 	and $18
 	swap a
 	rlca
 	ld b,a
-	ld hl,_pumpkinHead_body_collisionRadiusXVals
+	ld hl,pumpkinHead_body_collisionRadiusXVals
 	rst_addAToHl
 	ld e,Enemy.collisionRadiusX
 	ld a,(hl)
@@ -6239,10 +6239,10 @@ _pumpkinHead_body_beginStomp:
 
 
 ; In midair during stomp
-_pumpkinHead_body_state0e:
+pumpkinHead_body_state0e:
 	ld c,$30
 	call objectUpdateSpeedZ_paramC
-	jp nz,_ecom_applyVelocityForSideviewEnemyNoHoles
+	jp nz,ecom_applyVelocityForSideviewEnemyNoHoles
 
 	; Hit ground
 
@@ -6260,28 +6260,28 @@ _pumpkinHead_body_state0e:
 	ld (hl),a
 
 	ld a,20
-	call _pumpkinHead_body_shakeScreen
+	call pumpkinHead_body_shakeScreen
 	jp objectSetVisible83
 
 
 ; Landed after a stomp
-_pumpkinHead_body_state0f:
-	call _ecom_decCounter1
+pumpkinHead_body_state0f:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,Enemy.var30
 	dec (hl)
-	jr nz,_pumpkinHead_body_beginStomp
-	jp _pumpkinHead_body_beginMoving
+	jr nz,pumpkinHead_body_beginStomp
+	jp pumpkinHead_body_beginMoving
 
 
 ; Body has been destroyed
-_pumpkinHead_body_state10:
+pumpkinHead_body_state10:
 	ret
 
 
 ; Head has moved up, body will now regenerate
-_pumpkinHead_body_state11:
+pumpkinHead_body_state11:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6294,8 +6294,8 @@ _pumpkinHead_body_state11:
 
 
 ; Delay before making body visible
-_pumpkinHead_body_state12:
-	call _ecom_decCounter1
+pumpkinHead_body_state12:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),30 ; [counter1]
@@ -6309,41 +6309,41 @@ _pumpkinHead_body_state12:
 
 
 ; Body has regenerated, waiting a moment before resuming
-_pumpkinHead_body_state13:
-	call _ecom_decCounter1
+pumpkinHead_body_state13:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,Enemy.collisionType
 	set 7,(hl)
 
-	call _pumpkinHead_body_chooseRandomStompTimerAndCount
-	jp _pumpkinHead_body_beginMoving
+	call pumpkinHead_body_chooseRandomStompTimerAndCount
+	jp pumpkinHead_body_beginMoving
 
 
-_pumpkinHead_ghost:
+pumpkinHead_ghost:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _pumpkinHead_ghost_state08
-	.dw _pumpkinHead_ghost_state09
-	.dw _pumpkinHead_ghost_state0a
-	.dw _pumpkinHead_ghost_state0b
-	.dw _pumpkinHead_ghost_state0c
-	.dw _pumpkinHead_ghost_state0d
-	.dw _pumpkinHead_ghost_state0e
-	.dw _pumpkinHead_ghost_state0f
-	.dw _pumpkinHead_ghost_state10
-	.dw _pumpkinHead_ghost_state11
-	.dw _pumpkinHead_ghost_state12
-	.dw _pumpkinHead_ghost_state13
-	.dw _pumpkinHead_ghost_state14
-	.dw _pumpkinHead_ghost_state15
-	.dw _pumpkinHead_ghost_state16
-	.dw _pumpkinHead_ghost_state17
+	.dw pumpkinHead_ghost_state08
+	.dw pumpkinHead_ghost_state09
+	.dw pumpkinHead_ghost_state0a
+	.dw pumpkinHead_ghost_state0b
+	.dw pumpkinHead_ghost_state0c
+	.dw pumpkinHead_ghost_state0d
+	.dw pumpkinHead_ghost_state0e
+	.dw pumpkinHead_ghost_state0f
+	.dw pumpkinHead_ghost_state10
+	.dw pumpkinHead_ghost_state11
+	.dw pumpkinHead_ghost_state12
+	.dw pumpkinHead_ghost_state13
+	.dw pumpkinHead_ghost_state14
+	.dw pumpkinHead_ghost_state15
+	.dw pumpkinHead_ghost_state16
+	.dw pumpkinHead_ghost_state17
 
 
 ; Initialization
-_pumpkinHead_ghost_state08:
+pumpkinHead_ghost_state08:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6366,14 +6366,14 @@ _pumpkinHead_ghost_state08:
 
 	call objectSetVisible83
 	ld c,$20
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 
 	ld a,$0a
 	jp enemySetAnimation
 
 
 ; Falling from ceiling. (Also called by "head" state 9.)
-_pumpkinHead_ghost_state09:
+pumpkinHead_ghost_state09:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ld l,Enemy.zh
@@ -6388,7 +6388,7 @@ _pumpkinHead_ghost_state09:
 
 
 ; Waiting for head to fall into place
-_pumpkinHead_ghost_state0a:
+pumpkinHead_ghost_state0a:
 	; Check [head.zh]
 	ld a,Object.relatedObj2+1
 	call objectGetRelatedObject1Var
@@ -6405,18 +6405,18 @@ _pumpkinHead_ghost_state0a:
 
 
 ; Copy body's position
-_pumpkinHead_ghost_state0b:
+pumpkinHead_ghost_state0b:
 	ld a,Object.enabled
 	call objectGetRelatedObject1Var
 	jp objectTakePosition
 
 
 ; Body just began stomping; is moving upward
-_pumpkinHead_ghost_state0c:
-	call _pumpkinHead_ghostOrHead_updatePositionWhileStompingUp
+pumpkinHead_ghost_state0c:
+	call pumpkinHead_ghostOrHead_updatePositionWhileStompingUp
 	ret nz
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.speedZ
 	xor a
 	ldi (hl),a
@@ -6425,9 +6425,9 @@ _pumpkinHead_ghost_state0c:
 
 
 ; Body is stomping; moving downward
-_pumpkinHead_ghost_state0d:
+pumpkinHead_ghost_state0d:
 	ld c,$28
-	call _pumpkinHead_ghostOrHead_updatePositionWhileStompingDown
+	call pumpkinHead_ghostOrHead_updatePositionWhileStompingDown
 	ret c
 
 	ld (hl),$f0 ; [zh]
@@ -6437,7 +6437,7 @@ _pumpkinHead_ghost_state0d:
 
 
 ; Reached target z-position after stomping; waiting for head to catch up
-_pumpkinHead_ghost_state0e:
+pumpkinHead_ghost_state0e:
 	ld a,Object.relatedObj2+1
 	call objectGetRelatedObject1Var
 	ld h,(hl)
@@ -6453,7 +6453,7 @@ _pumpkinHead_ghost_state0e:
 
 
 ; Body just destroyed
-_pumpkinHead_ghost_state0f:
+pumpkinHead_ghost_state0f:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6467,7 +6467,7 @@ _pumpkinHead_ghost_state0f:
 
 
 ; Falling to ground after body disappeared
-_pumpkinHead_ghost_state10:
+pumpkinHead_ghost_state10:
 	ld c,$28
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -6480,8 +6480,8 @@ _pumpkinHead_ghost_state10:
 
 
 ; Delay before going to next state?
-_pumpkinHead_ghost_state11:
-	call _ecom_decCounter1
+pumpkinHead_ghost_state11:
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [state]
@@ -6489,12 +6489,12 @@ _pumpkinHead_ghost_state11:
 
 
 ; Waiting for head to be picked up
-_pumpkinHead_ghost_state12:
+pumpkinHead_ghost_state12:
 	ret
 
 
 ; Link just grabbed the head; ghost runs away
-_pumpkinHead_ghost_state13:
+pumpkinHead_ghost_state13:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6513,31 +6513,31 @@ _pumpkinHead_ghost_state13:
 	set 7,(hl)
 	call objectSetVisiblec2
 
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 
 	ld a,$0a
 	jp enemySetAnimation
 
 
 ; Falling to ground, then running away with angle computed earlier
-_pumpkinHead_ghost_state14:
+pumpkinHead_ghost_state14:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,++
 
 	ld l,Enemy.state
 	inc (hl)
 	call objectSetVisible82
 ++
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jp enemyAnimate
 
 
 ; Stopped running away, or head just landed on ground
-_pumpkinHead_ghost_state15:
+pumpkinHead_ghost_state15:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6549,8 +6549,8 @@ _pumpkinHead_ghost_state15:
 
 
 ; After [counter1] frames, will choose which direction to move in next
-_pumpkinHead_ghost_state16:
-	call _ecom_decCounter1
+pumpkinHead_ghost_state16:
+	call ecom_decCounter1
 	jr nz,@checkHeadOnGround
 
 	ld (hl),60 ; [counter1]
@@ -6599,10 +6599,10 @@ _pumpkinHead_ghost_state16:
 
 
 ; Moving toward head (or where head used to be)
-_pumpkinHead_ghost_state17:
+pumpkinHead_ghost_state17:
 	ld h,d
 	ld l,Enemy.var33
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $08
 	cp $11
@@ -6634,33 +6634,33 @@ _pumpkinHead_ghost_state17:
 	jp objectSetInvisible
 
 @moveTowardHead:
-	call _ecom_moveTowardPosition
+	call ecom_moveTowardPosition
 	jp enemyAnimate
 
 
-_pumpkinHead_head:
+pumpkinHead_head:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _pumpkinHead_head_state08
-	.dw _pumpkinHead_head_state09
-	.dw _pumpkinHead_head_state0a
-	.dw _pumpkinHead_head_state0b
-	.dw _pumpkinHead_head_state0c
-	.dw _pumpkinHead_head_state0d
-	.dw _pumpkinHead_head_state0e
-	.dw _pumpkinHead_head_state0f
-	.dw _pumpkinHead_head_state10
-	.dw _pumpkinHead_head_state11
-	.dw _pumpkinHead_head_state12
-	.dw _pumpkinHead_head_state13
-	.dw _pumpkinHead_head_state14
-	.dw _pumpkinHead_head_state15
-	.dw _pumpkinHead_head_state16
+	.dw pumpkinHead_head_state08
+	.dw pumpkinHead_head_state09
+	.dw pumpkinHead_head_state0a
+	.dw pumpkinHead_head_state0b
+	.dw pumpkinHead_head_state0c
+	.dw pumpkinHead_head_state0d
+	.dw pumpkinHead_head_state0e
+	.dw pumpkinHead_head_state0f
+	.dw pumpkinHead_head_state10
+	.dw pumpkinHead_head_state11
+	.dw pumpkinHead_head_state12
+	.dw pumpkinHead_head_state13
+	.dw pumpkinHead_head_state14
+	.dw pumpkinHead_head_state15
+	.dw pumpkinHead_head_state16
 
 
 ; Initialization
-_pumpkinHead_head_state08:
+pumpkinHead_head_state08:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6676,13 +6676,13 @@ _pumpkinHead_head_state08:
 
 	call objectSetVisible82
 	ld c,$30
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 
 	ld a,$04
 	ld b,$00
 
 ;;
-_pumpkinHead_head_setAnimation:
+pumpkinHead_head_setAnimation:
 	ld e,Enemy.direction
 	ld (de),a
 	add b
@@ -6700,8 +6700,8 @@ _pumpkinHead_head_setAnimation:
 	.db $08 $06 $08 $06
 
 
-_pumpkinHead_head_state09:
-	call _pumpkinHead_ghost_state09
+pumpkinHead_head_state09:
+	call pumpkinHead_ghost_state09
 	ret c
 
 	ld a,MUS_BOSS
@@ -6710,7 +6710,7 @@ _pumpkinHead_head_state09:
 
 
 ; Head follows body. Called by other states.
-_pumpkinHead_head_state0a:
+pumpkinHead_head_state0a:
 	call objectSetPriorityRelativeToLink
 
 	ld a,Object.animParameter
@@ -6743,7 +6743,7 @@ _pumpkinHead_head_state0a:
 	rrca
 	rrca
 	ld b,$00
-	jr _pumpkinHead_head_setAnimation
+	jr pumpkinHead_head_setAnimation
 
 ; Offsets for head relative to body. Indexed by body's animParameter.
 ;   b0: Y offset
@@ -6755,7 +6755,7 @@ _pumpkinHead_head_state0a:
 
 
 ; Preparing to fire projectiles
-_pumpkinHead_head_state0b:
+pumpkinHead_head_state0b:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6763,19 +6763,19 @@ _pumpkinHead_head_state0b:
 	ld l,Enemy.counter1
 	ld (hl),20
 
-	call _pumpkinHead_head_state0a
+	call pumpkinHead_head_state0a
 
 	ld e,Enemy.angle
 	ld a,(de)
 	rrca
 	rrca
 	ld b,$01
-	jp _pumpkinHead_head_setAnimation
+	jp pumpkinHead_head_setAnimation
 
 
 ; Delay before firing projectile
-_pumpkinHead_head_state0c:
-	call _ecom_decCounter1
+pumpkinHead_head_state0c:
+	call ecom_decCounter1
 	jp nz,objectSetPriorityRelativeToLink
 
 	; Fire projectile
@@ -6788,7 +6788,7 @@ _pumpkinHead_head_state0c:
 	rrca
 	rrca
 	ld b,$00
-	call _pumpkinHead_head_setAnimation
+	call pumpkinHead_head_setAnimation
 	call getFreePartSlot
 	ret nz
 
@@ -6804,18 +6804,18 @@ _pumpkinHead_head_state0c:
 
 
 ; Delay after firing projectile
-_pumpkinHead_head_state0d:
-	call _ecom_decCounter1
+pumpkinHead_head_state0d:
+	call ecom_decCounter1
 	jp nz,objectSetPriorityRelativeToLink
 
 	ld l,e
 	ld (hl),$0a ; [state]
-	jr _pumpkinHead_head_state0a
+	jr pumpkinHead_head_state0a
 
 
 ; Began a stomp; moving up
-_pumpkinHead_head_state0e:
-	call _pumpkinHead_ghostOrHead_updatePositionWhileStompingUp
+pumpkinHead_head_state0e:
+	call pumpkinHead_ghostOrHead_updatePositionWhileStompingUp
 	jr z,@movingDown
 
 	; Update angle
@@ -6831,10 +6831,10 @@ _pumpkinHead_head_state0e:
 	rrca
 	rrca
 	ld b,$00
-	jp _pumpkinHead_head_setAnimation
+	jp pumpkinHead_head_setAnimation
 
 @movingDown:
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.speedZ
 	xor a
 	ldi (hl),a
@@ -6843,9 +6843,9 @@ _pumpkinHead_head_state0e:
 
 
 ; Body is stomping; moving down
-_pumpkinHead_head_state0f:
+pumpkinHead_head_state0f:
 	ld c,$20
-	call _pumpkinHead_ghostOrHead_updatePositionWhileStompingDown
+	call pumpkinHead_ghostOrHead_updatePositionWhileStompingDown
 	ret c
 
 	; Reached target position
@@ -6856,7 +6856,7 @@ _pumpkinHead_head_state0f:
 
 
 ; Body just destroyed
-_pumpkinHead_head_state10:
+pumpkinHead_head_state10:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6869,7 +6869,7 @@ _pumpkinHead_head_state10:
 
 
 ; Head falling down after body destroyed
-_pumpkinHead_head_state11:
+pumpkinHead_head_state11:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -6882,9 +6882,9 @@ _pumpkinHead_head_state11:
 
 
 ; Head is grabbable for 120 frames
-_pumpkinHead_head_state12:
-	call _ecom_decCounter1
-	jp nz,_pumpkinHead_head_state16
+pumpkinHead_head_state12:
+	call ecom_decCounter1
+	jp nz,pumpkinHead_head_state16
 
 	ld l,e
 	inc (hl) ; [state]
@@ -6899,7 +6899,7 @@ _pumpkinHead_head_state12:
 
 
 ; Ghost just re-entered head, or head timed out before Link grabbed it
-_pumpkinHead_head_state13:
+pumpkinHead_head_state13:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -6915,8 +6915,8 @@ _pumpkinHead_head_state13:
 
 
 ; Delay before moving back up, respawning body
-_pumpkinHead_head_state14:
-	call _ecom_decCounter1
+pumpkinHead_head_state14:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -6934,7 +6934,7 @@ _pumpkinHead_head_state14:
 
 
 ; Head moving up
-_pumpkinHead_head_state15:
+pumpkinHead_head_state15:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 
@@ -6969,12 +6969,12 @@ _pumpkinHead_head_state15:
 
 	ld a,$04
 	ld b,$00
-	jp _pumpkinHead_head_setAnimation
+	jp pumpkinHead_head_setAnimation
 
 
 ; Head has just come to rest after being thrown.
 ; Called by other states (to make it grabbable).
-_pumpkinHead_head_state16:
+pumpkinHead_head_state16:
 	ld a,Object.health
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -6990,7 +6990,7 @@ pumpkinHead_body_countdownUntilStomp:
 	ld a,(wFrameCounter)
 	rrca
 	ret c
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	ld l,Enemy.state
@@ -7000,9 +7000,9 @@ pumpkinHead_body_countdownUntilStomp:
 
 ;;
 ; Randomly sets the duration until a stomp occurs, and the number of stomps to perform.
-_pumpkinHead_body_chooseRandomStompTimerAndCount:
+pumpkinHead_body_chooseRandomStompTimerAndCount:
 	ld bc,$0701
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld a,b
 	ld hl,@counter2Vals
 	rst_addAToHl
@@ -7023,7 +7023,7 @@ _pumpkinHead_body_chooseRandomStompTimerAndCount:
 
 ;;
 ; @param[out]	zflag	z if body is moving down
-_pumpkinHead_ghostOrHead_updatePositionWhileStompingUp:
+pumpkinHead_ghostOrHead_updatePositionWhileStompingUp:
 	ld a,Object.speedZ+1
 	call objectGetRelatedObject1Var
 	bit 7,(hl)
@@ -7040,7 +7040,7 @@ _pumpkinHead_ghostOrHead_updatePositionWhileStompingUp:
 ; @param	c	Gravity
 ; @param[out]	hl	Enemy.zh
 ; @param[out]	cflag	nc if reached target z-position
-_pumpkinHead_ghostOrHead_updatePositionWhileStompingDown:
+pumpkinHead_ghostOrHead_updatePositionWhileStompingDown:
 	call objectUpdateSpeedZ_paramC
 	ld l,Enemy.zh
 	ld a,(hl)
@@ -7058,7 +7058,7 @@ _pumpkinHead_ghostOrHead_updatePositionWhileStompingDown:
 
 
 ;;
-_pumpkinHead_noHealth:
+pumpkinHead_noHealth:
 	ld e,Enemy.subid
 	ld a,(de)
 	dec a
@@ -7085,12 +7085,12 @@ _pumpkinHead_noHealth:
 	ld a,(de)
 	or a
 	jr nz,++
-	call _ecom_killRelatedObj1
+	call ecom_killRelatedObj1
 	ld l,Enemy.relatedObj2+1
 	ld h,(hl)
-	call _ecom_killObjectH
+	call ecom_killObjectH
 ++
-	call _enemyBoss_dead
+	call enemyBoss_dead
 	xor a
 	ret
 
@@ -7143,51 +7143,51 @@ enemyCode79:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 
 @normalStatus:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _headThwomp_state_uninitialized
-	.dw _headThwomp_state_stub
-	.dw _headThwomp_state_stub
-	.dw _headThwomp_state_stub
-	.dw _headThwomp_state_stub
-	.dw _headThwomp_state_stub
-	.dw _headThwomp_state_stub
-	.dw _headThwomp_state_stub
-	.dw _headThwomp_state8
-	.dw _headThwomp_state9
-	.dw _headThwomp_stateA
-	.dw _headThwomp_stateB
-	.dw _headThwomp_stateC
-	.dw _headThwomp_stateD
-	.dw _headThwomp_stateE
-	.dw _headThwomp_stateF
-	.dw _headThwomp_state10
-	.dw _headThwomp_state11
+	.dw headThwomp_state_uninitialized
+	.dw headThwomp_state_stub
+	.dw headThwomp_state_stub
+	.dw headThwomp_state_stub
+	.dw headThwomp_state_stub
+	.dw headThwomp_state_stub
+	.dw headThwomp_state_stub
+	.dw headThwomp_state_stub
+	.dw headThwomp_state8
+	.dw headThwomp_state9
+	.dw headThwomp_stateA
+	.dw headThwomp_stateB
+	.dw headThwomp_stateC
+	.dw headThwomp_stateD
+	.dw headThwomp_stateE
+	.dw headThwomp_stateF
+	.dw headThwomp_state10
+	.dw headThwomp_state11
 
 
-_headThwomp_state_uninitialized:
+headThwomp_state_uninitialized:
 	ld a,ENEMYID_HEAD_THWOMP
 	ld b,PALH_81
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld l,Enemy.counter1
 	ld (hl),18
 
-	call _headThwomp_setSolidTilesAroundSelf
+	call headThwomp_setSolidTilesAroundSelf
 	jp objectSetVisible80
 
 
-_headThwomp_state_stub:
+headThwomp_state_stub:
 	ret
 
 
 ; Waiting for Link to move up for fight to start
-_headThwomp_state8:
+headThwomp_state8:
 	ld a,(w1Link.yh)
 	cp $9c
 	ret nc
@@ -7204,23 +7204,23 @@ _headThwomp_state8:
 	ld a,$48
 	ld (wLinkLocalRespawnX),a
 
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.var34
 	ld (hl),$f0
 
-	call _enemyBoss_beginBoss
+	call enemyBoss_beginBoss
 
 
 ; Spinning normally
-_headThwomp_state9:
-	call _headThwomp_checkBombThrownIntoHead
+headThwomp_state9:
+	call headThwomp_checkBombThrownIntoHead
 	ret nz
 
-	call _headThwomp_checkShootProjectile
+	call headThwomp_checkShootProjectile
 
 	; Update rotation
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld e,Enemy.health
@@ -7253,8 +7253,8 @@ _headThwomp_state9:
 
 
 ; Bomb just thrown into head thwomp
-_headThwomp_stateA:
-	call _ecom_decCounter1
+headThwomp_stateA:
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -7265,7 +7265,7 @@ _headThwomp_stateA:
 
 
 ; Spinning after bomb was thrown into head
-_headThwomp_stateB:
+headThwomp_stateB:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -7283,9 +7283,9 @@ _headThwomp_stateB:
 
 ; Spinning at max speed
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ld b,$08
-	jp nz,_headThwomp_rotate
+	jp nz,headThwomp_rotate
 
 	ld l,e
 	inc (hl) ; [substate]
@@ -7299,7 +7299,7 @@ _headThwomp_stateB:
 
 ; Slower spinning
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	inc l
@@ -7318,7 +7318,7 @@ _headThwomp_stateB:
 	ld l,Enemy.counter1
 	ld (hl),a
 	ld b,$08
-	jp _headThwomp_rotate
+	jp headThwomp_rotate
 
 @startSlowestSpinning:
 	ld l,Enemy.counter1
@@ -7330,7 +7330,7 @@ _headThwomp_stateB:
 
 ; Slowest spinning; will stop when it reaches the target head
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	inc l
@@ -7345,7 +7345,7 @@ _headThwomp_stateB:
 	ld l,Enemy.var31
 	cp (hl)
 	ld b,$08
-	jp nz,_headThwomp_rotate
+	jp nz,headThwomp_rotate
 
 	ld l,Enemy.state
 	inc (hl)
@@ -7355,8 +7355,8 @@ _headThwomp_stateB:
 
 
 ; Just reached the target head color
-_headThwomp_stateC:
-	call _ecom_decCounter1
+headThwomp_stateC:
+	call ecom_decCounter1
 	ret nz
 
 	; Set state to number from $0d-$10 based on head color
@@ -7374,7 +7374,7 @@ _headThwomp_stateC:
 
 
 ; Green face (shoots fireballs)
-_headThwomp_stateD:
+headThwomp_stateD:
 	inc e
 	ld a,(de) ; [substate]
 	or a
@@ -7393,10 +7393,10 @@ _headThwomp_stateD:
 	ret
 
 @substate1:
-	call _headThwomp_checkBombThrownIntoHead
+	call headThwomp_checkBombThrownIntoHead
 	ret nz
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@resumeSpinning
 
 	ld a,(hl)
@@ -7408,7 +7408,7 @@ _headThwomp_stateD:
 	and $1f
 	ret nz
 	ld b,PARTID_HEAD_THWOMP_FIREBALL
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 
 @resumeSpinning:
 	ld l,Enemy.state
@@ -7419,7 +7419,7 @@ _headThwomp_stateD:
 
 
 ; Blue face (fires circular projectiles)
-_headThwomp_stateE:
+headThwomp_stateE:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -7451,9 +7451,9 @@ _headThwomp_stateE:
 
 ; Waiting a moment before starting to fire
 @substate1:
-	call _headThwomp_checkBombThrownIntoHead
+	call headThwomp_checkBombThrownIntoHead
 	ret nz
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld (hl),$08 ; [counter1]
@@ -7479,7 +7479,7 @@ _headThwomp_stateE:
 
 ; Cooldown after firing
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld (hl),30 ; [counter1]
@@ -7489,7 +7489,7 @@ _headThwomp_stateE:
 
 ; Cooldown after firing; checks whether to fire again or return to normal state
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	inc l
@@ -7520,7 +7520,7 @@ _headThwomp_stateE:
 
 
 ; Purple face (stomps the ground)
-_headThwomp_stateF:
+headThwomp_stateF:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -7539,7 +7539,7 @@ _headThwomp_stateF:
 	xor a
 	ldi (hl),a
 	ld (hl),$02
-	jp _headThwomp_unsetSolidTilesAroundSelf
+	jp headThwomp_unsetSolidTilesAroundSelf
 
 ; Falling
 @substate1:
@@ -7567,7 +7567,7 @@ _headThwomp_stateF:
 
 ; Resting on ground
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@beginMovingUp
 
 	ld a,(hl) ; [counter1]
@@ -7628,11 +7628,11 @@ _headThwomp_stateF:
 	ld (hl),$11
 	ld l,Enemy.counter1
 	ld (hl),$10
-	jp _headThwomp_setSolidTilesAroundSelf
+	jp headThwomp_setSolidTilesAroundSelf
 
 
 ; Red face (takes damage)
-_headThwomp_state10:
+headThwomp_state10:
 	inc e
 	ld a,(de) ; [substate]
 	or a
@@ -7655,14 +7655,14 @@ _headThwomp_state10:
 
 	; He's dead
 	dec (hl)
-	call _headThwomp_unsetSolidTilesAroundSelf
+	call headThwomp_unsetSolidTilesAroundSelf
 	ld a,TREE_GFXH_01
 	ld (wLoadedTreeGfxIndex),a
 ++
 	ld e,Enemy.health
 	ld a,(de)
 	inc a
-	call nz,_headThwomp_dropHeart
+	call nz,headThwomp_dropHeart
 
 	ld a,$10
 	call enemySetAnimation
@@ -7670,7 +7670,7 @@ _headThwomp_state10:
 	jp playSound
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@resumeSpinning
 
 	; Run below code only if he's dead
@@ -7693,7 +7693,7 @@ _headThwomp_state10:
 	ld h,d
 	ld l,Enemy.health
 	ld (hl),$00
-	jp _headThwomp_stateF@poundGround
+	jp headThwomp_stateF@poundGround
 
 @resumeSpinning:
 	ld l,Enemy.state
@@ -7709,8 +7709,8 @@ _headThwomp_state10:
 	jp enemySetAnimation
 
 
-_headThwomp_state11:
-	call _ecom_decCounter1
+headThwomp_state11:
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	inc (hl) ; [counter1]
@@ -7723,7 +7723,7 @@ _headThwomp_state11:
 
 
 ;;
-_headThwomp_setSolidTilesAroundSelf:
+headThwomp_setSolidTilesAroundSelf:
 	ld hl,wRoomCollisions+$46
 	ld (hl),$01
 	inc l
@@ -7741,7 +7741,7 @@ _headThwomp_setSolidTilesAroundSelf:
 	ret
 
 ;;
-_headThwomp_unsetSolidTilesAroundSelf:
+headThwomp_unsetSolidTilesAroundSelf:
 	ld hl,wRoomCollisions+$46
 	xor a
 	ldi (hl),a
@@ -7756,7 +7756,7 @@ _headThwomp_unsetSolidTilesAroundSelf:
 
 ;;
 ; @param	b	Animation base
-_headThwomp_rotate:
+headThwomp_rotate:
 	ld e,Enemy.direction
 	ld a,(de)
 	inc a
@@ -7778,7 +7778,7 @@ _headThwomp_rotate:
 ; If a bomb is thrown into head thwomp, this sets the state to $0a.
 ;
 ; @param[out]	zflag	z if no bomb entered head thwomp
-_headThwomp_checkBombThrownIntoHead:
+headThwomp_checkBombThrownIntoHead:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX,Item.start
 @itemLoop:
 	ld l,Item.id
@@ -7857,15 +7857,15 @@ _headThwomp_checkBombThrownIntoHead:
 	ret
 
 @betweenTwoHeads:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld b,$00
-	call _headThwomp_rotate
+	call headThwomp_rotate
 	jr @triggerBombEffect
 
 ;;
-_headThwomp_dropHeart:
+headThwomp_dropHeart:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_ITEM_DROP
@@ -7875,7 +7875,7 @@ _headThwomp_dropHeart:
 	jp objectCopyPositionWithOffset
 
 ;;
-_headThwomp_checkShootProjectile:
+headThwomp_checkShootProjectile:
 	ld a,(wFrameCounter)
 	rrca
 	ret c
@@ -7897,7 +7897,7 @@ _headThwomp_checkShootProjectile:
 	jr z,@dropBomb
 
 	ld b,PARTID_HEAD_THWOMP_FIREBALL
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 
 @dropBomb:
 	ld b,$02
@@ -7948,52 +7948,52 @@ enemyCode7a:
 	ld l,Enemy.id
 	ld a,(hl)
 	cp ENEMYID_SHADOW_HAG_BUG
-	call z,_ecom_killObjectH
+	call z,ecom_killObjectH
 	inc h
 	ld a,h
 	cp LAST_ENEMY_INDEX+1
 	jr c,@killNext
 @dead:
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 @normalStatus:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _shadowHag_state_uninitialized
-	.dw _shadowHag_state_stub
-	.dw _shadowHag_state_stub
-	.dw _shadowHag_state_stub
-	.dw _shadowHag_state_stub
-	.dw _shadowHag_state_stub
-	.dw _shadowHag_state_stub
-	.dw _shadowHag_state_stub
-	.dw _shadowHag_state8
-	.dw _shadowHag_state9
-	.dw _shadowHag_stateA
-	.dw _shadowHag_stateB
-	.dw _shadowHag_stateC
-	.dw _shadowHag_stateD
-	.dw _shadowHag_stateE
-	.dw _shadowHag_stateF
-	.dw _shadowHag_state10
-	.dw _shadowHag_state11
-	.dw _shadowHag_state12
-	.dw _shadowHag_state13
+	.dw shadowHag_state_uninitialized
+	.dw shadowHag_state_stub
+	.dw shadowHag_state_stub
+	.dw shadowHag_state_stub
+	.dw shadowHag_state_stub
+	.dw shadowHag_state_stub
+	.dw shadowHag_state_stub
+	.dw shadowHag_state_stub
+	.dw shadowHag_state8
+	.dw shadowHag_state9
+	.dw shadowHag_stateA
+	.dw shadowHag_stateB
+	.dw shadowHag_stateC
+	.dw shadowHag_stateD
+	.dw shadowHag_stateE
+	.dw shadowHag_stateF
+	.dw shadowHag_state10
+	.dw shadowHag_state11
+	.dw shadowHag_state12
+	.dw shadowHag_state13
 
-_shadowHag_state_uninitialized:
+shadowHag_state_uninitialized:
 	ld a,ENEMYID_SHADOW_HAG
 	ld b,$00
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	ld a,SPEED_80
-	jp _ecom_setSpeedAndState8
+	jp ecom_setSpeedAndState8
 
 
-_shadowHag_state_stub:
+shadowHag_state_stub:
 	ret
 
 
-_shadowHag_state8:
+shadowHag_state8:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -8013,7 +8013,7 @@ _shadowHag_state8:
 	ld (wDisabledObjects),a
 
 	ld bc,$0104
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
 	ld h,d
@@ -8041,7 +8041,7 @@ _shadowHag_state8:
 	cp ((LARGE_ROOM_WIDTH/2)<<4)+8
 	jp nc,objectApplySpeed
 
-	call _shadowHag_beginEmergingFromShadow
+	call shadowHag_beginEmergingFromShadow
 	ld h,d
 	ld l,Enemy.substate
 	inc (hl)
@@ -8051,11 +8051,11 @@ _shadowHag_state8:
 
 	ld l,Enemy.zh
 	ld (hl),$00
-	jp _ecom_killRelatedObj2
+	jp ecom_killRelatedObj2
 
 ; Emerging from shadow
 @substate2:
-	call _shadowHag_updateEmergingFromShadow
+	call shadowHag_updateEmergingFromShadow
 	ret nz
 
 	ld e,Enemy.substate
@@ -8066,7 +8066,7 @@ _shadowHag_state8:
 
 ; Delay before showing textbox
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 
 	ld (hl),$08
@@ -8076,17 +8076,17 @@ _shadowHag_state8:
 	jp showText
 
 @substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
-	call _shadowHag_beginReturningToGround
-	call _enemyBoss_beginBoss
+	call shadowHag_beginReturningToGround
+	call enemyBoss_beginBoss
 @animate:
 	jp enemyAnimate
 
 
 ; Currently in the ground, showing eyes
-_shadowHag_state9:
-	call _ecom_decCounter2
+shadowHag_state9:
+	call ecom_decCounter2
 	jp nz,shadowHag_updateReturningToGround
 
 	dec l
@@ -8095,7 +8095,7 @@ _shadowHag_state9:
 	jr z,@spawnShadows
 
 	dec (hl)
-	jp _ecom_flickerVisibility
+	jp ecom_flickerVisibility
 
 @spawnShadows:
 	ld b,$04
@@ -8104,14 +8104,14 @@ _shadowHag_state9:
 
 	ldbc PARTID_SHADOW_HAG_SHADOW,$04
 --
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	dec c
 	ld l,Part.angle
 	ld (hl),c
 	jr nz,--
 
 	; Go to state A
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),150
 	inc l
@@ -8123,11 +8123,11 @@ _shadowHag_state9:
 
 
 ; Shadows chasing Link
-_shadowHag_stateA:
+shadowHag_stateA:
 	ld a,(wFrameCounter)
 	rrca
 	ret c
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	; Time for shadows to reconverge.
@@ -8157,7 +8157,7 @@ _shadowHag_stateA:
 
 
 ; Shadows reconverging to target position
-_shadowHag_stateB:
+shadowHag_stateB:
 	ld e,Enemy.counter2
 	ld a,(de)
 	or a
@@ -8172,7 +8172,7 @@ _shadowHag_stateB:
 	ld e,Enemy.counter2
 	ld (de),a
 
-_shadowHag_initStateC:
+shadowHag_initStateC:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$0c
@@ -8193,8 +8193,8 @@ _shadowHag_initStateC:
 
 
 ; Delay before spawning bugs
-_shadowHag_stateC:
-	call _ecom_decCounter1
+shadowHag_stateC:
+	call ecom_decCounter1
 	jr nz,++
 	ld (hl),$41
 	ld l,e
@@ -8204,9 +8204,9 @@ _shadowHag_stateC:
 
 
 ; Spawning bugs
-_shadowHag_stateD:
+shadowHag_stateD:
 	call enemyAnimate
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@doneSpawningBugs
 
 	; Spawn bug every 16 frames
@@ -8222,7 +8222,7 @@ _shadowHag_stateD:
 
 	; Spawn bug
 	ld b,ENEMYID_SHADOW_HAG_BUG
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 
 	; [child.relatedObj1] = this
@@ -8240,16 +8240,16 @@ _shadowHag_stateD:
 	ret
 
 @doneSpawningBugs:
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),30
 	ret
 
 
 ; Done spawning bugs; delay before the hag herself spawns in
-_shadowHag_stateE:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+shadowHag_stateE:
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	ld e,Enemy.var31
 	ld a,(de)
@@ -8270,11 +8270,11 @@ _shadowHag_stateE:
 
 
 ; Waiting for Link to be in a position where the hag can spawn behind him
-_shadowHag_stateF:
-	call _ecom_decCounter1
+shadowHag_stateF:
+	call ecom_decCounter1
 	jr z,@couldntSpawn
 
-	call _shadowHag_chooseSpawnPosition
+	call shadowHag_chooseSpawnPosition
 	ret nz
 	ld e,Enemy.yh
 	ld a,b
@@ -8282,8 +8282,8 @@ _shadowHag_stateF:
 	ld e,Enemy.xh
 	ld a,c
 	ld (de),a
-	call _shadowHag_beginEmergingFromShadow
-	jp _ecom_incState
+	call shadowHag_beginEmergingFromShadow
+	jp ecom_incState
 
 @couldntSpawn:
 	ld e,Enemy.var31
@@ -8292,19 +8292,19 @@ _shadowHag_stateF:
 
 	inc l
 	dec (hl) ; [counter2]--
-	jp nz,_shadowHag_initStateC
+	jp nz,shadowHag_initStateC
 
-	call _shadowHag_beginReturningToGround
+	call shadowHag_beginReturningToGround
 	ld a,$04
 	jp enemySetAnimation
 
 
 ; Spawning out of ground to attack Link
-_shadowHag_state10:
-	call _shadowHag_updateEmergingFromShadow
+shadowHag_state10:
+	call shadowHag_updateEmergingFromShadow
 	ret nz
 
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.collisionType
 	ld (hl),$80|ENEMYID_SHADOW_HAG
@@ -8321,52 +8321,52 @@ _shadowHag_state10:
 	inc l
 	ld (hl),$08
 
-	call _ecom_updateCardinalAngleTowardTarget
-	jp _ecom_updateAnimationFromAngle
+	call ecom_updateCardinalAngleTowardTarget
+	jp ecom_updateAnimationFromAngle
 
 
 ; Delay before charging at Link
-_shadowHag_state11:
-	call _shadowHag_checkLinkLookedAtHag
-	jr z,_shadowHag_doneCharging
+shadowHag_state11:
+	call shadowHag_checkLinkLookedAtHag
+	jr z,shadowHag_doneCharging
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),60
 
 	ld l,Enemy.state
 	inc (hl)
 
-_shadowHag_animate:
+shadowHag_animate:
 	jp enemyAnimate
 
 
 ; Charging at Link
-_shadowHag_state12:
-	call _shadowHag_checkLinkLookedAtHag
-	jr z,_shadowHag_doneCharging
+shadowHag_state12:
+	call shadowHag_checkLinkLookedAtHag
+	jr z,shadowHag_doneCharging
 
-	call _ecom_decCounter1
-	jr z,_shadowHag_doneCharging
+	call ecom_decCounter1
+	jr z,shadowHag_doneCharging
 
 	ld e,Enemy.yh
 	ld a,(de)
 	sub $12
 	cp (LARGE_ROOM_HEIGHT<<4)-$32
-	jr nc,_shadowHag_doneCharging
+	jr nc,shadowHag_doneCharging
 
 	ld e,Enemy.xh
 	ld a,(de)
 	sub $18
 	cp (LARGE_ROOM_WIDTH<<4)-$30
-	jr nc,_shadowHag_doneCharging
+	jr nc,shadowHag_doneCharging
 	call objectApplySpeed
-	jr _shadowHag_animate
+	jr shadowHag_animate
 
 
-_shadowHag_doneCharging:
-	call _ecom_decCounter2
-	jp z,_shadowHag_beginReturningToGround
+shadowHag_doneCharging:
+	call ecom_decCounter2
+	jp z,shadowHag_beginReturningToGround
 
 	ld l,Enemy.counter1
 	ld (hl),30
@@ -8381,14 +8381,14 @@ _shadowHag_doneCharging:
 
 
 ; Delay before spawning bugs again
-_shadowHag_state13:
-	call _ecom_decCounter1
+shadowHag_state13:
+	call ecom_decCounter1
 	jr nz,shadowHag_updateReturningToGround
-	jp _shadowHag_initStateC
+	jp shadowHag_initStateC
 
 
 ;;
-_shadowHag_beginEmergingFromShadow:
+shadowHag_beginEmergingFromShadow:
 	ld a,$05
 	call enemySetAnimation
 	call objectSetVisible82
@@ -8400,7 +8400,7 @@ _shadowHag_beginEmergingFromShadow:
 
 ;;
 ; @param[out]	zflag	z if done emerging? (animParameter was $ff)
-_shadowHag_updateEmergingFromShadow:
+shadowHag_updateEmergingFromShadow:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -8449,7 +8449,7 @@ shadowHag_updateReturningToGround:
 
 ;;
 ; Sets state to 9 & initializes stuff
-_shadowHag_beginReturningToGround:
+shadowHag_beginReturningToGround:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$09
@@ -8476,7 +8476,7 @@ _shadowHag_beginReturningToGround:
 ;
 ; @param[out]	bc	Spawn position
 ; @param[out]	zflag	nz if Link is too close to the wall to spawn in
-_shadowHag_chooseSpawnPosition:
+shadowHag_chooseSpawnPosition:
 	ld a,(w1Link.direction)
 	ld hl,@spawnOffsets
 	rst_addDoubleIndex
@@ -8516,7 +8516,7 @@ _shadowHag_chooseSpawnPosition:
 
 ;;
 ; @param[out]	zflag	z if Link looked at the hag
-_shadowHag_checkLinkLookedAtHag:
+shadowHag_checkLinkLookedAtHag:
 	call objectGetAngleTowardEnemyTarget
 	add $14
 	and $18
@@ -8555,7 +8555,7 @@ enemyCode7b:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
-	jp z,_eyesoar_dead
+	jp z,eyesoar_dead
 
 	; ENEMYSTATUS_JUST_HIT or ENEMYSTATUS_KNOCKBACK
 
@@ -8585,24 +8585,24 @@ enemyCode7b:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _eyesoar_state_uninitialized
-	.dw _eyesoar_state1
-	.dw _eyesoar_state_stub
-	.dw _eyesoar_state_switchHook
-	.dw _eyesoar_state_stub
-	.dw _eyesoar_state_stub
-	.dw _eyesoar_state_stub
-	.dw _eyesoar_state_stub
-	.dw _eyesoar_state8
-	.dw _eyesoar_state9
-	.dw _eyesoar_stateA
-	.dw _eyesoar_stateB
-	.dw _eyesoar_stateC
-	.dw _eyesoar_stateD
-	.dw _eyesoar_stateE
+	.dw eyesoar_state_uninitialized
+	.dw eyesoar_state1
+	.dw eyesoar_state_stub
+	.dw eyesoar_state_switchHook
+	.dw eyesoar_state_stub
+	.dw eyesoar_state_stub
+	.dw eyesoar_state_stub
+	.dw eyesoar_state_stub
+	.dw eyesoar_state8
+	.dw eyesoar_state9
+	.dw eyesoar_stateA
+	.dw eyesoar_stateB
+	.dw eyesoar_stateC
+	.dw eyesoar_stateD
+	.dw eyesoar_stateE
 
 
-_eyesoar_state_uninitialized:
+eyesoar_state_uninitialized:
 	ld h,d
 	ld l,Enemy.counter1
 	ld (hl),60
@@ -8615,7 +8615,7 @@ _eyesoar_state_uninitialized:
 	ld a,(hl)
 	or a
 	ld a,SPEED_80
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 
 	; BUG: This sets an invalid state!
 	; 'a+1' == SPEED_80+1 == $15, a state which isn't defined.
@@ -8627,11 +8627,11 @@ _eyesoar_state_uninitialized:
 
 	ld a,$ff
 	ld b,$00
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 
 
 ; Spawning "real" eyesoar and children.
-_eyesoar_state1:
+eyesoar_state1:
 	; If this actually returns here, the game could crash (see above note).
 	ld b,$05
 	call checkBEnemySlotsAvailable
@@ -8639,7 +8639,7 @@ _eyesoar_state1:
 
 	; Spawn the "real" version of the boss (subid 1).
 	ld b,ENEMYID_EYESOAR
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 
 	ld l,Enemy.enabled
 	ld e,l
@@ -8672,7 +8672,7 @@ _eyesoar_state1:
 	jp enemyDelete
 
 
-_eyesoar_state_switchHook:
+eyesoar_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -8701,7 +8701,7 @@ _eyesoar_state_switchHook:
 	ld (hl),150
 	ld l,Enemy.direction
 	ld (hl),$00
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @substate1:
 	ret
@@ -8718,15 +8718,15 @@ _eyesoar_state_switchHook:
 
 @substate3:
 	ld b,$0c
-	jp _ecom_fallToGroundAndSetState
+	jp ecom_fallToGroundAndSetState
 
 
-_eyesoar_state_stub:
+eyesoar_state_stub:
 	ret
 
 
 ; Flickering into existence
-_eyesoar_state8:
+eyesoar_state8:
 	; Something about doors?
 	ld a,($cc93)
 	or a
@@ -8734,8 +8734,8 @@ _eyesoar_state8:
 
 	inc a
 	ld (wDisabledObjects),a
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	ld (hl),60  ; [counter1]
 	inc l
@@ -8751,9 +8751,9 @@ _eyesoar_state8:
 
 
 ; Waiting [counter1] frames until fight begins
-_eyesoar_state9:
-	call _ecom_decCounter1
-	jr nz,_eyesoar_animate
+eyesoar_state9:
+	call ecom_decCounter1
+	jr nz,eyesoar_animate
 
 	ld l,e
 	inc (hl) ; [state]
@@ -8761,15 +8761,15 @@ _eyesoar_state9:
 	ld l,Enemy.counter1
 	inc (hl)
 
-	call _enemyBoss_beginBoss
-	jr _eyesoar_animate
+	call enemyBoss_beginBoss
+	jr eyesoar_animate
 
 
 ; Standing still for [counter1] frames?
-_eyesoar_stateA:
-	call _eyesoar_updateFormation
-	call _ecom_decCounter1
-	jr nz,_eyesoar_animate
+eyesoar_stateA:
+	call eyesoar_updateFormation
+	call ecom_decCounter1
+	jr nz,eyesoar_animate
 
 	ld l,Enemy.state
 	inc (hl)
@@ -8801,16 +8801,16 @@ _eyesoar_stateA:
 ++
 	ld (hl),b ; [var37]
 
-	jr _eyesoar_animate
+	jr eyesoar_animate
 
 
 ; Moving until it reaches its target position
-_eyesoar_stateB:
-	call _eyesoar_updateFormation
+eyesoar_stateB:
+	call eyesoar_updateFormation
 	ld h,d
 	ld l,Enemy.var36
 
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $02
 	cp $05
@@ -8825,18 +8825,18 @@ _eyesoar_stateB:
 	dec (hl)
 	ld l,Enemy.counter1
 	ld (hl),60
-	jr _eyesoar_animate
+	jr eyesoar_animate
 ++
-	call _ecom_moveTowardPosition
+	call ecom_moveTowardPosition
 
-_eyesoar_animate:
+eyesoar_animate:
 	jp enemyAnimate
 
 
 ; Spinning in place after being switch hook'd
-_eyesoar_stateC:
-	call _ecom_decCounter1
-	jr nz,_eyesoar_animate
+eyesoar_stateC:
+	call ecom_decCounter1
+	jr nz,eyesoar_animate
 
 	ld l,e
 	inc (hl) ; [state]
@@ -8849,7 +8849,7 @@ _eyesoar_stateC:
 
 
 ; Moving back up into the air
-_eyesoar_stateD:
+eyesoar_stateD:
 	ld h,d
 	ld l,Enemy.z
 	ld a,(hl)
@@ -8860,7 +8860,7 @@ _eyesoar_stateD:
 	ld (hl),a
 
 	cp $fe
-	jr nz,_eyesoar_animate
+	jr nz,eyesoar_animate
 
 	ld l,e
 	inc (hl) ; [state]
@@ -8873,12 +8873,12 @@ _eyesoar_stateD:
 
 	ld l,Enemy.var39
 	res 1,(hl)
-	call _eyesoar_chooseNewAngle
+	call eyesoar_chooseNewAngle
 
 
 ; Flying around kinda randomly
-_eyesoar_stateE:
-	call _ecom_decCounter1
+eyesoar_stateE:
+	call ecom_decCounter1
 	jr nz,++
 	ld l,Enemy.var39
 	res 3,(hl)
@@ -8903,15 +8903,15 @@ _eyesoar_stateE:
 	ld l,Enemy.counter1
 	ld a,(hl)
 	and $3f
-	call z,_eyesoar_chooseNewAngle
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
-	jr _eyesoar_animate
+	call z,eyesoar_chooseNewAngle
+	call ecom_applyVelocityForSideviewEnemyNoHoles
+	jr eyesoar_animate
 
 
 ;;
 ; Checks to update the "formation", that is, the distances away from Eyesoar for the
 ; children.
-_eyesoar_updateFormation:
+eyesoar_updateFormation:
 	; Check all children are at their target distance away from Eyesoar
 	ld e,Enemy.var3a
 	ld a,(de)
@@ -8934,7 +8934,7 @@ _eyesoar_updateFormation:
 	inc c
 	jr nz,@notInFormation
 
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 	ld (hl),180
 
@@ -8970,7 +8970,7 @@ distancesFromEyesoar:
 
 
 
-_eyesoar_dead:
+eyesoar_dead:
 	ld e,Enemy.collisionType
 	ld a,(de)
 	or a
@@ -8981,25 +8981,25 @@ _eyesoar_dead:
 	ld a,(de)
 	ld h,a
 	ld l,e
-	call _ecom_killObjectH
+	call ecom_killObjectH
 	inc e
 	ld a,e
 	cp Enemy.var36
 	jr c,@killNextChild
 
 @doneKillingChildren:
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 
 ;;
 ; Chooses an angle which roughly goes toward the center of the room, plus a small, random
 ; angle offset.
-_eyesoar_chooseNewAngle:
+eyesoar_chooseNewAngle:
 	; Get random angle offset in 'c'
 	call getRandomNumber_noPreserveVars
 	and $0f
 	cp $09
-	jr nc,_eyesoar_chooseNewAngle
+	jr nc,eyesoar_chooseNewAngle
 
 	ld c,a
 	ld b,$00
@@ -9048,24 +9048,24 @@ enemyCode7c:
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
 	jr nz,@normalStatus
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 @normalStatus:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _smog_state_uninitialized
-	.dw _smog_state_stub
-	.dw _smog_state_stub
-	.dw _smog_state_stub
-	.dw _smog_state_stub
-	.dw _smog_state_stub
-	.dw _smog_state_stub
-	.dw _smog_state_stub
-	.dw _smog_state8
+	.dw smog_state_uninitialized
+	.dw smog_state_stub
+	.dw smog_state_stub
+	.dw smog_state_stub
+	.dw smog_state_stub
+	.dw smog_state_stub
+	.dw smog_state_stub
+	.dw smog_state_stub
+	.dw smog_state8
 
 
-_smog_state_uninitialized:
+smog_state_uninitialized:
 	ld e,Enemy.subid
 	ld a,(de)
 	and $0f
@@ -9095,7 +9095,7 @@ _smog_state_uninitialized:
 	jr @setAnimationAndCommonInit
 
 @subid2Init:
-	call _enemyBoss_beginBoss
+	call enemyBoss_beginBoss
 
 	ld h,d
 	ld e,Enemy.direction
@@ -9116,7 +9116,7 @@ _smog_state_uninitialized:
 	jr @setAnimationAndCommonInit
 
 @subid3Init:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 
 	ld l,Enemy.collisionType
 	res 7,(hl)
@@ -9149,21 +9149,21 @@ _smog_state_uninitialized:
 
 @setAnimationAndCommonInit:
 	call enemySetAnimation
-	call _smog_setCounterToFireProjectile
+	call smog_setCounterToFireProjectile
 	ld e,Enemy.subid
 	ld a,(de)
 	and $0f
 	ld hl,@subidSpeedTable
 	rst_addAToHl
 	ld a,(hl)
-	jp _ecom_setSpeedAndState8AndVisible
+	jp ecom_setSpeedAndState8AndVisible
 
 @subid5Init:
 @subid6Init:
 	ld a,ENEMYID_SMOG
 	ld b,$00
-	call _enemyBoss_initializeRoom
-	call _ecom_setSpeedAndState8
+	call enemyBoss_initializeRoom
+	call ecom_setSpeedAndState8
 	ld l,Enemy.collisionType
 	res 7,(hl)
 	ret
@@ -9185,28 +9185,28 @@ _smog_state_uninitialized:
 	.db SPEED_40
 
 
-_smog_state_stub:
+smog_state_stub:
 	ret
 
 
-_smog_state8:
+smog_state8:
 	ld e,Enemy.subid
 	ld a,(de)
 	and $0f
 	rst_jumpTable
-	.dw _smog_state8_subid0
-	.dw _smog_state8_subid1
-	.dw _smog_state8_subid2
-	.dw _smog_state8_subid3
-	.dw _smog_state8_subid4
-	.dw _smog_state8_subid5
-	.dw _smog_deleteSelf
+	.dw smog_state8_subid0
+	.dw smog_state8_subid1
+	.dw smog_state8_subid2
+	.dw smog_state8_subid3
+	.dw smog_state8_subid4
+	.dw smog_state8_subid5
+	.dw smog_deleteSelf
 
 ; Splitting into two?
-_smog_state8_subid0:
+smog_state8_subid0:
 	call retIfTextIsActive
 	call enemyAnimate
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	call getFreeEnemySlot
@@ -9222,22 +9222,22 @@ _smog_state8_subid0:
 	ld (hl),$01 ; [child.subid]
 	ld bc,$0010
 	call objectCopyPositionWithOffset
-	jr _smog_deleteSelf
+	jr smog_deleteSelf
 
-_smog_state8_subid1:
+smog_state8_subid1:
 	call enemyAnimate
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
-_smog_deleteSelf:
+smog_deleteSelf:
 	call objectCreatePuff
 	call decNumEnemies
 	jp enemyDelete
 
 
 ; Small or medium-sized smog
-_smog_state8_subid2:
-_smog_state8_subid3:
+smog_state8_subid2:
+smog_state8_subid3:
 	ld e,Enemy.var2a
 	ld a,(de)
 	bit 7,a
@@ -9255,12 +9255,12 @@ _smog_state8_subid3:
 	ld (de),a
 
 @noCollision:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp nz,enemyAnimate
 
 	call getThisRoomFlags
 	bit ROOMFLAG_BIT_40,a
-	jr nz,_smog_deleteSelf
+	jr nz,smog_deleteSelf
 
 	call enemyAnimate
 
@@ -9276,13 +9276,13 @@ _smog_state8_subid3:
 	add a
 	add -4
 	call enemySetAnimation
-	call _smog_setCounterToFireProjectile
+	call smog_setCounterToFireProjectile
 	ld b,PARTID_SMOG_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	call objectCopyPosition
 
 @doneShootingProjectile:
-	call _smog_decCounterToFireProjectile
+	call smog_decCounterToFireProjectile
 	jr z,@runSubstate
 
 	ld e,Enemy.subid
@@ -9303,8 +9303,8 @@ _smog_state8_subid3:
 ; Just spawned, or need to redetermine what direction to move in based on surrounding
 ; walls
 @substate0:
-	call _smog_applySpeed
-	call _smog_checkHuggingWall
+	call smog_applySpeed
+	call smog_checkHuggingWall
 	jr nz,@checkHitWall
 
 	ld l,Enemy.var32
@@ -9323,16 +9323,16 @@ _smog_state8_subid3:
 	ld e,Enemy.substate
 	ld a,$01
 	ld (de),a
-	jp _smog_applySpeed
+	jp smog_applySpeed
 
 @checkHitWall:
-	call _smog_checkHitWall
+	call smog_checkHitWall
 	jr nz,@hitWall
 	ret
 
 @substate1:
-	call _smog_applySpeed
-	call _smog_checkHuggingWall
+	call smog_applySpeed
+	call smog_checkHuggingWall
 	jr nz,@notHuggingWall
 
 	; The wall being hugged disappeared.
@@ -9367,7 +9367,7 @@ _smog_state8_subid3:
 
 @mediumSmog:
 	; Just keep moving forward until we hit a wall
-	call _smog_checkHitWall
+	call smog_checkHitWall
 	ret z
 
 @hitWall:
@@ -9391,19 +9391,19 @@ _smog_state8_subid3:
 
 ; Moving normally along wall
 @substate2:
-	call _smog_updateAdjacentWallsBitset
-	call _smog_checkHitWall
+	call smog_updateAdjacentWallsBitset
+	call smog_checkHitWall
 	jr nz,@hitWall
 
 @notHuggingWall:
 	ld e,Enemy.substate
 	xor a
 	ld (de),a
-	jp _smog_applySpeed
+	jp smog_applySpeed
 
 
 ; Large smog (can be attacked)
-_smog_state8_subid4:
+smog_state8_subid4:
 	ld e,Enemy.var2a
 	ld a,(de)
 	cp $80|ITEMCOLLISION_ELECTRIC_SHOCK
@@ -9433,7 +9433,7 @@ _smog_state8_subid4:
 	ld e,Enemy.speed
 	ld (de),a
 
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 
 	ld e,Enemy.counter1
 	ld a,20
@@ -9449,7 +9449,7 @@ _smog_state8_subid4:
 	cp SPEED_c0
 	ret nz
 
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 ; Slowing down
 @substate2:
@@ -9477,25 +9477,25 @@ _smog_state8_subid4:
 
 	ld a,$04
 	call enemySetAnimation
-	jp _smog_setCounterToFireProjectile
+	jp smog_setCounterToFireProjectile
 
 @parameter1:
 	ld b,PARTID_SMOG_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld l,Part.subid
 	inc (hl)
 	ld bc,$0800
 	jp objectCopyPositionWithOffset
 
 @parameter0:
-	call _smog_decCounterToFireProjectile
+	call smog_decCounterToFireProjectile
 	jr z,++
 	ld a,$05
 	call enemySetAnimation
 ++
 	call objectApplySpeed
-	call _ecom_bounceOffScreenBoundary
-	call _ecom_decCounter1
+	call ecom_bounceOffScreenBoundary
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),20
@@ -9505,7 +9505,7 @@ _smog_state8_subid4:
 
 ; Stop while Link is shocked
 @substate3:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 	xor a
 	ld (de),a
@@ -9514,22 +9514,22 @@ _smog_state8_subid4:
 	ret
 
 
-_smog_state8_subid5:
+smog_state8_subid5:
 	ret
 
 
 ;;
 ; @param[out]	zflag	nz if hit a wall
-_smog_checkHitWall:
+smog_checkHitWall:
 	ld e,Enemy.direction
 	ld a,(de)
 	swap a
 	rrca
 	inc e
 	ld (de),a
-	jr _smog_checkAdjacentWallsBitset
+	jr smog_checkAdjacentWallsBitset
 
-_smog_positionOffsets:
+smog_positionOffsets:
 	.db $f0 $00
 	.db $00 $10
 	.db $10 $00
@@ -9537,7 +9537,7 @@ _smog_positionOffsets:
 
 ;;
 ; @param[out]	zflag	nz if hugging a wall
-_smog_checkHuggingWall:
+smog_checkHuggingWall:
 	ld b,$ff
 	ld e,Enemy.subid
 	ld a,(de)
@@ -9560,7 +9560,7 @@ _smog_checkHuggingWall:
 
 	; Get position offset in direction smog is moving in
 	ld a,c
-	ld hl,_smog_positionOffsets
+	ld hl,smog_positionOffsets
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld c,(hl)
@@ -9585,7 +9585,7 @@ _smog_checkHuggingWall:
 ; called.)
 ;
 ; @param[out]	zflag	nz if a wall exists
-_smog_checkAdjacentWallsBitset:
+smog_checkAdjacentWallsBitset:
 	ld h,d
 	ld l,Enemy.angle
 	ld a,(hl)
@@ -9616,7 +9616,7 @@ _smog_checkAdjacentWallsBitset:
 
 ;;
 ; Applies speed and updates "adjacentWallsBitset"
-_smog_applySpeed:
+smog_applySpeed:
 	; Update angle based on direction
 	ld e,Enemy.direction
 	ld a,(de)
@@ -9626,7 +9626,7 @@ _smog_applySpeed:
 	ld (de),a
 	call objectApplySpeed
 
-_smog_updateAdjacentWallsBitset:
+smog_updateAdjacentWallsBitset:
 	; Clear collision value of wall being hugged?
 	ld e,Enemy.var30
 	xor a
@@ -9678,7 +9678,7 @@ _smog_updateAdjacentWallsBitset:
 
 ;;
 ; @param[out]	zflag	nz if smog should begin "firing projectile" animation
-_smog_decCounterToFireProjectile:
+smog_decCounterToFireProjectile:
 	ld e,Enemy.var36
 	ld a,(de)
 	or a
@@ -9698,7 +9698,7 @@ _smog_decCounterToFireProjectile:
 ;;
 ; For given values of subid and var03, this reads one of four randomly chosen values and
 ; puts that value into var36 (counter until next projectile is fired).
-_smog_setCounterToFireProjectile:
+smog_setCounterToFireProjectile:
 	ld e,Enemy.subid
 	ld a,(de)
 	and $0f
@@ -9800,8 +9800,8 @@ enemyCode7d:
 	ld e,Enemy.collisionType
 	ld a,(de)
 	or a
-	call nz,_ecom_killRelatedObj1
-	jp _enemyBoss_dead
+	call nz,ecom_killRelatedObj1
+	jp enemyBoss_dead
 
 @justHit:
 	ld a,Object.invincibilityCounter
@@ -9914,24 +9914,24 @@ enemyCode7d:
 
 	ld a,(de)
 	rst_jumpTable
-	.dw _octogon_subid0
-	.dw _octogon_subid1
-	.dw _octogon_subid2
+	.dw octogon_subid0
+	.dw octogon_subid1
+	.dw octogon_subid2
 
 
 @state8OrLess:
 	rst_jumpTable
-	.dw _octogon_state_uninitialized
-	.dw _octogon_state_stub
-	.dw _octogon_state_stub
-	.dw _octogon_state_stub
-	.dw _octogon_state_stub
-	.dw _octogon_state_stub
-	.dw _octogon_state_stub
-	.dw _octogon_state_stub
+	.dw octogon_state_uninitialized
+	.dw octogon_state_stub
+	.dw octogon_state_stub
+	.dw octogon_state_stub
+	.dw octogon_state_stub
+	.dw octogon_state_stub
+	.dw octogon_state_stub
+	.dw octogon_state_stub
 
 
-_octogon_state_uninitialized:
+octogon_state_uninitialized:
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $02
@@ -9940,7 +9940,7 @@ _octogon_state_uninitialized:
 	ld e,Enemy.enemyCollisionMode
 	ld a,ENEMYCOLLISION_OCTOGON_SHELL
 	ld (de),a
-	jp _ecom_setSpeedAndState8
+	jp ecom_setSpeedAndState8
 
 @notSubid2:
 	ld a,ENEMYID_OCTOGON
@@ -9953,7 +9953,7 @@ _octogon_state_uninitialized:
 	or a
 	jr nz,++
 	inc (hl)
-	call _enemyBoss_initializeRoomWithoutExtraGfx
+	call enemyBoss_initializeRoomWithoutExtraGfx
 ++
 	; Create "child" with subid 2? They will reference each other with relatedObj2.
 	call getFreeEnemySlot_uncounted
@@ -9972,7 +9972,7 @@ _octogon_state_uninitialized:
 	ld (hl),d
 
 	ld a,SPEED_100
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 
 	ld l,Enemy.var35
 	ld (hl),$0c ; [this.var35]
@@ -10017,7 +10017,7 @@ _octogon_state_uninitialized:
 	.dw @subid1_1
 
 @subid0_0:
-	call _octogon_fixPositionAboveWater
+	call octogon_fixPositionAboveWater
 
 	ld h,d
 	ld l,Enemy.counter2
@@ -10026,9 +10026,9 @@ _octogon_state_uninitialized:
 	ld l,Enemy.var30
 	ld a,(hl)
 	inc a
-	jp z,_octogon_chooseRandomTargetPosition
+	jp z,octogon_chooseRandomTargetPosition
 
-	call _octogon_loadTargetPosition
+	call octogon_loadTargetPosition
 	ret z
 	dec hl
 	dec hl
@@ -10039,8 +10039,8 @@ _octogon_state_uninitialized:
 	jp enemySetAnimation
 
 @subid0_1:
-	call _octogon_fixPositionAboveWater
-	jp _octogon_loadNormalSubmergedAnimation
+	call octogon_fixPositionAboveWater
+	jp octogon_loadNormalSubmergedAnimation
 
 @subid1_0:
 	ld h,d
@@ -10076,7 +10076,7 @@ _octogon_state_uninitialized:
 	ldh a,(<hEnemyTargetX)
 	ld (hl),a
 
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	add $04
 	and $18
 	rrca
@@ -10096,11 +10096,11 @@ _octogon_state_uninitialized:
 	ret
 
 
-_octogon_state_stub:
+octogon_state_stub:
 	ret
 
 
-_octogon_subid0:
+octogon_subid0:
 	; Initialize Y/X position
 	ld h,d
 	ld l,Enemy.var33
@@ -10117,23 +10117,23 @@ _octogon_subid0:
 	or a
 	ld e,Enemy.state
 	ld a,(de)
-	jp nz,_octogon_subid0BelowWater
+	jp nz,octogon_subid0BelowWater
 
 	sub $08
 	rst_jumpTable
-	.dw _octogon_subid0AboveWater_state8
-	.dw _octogon_subid0AboveWater_state9
-	.dw _octogon_subid0AboveWater_stateA
-	.dw _octogon_subid0AboveWater_stateB
-	.dw _octogon_subid0AboveWater_stateC
-	.dw _octogon_subid0AboveWater_stateD
-	.dw _octogon_subid0AboveWater_stateE
-	.dw _octogon_subid0AboveWater_stateF
-	.dw _octogon_subid0AboveWater_state10
-	.dw _octogon_subid0AboveWater_state11
+	.dw octogon_subid0AboveWater_state8
+	.dw octogon_subid0AboveWater_state9
+	.dw octogon_subid0AboveWater_stateA
+	.dw octogon_subid0AboveWater_stateB
+	.dw octogon_subid0AboveWater_stateC
+	.dw octogon_subid0AboveWater_stateD
+	.dw octogon_subid0AboveWater_stateE
+	.dw octogon_subid0AboveWater_stateF
+	.dw octogon_subid0AboveWater_state10
+	.dw octogon_subid0AboveWater_state11
 
 
-_octogon_subid0AboveWater_state8:
+octogon_subid0AboveWater_state8:
 	; Wait for shutters to close
 	ld a,($cc93)
 	or a
@@ -10154,8 +10154,8 @@ _octogon_subid0AboveWater_state8:
 
 
 ; Moving normally around the room
-_octogon_subid0AboveWater_state9:
-	call _octogon_decVar36IfNonzero
+octogon_subid0AboveWater_state9:
+	call octogon_decVar36IfNonzero
 
 	; Submerge into water after set amount of time
 	ld a,(wFrameCounter)
@@ -10163,20 +10163,20 @@ _octogon_subid0AboveWater_state9:
 	jr nz,++
 	ld l,Enemy.counter2
 	dec (hl)
-	jp z,_octogon_subid0_submergeIntoWater
+	jp z,octogon_subid0_submergeIntoWater
 ++
 	; Check if lined up to fire at Link.
 	; BUG: Should set 'b', not 'c'? (b happens to be $0f here, so it works out ok.)
 	ld c,$08
 	call objectCheckCenteredWithLink
-	jp nc,_octogon_updateMovementAndAnimation
+	jp nc,octogon_updateMovementAndAnimation
 
 	; If enough time has passed, begin firing at Link.
 	ld h,d
 	ld l,Enemy.var36
 	ld a,(hl)
 	or a
-	jp nz,_octogon_updateMovementAndAnimation
+	jp nz,octogon_updateMovementAndAnimation
 
 	ld (hl),120 ; [var36]
 
@@ -10190,7 +10190,7 @@ _octogon_subid0AboveWater_state9:
 	and $0c
 	add a
 	cp b
-	jp nz,_octogon_updateMovementAndAnimation
+	jp nz,octogon_updateMovementAndAnimation
 
 	ld h,d
 	ld l,Enemy.state
@@ -10201,9 +10201,9 @@ _octogon_subid0AboveWater_state9:
 	ret
 
 
-_octogon_subid0AboveWater_stateA:
-_octogon_subid0_pauseMovement:
-	call _ecom_decCounter1
+octogon_subid0AboveWater_stateA:
+octogon_subid0_pauseMovement:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -10215,11 +10215,11 @@ _octogon_subid0_pauseMovement:
 	ld (hl),a
 
 	and $07
-	jr nz,_octogon_loadTargetPosition
+	jr nz,octogon_loadTargetPosition
 
 
 ;;
-_octogon_chooseRandomTargetPosition:
+octogon_chooseRandomTargetPosition:
 	call getRandomNumber
 	and $18
 	ld (hl),a
@@ -10228,7 +10228,7 @@ _octogon_chooseRandomTargetPosition:
 ; @param	hl	Pointer to index for a table
 ; @param[out]	hl	Pointer to some data
 ; @param[out]	zflag	z if animation changed
-_octogon_loadTargetPosition:
+octogon_loadTargetPosition:
 	ld a,(hl)
 	add a
 	add (hl)
@@ -10295,18 +10295,18 @@ _octogon_loadTargetPosition:
 
 
 ; Turning around to fire projectile (or just after doing so)?
-_octogon_subid0AboveWater_stateB:
-_octogon_subid0AboveWater_stateF:
+octogon_subid0AboveWater_stateB:
+octogon_subid0AboveWater_stateF:
 	ld b,$06
-	jr _octogon_subid0AboveWater_turningAround
+	jr octogon_subid0AboveWater_turningAround
 
 
 ; Turning around?
-_octogon_subid0AboveWater_stateC:
+octogon_subid0AboveWater_stateC:
 	ld b,$18
 
-_octogon_subid0AboveWater_turningAround:
-	call _ecom_decCounter1
+octogon_subid0AboveWater_turningAround:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),b
@@ -10322,8 +10322,8 @@ _octogon_subid0AboveWater_turningAround:
 
 
 ; About to fire projectile?
-_octogon_subid0AboveWater_stateD:
-	call _ecom_decCounter1
+octogon_subid0AboveWater_stateD:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),$08
@@ -10339,8 +10339,8 @@ _octogon_subid0AboveWater_stateD:
 
 
 ; Firing projectile
-_octogon_subid0AboveWater_stateE:
-	call _ecom_decCounter1
+octogon_subid0AboveWater_stateE:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),40
@@ -10350,18 +10350,18 @@ _octogon_subid0AboveWater_stateE:
 	inc (hl)
 	ld a,(hl)
 	call enemySetAnimation
-	jp _octogon_fireOctorokProjectile
+	jp octogon_fireOctorokProjectile
 
 
 ; Turning around after firing projectile?
-_octogon_subid0AboveWater_state10:
+octogon_subid0AboveWater_state10:
 	ld b,$0c
-	jr _octogon_subid0AboveWater_turningAround
+	jr octogon_subid0AboveWater_turningAround
 
 
 ; Delay before resuming normal movement
-_octogon_subid0AboveWater_state11:
-	call _ecom_decCounter1
+octogon_subid0AboveWater_state11:
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	ld (hl),$09 ; [state]
@@ -10369,19 +10369,19 @@ _octogon_subid0AboveWater_state11:
 
 
 ; Octogon code where octogon itself is below water, and link is above water
-_octogon_subid0BelowWater:
+octogon_subid0BelowWater:
 	sub $08
 	rst_jumpTable
-	.dw _octogon_subid0BelowWater_state8
-	.dw _octogon_subid0BelowWater_state9
-	.dw _octogon_subid0BelowWater_stateA
-	.dw _octogon_subid0BelowWater_stateB
-	.dw _octogon_subid0BelowWater_stateC
-	.dw _octogon_subid0BelowWater_stateD
+	.dw octogon_subid0BelowWater_state8
+	.dw octogon_subid0BelowWater_state9
+	.dw octogon_subid0BelowWater_stateA
+	.dw octogon_subid0BelowWater_stateB
+	.dw octogon_subid0BelowWater_stateC
+	.dw octogon_subid0BelowWater_stateD
 
 
 ; Swimming normally
-_octogon_subid0BelowWater_state8:
+octogon_subid0BelowWater_state8:
 	call enemyAnimate
 
 	; Check whether to play swimming sound
@@ -10394,33 +10394,33 @@ _octogon_subid0BelowWater_state8:
 	ld a,SND_LINK_SWIM
 	call playSound
 ++
-	call _octogon_decVar36IfNonzero
-	jp nz,_octogon_moveTowardTargetPosition
+	call octogon_decVar36IfNonzero
+	jp nz,octogon_moveTowardTargetPosition
 
 	; Reached target position
 	ld (hl),90 ; [var36]
 	call getRandomNumber
 	cp $50
-	jp nc,_octogon_moveTowardTargetPosition
+	jp nc,octogon_moveTowardTargetPosition
 
 	; Random chance of going to state $0a (firing projectile)
 	ld l,Enemy.state
 	ld (hl),$0a
 	ld l,Enemy.counter1
 	ld (hl),60
-	jr _octogon_loadNormalSubmergedAnimation
+	jr octogon_loadNormalSubmergedAnimation
 
 
 ; Waiting in place before moving again
-_octogon_subid0BelowWater_state9:
-	call _octogon_subid0_pauseMovement
-_octogon_animate:
+octogon_subid0BelowWater_state9:
+	call octogon_subid0_pauseMovement
+octogon_animate:
 	jp enemyAnimate
 
 
 ; Delay before firing projectile
-_octogon_subid0BelowWater_stateA:
-	call _ecom_decCounter1
+octogon_subid0BelowWater_stateA:
+	call ecom_decCounter1
 	jr z,@beginFiring
 
 	ld a,(hl)
@@ -10437,7 +10437,7 @@ _octogon_subid0BelowWater_stateA:
 	ld l,e
 	inc (hl) ; [state] = $0b
 
-_octogon_loadNormalSubmergedAnimation:
+octogon_loadNormalSubmergedAnimation:
 	ld e,Enemy.direction
 	ld a,$12
 	ld (de),a
@@ -10445,8 +10445,8 @@ _octogon_loadNormalSubmergedAnimation:
 
 
 ; Firing projectile
-_octogon_subid0BelowWater_stateB:
-	call _ecom_decCounter1
+octogon_subid0BelowWater_stateB:
+	call ecom_decCounter1
 	jr z,@fireProjectile
 
 	ld a,(hl)
@@ -10463,14 +10463,14 @@ _octogon_subid0BelowWater_stateB:
 	ld l,e
 	inc (hl) ; [state] = $0c
 	ld b,PARTID_OCTOGON_DEPTH_CHARGE
-	call _ecom_spawnProjectile
-	jr _octogon_loadNormalSubmergedAnimation
+	call ecom_spawnProjectile
+	jr octogon_loadNormalSubmergedAnimation
 
 
 ; Delay before moving again
-_octogon_subid0BelowWater_stateC:
-	call _ecom_decCounter1
-	jr nz,_octogon_animate
+octogon_subid0BelowWater_stateC:
+	call ecom_decCounter1
+	jr nz,octogon_animate
 
 	ld l,Enemy.var36
 	ld (hl),90
@@ -10478,23 +10478,23 @@ _octogon_subid0BelowWater_stateC:
 	ld l,e
 	ld (hl),$08 ; [state]
 
-	jr _octogon_animate
+	jr octogon_animate
 
 
 ; Just submerged into water
-_octogon_subid0BelowWater_stateD:
-	call _ecom_decCounter1
+octogon_subid0BelowWater_stateD:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),30
 
 	ld l,e
 	ld (hl),$08 ; [state]
 
-	jr _octogon_loadNormalSubmergedAnimation
+	jr octogon_loadNormalSubmergedAnimation
 
 
 ; Link is below water
-_octogon_subid1:
+octogon_subid1:
 	ld h,d
 	ld l,Enemy.var33
 	ld e,Enemy.yh
@@ -10509,20 +10509,20 @@ _octogon_subid1:
 	or a
 	ld e,Enemy.state
 	ld a,(de)
-	jp z,_octogon_subid1_aboveWater
+	jp z,octogon_subid1_aboveWater
 
 	sub $08
 	rst_jumpTable
-	.dw _octogon_subid1_belowWater_state8
-	.dw _octogon_subid1_belowWater_state9
-	.dw _octogon_subid1_belowWater_stateA
-	.dw _octogon_subid1_belowWater_stateB
-	.dw _octogon_subid1_belowWater_stateC
+	.dw octogon_subid1_belowWater_state8
+	.dw octogon_subid1_belowWater_state9
+	.dw octogon_subid1_belowWater_stateA
+	.dw octogon_subid1_belowWater_stateB
+	.dw octogon_subid1_belowWater_stateC
 
 
 ; Normal movement (moving toward some target position decided already)
-_octogon_subid1_belowWater_state8:
-	call _octogon_decVar36IfNonzero
+octogon_subid1_belowWater_state8:
+	call octogon_decVar36IfNonzero
 	jr nz,@normalMovement
 
 	; var36 reached 0
@@ -10565,10 +10565,10 @@ _octogon_subid1_belowWater_state8:
 	jr nz,++
 	ld l,Enemy.counter2
 	dec (hl)
-	jp z,_octogon_beginRisingAboveWater
+	jp z,octogon_beginRisingAboveWater
 ++
-	call _ecom_decCounter1
-	jr nz,_octogon_updateMovementAndAnimation
+	call ecom_decCounter1
+	jr nz,octogon_updateMovementAndAnimation
 
 	ld (hl),60 ; [counter1]
 
@@ -10578,8 +10578,8 @@ _octogon_subid1_belowWater_state8:
 
 ;;
 ; Moves toward target position and updates animation + sound effects accordingly
-_octogon_updateMovementAndAnimation:
-	call _octogon_moveTowardTargetPosition
+octogon_updateMovementAndAnimation:
+	call octogon_moveTowardTargetPosition
 
 	ld h,d
 	ld l,Enemy.var35
@@ -10603,7 +10603,7 @@ _octogon_updateMovementAndAnimation:
 	; Above-water only (subid 0)
 
 ;;
-_octogon_doSplashAnimation:
+octogon_doSplashAnimation:
 	ld a,SND_SWORDSPIN
 	call playSound
 
@@ -10620,8 +10620,8 @@ _octogon_doSplashAnimation:
 
 
 ; Waiting in place until counter1 reaches 0, then will charge at Link.
-_octogon_subid1_belowWater_state9:
-	call _ecom_decCounter1
+octogon_subid1_belowWater_state9:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),$0c ; [counter1]
@@ -10637,7 +10637,7 @@ _octogon_subid1_belowWater_state9:
 	ld (hl),a
 
 	; Do some weird math to decide animation
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	ld h,d
 	ld l,Enemy.direction
 	ld a,(hl)
@@ -10666,8 +10666,8 @@ _octogon_subid1_belowWater_state9:
 
 
 ; Waiting for a split second before charging
-_octogon_subid1_belowWater_stateA:
-	call _ecom_decCounter1
+octogon_subid1_belowWater_stateA:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),90
@@ -10685,8 +10685,8 @@ _octogon_subid1_belowWater_stateA:
 
 
 ; Delay before firing bubble
-_octogon_subid1_belowWater_stateB:
-	call _ecom_decCounter1
+octogon_subid1_belowWater_stateB:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),60
@@ -10702,14 +10702,14 @@ _octogon_subid1_belowWater_stateB:
 	call getFreePartSlot
 	jr nz,++
 	ld (hl),PARTID_OCTOGON_BUBBLE
-	call _octogon_initializeProjectile
+	call octogon_initializeProjectile
 ++
-	jp _octogon_doSplashAnimation
+	jp octogon_doSplashAnimation
 
 
 ; Delay after firing bubble
-_octogon_subid1_belowWater_stateC:
-	call _ecom_decCounter1
+octogon_subid1_belowWater_stateC:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -10723,7 +10723,7 @@ _octogon_subid1_belowWater_stateC:
 
 
 ; Octogon is above water, but Link is below water
-_octogon_subid1_aboveWater:
+octogon_subid1_aboveWater:
 	sub $08
 	rst_jumpTable
 	.dw @state8
@@ -10731,16 +10731,16 @@ _octogon_subid1_aboveWater:
 	.dw @stateA
 
 @state8:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),120
 	ld b,PARTID_OCTOGON_DEPTH_CHARGE
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 
 
 ; States $09-$0a used while moving to surface
 @state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -10755,7 +10755,7 @@ _octogon_subid1_aboveWater:
 	call playSound
 
 	ld bc,$0208
-	jp _enemyBoss_spawnShadow
+	jp enemyBoss_spawnShadow
 
 @stateA:
 	ld h,d
@@ -10771,7 +10771,7 @@ _octogon_subid1_aboveWater:
 	ret nc
 
 	cp $c0
-	jp nz,_ecom_flickerVisibility
+	jp nz,ecom_flickerVisibility
 
 	ld (hl),$00
 
@@ -10785,11 +10785,11 @@ _octogon_subid1_aboveWater:
 	ld (hl),60
 
 	call objectSetInvisible
-	jp _ecom_killRelatedObj1
+	jp ecom_killRelatedObj1
 
 
 ; Invisible collision box for the shell
-_octogon_subid2:
+octogon_subid2:
 	ld a,Object.direction
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -10826,7 +10826,7 @@ _octogon_subid2:
 
 
 ;;
-_octogon_subid0_submergeIntoWater:
+octogon_subid0_submergeIntoWater:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$0d
@@ -10845,7 +10845,7 @@ _octogon_subid0_submergeIntoWater:
 
 
 ;;
-_octogon_beginRisingAboveWater:
+octogon_beginRisingAboveWater:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$09
@@ -10867,7 +10867,7 @@ _octogon_beginRisingAboveWater:
 ;;
 ; Takes current position, fixes it to the closest valid spot above water, and decides
 ; a value for var30 (target position index).
-_octogon_fixPositionAboveWater:
+octogon_fixPositionAboveWater:
 	ld a,(wTmpcfc0.octogonBoss.posNeedsFixing)
 	or a
 	ret z
@@ -10881,14 +10881,14 @@ _octogon_fixPositionAboveWater:
 	ld b,a
 	inc l
 	ld c,(hl)
-	call _octogon_getClosestTargetPositionIndex
+	call octogon_getClosestTargetPositionIndex
 	ld l,e
 
 	ld a,(w1Link.yh)
 	ld b,a
 	ld a,(w1Link.xh)
 	ld c,a
-	call _octogon_getClosestTargetPositionIndex
+	call octogon_getClosestTargetPositionIndex
 
 	; BUG: supposed to compare 'l' against 'e', not 'a'. As a result octogon may not
 	; move out of the way properly if Link surfaces in the same position.
@@ -10917,8 +10917,8 @@ _octogon_fixPositionAboveWater:
 	ld h,d
 	ld l,e
 	bit 7,a
-	jp nz,_octogon_chooseRandomTargetPosition
-	jp _octogon_loadTargetPosition
+	jp nz,octogon_chooseRandomTargetPosition
+	jp octogon_loadTargetPosition
 
 ; Data format: Y, X, var30 (target position index), unused
 @data:
@@ -10938,7 +10938,7 @@ _octogon_fixPositionAboveWater:
 	.db $01 $00 $01 $06 $00 $08 $03 $08 $05
 
 ;;
-_octogon_fireOctorokProjectile:
+octogon_fireOctorokProjectile:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_OCTOROK_PROJECTILE
@@ -10946,7 +10946,7 @@ _octogon_fireOctorokProjectile:
 ;;
 ; @param	h	Projectile (could be PARTID_OCTOROK_PROJECTILE or
 ;			PARTID_OCTOGON_BUBBLE)
-_octogon_initializeProjectile:
+octogon_initializeProjectile:
 	ld e,Enemy.direction
 	ld a,(de)
 	and $0c
@@ -10976,7 +10976,7 @@ _octogon_initializeProjectile:
 	.db $00 $f0
 
 ;;
-_octogon_decVar36IfNonzero:
+octogon_decVar36IfNonzero:
 	ld h,d
 	ld l,Enemy.var36
 	ld a,(hl)
@@ -10988,20 +10988,20 @@ _octogon_decVar36IfNonzero:
 ;;
 ; Moves toward position stored in var31/var32. Increments state and sets counter1 to 30
 ; when it reaches that position.
-_octogon_moveTowardTargetPosition:
+octogon_moveTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var31
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	inc a
 	cp $03
-	jp nc,_ecom_moveTowardPosition
+	jp nc,ecom_moveTowardPosition
 
 	ldh a,(<hFF8F)
 	sub b
 	inc a
 	cp $03
-	jp nc,_ecom_moveTowardPosition
+	jp nc,ecom_moveTowardPosition
 
 	ld l,Enemy.yh
 	ld (hl),b
@@ -11021,7 +11021,7 @@ _octogon_moveTowardTargetPosition:
 ; @param	bc	Position
 ; @param[out]	a
 ; @param[out]	e
-_octogon_getClosestTargetPositionIndex:
+octogon_getClosestTargetPositionIndex:
 	ld e,$00
 
 @checkY:
@@ -11075,7 +11075,7 @@ enemyCode7e:
 
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 
 	; Hit by something
 	ld e,Enemy.enemyCollisionMode
@@ -11087,33 +11087,33 @@ enemyCode7e:
 	ld a,(de)
 	res 7,a
 	cp ITEMCOLLISION_L1_SWORD
-	call nc,_plasmarine_state_switchHook@swapColor
+	call nc,plasmarine_state_switchHook@swapColor
 
 @normalStatus:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _plasmarine_state_uninitialized
-	.dw _plasmarine_state_stub
-	.dw _plasmarine_state_stub
-	.dw _plasmarine_state_switchHook
-	.dw _plasmarine_state_stub
-	.dw _plasmarine_state_stub
-	.dw _plasmarine_state_stub
-	.dw _plasmarine_state_stub
-	.dw _plasmarine_state8
-	.dw _plasmarine_state9
-	.dw _plasmarine_stateA
-	.dw _plasmarine_stateB
-	.dw _plasmarine_stateC
-	.dw _plasmarine_stateD
-	.dw _plasmarine_stateE
-	.dw _plasmarine_stateF
+	.dw plasmarine_state_uninitialized
+	.dw plasmarine_state_stub
+	.dw plasmarine_state_stub
+	.dw plasmarine_state_switchHook
+	.dw plasmarine_state_stub
+	.dw plasmarine_state_stub
+	.dw plasmarine_state_stub
+	.dw plasmarine_state_stub
+	.dw plasmarine_state8
+	.dw plasmarine_state9
+	.dw plasmarine_stateA
+	.dw plasmarine_stateB
+	.dw plasmarine_stateC
+	.dw plasmarine_stateD
+	.dw plasmarine_stateE
+	.dw plasmarine_stateF
 
 
-_plasmarine_state_uninitialized:
+plasmarine_state_uninitialized:
 	ld a,SPEED_280
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld l,Enemy.angle
 	ld (hl),$08
 
@@ -11131,11 +11131,11 @@ _plasmarine_state_uninitialized:
 
 	ld a,ENEMYID_PLASMARINE
 	ld b,$00
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	jp objectSetVisible83
 
 
-_plasmarine_state_switchHook:
+plasmarine_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -11149,7 +11149,7 @@ _plasmarine_state_switchHook:
 	ld e,Enemy.var33
 	ld (de),a
 	call enemySetAnimation
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @afterSwitch:
 	ld e,Enemy.var33
@@ -11181,30 +11181,30 @@ _plasmarine_state_switchHook:
 
 @released:
 	ld b,$0a
-	call _ecom_fallToGroundAndSetState
+	call ecom_fallToGroundAndSetState
 	ret nz
 	ld l,Enemy.counter1
 	ld (hl),60
-	jp _plasmarine_decideNumberOfShockAttacks
+	jp plasmarine_decideNumberOfShockAttacks
 
 
-_plasmarine_state_stub:
+plasmarine_state_stub:
 	ret
 
 
 ; Moving toward centre of room before starting fight
-_plasmarine_state8:
-	call _plasmarine_checkCloseToTargetPosition
+plasmarine_state8:
+	call plasmarine_checkCloseToTargetPosition
 	jr c,@reachedTarget
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,++
 	ld (hl),$04
 	call objectGetRelativeAngleWithTempVars
 	call objectNudgeAngleTowards
 ++
 	call objectApplySpeed
-	jr _plasmarine_animate
+	jr plasmarine_animate
 
 @reachedTarget:
 	ld l,e
@@ -11216,13 +11216,13 @@ _plasmarine_state8:
 	ld (hl),b
 	ld l,Enemy.xh
 	ld (hl),c
-	jr _plasmarine_animate
+	jr plasmarine_animate
 
 
 ; 60 frame delay before starting fight
-_plasmarine_state9:
-	call _ecom_decCounter1
-	jr nz,_plasmarine_animate
+plasmarine_state9:
+	call ecom_decCounter1
+	jr nz,plasmarine_animate
 
 	ld (hl),60 ; [counter1]
 	ld l,e
@@ -11231,22 +11231,22 @@ _plasmarine_state9:
 	ld l,Enemy.collisionType
 	set 7,(hl)
 
-	call _plasmarine_decideNumberOfShockAttacks
-	call _enemyBoss_beginBoss
+	call plasmarine_decideNumberOfShockAttacks
+	call enemyBoss_beginBoss
 	xor a
 	jp enemySetAnimation
 
 
 ; Standing in place before charging
-_plasmarine_stateA:
-	call _ecom_decCounter1
-	jr nz,_plasmarine_animate
+plasmarine_stateA:
+	call ecom_decCounter1
+	jr nz,plasmarine_animate
 
 	inc (hl) ; [counter1] = 1
 
 	ld l,Enemy.animParameter
 	bit 0,(hl)
-	jr z,_plasmarine_animate
+	jr z,plasmarine_animate
 
 	; Initialize stuff for state $0b (charge at Link)
 	ld l,Enemy.counter1
@@ -11262,13 +11262,13 @@ _plasmarine_stateA:
 	ldh a,(<hEnemyTargetX)
 	ld (hl),a
 
-_plasmarine_animate:
+plasmarine_animate:
 	jp enemyAnimate
 
 
 ; Charging toward Link
-_plasmarine_stateB:
-	call _ecom_decCounter1
+plasmarine_stateB:
+	call ecom_decCounter1
 	jr nz,++
 	ld l,e
 	inc (hl) ; [state] = $0c
@@ -11279,9 +11279,9 @@ _plasmarine_stateB:
 	ld (hl),a
 	; Fall through
 
-_plasmarine_stateC:
-	call _plasmarine_checkCloseToTargetPosition
-	jp nc,_ecom_moveTowardPosition
+plasmarine_stateC:
+	call plasmarine_checkCloseToTargetPosition
+	jp nc,ecom_moveTowardPosition
 
 	; Reached target position.
 	ld l,Enemy.counter2
@@ -11329,8 +11329,8 @@ _plasmarine_stateC:
 
 
 ; Shock attack
-_plasmarine_stateD:
-	call _ecom_decCounter1
+plasmarine_stateD:
+	call ecom_decCounter1
 	jr z,@doneAttack
 
 	ld a,(hl)
@@ -11353,7 +11353,7 @@ _plasmarine_stateD:
 	ld l,Enemy.oamFlagsBackup
 	ldi (hl),a
 	ld (hl),a
-	jr _plasmarine_animate
+	jr plasmarine_animate
 
 @doneAttack:
 	ld (hl),60 ; [counter1]
@@ -11380,7 +11380,7 @@ _plasmarine_stateD:
 
 
 ; Firing projectiles
-_plasmarine_stateE:
+plasmarine_stateE:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -11390,7 +11390,7 @@ _plasmarine_stateE:
 	inc a
 	ret z
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),60
 	xor a
@@ -11420,8 +11420,8 @@ _plasmarine_stateE:
 
 
 ; Decides whether to return to state $0e (fire another projectile) or charge at Link again
-_plasmarine_stateF:
-	call _ecom_decCounter1
+plasmarine_stateF:
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,Enemy.var34
@@ -11439,7 +11439,7 @@ _plasmarine_stateF:
 	ld (hl),30
 
 ;;
-_plasmarine_decideNumberOfShockAttacks:
+plasmarine_decideNumberOfShockAttacks:
 	call getRandomNumber_noPreserveVars
 	and $01
 	inc a
@@ -11449,10 +11449,10 @@ _plasmarine_decideNumberOfShockAttacks:
 
 ;;
 ; @param[out]	cflag	c if close enough to target position
-_plasmarine_checkCloseToTargetPosition:
+plasmarine_checkCloseToTargetPosition:
 	ld h,d
 	ld l,Enemy.var30
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $04
 	cp $09
@@ -11550,31 +11550,31 @@ enemyCode7f:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _kingMoblin_state_uninitialized
-	.dw _kingMoblin_state_stub
-	.dw _kingMoblin_state_stub
-	.dw _kingMoblin_state_stub
-	.dw _kingMoblin_state_stub
-	.dw _kingMoblin_state_stub
-	.dw _kingMoblin_state_stub
-	.dw _kingMoblin_state_stub
-	.dw _kingMoblin_state8
-	.dw _kingMoblin_state9
-	.dw _kingMoblin_stateA
-	.dw _kingMoblin_stateB
-	.dw _kingMoblin_stateC
-	.dw _kingMoblin_stateD
-	.dw _kingMoblin_stateE
-	.dw _kingMoblin_stateF
-	.dw _kingMoblin_state10
-	.dw _kingMoblin_state11
-	.dw _kingMoblin_state12
-	.dw _kingMoblin_state13
-	.dw _kingMoblin_state14
-	.dw _kingMoblin_state15
+	.dw kingMoblin_state_uninitialized
+	.dw kingMoblin_state_stub
+	.dw kingMoblin_state_stub
+	.dw kingMoblin_state_stub
+	.dw kingMoblin_state_stub
+	.dw kingMoblin_state_stub
+	.dw kingMoblin_state_stub
+	.dw kingMoblin_state_stub
+	.dw kingMoblin_state8
+	.dw kingMoblin_state9
+	.dw kingMoblin_stateA
+	.dw kingMoblin_stateB
+	.dw kingMoblin_stateC
+	.dw kingMoblin_stateD
+	.dw kingMoblin_stateE
+	.dw kingMoblin_stateF
+	.dw kingMoblin_state10
+	.dw kingMoblin_state11
+	.dw kingMoblin_state12
+	.dw kingMoblin_state13
+	.dw kingMoblin_state14
+	.dw kingMoblin_state15
 
 
-_kingMoblin_state_uninitialized:
+kingMoblin_state_uninitialized:
 	ld a,ENEMYID_KING_MOBLIN
 	ld (wEnemyIDToLoadExtraGfx),a
 
@@ -11603,7 +11603,7 @@ _kingMoblin_state_uninitialized:
 	ld e,Enemy.var31
 	ld (de),a
 	ld a,SPEED_c0
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	call objectSetVisible83
 	ld a,$02
 	jp enemySetAnimation
@@ -11621,22 +11621,22 @@ _kingMoblin_state_uninitialized:
 	ret
 
 
-_kingMoblin_state_stub:
+kingMoblin_state_stub:
 	ret
 
 
 ; Waiting for Link to move in to start the fight
-_kingMoblin_state8:
+kingMoblin_state8:
 	ld hl,w1Link.xh
 	ld a,(hl)
 	sub $40
 	cp $20
-	jr nc,_kingMoblin_animate
+	jr nc,kingMoblin_animate
 
 	ld l,<w1Link.zh
 	ld a,(hl)
 	or a
-	jr nz,_kingMoblin_animate
+	jr nz,kingMoblin_animate
 
 	ld l,<w1Link.direction
 	ld (hl),DIR_UP
@@ -11663,18 +11663,18 @@ _kingMoblin_state8:
 	ld l,Interaction.xh
 	ld (hl),$18
 ++
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),$18
 
-_kingMoblin_animate:
+kingMoblin_animate:
 	jp enemyAnimate
 
 
 ; Delay before showing text
-_kingMoblin_state9:
-	call _ecom_decCounter1
-	jr nz,_kingMoblin_animate
+kingMoblin_state9:
+	call ecom_decCounter1
+	jr nz,kingMoblin_animate
 
 	ld l,e
 	inc (hl) ; [state] = $0a
@@ -11688,7 +11688,7 @@ _kingMoblin_state9:
 
 
 ; Starting fight
-_kingMoblin_stateA:
+kingMoblin_stateA:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = $0b
@@ -11705,23 +11705,23 @@ _kingMoblin_stateA:
 	ld b,(hl)
 	ld (bc),a ; [minion2.state] = $02
 
-	call _enemyBoss_beginBoss
+	call enemyBoss_beginBoss
 	xor a
 	jp enemySetAnimation
 
 
 ; Facing backwards while picking up a bomb
-_kingMoblin_stateB:
-	call _ecom_decCounter2
-	jr nz,_kingMoblin_animate
+kingMoblin_stateB:
+	call ecom_decCounter2
+	jr nz,kingMoblin_animate
 
 	ld b,PARTID_KING_MOBLIN_BOMB
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 
-	call _ecom_incState
+	call ecom_incState
 
-_kingMoblin_initBombPickupAnimation:
+kingMoblin_initBombPickupAnimation:
 	ld e,Enemy.health
 	ld a,(de)
 	dec a
@@ -11739,11 +11739,11 @@ _kingMoblin_initBombPickupAnimation:
 
 
 ; Will raise bomb over head in [counter2] frames?
-_kingMoblin_stateC:
-	call _kingMoblin_checkMoveToCentre
+kingMoblin_stateC:
+	call kingMoblin_checkMoveToCentre
 	ret nz
 
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	ld l,Enemy.state
@@ -11777,11 +11777,11 @@ _kingMoblin_stateC:
 
 
 ; Delay before throwing bomb
-_kingMoblin_stateD:
-	call _kingMoblin_checkMoveToCentre
+kingMoblin_stateD:
+	call kingMoblin_checkMoveToCentre
 	ret nz
 
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	ld (hl),30
@@ -11821,8 +11821,8 @@ _kingMoblin_stateD:
 
 
 ; Delay after throwing bomb
-_kingMoblin_stateE:
-	call _ecom_decCounter2
+kingMoblin_stateE:
+	call ecom_decCounter2
 	ret nz
 	ld l,e
 	inc (hl) ; [state] = $0f
@@ -11831,12 +11831,12 @@ _kingMoblin_stateE:
 
 
 ; Waiting for something to do
-_kingMoblin_stateF:
+kingMoblin_stateF:
 	ld a,Object.id
 	call objectGetRelatedObject2Var
 	ld a,(hl)
 	cp PARTID_KING_MOBLIN_BOMB
-	jp nz,_kingMoblin_moveToCentre
+	jp nz,kingMoblin_moveToCentre
 
 	; Do several checks to see if king moblin can pick up the bomb.
 
@@ -11844,20 +11844,20 @@ _kingMoblin_stateF:
 	ld l,Part.state
 	ld a,(hl)
 	cp $04
-	jr nz,_kingMoblin_animate2
+	jr nz,kingMoblin_animate2
 
 	; Is it above the ledge?
 	ld l,Part.yh
 	ldi a,(hl)
 	cp $36
-	jr nc,_kingMoblin_animate2
+	jr nc,kingMoblin_animate2
 
 	; Is it reachable on the x axis?
 	inc l
 	ld a,(hl) ; [bomb.xh]
 	sub $30
 	cp $41
-	jr nc,_kingMoblin_animate2
+	jr nc,kingMoblin_animate2
 
 	; Bomb can be grabbed.
 
@@ -11868,7 +11868,7 @@ _kingMoblin_stateF:
 	sub (hl)
 	add $08
 	cp $11
-	jr c,_kingMoblin_grabBomb
+	jr c,kingMoblin_grabBomb
 
 	; No; must move toward it
 	ld a,(hl)
@@ -11877,9 +11877,9 @@ _kingMoblin_stateF:
 	ld l,Enemy.var32
 	ld (hl),a
 	ld b,$11 ; state $11
-	jp _kingMoblin_setAngleStateAndAnimation
+	jp kingMoblin_setAngleStateAndAnimation
 
-_kingMoblin_grabBomb:
+kingMoblin_grabBomb:
 	ld a,Object.state
 	call objectGetRelatedObject2Var
 	ld a,(hl)
@@ -11892,11 +11892,11 @@ _kingMoblin_grabBomb:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$0c
-	jp _kingMoblin_initBombPickupAnimation
+	jp kingMoblin_initBombPickupAnimation
 
 
 ; Moving to centre of screen
-_kingMoblin_state10:
+kingMoblin_state10:
 	ld e,Enemy.xh
 	ld a,(de)
 	sub $4e
@@ -11913,13 +11913,13 @@ _kingMoblin_state10:
 ++
 	call objectApplySpeed
 
-_kingMoblin_animate2:
+kingMoblin_animate2:
 	jp enemyAnimate
 
 
 ; Moving toward bomb
-_kingMoblin_state11:
-	call _kingMoblin_checkMoveToCentre
+kingMoblin_state11:
+	call kingMoblin_checkMoveToCentre
 	ret nz
 
 	call objectApplySpeed
@@ -11930,19 +11930,19 @@ _kingMoblin_state11:
 	sub (hl)
 	add $08
 	cp $11
-	jr c,_kingMoblin_grabBomb
+	jr c,kingMoblin_grabBomb
 	jp enemyAnimate
 
 
 ; Just died
-_kingMoblin_state12:
+kingMoblin_state12:
 	call objectApplySpeed
 	ld e,Enemy.yh
 	ld a,(de)
 	cp $0c
 	ret nc
 
-	call _ecom_incState
+	call ecom_incState
 
 	ld l,Enemy.angle
 	ld (hl),$10
@@ -11959,12 +11959,12 @@ _kingMoblin_state12:
 
 
 ; Falling to ground
-_kingMoblin_state13:
+kingMoblin_state13:
 	ld c,$20
 	call objectUpdateSpeedZAndBounce
 	jp nc,objectApplySpeed
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),150
 	ld l,Enemy.yh
@@ -11973,7 +11973,7 @@ _kingMoblin_state13:
 
 
 ; Wait for signal from ENEMYID_KING_MOBLIN_MINION to go to state $15?
-_kingMoblin_state14:
+kingMoblin_state14:
 	ld e,Enemy.var33
 	ld a,(de)
 	or a
@@ -11983,7 +11983,7 @@ _kingMoblin_state14:
 	rrca
 	ret c
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld l,Enemy.state
@@ -11994,15 +11994,15 @@ _kingMoblin_state14:
 	jp enemySetAnimation
 
 @gotoState15:
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter2
 	ld (hl),98
 	ret
 
 
 ; All bombs at top of screen explode, then initiates warp outside
-_kingMoblin_state15:
-	call _ecom_decCounter2
+kingMoblin_state15:
+	call ecom_decCounter2
 	jr z,@warpOutside
 
 	; Explosion every 32 frames
@@ -12057,7 +12057,7 @@ _kingMoblin_state15:
 ; bomb on screen. Sets state to $10 while moving, $0b when reached centre.
 ;
 ; @param[out]	zflag	nz if state changed
-_kingMoblin_checkMoveToCentre:
+kingMoblin_checkMoveToCentre:
 	ld a,Object.id
 	call objectGetRelatedObject2Var
 	ld a,(hl)
@@ -12065,7 +12065,7 @@ _kingMoblin_checkMoveToCentre:
 	ret z
 
 ;;
-_kingMoblin_moveToCentre:
+kingMoblin_moveToCentre:
 	ld h,d
 	ld l,Enemy.xh
 	ld a,(hl)
@@ -12078,13 +12078,13 @@ _kingMoblin_moveToCentre:
 	ld (hl),30
 	ld b,$0b
 	xor a
-	jr _kingMoblin_setStateAndAnimation
+	jr kingMoblin_setStateAndAnimation
 
 @moveTowardCentre:
 	cp $b0
 	ld b,$10
 
-_kingMoblin_setAngleStateAndAnimation:
+kingMoblin_setAngleStateAndAnimation:
 	ld a,ANGLE_RIGHT
 	jr nc,+
 	ld a,ANGLE_LEFT
@@ -12094,7 +12094,7 @@ _kingMoblin_setAngleStateAndAnimation:
 	swap a
 	rlca
 
-_kingMoblin_setStateAndAnimation:
+kingMoblin_setStateAndAnimation:
 	ld l,Enemy.state
 	ld (hl),b
 	call enemySetAnimation

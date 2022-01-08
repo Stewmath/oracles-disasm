@@ -39,7 +39,7 @@ updateSpecialObjects:
 	ld hl,wLinkTurningDisabled
 	res 7,(hl)
 
-	call _updateGameKeysPressed
+	call updateGameKeysPressed
 
 	ld hl,w1Companion
 	call @updateSpecialObject
@@ -53,7 +53,7 @@ updateSpecialObjects:
 	ld hl,w1Link
 	call @updateSpecialObject
 
-	call _updateLinkInvincibilityCounter
+	call updateLinkInvincibilityCounter
 
 	ld a,(wLinkPlayingInstrument)
 	ld (wLinkRidingObject),a
@@ -94,35 +94,35 @@ updateSpecialObjects:
 	ld l,Object.id
 	ld a,(hl)
 	rst_jumpTable
-	.dw  specialObjectCode_link
+	.dw specialObjectCode_link
 .ifdef ROM_AGES
-	.dw  specialObjectCode_transformedLink
+	.dw specialObjectCode_transformedLink
 .else
-	.dw  specialObjectCode_subrosiaDanceLink
+	.dw specialObjectCode_subrosiaDanceLink
 .endif
-	.dw  specialObjectCode_transformedLink
-	.dw  specialObjectCode_transformedLink
-	.dw  specialObjectCode_transformedLink
-	.dw  specialObjectCode_transformedLink
-	.dw  specialObjectCode_transformedLink
-	.dw  specialObjectCode_transformedLink
-	.dw  specialObjectCode_linkInCutscene
-	.dw  specialObjectCode_linkRidingAnimal
-	.dw _specialObjectCode_minecart
-	.dw _specialObjectCode_ricky
-	.dw _specialObjectCode_dimitri
-	.dw _specialObjectCode_moosh
-	.dw _specialObjectCode_maple
-	.dw  specialObjectCode_companionCutscene
-	.dw  specialObjectCode_companionCutscene
-	.dw  specialObjectCode_companionCutscene
-	.dw  specialObjectCode_companionCutscene
-	.dw _specialObjectCode_raft
+	.dw specialObjectCode_transformedLink
+	.dw specialObjectCode_transformedLink
+	.dw specialObjectCode_transformedLink
+	.dw specialObjectCode_transformedLink
+	.dw specialObjectCode_transformedLink
+	.dw specialObjectCode_transformedLink
+	.dw specialObjectCode_linkInCutscene
+	.dw specialObjectCode_linkRidingAnimal
+	.dw specialObjectCode_minecart
+	.dw specialObjectCode_ricky
+	.dw specialObjectCode_dimitri
+	.dw specialObjectCode_moosh
+	.dw specialObjectCode_maple
+	.dw specialObjectCode_companionCutscene
+	.dw specialObjectCode_companionCutscene
+	.dw specialObjectCode_companionCutscene
+	.dw specialObjectCode_companionCutscene
+	.dw specialObjectCode_raft
 
 ;;
 ; Updates wGameKeysPressed based on wKeysPressed, and updates wLinkAngle based on
 ; direction buttons pressed.
-_updateGameKeysPressed:
+updateGameKeysPressed:
 	ld a,(wKeysPressed)
 	ld c,a
 
@@ -438,7 +438,7 @@ specialObjectSetOamVariables:
 ;;
 ; Deals 4 points of damage (1/2 heart?) to link, and applies knockback in the opposite
 ; direction he is moving.
-_dealSpikeDamageToLink:
+dealSpikeDamageToLink:
 	ld a,(wLinkRidingObject)
 	ld b,a
 	ld h,d
@@ -488,7 +488,7 @@ linkApplyDamage_b5:
 	ret
 
 ;;
-_updateLinkInvincibilityCounter:
+updateLinkInvincibilityCounter:
 	ld hl,w1Link.invincibilityCounter
 	ld a,(hl)
 	or a
@@ -528,7 +528,7 @@ _updateLinkInvincibilityCounter:
 ; NOTE: wLastActiveTileType actually keeps track of the tile BELOW Link when in
 ; a sidescrolling section.
 ;
-_sidescrollUpdateActiveTile:
+sidescrollUpdateActiveTile:
 	call objectGetTileAtPosition
 	ld (wActiveTileIndex),a
 
@@ -548,7 +548,7 @@ _sidescrollUpdateActiveTile:
 ; constants/tileTypes.s).
 ;
 ; @param	d	Link object
-_linkApplyTileTypes:
+linkApplyTileTypes:
 	xor a
 	ld (wIsTileSlippery),a
 	ld a,(wLinkInAir)
@@ -575,7 +575,7 @@ _linkApplyTileTypes:
 	.dw @tileType_conveyor ; TILETYPE_RIGHTCONVEYOR
 	.dw @tileType_conveyor ; TILETYPE_DOWNCONVEYOR
 	.dw @tileType_conveyor ; TILETYPE_LEFTCONVEYOR
-	.dw _dealSpikeDamageToLink ; TILETYPE_SPIKE
+	.dw dealSpikeDamageToLink ; TILETYPE_SPIKE
 	.dw @tileType_cracked_ice ; TILETYPE_CRACKED_ICE
 	.dw @tileType_ice ; TILETYPE_ICE
 	.dw @tileType_lava ; TILETYPE_LAVA
@@ -687,7 +687,7 @@ _linkApplyTileTypes:
 ++
 	ld a,$80
 	ld (wcc92),a
-	jp _linkPullIntoHole
+	jp linkPullIntoHole
 
 @tileType_ice:
 	ld a,SNOWSHOE_RING
@@ -851,7 +851,7 @@ _linkApplyTileTypes:
 
 ;;
 ; Same as below, but operates on SpecialObject.angle, not a given variable.
-_linkAdjustAngleInSidescrollingArea:
+linkAdjustAngleInSidescrollingArea:
 	ld l,SpecialObject.angle
 
 ;;
@@ -859,7 +859,7 @@ _linkAdjustAngleInSidescrollingArea:
 ; This results in Link only moving in horizontal directions.
 ;
 ; @param	l	Angle variable to use
-_linkAdjustGivenAngleInSidescrollingArea:
+linkAdjustGivenAngleInSidescrollingArea:
 	ld h,d
 	ld e,l
 
@@ -889,13 +889,13 @@ _linkAdjustGivenAngleInSidescrollingArea:
 ; Prevents link from passing object d.
 ;
 ; @param	d	The object that Link shall not pass.
-_companionPreventLinkFromPassing_noExtraChecks:
+companionPreventLinkFromPassing_noExtraChecks:
 	ld hl,w1Link
 	jp preventObjectHFromPassingObjectD
 
 ;;
-_companionUpdateMovement:
-	call _companionCalculateAdjacentWallsBitset
+companionUpdateMovement:
+	call companionCalculateAdjacentWallsBitset
 	call specialObjectUpdatePosition
 
 	; Don't attempt to break tile on ground if in midair
@@ -908,7 +908,7 @@ _companionUpdateMovement:
 ;;
 ; Calculate position of the tile beneath the companion's feet, to see if it can be broken
 ; (just by walking on it)
-_companionTryToBreakTileFromMoving:
+companionTryToBreakTileFromMoving:
 	ld h,d
 	ld l,SpecialObject.yh
 	ld a,(hl)
@@ -922,7 +922,7 @@ _companionTryToBreakTileFromMoving:
 
 ;;
 ; @param	d	Special object
-_companionCalculateAdjacentWallsBitset:
+companionCalculateAdjacentWallsBitset:
 	ld e,SpecialObject.adjacentWallsBitset
 	xor a
 	ld (de),a
@@ -943,7 +943,7 @@ _companionCalculateAdjacentWallsBitset:
 	add c
 	ld c,a
 	push hl
-	call _checkCollisionForCompanion
+	call checkCollisionForCompanion
 	pop hl
 	ldh a,(<hFF8B)
 	rla
@@ -968,7 +968,7 @@ _companionCalculateAdjacentWallsBitset:
 ; @param	bc	Position to check
 ; @param	d	A special object (should be a companion?)
 ; @param[out]	cflag	Set if a collision happened
-_checkCollisionForCompanion:
+checkCollisionForCompanion:
 	; Animals can't pass through climbable vines
 	call getTileAtPosition
 	ld a,(hl)
@@ -1023,7 +1023,7 @@ _checkCollisionForCompanion:
 ; @param[out]	a	Collision value of tile at object's position + offset
 ; @param[out]	b	Tile index at object's position + offset
 ; @param[out]	hl	Address of collision value
-_specialObjectGetRelativeTileWithDirectionTable:
+specialObjectGetRelativeTileWithDirectionTable:
 	ld e,SpecialObject.direction
 	ld a,(de)
 	rst_addDoubleIndex
@@ -1034,7 +1034,7 @@ _specialObjectGetRelativeTileWithDirectionTable:
 ; @param[out]	a	Collision value of tile at object's position + offset
 ; @param[out]	b	Tile index at object's position + offset
 ; @param[out]	hl	Address of collision value
-_specialObjectGetRelativeTileFromHl:
+specialObjectGetRelativeTileFromHl:
 	ldi a,(hl)
 	ld b,a
 	ld c,(hl)
@@ -1046,7 +1046,7 @@ _specialObjectGetRelativeTileFromHl:
 
 ;;
 ; @param[out]	zflag	nz if an object is moving away from a wall
-_specialObjectCheckMovingAwayFromWall:
+specialObjectCheckMovingAwayFromWall:
 	; Check that the object is trying to move
 	ld h,d
 	ld l,SpecialObject.angle
@@ -1059,7 +1059,7 @@ _specialObjectCheckMovingAwayFromWall:
 	and $1f
 	ld (hl),a
 
-	call _specialObjectCheckFacingWall
+	call specialObjectCheckFacingWall
 	ld c,a
 
 	; Uninvert angle
@@ -1080,7 +1080,7 @@ _specialObjectCheckMovingAwayFromWall:
 ; @param[out]	a	The bits from adjacentWallsBitset corresponding to the direction
 ;			it's moving in
 ; @param[out]	zflag	nz if an object is moving toward a wall
-_specialObjectCheckMovingTowardWall:
+specialObjectCheckMovingTowardWall:
 	; Check that the object is trying to move
 	ld h,d
 	ld l,SpecialObject.angle
@@ -1093,7 +1093,7 @@ _specialObjectCheckMovingTowardWall:
 ; @param	h	Special object
 ; @param[out]	a	The bits from adjacentWallsBitset corresponding to the direction
 ;			it's moving in
-_specialObjectCheckFacingWall:
+specialObjectCheckFacingWall:
 	ld bc,$0000
 
 	; Check if straight left or right
@@ -1141,7 +1141,7 @@ _specialObjectCheckFacingWall:
 ; Create an item which deals damage 7.
 ;
 ; @param	bc	Item ID
-_companionCreateItem:
+companionCreateItem:
 	call getFreeItemSlot
 	ret nz
 	jr ++
@@ -1150,7 +1150,7 @@ _companionCreateItem:
 ; Create the weapon item which deals damage 7.
 ;
 ; @param	bc	Item ID
-_companionCreateWeaponItem:
+companionCreateWeaponItem:
 	ld hl,w1WeaponItem.enabled
 	ld a,(hl)
 	or a
@@ -1171,7 +1171,7 @@ _companionCreateWeaponItem:
 ; direction.
 ;
 ; @param	c	Base animation index?
-_companionUpdateDirectionAndAnimate:
+companionUpdateDirectionAndAnimate:
 	ld e,SpecialObject.direction
 	ld a,(de)
 	ld (w1Link.direction),a
@@ -1189,7 +1189,7 @@ _companionUpdateDirectionAndAnimate:
 ; Same as below, but updates the companion's direction based on its angle first?
 ;
 ; @param	c	Base animation index?
-_companionUpdateDirectionAndSetAnimation:
+companionUpdateDirectionAndSetAnimation:
 	ld e,SpecialObject.angle
 	ld a,(de)
 	add a
@@ -1200,7 +1200,7 @@ _companionUpdateDirectionAndSetAnimation:
 
 ;;
 ; @param	c	Base animation index? (Added with direction, var38)
-_companionSetAnimation:
+companionSetAnimation:
 	ld h,d
 	ld a,c
 	ld l,SpecialObject.direction
@@ -1213,7 +1213,7 @@ _companionSetAnimation:
 ; Relates to mounting a companion?
 ;
 ; @param[out]	zflag	Set if mounted successfully?
-_companionTryToMount:
+companionTryToMount:
 	ld a,(wActiveTileType)
 	cp TILETYPE_HOLE
 	jr z,@cantMount
@@ -1262,7 +1262,7 @@ _companionTryToMount:
 ; a companion.
 ;
 ; @param	a	Link's angle
-_setLinkMountingSpeed:
+setLinkMountingSpeed:
 	ld (wLinkAngle),a
 	ld a,$81
 	ld (wLinkInAir),a
@@ -1283,14 +1283,14 @@ _setLinkMountingSpeed:
 ;;
 ; @param[out]	a	Hazard type (see "objectCheckIsOnHazard")
 ; @param[out]	cflag	Set if the companion is on a hazard
-_companionCheckHazards:
+companionCheckHazards:
 	call objectCheckIsOnHazard
 	ld h,d
 	ret nc
 
 ;;
 ; Sets a companion's state to 4, which handles falling in a hazard.
-_companionGotoHazardHandlingState:
+companionGotoHazardHandlingState:
 	push af
 	ld l,SpecialObject.state
 	ld a,$04
@@ -1401,7 +1401,7 @@ companionDismount:
 	srl a
 	ld (hl),a
 
-	call _setLinkMountingSpeed
+	call setLinkMountingSpeed
 
 	ld hl,w1Link.angle
 	ld (hl),$ff
@@ -1448,7 +1448,7 @@ saveLinkLocalRespawnAndCompanionPosition:
 
 ;;
 ; @param[out]	zflag	Set if the companion has reached the center of the hole
-_companionDragToCenterOfHole:
+companionDragToCenterOfHole:
 	ld e,SpecialObject.var3d
 	ld a,(de)
 	or a
@@ -1516,7 +1516,7 @@ _companionDragToCenterOfHole:
 	ret
 
 ;;
-_companionRespawn:
+companionRespawn:
 	xor a
 	ld (wDisableScreenTransitions),a
 	ld (wLinkForceState),a
@@ -1542,7 +1542,7 @@ _companionRespawn:
 	jr nz,@invalidPosition
 
 	call objectGetPosition
-	call _checkCollisionForCompanion
+	call checkCollisionForCompanion
 	jr c,@invalidPosition
 
 	call objectCheckIsOnHazard
@@ -1592,7 +1592,7 @@ _companionRespawn:
 ; Checks if a companion's moving toward a cliff from the top, to hop down if so.
 ;
 ; @param[out]	zflag	Set if the companion should hop down a cliff
-_companionCheckHopDownCliff:
+companionCheckHopDownCliff:
 	; Make sure we're not moving at an angle
 	ld a,(wLinkAngle)
 	ld c,a
@@ -1605,7 +1605,7 @@ _companionCheckHopDownCliff:
 	cp c
 	ret nz
 
-	call _specialObjectCheckMovingTowardWall
+	call specialObjectCheckMovingTowardWall
 	cp $03  ; Wall to the right?
 	jr z,++
 	cp $0c  ; Wall to the left?
@@ -1674,7 +1674,7 @@ _companionCheckHopDownCliff:
 
 ;;
 ; Sets a bunch of variables the moment Link completes the mounting animation.
-_companionFinalizeMounting:
+companionFinalizeMounting:
 	ld h,d
 	ld l,SpecialObject.enabled
 	set 1,(hl)
@@ -1720,7 +1720,7 @@ _companionFinalizeMounting:
 ; Something to do with dismounting companions?
 ;
 ; @param[out]	zflag
-_companionFunc_47d8:
+companionFunc_47d8:
 	ld h,d
 	ld l,SpecialObject.var3c
 	ld a,(hl)
@@ -1757,7 +1757,7 @@ _companionFunc_47d8:
 	ret
 
 ;;
-_companionGotoDismountState:
+companionGotoDismountState:
 	ld e,SpecialObject.var38
 	ld a,(de)
 	or a
@@ -1775,8 +1775,8 @@ _companionGotoDismountState:
 ; Link)
 ;
 ; @param	c	Animation
-_companionSetAnimationAndGotoState5:
-	call _companionSetAnimation
+companionSetAnimationAndGotoState5:
+	call companionSetAnimation
 	ld a,$05
 ++
 	ld e,SpecialObject.state
@@ -1792,7 +1792,7 @@ _companionSetAnimationAndGotoState5:
 ;
 ; May return from caller.
 ;
-_companionCheckCanSpawn:
+companionCheckCanSpawn:
 	ld e,SpecialObject.state
 	ld a,(de)
 	or a
@@ -1873,7 +1873,7 @@ _companionCheckCanSpawn:
 ;;
 ; Returns from caller if the companion should not be updated right now.
 ;
-_companionRetIfInactive:
+companionRetIfInactive:
 	; Always update when in state 0 (uninitialized)
 	ld e,SpecialObject.state
 	ld a,(de)
@@ -1883,10 +1883,10 @@ _companionRetIfInactive:
 	; Don't update when text is on-screen
 	ld a,(wTextIsActive)
 	or a
-	jr nz,_companionRetIfInactiveWithoutStateCheck@ret
+	jr nz,companionRetIfInactiveWithoutStateCheck@ret
 
 ;;
-_companionRetIfInactiveWithoutStateCheck:
+companionRetIfInactiveWithoutStateCheck:
 	; Don't update when screen is scrolling, palette is fading, or wDisabledObjects is
 	; set to something.
 	ld a,(wScrollMode)
@@ -1903,7 +1903,7 @@ _companionRetIfInactiveWithoutStateCheck:
 	ret
 
 ;;
-_companionSetAnimationToVar3f:
+companionSetAnimationToVar3f:
 	ld h,d
 	ld l,SpecialObject.var3f
 	ld a,(hl)
@@ -1914,7 +1914,7 @@ _companionSetAnimationToVar3f:
 
 ;;
 ; Manipulates a companion's oam flags to make it flash when charging an attack.
-_companionFlashFromChargingAnimation:
+companionFlashFromChargingAnimation:
 	ld hl,w1Link.oamFlagsBackup
 	ld a,(wFrameCounter)
 	bit 2,a
@@ -1931,7 +1931,7 @@ _companionFlashFromChargingAnimation:
 
 ;;
 ; @param[out]	zflag	Set if complete
-_companionCheckMountingComplete:
+companionCheckMountingComplete:
 	; Check if something interrupted the mounting?
 .ifdef ROM_AGES
 	ld a,(wDisallowMountingCompanion)
@@ -1989,7 +1989,7 @@ _companionCheckMountingComplete:
 	ret
 
 ;;
-_companionCheckEnableTerrainEffects:
+companionCheckEnableTerrainEffects:
 	ld h,d
 	ld l,SpecialObject.enabled
 	ld a,(hl)
@@ -2039,7 +2039,7 @@ _companionCheckEnableTerrainEffects:
 
 ;;
 ; Set the animal's draw priority relative to Link's position.
-_companionSetPriorityRelativeToLink:
+companionSetPriorityRelativeToLink:
 	call objectSetPriorityRelativeToLink_withTerrainEffects
 	dec b
 	and $c0
@@ -2052,7 +2052,7 @@ _companionSetPriorityRelativeToLink:
 ;
 ; @param[out]	cflag	nc if counter1 has reached 0 (should jump down the cliff).
 ; @param[out]	zflag	Same as carry
-_companionDecCounter1ToJumpDownCliff:
+companionDecCounter1ToJumpDownCliff:
 	ld e,SpecialObject.counter1
 	ld a,(de)
 	or a
@@ -2077,7 +2077,7 @@ _companionDecCounter1ToJumpDownCliff:
 	ret
 
 ;;
-_companionDecCounter1IfNonzero:
+companionDecCounter1IfNonzero:
 	ld h,d
 	ld l,SpecialObject.counter1
 	ld a,(hl)
@@ -2091,21 +2091,21 @@ _companionDecCounter1IfNonzero:
 ; animParameter is set).
 ;
 ; @param[out]	cflag	Set if the animation finished and the companion has respawned.
-_companionAnimateDrowningOrFallingThenRespawn:
+companionAnimateDrowningOrFallingThenRespawn:
 	call specialObjectAnimate
 	ld e,SpecialObject.animParameter
 	ld a,(de)
 	rlca
 	ret nc
 
-	call _companionRespawn
+	call companionRespawn
 	scf
 	ret
 
 ;;
 ; @param[out]	hl	Companion's counter2 variable
-_companionInitializeOnEnteringScreen:
-	call _companionCheckCanSpawn
+companionInitializeOnEnteringScreen:
+	call companionCheckCanSpawn
 	ld l,SpecialObject.state
 	ld (hl),$0c
 	ld l,SpecialObject.var03
@@ -2117,9 +2117,9 @@ _companionInitializeOnEnteringScreen:
 ; Used with dimitri and moosh when they're walking into the screen.
 ;
 ; @param	hl	Table of direction offsets
-_companionRetIfNotFinishedWalkingIn:
+companionRetIfNotFinishedWalkingIn:
 	; Check that the tile in front has collision value 0
-	call _specialObjectGetRelativeTileWithDirectionTable
+	call specialObjectGetRelativeTileWithDirectionTable
 	or a
 	ret nz
 
@@ -2135,19 +2135,19 @@ _companionRetIfNotFinishedWalkingIn:
 	ret
 
 ;;
-_companionForceMount:
+companionForceMount:
 	ld a,(wMenuDisabled)
 	push af
 	xor a
 	ld (wMenuDisabled),a
 	ld (w1Link.invincibilityCounter),a
-	call _companionTryToMount
+	call companionTryToMount
 	pop af
 	ld (wMenuDisabled),a
 	ret
 
 ;;
-_companionDecCounter1:
+companionDecCounter1:
 	ld h,d
 	ld l,SpecialObject.counter1
 	ld a,(hl)
@@ -2173,31 +2173,31 @@ specialObjectCode_link:
 	ld e,<w1Link.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _linkState00
-	.dw _linkState01
-	.dw _linkState02
-	.dw _linkState03
-	.dw _linkState04
-	.dw _linkState05
-	.dw _linkState06
+	.dw linkState00
+	.dw linkState01
+	.dw linkState02
+	.dw linkState03
+	.dw linkState04
+	.dw linkState05
+	.dw linkState06
 	.dw linkState07
-	.dw _linkState08
-	.dw _linkState09
-	.dw _linkState0a
-	.dw _linkState0b
-	.dw _linkState0c
-	.dw _linkState0d
-	.dw _linkState0e
-	.dw _linkState0f
-	.dw _linkState10
-	.dw _linkState11
-	.dw _linkState12
-	.dw _linkState13
-	.dw _linkState14
+	.dw linkState08
+	.dw linkState09
+	.dw linkState0a
+	.dw linkState0b
+	.dw linkState0c
+	.dw linkState0d
+	.dw linkState0e
+	.dw linkState0f
+	.dw linkState10
+	.dw linkState11
+	.dw linkState12
+	.dw linkState13
+	.dw linkState14
 
 ;;
 ; LINK_STATE_00
-_linkState00:
+linkState00:
 	call clearAllParentItems
 	call specialObjectSetOamVariables
 	ld a,LINK_ANIM_MODE_WALK
@@ -2244,49 +2244,49 @@ _linkState00:
 	ld (de),a
 +
 	call objectSetVisiblec1
-	call _checkLinkForceState
-	jp _initLinkStateAndAnimateStanding
+	call checkLinkForceState
+	jp initLinkStateAndAnimateStanding
 
 ;;
 ; LINK_STATE_WARPING
-_linkState0a:
+linkState0a:
 	ld a,(wWarpTransition)
 	and $0f
 	rst_jumpTable
-	.dw _warpTransition0
-	.dw _warpTransition1
-	.dw _warpTransition2
-	.dw _warpTransition3
-	.dw _warpTransition4
-	.dw _warpTransition5
-	.dw _warpTransition6
+	.dw warpTransition0
+	.dw warpTransition1
+	.dw warpTransition2
+	.dw warpTransition3
+	.dw warpTransition4
+	.dw warpTransition5
+	.dw warpTransition6
 .ifdef ROM_AGES
-	.dw _warpTransitionA
+	.dw warpTransitionA
 .else
-	.dw _warpTransition7
+	.dw warpTransition7
 .endif
-	.dw _warpTransition8
-	.dw _warpTransition9
-	.dw _warpTransitionA
-	.dw _warpTransitionB
-	.dw _warpTransitionC
-	.dw _warpTransitionA
-	.dw _warpTransitionE
-	.dw _warpTransitionF
+	.dw warpTransition8
+	.dw warpTransition9
+	.dw warpTransitionA
+	.dw warpTransitionB
+	.dw warpTransitionC
+	.dw warpTransitionA
+	.dw warpTransitionE
+	.dw warpTransitionF
 
 ;;
 ; TRANSITION_DEST_BASIC
-_warpTransition0:
-	call _warpTransition_setLinkFacingDir
+warpTransition0:
+	call warpTransition_setLinkFacingDir
 ;;
 ; TRANSITION_DEST_UNKNOWN_A
-_warpTransitionA:
-	jp _initLinkStateAndAnimateStanding
+warpTransitionA:
+	jp initLinkStateAndAnimateStanding
 
 ;;
 ; TRANSITION_DEST_X_SHIFTED
 ; Shifts Link's X position left 8, but otherwise behaves like Transition 1
-_warpTransitionE:
+warpTransitionE:
 	call objectCenterOnTile
 	ld a,(hl)
 	and $f0
@@ -2295,32 +2295,32 @@ _warpTransitionE:
 ;;
 ; TRANSITION_DEST_SET_RESPAWN
 ; Behaves like transition 0, but saves link's deathwarp point
-_warpTransition1:
-	call _warpTransition_setLinkFacingDir
+warpTransition1:
+	call warpTransition_setLinkFacingDir
 
 ;;
-_warpUpdateRespawnPoint:
+warpUpdateRespawnPoint:
 	ld a,(wActiveGroup)
 	cp NUM_UNIQUE_GROUPS ; Don't update respawn point in sidescrolling rooms?
-	jr nc,_warpTransition0
+	jr nc,warpTransition0
 	call setDeathRespawnPoint
 	call updateLinkLocalRespawnPosition
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 ;;
 ; TRANSITION_DEST_UNKNOWN_C
 ; Behaves like transition 0, but sets link's facing direction in a way I don't understand
-_warpTransitionC:
+warpTransitionC:
 	ld a,(wcc50)
 	and $03
 	ld e,<w1Link.direction
 	ld (de),a
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 ;;
-_warpTransition_setLinkFacingDir:
+warpTransition_setLinkFacingDir:
 	call objectGetTileAtPosition
-	ld hl,_facingDirAfterWarpTable
+	ld hl,facingDirAfterWarpTable
 	call lookupCollisionTable
 	jr c,+
 	ld a,DIR_DOWN
@@ -2329,7 +2329,7 @@ _warpTransition_setLinkFacingDir:
 	ld (de),a
 	ret
 
-_facingDirAfterWarpTable:
+facingDirAfterWarpTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -2370,7 +2370,7 @@ _facingDirAfterWarpTable:
 ;;
 ; TRANSITION_SRC_FADEOUT
 ; Screen fades out.
-_warpTransition2:
+warpTransition2:
 	ld a,$03
 	ld (wWarpTransition2),a
 	ld a,SND_ENTERCAVE
@@ -2381,7 +2381,7 @@ _warpTransition2:
 ; TRANSITION_SRC_LEAVESCREEN
 ; Used by both sources and destinations for transitions where link walks off the screen (or comes in
 ; from off the screen). It saves link's deathwarp point.
-_warpTransition3:
+warpTransition3:
 	ld e,<w1Link.warpVar1
 	ld a,(de)
 	or a
@@ -2409,7 +2409,7 @@ _warpTransition3:
 	ld (hl),a
 
 	call updateLinkSpeed_standard
-	call _animateLinkStanding
+	call animateLinkStanding
 	ld a,(wWarpTransition)
 	rlca
 	jr c,@destInit
@@ -2441,7 +2441,7 @@ _warpTransition3:
 	; Update respawn point if this is a destination
 	ld a,(wWarpTransition)
 	bit 7,a
-	jp nz,_warpUpdateRespawnPoint
+	jp nz,warpUpdateRespawnPoint
 
 	swap a
 	and $03
@@ -2461,7 +2461,7 @@ _warpTransition3:
 	call setShortPosition
 	ld l,<w1Link.warpVar2
 	ld (hl),$1c
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 @enterFromMiddleBottom:
 	ld a,$01
@@ -2514,10 +2514,10 @@ _warpTransition3:
 ;;
 ; TRANSITION_DEST_DONT_SET_RESPAWN
 ; TRANSITION_SRC_INSTANT
-_warpTransition4:
+warpTransition4:
 	ld a,(wWarpTransition)
 	rlca
-	jp c,_warpTransition0
+	jp c,warpTransition0
 
 	ld a,$01
 	ld (wWarpTransition2),a
@@ -2527,15 +2527,15 @@ _warpTransition4:
 ;;
 ; TRANSITION_DEST_FALL
 ; Link falls into the screen
-_warpTransition5:
+warpTransition5:
 	ld e,<w1Link.warpVar1
 	ld a,(de)
 	rst_jumpTable
-	.dw _warpTransition5_00
-	.dw _warpTransition5_01
-	.dw _warpTransition5_02
+	.dw warpTransition5_00
+	.dw warpTransition5_01
+	.dw warpTransition5_02
 
-_warpTransition5_00:
+warpTransition5_00:
 	ld a,$01
 	ld (de),a
 	ld bc,$0020
@@ -2552,7 +2552,7 @@ _warpTransition5_00:
 	ld a,LINK_ANIM_MODE_FALL
 	jp specialObjectSetAnimation
 
-_warpTransition5_01:
+warpTransition5_01:
 	call specialObjectAnimate
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
@@ -2570,17 +2570,17 @@ _warpTransition5_01:
 	; If he didn't fall into a hazard, make link "collapse" when he lands.
 	ld hl,hazardCollisionTable
 	call lookupCollisionTable
-	jp nc,_warpTransition7@linkCollapsed
-	jp _initLinkStateAndAnimateStanding
+	jp nc,warpTransition7@linkCollapsed
+	jp initLinkStateAndAnimateStanding
 
 .ifdef ROM_SEASONS
 @trampoline:
 	ld a,(wActiveGroup)
 	and $06
 	cp $04
-	jp nz,_warpTransition7@linkCollapsed
+	jp nz,warpTransition7@linkCollapsed
 	; group 4/5
-	jp _bounceLinkOffTrampolineAfterFalling
+	jp bounceLinkOffTrampolineAfterFalling
 .endif
 
 
@@ -2588,14 +2588,14 @@ _warpTransition5_01:
 
 ; TRANSITION_DEST_FROM_TRAMPOLINE
 ; Jumped in from a trampoline.
-_warpTransition6:
+warpTransition6:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _warpTransition6_00
-	.dw _warpTransition6_01
+	.dw warpTransition6_00
+	.dw warpTransition6_01
 
-_warpTransition6_00:
+warpTransition6_00:
 	ld a,$01
 	ld (de),a
 
@@ -2619,12 +2619,12 @@ _warpTransition6_00:
 	ld a,LINK_ANIM_MODE_FALL
 	call specialObjectSetAnimation
 
-_warpTransition6_01:
+warpTransition6_01:
 	ld c,$18
 	call objectUpdateSpeedZ_paramC
 	jr z,@hitGround
 	call specialObjectAnimate
-	call _specialObjectUpdateAdjacentWallsBitset
+	call specialObjectUpdateAdjacentWallsBitset
 	ld e,SpecialObject.speed
 	ld a,SPEED_80
 	ld (de),a
@@ -2637,15 +2637,15 @@ _warpTransition6_01:
 @hitGround:
 	call objectGetTileAtPosition
 	cp TILEINDEX_TRAMPOLINE
-	jp z,_bounceLinkOffTrampolineAfterFalling
-	jp _initLinkStateAndAnimateStanding
+	jp z,bounceLinkOffTrampolineAfterFalling
+	jp initLinkStateAndAnimateStanding
 .endif
 
 
 ;;
 ; TRANSITION_DEST_FALL_INTO_HOLLYS_HOUSE
 ; Only used in Seasons.
-_warpTransition7:
+warpTransition7:
 	ld e,<w1Link.warpVar1
 	ld a,(de)
 	rst_jumpTable
@@ -2712,19 +2712,19 @@ _warpTransition7:
 @warpVar3:
 	call setDeathRespawnPoint
 
-_warpTransition5_02:
+warpTransition5_02:
 	call itemDecCounter1
 	ret nz
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 ;;
-_linkIncrementDirectionOnOddFrames:
+linkIncrementDirectionOnOddFrames:
 	ld a,(wFrameCounter)
 	rrca
 	ret nc
 
 ;;
-_linkIncrementDirection:
+linkIncrementDirection:
 	ld e,<w1Link.direction
 	ld a,(de)
 	inc a
@@ -2735,7 +2735,7 @@ _linkIncrementDirection:
 ;;
 ; TRANSITION_SRC_SUBROSIA
 ; A subrosian warp portal.
-_warpTransition8:
+warpTransition8:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -2782,7 +2782,7 @@ _warpTransition8:
 +
 	ld a,(wFrameCounter)
 	and $03
-	call z,_linkIncrementDirection
+	call z,linkIncrementDirection
 	call itemDecCounter1
 	ret nz
 	jp itemIncSubstate
@@ -2790,7 +2790,7 @@ _warpTransition8:
 @substate2:
 	ld c,$02
 	call objectUpdateSpeedZ_paramC
-	call _linkIncrementDirectionOnOddFrames
+	call linkIncrementDirectionOnOddFrames
 
 	ld h,d
 	ld l,SpecialObject.speedZ+1
@@ -2806,7 +2806,7 @@ _warpTransition8:
 	jp itemIncSubstate
 
 @substate3:
-	call _linkIncrementDirectionOnOddFrames
+	call linkIncrementDirectionOnOddFrames
 	call itemDecCounter1
 	ret nz
 	ld hl,wTmpcbb3
@@ -2814,7 +2814,7 @@ _warpTransition8:
 	jp itemIncSubstate
 
 @substate4:
-	call _linkIncrementDirectionOnOddFrames
+	call linkIncrementDirectionOnOddFrames
 	ld a,(wCutsceneState)
 	cp $02
 	ret nz
@@ -2826,7 +2826,7 @@ _warpTransition8:
 @substate5:
 	ld c,$02
 	call objectUpdateSpeedZ_paramC
-	call _linkIncrementDirectionOnOddFrames
+	call linkIncrementDirectionOnOddFrames
 	call itemDecCounter1
 	ret nz
 	jp itemIncSubstate
@@ -2838,7 +2838,7 @@ _warpTransition8:
 	and $03
 	ret nz
 
-	call _linkIncrementDirection
+	call linkIncrementDirection
 	ld hl,wTmpcbbc
 	dec (hl)
 	ret nz
@@ -2855,24 +2855,24 @@ _warpTransition8:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-	jp _linkIncrementDirection
+	jp linkIncrementDirection
 +
 	ld e,SpecialObject.direction
 	ld a,(de)
 	cp $02
-	jp nz,_linkIncrementDirection
+	jp nz,linkIncrementDirection
 	ld a,(wActiveMusic2)
 	ld (wActiveMusic),a
 	call playSound
 	call setDeathRespawnPoint
 	call updateLinkLocalRespawnPosition
 	call resetLinkInvincibility
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 ;;
 ; TRANSITION_SRC_FALL
 ; Fall out of the screen (like into a hole).
-_warpTransition9:
+warpTransition9:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -2909,7 +2909,7 @@ _warpTransition9:
 ;;
 ; TRANSITION_DEST_SLOWFALL
 ; Transition used in the beginning of the game. Updates respawn point.
-_warpTransitionB:
+warpTransitionB:
 	ld e,<w1Link.warpVar1
 	ld a,(de)
 	rst_jumpTable
@@ -2940,7 +2940,7 @@ _warpTransitionB:
 
 .ifdef ROM_AGES
 	call itemIncSubstate
-	call _animateLinkStanding
+	call animateLinkStanding
 	ld a,SND_SPLASH
 	jp playSound
 .else
@@ -2959,14 +2959,14 @@ _warpTransitionB:
 	ret nz
 
 	call objectSetVisiblec2
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 
 ;;
 ; TRANSITION_DEST_INVISIBLE
 ; Link does not appear.
-_warpTransitionF:
-	call _checkLinkForceState
+warpTransitionF:
+	call checkLinkForceState
 	jp objectSetInvisible
 
 
@@ -2975,7 +2975,7 @@ _warpTransitionF:
 ;;
 ; TRANSITION_DEST_TIMEWARP
 ; Warp in and create a portal. Doesn't update respawn. Ages only.
-_warpTransition6:
+warpTransition6:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3175,7 +3175,7 @@ _warpTransition6:
 
 	call updateLinkLocalRespawnPosition
 	call objectSetVisiblec2
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 
 ; Substates 4-7: Warp failed, Link will be sent back to the time he came from
@@ -3262,7 +3262,7 @@ _warpTransition6:
 
 ;;
 ; LINK_STATE_08
-_linkState08:
+linkState08:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3285,7 +3285,7 @@ _linkState08:
 	jp specialObjectSetAnimation
 
 @substate1:
-	call _checkLinkForceState
+	call checkLinkForceState
 
 	ld hl,wcc50
 	ld a,(hl)
@@ -3302,7 +3302,7 @@ _linkState08:
 	or a
 	ret nz
 
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 ;;
 linkCancelAllItemUsageAndClearAdjacentWallsBitset:
@@ -3317,7 +3317,7 @@ linkCancelAllItemUsage:
 
 ;;
 ; LINK_STATE_0e
-_linkState0e:
+linkState0e:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3355,7 +3355,7 @@ _linkState0e:
 .ifdef ROM_AGES
 ;;
 ; LINK_STATE_TOSSED_BY_GUARDS
-_linkState0f:
+linkState0f:
 	ld a,(wTextIsActive)
 	or a
 	ret nz
@@ -3405,12 +3405,12 @@ _linkState0f:
 @substate2:
 	call itemDecCounter1
 	ret nz
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 .endif
 
 ;;
 ; LINK_STATE_FORCE_MOVEMENT
-_linkState0b:
+linkState0b:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3440,12 +3440,12 @@ _linkState0b:
 	jp nz,specialObjectUpdatePosition
 
 	; When counter1 reaches 0, go back to LINK_STATE_NORMAL.
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 
 ;;
 ; LINK_STATE_04
-_linkState04:
+linkState04:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3490,7 +3490,7 @@ setLinkStateToDead:
 	call linkSetState
 ;;
 ; LINK_STATE_DYING
-_linkState03:
+linkState03:
 	xor a
 	ld (wLinkHealth),a
 	ld e,SpecialObject.substate
@@ -3501,12 +3501,12 @@ _linkState03:
 
 ; Link just started dying (initialization)
 @substate0:
-	call _specialObjectUpdateAdjacentWallsBitset
+	call specialObjectUpdateAdjacentWallsBitset
 
 	ld e,SpecialObject.knockbackCounter
 	ld a,(de)
 	or a
-	jp nz,_linkUpdateKnockback
+	jp nz,linkUpdateKnockback
 
 	ld h,d
 	ld l,SpecialObject.substate
@@ -3555,7 +3555,7 @@ _linkState03:
 ;  2: Respawn instantly
 ;  3: Fall down a hole, different behaviour?
 ;  4: Drown
-_linkState02:
+linkState02:
 	ld a,$ff
 	ld (wGameKeysPressed),a
 
@@ -3711,8 +3711,8 @@ _linkState02:
 
 	call linkApplyDamage
 	call objectSetVisiblec1
-	call _specialObjectUpdateAdjacentWallsBitset
-	jp _animateLinkStanding
+	call specialObjectUpdateAdjacentWallsBitset
+	jp animateLinkStanding
 
 
 ; Waiting for counter1 to reach 0 before switching back to LINK_STATE_NORMAL.
@@ -3724,7 +3724,7 @@ _linkState02:
 	ld l,SpecialObject.collisionType
 	set 7,(hl)
 
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 
 @substate4:
@@ -3733,7 +3733,7 @@ _linkState02:
 	bit 7,(hl)
 	jp z,specialObjectAnimate
 	call objectSetInvisible
-	jp _checkLinkForceState
+	jp checkLinkForceState
 
 
 ; Drowning instead of falling into a hole
@@ -3747,7 +3747,7 @@ _linkState02:
 .ifdef ROM_AGES
 ;;
 ; Makes Link surface from an underwater area if he's pressed B.
-_checkForUnderwaterTransition:
+checkForUnderwaterTransition:
 	ld a,(wDisableScreenTransitions)
 	or a
 	ret nz
@@ -3777,7 +3777,7 @@ _checkForUnderwaterTransition:
 	call checkLinkCanSurface
 	ret nc
 
-	; Return from the caller (_linkState01)
+	; Return from the caller (linkState01)
 	pop af
 
 	ld a,(wTilesetFlags)
@@ -3845,7 +3845,7 @@ _checkForUnderwaterTransition:
 .ifdef ROM_SEASONS
 ; Bouncing from trampoline, hitting the ceiling,
 ; or setting warp to floor above
-_linkState09:
+linkState09:
 	call retIfTextIsActive
 	ld e,SpecialObject.substate
 	ld a,(de)
@@ -3945,7 +3945,7 @@ _linkState09:
 	ret nz
 	call objectGetTileAtPosition
 	cp $07
-	jr z,_bounceLinkOffTrampolineAfterFalling
+	jr z,bounceLinkOffTrampolineAfterFalling
 	ld h,d
 	ld l,SpecialObject.substate
 	inc (hl)
@@ -3961,18 +3961,18 @@ _linkState09:
 -
 	xor a
 	ld (wLinkInAir),a
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 @substate6:
 	call specialObjectAnimate
-	call _specialObjectUpdateAdjacentWallsBitset
+	call specialObjectUpdateAdjacentWallsBitset
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jp nz,specialObjectUpdatePosition
 	call updateLinkLocalRespawnPosition
 	jr -
 
-_bounceLinkOffTrampolineAfterFalling:
+bounceLinkOffTrampolineAfterFalling:
 	call objectGetShortPosition
 	ld c,a
 	ld b,$02
@@ -4020,7 +4020,7 @@ _bounceLinkOffTrampolineAfterFalling:
 
 ;;
 ; LINK_STATE_GRABBED_BY_WALLMASTER
-_linkState0c:
+linkState0c:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -4080,7 +4080,7 @@ _linkState0c:
 ;;
 ; LINK_STATE_STONE
 ; Only used in Seasons for the Medusa boss
-_linkState13:
+linkState13:
 	ld a,$80
 	ld (wForceLinkPushAnimation),a
 
@@ -4114,7 +4114,7 @@ _linkState13:
 	ret
 
 
-; This is used by both _linkState13 and _linkState14.
+; This is used by both linkState13 and linkState14.
 ; Waits for counter1 to reach 0, then restores Link to normal.
 @substate1:
 	ld c,$40
@@ -4154,16 +4154,16 @@ _linkState13:
 
 	xor a
 	ld (wLinkForceState),a
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 ;;
 ; LINK_STATE_COLLAPSED
-_linkState14:
+linkState14:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
-	.dw _linkState13@substate1
+	.dw linkState13@substate1
 
 @substate0:
 	call itemIncSubstate
@@ -4183,7 +4183,7 @@ _linkState14:
 ;;
 ; LINK_STATE_GRABBED
 ; Grabbed by Like-like, Gohma, Veran spider form?
-_linkState0d:
+linkState0d:
 	ld a,$80
 	ld (wcc92),a
 	ld e,SpecialObject.substate
@@ -4260,7 +4260,7 @@ _linkState0d:
 
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
-	call _specialObjectUpdateAdjacentWallsBitset
+	call specialObjectUpdateAdjacentWallsBitset
 	call specialObjectUpdatePosition
 	jp specialObjectAnimate
 
@@ -4274,11 +4274,11 @@ _linkState0d:
 ++
 	xor a
 	ld (wWarpsDisabled),a
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 ;;
 ; LINK_STATE_SLEEPING
-_linkState05:
+linkState05:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -4300,7 +4300,7 @@ _linkState05:
 	ld l,$13
 .endif
 	ld a,$02
-	call _specialObjectSetVar37AndVar38
+	call specialObjectSetVar37AndVar38
 
 	ld bc,-$180
 	call objectSetSpeedZ
@@ -4314,7 +4314,7 @@ _linkState05:
 ; Jumping into the bed
 @substate1:
 	call specialObjectAnimate
-	call _specialObjectSetAngleRelativeToVar38
+	call specialObjectSetAngleRelativeToVar38
 	call objectApplySpeed
 
 	ld c,$20
@@ -4322,7 +4322,7 @@ _linkState05:
 	ret nz
 
 	call itemIncSubstate
-	jp _specialObjectSetPositionToVar38IfSet
+	jp specialObjectSetPositionToVar38IfSet
 
 ; Sleeping; do various things depending on "animParameter".
 @substate2:
@@ -4379,12 +4379,12 @@ _linkState05:
 
 	ld a,$81
 	ld (wLinkInAir),a
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 ;;
 ; LINK_STATE_06
 ; Moves Link up until he's no longer in a solid wall?
-_linkState06:
+linkState06:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -4450,7 +4450,7 @@ _linkState06:
 
 @substate3:
 	call specialObjectAnimate
-	call _specialObjectUpdateAdjacentWallsBitset
+	call specialObjectUpdateAdjacentWallsBitset
 	call specialObjectUpdatePosition
 	ld c,$18
 	call objectUpdateSpeedZ_paramC
@@ -4459,13 +4459,13 @@ _linkState06:
 	xor a
 	ld (wLinkInAir),a
 	ld (wWarpsDisabled),a
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
 .ifdef ROM_AGES
 ;;
 ; LINK_STATE_AMBI_POSSESSED_CUTSCENE
 ; This state is used during the cutscene in the black tower where Ambi gets un-possessed.
-_linkState09:
+linkState09:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -4584,7 +4584,7 @@ _linkState09:
 
 .else
 
-_linkState0f:
+linkState0f:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -4706,9 +4706,9 @@ _linkState0f:
 	ret nz
 	xor a
 	ld (wDisableLinkCollisionsAndMenu),a
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 
-_linkState10:
+linkState10:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -4728,7 +4728,7 @@ _linkState10:
 	; SpecialObject.angle
 	inc l
 	ld (hl),DIR_UP
-	jp _animateLinkStanding
+	jp animateLinkStanding
 
 @substate1:
 	call specialObjectAnimate
@@ -4747,7 +4747,7 @@ _linkState10:
 	jp nz,specialObjectUpdatePosition
 	ld a,(wCutsceneState)
 	dec a
-	jp nz,_initLinkStateAndAnimateStanding
+	jp nz,initLinkStateAndAnimateStanding
 	ld l,SpecialObject.substate
 	inc (hl)
 	; SpecialObject.counter1
@@ -4766,12 +4766,12 @@ _linkState10:
 	inc (hl)
 	ld a,$02
 	call fadeoutToWhiteWithDelay
-	jp _initLinkStateAndAnimateStanding
+	jp initLinkStateAndAnimateStanding
 .endif
 
 ;;
 ; LINK_STATE_SQUISHED
-_linkState11:
+linkState11:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -4831,16 +4831,16 @@ _linkState11:
 	jr nz,+
 
 	call respawnLink
-	jr _checkLinkForceState
+	jr checkLinkForceState
 +
 	ld a,LINK_STATE_DYING
 	ld (wLinkForceState),a
-	jr _checkLinkForceState
+	jr checkLinkForceState
 
 ;;
 ; Checks wLinkForceState, and sets Link's state to that value if it's nonzero.
 ; This also returns from the function that called it if his state changed.
-_checkLinkForceState:
+checkLinkForceState:
 	ld hl,wLinkForceState
 	ld a,(hl)
 	or a
@@ -4875,9 +4875,9 @@ linkSetState:
 ;;
 ; LINK_STATE_NORMAL
 ; LINK_STATE_10
-_linkState01:
+linkState01:
 .ifdef ROM_AGES
-_linkState10:
+linkState10:
 .endif
 	; This should prevent Link from ever doing his pushing animation.
 	; Under normal circumstances, this should be overwritten with $00 later, allowing
@@ -4900,7 +4900,7 @@ _linkState10:
 	jp nz,setLinkStateToDead
 
 	; This will return if [wLinkForceState] != 0
-	call _checkLinkForceState
+	call checkLinkForceState
 
 	call retIfTextIsActive
 
@@ -4949,12 +4949,12 @@ _linkState10:
 
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL
-	jp nz,_linkState01_sidescroll
+	jp nz,linkState01_sidescroll
 
 	; The rest of this code is only run in non-sidescrolling areas.
 
 	; Apply stuff like breakable floors, holes, conveyors, etc.
-	call _linkApplyTileTypes
+	call linkApplyTileTypes
 
 	; Let Link move around if a chest spawned on top of him
 	call checkAndUpdateLinkOnChest
@@ -4966,8 +4966,8 @@ _linkState10:
 	or a
 	ret nz
 
-	call _specialObjectUpdateAdjacentWallsBitset
-	call _linkUpdateKnockback
+	call specialObjectUpdateAdjacentWallsBitset
+	call linkUpdateKnockback
 
 	; Jump if drowning
 	ld a,(wLinkSwimmingState)
@@ -4992,9 +4992,9 @@ _linkState10:
 .ifdef ROM_SEASONS
 	call checkLinkPushingAgainstTreeStump
 .endif
-	call _checkLinkJumpingOffCliff
+	call checkLinkJumpingOffCliff
 ++
-	call _linkUpdateInAir
+	call linkUpdateInAir
 	ld a,(wLinkInAir)
 	or a
 	jr z,@notInAir
@@ -5007,23 +5007,23 @@ _linkState10:
 	ld e,SpecialObject.speedZ+1
 	ld a,(de)
 	bit 7,a
-	call z,_linkUpdateVelocity
+	call z,linkUpdateVelocity
 +
 	ld hl,wcc95
 	res 4,(hl)
-	call _specialObjectSetAngleRelativeToVar38
+	call specialObjectSetAngleRelativeToVar38
 	call specialObjectUpdatePosition
 	jp specialObjectAnimate
 
 @notInAir:
 	ld a,(wMagnetGloveState)
 	bit 6,a
-	jp nz,_animateLinkStanding
+	jp nz,animateLinkStanding
 
 	ld e,SpecialObject.knockbackCounter
 	ld a,(de)
 	or a
-	jp nz,_func_5631
+	jp nz,func_5631
 
 	ld h,d
 	ld l,SpecialObject.collisionType
@@ -5031,7 +5031,7 @@ _linkState10:
 
 	ld a,(wLinkSwimmingState)
 	or a
-	jp nz,_linkUpdateSwimming
+	jp nz,linkUpdateSwimming
 
 	call objectSetVisiblec1
 	ld a,(wLinkObjectIndex)
@@ -5051,7 +5051,7 @@ _linkState10:
 	jr @updateDirection
 +
 	; This will return if a transition occurs (pressed B in an underwater area).
-	call _checkForUnderwaterTransition
+	call checkForUnderwaterTransition
 .else
 	jr c,@updateDirection
 .endif
@@ -5071,7 +5071,7 @@ _linkState10:
 	jr z,+
 
 	; Do mermaid-suit-based movement
-	call _linkUpdateVelocity@mermaidSuit
+	call linkUpdateVelocity@mermaidSuit
 	jr ++
 +
 .endif
@@ -5090,7 +5090,7 @@ _linkState10:
 	; Slippery tile movement?
 	ld c,$88
 	call updateLinkSpeed_withParam
-	call _linkUpdateVelocity
+	call linkUpdateVelocity
 ++
 	ld a,(wLinkAngle)
 	rlca
@@ -5126,9 +5126,9 @@ _linkState10:
 
 @updateMovement:
 	; The value of 'c' here determines whether Link should move, what his animation
-	; should be, and whether the heart ring should apply. See the _linkUpdateMovement
+	; should be, and whether the heart ring should apply. See the linkUpdateMovement
 	; function for details.
-	call _linkUpdateMovement
+	call linkUpdateMovement
 
 @updateDirectionIfNotUsingItem:
 	ld a,(wLinkTurningDisabled)
@@ -5147,7 +5147,7 @@ linkResetSpeed:
 
 ;;
 ; Does something with Link's knockback when on a slippery tile?
-_func_5631:
+func_5631:
 	ld hl,wIsTileSlippery
 	bit 6,(hl)
 	ret z
@@ -5163,7 +5163,7 @@ _func_5631:
 ; @param	a		Bits 0,1 set if Link's y,x offsets should be added to the
 ;				counter, respectively.
 ; @param	wTmpcec0	Offsets of Link's movement, to be added to wHeartRingCounter.
-_updateHeartRingCounter:
+updateHeartRingCounter:
 	ld e,a
 	ld a,(wActiveRing)
 
@@ -5248,9 +5248,9 @@ _updateHeartRingCounter:
 	ret
 
 ;;
-; This is called from _linkState01 if [wLinkSwimmingState] != 0.
-; Only for non-sidescrolling areas. (See also _linkUpdateSwimming_sidescroll.)
-_linkUpdateSwimming:
+; This is called from linkState01 if [wLinkSwimmingState] != 0.
+; Only for non-sidescrolling areas. (See also linkUpdateSwimming_sidescroll.)
+linkUpdateSwimming:
 	ld a,(wLinkSwimmingState)
 	and $0f
 
@@ -5258,17 +5258,17 @@ _linkUpdateSwimming:
 	res 4,(hl)
 
 	rst_jumpTable
-	.dw _initLinkState
-	.dw _overworldSwimmingState1
-	.dw _overworldSwimmingState2
-	.dw _overworldSwimmingState3
-	.dw _linkUpdateDrowning
+	.dw initLinkState
+	.dw overworldSwimmingState1
+	.dw overworldSwimmingState2
+	.dw overworldSwimmingState3
+	.dw linkUpdateDrowning
 
 ;;
 ; Just entered the water
-_overworldSwimmingState1:
+overworldSwimmingState1:
 	call linkCancelAllItemUsage
-	call _linkSetSwimmingSpeed
+	call linkSetSwimmingSpeed
 
 .ifdef ROM_AGES
 	; Set counter1 to the number of frames to stay in swimmingState2.
@@ -5292,7 +5292,7 @@ _overworldSwimmingState1:
 	jr nz,@drownWithLessInvincibility
 
 .ifdef ROM_AGES
-	call _checkSwimmingOverSeawater
+	call checkSwimmingOverSeawater
 	jr z,@drown
 .endif
 
@@ -5337,16 +5337,16 @@ _overworldSwimmingState1:
 	jp linkCreateSplash
 
 ;;
-; This is called from _linkUpdateSwimming_sidescroll.
-_forceDrownLink:
+; This is called from linkUpdateSwimming_sidescroll.
+forceDrownLink:
 	ld hl,wLinkSwimmingState
 	set 6,(hl)
-	jr _overworldSwimmingState1@drownWithLessInvincibility
+	jr overworldSwimmingState1@drownWithLessInvincibility
 
 .ifdef ROM_AGES
 ;;
 ; @param[out]	zflag	Set if swimming over seawater (and you have the mermaid suit)
-_checkSwimmingOverSeawater:
+checkSwimmingOverSeawater:
 	ld a,(w1Link.var2f)
 	bit 6,a
 	ret nz
@@ -5357,7 +5357,7 @@ _checkSwimmingOverSeawater:
 
 ;;
 ; State 2: speed is locked for a few frames after entering the water
-_overworldSwimmingState2:
+overworldSwimmingState2:
 	call itemDecCounter1
 	jp nz,specialObjectUpdatePosition
 
@@ -5366,13 +5366,13 @@ _overworldSwimmingState2:
 
 ;;
 ; State 3: the normal state when swimming
-_overworldSwimmingState3:
+overworldSwimmingState3:
 .ifdef ROM_AGES
-	call _checkSwimmingOverSeawater
-	jr z,_overworldSwimmingState1@drown
+	call checkSwimmingOverSeawater
+	jr z,overworldSwimmingState1@drown
 .endif
 
-	call _linkUpdateDiving
+	call linkUpdateDiving
 
 	; Set Link's visibility layer to normal
 	call objectSetVisiblec1
@@ -5402,19 +5402,19 @@ _overworldSwimmingState3:
 	jr z,+
 
 	; Mermaid suit movement
-	call _linkUpdateVelocity@mermaidSuit
+	call linkUpdateVelocity@mermaidSuit
 	jp specialObjectUpdatePosition
 +
 .endif
 	; Flippers movement
-	call _linkUpdateFlippersSpeed
-	call _func_5933
+	call linkUpdateFlippersSpeed
+	call func_5933
 	jp specialObjectUpdatePosition
 
 
 ;;
 ; Deals with Link drowning
-_linkUpdateDrowning:
+linkUpdateDrowning:
 	ld a,$80
 	ld (wcc92),a
 
@@ -5441,7 +5441,7 @@ _linkUpdateDrowning:
 
 ;;
 ; Sets Link's speed, speedTmp, var12, and var35 variables.
-_linkSetSwimmingSpeed:
+linkSetSwimmingSpeed:
 	ld a,SWIMMERS_RING
 	call cpActiveRing
 	ld a,SPEED_e0
@@ -5466,7 +5466,7 @@ _linkSetSwimmingSpeed:
 ;;
 ; Sets the speedTmp variable in the same way as the above function, but doesn't touch any
 ; other variables.
-_linkSetSwimmingSpeedTmp:
+linkSetSwimmingSpeedTmp:
 	ld a,SWIMMERS_RING
 	call cpActiveRing
 	ld a,SPEED_e0
@@ -5479,7 +5479,7 @@ _linkSetSwimmingSpeedTmp:
 
 ;;
 ; @param[out]	a	The angle Link should move in?
-_linkUpdateFlippersSpeed:
+linkUpdateFlippersSpeed:
 	ld e,SpecialObject.var35
 	ld a,(de)
 	rst_jumpTable
@@ -5493,7 +5493,7 @@ _linkUpdateFlippersSpeed:
 	and BTN_A
 	jr nz,@pressedA
 
-	call _linkSetSwimmingSpeedTmp
+	call linkSetSwimmingSpeedTmp
 	ld a,(wLinkAngle)
 	ret
 
@@ -5510,7 +5510,7 @@ _linkUpdateFlippersSpeed:
 	add a
 	add a
 	add a
-	call _func_5933
+	call func_5933
 	pop af
 	dec a
 	jr nz,--
@@ -5548,7 +5548,7 @@ _linkUpdateFlippersSpeed:
 	ld (hl),b
 	jr nz,+
 
-	call _linkSetSwimmingSpeed
+	call linkSetSwimmingSpeed
 	jr @returnDirection
 +
 	ld l,SpecialObject.counter1
@@ -5579,7 +5579,7 @@ _linkUpdateFlippersSpeed:
 	ret
 
 ;;
-_linkUpdateDiving:
+linkUpdateDiving:
 	call specialObjectAnimate
 	ld hl,wLinkSwimmingState
 .ifdef ROM_AGES
@@ -5595,7 +5595,7 @@ _linkUpdateDiving:
 	ld b,>wRoomLayout
 	ld a,(bc)
 	cp TILEINDEX_DEEP_WATER
-	jp z,_checkForUnderwaterTransition@levelDown
+	jp z,checkForUnderwaterTransition@levelDown
 .endif
 
 @checkInput:
@@ -5635,7 +5635,7 @@ _linkUpdateDiving:
 	jp specialObjectSetAnimation
 
 ;;
-_linkUpdateSwimming_sidescroll:
+linkUpdateSwimming_sidescroll:
 	ld a,(wLinkSwimmingState)
 	and $0f
 	jr z,@swimmingState0
@@ -5647,11 +5647,11 @@ _linkUpdateSwimming_sidescroll:
 	.dw @swimmingState0
 	.dw @swimmingState1
 	.dw @swimmingState2
-	.dw _linkUpdateDrowning
+	.dw linkUpdateDrowning
 
 ; Not swimming
 @swimmingState0:
-	jp _initLinkState
+	jp initLinkState
 
 
 ; Just entered the water
@@ -5661,7 +5661,7 @@ _linkUpdateSwimming_sidescroll:
 	ld hl,wLinkSwimmingState
 	inc (hl)
 
-	call _linkSetSwimmingSpeed
+	call linkSetSwimmingSpeed
 	call objectSetVisiblec1
 
 	ld a,TREASURE_FLIPPERS
@@ -5731,13 +5731,13 @@ _linkUpdateSwimming_sidescroll:
 	jr z,+
 
 	; Mermaid suit movement
-	call _linkUpdateVelocity@mermaidSuit
+	call linkUpdateVelocity@mermaidSuit
 	jr ++
 +
 .endif
 	; Flippers movement
-	call _linkUpdateFlippersSpeed
-	call _func_5933
+	call linkUpdateFlippersSpeed
+	call func_5933
 ++
 	call specialObjectUpdatePosition
 +++
@@ -5762,7 +5762,7 @@ _linkUpdateSwimming_sidescroll:
 ;;
 ; Updates speed and angle for things like ice, jumping, underwater? (Things where he
 ; accelerates and decelerates)
-_linkUpdateVelocity:
+linkUpdateVelocity:
 .ifdef ROM_AGES
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_UNDERWATER
@@ -5795,7 +5795,7 @@ _linkUpdateVelocity:
 
 	ld a,$ff
 	ld (hl),a
-	jr _func_5933
+	jr func_5933
 
 @directionButtonPressed:
 	ld a,SND_SPLASH
@@ -5813,7 +5813,7 @@ _linkUpdateVelocity:
 
 ;;
 ; @param a
-_func_5933:
+func_5933:
 	ld e,a
 	ld h,d
 	ld l,SpecialObject.angle
@@ -5911,8 +5911,8 @@ _func_5933:
 
 ;;
 ; linkState01 code, only for sidescrolling areas.
-_linkState01_sidescroll:
-	call _sidescrollUpdateActiveTile
+linkState01_sidescroll:
+	call sidescrollUpdateActiveTile
 	ld a,(wActiveTileType)
 	bit TILETYPE_SS_BIT_WATER,a
 	jr z,@notInWater
@@ -5973,12 +5973,12 @@ _linkState01_sidescroll:
 	or a
 	ret nz
 
-	call _specialObjectUpdateAdjacentWallsBitset
-	call _linkUpdateKnockback
+	call specialObjectUpdateAdjacentWallsBitset
+	call linkUpdateKnockback
 
 	ld a,(wLinkSwimmingState)
 	or a
-	jp nz,_linkUpdateSwimming_sidescroll
+	jp nz,linkUpdateSwimming_sidescroll
 
 	ld a,(wMagnetGloveState)
 	bit 6,a
@@ -5986,9 +5986,9 @@ _linkState01_sidescroll:
 
 	xor a
 	ld (wLinkInAir),a
-	jp _animateLinkStanding
+	jp animateLinkStanding
 +
-	call _linkUpdateInAir_sidescroll
+	call linkUpdateInAir_sidescroll
 	ret z
 
 	ld e,SpecialObject.knockbackCounter
@@ -5998,7 +5998,7 @@ _linkState01_sidescroll:
 
 	ld a,(wActiveTileIndex)
 	cp TILEINDEX_SS_SPIKE
-	call z,_dealSpikeDamageToLink
+	call z,dealSpikeDamageToLink
 
 	ld a,(wForceIcePhysics)
 	or a
@@ -6024,7 +6024,7 @@ _linkState01_sidescroll:
 	ld a,$06
 	ld (wForceIcePhysics),a
 
-	call _linkUpdateVelocity
+	call linkUpdateVelocity
 
 	ld c,$02
 	ld a,(wLinkAngle)
@@ -6044,7 +6044,7 @@ _linkState01_sidescroll:
 
 	call updateLinkSpeed_standard
 
-	; Parameter for _linkUpdateMovement (update his animation only; don't update his
+	; Parameter for linkUpdateMovement (update his animation only; don't update his
 	; position)
 	ld c,$01
 
@@ -6052,7 +6052,7 @@ _linkState01_sidescroll:
 	or a
 	jr nz,++
 +
-	; Parameter for _linkUpdateMovement (update everything, including his position)
+	; Parameter for linkUpdateMovement (update everything, including his position)
 	ld c,$07
 ++
 	; When not in the water or in other tiles with particular effects, adjust Link's
@@ -6061,9 +6061,9 @@ _linkState01_sidescroll:
 	ldi a,(hl)
 	or (hl)
 	and $ff~TILETYPE_SS_ICE
-	call z,_linkAdjustAngleInSidescrollingArea
+	call z,linkAdjustAngleInSidescrollingArea
 
-	call _linkUpdateMovement
+	call linkUpdateMovement
 
 	; The following checks are for whether to cap Link's y position so he doesn't go
 	; above a certain point.
@@ -6125,17 +6125,17 @@ _linkState01_sidescroll:
 ; @param c Bit 0: Set if Link's animation should be "walking" instead of "standing".
 ;          Bit 1: Set if Link's position should be updated based on his speed and angle.
 ;          Bit 2: Set if the heart ring's regeneration should be applied (if he moves).
-_linkUpdateMovement:
+linkUpdateMovement:
 	ld a,c
 
 	; Check whether to animate him "standing" or "walking"
 	rrca
 	push af
 	jr c,+
-	call _animateLinkStanding
+	call animateLinkStanding
 	jr ++
 +
-	call _animateLinkWalking
+	call animateLinkWalking
 ++
 	pop af
 
@@ -6155,15 +6155,15 @@ _linkUpdateMovement:
 	ret nc
 
 	ld a,c
-	jp _updateHeartRingCounter
+	jp updateHeartRingCounter
 +
 	pop af
 ++
 	jp linkResetSpeed
 
 ;;
-; Only for top-down sections. (See also _linkUpdateInAir_sidescroll.)
-_linkUpdateInAir:
+; Only for top-down sections. (See also linkUpdateInAir_sidescroll.)
+linkUpdateInAir:
 	ld a,(wLinkInAir)
 	and $0f
 	rst_jumpTable
@@ -6264,9 +6264,9 @@ _linkUpdateInAir:
 	ld e,SpecialObject.var36
 	ld (de),a
 
-	call _animateLinkStanding
-	call _specialObjectSetPositionToVar38IfSet
-	call _linkApplyTileTypes
+	call animateLinkStanding
+	call specialObjectSetPositionToVar38IfSet
+	call linkApplyTileTypes
 
 	; Check if wActiveTileType is TILETYPE_HOLE or TILETYPE_WARPHOLE
 	ld a,(wActiveTileType)
@@ -6280,12 +6280,12 @@ _linkUpdateInAir:
 +
 	ld a,SND_LAND
 	call playSound
-	call _specialObjectUpdateAdjacentWallsBitset
-	jp _initLinkState
+	call specialObjectUpdateAdjacentWallsBitset
+	jp initLinkState
 
 ;;
-; @param[out]	zflag	If set, _linkState01_sidescroll will return prematurely.
-_linkUpdateInAir_sidescroll:
+; @param[out]	zflag	If set, linkState01_sidescroll will return prematurely.
+linkUpdateInAir_sidescroll:
 	ld a,(wLinkInAir)
 	and $0f
 	rst_jumpTable
@@ -6379,7 +6379,7 @@ _linkUpdateInAir_sidescroll:
 	ld hl,wActiveTileType
 	ldi a,(hl)
 	cp TILETYPE_SS_LAVA
-	jp z,_forceDrownLink
+	jp z,forceDrownLink
 
 	; Check if he's ended up in a hole
 	cp TILETYPE_SS_HOLE
@@ -6399,7 +6399,7 @@ _linkUpdateInAir_sidescroll:
 	jp respawnLink
 
 ++
-	call _linkUpdateVelocity
+	call linkUpdateVelocity
 
 @applySpeedZ:
 	; Apply speedZ to Y position
@@ -6438,7 +6438,7 @@ _linkUpdateInAir_sidescroll:
 	ldi (hl),a
 	ld (hl),$03
 +
-	call _specialObjectUpdateAdjacentWallsBitset
+	call specialObjectUpdateAdjacentWallsBitset
 
 	; Check (again) whether Link has reached the ground.
 	ld e,SpecialObject.adjacentWallsBitset
@@ -6451,7 +6451,7 @@ _linkUpdateInAir_sidescroll:
 	; this does is prevent Link's movement from affecting the Y axis; it still allows
 	; his Z speed to be applied.
 	; Disabling this would give him some control over the height of his jumps.
-	call _linkAdjustAngleInSidescrollingArea
+	call linkAdjustAngleInSidescrollingArea
 
 	call specialObjectUpdatePosition
 	call specialObjectAnimate
@@ -6495,11 +6495,11 @@ _linkUpdateInAir_sidescroll:
 	; Check if he landed on a spike
 	ld a,(wActiveTileIndex)
 	cp TILEINDEX_SS_SPIKE
-	call z,_dealSpikeDamageToLink
+	call z,dealSpikeDamageToLink
 
 	ld a,SND_LAND
 	call playSound
-	call _animateLinkStanding
+	call animateLinkStanding
 	xor a
 	ret
 
@@ -6518,7 +6518,7 @@ _linkUpdateInAir_sidescroll:
 
 ;;
 ; Sets link's state to LINK_STATE_NORMAL, sets var35 to $00
-_initLinkState:
+initLinkState:
 	ld h,d
 	ld l,<w1Link.state
 	ld (hl),LINK_STATE_NORMAL
@@ -6530,19 +6530,19 @@ _initLinkState:
 
 ;;
 ; Called after most types of warps
-_initLinkStateAndAnimateStanding:
-	call _initLinkState
+initLinkStateAndAnimateStanding:
+	call initLinkState
 	ld l,<w1Link.visible
 	set 7,(hl)
 ;;
-_animateLinkStanding:
+animateLinkStanding:
 	ld e,<w1Link.animMode
 	ld a,(de)
 	cp LINK_ANIM_MODE_WALK
 	jr nz,+
 
 	call checkPegasusSeedCounter
-	jr nz,_animateLinkWalking
+	jr nz,animateLinkWalking
 +
 	; If not using pegasus seeds, set animMode to 0. At the end of the function, this
 	; will be changed back to LINK_ANIM_MODE_WALK; this will simply cause the
@@ -6551,7 +6551,7 @@ _animateLinkStanding:
 	ld (de),a
 
 ;;
-_animateLinkWalking:
+animateLinkWalking:
 	call checkPegasusSeedCounter
 	jr z,++
 
@@ -6666,7 +6666,7 @@ updateLinkSpeed_withParam:
 
 ;;
 ; Updates Link's speed and updates his position if he's experiencing knockback.
-_linkUpdateKnockback:
+linkUpdateKnockback:
 	ld e,SpecialObject.state
 	ld a,(de)
 	cp LINK_STATE_RESPAWNING
@@ -6696,7 +6696,7 @@ _linkUpdateKnockback:
 
 	; Adjust link's knockback angle if necessary when sidescrolling
 	ld l,SpecialObject.knockbackAngle
-	call _linkAdjustGivenAngleInSidescrollingArea
+	call linkAdjustGivenAngleInSidescrollingArea
 
 	; Get speed and knockback angle (de = w1Link.knockbackAngle)
 	ld a,(de)
@@ -6908,7 +6908,7 @@ specialObjectUpdatePositionGivenVelocity:
 ;;
 ; Updates SpecialObject.adjacentWallsBitset (always for link?) which determines which ways
 ; he can move.
-_specialObjectUpdateAdjacentWallsBitset:
+specialObjectUpdateAdjacentWallsBitset:
 	ld e,SpecialObject.adjacentWallsBitset
 	xor a
 	ld (de),a
@@ -7115,7 +7115,7 @@ calculateAdjacentWallsBitset:
 
 ;;
 ; Unused?
-_clearLinkImmobilizedBit4:
+clearLinkImmobilizedBit4:
 	push hl
 	ld hl,wLinkImmobilized
 	res 4,(hl)
@@ -7123,7 +7123,7 @@ _clearLinkImmobilizedBit4:
 	ret
 
 ;;
-_setLinkImmobilizedBit4:
+setLinkImmobilizedBit4:
 	push hl
 	ld hl,wLinkImmobilized
 	set 4,(hl)
@@ -7133,7 +7133,7 @@ _setLinkImmobilizedBit4:
 ;;
 ; Adjusts Link's position to suck him into the center of a tile, and sets his state to
 ; LINK_STATE_FALLING when he reaches the center.
-_linkPullIntoHole:
+linkPullIntoHole:
 	xor a
 	ld e,SpecialObject.knockbackCounter
 	ld (de),a
@@ -7148,7 +7148,7 @@ _linkPullIntoHole:
 	; hole.
 	ld a,(wStandingOnTileCounter)
 	cp $10
-	call nc,_setLinkImmobilizedBit4
+	call nc,setLinkImmobilizedBit4
 
 	; Depending on the frame counter, move horizontally, vertically, or not at all.
 	and $03
@@ -7301,7 +7301,7 @@ checkLinkPushingAgainstTreeStump:
 	cp $20
 	ret nz
 	ld a,$01
-	call _specialObjectSetVar37AndVar38
+	call specialObjectSetVar37AndVar38
 
 	ld e,SpecialObject.direction
 	ld a,(de)
@@ -7428,7 +7428,7 @@ clearVar37AndVar38:
 ;;
 ; @param	a	Value for var37
 ; @param	l	Value for var38 (a position value)
-_specialObjectSetVar37AndVar38:
+specialObjectSetVar37AndVar38:
 	ld e,SpecialObject.var37
 	ld (de),a
 	inc e
@@ -7437,13 +7437,13 @@ _specialObjectSetVar37AndVar38:
 
 ;;
 ; Sets an object's angle to face the position in var37/var38?
-_specialObjectSetAngleRelativeToVar38:
+specialObjectSetAngleRelativeToVar38:
 	ld e,SpecialObject.var37
 	ld a,(de)
 	or a
 	ret z
 
-	ld hl,_data_6012-2
+	ld hl,data_6012-2
 	rst_addDoubleIndex
 
 	inc e
@@ -7464,19 +7464,19 @@ _specialObjectSetAngleRelativeToVar38:
 	ld (de),a
 	ret
 
-_data_6012:
+data_6012:
 	.db $02 $08
 	.db $0c $08
 
 ;;
 ; Warps link somewhere based on var37 and var38?
-_specialObjectSetPositionToVar38IfSet:
+specialObjectSetPositionToVar38IfSet:
 	ld e,SpecialObject.var37
 	ld a,(de)
 	or a
 	ret z
 
-	ld hl,_data_6012-2
+	ld hl,data_6012-2
 	rst_addDoubleIndex
 
 	; de = SpecialObject.var38
@@ -7499,7 +7499,7 @@ _specialObjectSetPositionToVar38IfSet:
 
 ;;
 ; Checks if Link touches a cliff tile, and starts the jumping-off-cliff code if so.
-_checkLinkJumpingOffCliff:
+checkLinkJumpingOffCliff:
 .ifdef ROM_SEASONS
 	ld a,(wActiveTileType)
 	cp TILETYPE_STUMP
@@ -7562,7 +7562,7 @@ _checkLinkJumpingOffCliff:
 
 	ld a,LINK_STATE_JUMPING_DOWN_LEDGE
 	call linkSetState
-	jr _linkState12
+	jr linkState12
 
 ;;
 ; Unused?
@@ -7608,7 +7608,7 @@ _checkLinkJumpingOffCliff:
 
 ;;
 ; LINK_STATE_JUMPING_DOWN_LEDGE
-_linkState12:
+linkState12:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -7733,8 +7733,8 @@ _linkState12:
 	ld a,SND_LAND
 	call playSound
 
-	call _specialObjectUpdateAdjacentWallsBitset
-	jp _initLinkStateAndAnimateStanding
+	call specialObjectUpdateAdjacentWallsBitset
+	jp initLinkStateAndAnimateStanding
 
 
 ; In the process of falling down the cliff (a screen transition will occur).
@@ -7830,7 +7830,7 @@ _linkState12:
 
 	; Even if it's solid and unbreakable, check if it's an exception (raisable floor)
 	ldh a,(<hFF92)
-	ld hl,_landableTileFromCliffExceptions
+	ld hl,landableTileFromCliffExceptions
 	call findByteInCollisionTable
 	jr c,@landHere
 
@@ -7864,7 +7864,7 @@ _linkState12:
 
 ; This is a list of tiles that can be landed on when jumping down a cliff, despite being
 ; solid.
-_landableTileFromCliffExceptions:
+landableTileFromCliffExceptions:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -8003,7 +8003,7 @@ specialObjectCode_transformedLink:
 	jr z,@disableTransformationForBaby
 	jr ++
 +
-	call _linkApplyTileTypes
+	call linkApplyTileTypes
 	ld a,(wLinkSwimmingState)
 	or a
 	jr nz,@resetIDToNormal
@@ -8015,8 +8015,8 @@ specialObjectCode_transformedLink:
 	ld a,b
 	jr nz,@resetIDToNormal
 ++
-	call _specialObjectUpdateAdjacentWallsBitset
-	call _linkUpdateKnockback
+	call specialObjectUpdateAdjacentWallsBitset
+	call linkUpdateKnockback
 	call updateLinkSpeed_standard
 
 	; Halve speed if he's in baby form
@@ -8154,7 +8154,7 @@ specialObjectCode_linkRidingAnimal:
 	ld a,(wDisabledObjects)
 	rlca
 	ret c
-	call _linkUpdateKnockback
+	call linkUpdateKnockback
 
 ;;
 ; Copies companion's animParameter & $3f to var31.
@@ -8169,7 +8169,7 @@ specialObjectCode_linkRidingAnimal:
 
 ;;
 ; Update a minecart object.
-_specialObjectCode_minecart:
+specialObjectCode_minecart:
 	; Jump to code in bank 6 to handle it
 	jpab bank6.specialObjectCode_minecart
 
@@ -8203,28 +8203,28 @@ _specialObjectCode_minecart:
 ;
 ;
 ;;
-_specialObjectCode_maple:
-	call _companionRetIfInactiveWithoutStateCheck
+specialObjectCode_maple:
+	call companionRetIfInactiveWithoutStateCheck
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _mapleState0
-	.dw _mapleState1
-	.dw _mapleState2
-	.dw _mapleState3
-	.dw _mapleState4
-	.dw _mapleState5
-	.dw _mapleState6
-	.dw _mapleState7
-	.dw _mapleState8
-	.dw _mapleState9
-	.dw _mapleStateA
-	.dw _mapleStateB
-	.dw _mapleStateC
+	.dw mapleState0
+	.dw mapleState1
+	.dw mapleState2
+	.dw mapleState3
+	.dw mapleState4
+	.dw mapleState5
+	.dw mapleState6
+	.dw mapleState7
+	.dw mapleState8
+	.dw mapleState9
+	.dw mapleStateA
+	.dw mapleStateB
+	.dw mapleStateC
 
 ;;
 ; State 0: Initialization
-_mapleState0:
+mapleState0:
 	xor a
 	ld (wcc85),a
 	call specialObjectSetOamVariables
@@ -8293,7 +8293,7 @@ _mapleState0:
 	ld e,SpecialObject.var03
 	ld (de),a
 
-	ld hl,_mapleShadowPathsTable
+	ld hl,mapleShadowPathsTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -8314,18 +8314,18 @@ _mapleState0:
 	ld a,(hl)
 	ld e,SpecialObject.angle
 	ld (de),a
-	call _mapleDecideNextAngle
+	call mapleDecideNextAngle
 	call objectSetVisiblec0
 	ld a,$19
 	jp specialObjectSetAnimation
 
 ;;
-_mapleState1:
-	call _mapleState4
+mapleState1:
+	call mapleState4
 	ret nz
 	ld a,(wMenuDisabled)
 	or a
-	jp nz,_mapleDeleteSelf
+	jp nz,mapleDeleteSelf
 
 	ld a,MUS_MAPLE_THEME
 	ld (wActiveMusic),a
@@ -8333,7 +8333,7 @@ _mapleState1:
 
 ;;
 ; State 4: lying on ground after being hit
-_mapleState4:
+mapleState4:
 	ld hl,w1Companion.knockbackCounter
 	dec (hl)
 	ret nz
@@ -8343,7 +8343,7 @@ _mapleState4:
 
 ;;
 ; State 2: flying around (above screen or otherwise) before being hit
-_mapleState2:
+mapleState2:
 	ld a,(wTextIsActive)
 	or a
 	jr nz,@animate
@@ -8359,12 +8359,12 @@ _mapleState2:
 	ld l,SpecialObject.angle
 	cp (hl)
 	jr z,+
-	call _mapleUpdateAngle
+	call mapleUpdateAngle
 	jr ++
 +
 	ld l,SpecialObject.counter1
 	dec (hl)
-	call z,_mapleDecideNextAngle
+	call z,mapleDecideNextAngle
 	jr z,@label_05_262
 ++
 	call objectApplySpeed
@@ -8380,19 +8380,19 @@ _mapleState2:
 .endif
 	jr nc,@animate
 	call objectCheckCollidedWithLink_ignoreZ
-	jr c,_mapleCollideWithLink
+	jr c,mapleCollideWithLink
 @animate:
-	call _mapleUpdateOscillation
+	call mapleUpdateOscillation
 	jp specialObjectAnimate
 
 @label_05_262:
 	ld hl,w1Companion.var3e
 	ld a,(hl)
 	or a
-	jp nz,_mapleDeleteSelf
+	jp nz,mapleDeleteSelf
 
 	inc (hl)
-	call _mapleInitZPositionAndSpeed
+	call mapleInitZPositionAndSpeed
 
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_200
@@ -8412,10 +8412,10 @@ _mapleState2:
 ++
 	call getRandomNumber
 	and e
-	ld hl,_mapleMovementPatternIndices
+	ld hl,mapleMovementPatternIndices
 	rst_addAToHl
 	ld a,(hl)
-	ld hl,_mapleMovementPatternTable
+	ld hl,mapleMovementPatternTable
 	rst_addDoubleIndex
 
 	ld e,SpecialObject.yh
@@ -8451,7 +8451,7 @@ _mapleState2:
 ; length of time she should stay in that angle.
 ;
 ; @param[out]	zflag	z if we've reached the end of the "angle data".
-_mapleDecideNextAngle:
+mapleDecideNextAngle:
 	ld hl,w1Companion.relatedObj2
 	ldi a,(hl)
 	ld h,(hl)
@@ -8475,15 +8475,15 @@ _mapleDecideNextAngle:
 	ld a,c
 	cp $ff
 	ret z
-	jp _mapleDecideAnimation
+	jp mapleDecideAnimation
 
 ;;
 ; Handles stuff when Maple collides with Link. (Sets knockback for both, sets Maple's
 ; animation, drops items, and goes to state 3.)
 ;
-_mapleCollideWithLink:
+mapleCollideWithLink:
 	call dropLinkHeldItem
-	call _mapleSpawnItemDrops
+	call mapleSpawnItemDrops
 
 	ld a,$01
 	ld (wDisableScreenTransitions),a
@@ -8495,7 +8495,7 @@ _mapleCollideWithLink:
 	ld (de),a
 
 	; Set knockback direction and angle for Link and Maple
-	call _mapleGetCardinalAngleTowardLink
+	call mapleGetCardinalAngleTowardLink
 	ld b,a
 	ld hl,w1Link.knockbackCounter
 	ld (hl),$18
@@ -8551,7 +8551,7 @@ _mapleCollideWithLink:
 
 ;;
 ; State 3: recoiling after being hit
-_mapleState3:
+mapleState3:
 	ld a,(w1Link.knockbackCounter)
 	or a
 	jr nz,+
@@ -8581,7 +8581,7 @@ _mapleState3:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	call objectApplySpeed
-	call _mapleKeepInBounds
+	call mapleKeepInBounds
 	call objectGetTileCollisions
 	ret z
 	jr @counteractWallSpeed
@@ -8635,7 +8635,7 @@ _mapleState3:
 
 ;;
 ; State 5: floating back up after being hit
-_mapleState5:
+mapleState5:
 	ld hl,w1Companion.counter1
 	ld a,(hl)
 	or a
@@ -8644,7 +8644,7 @@ _mapleState5:
 ; counter1 has reached 0
 
 	inc (hl)
-	call _mapleInitZPositionAndSpeed
+	call mapleInitZPositionAndSpeed
 	ld l,SpecialObject.zh
 	ld (hl),$ff
 	ld a,$01
@@ -8657,7 +8657,7 @@ _mapleState5:
 	ld a,(de)
 	xor $10
 	ld (de),a
-	call _mapleDecideAnimation
+	call mapleDecideAnimation
 
 @floatUp:
 	ld e,SpecialObject.damage
@@ -8746,7 +8746,7 @@ _mapleState5:
 	xor a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
-	jp _mapleDecideItemToCollectAndUpdateTargetAngle
+	jp mapleDecideItemToCollectAndUpdateTargetAngle
 
 @exchangeTouchingBook:
 	ld a,$0b
@@ -8783,7 +8783,7 @@ _mapleState5:
 
 ;;
 ; Updates maple's Z position and speedZ for oscillation (but not if she's in a ufo?)
-_mapleUpdateOscillation:
+mapleUpdateOscillation:
 	ld h,d
 	ld e,SpecialObject.damage
 	ld a,(de)
@@ -8815,7 +8815,7 @@ _mapleUpdateOscillation:
 	ret
 
 ;;
-_mapleUpdateAngle:
+mapleUpdateAngle:
 	ld hl,w1Companion.var3b
 	dec (hl)
 	ret nz
@@ -8832,7 +8832,7 @@ _mapleUpdateAngle:
 
 ;;
 ; @param[out]	zflag
-_mapleDecideAnimation:
+mapleDecideAnimation:
 	ld e,SpecialObject.var3e
 	ld a,(de)
 	or a
@@ -8859,8 +8859,8 @@ _mapleDecideAnimation:
 
 ;;
 ; State 6: talking to Link / moving toward an item
-_mapleState6:
-	call _mapleUpdateOscillation
+mapleState6:
+	call mapleUpdateOscillation
 	call specialObjectAnimate
 	call retIfTextIsActive
 
@@ -8876,9 +8876,9 @@ _mapleState6:
 	ld a,(hl)
 	ld l,SpecialObject.angle
 	cp (hl)
-	call nz,_mapleUpdateAngle
+	call nz,mapleUpdateAngle
 
-	call _mapleDecideItemToCollectAndUpdateTargetAngle
+	call mapleDecideItemToCollectAndUpdateTargetAngle
 	call objectApplySpeed
 
 	; Check if Maple's touching the target object
@@ -8889,7 +8889,7 @@ _mapleState6:
 	ld a,(de)
 	ld l,a
 	call checkObjectsCollided
-	jp nc,_mapleKeepInBounds
+	jp nc,mapleKeepInBounds
 
 	; Set the item being collected to state 4
 	ld e,SpecialObject.relatedObj2
@@ -8921,7 +8921,7 @@ _mapleState6:
 	ld e,SpecialObject.damage
 	ld a,(de)
 	or a
-	call z,_mapleFunc_6c27
+	call z,mapleFunc_6c27
 	ret z
 
 	add $16
@@ -8930,7 +8930,7 @@ _mapleState6:
 
 ;;
 ; State 7: picking up an item
-_mapleState7:
+mapleState7:
 	call specialObjectAnimate
 
 	ld e,SpecialObject.damage
@@ -8953,12 +8953,12 @@ _mapleState7:
 	ld (de),a
 
 	; Check if there's an actual bomb (one that can explode) on-screen.
-	call _mapleFindUnexplodedBomb
+	call mapleFindUnexplodedBomb
 	jr nz,+
 	call checkObjectsCollided
 	jr c,@explosiveBombNearMaple
 +
-	call _mapleFindNextUnexplodedBomb
+	call mapleFindNextUnexplodedBomb
 	jr nz,@updateItemBeingCollected
 	call checkObjectsCollided
 	jr c,@explosiveBombNearMaple
@@ -9117,7 +9117,7 @@ _mapleState7:
 
 	ld e,SpecialObject.stunCounter
 	ld a,(de)
-	ld hl,_mapleItemValues
+	ld hl,mapleItemValues
 	rst_addAToHl
 	ld a,$0e
 	ld (de),a
@@ -9162,7 +9162,7 @@ _mapleState7:
 
 ;;
 ; State A: Maple doing her dusting animation after getting an item (broom only)
-_mapleStateA:
+mapleStateA:
 	call specialObjectAnimate
 	call itemDecCounter2
 	ret nz
@@ -9181,7 +9181,7 @@ _mapleStateA:
 
 ;;
 ; State 8: stunned from a bomb
-_mapleState8:
+mapleState8:
 	call specialObjectAnimate
 	ld e,SpecialObject.substate
 	ld a,(de)
@@ -9246,11 +9246,11 @@ _mapleState8:
 	ldi (hl),a
 	ld (hl),$00
 
-	jp _mapleDecideItemToCollectAndUpdateTargetAngle
+	jp mapleDecideItemToCollectAndUpdateTargetAngle
 
 ;;
 ; State 9: flying away after item collection is over
-_mapleState9:
+mapleState9:
 	call specialObjectAnimate
 	ld e,SpecialObject.substate
 	ld a,(de)
@@ -9296,7 +9296,7 @@ _mapleState9:
 	ld b,(hl)
 	call showText
 
-	call _mapleGetCardinalAngleTowardLink
+	call mapleGetCardinalAngleTowardLink
 	call convertAngleToDirection
 	add $04
 	ld b,a
@@ -9316,7 +9316,7 @@ _mapleState9:
 
 ; Substate 1: wait until textbox is closed
 @substate1:
-	call _mapleUpdateOscillation
+	call mapleUpdateOscillation
 	call retIfTextIsActive
 
 	ld a,$80
@@ -9342,25 +9342,25 @@ _mapleState9:
 
 ; Substate 2: moving until off screen
 @substate2:
-	call _mapleUpdateOscillation
+	call mapleUpdateOscillation
 	call objectApplySpeed
 	call objectCheckWithinScreenBoundary
 	ret c
 
 ;;
 ; Increments meeting counter, deletes maple, etc.
-_mapleEndEncounter:
+mapleEndEncounter:
 	xor a
 	ld (wTextIsActive),a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 	ld (wDisableScreenTransitions),a
-	call _mapleIncrementMeetingCounter
+	call mapleIncrementMeetingCounter
 
 	; Fall through
 
 ;;
-_mapleDeleteSelf:
+mapleDeleteSelf:
 	ld a,(wActiveMusic2)
 	ld (wActiveMusic),a
 	call playSound
@@ -9372,14 +9372,14 @@ _mapleDeleteSelf:
 
 ;;
 ; State B: exchanging touching book
-_mapleStateB:
+mapleStateB:
 	inc e
 	ld a,(de) ; a = [substate]
 	or a
 	jr nz,@substate1
 
 @substate0:
-	call _mapleUpdateOscillation
+	call mapleUpdateOscillation
 .ifdef ROM_AGES
 	ld e,SpecialObject.direction
 	ld a,(de)
@@ -9444,8 +9444,8 @@ _mapleStateB:
 
 ;;
 ; State C: leaving after reading touching book
-_mapleStateC:
-	call _mapleUpdateOscillation
+mapleStateC:
+	call mapleUpdateOscillation
 	call retIfTextIsActive
 
 	call objectApplySpeed
@@ -9462,12 +9462,12 @@ _mapleStateC:
 
 	call objectCheckWithinScreenBoundary
 	ret c
-	jp _mapleEndEncounter
+	jp mapleEndEncounter
 
 
 ;;
 ; Adjusts Maple's X and Y position to keep them in-bounds.
-_mapleKeepInBounds:
+mapleKeepInBounds:
 	ld e,SpecialObject.yh
 	ld a,(de)
 	cp $f0
@@ -9507,7 +9507,7 @@ _mapleKeepInBounds:
 
 
 ;;
-_mapleSpawnItemDrops:
+mapleSpawnItemDrops:
 	; Check if Link has the touching book
 	ld a,TREASURE_TRADEITEM
 	call checkTreasureObtained
@@ -9548,7 +9548,7 @@ _mapleSpawnItemDrops:
 @nextMapleItem:
 	ld e,SpecialObject.var03 ; If var03 is 0, rarer items will be dropped
 	ld a,(de)
-	ld hl,_maple_itemDropDistributionTable
+	ld hl,maple_itemDropDistributionTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -9583,14 +9583,14 @@ _mapleSpawnItemDrops:
 	ldh (<hFF8C),a
 	jr z,@ret
 
-	ld hl,_maple_linkItemDropDistribution
+	ld hl,maple_linkItemDropDistribution
 	call getRandomIndexFromProbabilityDistribution
 
-	call _mapleCheckLinkCanDropItem
+	call mapleCheckLinkCanDropItem
 	jr z,@nextLinkItem
 
 	ld d,>w1Link
-	call _mapleSpawnItemDrop
+	call mapleSpawnItemDrop
 
 	ld d,>w1Companion
 	ld e,SpecialObject.counter1
@@ -9608,7 +9608,7 @@ _mapleSpawnItemDrops:
 @checkSpawnItem:
 	; Check that Link has obtained the item (if applicable)
 	push af
-	ld hl,_mapleItemDropTreasureIndices
+	ld hl,mapleItemDropTreasureIndices
 	rst_addAToHl
 	ld a,(hl)
 	call checkTreasureObtained
@@ -9624,7 +9624,7 @@ _mapleSpawnItemDrops:
 	; Skip the below conditions for all items of index 5 or above (items that can be
 	; dropped multiple times)
 	cp $05
-	jp nc,_mapleSpawnItemDrop
+	jp nc,mapleSpawnItemDrop
 
 	; If this is the heart piece, only drop it if it hasn't been obtained yet
 	or a
@@ -9655,7 +9655,7 @@ _mapleSpawnItemDrops:
 	ld (de),a
 
 @spawnItem:
-	jr _mapleSpawnItemDrop_variant
+	jr mapleSpawnItemDrop_variant
 
 
 ; Bitmasks for items 1-5 for remembering if one's spawned already
@@ -9667,7 +9667,7 @@ _mapleSpawnItemDrops:
 ; numbers in each distribution should be exactly $100. An item with a higher number has
 ; a higher chance of dropping.
 
-_maple_itemDropDistributionTable: ; Probabilities that Maple will drop something
+maple_itemDropDistributionTable: ; Probabilities that Maple will drop something
 	.dw @rareItems
 	.dw @standardItems
 
@@ -9680,14 +9680,14 @@ _maple_itemDropDistributionTable: ; Probabilities that Maple will drop something
 	.db $00 $00 $32 $34 $3c $46
 
 
-_maple_linkItemDropDistribution: ; Probabilities that Link will drop something
+maple_linkItemDropDistribution: ; Probabilities that Link will drop something
 	.db $00 $00 $00 $00 $00 $20 $20 $20
 	.db $20 $20 $20 $20 $00 $20
 
 
 ; Each byte is the "value" of an item. The values of the items Link and Maple pick up are
 ; added up and totalled to see who "won" the encounter.
-_mapleItemValues:
+mapleItemValues:
 	.db $3c $0f $0a $08 $06 $05 $05 $05
 	.db $05 $05 $04 $03 $02 $01 $00
 
@@ -9712,7 +9712,7 @@ _mapleItemValues:
 ;  $0c: 5 rupees
 ;  $0d: 1 rupee
 
-_mapleItemDropTreasureIndices:
+mapleItemDropTreasureIndices:
 	.db TREASURE_PUNCH      TREASURE_PUNCH         TREASURE_PUNCH       TREASURE_PUNCH
 	.db TREASURE_PUNCH      TREASURE_EMBER_SEEDS   TREASURE_SCENT_SEEDS TREASURE_PEGASUS_SEEDS
 	.db TREASURE_GALE_SEEDS TREASURE_MYSTERY_SEEDS TREASURE_BOMBS       TREASURE_PUNCH
@@ -9721,7 +9721,7 @@ _mapleItemDropTreasureIndices:
 ;;
 ; @param	d	Object it comes from (Link or Maple)
 ; @param	hFF8B	Value for part's subid and var03 (item type?)
-_mapleSpawnItemDrop:
+mapleSpawnItemDrop:
 	call getFreePartSlot
 	scf
 	ret nz
@@ -9738,7 +9738,7 @@ _mapleSpawnItemDrop:
 ;;
 ; @param	d	Object it comes from (Link or Maple)
 ; @param	hFF8B	Value for part's subid and var03 (item type?)
-_mapleSpawnItemDrop_variant:
+mapleSpawnItemDrop_variant:
 	call getFreePartSlot
 	scf
 	ret nz
@@ -9756,7 +9756,7 @@ _mapleSpawnItemDrop_variant:
 ;
 ; @param[out]	hl	The part object to go for
 ; @param[out]	zflag	nz if there are no items left
-_mapleDecideItemToCollect:
+mapleDecideItemToCollect:
 
 ; Search for item IDs 0-4 first
 
@@ -9910,7 +9910,7 @@ _mapleDecideItemToCollect:
 ; currently exploding, it gets set as Maple's relatedObj1.
 ;
 ; @param[out]	zflag	z if the first bomb object found was suitable
-_mapleFindUnexplodedBomb:
+mapleFindUnexplodedBomb:
 	ld e,SpecialObject.relatedObj1
 	xor a
 	ld (de),a
@@ -9925,7 +9925,7 @@ _mapleFindUnexplodedBomb:
 ; This is similar to above, except it's a "continuation" in case the first bomb that was
 ; found was unsuitable (in the process of exploding).
 ;
-_mapleFindNextUnexplodedBomb:
+mapleFindNextUnexplodedBomb:
 	ld c,ITEMID_BOMB
 	call findItemWithID_startingAfterH
 	ret nz
@@ -9949,7 +9949,7 @@ _mapleFindNextUnexplodedBomb:
 	ret
 
 ;;
-_mapleInitZPositionAndSpeed:
+mapleInitZPositionAndSpeed:
 	ld h,d
 	ld l,SpecialObject.zh
 	ld a,$f8
@@ -9967,7 +9967,7 @@ _mapleInitZPositionAndSpeed:
 
 ;;
 ; @param[out]	a	Angle toward link (rounded to cardinal direction)
-_mapleGetCardinalAngleTowardLink:
+mapleGetCardinalAngleTowardLink:
 	call objectGetAngleTowardLink
 	and $18
 	ret
@@ -9978,8 +9978,8 @@ _mapleGetCardinalAngleTowardLink:
 ;
 ; If there are no more items, this sets Maple's state to $09.
 ;
-_mapleDecideItemToCollectAndUpdateTargetAngle:
-	call _mapleDecideItemToCollect
+mapleDecideItemToCollectAndUpdateTargetAngle:
+	call mapleDecideItemToCollect
 	jr nz,@noMoreItems
 
 	ld e,SpecialObject.relatedObj2
@@ -9991,7 +9991,7 @@ _mapleDecideItemToCollectAndUpdateTargetAngle:
 	ld e,SpecialObject.damageToApply
 	xor a
 	ld (de),a
-	jr _mapleSetTargetDirectionToRelatedObj2
+	jr mapleSetTargetDirectionToRelatedObj2
 
 @noMoreItems:
 	ld e,SpecialObject.state
@@ -10003,7 +10003,7 @@ _mapleDecideItemToCollectAndUpdateTargetAngle:
 	ret
 
 ;;
-_mapleSetTargetDirectionToRelatedObj2:
+mapleSetTargetDirectionToRelatedObj2:
 	ld e,SpecialObject.relatedObj2
 	ld a,(de)
 	ld h,a
@@ -10034,7 +10034,7 @@ _mapleSetTargetDirectionToRelatedObj2:
 ; @param	b	The item to drop
 ; @param[out]	hFF8B	The "maple item index" of the item to be dropped
 ; @param[out]	zflag	nz if Link can drop it
-_mapleCheckLinkCanDropItem:
+mapleCheckLinkCanDropItem:
 	ld a,b
 	sub $05
 	ld b,a
@@ -10133,7 +10133,7 @@ _mapleCheckLinkCanDropItem:
 ;;
 ; @param[out]	a	Maple.damage variable (actually vehicle type)
 ; @param[out]	zflag	z if Maple's in a wall? (she won't do her sweeping animation)
-_mapleFunc_6c27:
+mapleFunc_6c27:
 	ld e,SpecialObject.counter2
 	ld a,$30
 	ld (de),a
@@ -10159,7 +10159,7 @@ _mapleFunc_6c27:
 
 ;;
 ; Increments lower 4 bits of wMapleState (the number of times Maple has been met)
-_mapleIncrementMeetingCounter:
+mapleIncrementMeetingCounter:
 	ld hl,wMapleState
 	ld a,(hl)
 	and $0f
@@ -10175,7 +10175,7 @@ _mapleIncrementMeetingCounter:
 
 
 ; These are the possible paths Maple can take when you just see her shadow.
-_mapleShadowPathsTable:
+mapleShadowPathsTable:
 	.dw @rareItemDrops
 	.dw @standardItemDrops
 
@@ -10204,11 +10204,11 @@ _mapleShadowPathsTable:
 ; Maps a number to an index for the table below. At first, only the first 4 bytes are read
 ; at random from this table, but as maple is encountered more, the subsequent bytes are
 ; read, giving maple more variety in the way she moves.
-_mapleMovementPatternIndices:
+mapleMovementPatternIndices:
 	.db $00 $01 $02 $00 $03 $04 $05 $03
 	.db $06 $07 $01 $02 $04 $05 $06 $07
 
-_mapleMovementPatternTable:
+mapleMovementPatternTable:
 	.dw @pattern0
 	.dw @pattern1
 	.dw @pattern2
@@ -10320,35 +10320,35 @@ _mapleMovementPatternTable:
 
 
 ;;
-_specialObjectCode_ricky:
-	call _companionRetIfInactive
-	call _companionFunc_47d8
+specialObjectCode_ricky:
+	call companionRetIfInactive
+	call companionFunc_47d8
 	call @runState
-	jp _companionCheckEnableTerrainEffects
+	jp companionCheckEnableTerrainEffects
 
 @runState:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _rickyState0
-	.dw _rickyState1
-	.dw _rickyState2
-	.dw _rickyState3
-	.dw _rickyState4
-	.dw _rickyState5
-	.dw _rickyState6
-	.dw _rickyState7
-	.dw _rickyState8
-	.dw _rickyState9
-	.dw _rickyStateA
-	.dw _rickyStateB
-	.dw _rickyStateC
+	.dw rickyState0
+	.dw rickyState1
+	.dw rickyState2
+	.dw rickyState3
+	.dw rickyState4
+	.dw rickyState5
+	.dw rickyState6
+	.dw rickyState7
+	.dw rickyState8
+	.dw rickyState9
+	.dw rickyStateA
+	.dw rickyStateB
+	.dw rickyStateC
 
 ;;
 ; State 0: initialization
-_rickyState0:
-_rickyStateB:
-	call _companionCheckCanSpawn ; This may return
+rickyState0:
+rickyStateB:
+	call companionCheckCanSpawn ; This may return
 
 	ld a,$06
 	call objectSetCollideRadius
@@ -10401,15 +10401,15 @@ _rickyStateB:
 
 ;;
 ; State 1: waiting for Link to mount
-_rickyState1:
+rickyState1:
 	call specialObjectAnimate
-	call _companionSetPriorityRelativeToLink
+	call companionSetPriorityRelativeToLink
 
 	ld c,$09
 	call objectCheckLinkWithinDistance
 	jr nc,@didntMount
 
-	call _companionTryToMount
+	call companionTryToMount
 	ret z
 
 @didntMount:
@@ -10417,7 +10417,7 @@ _rickyState1:
 	ld e,SpecialObject.animParameter
 	ld a,(de)
 	and $c0
-	jr z,_rickyCheckHazards
+	jr z,rickyCheckHazards
 	rlca
 	ld c,$40
 	jp nc,objectUpdateSpeedZ_paramC
@@ -10425,18 +10425,18 @@ _rickyState1:
 	call objectSetSpeedZ
 
 ;;
-_rickyCheckHazards:
-	call _companionCheckHazards
-	jp c,_rickyFunc_70cc
+rickyCheckHazards:
+	call companionCheckHazards
+	jp c,rickyFunc_70cc
 
 ;;
-_rickyState9:
+rickyState9:
 	ret
 
 ;;
 ; State 2: Jumping up a cliff
-_rickyState2:
-	call _companionDecCounter1
+rickyState2:
+	call companionDecCounter1
 	jr z,++
 	dec (hl)
 	ret nz
@@ -10448,7 +10448,7 @@ _rickyState2:
 	call specialObjectAnimate
 	call objectApplySpeed
 
-	call _companionCalculateAdjacentWallsBitset
+	call companionCalculateAdjacentWallsBitset
 
 	; Check whether Ricky's passed through any walls?
 	ld e,SpecialObject.adjacentWallsBitset
@@ -10462,25 +10462,25 @@ _rickyState2:
 	ld a,(de)
 	or a
 	ret z
-	jp _rickyStopUntilLandedOnGround
+	jp rickyStopUntilLandedOnGround
 
 ;;
 ; State 3: Link is currently jumping up to mount Ricky
-_rickyState3:
+rickyState3:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
-	call _companionCheckMountingComplete
+	call companionCheckMountingComplete
 	ret nz
 
-	call _companionFinalizeMounting
+	call companionFinalizeMounting
 	ld a,SND_RICKY
 	call playSound
 	ld c,$20
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ;;
 ; State 4: Ricky falling into a hazard (hole/water)
-_rickyState4:
+rickyState4:
 	ld e,SpecialObject.var37
 	ld a,(de)
 	cp $0e ; Is this water?
@@ -10489,10 +10489,10 @@ _rickyState4:
 	; For any other value of var37, assume it's a hole ($0d).
 	ld a,$0d
 	ld (de),a
-	call _companionDragToCenterOfHole
+	call companionDragToCenterOfHole
 	ret nz
 ++
-	call _companionDecCounter1
+	call companionDecCounter1
 	jr nz,@animate
 
 	inc (hl)
@@ -10508,7 +10508,7 @@ _rickyState4:
 	jp playSound
 
 @animate:
-	call _companionAnimateDrowningOrFallingThenRespawn
+	call companionAnimateDrowningOrFallingThenRespawn
 	ret nc
 
 	; Decide animation depending whether Link is riding Ricky
@@ -10518,36 +10518,36 @@ _rickyState4:
 	jr nc,+
 	ld c,$05
 +
-	jp _companionUpdateDirectionAndSetAnimation
+	jp companionUpdateDirectionAndSetAnimation
 
 ;;
 ; State 5: Link riding Ricky.
 ;
 ; (Note: this may be called from state C?)
 ;
-_rickyState5:
+rickyState5:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _rickyState5Substate0
-	.dw _rickyState5Substate1
-	.dw _rickyState5Substate2
-	.dw _rickyState5Substate3
+	.dw rickyState5Substate0
+	.dw rickyState5Substate1
+	.dw rickyState5Substate2
+	.dw rickyState5Substate3
 
 ;;
 ; Substate 0: moving (not hopping)
-_rickyState5Substate0:
+rickyState5Substate0:
 	ld a,(wForceCompanionDismount)
 	or a
 	jr nz,++
 
 	ld a,(wGameKeysJustPressed)
 	bit BTN_BIT_A,a
-	jp nz,_rickyStartPunch
+	jp nz,rickyStartPunch
 
 	bit BTN_BIT_B,a
 ++
-	jp nz,_companionGotoDismountState
+	jp nz,companionGotoDismountState
 
 	; Copy Link's angle (calculated from input buttons) to companion's angle
 	ld h,d
@@ -10563,8 +10563,8 @@ _rickyState5Substate0:
 	ld (hl),a
 
 	ld c,$20
-	call _companionSetAnimation
-	jp _rickyCheckHazards
+	call companionSetAnimation
+	jp rickyCheckHazards
 
 @moving:
 	; Check if the "jump countdown" has reached zero
@@ -10579,20 +10579,20 @@ _rickyState5Substate0:
 	ld (hl),SPEED_c0
 
 	ld c,$20
-	call _companionUpdateDirectionAndAnimate
-	call _rickyCheckForHoleInFront
-	jp z,_rickyBeginJumpOverHole
+	call companionUpdateDirectionAndAnimate
+	call rickyCheckForHoleInFront
+	jp z,rickyBeginJumpOverHole
 
-	call _companionCheckHopDownCliff
+	call companionCheckHopDownCliff
 	jr nz,+
-	jp _rickySetJumpSpeed
+	jp rickySetJumpSpeed
 +
-	call _rickyCheckHopUpCliff
+	call rickyCheckHopUpCliff
 	jr nz,+
-	jp _rickySetJumpSpeed_andcc91
+	jp rickySetJumpSpeed_andcc91
 +
-	call _companionUpdateMovement
-	jp _rickyCheckHazards
+	call companionUpdateMovement
+	jp rickyCheckHazards
 
 ; "Jump timer" has reached zero; make him jump (either from movement, over a hole, or up
 ; or down a cliff).
@@ -10604,7 +10604,7 @@ _rickyState5Substate0:
 	swap a
 	and $03
 	ldi (hl),a
-	call _rickySetJumpSpeed_andcc91
+	call rickySetJumpSpeed_andcc91
 
 	; If he's moving left or right, skip the up/down cliff checks
 	ld l,SpecialObject.angle
@@ -10612,23 +10612,23 @@ _rickyState5Substate0:
 	bit 2,a
 	jr nz,@jump
 
-	call _companionCheckHopDownCliff
+	call companionCheckHopDownCliff
 	jr nz,++
 	ld (wDisableScreenTransitions),a
 	ld c,$0f
-	jp _companionSetAnimation
+	jp companionSetAnimation
 ++
-	call _rickyCheckHopUpCliff
+	call rickyCheckHopUpCliff
 	ld c,$0f
-	jp z,_companionSetAnimation
+	jp z,companionSetAnimation
 
 @jump:
 	; If there's a hole in front, try to jump over it
 	ld e,SpecialObject.substate
 	ld a,$02
 	ld (de),a
-	call _rickyCheckForHoleInFront
-	jp z,_rickyBeginJumpOverHole
+	call rickyCheckForHoleInFront
+	jp z,rickyBeginJumpOverHole
 
 	; Otherwise, just do a normal hop
 	ld bc,-$180
@@ -10640,7 +10640,7 @@ _rickyState5Substate0:
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_200
 	ld c,$19
-	call _companionSetAnimation
+	call companionSetAnimation
 
 	call getRandomNumber
 	and $0f
@@ -10656,7 +10656,7 @@ _rickyState5Substate0:
 ; @param[out]	a	The tile directly in front of Ricky
 ; @param[out]	var36	The tile 2 spaces in front of Ricky
 ; @param[out]	zflag	Set if the tile in front of Ricky is a hole
-_rickyCheckForHoleInFront:
+rickyCheckForHoleInFront:
 	; Make sure we're not moving diagonally
 	ld a,(wLinkAngle)
 	and $04
@@ -10664,7 +10664,7 @@ _rickyCheckForHoleInFront:
 
 	ld e,SpecialObject.direction
 	ld a,(de)
-	ld hl,_rickyHoleCheckOffsets
+	ld hl,rickyHoleCheckOffsets
 	rst_addDoubleIndex
 
 	; Set b = y-position 2 tiles away, [hFF90] = y-position one tile away
@@ -10704,7 +10704,7 @@ _rickyCheckForHoleInFront:
 
 ;;
 ; Substate 1: hopping during normal movement
-_rickyState5Substate1:
+rickyState5Substate1:
 	dec e
 	ld a,(de) ; Check [state]
 	cp $05
@@ -10712,7 +10712,7 @@ _rickyState5Substate1:
 
 	ld a,(wGameKeysJustPressed)
 	bit BTN_BIT_A,a
-	jp nz,_rickyStartPunch
+	jp nz,rickyStartPunch
 
 	; Check if we're attempting to move
 	ld a,(wLinkAngle)
@@ -10732,7 +10732,7 @@ _rickyState5Substate1:
 	cp (hl)
 	ld (hl),a
 	ld c,$19
-	call nz,_companionSetAnimation
+	call nz,companionSetAnimation
 
 @doneInputParsing:
 	ld c,$40
@@ -10747,8 +10747,8 @@ _rickyState5Substate1:
 	jr nz,@updateMovement
 ++
 	; If Ricky's facing a hole, don't move into it
-	ld hl,_rickyHoleCheckOffsets
-	call _specialObjectGetRelativeTileWithDirectionTable
+	ld hl,rickyHoleCheckOffsets
+	call specialObjectGetRelativeTileWithDirectionTable
 	ld a,b
 	cp TILEINDEX_HOLE
 	ret z
@@ -10756,18 +10756,18 @@ _rickyState5Substate1:
 	ret z
 
 @updateMovement:
-	jp _companionUpdateMovement
+	jp companionUpdateMovement
 
 @landed:
 	call specialObjectAnimate
-	call _companionDecCounter1IfNonzero
+	call companionDecCounter1IfNonzero
 	ret nz
-	jp _rickyStopUntilLandedOnGround
+	jp rickyStopUntilLandedOnGround
 
 ;;
 ; Substate 2: jumping over a hole
-_rickyState5Substate2:
-	call _companionDecCounter1
+rickyState5Substate2:
+	call companionDecCounter1
 	jr z,++
 	dec (hl)
 	ret nz
@@ -10776,34 +10776,34 @@ _rickyState5Substate2:
 ++
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
-	jp z,_rickyStopUntilLandedOnGround
+	jp z,rickyStopUntilLandedOnGround
 
 	call specialObjectAnimate
-	call _companionUpdateMovement
-	call _specialObjectCheckMovingTowardWall
-	jp nz,_rickyStopUntilLandedOnGround
+	call companionUpdateMovement
+	call specialObjectCheckMovingTowardWall
+	jp nz,rickyStopUntilLandedOnGround
 	ret
 
 ;;
 ; Substate 3: just landed on the ground (or waiting to land on the ground?)
-_rickyState5Substate3:
+rickyState5Substate3:
 	; If he hasn't landed yet, do nothing until he does
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call _rickyBreakTilesOnLanding
+	call rickyBreakTilesOnLanding
 
 	; Return to state 5, substate 0 (normal movement)
 	xor a
 	ld e,SpecialObject.substate
 	ld (de),a
 
-	jp _rickyCheckHazards2
+	jp rickyCheckHazards2
 
 ;;
 ; State 8: punching (substate 0) or charging tornado (substate 1)
-_rickyState8:
+rickyState8:
 	ld e,$05
 	ld a,(de)
 	rst_jumpTable
@@ -10816,12 +10816,12 @@ _rickyState8:
 	call objectUpdateSpeedZ_paramC
 	jr z,@onGround
 
-	call _companionUpdateMovement
+	call companionUpdateMovement
 	jr ++
 
 @onGround:
-	call _companionTryToBreakTileFromMoving
-	call _rickyCheckHazards
+	call companionTryToBreakTileFromMoving
+	call rickyCheckHazards
 ++
 	; Wait for the animation to signal something (play sound effect or start tornado
 	; charging)
@@ -10847,15 +10847,15 @@ _rickyState8:
 	; Check if let go of the button
 	ld a,(wGameKeysPressed)
 	and BTN_A
-	jp z,_rickyStopUntilLandedOnGround
+	jp z,rickyStopUntilLandedOnGround
 
 	; Start tornado charging
 	call itemIncSubstate
 	ld c,$13
-	call _companionSetAnimation
-	call _companionCheckHazards
+	call companionSetAnimation
+	call companionCheckHazards
 	ret nc
-	jp _rickyFunc_70cc
+	jp rickyFunc_70cc
 
 ; Substate 1: charging tornado
 @substate1:
@@ -10867,7 +10867,7 @@ _rickyState8:
 	cp (hl)
 	ld (hl),a
 	ld c,$13
-	call nz,_companionUpdateDirectionAndAnimate
+	call nz,companionUpdateDirectionAndAnimate
 ++
 	call specialObjectAnimate
 	ld a,(wGameKeysPressed)
@@ -10880,10 +10880,10 @@ _rickyState8:
 	cp $1e
 	jr nz,@continueCharging
 
-	call _companionTryToBreakTileFromMoving
-	call _rickyCheckHazards
+	call companionTryToBreakTileFromMoving
+	call rickyCheckHazards
 	ld c,$04
-	jp _companionFlashFromChargingAnimation
+	jp companionFlashFromChargingAnimation
 
 @continueCharging:
 	inc a
@@ -10905,23 +10905,23 @@ _rickyState8:
 	jr nz,@notCharged
 
 	ldbc ITEMID_RICKY_TORNADO, $00
-	call _companionCreateItem
+	call companionCreateItem
 
 	ld a,SNDCTRL_STOPSFX
 	call playSound
 	ld a,SND_SWORDSPIN
 	call playSound
 
-	jr _rickyStartPunch
+	jr rickyStartPunch
 
 @notCharged:
 	ld c,$05
-	jp _companionSetAnimationAndGotoState5
+	jp companionSetAnimationAndGotoState5
 
 ;;
-_rickyStartPunch:
+rickyStartPunch:
 	ldbc ITEMID_28, $00
-	call _companionCreateWeaponItem
+	call companionCreateWeaponItem
 	ret nz
 	ld h,d
 	ld l,SpecialObject.state
@@ -10934,14 +10934,14 @@ _rickyStartPunch:
 	ld l,SpecialObject.var35
 	ld (hl),a
 	ld c,$09
-	call _companionSetAnimation
+	call companionSetAnimation
 	ld a,SND_SWORDSLASH
 	jp playSound
 
 ;;
 ; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
 ; then comes back.
-_rickyState6:
+rickyState6:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -10966,11 +10966,11 @@ _rickyState6:
 
 ; Waiting for Link to get a certain distance away before allowing him to mount again
 @substate2:
-	call _companionSetPriorityRelativeToLink
+	call companionSetPriorityRelativeToLink
 
 	ld c,$09
 	call objectCheckLinkWithinDistance
-	jp c,_rickyCheckHazards
+	jp c,rickyCheckHazards
 
 	; Link is far enough away; allow him to remount when he approaches again.
 	ld e,SpecialObject.substate
@@ -10983,12 +10983,12 @@ _rickyState6:
 
 ;;
 ; State 7: Jumping down a cliff
-_rickyState7:
-	call _companionDecCounter1ToJumpDownCliff
+rickyState7:
+	call companionDecCounter1ToJumpDownCliff
 	ret c
 
-	call _companionCalculateAdjacentWallsBitset
-	call _specialObjectCheckMovingAwayFromWall
+	call companionCalculateAdjacentWallsBitset
+	call specialObjectCheckMovingAwayFromWall
 	ld e,$07
 	jr z,+
 	ld (de),a
@@ -11001,7 +11001,7 @@ _rickyState7:
 ;;
 ; Sets ricky to state 5, substate 3 (do nothing until he lands, then continue normal
 ; movement)
-_rickyStopUntilLandedOnGround:
+rickyStopUntilLandedOnGround:
 	ld a,(wLinkObjectIndex)
 	rrca
 	jr nc,+
@@ -11018,21 +11018,21 @@ _rickyStopUntilLandedOnGround:
 
 	; If Ricky's close to the screen edge, set the "jump delay counter" back to $10 so
 	; that he'll stay on the ground long enough for a screen transition to happen
-	call _rickyCheckAtScreenEdge
-	jr z,_rickyCheckHazards2
+	call rickyCheckAtScreenEdge
+	jr z,rickyCheckHazards2
 	ld e,SpecialObject.var39
 	ld a,$10
 	ld (de),a
 
 ;;
-_rickyCheckHazards2:
-	call _companionCheckHazards
+rickyCheckHazards2:
+	call companionCheckHazards
 	ld c,$20
-	jp nc,_companionSetAnimation
+	jp nc,companionSetAnimation
 
 ;;
 ; @param	a	Hazard type landed on
-_rickyFunc_70cc:
+rickyFunc_70cc:
 	ld c,$0e
 	cp $01 ; Landed on water?
 	jr z,+
@@ -11048,31 +11048,31 @@ _rickyFunc_70cc:
 ;;
 ; State A: various cutscene-related things? Behaviour is controlled by "var03" instead of
 ; "substate".
-_rickyStateA:
+rickyStateA:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	rst_jumpTable
-	.dw _rickyStateASubstate0
-	.dw _rickyStateASubstate1
-	.dw _rickyStateASubstate2
-	.dw _rickyStateASubstate3
-	.dw _rickyStateASubstate4
-	.dw _rickyStateASubstate5
-	.dw _rickyStateASubstate6
-	.dw _rickyStateASubstate7
+	.dw rickyStateASubstate0
+	.dw rickyStateASubstate1
+	.dw rickyStateASubstate2
+	.dw rickyStateASubstate3
+	.dw rickyStateASubstate4
+	.dw rickyStateASubstate5
+	.dw rickyStateASubstate6
+	.dw rickyStateASubstate7
 .ifdef ROM_SEASONS
-	.dw _rickyStateASubstate8
-	.dw _rickyStateASubstate9
-	.dw _rickyStateASubstateA
-	.dw _rickyStateASubstateB
-	.dw _rickyStateASubstateC
+	.dw rickyStateASubstate8
+	.dw rickyStateASubstate9
+	.dw rickyStateASubstateA
+	.dw rickyStateASubstateB
+	.dw rickyStateASubstateC
 .endif
 
 ;;
 ; Standing around doing nothing?
-_rickyStateASubstate0:
-	call _companionPreventLinkFromPassing_noExtraChecks
-	call _companionSetPriorityRelativeToLink
+rickyStateASubstate0:
+	call companionPreventLinkFromPassing_noExtraChecks
+	call companionSetPriorityRelativeToLink
 	call specialObjectAnimate
 	ld e,$21
 	ld a,(de)
@@ -11084,15 +11084,15 @@ _rickyStateASubstate0:
 
 ;;
 ; Force Link to mount
-_rickyStateASubstate1:
+rickyStateASubstate1:
 	ld e,SpecialObject.var3d
 	call objectRemoveFromAButtonSensitiveObjectList
-	jp _companionForceMount
+	jp companionForceMount
 
 .ifdef ROM_AGES
 ;;
 ; Ricky leaving upon meeting Tingle (part 1: print text)
-_rickyStateASubstate2:
+rickyStateASubstate2:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -11114,10 +11114,10 @@ _rickyStateASubstate2:
 	ld e,SpecialObject.var3f
 	ld (de),a
 	call specialObjectSetAnimation
-	call _rickyIncVar03
-	jr _rickySetJumpSpeedForCutscene
+	call rickyIncVar03
+	jr rickySetJumpSpeedForCutscene
 .else
-_rickyStateASubstate2:
+rickyStateASubstate2:
 	ld a,$01
 	ld (wDisabledObjects),a
 	ld a,DIR_UP
@@ -11126,11 +11126,11 @@ _rickyStateASubstate2:
 	ld a,$05
 	ld e,SpecialObject.var3f
 	ld (de),a
-	call _rickyIncVar03
+	call rickyIncVar03
 .endif
 
 ;;
-_rickySetJumpSpeedForCutsceneAndSetAngle:
+rickySetJumpSpeedForCutsceneAndSetAngle:
 	ld b,$30
 	ld c,$58
 	call objectGetRelativeAngle
@@ -11139,7 +11139,7 @@ _rickySetJumpSpeedForCutsceneAndSetAngle:
 	ld (de),a
 
 ;;
-_rickySetJumpSpeedForCutscene:
+rickySetJumpSpeedForCutscene:
 	ld bc,-$180
 	call objectSetSpeedZ
 	ld l,SpecialObject.substate
@@ -11153,7 +11153,7 @@ _rickySetJumpSpeedForCutscene:
 .ifdef ROM_AGES
 ;;
 ; Ricky leaving upon meeting Tingle (part 5: punching the air)
-_rickyStateASubstate6:
+rickyStateASubstate6:
 	; Wait for animation to give signals to play sound, start moving away.
 	call specialObjectAnimate
 	ld e,SpecialObject.animParameter
@@ -11167,18 +11167,18 @@ _rickyStateASubstate6:
 	ret nc
 
 	; Start moving away
-	call _rickySetJumpSpeedForCutsceneAndSetAngle
+	call rickySetJumpSpeedForCutsceneAndSetAngle
 	ld e,SpecialObject.angle
 	ld a,$10
 	ld (de),a
 
 	ld c,$05
-	call _companionSetAnimation
-	jp _rickyIncVar03
+	call companionSetAnimation
+	jp rickyIncVar03
 
 ;;
 ; Ricky leaving upon meeting Tingle (part 2: start moving toward cliff)
-_rickyStateASubstate3:
+rickyStateASubstate3:
 	call retIfTextIsActive
 
 	; Move down-left
@@ -11192,12 +11192,12 @@ _rickyStateASubstate3:
 	ld (de),a
 
 	ld c,$05
-	call _companionSetAnimation
-	jp _rickyIncVar03
+	call companionSetAnimation
+	jp rickyIncVar03
 
 ;;
 ; Ricky leaving upon meeting Tingle (part 4: jumping down cliff)
-_rickyStateASubstate5:
+rickyStateASubstate5:
 	call specialObjectAnimate
 	call objectApplySpeed
 	ld c,$40
@@ -11207,15 +11207,15 @@ _rickyStateASubstate5:
 	; Reached bottom of cliff
 	ld a,$18
 	call specialObjectSetAnimation
-	jp _rickyIncVar03
+	jp rickyIncVar03
 
 ;;
 ; Ricky leaving upon meeting Tingle (part 3: moving toward cliff, or...
 ;                                    part 6: moving toward screen edge)
-_rickyStateASubstate4:
-_rickyStateASubstate7:
-	call _companionSetAnimationToVar3f
-	call _rickyWaitUntilJumpDone
+rickyStateASubstate4:
+rickyStateASubstate7:
+	call companionSetAnimationToVar3f
+	call rickyWaitUntilJumpDone
 	ret nz
 
 	; Ricky has just touched the ground, and is ready to do another hop.
@@ -11224,21 +11224,21 @@ _rickyStateASubstate7:
 	ld a,$18
 	ld e,SpecialObject.angle
 	ld (de),a
-	call _specialObjectCheckMovingTowardWall
+	call specialObjectCheckMovingTowardWall
 	jr z,@hop
 
 	; Check if moving toward a wall below
 	ld a,$10
 	ld e,SpecialObject.angle
 	ld (de),a
-	call _specialObjectCheckMovingTowardWall
+	call specialObjectCheckMovingTowardWall
 	jr z,@hop
 
 	; He's against the cliff; proceed to next state (jumping down cliff).
-	call _rickySetJumpSpeed
+	call rickySetJumpSpeed
 	ld a,SND_JUMP
 	call playSound
-	jp _rickyIncVar03
+	jp rickyIncVar03
 
 @hop:
 	call objectCheckWithinScreenBoundary
@@ -11254,7 +11254,7 @@ _rickyStateASubstate7:
 +
 	ld e,SpecialObject.angle
 	ld (de),a
-	jp _rickySetJumpSpeedForCutscene
+	jp rickySetJumpSpeedForCutscene
 
 @leftScreen:
 	xor a
@@ -11267,8 +11267,8 @@ _rickyStateASubstate7:
 	jp saveLinkLocalRespawnAndCompanionPosition
 .else
 
-_rickyStateASubstate7:
-	call _companionSetAnimationToVar3f
+rickyStateASubstate7:
+	call companionSetAnimationToVar3f
 	call specialObjectAnimate
 	ld e,SpecialObject.animParameter
 	ld a,(de)
@@ -11278,30 +11278,30 @@ _rickyStateASubstate7:
 	ld a,(de)
 	rlca
 	ret nc
-	call _rickySetJumpSpeedForCutsceneAndSetAngle
+	call rickySetJumpSpeedForCutsceneAndSetAngle
 	ld e,SpecialObject.angle
 	ld a,$10
 	ld (de),a
 	ret
-_rickyStateASubstate3:
-	call _companionSetAnimationToVar3f
+rickyStateASubstate3:
+	call companionSetAnimationToVar3f
 	ld e,SpecialObject.var3e
 	ld a,(de)
 	and $01
 	ret nz
-	call _rickyWaitUntilJumpDone
+	call rickyWaitUntilJumpDone
 	ret nz
 	ld e,SpecialObject.yh
 	ld a,(de)
 	cp $38
-	jr nc,_rickySetJumpSpeedForCutsceneAndSetAngle
+	jr nc,rickySetJumpSpeedForCutsceneAndSetAngle
 	ld e,SpecialObject.var3e
 	ld a,(de)
 	or $01
 	ld (de),a
 	ret
-_rickyStateASubstate4:
-	call _companionSetAnimationToVar3f
+rickyStateASubstate4:
+	call companionSetAnimationToVar3f
 	ld e,SpecialObject.var3e
 	ld a,(de)
 	bit 1,a
@@ -11309,16 +11309,16 @@ _rickyStateASubstate4:
 	or $02
 	ld (de),a
 	jp companionDismount
-_rickyStateASubstate5:
-	call _rickySetJumpSpeedForCutsceneAndSetAngle
+rickyStateASubstate5:
+	call rickySetJumpSpeedForCutsceneAndSetAngle
 	ld e,SpecialObject.angle
 	ld a,$10
 	ld (de),a
 	ret
-_rickyStateASubstate6:
-_rickyStateASubstate8:
-	call _companionSetAnimationToVar3f
-	call _rickyWaitUntilJumpDone
+rickyStateASubstate6:
+rickyStateASubstate8:
+	call companionSetAnimationToVar3f
+	call rickyWaitUntilJumpDone
 	ret nz
 	call objectCheckWithinScreenBoundary
 	jr nc,++
@@ -11331,7 +11331,7 @@ _rickyStateASubstate8:
 	or SpecialObject.state
 	ld (de),a
 +
-	call _rickySetJumpSpeedForCutsceneAndSetAngle
+	call rickySetJumpSpeedForCutsceneAndSetAngle
 	ld e,SpecialObject.angle
 	ld a,$10
 	ld (de),a
@@ -11343,15 +11343,15 @@ _rickyStateASubstate8:
 	ld (wDisabledObjects),a
 	call itemDelete
 	jp saveLinkLocalRespawnAndCompanionPosition
-_rickyStateASubstate9:
+rickyStateASubstate9:
 	ld a,$80
 	ld (wMenuDisabled),a
 	ld a,$01
 	ld e,SpecialObject.direction
 	ld (de),a
-	call _rickyIncVar03
+	call rickyIncVar03
 	ld c,$20
-	call _companionSetAnimation
+	call companionSetAnimation
 -
 	ld bc,$4070
 	call objectGetRelativeAngle
@@ -11359,9 +11359,9 @@ _rickyStateASubstate9:
 	ld e,SpecialObject.angle
 	ld (de),a
 	ret
-_rickyStateASubstateA:
+rickyStateASubstateA:
 	call specialObjectAnimate
-	call _companionUpdateMovement
+	call companionUpdateMovement
 	ld e,SpecialObject.xh
 	ld a,(de)
 	cp $38
@@ -11371,7 +11371,7 @@ _rickyStateASubstateA:
 .endif
 
 ;;
-_rickyIncVar03:
+rickyIncVar03:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	inc a
@@ -11380,7 +11380,7 @@ _rickyIncVar03:
 
 ;;
 ; Seasons-only
-_rickyStateASubstateB:
+rickyStateASubstateB:
 	call retIfTextIsActive
 	call companionDismount
 
@@ -11403,11 +11403,11 @@ _rickyStateASubstateB:
 
 	ld a,$24
 	call specialObjectSetAnimation
-	jr _rickyIncVar03
+	jr rickyIncVar03
 
 ;;
 ; Seasons-only
-_rickyStateASubstateC:
+rickyStateASubstateC:
 	ld a,(wLinkInAir)
 	or a
 	ret nz
@@ -11437,7 +11437,7 @@ _rickyStateASubstateC:
 
 @moveCompanion:
 	call specialObjectAnimate
-	call _companionUpdateMovement
+	call companionUpdateMovement
 	call objectCheckWithinScreenBoundary
 	ret c
 	xor a
@@ -11448,23 +11448,23 @@ _rickyStateASubstateC:
 
 ;;
 ; @param[out]	zflag	Set if Ricky's on the ground and counter1 has reached 0.
-_rickyWaitUntilJumpDone:
+rickyWaitUntilJumpDone:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	jr z,@onGround
 
-	call _companionUpdateMovement
+	call companionUpdateMovement
 	or d
 	ret
 
 @onGround:
 	ld c,$05
-	call _companionSetAnimation
-	jp _companionDecCounter1IfNonzero
+	call companionSetAnimation
+	jp companionDecCounter1IfNonzero
 
 ;;
 ; State $0c: Ricky entering screen from flute call
-_rickyStateC:
+rickyStateC:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	rst_jumpTable
@@ -11472,16 +11472,16 @@ _rickyStateC:
 	.dw @parameter1
 
 @parameter0:
-	call _companionInitializeOnEnteringScreen
+	call companionInitializeOnEnteringScreen
 	ld (hl),$02
-	call _rickySetJumpSpeedForCutscene
+	call rickySetJumpSpeedForCutscene
 	ld a,SND_RICKY
 	call playSound
 	ld c,$01
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 @parameter1:
-	call _rickyState5
+	call rickyState5
 
 	; Return if falling into a hazard
 	ld e,SpecialObject.state
@@ -11496,28 +11496,28 @@ _rickyStateC:
 	cp $03
 	ret nz
 
-	call _rickyBreakTilesOnLanding
-	ld hl,_rickyHoleCheckOffsets
-	call _specialObjectGetRelativeTileWithDirectionTable
+	call rickyBreakTilesOnLanding
+	ld hl,rickyHoleCheckOffsets
+	call specialObjectGetRelativeTileWithDirectionTable
 	or a
 	jr nz,@initializeRicky
 	call itemDecCounter2
 	jr z,@initializeRicky
-	call _rickySetJumpSpeedForCutscene
+	call rickySetJumpSpeedForCutscene
 	ld c,$01
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ; Make Ricky stop moving in, start waiting in place
 @initializeRicky:
 	ld e,SpecialObject.var03
 	xor a
 	ld (de),a
-	jp _rickyState0
+	jp rickyState0
 
 
 ;;
 ; @param[out]	zflag	Set if Ricky should hop up a cliff
-_rickyCheckHopUpCliff:
+rickyCheckHopUpCliff:
 	; Check that Ricky's facing a wall above him
 	ld e,SpecialObject.adjacentWallsBitset
 	ld a,(de)
@@ -11536,7 +11536,7 @@ _rickyCheckHopUpCliff:
 ; Check that the tiles on ricky's left and right sides one tile up are clear
 @tryOneTileUp:
 	ld hl,@cliffOffset_oneUp_right
-	call _specialObjectGetRelativeTileFromHl
+	call specialObjectGetRelativeTileFromHl
 	cp $03
 	jr z,+
 	ld a,b
@@ -11544,7 +11544,7 @@ _rickyCheckHopUpCliff:
 	jr nz,@tryTwoTilesUp
 +
 	ld hl,@cliffOffset_oneUp_left
-	call _specialObjectGetRelativeTileFromHl
+	call specialObjectGetRelativeTileFromHl
 	cp $03
 	jr z,@canJumpUpCliff
 	ld a,b
@@ -11554,7 +11554,7 @@ _rickyCheckHopUpCliff:
 ; Check that the tiles on ricky's left and right sides two tiles up are clear
 @tryTwoTilesUp:
 	ld hl,@cliffOffset_twoUp_right
-	call _specialObjectGetRelativeTileFromHl
+	call specialObjectGetRelativeTileFromHl
 	cp $03
 	jr z,+
 	ld a,b
@@ -11562,7 +11562,7 @@ _rickyCheckHopUpCliff:
 	ret nz
 +
 	ld hl,@cliffOffset_twoUp_left
-	call _specialObjectGetRelativeTileFromHl
+	call specialObjectGetRelativeTileFromHl
 	cp $03
 	jr z,@canJumpUpCliff
 	ld a,b
@@ -11595,7 +11595,7 @@ _rickyCheckHopUpCliff:
 
 
 ;;
-_rickyBreakTilesOnLanding:
+rickyBreakTilesOnLanding:
 	ld hl,@offsets
 @next:
 	ldi a,(hl)
@@ -11628,18 +11628,18 @@ _rickyBreakTilesOnLanding:
 ;;
 ; Seems to set variables for ricky's jump speed, etc, but the jump may still be cancelled
 ; after this?
-_rickyBeginJumpOverHole:
+rickyBeginJumpOverHole:
 	ld a,$01
 	ld (wLinkInAir),a
 
 ;;
-_rickySetJumpSpeed_andcc91:
+rickySetJumpSpeed_andcc91:
 	ld a,$01
 	ld (wDisableScreenTransitions),a
 
 ;;
 ; Sets up Ricky's speed for long jumps across holes and cliffs.
-_rickySetJumpSpeed:
+rickySetJumpSpeed:
 	ld bc,-$300
 	call objectSetSpeedZ
 	ld l,SpecialObject.counter1
@@ -11647,13 +11647,13 @@ _rickySetJumpSpeed:
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_140
 	ld c,$0f
-	call _companionSetAnimation
+	call companionSetAnimation
 	ld h,d
 	ret
 
 ;;
 ; @param[out]	zflag	Set if Ricky's close to the screen edge
-_rickyCheckAtScreenEdge:
+rickyCheckAtScreenEdge:
 	ld h,d
 	ld l,SpecialObject.yh
 	ld a,$06
@@ -11683,7 +11683,7 @@ _rickyCheckAtScreenEdge:
 	ret
 
 ; Offsets relative to Ricky's position to check for holes to jump over
-_rickyHoleCheckOffsets:
+rickyHoleCheckOffsets:
 	.db $f8 $00
 	.db $05 $08
 	.db $08 $00
@@ -11692,38 +11692,38 @@ _rickyHoleCheckOffsets:
 
 ;;
 ; var38: nonzero if Dimitri is in water?
-_specialObjectCode_dimitri:
-	call _companionRetIfInactive
-	call _companionFunc_47d8
+specialObjectCode_dimitri:
+	call companionRetIfInactive
+	call companionFunc_47d8
 	call @runState
 	xor a
 	ld (wDimitriHitNpc),a
-	jp _companionCheckEnableTerrainEffects
+	jp companionCheckEnableTerrainEffects
 
-; Note: expects that h=d (call to _companionFunc_47d8 does this)
+; Note: expects that h=d (call to companionFunc_47d8 does this)
 @runState:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _dimitriState0
-	.dw _dimitriState1
-	.dw _dimitriState2
-	.dw _dimitriState3
-	.dw _dimitriState4
-	.dw _dimitriState5
-	.dw _dimitriState6
-	.dw _dimitriState7
-	.dw _dimitriState8
-	.dw _dimitriState9
-	.dw _dimitriStateA
-	.dw _dimitriStateB
-	.dw _dimitriStateC
-	.dw _dimitriStateD
+	.dw dimitriState0
+	.dw dimitriState1
+	.dw dimitriState2
+	.dw dimitriState3
+	.dw dimitriState4
+	.dw dimitriState5
+	.dw dimitriState6
+	.dw dimitriState7
+	.dw dimitriState8
+	.dw dimitriState9
+	.dw dimitriStateA
+	.dw dimitriStateB
+	.dw dimitriStateC
+	.dw dimitriStateD
 
 ;;
 ; State 0: initialization, deciding which state to go to
-_dimitriState0:
-	call _companionCheckCanSpawn
+dimitriState0:
+	call companionCheckCanSpawn
 
 	ld a,DIR_DOWN
 	ld l,SpecialObject.direction
@@ -11773,28 +11773,28 @@ _dimitriState0:
 
 @setAnimation:
 	ld c,$1c
-	call _companionSetAnimation
+	call companionSetAnimation
 @setVisible:
 	jp objectSetVisible81
 
 ;;
 ; State 1: waiting for Link to mount
-_dimitriState1:
-	call _companionSetPriorityRelativeToLink
+dimitriState1:
+	call companionSetPriorityRelativeToLink
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
 	; Is dimitri in a hole?
-	call _companionCheckHazards
+	call companionCheckHazards
 	jr nc,@onLand
 	cp $02
 	ret z
 
 	; No, he must be in water
-	call _dimitriAddWaterfallResistance
+	call dimitriAddWaterfallResistance
 	ld a,$04
-	call _dimitriFunc_756d
+	call dimitriFunc_756d
 	jr ++
 
 @onLand:
@@ -11805,7 +11805,7 @@ _dimitriState1:
 	xor a
 	ld (de),a
 	ld c,$1c
-	call _companionSetAnimation
+	call companionSetAnimation
 ++
 	ld a,$06
 	call objectSetCollideRadius
@@ -11813,30 +11813,30 @@ _dimitriState1:
 	ld e,SpecialObject.var3b
 	ld a,(de)
 	or a
-	jp nz,_dimitriGotoState1IfLinkFarAway
+	jp nz,dimitriGotoState1IfLinkFarAway
 
 	ld c,$09
 	call objectCheckLinkWithinDistance
-	jp nc,_dimitriCheckAddToGrabbableObjectBuffer
-	jp _companionTryToMount
+	jp nc,dimitriCheckAddToGrabbableObjectBuffer
+	jp companionTryToMount
 
 ;;
 ; State 2: curled into a ball (being held or thrown).
 ;
 ; The substates are generally controlled by power bracelet code (see "itemCode16").
 ;
-_dimitriState2:
+dimitriState2:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _dimitriState2Substate0
-	.dw _dimitriState2Substate1
-	.dw _dimitriState2Substate2
-	.dw _dimitriState2Substate3
+	.dw dimitriState2Substate0
+	.dw dimitriState2Substate1
+	.dw dimitriState2Substate2
+	.dw dimitriState2Substate3
 
 ;;
 ; Substate 0: just grabbed
-_dimitriState2Substate0:
+dimitriState2Substate0:
 	ld a,$40
 	ld (wLinkGrabState2),a
 	call itemIncSubstate
@@ -11855,11 +11855,11 @@ _dimitriState2Substate0:
 	call setFlag
 
 	ld c,$18
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ;;
 ; Substate 1: being lifted, carried
-_dimitriState2Substate1:
+dimitriState2Substate1:
 	xor a
 	ld (w1Link.knockbackCounter),a
 	ld a,(wActiveTileType)
@@ -11883,7 +11883,7 @@ _dimitriState2Substate1:
 	dec e
 	ld (de),a ; [direction] = [w1Link.direction]
 
-	call _dimitriCheckCanBeHeldInDirection
+	call dimitriCheckCanBeHeldInDirection
 	jr nz,@update
 
 @releaseDimitri:
@@ -11896,20 +11896,20 @@ _dimitriState2Substate1:
 
 @update:
 	; Check whether to prevent Link from throwing dimitri (write nonzero to wcc67)
-	call _companionCalculateAdjacentWallsBitset
-	call _specialObjectCheckMovingTowardWall
+	call companionCalculateAdjacentWallsBitset
+	call specialObjectCheckMovingTowardWall
 	ret z
 	ld (wcc67),a
 	ret
 
 ;;
 ; Substate 2: dimitri released, falling to ground
-_dimitriState2Substate2:
+dimitriState2Substate2:
 	ld h,d
 	ld l,SpecialObject.enabled
 	res 1,(hl)
 
-	call _companionCheckHazards
+	call companionCheckHazards
 	jr nc,@noHazard
 
 	; Return if he's on a hole
@@ -11940,8 +11940,8 @@ _dimitriState2Substate2:
 	or a
 	jr nz,@stopMovement
 
-	call _companionCalculateAdjacentWallsBitset
-	call _specialObjectCheckMovingTowardWall
+	call companionCalculateAdjacentWallsBitset
+	call specialObjectCheckMovingTowardWall
 	jr nz,@stopMovement
 
 	ld c,$00
@@ -12035,11 +12035,11 @@ _dimitriState2Substate2:
 	ld (de),a ; [direction] = a
 
 	ld c,$00
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ;;
 ; Substate 3: landed on ground for good
-_dimitriState2Substate3:
+dimitriState2Substate3:
 	ld h,d
 	ld l,SpecialObject.enabled
 	res 1,(hl)
@@ -12047,8 +12047,8 @@ _dimitriState2Substate3:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call _companionTryToBreakTileFromMoving
-	call _companionCheckHazards
+	call companionTryToBreakTileFromMoving
+	call companionCheckHazards
 	jr nc,@gotoState1
 
 	; If on a hole, return (stay in this state?)
@@ -12057,14 +12057,14 @@ _dimitriState2Substate3:
 
 	; If in water, go to state 1, but with alternate value for var38?
 	ld a,$04
-	jp _dimitriFunc_756d
+	jp dimitriFunc_756d
 
 @gotoState1:
 	xor a
 
 ;;
 ; @param	a	Value for var38
-_dimitriFunc_756d:
+dimitriFunc_756d:
 	ld h,d
 	ld l,SpecialObject.var38
 	ld (hl),a
@@ -12075,23 +12075,23 @@ _dimitriFunc_756d:
 	ld (hl),$00 ; [substate] = 0
 
 	ld c,$1c
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ;;
 ; State 3: Link is jumping up to mount Dimitri
-_dimitriState3:
-	call _companionCheckMountingComplete
+dimitriState3:
+	call companionCheckMountingComplete
 	ret nz
-	call _companionFinalizeMounting
+	call companionFinalizeMounting
 	ld c,$00
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ;;
 ; State 4: Dimitri's falling into a hazard (hole/water)
-_dimitriState4:
-	call _companionDragToCenterOfHole
+dimitriState4:
+	call companionDragToCenterOfHole
 	ret nz
-	call _companionDecCounter1
+	call companionDecCounter1
 	jr nz,@animate
 
 	inc (hl)
@@ -12101,14 +12101,14 @@ _dimitriState4:
 	jp specialObjectSetAnimation
 
 @animate:
-	call _companionAnimateDrowningOrFallingThenRespawn
+	call companionAnimateDrowningOrFallingThenRespawn
 	ret nc
 	ld c,$00
-	jp _companionUpdateDirectionAndSetAnimation
+	jp companionUpdateDirectionAndSetAnimation
 
 ;;
 ; State 5: Link riding dimitri.
-_dimitriState5:
+dimitriState5:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -12118,28 +12118,28 @@ _dimitriState5:
 	jr nz,++
 	ld a,(wGameKeysJustPressed)
 	bit BTN_BIT_A,a
-	jr nz,_dimitriGotoEatingState
+	jr nz,dimitriGotoEatingState
 	bit BTN_BIT_B,a
 ++
-	jp nz,_companionGotoDismountState
+	jp nz,companionGotoDismountState
 
 	ld a,(wLinkAngle)
 	bit 7,a
-	jr nz,_dimitriUpdateMovement@checkHazards
+	jr nz,dimitriUpdateMovement@checkHazards
 
 	; Check if angle changed, update direction if so
 	ld hl,w1Companion.angle
 	cp (hl)
 	ld (hl),a
 	ld c,$00
-	jp nz,_companionUpdateDirectionAndAnimate
+	jp nz,companionUpdateDirectionAndAnimate
 
 	; Return if he should hop down a cliff (state changed in function call)
-	call _companionCheckHopDownCliff
+	call companionCheckHopDownCliff
 	ret z
 
 ;;
-_dimitriUpdateMovement:
+dimitriUpdateMovement:
 	; Play sound effect when animation indicates to do so
 	ld h,d
 	ld l,SpecialObject.animParameter
@@ -12158,11 +12158,11 @@ _dimitriUpdateMovement:
 +
 	ld l,SpecialObject.speed
 	ld (hl),a
-	call _companionUpdateMovement
+	call companionUpdateMovement
 	call specialObjectAnimate
 
 @checkHazards:
-	call _companionCheckHazards
+	call companionCheckHazards
 	ld h,d
 	jr nc,@setNotInWater
 
@@ -12180,11 +12180,11 @@ _dimitriUpdateMovement:
 	jr nz,++
 	xor a
 	ld (wLinkForceState),a
-	jp _companionGotoHazardHandlingState
+	jp companionGotoHazardHandlingState
 ++
 .endif
 
-	call _dimitriAddWaterfallResistance
+	call dimitriAddWaterfallResistance
 	ld b,$04
 	jr @setWaterStatus
 
@@ -12198,14 +12198,14 @@ _dimitriUpdateMovement:
 	cp b
 	ld (hl),b
 	ld c,$00
-	jp nz,_companionUpdateDirectionAndSetAnimation
+	jp nz,companionUpdateDirectionAndSetAnimation
 
 ;;
-_dimitriState9:
+dimitriState9:
 	ret
 
 ;;
-_dimitriGotoEatingState:
+dimitriGotoEatingState:
 	ld h,d
 	ld l,SpecialObject.state
 	ld a,$08
@@ -12229,9 +12229,9 @@ _dimitriGotoEatingState:
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_c0
 	ld c,$08
-	call _companionSetAnimation
+	call companionSetAnimation
 	ldbc ITEMID_DIMITRI_MOUTH, $00
-	call _companionCreateWeaponItem
+	call companionCreateWeaponItem
 
 	ld a,SND_DIMITRI
 	jp playSound
@@ -12239,7 +12239,7 @@ _dimitriGotoEatingState:
 ;;
 ; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
 ; then comes back.
-_dimitriState6:
+dimitriState6:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -12252,7 +12252,7 @@ _dimitriState6:
 	ld (de),a
 	call companionDismountAndSavePosition
 	ld c,$1c
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 @substate1:
 	ld a,(wLinkInAir)
@@ -12261,10 +12261,10 @@ _dimitriState6:
 	jp itemIncSubstate
 
 @substate2:
-	call _dimitriCheckAddToGrabbableObjectBuffer
+	call dimitriCheckAddToGrabbableObjectBuffer
 
 ;;
-_dimitriGotoState1IfLinkFarAway:
+dimitriGotoState1IfLinkFarAway:
 	; Return if Link is too close
 	ld c,$09
 	call objectCheckLinkWithinDistance
@@ -12273,7 +12273,7 @@ _dimitriGotoState1IfLinkFarAway:
 ;;
 ; @param[out]	a	0
 ; @param[out]	de	var3b
-_dimitriGotoState1:
+dimitriGotoState1:
 	ld e,SpecialObject.state
 	ld a,$01
 	ld (de),a
@@ -12286,11 +12286,11 @@ _dimitriGotoState1:
 
 ;;
 ; State 7: jumping down a cliff
-_dimitriState7:
-	call _companionDecCounter1ToJumpDownCliff
+dimitriState7:
+	call companionDecCounter1ToJumpDownCliff
 	ret c
-	call _companionCalculateAdjacentWallsBitset
-	call _specialObjectCheckMovingAwayFromWall
+	call companionCalculateAdjacentWallsBitset
+	call specialObjectCheckMovingAwayFromWall
 
 	ld l,SpecialObject.counter2
 	jr z,+
@@ -12300,11 +12300,11 @@ _dimitriState7:
 	ld a,(hl)
 	or a
 	ret z
-	jp _dimitriLandOnGroundAndGotoState5
+	jp dimitriLandOnGroundAndGotoState5
 
 ;;
 ; State 8: Attempting to eat something
-_dimitriState8:
+dimitriState8:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -12336,13 +12336,13 @@ _dimitriState8:
 	ld l,SpecialObject.counter1
 	ld (hl),$0c
 	ld c,$00
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ; Substate 1: moving back
 @substate1:
 	call specialObjectAnimate
 	call objectApplySpeed
-	call _companionDecCounter1IfNonzero
+	call companionDecCounter1IfNonzero
 	ret nz
 
 	; Done moving back
@@ -12361,26 +12361,26 @@ _dimitriState8:
 	ld l,SpecialObject.var35
 	ld a,(hl)
 	or a
-	jp z,_dimitriLandOnGroundAndGotoState5
+	jp z,dimitriLandOnGroundAndGotoState5
 	call itemIncSubstate
 	ld c,$10
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ; Substate 2: swallowing something
 @substate2:
 	call specialObjectAnimate
-	call _companionDecCounter1IfNonzero
+	call companionDecCounter1IfNonzero
 	ret nz
-	jr _dimitriLandOnGroundAndGotoState5
+	jr dimitriLandOnGroundAndGotoState5
 
 ;;
 ; State B: swimming back to land after being thrown into water
-_dimitriStateB:
+dimitriStateB:
 	ld c,$40
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call _dimitriUpdateMovement
+	call dimitriUpdateMovement
 
 	; Set state to $01 if he's out of the water; stay in $0b otherwise
 	ld h,d
@@ -12395,7 +12395,7 @@ _dimitriStateB:
 
 ;;
 ; State C: Dimitri entering screen from flute call
-_dimitriStateC:
+dimitriStateC:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	rst_jumpTable
@@ -12404,74 +12404,74 @@ _dimitriStateC:
 
 ; substate 0: dimitri just spawned?
 @parameter0:
-	call _companionInitializeOnEnteringScreen
+	call companionInitializeOnEnteringScreen
 	ld (hl),$3c ; [counter2] = $3c
 
 	ld a,SND_DIMITRI
 	call playSound
 	ld c,$00
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ; substate 1: walking in
 @parameter1:
-	call _dimitriUpdateMovement
+	call dimitriUpdateMovement
 	ld e,SpecialObject.state
 	ld a,$0c
 	ld (de),a
 
-	ld hl,_dimitriTileOffsets
-	call _companionRetIfNotFinishedWalkingIn
+	ld hl,dimitriTileOffsets
+	call companionRetIfNotFinishedWalkingIn
 
 	; Done walking into screen; jump to state 0
 	ld e,SpecialObject.var03
 	xor a
 	ld (de),a
-	jp _dimitriState0
+	jp dimitriState0
 
 ;;
 ; State D: ? (set to this by INTERACID_CARPENTER subid $ff?)
-_dimitriStateD:
+dimitriStateD:
 	ld e,SpecialObject.var3c
 	ld a,(de)
 	or a
 	jr nz,++
 
-	call _dimitriGotoState1
+	call dimitriGotoState1
 	inc a
 	ld (de),a ; [var3b] = 1
 
 	ld hl,w1Companion.enabled
 	res 1,(hl)
 	ld c,$1c
-	jp _companionSetAnimation
+	jp companionSetAnimation
 ++
 	ld e,SpecialObject.state
 	ld a,$05
 	ld (de),a
 
 ;;
-_dimitriLandOnGroundAndGotoState5:
+dimitriLandOnGroundAndGotoState5:
 	xor a
 	ld (wLinkInAir),a
 	ld c,$00
-	jp _companionSetAnimationAndGotoState5
+	jp companionSetAnimationAndGotoState5
 
 .ifdef ROM_AGES
 ;;
 ; State A: cutscene-related stuff
-_dimitriStateA:
+dimitriStateA:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	rst_jumpTable
-	.dw _dimitriStateASubstate0
-	.dw _dimitriStateASubstate1
-	.dw _dimitriStateASubstate2
-	.dw _dimitriStateASubstate3
-	.dw _dimitriStateASubstate4
+	.dw dimitriStateASubstate0
+	.dw dimitriStateASubstate1
+	.dw dimitriStateASubstate2
+	.dw dimitriStateASubstate3
+	.dw dimitriStateASubstate4
 
 ;;
 ; Force mounting Dimitri?
-_dimitriStateASubstate0:
+dimitriStateASubstate0:
 	ld e,SpecialObject.var3d
 	ld a,(de)
 	or a
@@ -12479,8 +12479,8 @@ _dimitriStateASubstate0:
 	ld a,$81
 	ld (wDisabledObjects),a
 +
-	call _companionSetAnimationToVar3f
-	call _companionPreventLinkFromPassing_noExtraChecks
+	call companionSetAnimationToVar3f
+	call companionPreventLinkFromPassing_noExtraChecks
 	call specialObjectAnimate
 
 	ld e,SpecialObject.visible
@@ -12498,21 +12498,21 @@ _dimitriStateASubstate0:
 	ld a,$ff
 	ld (wStatusBarNeedsRefresh),a
 	ld c,$1c
-	call _companionSetAnimation
-	jp _companionForceMount
+	call companionSetAnimation
+	jp companionForceMount
 
 ;;
 ; Force mounting dimitri?
-_dimitriStateASubstate1:
+dimitriStateASubstate1:
 	ld e,SpecialObject.var3d
 	call objectRemoveFromAButtonSensitiveObjectList
 	ld c,$1c
-	call _companionSetAnimation
-	jp _companionForceMount
+	call companionSetAnimation
+	jp companionForceMount
 
 ;;
 ; Dimitri begins parting upon reaching mainland?
-_dimitriStateASubstate3:
+dimitriStateASubstate3:
 	ld e,SpecialObject.direction
 	ld a,DIR_RIGHT
 	ld (de),a
@@ -12521,7 +12521,7 @@ _dimitriStateASubstate3:
 	ld (de),a ; [angle] = $08
 
 	ld c,$00
-	call _companionSetAnimation
+	call companionSetAnimation
 	ld e,SpecialObject.var03
 	ld a,$04
 	ld (de),a
@@ -12531,8 +12531,8 @@ _dimitriStateASubstate3:
 
 ;;
 ; Dimitri moving until he goes off-screen
-_dimitriStateASubstate4:
-	call _dimitriUpdateMovement
+dimitriStateASubstate4:
+	call dimitriUpdateMovement
 
 	ld e,SpecialObject.state
 	ld a,$0a
@@ -12549,7 +12549,7 @@ _dimitriStateASubstate4:
 
 ;;
 ; Force dismount Dimitri
-_dimitriStateASubstate2:
+dimitriStateASubstate2:
 	ld a,(wLinkObjectIndex)
 	cp >w1Companion
 	ret nz
@@ -12558,9 +12558,9 @@ _dimitriStateASubstate2:
 	ld (wRememberedCompanionId),a
 	ret
 .else
-_dimitriStateA:
-	call _companionSetAnimationToVar3f
-	call _companionPreventLinkFromPassing_noExtraChecks
+dimitriStateA:
+	call companionSetAnimationToVar3f
+	call companionPreventLinkFromPassing_noExtraChecks
 	call specialObjectAnimate
 	ld e,SpecialObject.visible
 	ld a,$c7
@@ -12575,17 +12575,17 @@ _dimitriStateA:
 	ld a,$ff
 	ld (wStatusBarNeedsRefresh),a
 	ld c,$1c
-	call _companionSetAnimation
-	jp _companionForceMount
+	call companionSetAnimation
+	jp companionForceMount
 .endif
 
 ;;
-_dimitriCheckAddToGrabbableObjectBuffer:
+dimitriCheckAddToGrabbableObjectBuffer:
 	ld a,(wLinkClimbingVine)
 	or a
 	ret nz
 	ld a,(w1Link.direction)
-	call _dimitriCheckCanBeHeldInDirection
+	call dimitriCheckCanBeHeldInDirection
 	ret z
 
 	; Check the collisions at Link's position
@@ -12618,7 +12618,7 @@ _dimitriCheckAddToGrabbableObjectBuffer:
 ;
 ; @param	a	Direction that Link/Dimitri's moving toward
 ; @param[out]	zflag	Set if one of the tiles in front are not passable.
-_dimitriCheckCanBeHeldInDirection:
+dimitriCheckCanBeHeldInDirection:
 	call @checkTile
 	ret z
 
@@ -12648,7 +12648,7 @@ _dimitriCheckCanBeHeldInDirection:
 ; @param	a	Direction
 ; @param[out]	zflag	Set if the tile in that direction is not ok for holding dimitri?
 @checkTile:
-	ld hl,_dimitriTileOffsets
+	ld hl,dimitriTileOffsets
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld c,(hl)
@@ -12675,7 +12675,7 @@ _dimitriCheckCanBeHeldInDirection:
 
 ;;
 ; Moves Dimitri down if he's on a waterfall
-_dimitriAddWaterfallResistance:
+dimitriAddWaterfallResistance:
 	call objectGetTileAtPosition
 	ld h,d
 	cp TILEINDEX_WATERFALL
@@ -12701,41 +12701,41 @@ _dimitriAddWaterfallResistance:
 	ld (wScreenTransitionDirection),a
 	ret
 
-_dimitriTileOffsets:
+dimitriTileOffsets:
 	.db $f8 $00 ; DIR_UP
 	.db $00 $08 ; DIR_RIGHT
 	.db $08 $00 ; DIR_DOWN
 	.db $00 $f8 ; DIR_LEFT
 
 ;;
-_specialObjectCode_moosh:
-	call _companionRetIfInactive
-	call _companionFunc_47d8
+specialObjectCode_moosh:
+	call companionRetIfInactive
+	call companionFunc_47d8
 	call @runState
-	jp _companionCheckEnableTerrainEffects
+	jp companionCheckEnableTerrainEffects
 
 @runState:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _mooshState0
-	.dw _mooshState1
-	.dw _mooshState2
-	.dw _mooshState3
-	.dw _mooshState4
-	.dw _mooshState5
-	.dw _mooshState6
-	.dw _mooshState7
-	.dw _mooshState8
-	.dw _mooshState9
-	.dw _mooshStateA
-	.dw _mooshStateB
-	.dw _mooshStateC
+	.dw mooshState0
+	.dw mooshState1
+	.dw mooshState2
+	.dw mooshState3
+	.dw mooshState4
+	.dw mooshState5
+	.dw mooshState6
+	.dw mooshState7
+	.dw mooshState8
+	.dw mooshState9
+	.dw mooshStateA
+	.dw mooshStateB
+	.dw mooshStateC
 
 ;;
 ; State 0: initialization
-_mooshState0:
-	call _companionCheckCanSpawn
+mooshState0:
+	call companionCheckCanSpawn
 	ld a,$06
 	call objectSetCollideRadius
 
@@ -12794,41 +12794,41 @@ _mooshState0:
 	ld e,SpecialObject.state
 	ld a,$0a
 	ld (de),a
-	jp _mooshStateA
+	jp mooshStateA
 
 @setAnimation:
 	ld c,$01
-	call _companionSetAnimation
+	call companionSetAnimation
 	jp objectSetVisiblec1
 
 ;;
 ; State 1: waiting for Link to mount
-_mooshState1:
-	call _companionSetPriorityRelativeToLink
+mooshState1:
+	call companionSetPriorityRelativeToLink
 	call specialObjectAnimate
 
 	ld c,$09
 	call objectCheckLinkWithinDistance
-	jp c,_companionTryToMount
+	jp c,companionTryToMount
 
 ;;
-_mooshCheckHazards:
-	call _companionCheckHazards
+mooshCheckHazards:
+	call companionCheckHazards
 	ret nc
-	jr _mooshSetVar37ForHazard
+	jr mooshSetVar37ForHazard
 
 ;;
 ; State 3: Link is currently jumping up to mount Moosh
-_mooshState3:
-	call _companionCheckMountingComplete
+mooshState3:
+	call companionCheckMountingComplete
 	ret nz
-	call _companionFinalizeMounting
+	call companionFinalizeMounting
 	ld c,$13
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ;;
 ; State 4: Moosh falling into a hazard (hole/water)
-_mooshState4:
+mooshState4:
 	ld h,d
 	ld l,SpecialObject.collisionType
 	set 7,(hl)
@@ -12842,10 +12842,10 @@ _mooshState4:
 	; No, it's a hole
 	ld a,$0e
 	ld (hl),a
-	call _companionDragToCenterOfHole
+	call companionDragToCenterOfHole
 	ret nz
 ++
-	call _companionDecCounter1
+	call companionDecCounter1
 	jr nz,@animate
 
 	; Set falling/drowning animation, play falling sound if appropriate
@@ -12863,7 +12863,7 @@ _mooshState4:
 	jp playSound
 
 @animate:
-	call _companionAnimateDrowningOrFallingThenRespawn
+	call companionAnimateDrowningOrFallingThenRespawn
 	ret nc
 	ld c,$13
 	ld a,(wLinkObjectIndex)
@@ -12871,17 +12871,17 @@ _mooshState4:
 	jr c,+
 	ld c,$01
 +
-	jp _companionUpdateDirectionAndSetAnimation
+	jp companionUpdateDirectionAndSetAnimation
 
 ;;
-_mooshTryToBreakTileFromMovingAndCheckHazards:
-	call _companionTryToBreakTileFromMoving
-	call _companionCheckHazards
+mooshTryToBreakTileFromMovingAndCheckHazards:
+	call companionTryToBreakTileFromMoving
+	call companionCheckHazards
 	ld c,$13
-	jp nc,_companionUpdateDirectionAndAnimate
+	jp nc,companionUpdateDirectionAndAnimate
 
 ;;
-_mooshSetVar37ForHazard:
+mooshSetVar37ForHazard:
 	dec a
 	ld c,$0d
 	jr z,+
@@ -12897,23 +12897,23 @@ _mooshSetVar37ForHazard:
 
 ;;
 ; State 5: Link riding Moosh.
-_mooshState5:
+mooshState5:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call _companionCheckHazards
-	jr c,_mooshSetVar37ForHazard
+	call companionCheckHazards
+	jr c,mooshSetVar37ForHazard
 
 	ld a,(wForceCompanionDismount)
 	or a
 	jr nz,++
 	ld a,(wGameKeysJustPressed)
 	bit BTN_BIT_A,a
-	jr nz,_mooshPressedAButton
+	jr nz,mooshPressedAButton
 	bit BTN_BIT_B,a
 ++
-	jp nz,_companionGotoDismountState
+	jp nz,companionGotoDismountState
 
 	; Return if not attempting to move
 	ld a,(wLinkAngle)
@@ -12925,27 +12925,27 @@ _mooshState5:
 	cp (hl)
 	ld (hl),a
 	ld c,$13
-	jp nz,_companionUpdateDirectionAndAnimate
+	jp nz,companionUpdateDirectionAndAnimate
 
-	call _companionCheckHopDownCliff
+	call companionCheckHopDownCliff
 	ret z
 
 	ld e,SpecialObject.speed
 	ld a,SPEED_100
 	ld (de),a
-	call _companionUpdateMovement
+	call companionUpdateMovement
 
-	jr _mooshTryToBreakTileFromMovingAndCheckHazards
+	jr mooshTryToBreakTileFromMovingAndCheckHazards
 
 ;;
-_mooshLandOnGroundAndGotoState5:
+mooshLandOnGroundAndGotoState5:
 	xor a
 	ld (wLinkInAir),a
 	ld c,$13
-	jp _companionSetAnimationAndGotoState5
+	jp companionSetAnimationAndGotoState5
 
 ;;
-_mooshPressedAButton:
+mooshPressedAButton:
 	ld a,$08
 	ld e,SpecialObject.state
 	ld (de),a
@@ -12956,27 +12956,27 @@ _mooshPressedAButton:
 	call playSound
 
 ;;
-_mooshState2:
-_mooshState9:
-_mooshStateB:
+mooshState2:
+mooshState9:
+mooshStateB:
 	ret
 
 ;;
 ; State 8: floating in air, possibly performing buttstomp
-_mooshState8:
+mooshState8:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _mooshState8Substate0
-	.dw _mooshState8Substate1
-	.dw _mooshState8Substate2
-	.dw _mooshState8Substate3
-	.dw _mooshState8Substate4
-	.dw _mooshState8Substate5
+	.dw mooshState8Substate0
+	.dw mooshState8Substate1
+	.dw mooshState8Substate2
+	.dw mooshState8Substate3
+	.dw mooshState8Substate4
+	.dw mooshState8Substate5
 
 ;;
 ; Substate 0: just pressed A button
-_mooshState8Substate0:
+mooshState8Substate0:
 	ld a,$01
 	ld (de),a ; [substate] = 1
 
@@ -12993,11 +12993,11 @@ _mooshState8Substate0:
 	ldi (hl),a ; [var3b] = 0
 
 	ld c,$09
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ;;
 ; Substate 1: floating in air
-_mooshState8Substate1:
+mooshState8Substate1:
 	; Check if over water
 	call objectCheckIsOverHazard
 	cp $01
@@ -13034,7 +13034,7 @@ _mooshState8Substate1:
 	ld hl,w1Companion.angle
 	cp (hl)
 	ld (hl),a
-	call _companionUpdateMovement
+	call companionUpdateMovement
 +
 	ld e,SpecialObject.speedZ+1
 	ld a,(de)
@@ -13099,26 +13099,26 @@ _mooshState8Substate1:
 	ld a,$0f
 	ld (de),a
 	ld c,$09
-	jp _companionUpdateDirectionAndAnimate
+	jp companionUpdateDirectionAndAnimate
 
 @movingUp:
 	ld c,$09
-	call _companionUpdateDirectionAndAnimate
+	call companionUpdateDirectionAndAnimate
 
 @updateMovement:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call _companionTryToBreakTileFromMoving
-	call _mooshLandOnGroundAndGotoState5
-	jp _mooshTryToBreakTileFromMovingAndCheckHazards
+	call companionTryToBreakTileFromMoving
+	call mooshLandOnGroundAndGotoState5
+	jp mooshTryToBreakTileFromMovingAndCheckHazards
 
 @gotoSubstate2:
 	jp itemIncSubstate
 
 ;;
 ; Substate 2: charging buttstomp
-_mooshState8Substate2:
+mooshState8Substate2:
 	call specialObjectAnimate
 
 	ld a,(wGameKeysPressed)
@@ -13130,7 +13130,7 @@ _mooshState8Substate2:
 	cp 40
 	jr c,+
 	ld c,$02
-	call _companionFlashFromChargingAnimation
+	call companionFlashFromChargingAnimation
 +
 	ld e,SpecialObject.var3b
 	ld a,(de)
@@ -13169,11 +13169,11 @@ _mooshState8Substate2:
 	ld a,(de)
 	cp 40
 	ret c
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 ;;
 ; Substate 3: falling to ground with buttstomp attack (or cancelling buttstomp)
-_mooshState8Substate3:
+mooshState8Substate3:
 	ld c,$80
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -13186,12 +13186,12 @@ _mooshState8Substate3:
 	jr nc,+
 
 	; Buttstomp not charged; just land on the ground
-	call _mooshLandOnGroundAndGotoState5
-	jp _mooshTryToBreakTileFromMovingAndCheckHazards
+	call mooshLandOnGroundAndGotoState5
+	jp mooshTryToBreakTileFromMovingAndCheckHazards
 +
 	; Buttstomp charged; unleash the attack
-	call _companionCheckHazards
-	jp c,_mooshSetVar37ForHazard
+	call companionCheckHazards
+	jp c,mooshSetVar37ForHazard
 
 	call itemIncSubstate
 
@@ -13208,11 +13208,11 @@ _mooshState8Substate3:
 	call setFlag
 
 	ldbc ITEMID_28, $00
-	jp _companionCreateWeaponItem
+	jp companionCreateWeaponItem
 
 ;;
 ; Substate 4: sitting on the ground briefly after buttstomp attack
-_mooshState8Substate4:
+mooshState8Substate4:
 	call specialObjectAnimate
 	ld e,SpecialObject.animParameter
 	ld a,(de)
@@ -13226,25 +13226,25 @@ _mooshState8Substate4:
 	inc h
 	set 7,(hl)
 
-	jp _mooshLandOnGroundAndGotoState5
+	jp mooshLandOnGroundAndGotoState5
 
 ;;
 ; Substate 5: Moosh is over water, in the process of falling down.
-_mooshState8Substate5:
-	call _companionDecCounter1IfNonzero
+mooshState8Substate5:
+	call companionDecCounter1IfNonzero
 	jr z,+
 	jp specialObjectAnimate
 +
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	call _mooshLandOnGroundAndGotoState5
-	jp _mooshTryToBreakTileFromMovingAndCheckHazards
+	call mooshLandOnGroundAndGotoState5
+	jp mooshTryToBreakTileFromMovingAndCheckHazards
 
 ;;
 ; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
 ; then comes back.
-_mooshState6:
+mooshState6:
 	ld e,SpecialObject.substate
 	ld a,(de)
 	rst_jumpTable
@@ -13257,7 +13257,7 @@ _mooshState6:
 	ld (de),a
 	call companionDismountAndSavePosition
 	ld c,$01
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 @substate1:
 	ld a,(wLinkInAir)
@@ -13268,7 +13268,7 @@ _mooshState6:
 @substate2:
 	ld c,$09
 	call objectCheckLinkWithinDistance
-	jp c,_mooshCheckHazards
+	jp c,mooshCheckHazards
 
 	ld e,SpecialObject.substate
 	xor a
@@ -13280,15 +13280,15 @@ _mooshState6:
 
 ;;
 ; State 7: jumping down a cliff
-_mooshState7:
-	call _companionDecCounter1ToJumpDownCliff
+mooshState7:
+	call companionDecCounter1ToJumpDownCliff
 	jr nc,+
 	ret nz
 	ld c,$09
-	jp _companionSetAnimation
+	jp companionSetAnimation
 +
-	call _companionCalculateAdjacentWallsBitset
-	call _specialObjectCheckMovingAwayFromWall
+	call companionCalculateAdjacentWallsBitset
+	call specialObjectCheckMovingAwayFromWall
 	ld e,$07
 	jr z,+
 	ld (de),a
@@ -13297,11 +13297,11 @@ _mooshState7:
 	ld a,(de)
 	or a
 	ret z
-	jp _mooshLandOnGroundAndGotoState5
+	jp mooshLandOnGroundAndGotoState5
 
 ;;
 ; State C: Moosh entering from a flute call
-_mooshStateC:
+mooshStateC:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	rst_jumpTable
@@ -13309,12 +13309,12 @@ _mooshStateC:
 	.dw @substate1
 
 @substate0:
-	call _companionInitializeOnEnteringScreen
+	call companionInitializeOnEnteringScreen
 	ld (hl),$3c ; [counter2] = $3c
 	ld a,SND_MOOSH
 	call playSound
 	ld c,$0f
-	jp _companionSetAnimation
+	jp companionSetAnimation
 
 @substate1:
 	call specialObjectAnimate
@@ -13323,13 +13323,13 @@ _mooshStateC:
 	ld a,SPEED_c0
 	ld (de),a
 
-	call _companionUpdateMovement
+	call companionUpdateMovement
 	ld hl,@mooshDirectionOffsets
-	call _companionRetIfNotFinishedWalkingIn
+	call companionRetIfNotFinishedWalkingIn
 	ld e,SpecialObject.var03
 	xor a
 	ld (de),a
-	jp _mooshState0
+	jp mooshState0
 
 @mooshDirectionOffsets:
 	.db $f8 $00 ; DIR_UP
@@ -13341,17 +13341,17 @@ _mooshStateC:
 .ifdef ROM_AGES
 ;;
 ; State A: cutscene stuff
-_mooshStateA:
+mooshStateA:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	rst_jumpTable
 	.dw @mooshStateASubstate0
-	.dw _mooshStateASubstate1
+	.dw mooshStateASubstate1
 	.dw @mooshStateASubstate2
-	.dw _mooshStateASubstate3
-	.dw _mooshStateASubstate4
-	.dw _mooshStateASubstate5
-	.dw _mooshStateASubstate6
+	.dw mooshStateASubstate3
+	.dw mooshStateASubstate4
+	.dw mooshStateASubstate5
+	.dw mooshStateASubstate6
 
 ;;
 @mooshStateASubstate0:
@@ -13400,7 +13400,7 @@ _mooshStateA:
 	jp objectSetVisiblec3
 
 ;;
-_mooshStateASubstate1:
+mooshStateASubstate1:
 	ld e,SpecialObject.var3d
 	ld a,(de)
 	or a
@@ -13409,17 +13409,17 @@ _mooshStateASubstate1:
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 +
-	call _companionSetAnimationToVar3f
-	call _mooshUpdateAsNpc
+	call companionSetAnimationToVar3f
+	call mooshUpdateAsNpc
 	ld a,(wMooshState)
 	and $80
 	ret z
 	jr +
 
 ;;
-_mooshStateASubstate3:
-	call _companionSetAnimationToVar3f
-	call _mooshUpdateAsNpc
+mooshStateASubstate3:
+	call companionSetAnimationToVar3f
+	call mooshUpdateAsNpc
 	ld a,(wMooshState)
 	and $20
 	ret z
@@ -13433,17 +13433,17 @@ _mooshStateASubstate3:
 	call objectRemoveFromAButtonSensitiveObjectList
 
 	ld c,$01
-	call _companionSetAnimation
-	jp _companionForceMount
+	call companionSetAnimation
+	jp companionForceMount
 
 ;;
-_mooshStateASubstate4:
-	call _mooshIncVar03
+mooshStateASubstate4:
+	call mooshIncVar03
 	ld bc,TX_2208
 	jp showText
 
 ;;
-_mooshStateASubstate5:
+mooshStateASubstate5:
 	call retIfTextIsActive
 
 	ld bc,-$140
@@ -13456,10 +13456,10 @@ _mooshStateASubstate5:
 	ld a,$0b
 	call specialObjectSetAnimation
 
-	jp _mooshIncVar03
+	jp mooshIncVar03
 
 ;;
-_mooshStateASubstate6:
+mooshStateASubstate6:
 	call specialObjectAnimate
 
 	ld e,SpecialObject.speedZ+1
@@ -13483,25 +13483,25 @@ _mooshStateASubstate6:
 	set 6,(hl)
 	jp itemDelete
 .else
-_mooshStateA:
+mooshStateA:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	rst_jumpTable
-	.dw _mooshStateASubstate0
-	.dw _mooshStateASubstate1
-	.dw _mooshStateASubstate2
-	.dw _mooshStateASubstate3
-	.dw _mooshStateASubstate4
-	.dw _mooshStateASubstate5
-	.dw _mooshStateASubstate6
-	.dw _mooshStateASubstate7
-	.dw _mooshStateASubstate8
-	.dw _mooshStateASubstate9
-	.dw _mooshStateASubstateA
-	.dw _mooshStateASubstateB
-	.dw _mooshStateASubstateC
+	.dw mooshStateASubstate0
+	.dw mooshStateASubstate1
+	.dw mooshStateASubstate2
+	.dw mooshStateASubstate3
+	.dw mooshStateASubstate4
+	.dw mooshStateASubstate5
+	.dw mooshStateASubstate6
+	.dw mooshStateASubstate7
+	.dw mooshStateASubstate8
+	.dw mooshStateASubstate9
+	.dw mooshStateASubstateA
+	.dw mooshStateASubstateB
+	.dw mooshStateASubstateC
 
-_mooshStateASubstate0:
+mooshStateASubstate0:
 	ld a,$01
 	ld (de),a
 
@@ -13514,7 +13514,7 @@ _mooshStateASubstate0:
 	ld a,$02
 	ld (de),a
 	ld c,$01
-	call _companionSetAnimation
+	call companionSetAnimation
 	jr ++
 +
 	ld a,$00
@@ -13526,10 +13526,10 @@ _mooshStateASubstate0:
 	ld e,SpecialObject.var3d
 	jp objectAddToAButtonSensitiveObjectList
 
-_mooshStateASubstate1:
-_mooshStateASubstate7:
-	call _companionSetAnimationToVar3f
-	call _mooshUpdateAsNpc
+mooshStateASubstate1:
+mooshStateASubstate7:
+	call companionSetAnimationToVar3f
+	call mooshUpdateAsNpc
 	ld a,(wMooshState)
 	and $80
 	jr z,+
@@ -13543,7 +13543,7 @@ _mooshStateASubstate7:
 	ld (wDisabledObjects),a
 	ret
 
-_mooshStateASubstate2:
+mooshStateASubstate2:
 	ld e,SpecialObject.invincibilityCounter
 	ld a,(de)
 	or a
@@ -13551,18 +13551,18 @@ _mooshStateASubstate2:
 	dec a
 	ld (de),a
 	ld h,d
-	jp _updateLinkInvincibilityCounter@func_4244
+	jp updateLinkInvincibilityCounter@func_4244
 
-_mooshStateASubstate3:
-	call _companionSetAnimationToVar3f
+mooshStateASubstate3:
+	call companionSetAnimationToVar3f
 	call specialObjectAnimate
-	call _companionDecCounter1IfNonzero
+	call companionDecCounter1IfNonzero
 	ret nz
 	ld c,$10
 	jp objectUpdateSpeedZ_paramC
 
-_mooshStateASubstate4:
-	call _companionSetAnimationToVar3f
+mooshStateASubstate4:
+	call companionSetAnimationToVar3f
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -13572,10 +13572,10 @@ _mooshStateASubstate4:
 	ld (de),a
 	jp specialObjectAnimate
 
-_mooshStateASubstate5:
-_mooshStateASubstate6:
-	call _companionSetAnimationToVar3f
-	call _mooshUpdateAsNpc
+mooshStateASubstate5:
+mooshStateASubstate6:
+	call companionSetAnimationToVar3f
+	call mooshUpdateAsNpc
 	ld a,(wMooshState)
 	and $20
 	ret z
@@ -13587,18 +13587,18 @@ _mooshStateASubstate6:
 	ld (de),a
 	call objectRemoveFromAButtonSensitiveObjectList
 	ld c,$01
-	call _companionSetAnimation
-	jp _companionForceMount
+	call companionSetAnimation
+	jp companionForceMount
 
-_mooshStateASubstate8:
-	call _companionSetAnimationToVar3f
+mooshStateASubstate8:
+	call companionSetAnimationToVar3f
 	ld e,SpecialObject.var3e
 	xor a
 	ld (de),a
 	ld c,$10
 	jp objectUpdateSpeedZ_paramC
 
-_mooshFunc_05_7aff:
+mooshFunc_05_7aff:
 	ld b,$40
 	ld c,$70
 	call objectGetRelativeAngle
@@ -13607,31 +13607,31 @@ _mooshFunc_05_7aff:
 	ld (de),a
 	ret
 
-_mooshStateASubstate9:
+mooshStateASubstate9:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	call specialObjectAnimate
-	call _companionUpdateMovement
+	call companionUpdateMovement
 	ld e,SpecialObject.xh
 	ld a,(de)
 	cp $38
-	jr c,_mooshFunc_05_7aff
+	jr c,mooshFunc_05_7aff
 	ld a,$01
 	ld e,SpecialObject.var3e
 	ld (de),a
-	jp _mooshIncVar03
+	jp mooshIncVar03
 
-_mooshStateASubstateA:
-	call _companionSetAnimationToVar3f
+mooshStateASubstateA:
+	call companionSetAnimationToVar3f
 	ld e,SpecialObject.var3e
 	ld a,(de)
 	and $02
 	ret z
 	ld bc,TX_220f
 	call showText
-	jp _mooshIncVar03
+	jp mooshIncVar03
 
-_mooshStateASubstateB:
+mooshStateASubstateB:
 	call retIfTextIsActive
 	call companionDismount
 	ld a,$18
@@ -13646,10 +13646,10 @@ _mooshStateASubstateB:
 	ld l,SpecialObject.counter1
 	ld (hl),$1e
 	ld c,$0c
-	call _companionSetAnimation
-	jp _mooshIncVar03
+	call companionSetAnimation
+	jp mooshIncVar03
 
-_mooshStateASubstateC:
+mooshStateASubstateC:
 	call specialObjectAnimate
 	ld e,$15
 	ld a,(de)
@@ -13673,9 +13673,9 @@ _mooshStateASubstateC:
 ++
 	ld l,SpecialObject.direction
 	ld (hl),a
-	call _companionDecCounter1IfNonzero
+	call companionDecCounter1IfNonzero
 	ret nz
-	call _companionUpdateMovement
+	call companionUpdateMovement
 	call objectCheckWithinScreenBoundary
 	ret c
 	xor a
@@ -13686,13 +13686,13 @@ _mooshStateASubstateC:
 
 ;;
 ; Prevents Link from passing Moosh, calls animate.
-_mooshUpdateAsNpc:
-	call _companionPreventLinkFromPassing_noExtraChecks
+mooshUpdateAsNpc:
+	call companionPreventLinkFromPassing_noExtraChecks
 	call specialObjectAnimate
-	jp _companionSetPriorityRelativeToLink
+	jp companionSetPriorityRelativeToLink
 
 ;;
-_mooshIncVar03:
+mooshIncVar03:
 	ld e,SpecialObject.var03
 	ld a,(de)
 	inc a
@@ -13701,7 +13701,7 @@ _mooshIncVar03:
 
 
 ;;
-_specialObjectCode_raft:
+specialObjectCode_raft:
 .ifdef ROM_AGES
 	jpab bank6.specialObjectCode_raft
 .endif

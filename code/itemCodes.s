@@ -14,12 +14,12 @@ itemCode24:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _seedItemState1
-	.dw _seedItemState2
-	.dw _seedItemState3
+	.dw seedItemState1
+	.dw seedItemState2
+	.dw seedItemState3
 
 @state0:
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	xor a
 	call itemSetAnimation
 	call objectSetVisiblec1
@@ -66,7 +66,7 @@ itemCode24:
 
 .ifdef ROM_AGES
 	ld hl,@satchelPositionOffsets
-	call _applyOffsetTableHL
+	call applyOffsetTableHL
 .endif
 
 	ld a,SPEED_c0
@@ -111,7 +111,7 @@ itemCode24:
 	ld (de),a
 .ifdef ROM_SEASONS
 	ld hl,@satchelPositionOffsets
-	call _applyOffsetTableHL
+	call applyOffsetTableHL
 .endif
 
 	; If it's a mystery seed, get a random effect
@@ -156,8 +156,8 @@ itemCode24:
 
 ;;
 ; State 1: seed moving
-_seedItemState1:
-	call _itemUpdateDamageToApply
+seedItemState1:
+	call itemUpdateDamageToApply
 .ifdef ROM_AGES
 	jr z,@noCollision
 
@@ -168,7 +168,7 @@ _seedItemState1:
 	; [Item.var2a] = 0
 	ld (hl),$00
 
-	call _func_50f4
+	call func_50f4
 	jr z,@updatePosition
 	jr @seedCollidedWithWall
 .else
@@ -183,9 +183,9 @@ _seedItemState1:
 
 @slingshotUpdate:
 .ifdef ROM_AGES
-	call _seedItemUpdateBouncing
+	call seedItemUpdateBouncing
 .else
-	call _slingshotCheckCanPassSolidTile
+	call slingshotCheckCanPassSolidTile
 .endif
 	jr nz,@seedCollidedWithWall
 
@@ -196,7 +196,7 @@ _seedItemState1:
 	call objectCheckWithinScreenBoundary
 .endif
 	jp c,objectApplySpeed
-	jp _seedItemDelete
+	jp seedItemDelete
 
 @satchelUpdate:
 	; Set speed to 0 if landed in water?
@@ -208,12 +208,12 @@ _seedItemState1:
 	ld (hl),SPEED_0
 +
 	call objectCheckWithinRoomBoundary
-	jp nc,_seedItemDelete
+	jp nc,seedItemDelete
 
 	call objectApplySpeed
 	ld c,$1c
-	call _itemUpdateThrowingVerticallyAndCheckHazards
-	jp c,_seedItemDelete
+	call itemUpdateThrowingVerticallyAndCheckHazards
+	jp c,seedItemDelete
 	ret z
 
 ; Landed on ground
@@ -227,7 +227,7 @@ _seedItemState1:
 	rst_jumpTable
 	.dw @emberStandard
 	.dw @scentLanded
-	.dw _seedItemDelete
+	.dw seedItemDelete
 	.dw @galeLanded
 	.dw @mysteryStandard
 
@@ -339,7 +339,7 @@ _seedItemState1:
 	dec l
 	ld (hl),a
 
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	xor a
 	call itemSetAnimation
 	ld e,Item.health
@@ -403,7 +403,7 @@ _seedItemState1:
 	.db $0b $3c $96 SND_SCENT_SEED
 
 ;;
-_seedItemDelete:
+seedItemDelete:
 	ld e,Item.subid
 	ld a,(de)
 	or a
@@ -421,25 +421,25 @@ _seedItemDelete:
 ;;
 ; State 3: typically occurs when the seed collides with a wall or enemy (instead of the
 ; ground)
-_seedItemState3:
+seedItemState3:
 	ld e,Item.id
 	ld a,(de)
 	sub ITEMID_EMBER_SEED
 	rst_jumpTable
-	.dw _emberSeedBurn
-	.dw _seedUpdateAnimation
-	.dw _seedUpdateAnimation
-	.dw _galeSeedUpdateAnimationAndCounter
-	.dw _seedUpdateAnimation
+	.dw emberSeedBurn
+	.dw seedUpdateAnimation
+	.dw seedUpdateAnimation
+	.dw galeSeedUpdateAnimationAndCounter
+	.dw seedUpdateAnimation
 
-_emberSeedBurn:
+emberSeedBurn:
 	ld h,d
 	ld l,Item.counter1
 	dec (hl)
 	jr z,@breakTile
 
 	call itemAnimate
-	call _itemUpdateDamageToApply
+	call itemUpdateDamageToApply
 	ld l,Item.animParameter
 	ld b,(hl)
 	jr z,+
@@ -465,13 +465,13 @@ _emberSeedBurn:
 	ld a,BREAKABLETILESOURCE_0c
 	call itemTryToBreakTile
 @deleteSelf:
-	jp _seedItemDelete
+	jp seedItemDelete
 
 
 ;;
 ; Generic update function for seed states 2/3
 ;
-_seedUpdateAnimation:
+seedUpdateAnimation:
 	ld e,Item.collisionType
 	xor a
 	ld (de),a
@@ -480,32 +480,32 @@ _seedUpdateAnimation:
 	ld a,(de)
 	rlca
 	ret nc
-	jp _seedItemDelete
+	jp seedItemDelete
 
 ;;
 ; State 2: typically occurs when the seed lands on the ground
-_seedItemState2:
+seedItemState2:
 	ld e,Item.id
 	ld a,(de)
 	sub ITEMID_EMBER_SEED
 	rst_jumpTable
-	.dw _emberSeedBurn
-	.dw _scentSeedSmell
-	.dw _seedUpdateAnimation
-	.dw _galeSeedTryToWarpLink
-	.dw _seedUpdateAnimation
+	.dw emberSeedBurn
+	.dw scentSeedSmell
+	.dw seedUpdateAnimation
+	.dw galeSeedTryToWarpLink
+	.dw seedUpdateAnimation
 
 ;;
 ; Scent seed in the "smelling" state that attracts enemies
 ;
-_scentSeedSmell:
+scentSeedSmell:
 	ld h,d
 	ld l,Item.counter1
 	ld a,(wFrameCounter)
 	rrca
 	jr c,+
 	dec (hl)
-	jp z,_seedItemDelete
+	jp z,seedItemDelete
 +
 	; Toggle visibility when counter is low enough
 	ld a,(hl)
@@ -526,15 +526,15 @@ _scentSeedSmell:
 	ld a,$ff
 	ld (wScentSeedActive),a
 	call itemAnimate
-	call _bombPullTowardPoint
-	jp c,_seedItemDelete
-	jp _itemUpdateSpeedZAndCheckHazards
+	call bombPullTowardPoint
+	jp c,seedItemDelete
+	jp itemUpdateSpeedZAndCheckHazards
 
 ;;
-_galeSeedUpdateAnimationAndCounter:
-	call _galeSeedUpdateAnimation
+galeSeedUpdateAnimationAndCounter:
+	call galeSeedUpdateAnimation
 	call itemDecCounter1
-	jp z,_seedItemDelete
+	jp z,seedItemDelete
 
 	; Toggle visibility when almost disappeared
 	ld a,(hl)
@@ -548,10 +548,10 @@ _galeSeedUpdateAnimationAndCounter:
 
 ;;
 ; Note: for some reason, this tends to be called twice per frame in the
-; "_galeSeedTryToWarpLink" function, which causes the animation to go over, and it skips
+; "galeSeedTryToWarpLink" function, which causes the animation to go over, and it skips
 ; over some of the palettes?
 ;
-_galeSeedUpdateAnimation:
+galeSeedUpdateAnimation:
 	call itemAnimate
 	ld e,Item.counter1
 	ld a,(de)
@@ -570,8 +570,8 @@ _galeSeedUpdateAnimation:
 
 ;;
 ; Gale seed in its tornado state, will pull in Link if possible
-_galeSeedTryToWarpLink:
-	call _galeSeedUpdateAnimation
+galeSeedTryToWarpLink:
+	call galeSeedUpdateAnimation
 	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
@@ -594,25 +594,25 @@ _galeSeedTryToWarpLink:
 	; Check warps enabled, Link not riding companion
 	ld a,(wWarpsDisabled)
 	or a
-	jr nz,_galeSeedUpdateAnimationAndCounter
+	jr nz,galeSeedUpdateAnimationAndCounter
 	ld a,(wLinkObjectIndex)
 	rrca
-	jr c,_galeSeedUpdateAnimationAndCounter
+	jr c,galeSeedUpdateAnimationAndCounter
 
 	; Don't allow warp to occur if holding a very heavy object?
 	ld a,(wLinkGrabState2)
 	and $f0
 	cp $40
-	jr z,_galeSeedUpdateAnimationAndCounter
+	jr z,galeSeedUpdateAnimationAndCounter
 
 .ifdef ROM_AGES
 	call checkLinkVulnerableAndIDZero
 .else
 	call checkLinkID0AndControlNormal
 .endif
-	jr nc,_galeSeedUpdateAnimationAndCounter
+	jr nc,galeSeedUpdateAnimationAndCounter
 	call objectCheckCollidedWithLink
-	jr nc,_galeSeedUpdateAnimationAndCounter
+	jr nc,galeSeedUpdateAnimationAndCounter
 
 	ld hl,w1Link
 	call objectTakePosition
@@ -675,7 +675,7 @@ _galeSeedTryToWarpLink:
 	; Open warp menu, delete self
 	ld a,$05
 	call openMenu
-	jp _seedItemDelete
+	jp seedItemDelete
 
 @flickerAndCopyPositionToLink:
 	ld e,Item.visible
@@ -692,7 +692,7 @@ _galeSeedTryToWarpLink:
 ; Substate 3: doesn't warp Link anywhere, just waiting for it to get deleted
 @substate3:
 	call itemDecCounter2
-	jp z,_seedItemDelete
+	jp z,seedItemDelete
 	ld l,Item.visible
 	ld a,(hl)
 	xor $80
@@ -705,9 +705,9 @@ _galeSeedTryToWarpLink:
 ; "bounces" when that happens.
 ;
 ; @param[out]	zflag	Unset when the seed's "effect" should be activated
-_seedItemUpdateBouncing:
+seedItemUpdateBouncing:
 	call objectGetTileAtPosition
-	ld hl,_seedDontBounceTilesTable
+	ld hl,seedDontBounceTilesTable
 	call findByteInCollisionTable
 	jr c,@unsetZFlag
 
@@ -718,11 +718,11 @@ _seedItemUpdateBouncing:
 
 ; Moving diagonal
 
-	call _seedItemCheckDiagonalCollision
+	call seedItemCheckDiagonalCollision
 
 	; Call this just to update var3c/var3d (tile position / index)?
 	push af
-	call _itemCheckCanPassSolidTile
+	call itemCheckCanPassSolidTile
 	pop af
 
 	jr z,@setZFlag
@@ -738,11 +738,11 @@ _seedItemUpdateBouncing:
 	ld e,Item.var33
 	ld a,$03
 	ld (de),a
-	call _itemCheckCanPassSolidTile
+	call itemCheckCanPassSolidTile
 	jr z,@setZFlag
 
 @bounce:
-	call _seedItemClearKnockback
+	call seedItemClearKnockback
 
 	; Decrement bounce counter
 	ld h,d
@@ -798,7 +798,7 @@ _seedItemUpdateBouncing:
 ;
 ; @param	a	Angle
 ; @param[out]	zflag	Unset if the seed should bounce
-_seedItemCheckDiagonalCollision:
+seedItemCheckDiagonalCollision:
 	rrca
 	and $0c
 	ld hl,@collisionOffsets
@@ -830,7 +830,7 @@ _seedItemCheckDiagonalCollision:
 ; Collision occurred; check whether it should bounce (set carry flag if so)
 
 	call getTileAtPosition
-	ld hl,_seedDontBounceTilesTable
+	ld hl,seedDontBounceTilesTable
 	call findByteInCollisionTable
 	ccf
 	jr nc,@next
@@ -838,7 +838,7 @@ _seedItemCheckDiagonalCollision:
 	ld h,d
 	ld l,Item.angle
 	ld b,(hl)
-	call _checkTileIsPassableFromDirection
+	call checkTileIsPassableFromDirection
 	ccf
 	jr c,@next
 	jr z,@next
@@ -875,17 +875,17 @@ _seedItemCheckDiagonalCollision:
 ;;
 ; @param	h,d	Object
 ; @param[out]	zflag	Set if there are still bounces left?
-_func_50f4:
+func_50f4:
 	ld e,Item.angle
 	ld l,Item.knockbackAngle
 	ld a,(de)
 	add (hl)
-	ld hl,_data_5114
+	ld hl,data_5114
 	rst_addAToHl
 	ld c,(hl)
 	ld a,(de)
 	cp c
-	jr z,_seedItemClearKnockback
+	jr z,seedItemClearKnockback
 
 	ld h,d
 	ld l,Item.var34
@@ -903,14 +903,14 @@ _func_50f4:
 	ret
 
 ;;
-_seedItemClearKnockback:
+seedItemClearKnockback:
 	ld e,Item.knockbackCounter
 	xor a
 	ld (de),a
 	ret
 
 
-_data_5114:
+data_5114:
 	.db $00 $08 $10 $18 $1c $04 $0c $14
 	.db $18 $00 $08 $10 $14 $1c $04 $0c
 	.db $10 $18 $00 $08 $0c $14 $1c $04
@@ -918,7 +918,7 @@ _data_5114:
 
 
 ; List of tiles which seeds don't bounce off of. (Burnable stuff.)
-_seedDontBounceTilesTable:
+seedDontBounceTilesTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -941,10 +941,10 @@ _seedDontBounceTilesTable:
 .else
 ;;
 ; @param[out]	zflag	z if no collision
-_slingshotCheckCanPassSolidTile:
+slingshotCheckCanPassSolidTile:
 	call objectCheckTileCollision_allowHoles
 	jr nc,++
-	call _itemCheckCanPassSolidTile
+	call itemCheckCanPassSolidTile
 	ret
 ++
 	xor a
@@ -963,7 +963,7 @@ itemCode2b:
 	jr nz,+
 
 	; Initialization
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	call itemIncState
 	ld l,Item.counter1
 	ld (hl),$0c
@@ -1016,13 +1016,13 @@ itemCode2b:
 ;;
 ; ITEMID_BOMBCHUS
 itemCode0d:
-	call _bombchuCountdownToExplosion
+	call bombchuCountdownToExplosion
 
 	; If state is $ff, it's exploding
 	ld e,Item.state
 	ld a,(de)
 	cp $ff
-	jp nc,_itemUpdateExplosion
+	jp nc,itemUpdateExplosion
 
 	call objectCheckWithinRoomBoundary
 	jp nc,itemDelete
@@ -1035,7 +1035,7 @@ itemCode0d:
 
 	; This call will return if the bombchu falls into a hole/water/lava.
 	ld c,$20
-	call _itemUpdateSpeedZAndCheckHazards
+	call itemUpdateSpeedZAndCheckHazards
 
 	ld e,Item.state
 	ld a,(de)
@@ -1054,7 +1054,7 @@ itemCode0d:
 	jr nz,+
 
 	ld c,$18
-	call _itemUpdateThrowingVerticallyAndCheckHazards
+	call itemUpdateThrowingVerticallyAndCheckHazards
 	jp c,itemDelete
 +
 	ld e,Item.state
@@ -1068,7 +1068,7 @@ itemCode0d:
 
 
 @tdState0:
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	call decNumBombchus
 
 	ld h,d
@@ -1108,8 +1108,8 @@ itemCode0d:
 	ld l,Item.direction
 	ld (hl),$ff
 
-	call _bombchuSetAnimationFromAngle
-	jp _bombchuSetPositionInFrontOfLink
+	call bombchuSetAnimationFromAngle
+	jp bombchuSetPositionInFrontOfLink
 
 
 ; State 1: waiting to reach the ground (if dropped from midair)
@@ -1125,11 +1125,11 @@ itemCode0d:
 
 ; State 2: searching for target
 @tdState2:
-	call _bombchuCheckForEnemyTarget
+	call bombchuCheckForEnemyTarget
 	ret z
 ++
-	call _bombchuUpdateSpeed
-	call _itemUpdateConveyorBelt
+	call bombchuUpdateSpeed
+	call itemUpdateConveyorBelt
 
 @animate:
 	jp itemAnimate
@@ -1140,7 +1140,7 @@ itemCode0d:
 	ld h,d
 	ld l,Item.counter1
 	dec (hl)
-	jp nz,_itemUpdateConveyorBelt
+	jp nz,itemUpdateConveyorBelt
 
 	; Set counter
 	ld (hl),$0a
@@ -1152,11 +1152,11 @@ itemCode0d:
 
 ; State 4: Dashing toward target
 @tdState4:
-	call _bombchuCheckCollidedWithTarget
-	jp c,_bombchuClearCounter2AndInitializeExplosion
+	call bombchuCheckCollidedWithTarget
+	jp c,bombchuClearCounter2AndInitializeExplosion
 
-	call _bombchuUpdateVelocity
-	call _itemUpdateConveyorBelt
+	call bombchuUpdateVelocity
+	call itemUpdateConveyorBelt
 	jr @animate
 
 
@@ -1174,19 +1174,19 @@ itemCode0d:
 
 	add $08
 	ld (de),a
-	jp _bombchuSetAnimationFromAngle
+	jp bombchuSetAnimationFromAngle
 
 ; State 1: searching for target
 @ssState1:
 	ld e,Item.speed
 	ld a,SPEED_80
 	ld (de),a
-	call _bombchuCheckForEnemyTarget
+	call bombchuCheckForEnemyTarget
 	ret z
 
 	; Target not found yet
 
-	call _bombchuCheckWallsAndApplySpeed
+	call bombchuCheckWallsAndApplySpeed
 
 @ssAnimate:
 	jp itemAnimate
@@ -1205,26 +1205,26 @@ itemCode0d:
 
 ; State 3: Chase after target
 @ssState3:
-	call _bombchuCheckCollidedWithTarget
-	jp c,_bombchuClearCounter2AndInitializeExplosion
-	call _bombchuUpdateVelocityAndClimbing_sidescroll
+	call bombchuCheckCollidedWithTarget
+	jp c,bombchuClearCounter2AndInitializeExplosion
+	call bombchuUpdateVelocityAndClimbing_sidescroll
 	jr @ssAnimate
 
 
 ;;
 ; Updates bombchu's position & speed every frame, and the angle every 8 frames.
 ;
-_bombchuUpdateVelocity:
+bombchuUpdateVelocity:
 	ld a,(wFrameCounter)
 	and $07
-	call z,_bombchuUpdateAngle_topDown
+	call z,bombchuUpdateAngle_topDown
 
 ;;
-_bombchuUpdateSpeed:
+bombchuUpdateSpeed:
 	call @updateSpeed
 
 	; Note: this will actually update the Z position for a second time in the frame?
-	; (due to earlier call to _itemUpdateSpeedZAndCheckHazards)
+	; (due to earlier call to itemUpdateSpeedZAndCheckHazards)
 	ld c,$18
 	call objectUpdateSpeedZ_paramC
 
@@ -1234,7 +1234,7 @@ _bombchuUpdateSpeed:
 ; Update the speed based on what kind of tile it's on
 @updateSpeed:
 	ld e,Item.angle
-	call _bombchuGetTileCollisions
+	call bombchuGetTileCollisions
 
 	cp SPECIALCOLLISION_HOLE
 	jr z,@impassableTile
@@ -1253,7 +1253,7 @@ _bombchuUpdateSpeed:
 	jr z,+
 
 	ld e,a
-	ld hl,_bounceSpeedReductionMapping
+	ld hl,bounceSpeedReductionMapping
 	call lookupKey
 +
 	; If new speed < old speed, trigger a jump. (Happens when a bombchu starts
@@ -1281,7 +1281,7 @@ _bombchuUpdateSpeed:
 	add (hl)
 	and $18
 	ld (hl),a
-	jp _bombchuSetAnimationFromAngle
+	jp bombchuSetAnimationFromAngle
 
 ;;
 ; Get tile collisions at the front end of the bombchu.
@@ -1290,7 +1290,7 @@ _bombchuUpdateSpeed:
 ; @param[out]	a	Collision value
 ; @param[out]	hl	Address of collision data
 ; @param[out]	zflag	Set if there is no collision.
-_bombchuGetTileCollisions:
+bombchuGetTileCollisions:
 	ld h,d
 	ld l,Item.yh
 	ld b,(hl)
@@ -1317,15 +1317,15 @@ _bombchuGetTileCollisions:
 	.db $02 $fc ; DIR_LEFT
 
 ;;
-_bombchuUpdateVelocityAndClimbing_sidescroll:
+bombchuUpdateVelocityAndClimbing_sidescroll:
 	ld a,(wFrameCounter)
 	and $07
-	call z,_bombchuUpdateAngle_sidescrolling
+	call z,bombchuUpdateAngle_sidescrolling
 
 ;;
 ; In sidescrolling areas, this updates the bombchu's "climbing wall" state.
 ;
-_bombchuCheckWallsAndApplySpeed:
+bombchuCheckWallsAndApplySpeed:
 	call @updateWallClimbing
 	jp objectApplySpeed
 
@@ -1338,7 +1338,7 @@ _bombchuCheckWallsAndApplySpeed:
 
 	; Return if it hasn't collided with a wall
 	ld e,Item.angle
-	call _bombchuGetTileCollisions
+	call bombchuGetTileCollisions
 	ret z
 
 	; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
@@ -1350,7 +1350,7 @@ _bombchuCheckWallsAndApplySpeed:
 	ld a,(de)
 	xor $10
 	ld (de),a
-	jp _bombchuSetAnimationFromAngle
+	jp bombchuSetAnimationFromAngle
 +
 	; Tell it to start climbing the wall
 	ld h,d
@@ -1361,12 +1361,12 @@ _bombchuCheckWallsAndApplySpeed:
 	ld (hl),a
 	ld l,Item.var32
 	ld (hl),$01
-	jp _bombchuSetAnimationFromAngle
+	jp bombchuSetAnimationFromAngle
 
 @climbingWall:
 	; Check if the bombchu is still touching the wall it's supposed to be climbing
 	ld e,Item.var33
-	call _bombchuGetTileCollisions
+	call bombchuGetTileCollisions
 	jr nz,@@touchingWall
 
 	; Bombchu is no longer touching the wall it's climbing. It will now "uncling"; the
@@ -1401,12 +1401,12 @@ _bombchuCheckWallsAndApplySpeed:
 
 	ld l,Item.direction
 	ld (hl),$ff
-	jp _bombchuSetAnimationFromAngle
+	jp bombchuSetAnimationFromAngle
 
 @@touchingWall:
 	; Check if it hits a wall
 	ld e,Item.angle
-	call _bombchuGetTileCollisions
+	call bombchuGetTileCollisions
 	ret z
 
 	; If so, try to cling to it
@@ -1436,14 +1436,14 @@ _bombchuCheckWallsAndApplySpeed:
 	or a
 	ld l,Item.var34
 	ld (hl),$00
-	jr nz,_bombchuSetAnimationFromAngle
+	jr nz,bombchuSetAnimationFromAngle
 	inc (hl)
-	jr _bombchuSetAnimationFromAngle
+	jr bombchuSetAnimationFromAngle
 
 ;;
 ; Sets the bombchu's angle relative to its target.
 ;
-_bombchuUpdateAngle_topDown:
+bombchuUpdateAngle_topDown:
 	ld a,Object.yh
 	call objectGetRelatedObject2Var
 	ld b,(hl)
@@ -1479,7 +1479,7 @@ _bombchuUpdateAngle_topDown:
 ;
 ; Also, this assumes that the item's angle is a cardinal direction?
 ;
-_bombchuSetAnimationFromAngle:
+bombchuSetAnimationFromAngle:
 	ld h,d
 	ld l,Item.direction
 	ld e,Item.angle
@@ -1510,7 +1510,7 @@ _bombchuSetAnimationFromAngle:
 ; current axis; so if it's moving along the X axis, it will chase on the X axis, and
 ; vice-versa.
 ;
-_bombchuUpdateAngle_sidescrolling:
+bombchuUpdateAngle_sidescrolling:
 	ld a,Object.yh
 	call objectGetRelatedObject2Var
 	ld b,(hl)
@@ -1545,14 +1545,14 @@ _bombchuUpdateAngle_sidescrolling:
 @setAngle:
 	ld e,Item.angle
 	ld (de),a
-	jr _bombchuSetAnimationFromAngle
+	jr bombchuSetAnimationFromAngle
 
 ;;
 ; Set a bombchu's position to be slightly in front of Link, based on his direction. If it
 ; would put the item in a wall, it will default to Link's exact position instead.
 ;
 ; @param[out]	zflag	Set if the item defaulted to Link's exact position due to a wall
-_bombchuSetPositionInFrontOfLink:
+bombchuSetPositionInFrontOfLink:
 	ld hl,w1Link.yh
 	ld b,(hl)
 	ld l,<w1Link.xh
@@ -1612,20 +1612,20 @@ _bombchuSetPositionInFrontOfLink:
 ;;
 ; Bombchus call this every frame.
 ;
-_bombchuCountdownToExplosion:
+bombchuCountdownToExplosion:
 	call itemDecCounter2
 	ret nz
 
 ;;
-_bombchuClearCounter2AndInitializeExplosion:
+bombchuClearCounter2AndInitializeExplosion:
 	ld e,Item.counter2
 	xor a
 	ld (de),a
-	jp _itemInitializeBombExplosion
+	jp itemInitializeBombExplosion
 
 ;;
 ; @param[out]	cflag	Set on collision or if the enemy has died
-_bombchuCheckCollidedWithTarget:
+bombchuCheckCollidedWithTarget:
 	ld a,Object.health
 	call objectGetRelatedObject2Var
 	ld a,(hl)
@@ -1641,7 +1641,7 @@ _bombchuCheckCollidedWithTarget:
 ; Each time it loops through all enemies, the bombchu's vision radius increases.
 ;
 ; @param[out]	zflag	Set if a valid target is found
-_bombchuCheckForEnemyTarget:
+bombchuCheckForEnemyTarget:
 	; Check if the target enemy is enabled
 	ld e,Item.var30
 	ld a,(de)
@@ -1697,11 +1697,11 @@ _bombchuCheckForEnemyTarget:
 	and TILESETFLAG_SIDESCROLL
 	jr nz,+
 
-	call _bombchuUpdateAngle_topDown
+	call bombchuUpdateAngle_topDown
 	xor a
 	ret
 +
-	call _bombchuUpdateAngle_sidescrolling
+	call bombchuUpdateAngle_sidescrolling
 	xor a
 	ret
 
@@ -1747,11 +1747,11 @@ itemCode03:
 	jr nz,@label_07_153
 
 	bit 7,a
-	jp nz,_bombResetAnimationAndSetVisiblec1
+	jp nz,bombResetAnimationAndSetVisiblec1
 
 	; Check if exploding
 	bit 4,a
-	jp nz,_bombUpdateExplosion
+	jp nz,bombUpdateExplosion
 
 	ld e,Item.state
 	ld a,(de)
@@ -1779,15 +1779,15 @@ itemCode03:
 ; State 1: bomb is motionless on the ground
 @state1:
 	ld c,$20
-	call _bombUpdateThrowingVerticallyAndCheckDelete
+	call bombUpdateThrowingVerticallyAndCheckDelete
 	ret c
 
 	; No idea what function is for
-	call _bombPullTowardPoint
+	call bombPullTowardPoint
 	jp c,itemDelete
 
-	call _itemUpdateConveyorBelt
-	jp _bombUpdateAnimation
+	call itemUpdateConveyorBelt
+	jp bombUpdateAnimation
 
 ; State 0/2: bomb is being picked up / thrown around
 @state0:
@@ -1811,16 +1811,16 @@ itemCode03:
 
 	ld l,Item.var37
 	res 0,(hl)
-	call _bombInitializeIfNeeded
+	call bombInitializeIfNeeded
 
 ; Bomb being held
 @heldState1:
 	; Bombs don't explode while being held if the peace ring is equipped
 	ld a,PEACE_RING
 	call cpActiveRing
-	jp z,_bombResetAnimationAndSetVisiblec1
+	jp z,bombResetAnimationAndSetVisiblec1
 
-	call _bombUpdateAnimation
+	call bombUpdateAnimation
 	ret z
 
 	; If z-flag was unset (bomb started exploding), release the item?
@@ -1834,28 +1834,28 @@ itemCode03:
 	ld (de),a
 
 	; Update movement?
-	call _bombUpdateThrowingLaterally
+	call bombUpdateThrowingLaterally
 
 	ld e,Item.var39
 	ld a,(de)
 	ld c,a
 
 	; Update throwing, return if the bomb was deleted from falling into a hazard
-	call _bombUpdateThrowingVerticallyAndCheckDelete
+	call bombUpdateThrowingVerticallyAndCheckDelete
 	ret c
 
 	; Jump if the item is not on the ground
 	jr z,+
 
 	; If on the ground...
-	call _itemBounce
+	call itemBounce
 	jr c,@stoppedBouncing
 
 	; No idea what this function is for
-	call _bombPullTowardPoint
+	call bombPullTowardPoint
 	jp c,itemDelete
 +
-	jp _bombUpdateAnimation
+	jp bombUpdateAnimation
 
 @stoppedBouncing:
 	; Bomb goes to state 1 (motionless on the ground)
@@ -1866,12 +1866,12 @@ itemCode03:
 	ld l,Item.var2f
 	res 6,(hl)
 
-	jp _bombUpdateAnimation
+	jp bombUpdateAnimation
 
 ;;
 ; @param[out]	cflag	Set if the item was deleted
 ; @param[out]	zflag	Set if the bomb is not on the ground
-_bombUpdateThrowingVerticallyAndCheckDelete:
+bombUpdateThrowingVerticallyAndCheckDelete:
 	push bc
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL
@@ -1893,7 +1893,7 @@ _bombUpdateThrowingVerticallyAndCheckDelete:
 	; Within the room boundary
 
 	; Return if it hasn't landed in a hazard (hole/water/lava)
-	call _itemUpdateThrowingVerticallyAndCheckHazards
+	call itemUpdateThrowingVerticallyAndCheckHazards
 	ret nc
 
 .ifdef ROM_AGES
@@ -1921,7 +1921,7 @@ _bombUpdateThrowingVerticallyAndCheckDelete:
 ;;
 ; Update function for bombs and bombchus while they're exploding
 ;
-_itemUpdateExplosion:
+itemUpdateExplosion:
 	; animParameter specifies:
 	;  Bits 0-4: collision radius
 	;  Bit 6:    Zero out "collisionType" if set?
@@ -1945,29 +1945,29 @@ _itemUpdateExplosion:
 
 	; If bit 7 of Item.collisionType is set, check for collision with Link
 	bit 7,c
-	call nz,_explosionCheckAndApplyLinkCollision
+	call nz,explosionCheckAndApplyLinkCollision
 
 	ld h,d
 	ld l,Item.counter1
 	bit 7,(hl)
-	call z,_explosionTryToBreakNextTile
+	call z,explosionTryToBreakNextTile
 	jp itemAnimate
 
 ;;
 ; Bombs call each frame if bit 4 of Item.var2f is set.
 ;
-_bombUpdateExplosion:
+bombUpdateExplosion:
 	ld h,d
 	ld l,Item.state
 	ld a,(hl)
 	cp $ff
-	jr nz,_itemInitializeBombExplosion
-	jr _itemUpdateExplosion
+	jr nz,itemInitializeBombExplosion
+	jr itemUpdateExplosion
 
 ;;
 ; @param[out]	zflag	Set if the bomb isn't exploding (not sure if it gets unset on just
 ;			one frame, or all frames after the explosion starts)
-_bombUpdateAnimation:
+bombUpdateAnimation:
 	call itemAnimate
 	ld e,Item.animParameter
 	ld a,(de)
@@ -1978,7 +1978,7 @@ _bombUpdateAnimation:
 ; Initializes a bomb explosion?
 ;
 ; @param[out]	zflag
-_itemInitializeBombExplosion:
+itemInitializeBombExplosion:
 	ld h,d
 	ld l,Item.oamFlagsBackup
 	ld a,$0a
@@ -2031,7 +2031,7 @@ _itemInitializeBombExplosion:
 	ret
 
 ;;
-_bombInitializeIfNeeded:
+bombInitializeIfNeeded:
 	ld h,d
 	ld l,Item.var37
 	bit 7,(hl)
@@ -2039,11 +2039,11 @@ _bombInitializeIfNeeded:
 
 	set 7,(hl)
 	call decNumBombs
-	call _itemLoadAttributesAndGraphics
-	call _itemMergeZPositionIfSidescrollingArea
+	call itemLoadAttributesAndGraphics
+	call itemMergeZPositionIfSidescrollingArea
 
 ;;
-_bombResetAnimationAndSetVisiblec1:
+bombResetAnimationAndSetVisiblec1:
 	xor a
 	call itemSetAnimation
 	jp objectSetVisiblec1
@@ -2051,7 +2051,7 @@ _bombResetAnimationAndSetVisiblec1:
 ;;
 ; Bombs call this to check for collision with Link and apply the damage.
 ;
-_explosionCheckAndApplyLinkCollision:
+explosionCheckAndApplyLinkCollision:
 	; Return if the bomb has already hit Link
 	ld h,d
 	ld l,Item.var37
@@ -2122,7 +2122,7 @@ _explosionCheckAndApplyLinkCollision:
 ; Each call checks one tile for deletion. After 9 calls, all spots will have been checked.
 ;
 ; @param	hl	Pointer to a counter (should count down from 8 to 0)
-_explosionTryToBreakNextTile:
+explosionTryToBreakNextTile:
 	ld a,(hl)
 	dec (hl)
 	ld l,a
@@ -2219,7 +2219,7 @@ itemCode06:
 	.dw @state4
 
 @state0:
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 .ifdef ROM_AGES
 	ld a,UNCMP_GFXH_18
 .else
@@ -2292,7 +2292,7 @@ itemCode06:
 
 	call objectCheckTileCollision_allowHoles
 	jr nc,@noCollision
-	call _itemCheckCanPassSolidTile
+	call itemCheckCanPassSolidTile
 	jr nz,@hitWall
 
 @noCollision:
@@ -2338,7 +2338,7 @@ itemCode06:
 	jr @nextState
 
 @hitWall:
-	call _objectCreateClinkInteraction
+	call objectCreateClinkInteraction
 
 	; Reverse direction
 	ld h,d
@@ -2367,7 +2367,7 @@ itemCode06:
 
 	; Increment state if within 10 pixels of Link
 	ld bc,$140a
-	call _itemCheckWithinRangeOfLink
+	call itemCheckWithinRangeOfLink
 	call c,itemIncState
 
 	jr @breakTileAndUpdateSpeedAndAnimation
@@ -2382,7 +2382,7 @@ itemCode06:
 
 	; Check if within 2 pixels of Link
 	ld bc,$0402
-	call _itemCheckWithinRangeOfLink
+	call itemCheckWithinRangeOfLink
 	jr nc,@breakTileAndUpdateSpeedAndAnimation
 
 	; Go to state 4, make invisible, disable collisions
@@ -2442,7 +2442,7 @@ magicBoomerangTryToBreakTile:
 ; @param	b	Should be double the value of c
 ; @param	c	Range to be within
 ; @param[out]	cflag	Set if within specified range of link
-_itemCheckWithinRangeOfLink:
+itemCheckWithinRangeOfLink:
 	ld hl,w1Link.yh
 	ld e,Item.yh
 	ld a,(de)
@@ -2540,7 +2540,7 @@ itemCode0b:
 	or a
 	ret nz
 
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	call itemIncState
 	ld l,Item.counter1
 	ld (hl),$03
@@ -2551,14 +2551,14 @@ itemCode0b:
 ;;
 ; ITEMID_SWITCH_HOOK
 itemCode0aPost:
-	call _cpRelatedObject1ID
+	call cpRelatedObject1ID
 	ret z
 
 	ld a,(wSwitchHookState)
 	or a
 	jp z,itemDelete
 
-	jp _func_5902
+	jp func_5902
 
 ;;
 ; ITEMID_SWITCH_HOOK
@@ -2573,17 +2573,17 @@ itemCode0a:
 	.dw @state0
 	.dw @state1
 	.dw @state2
-	.dw _switchHookState3
+	.dw switchHookState3
 
 @state0:
 	ld a,UNCMP_GFXH_AGES_1f
 	call loadWeaponGfx
 
 	ld hl,@offsetsTable
-	call _applyOffsetTableHL
+	call applyOffsetTableHL
 
 	call objectSetVisible82
-	call _loadAttributesAndGraphicsAndIncState
+	call loadAttributesAndGraphicsAndIncState
 
 	; Depending on the switch hook's level, set speed (b) and # frames to extend (c)
 	ldbc SPEED_200,$29
@@ -2646,7 +2646,7 @@ itemCode0a:
 	jr nc,@noCollisionWithTile
 
 	; There is a collision, but check for exceptions (tiles that items can pass by)
-	call _itemCheckCanPassSolidTile
+	call itemCheckCanPassSolidTile
 	jr nz,@collisionWithTile
 
 @noCollisionWithTile:
@@ -2668,11 +2668,11 @@ itemCode0a:
 	ld l,Item.var2f
 	set 3,(hl)
 ++
-	call _updateSwitchHookSound
+	call updateSwitchHookSound
 	jp objectApplySpeed
 
 @collisionWithTile:
-	call _objectCreateClinkInteraction
+	call objectCreateClinkInteraction
 
 	; Check if the tile is breakable (oring with $80 makes it perform only a check,
 	; not the breakage itself).
@@ -2726,7 +2726,7 @@ itemCode0a:
 
 	; The counter is just for keeping track of the sound?
 	call itemDecCounter1
-	call _updateSwitchHookSound
+	call updateSwitchHookSound
 
 	; Update angle based on position of link
 	call objectGetAngleTowardLink
@@ -2737,7 +2737,7 @@ itemCode0a:
 
 	; Check if within 8 pixels of link
 	ld bc,$1008
-	call _itemCheckWithinRangeOfLink
+	call itemCheckWithinRangeOfLink
 	ret nc
 
 	; Item has reached Link
@@ -2761,8 +2761,8 @@ itemCode0a:
 
 ;;
 ; Swap with an object?
-_func_5902:
-	call _checkRelatedObject2States
+func_5902:
+	call checkRelatedObject2States
 	jr nc,++
 	jr z,++
 
@@ -2778,7 +2778,7 @@ _func_5902:
 ; State 3: grabbed something switchable
 ; Uses w1ReservedItemE as ITEMID_SWITCH_HOOK_HELPER to hold the positions for link and the
 ; object temporarily.
-_switchHookState3:
+switchHookState3:
 	ld e,Item.substate
 	ld a,(de)
 	rst_jumpTable
@@ -2794,7 +2794,7 @@ _switchHookState3:
 	; Check if deletion was requested?
 	ld l,Item.var2f
 	bit 5,(hl)
-	jp nz,_func_5902
+	jp nz,func_5902
 
 	; Wait until the animation writes bit 7 to animParameter
 	ld l,Item.animParameter
@@ -2804,7 +2804,7 @@ _switchHookState3:
 	; At this point the animation is finished, now link and the hooked object/tile
 	; will rise and swap
 
-	call _checkRelatedObject2States
+	call checkRelatedObject2States
 	jr nc,itemCode0a@label_07_185
 	; Jump if an object collision, not a tile collision
 	jr nz,@@objectCollision
@@ -2828,7 +2828,7 @@ _switchHookState3:
 	ld (hl),a
 
 	; Imitate the tile that was grabbed
-	call _itemMimicBgTile
+	call itemMimicBgTile
 
 	ld h,d
 	ld l,Item.var3c
@@ -2955,7 +2955,7 @@ _switchHookState3:
 	call getShortPositionFromDE
 	pop de
 	ld l,a
-	call _checkCanPlaceDiamondOnTile
+	call checkCanPlaceDiamondOnTile
 	jr z,++
 
 	ld e,l
@@ -2964,7 +2964,7 @@ _switchHookState3:
 	call addAToBc
 	ld a,(bc)
 	rst_addAToHl
-	call _checkCanPlaceDiamondOnTile
+	call checkCanPlaceDiamondOnTile
 	jr z,++
 	ld l,e
 ++
@@ -2985,7 +2985,7 @@ _switchHookState3:
 	ld (hl),a
 
 	call itemIncSubstate
-	call _checkRelatedObject2States
+	call checkRelatedObject2States
 	jr nc,+
 	jr z,+
 	ld (hl),$02
@@ -2998,7 +2998,7 @@ _switchHookState3:
 ; Update the positions (mainly z positions) for Link and the object being hooked.
 @updateOtherPositions:
 	; Update other object position if hooked to an enemy
-	call _checkRelatedObject2States
+	call checkRelatedObject2States
 	call nz,objectCopyPosition
 
 	; Update the Z position that w1ReservedItemE is keeping track of
@@ -3031,14 +3031,14 @@ _switchHookState3:
 	or a
 	ret nz
 
-	call _checkRelatedObject2States
+	call checkRelatedObject2States
 	jr nz,@reenableEnemy
 
 	; For tile collisions, check whether to make the interaction which shows it
 	; breaking, or whether to keep the switch hook diamond there
 
 	call objectGetTileCollisions
-	call _checkCanPlaceDiamondOnTile
+	call checkCanPlaceDiamondOnTile
 	jr nz,+
 
 	; If the current block is the switch diamond, do NOT break it
@@ -3069,7 +3069,7 @@ _switchHookState3:
 ; @param[out]	hl	Related object 2's substate variable
 ; @param[out]	zflag	Set if latched onto a tile, not an object
 ; @param[out]	cflag	Unset if the related object is on state 3, substate 3?
-_checkRelatedObject2States:
+checkRelatedObject2States:
 	; Jump if latched onto a tile, not an object
 	ld e,Item.subid
 	ld a,(de)
@@ -3095,7 +3095,7 @@ _checkRelatedObject2States:
 
 ;;
 ; Plays the switch hook sound every 4 frames.
-_updateSwitchHookSound:
+updateSwitchHookSound:
 	ld e,Item.counter1
 	ld a,(de)
 	and $03
@@ -3108,7 +3108,7 @@ _updateSwitchHookSound:
 ; @param l Position to check
 ; @param[out] zflag Set if the tile at l has a collision value of 0 (or is the somaria
 ; block?)
-_checkCanPlaceDiamondOnTile:
+checkCanPlaceDiamondOnTile:
 	ld h,>wRoomCollisions
 	ld a,(hl)
 	or a
@@ -3167,7 +3167,7 @@ itemCode09:
 
 ;;
 ; Unused?
-_func_5af5:
+func_5af5:
 	ld hl,w1ReservedItemE
 	bit 0,(hl)
 	ret z
@@ -3216,7 +3216,7 @@ itemCode2a:
 	sub $02
 	ld (de),a
 
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	xor a
 	call itemSetAnimation
 	jp objectSetVisiblec1
@@ -3276,7 +3276,7 @@ itemCode29:
 	ld l,Item.var31
 	ldd (hl),a
 	ld (hl),b
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	xor a
 	call itemSetAnimation
 	call objectSetVisiblec3
@@ -3960,7 +3960,7 @@ itemCode0f:
 @state0:
 	ld a,UNCMP_GFXH_AGES_1d
 	call loadWeaponGfx
-	call _loadAttributesAndGraphicsAndIncState
+	call loadAttributesAndGraphicsAndIncState
 	ld e,Item.var30
 	ld a,$ff
 	ld (de),a
@@ -3973,11 +3973,11 @@ itemCode0f:
 ;;
 ; ITEMID_SHOOTER
 itemCode0fPost:
-	call _cpRelatedObject1ID
+	call cpRelatedObject1ID
 	jp nz,itemDelete
 
 	ld hl,@data
-	call _itemInitializeFromLinkPosition
+	call itemInitializeFromLinkPosition
 
 	; Copy link Z position
 	ld h,d
@@ -4016,7 +4016,7 @@ itemCode28:
 	call itemIncState
 	ld l,Item.counter1
 	ld (hl),$14
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	jr @calculatePosition
 +
 	call @calculatePosition
@@ -4036,7 +4036,7 @@ itemCode28:
 	ld hl,@rickyData
 	rst_addDoubleIndex
 +
-	jp _itemInitializeFromLinkPosition
+	jp itemInitializeFromLinkPosition
 
 
 ; b0/b1: collisionRadiusY/X
@@ -4119,7 +4119,7 @@ itemCode15:
 
 	; Initialization (state 0)
 
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	call itemIncState
 	ld l,Item.counter1
 	ld (hl),$04
@@ -4146,7 +4146,7 @@ itemCode15:
 ;;
 ; ITEMID_CANE_OF_SOMARIA
 itemCode04:
-	call _itemTransferKnockbackToLink
+	call itemTransferKnockbackToLink
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -4158,7 +4158,7 @@ itemCode04:
 @state0:
 	ld a,UNCMP_GFXH_AGES_1c
 	call loadWeaponGfx
-	call _loadAttributesAndGraphicsAndIncState
+	call loadAttributesAndGraphicsAndIncState
 
 	ld a,SND_SWORDSLASH
 	call playSound
@@ -4237,9 +4237,9 @@ itemCode18:
 
 ; State 0: initialization
 @state0:
-	call _itemMergeZPositionIfSidescrollingArea
+	call itemMergeZPositionIfSidescrollingArea
 	call @alignOnTile
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	xor a
 	call itemSetAnimation
 	call itemIncState
@@ -4336,7 +4336,7 @@ itemCode18:
 	call @removeBlock
 
 @state4Substate1:
-	call _itemUpdateDamageToApply
+	call itemUpdateDamageToApply
 	jr c,@deleteSelfWithPuff
 	call @checkDeletionTrigger
 	jr nz,@deleteSelfWithPuff
@@ -4388,7 +4388,7 @@ itemCode18:
 
 ; Substate 1: being lifted
 @state2Substate1:
-	call _itemUpdateDamageToApply
+	call itemUpdateDamageToApply
 	ret nc
 	call dropLinkHeldItem
 	jr @deleteSelfWithPuff
@@ -4399,14 +4399,14 @@ itemCode18:
 	call objectCheckWithinRoomBoundary
 	jr nc,@deleteSelf
 
-	call _bombUpdateThrowingLaterally
+	call bombUpdateThrowingLaterally
 	call @checkDeletionTrigger
 	jr nz,@deleteSelfWithPuff
 
 	; var39 = gravity
 	ld l,Item.var39
 	ld c,(hl)
-	call _itemUpdateThrowingVerticallyAndCheckHazards
+	call itemUpdateThrowingVerticallyAndCheckHazards
 	jr c,@deleteSelf
 
 	ret z
@@ -4419,7 +4419,7 @@ itemCode18:
 	jr nz,@deleteSelfWithPuff
 
 	; Check if health went below 0
-	call _itemUpdateDamageToApply
+	call itemUpdateDamageToApply
 	jr c,@removeBlockAndDeleteSelfWithPuff
 
 	; Check bit 5 of var2f (set when another somaria block is being created)
@@ -4578,7 +4578,7 @@ itemCode18:
 
 ; ITEMID_ROD_OF_SEASONS
 itemCode07:
-	call _itemTransferKnockbackToLink
+	call itemTransferKnockbackToLink
 	ld e,Object.state
 	ld a,(de)
 	rst_jumpTable
@@ -4597,7 +4597,7 @@ itemCode07:
 	call playSound
 	ld a,UNCMP_GFXH_SEASONS_1c
 	call loadWeaponGfx
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	jp objectSetVisible82
 
 @state1:
@@ -4627,7 +4627,7 @@ itemCode1d:
 	or a
 	ret nz
 
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	call itemIncState
 	ld l,Item.enabled
 	set 1,(hl)
@@ -4662,7 +4662,7 @@ itemCode13:
 	ret nz
 	ld a,UNCMP_GFXH_SEASONS_1d
 	call loadWeaponGfx
-	call _loadAttributesAndGraphicsAndIncState
+	call loadAttributesAndGraphicsAndIncState
 	ld h,d
 	ld a,(wSlingshotLevel)
 	or $08
@@ -4685,7 +4685,7 @@ itemCode08:
 @state0:
 	ld a,UNCMP_GFXH_SEASONS_1e
 	call loadWeaponGfx
-	call _loadAttributesAndGraphicsAndIncState
+	call loadAttributesAndGraphicsAndIncState
 	call objectSetVisible81
 
 @state1:
@@ -4714,7 +4714,7 @@ itemCode1e:
 @state0:
 	ld a,UNCMP_GFXH_SEASONS_1f
 	call loadWeaponGfx
-	call _loadAttributesAndGraphicsAndIncState
+	call loadAttributesAndGraphicsAndIncState
 	xor a
 	call itemSetAnimation
 	jp objectSetVisible82
@@ -4733,7 +4733,7 @@ itemCode0c:
 @state0:
 	ld a,UNCMP_GFXH_1b
 	call loadWeaponGfx
-	call _loadAttributesAndGraphicsAndIncState
+	call loadAttributesAndGraphicsAndIncState
 	ld a,SND_BIGSWORD
 	call playSound
 	jp objectSetVisible82
@@ -4742,7 +4742,7 @@ itemCode0c:
 ;;
 ; ITEMID_SWORD
 itemCode05:
-	call _itemTransferKnockbackToLink
+	call itemTransferKnockbackToLink
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -4785,7 +4785,7 @@ itemCode05:
 
 ; State 6: partial re-initialization?
 @state6:
-	call _loadAttributesAndGraphicsAndIncState
+	call loadAttributesAndGraphicsAndIncState
 
 	; Load collisiontype and damage
 	ld a,(wSwordLevel)
@@ -4888,7 +4888,7 @@ itemCode05:
 @state5:
 	; Try to break tile at Link's feet, then delete self
 	ld a,$08
-	call _tryBreakTileWithSword_calculateLevel
+	call tryBreakTileWithSword_calculateLevel
 	jp itemDelete
 
 
@@ -4905,7 +4905,7 @@ itemCode02:
 	.dw @state1
 
 @state0:
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	ld c,SND_STRIKE
 	call itemIncState
 	ld l,Item.counter1
@@ -4931,7 +4931,7 @@ itemCode02:
 	inc (hl)
 
 	; Check for clinks against bombable walls?
-	call _tryBreakTileWithExpertsRing
+	call tryBreakTileWithExpertsRing
 
 	ld c,SND_EXPLOSION
 ++
@@ -4956,8 +4956,8 @@ itemCode27:
 
 @state0:
 	ld hl,@initialOffsetsTable
-	call _applyOffsetTableHL
-	call _itemLoadAttributesAndGraphics
+	call applyOffsetTableHL
+	call itemLoadAttributesAndGraphics
 	call itemIncState
 
 	ld l,Item.speed
@@ -4985,7 +4985,7 @@ itemCode27:
 	.db $00 $f3 $00 ; DIR_LEFT
 
 @state1:
-	call _itemUpdateDamageToApply
+	call itemUpdateDamageToApply
 	jr nz,@collision
 
 	; No collision with an object?
@@ -4994,7 +4994,7 @@ itemCode27:
 	call objectCheckTileCollision_allowHoles
 	jr nc,@noCollision
 
-	call _itemCheckCanPassSolidTile
+	call itemCheckCanPassSolidTile
 	jr nz,@collision
 
 @noCollision:
@@ -5022,16 +5022,16 @@ itemCode27:
 ; Used for sword, cane of somaria, rod of seasons. Updates animation, deals with
 ; destroying tiles?
 ;
-_updateSwingableItemAnimation:
+updateSwingableItemAnimation:
 	ld l,Item.animParameter
 .ifdef ROM_AGES
 	cp ITEMID_CANE_OF_SOMARIA
 .else
 	cp ITEMID_ROD_OF_SEASONS
 .endif
-	jr z,_label_07_227
+	jr z,label_07_227
 	bit 6,(hl)
-	jr z,_label_07_227
+	jr z,label_07_227
 
 	res 6,(hl)
 	ld a,(hl)
@@ -5043,10 +5043,10 @@ _updateSwingableItemAnimation:
 +
 	and $07
 	push hl
-	call _tryBreakTileWithSword_calculateLevel
+	call tryBreakTileWithSword_calculateLevel
 	pop hl
 
-_label_07_227:
+label_07_227:
 	ld c,$10
 	ld a,(hl)
 	and $1f
@@ -5085,9 +5085,9 @@ _label_07_227:
 	.db $00 $11 $22 $33 $44 $55 $66 $77
 
 ;;
-; Analagous to _updateSwingableItemAnimation, but specifically for biggoron's sword
+; Analagous to updateSwingableItemAnimation, but specifically for biggoron's sword
 ;
-_updateBiggoronSwordAnimation:
+updateBiggoronSwordAnimation:
 	ld b,$00
 	ld l,Item.animParameter
 	bit 6,(hl)
@@ -5116,7 +5116,7 @@ _updateBiggoronSwordAnimation:
 	push af
 	ld c,a
 	ld a,BREAKABLETILESOURCE_SWORD_L2
-	call _tryBreakTileWithSword
+	call tryBreakTileWithSword
 	pop af
 ++
 	ld e,Item.var30
@@ -5127,7 +5127,7 @@ _updateBiggoronSwordAnimation:
 ; ITEMID_MAGNET_GLOVES
 ;
 itemCode08Post:
-	call _cpRelatedObject1ID
+	call cpRelatedObject1ID
 	jp nz,itemDelete
 
 	ld hl,w1Link.yh
@@ -5145,7 +5145,7 @@ itemCode08Post:
 ; ITEMID_SLINGSHOT
 ;
 itemCode13Post:
-	call _cpRelatedObject1ID
+	call cpRelatedObject1ID
 	jp nz,itemDelete
 
 	ld hl,w1Link.yh
@@ -5159,7 +5159,7 @@ itemCode13Post:
 ; ITEMID_FOOLS_ORE
 ;
 itemCode1ePost:
-	call _cpRelatedObject1ID
+	call cpRelatedObject1ID
 	jp nz,itemDelete
 
 	ld l,Item.animParameter
@@ -5171,8 +5171,8 @@ itemCode1ePost:
 	add b
 	ld e,Item.var30
 	ld (de),a
-	ld hl,_swordArcData
-	jr _itemSetPositionInSwordArc
+	ld hl,swordArcData
+	jr itemSetPositionInSwordArc
 
 ;;
 ; ITEMID_PUNCH
@@ -5181,22 +5181,22 @@ itemCode00Post:
 itemCode02Post:
 	ld a,(w1Link.direction)
 	add $18
-	ld hl,_swordArcData
-	jr _itemSetPositionInSwordArc
+	ld hl,swordArcData
+	jr itemSetPositionInSwordArc
 
 ;;
 ; ITEMID_BIGGORON_SWORD
 ;
 itemCode0cPost:
-	call _cpRelatedObject1ID
+	call cpRelatedObject1ID
 	jp nz,itemDelete
 
-	call _updateBiggoronSwordAnimation
+	call updateBiggoronSwordAnimation
 	ld e,Item.var30
 	ld a,(de)
-	ld hl,_biggoronSwordArcData
-	call _itemSetPositionInSwordArc
-	jp _itemCalculateSwordDamage
+	ld hl,biggoronSwordArcData
+	call itemSetPositionInSwordArc
+	jp itemCalculateSwordDamage
 
 ;;
 ; ITEMID_CANE_OF_SOMARIA
@@ -5206,22 +5206,22 @@ itemCode0cPost:
 itemCode04Post:
 itemCode05Post:
 itemCode07Post:
-	call _cpRelatedObject1ID
+	call cpRelatedObject1ID
 	jp nz,itemDelete
 
-	call _updateSwingableItemAnimation
+	call updateSwingableItemAnimation
 
 	ld e,Item.var30
 	ld a,(de)
-	ld hl,_swordArcData
-	call _itemSetPositionInSwordArc
+	ld hl,swordArcData
+	call itemSetPositionInSwordArc
 
-	jp _itemCalculateSwordDamage
+	jp itemCalculateSwordDamage
 
 ;;
 ; @param	a	Index for table 'hl'
-; @param	hl	Usually points to _swordArcData
-_itemSetPositionInSwordArc:
+; @param	hl	Usually points to swordArcData
+itemSetPositionInSwordArc:
 	add a
 	rst_addDoubleIndex
 
@@ -5229,7 +5229,7 @@ _itemSetPositionInSwordArc:
 ; Copy Link's position (accounting for raised floors, with Z position 2 higher than Link)
 ;
 ; @param	hl	Pointer to data for collision radii and position offsets
-_itemInitializeFromLinkPosition:
+itemInitializeFromLinkPosition:
 	ld e,Item.collisionRadiusY
 	ldi a,(hl)
 	ld (de),a
@@ -5268,7 +5268,7 @@ _itemInitializeFromLinkPosition:
 ; Each row probably corresponds to part of a sword's arc? (Also used by punches.)
 ; b0/b1: collisionRadiusY/X
 ; b2/b3: Y/X offsets relative to Link
-_swordArcData:
+swordArcData:
 	.db $09 $06 $fe $10
 	.db $06 $09 $f2 $00
 	.db $09 $06 $00 $f1
@@ -5298,7 +5298,7 @@ _swordArcData:
 	.db $05 $05 $0c $03
 	.db $05 $05 $00 $f4
 
-_biggoronSwordArcData:
+biggoronSwordArcData:
 	.db $0b $0b $ef $fe
 	.db $09 $0c $f2 $10
 	.db $0b $0b $02 $13
@@ -5310,24 +5310,24 @@ _biggoronSwordArcData:
 
 
 ;;
-_tryBreakTileWithExpertsRing:
+tryBreakTileWithExpertsRing:
 	ld a,(w1Link.direction)
 	add a
 	ld c,a
 	ld a,BREAKABLETILESOURCE_03
-	jr _tryBreakTileWithSword
+	jr tryBreakTileWithSword
 
 ;;
 ; Same as below function, except this checks the sword's level to decide on the
 ; "breakableTileSource".
 ;
 ; @param	a	Direction (see below function)
-_tryBreakTileWithSword_calculateLevel:
+tryBreakTileWithSword_calculateLevel:
 	; Use BREAKABLETILESOURCE_SWORD_L1 or L2 depending on sword's level
 	ld c,a
 	ld a,(wSwordLevel)
 	cp $01
-	jr z,_tryBreakTileWithSword
+	jr z,tryBreakTileWithSword
 	ld a,BREAKABLETILESOURCE_SWORD_L2
 
 ;;
@@ -5335,7 +5335,7 @@ _tryBreakTileWithSword_calculateLevel:
 ;
 ; @param	a	See constants/breakableTileSources.s
 ; @param	c	Direction (0-7 are 45-degree increments, 8 is link's center)
-_tryBreakTileWithSword:
+tryBreakTileWithSword:
 	; Check link is close enough to the ground
 	ld e,a
 	ld a,(w1Link.zh)
@@ -5500,7 +5500,7 @@ _tryBreakTileWithSword:
 ;;
 ; Calculates the value for Item.damage, accounting for ring modifiers.
 ;
-_itemCalculateSwordDamage:
+itemCalculateSwordDamage:
 	ld e,Item.var3a
 	ld a,(de)
 	ld b,a
@@ -5585,7 +5585,7 @@ _itemCalculateSwordDamage:
 ;;
 ; Makes the given item mimic a tile. Used for switch hooking bushes and pots and stuff,
 ; possibly for other things too?
-_itemMimicBgTile:
+itemMimicBgTile:
 	call getTileMappingData
 	push bc
 	ld h,d
@@ -5650,7 +5650,7 @@ itemCode16:
 	.dw @state3
 
 @state0:
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	ld h,d
 	ld l,Item.enabled
 	set 1,(hl)
@@ -5663,7 +5663,7 @@ itemCode16:
 
 	ld l,Item.state
 	ld (hl),$02
-	call _itemMimicBgTile
+	call itemMimicBgTile
 	jp objectSetVisiblec0
 
 
@@ -5693,7 +5693,7 @@ itemCode16:
 ; created at the time it is thrown, instead of the time it is picked up. Also, it's
 ; invisible, since its only purpose is to provide collisions?
 @notTile:
-	call _braceletCheckDeleteSelfWhileThrowing
+	call braceletCheckDeleteSelfWhileThrowing
 
 	; Check if relatedObj2 is an item or not?
 	ld a,h
@@ -5730,7 +5730,7 @@ itemCode16:
 	set 7,(hl)
 
 @throwItem:
-	call _itemBeginThrow
+	call itemBeginThrow
 	ld h,d
 	ld l,Item.state
 	ld (hl),$03
@@ -5740,8 +5740,8 @@ itemCode16:
 
 ; State 3: being thrown
 @state3:
-	call _braceletCheckDeleteSelfWhileThrowing
-	call _itemUpdateThrowingLaterally
+	call braceletCheckDeleteSelfWhileThrowing
+	call itemUpdateThrowingLaterally
 .ifdef ROM_AGES
 	jr z,@@destroyWithAnimation
 .else
@@ -5751,11 +5751,11 @@ itemCode16:
 	ld e,Item.var39
 	ld a,(de)
 	ld c,a
-	call _itemUpdateThrowingVertically
+	call itemUpdateThrowingVertically
 	jr nc,@@noCollision
 
 	; If it's breakable, destroy it; if not, let it bounce
-	call _braceletCheckBreakable
+	call braceletCheckBreakable
 
 .ifdef ROM_AGES
 	jr nz,@@destroyWithAnimation
@@ -5767,7 +5767,7 @@ itemCode16:
 +
 .endif
 
-	call _itemBounce
+	call itemBounce
 	jr c,@@release
 
 @@noCollision:
@@ -5813,7 +5813,7 @@ itemCode16:
 ;;
 ; @param[out] zflag Set if Item.subid is zero
 ; @param[out] cflag Inverse of zflag?
-_braceletCheckBreakable:
+braceletCheckBreakable:
 	ld e,Item.subid
 	ld a,(de)
 	or a
@@ -5829,7 +5829,7 @@ _braceletCheckBreakable:
 ; itself.
 ;
 ; @param[out]	hl	relatedObj2.substate or this.substate
-_braceletCheckDeleteSelfWhileThrowing:
+braceletCheckDeleteSelfWhileThrowing:
 	ld e,Item.subid
 	ld a,(de)
 	or a
@@ -5866,7 +5866,7 @@ _braceletCheckDeleteSelfWhileThrowing:
 ;;
 ; Called every frame a bomb is being thrown. Also used by somaria block?
 ;
-_bombUpdateThrowingLaterally:
+bombUpdateThrowingLaterally:
 	; If it's landed in water, set speed to 0 (for sidescrolling areas)
 	ld h,d
 	ld l,Item.var3b
@@ -5878,16 +5878,16 @@ _bombUpdateThrowingLaterally:
 	; If this is the start of the throw, initialize speed variables
 	ld l,Item.var37
 	bit 0,(hl)
-	call z,_itemBeginThrow
+	call z,itemBeginThrow
 
 	; Check for collisions with walls, update position.
-	jp _itemUpdateThrowingLaterally
+	jp itemUpdateThrowingLaterally
 
 ;;
 ; Items call this once on the frame they're thrown
 ;
-_itemBeginThrow:
-	call _itemSetVar3cToFF
+itemBeginThrow:
+	call itemSetVar3cToFF
 
 	; Move the item one pixel in Link's facing direction
 	ld a,(w1Link.direction)
@@ -5918,7 +5918,7 @@ _itemBeginThrow:
 	and $f0
 	swap a
 	add a
-	ld hl,_itemWeights
+	ld hl,itemWeights
 	rst_addDoubleIndex
 
 	; Byte 0 from hl: value for Item.var39 (gravity)
@@ -5974,10 +5974,10 @@ _itemBeginThrow:
 ; Checks whether a throwable item has collided with a wall; if not, this updates its
 ; position.
 ;
-; Called by throwable items each frame. See also "_itemUpdateThrowingVertically".
+; Called by throwable items each frame. See also "itemUpdateThrowingVertically".
 ;
 ; @param[out]	zflag	Set if the item should break.
-_itemUpdateThrowingLaterally:
+itemUpdateThrowingLaterally:
 	ld e,Item.var38
 	ld a,(de)
 
@@ -6000,7 +6000,7 @@ _itemUpdateThrowingLaterally:
 	and $18
 	rrca
 	rrca
-	ld hl,_bombEdgeOffsets
+	ld hl,bombEdgeOffsets
 	rst_addAToHl
 	ldi a,(hl)
 	ld c,(hl)
@@ -6020,7 +6020,7 @@ _itemUpdateThrowingLaterally:
 
 	call checkTileCollisionAt_allowHoles
 	jr nc,@noCollision
-	call _itemCheckCanPassSolidTileAt
+	call itemCheckCanPassSolidTileAt
 	jr z,@noCollision
 	jr @collision
 
@@ -6035,7 +6035,7 @@ _itemUpdateThrowingLaterally:
 	ld e,Item.angle
 	ld a,(de)
 	and $18
-	ld hl,_data_649a
+	ld hl,data_649a
 	rst_addAToHl
 
 	; Loop 4 times, once for each corner of the object?
@@ -6059,7 +6059,7 @@ _itemUpdateThrowingLaterally:
 
 @collision:
 	; Check if this is a breakable object (based on a tile that was picked up)?
-	call _braceletCheckBreakable
+	call braceletCheckBreakable
 	jr nz,@setZFlag
 
 	; Clear angle, which will also set speed to 0
@@ -6093,7 +6093,7 @@ _itemUpdateThrowingLaterally:
 ; bounce a few times before settling, reducing in speed with each bounce.
 ; @param[out] zflag Set if the item has reached a ground speed of zero.
 ; @param[out] cflag Set if the item has stopped bouncing.
-_itemBounce:
+itemBounce:
 	ld a,SND_BOMB_LAND
 	call playSound
 
@@ -6105,7 +6105,7 @@ _itemBounce:
 	ld e,Item.speed
 	ld a,(de)
 	ld e,a
-	ld hl,_bounceSpeedReductionMapping
+	ld hl,bounceSpeedReductionMapping
 	call lookupKey
 	ld e,Item.speed
 	ld (de),a
@@ -6114,9 +6114,9 @@ _itemBounce:
 
 ; This seems to list the offsets of the 4 corners of a particular object, to be used for
 ; collision calculations.
-; Somewhat similar to "_bombEdgeOffsets", except that is only used to check for collisions
+; Somewhat similar to "bombEdgeOffsets", except that is only used to check for collisions
 ; in the direction it's moving in, whereas this seems to cover the entire object.
-_data_649a:
+data_649a:
 	.db $00 $00 $fa $fa $fa $00 $fa $05 ; DIR_UP
 	.db $00 $00 $fa $05 $00 $05 $05 $05 ; DIR_RIGHT
 	.db $00 $00 $05 $fb $05 $00 $05 $05 ; DIR_DOWN
@@ -6126,7 +6126,7 @@ _data_649a:
 ; b1: Low byte of Z speed to give the object (high byte will be $ff)
 ; b2: Throw speed without toss ring
 ; b3: Throw speed with toss ring
-_itemWeights:
+itemWeights:
 	.db $1c $10 SPEED_180 SPEED_280
 	.db $20 $00 SPEED_080 SPEED_100
 .ifdef ROM_AGES
@@ -6142,7 +6142,7 @@ _itemWeights:
 ; A series of key-value pairs where the key is a bouncing object's current speed, and the
 ; value is the object's new speed after one bounce.
 ; This returns roughly half the value of the key.
-_bounceSpeedReductionMapping:
+bounceSpeedReductionMapping:
 	.db SPEED_020 SPEED_000
 	.db SPEED_040 SPEED_020
 	.db SPEED_060 SPEED_020
@@ -6180,7 +6180,7 @@ itemCode1a:
 	.dw @substate2
 
 @substate0:
-	call _itemLoadAttributesAndGraphics
+	call itemLoadAttributesAndGraphics
 	call itemIncSubstate
 	ld hl,w1Link.yh
 	call objectTakePosition

@@ -9,7 +9,7 @@ faroreSparkleObjectData:
 	obj_Interaction $11 $71 $78 $58
 	obj_End
 
-; _twinrovaCutscene_state1
+; twinrovaCutscene_state1
 objectData4022:
 	obj_Interaction $44 $00 $42 $78
 	obj_Interaction $b0 $08
@@ -17,7 +17,7 @@ objectData4022:
 	obj_Interaction $b0 $0a
 	obj_End
 
-; _twinrovaCutscene_loadAngryFlames
+; twinrovaCutscene_loadAngryFlames
 objectData402f:
 	obj_Interaction $b0 $0b
 	obj_Interaction $b0 $0c

@@ -7,34 +7,34 @@ interactionCodedc:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _interactiondc_subid00
-	.dw _interactiondc_subid01
-	.dw _interactiondc_subid02
-	.dw _interactiondc_subid03
-	.dw _interactiondc_subid04
-	.dw _interactiondc_subid05
-	.dw _interactiondc_subid06
-	.dw _interactiondc_subid07
-	.dw _interactiondc_subid08
-	.dw _interactiondc_subid09
-	.dw _interactiondc_subid0A
-	.dw _interactiondc_subid0B
-	.dw _interactiondc_subid0C
-	.dw _interactiondc_subid0D
-	.dw _interactiondc_subid0E
-	.dw _interactiondc_subid0F
-	.dw _interactiondc_subid10
-	.dw _interactiondc_subid11
-	.dw _interactiondc_subid12
-	.dw _interactiondc_subid13
-	.dw _interactiondc_subid14
-	.dw _interactiondc_subid15
-	.dw _interactiondc_subid16
-	.dw _interactiondc_subid17
+	.dw interactiondc_subid00
+	.dw interactiondc_subid01
+	.dw interactiondc_subid02
+	.dw interactiondc_subid03
+	.dw interactiondc_subid04
+	.dw interactiondc_subid05
+	.dw interactiondc_subid06
+	.dw interactiondc_subid07
+	.dw interactiondc_subid08
+	.dw interactiondc_subid09
+	.dw interactiondc_subid0A
+	.dw interactiondc_subid0B
+	.dw interactiondc_subid0C
+	.dw interactiondc_subid0D
+	.dw interactiondc_subid0E
+	.dw interactiondc_subid0F
+	.dw interactiondc_subid10
+	.dw interactiondc_subid11
+	.dw interactiondc_subid12
+	.dw interactiondc_subid13
+	.dw interactiondc_subid14
+	.dw interactiondc_subid15
+	.dw interactiondc_subid16
+	.dw interactiondc_subid17
 
 
 ; Heart piece spawner
-_interactiondc_subid07:
+interactiondc_subid07:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
 	jp nz,interactionDelete
@@ -45,7 +45,7 @@ _interactiondc_subid07:
 
 
 ; Replaces a tile at a position with a given value when destroyed
-_interactiondc_subid08:
+interactiondc_subid08:
 	call checkInteractionState
 	jr z,@state0
 
@@ -87,7 +87,7 @@ _interactiondc_subid08:
 
 
 ; Graveyard key spawner
-_interactiondc_subid00:
+interactiondc_subid00:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
 	jp nz,interactionDelete
@@ -101,7 +101,7 @@ _interactiondc_subid00:
 
 
 ; Graveyard gate opening cutscene
-_interactiondc_subid01:
+interactiondc_subid01:
 	call checkInteractionState
 	jp nz,interactionRunScript
 	call getThisRoomFlags
@@ -114,7 +114,7 @@ _interactiondc_subid01:
 
 
 ; Initiates cutscene where present d2 collapses
-_interactiondc_subid02:
+interactiondc_subid02:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -193,9 +193,9 @@ _interactiondc_subid02:
 
 
 ; Reveals portal spot under bush in symmetry (left side)
-_interactiondc_subid03:
+interactiondc_subid03:
 	call checkInteractionState
-	jr nz,_interactiondc_subid3And4_state1
+	jr nz,interactiondc_subid3And4_state1
 
 @state0:
 	call getThisRoomFlags
@@ -206,7 +206,7 @@ _interactiondc_subid03:
 	ld (de),a
 	jp interactionIncState
 
-_interactiondc_subid3And4_state1:
+interactiondc_subid3And4_state1:
 	call objectGetTileAtPosition
 	cp TILEINDEX_OVERWORLD_STANDARD_GROUND
 	ret nz
@@ -226,9 +226,9 @@ _interactiondc_subid3And4_state1:
 
 
 ; Reveals portal spot under bush in symmetry (right side)
-_interactiondc_subid04:
+interactiondc_subid04:
 	call checkInteractionState
-	jr nz,_interactiondc_subid3And4_state1
+	jr nz,interactiondc_subid3And4_state1
 
 @state0:
 	call getThisRoomFlags
@@ -241,7 +241,7 @@ _interactiondc_subid04:
 
 
 ; Makes screen shake before tuni nut is restored
-_interactiondc_subid05:
+interactiondc_subid05:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -304,7 +304,7 @@ _interactiondc_subid05:
 
 
 ; Makes volcanoes erupt before tuni nut is restored (spawns INTERACID_VOLCANO_HANLDER)
-_interactiondc_subid06:
+interactiondc_subid06:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED
 	call checkGlobalFlag
 	jr nz,@delete
@@ -315,7 +315,7 @@ _interactiondc_subid06:
 
 
 ; Animates jabu-jabu
-_interactiondc_subid09:
+interactiondc_subid09:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -472,7 +472,7 @@ _interactiondc_subid09:
 
 
 ; Initiates jabu opening his mouth cutscene
-_interactiondc_subid0A:
+interactiondc_subid0A:
 	call checkInteractionState
 	jr z,@state0
 
@@ -499,7 +499,7 @@ _interactiondc_subid0A:
 
 
 ; Handles floor falling in King Moblin's castle
-_interactiondc_subid0B:
+interactiondc_subid0B:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -571,8 +571,8 @@ _interactiondc_subid0B:
 
 
 ; Bridge handler in Rolling Ridge past (subid 0c) and present (subid 0d)
-_interactiondc_subid0C:
-_interactiondc_subid0D:
+interactiondc_subid0C:
+interactiondc_subid0D:
 	call checkInteractionState
 	jr z,@state0
 
@@ -615,7 +615,7 @@ _interactiondc_subid0D:
 
 
 ; Puzzle at entrance to sea of no return (ancient tomb)
-_interactiondc_subid0E:
+interactiondc_subid0E:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -688,7 +688,7 @@ _interactiondc_subid0E:
 
 
 ; Shows text upon entering a room (only used for sea of no return entrance and black tower turret)
-_interactiondc_subid0F:
+interactiondc_subid0F:
 	call checkInteractionState
 	jr z,@state0
 	call objectCheckCollidedWithLink_notDead
@@ -716,7 +716,7 @@ _interactiondc_subid0F:
 
 
 ; Black tower entrance handler: warps Link to different variants of black tower.
-_interactiondc_subid10:
+interactiondc_subid10:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -767,7 +767,7 @@ _interactiondc_subid10:
 
 
 ; Gives D6 Past boss key when you get D6 Present boss key
-_interactiondc_subid11:
+interactiondc_subid11:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
 	ret z
@@ -777,7 +777,7 @@ _interactiondc_subid11:
 
 
 ; Bridge handler for cave leading to Tingle
-_interactiondc_subid12:
+interactiondc_subid12:
 	call getThisRoomFlags
 	and $40
 	jp nz,interactionDelete
@@ -806,7 +806,7 @@ _interactiondc_subid12:
 
 ; Makes lava-waterfall an d4 entrance behave like lava instead of just a wall, so that the fireballs
 ; "sink" into it instead of exploding like on land.
-_interactiondc_subid13:
+interactiondc_subid13:
 	call returnIfScrollMode01Unset
 	ld a,TILEINDEX_OVERWORLD_LAVA_1 ; TODO
 	ld hl,wRoomLayout+$14
@@ -822,7 +822,7 @@ _interactiondc_subid13:
 
 
 ; Spawns portal to final dungeon from maku tree
-_interactiondc_subid14:
+interactiondc_subid14:
 	call objectGetTileAtPosition
 	cp $dc ; TODO
 	jr nz,@delete
@@ -834,17 +834,17 @@ _interactiondc_subid14:
 
 
 ; Sets present sea of storms chest contents (changes if linked)
-_interactiondc_subid15:
+interactiondc_subid15:
 	call checkInteractionState
-	jr z,_interactiondc_subid15And16_state0
+	jr z,interactiondc_subid15And16_state0
 
 @state1:
 	call checkIsLinkedGame
 	ld a,$01
-	jr nz,_interactiondc_subid15And16_setChestContents
+	jr nz,interactiondc_subid15And16_setChestContents
 	dec a
 
-_interactiondc_subid15And16_setChestContents:
+interactiondc_subid15And16_setChestContents:
 	ld hl,@chestContents
 	rst_addDoubleIndex
 	ldi a,(hl)
@@ -857,7 +857,7 @@ _interactiondc_subid15And16_setChestContents:
 	dwbe TREASURE_OBJECT_GASHA_SEED_01 ; Unlinked
 	dwbe TREASURE_OBJECT_RING_1e       ; Linked
 
-_interactiondc_subid15And16_state0:
+interactiondc_subid15And16_state0:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
 	jp nz,interactionDelete
@@ -865,18 +865,18 @@ _interactiondc_subid15And16_state0:
 
 
 ; Sets past sea of storms chest contents (changes if linked)
-_interactiondc_subid16:
+interactiondc_subid16:
 	call checkInteractionState
-	jr z,_interactiondc_subid15And16_state0
+	jr z,interactiondc_subid15And16_state0
 	call checkIsLinkedGame
 	ld a,$00
-	jr nz,_interactiondc_subid15And16_setChestContents
+	jr nz,interactiondc_subid15And16_setChestContents
 	inc a
-	jr _interactiondc_subid15And16_setChestContents
+	jr interactiondc_subid15And16_setChestContents
 
 
 ; Forces Link to be squished when he's in a wall (used in ages d5 BK room)
-_interactiondc_subid17:
+interactiondc_subid17:
 	call checkInteractionState
 	jp z,interactionIncState
 
@@ -918,23 +918,23 @@ interactionCodedd:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _timewarp_subid0
-	.dw _timewarp_subid1
-	.dw _timewarp_subid2
-	.dw _timewarp_subid3
-	.dw _timewarp_subid4
+	.dw timewarp_subid0
+	.dw timewarp_subid1
+	.dw timewarp_subid2
+	.dw timewarp_subid3
+	.dw timewarp_subid4
 
-_timewarp_subid0:
+timewarp_subid0:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _timewarp_common_state0
-	.dw _timewarp_subid0_state1
-	.dw _timewarp_subid0_state2
-	.dw _timewarp_animateUntilFinished
+	.dw timewarp_common_state0
+	.dw timewarp_subid0_state1
+	.dw timewarp_subid0_state2
+	.dw timewarp_animateUntilFinished
 
 
-_timewarp_common_state0:
+timewarp_common_state0:
 	call interactionInitGraphics
 	call interactionIncState
 
@@ -949,8 +949,8 @@ _timewarp_common_state0:
 	jp objectSetVisible83
 
 
-_timewarp_subid0_state1:
-	call _timewarp_animate
+timewarp_subid0_state1:
+	call timewarp_animate
 	jp z,interactionIncState
 	dec a
 	jr nz,+
@@ -963,7 +963,7 @@ _timewarp_subid0_state1:
 
 ;;
 ; @param	b	Subid of INTERACID_TIMEWARP object to spawn
-_timewarp_spawnChild:
+timewarp_spawnChild:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_TIMEWARP
@@ -983,7 +983,7 @@ _timewarp_spawnChild:
 	jp objectCopyPositionWithOffset
 
 
-_timewarp_subid0_state2:
+timewarp_subid0_state2:
 	call interactionDecCounter1
 	jr z,@counterReached0
 
@@ -1045,23 +1045,23 @@ _timewarp_subid0_state2:
 	.db SPEED_240, $09, $03, $00
 
 
-_timewarp_animateUntilFinished:
-	call _timewarp_animate
+timewarp_animateUntilFinished:
+	call timewarp_animate
 	ret nz
 	jp interactionDelete
 
 
-_timewarp_subid1:
+timewarp_subid1:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _timewarp_common_state0
-	.dw _timewarp_subid1_state1
-	.dw _timewarp_animateUntilFinished ; TODO
+	.dw timewarp_common_state0
+	.dw timewarp_subid1_state1
+	.dw timewarp_animateUntilFinished ; TODO
 
 
-_timewarp_subid1_state1:
-	call _timewarp_animate
+timewarp_subid1_state1:
+	call timewarp_animate
 	jr z,++
 	dec a
 	ret z
@@ -1069,7 +1069,7 @@ _timewarp_subid1_state1:
 	xor a
 	ld (de),a ; [animParameter
 	ld b,$04
-	jp _timewarp_spawnChild
+	jp timewarp_spawnChild
 ++
 	ld a,Object.state
 	call objectGetRelatedObject2Var
@@ -1078,7 +1078,7 @@ _timewarp_subid1_state1:
 	ld a,$01
 	jp interactionSetAnimation
 
-_timewarp_subid2:
+timewarp_subid2:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -1097,7 +1097,7 @@ _timewarp_subid2:
 	jp objectSetVisible81
 
 @state1:
-	call _timewarp_animate
+	call timewarp_animate
 	ret nz
 	jp interactionIncState
 
@@ -1118,17 +1118,17 @@ _timewarp_subid2:
 	ret
 
 
-_timewarp_subid3:
+timewarp_subid3:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _itemwarp_subid3Or4_state0
-	.dw _timewarp_subid3_state1
+	.dw itemwarp_subid3Or4_state0
+	.dw timewarp_subid3_state1
 	.dw interactionAnimate
-	.dw _timewarp_subid3Or4_state3
-	.dw _timewarp_subid3Or4_state4
+	.dw timewarp_subid3Or4_state3
+	.dw timewarp_subid3Or4_state4
 
-_itemwarp_subid3Or4_state0:
+itemwarp_subid3Or4_state0:
 	ld e,Interaction.var03
 	ld a,(de)
 	add $c0
@@ -1137,37 +1137,37 @@ _itemwarp_subid3Or4_state0:
 	call interactionIncState
 	jp objectSetVisible82
 
-_timewarp_subid3_state1:
-	call _timewarp_animate
+timewarp_subid3_state1:
+	call timewarp_animate
 	ret nz
 	ld a,$03
 	call interactionSetAnimation
 	jp interactionIncState
 
-_timewarp_subid3Or4_state3:
+timewarp_subid3Or4_state3:
 	call interactionIncState
 	ld a,$04
 	jp interactionSetAnimation
 
-_timewarp_subid3Or4_state4:
-	call _timewarp_animate
+timewarp_subid3Or4_state4:
+	call timewarp_animate
 	ret nz
 	jp interactionDelete
 
 
-_timewarp_subid4:
+timewarp_subid4:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _itemwarp_subid3Or4_state0
+	.dw itemwarp_subid3Or4_state0
 	.dw interactionAnimate
-	.dw _timewarp_subid3Or4_state3 ; Actually state 2...
-	.dw _timewarp_subid3Or4_state4 ; Actually state 3...
+	.dw timewarp_subid3Or4_state3 ; Actually state 2...
+	.dw timewarp_subid3Or4_state4 ; Actually state 3...
 
 
 ;;
 ; @param[out]	a	[Interaction.animParameter]+1
-_timewarp_animate:
+timewarp_animate:
 	call interactionAnimate
 	ld e,Interaction.animParameter
 	ld a,(de)
@@ -1223,7 +1223,7 @@ interactionCodede:
 @state1:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing
 	jp nc,interactionIncState
-	jr _timeportal_updatePalette
+	jr timeportal_updatePalette
 
 @state2:
 	ld e,Interaction.var03
@@ -1233,7 +1233,7 @@ interactionCodede:
 	cp b
 	jp nz,interactionDelete
 
-	call _timeportal_updatePalette
+	call timeportal_updatePalette
 	ld a,(wLinkObjectIndex)
 	rrca
 	ret c
@@ -1275,7 +1275,7 @@ interactionBeginTimewarp:
 	jp interactionDelete
 
 ;;
-_timeportal_updatePalette:
+timeportal_updatePalette:
 	ld a,(wFrameCounter)
 	and $01
 	jr nz,@animate

@@ -40,23 +40,23 @@ interactionCode1f:
 	ld e,$42
 	ld a,(de)
 	rst_jumpTable
-	.dw _specialWarp_subid0
-	.dw _specialWarp_subid1
-	.dw _specialWarp_subid2
-	.dw _specialWarp_subid3
-	.dw _specialWarp_subid4
-	.dw _specialWarp_subid5
-	.dw _specialWarp_subid6
-	.dw _specialWarp_subid7
-	.dw _specialWarp_subid8
-	.dw _specialWarp_subid9
-	.dw _specialWarp_subidA
-	.dw _specialWarp_subidB
-	.dw _specialWarp_subidC
-	.dw _specialWarp_subidD
+	.dw specialWarp_subid0
+	.dw specialWarp_subid1
+	.dw specialWarp_subid2
+	.dw specialWarp_subid3
+	.dw specialWarp_subid4
+	.dw specialWarp_subid5
+	.dw specialWarp_subid6
+	.dw specialWarp_subid7
+	.dw specialWarp_subid8
+	.dw specialWarp_subid9
+	.dw specialWarp_subidA
+	.dw specialWarp_subidB
+	.dw specialWarp_subidC
+	.dw specialWarp_subidD
 
-_specialWarp_subid0:
-_specialWarp_subid1:
+specialWarp_subid0:
+specialWarp_subid1:
 	call checkInteractionState
 	jr nz,+
 	ld a,($cd00)
@@ -79,9 +79,9 @@ _specialWarp_subid1:
 	ld ($cca4),a
 	jp interactionDelete
 
-_specialWarp_subid2:
-_specialWarp_subid3:
-_specialWarp_subid4:
+specialWarp_subid2:
+specialWarp_subid3:
+specialWarp_subid4:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
@@ -155,9 +155,9 @@ _specialWarp_subid4:
 	ld (de),a
 	ret
 
-_specialWarp_subid5:
-_specialWarp_subid6:
-_specialWarp_subid7:
+specialWarp_subid5:
+specialWarp_subid6:
+specialWarp_subid7:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
@@ -165,7 +165,7 @@ _specialWarp_subid7:
 	.dw @state1
 	.dw @state2
 @state0:
-	call _specialWarp_subid4@state0
+	call specialWarp_subid4@state0
 	xor a
 	ld (wActiveMusic),a
 	jp interactionSetAlwaysUpdateBit
@@ -186,13 +186,13 @@ _specialWarp_subid7:
 	ld a,$ff
 	ld ($cca4),a
 	ld (wActiveMusic),a
-	jr _specialWarp_subid4@setWarpVariables
+	jr specialWarp_subid4@setWarpVariables
 
-_specialWarp_subid8:
-_specialWarp_subid9:
-_specialWarp_subidA:
-_specialWarp_subidB:
-_specialWarp_subidC:
+specialWarp_subid8:
+specialWarp_subid9:
+specialWarp_subidA:
+specialWarp_subidB:
+specialWarp_subidC:
 	call checkInteractionState
 	jr nz,+
 	ld a,$01
@@ -208,7 +208,7 @@ _specialWarp_subidC:
 	ld e,$42
 	ld a,(de)
 	sub $08
-	ld hl,_table_52a4
+	ld hl,table_52a4
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld (wWarpDestRoom),a
@@ -223,14 +223,14 @@ _specialWarp_subidC:
 	ld (wWarpTransition2),a
 	jp interactionDelete
 
-_table_52a4:
+table_52a4:
 	.db $e0 $02
 	.db $e1 $0b
 	.db $e4 $02
 	.db $e6 $02
 	.db $e7 $0d
 
-_specialWarp_subidD:
+specialWarp_subidD:
 	call checkInteractionState
 	jr nz,+
 	ld a,$01
@@ -251,7 +251,7 @@ _specialWarp_subidD:
 	ld (hl),$05
 	inc l
 	ld (hl),$29
-	jr _specialWarp_subidC@fadeoutTransition
+	jr specialWarp_subidC@fadeoutTransition
 
 
 ; ==============================================================================
@@ -435,7 +435,7 @@ interactionCode21:
 	ld (de),a
 	ld a,$01
 	ld (wDisableWarpTiles),a
-	call _func_5469
+	call func_5469
 	ld hl,mainScripts.gnarledKeyholeScript
 	jp interactionSetScript
 @state2:
@@ -446,18 +446,18 @@ interactionCode21:
 	ld a,($cca4)
 	or $80
 	ld ($cca4),a
-	call _func_545d
+	call func_545d
 @state3:
-	call _func_54ae
+	call func_54ae
 	call interactionDecCounter1
-	jr nz,_func_545d
+	jr nz,func_545d
 	ld l,$47
 	ld a,(hl)
 	cp $04
 	jr nc,+
 	inc (hl)
 	ld a,(hl)
-	call _func_549d
+	call func_549d
 	ld a,$82
 	call playSound
 	ld e,$47
@@ -469,11 +469,11 @@ interactionCode21:
 	ld (de),a
 	ld a,(hl)
 	or a
-	jr z,_func_5463
+	jr z,func_5463
 +
 	ld l,$44
 	inc (hl)
-	jr _func_5463
+	jr func_5463
 @table_542d:
 	; counter1
 	.db $1e $00
@@ -483,9 +483,9 @@ interactionCode21:
 	.db $23 $00
 @state4:
 	ld a,$09
-	ld hl,_table_5482
-	ld bc,_table_5494
-	call _func_5471
+	ld hl,table_5482
+	ld bc,table_5494
+	call func_5471
 	xor a
 	ld (wDisableWarpTiles),a
 	ld ($cca4),a
@@ -497,21 +497,21 @@ interactionCode21:
 	call playSound
 	jp interactionDelete
 
-_func_545d:
+func_545d:
 	ld a,$0f
 	ld (wScreenShakeCounterX),a
 	ret
 
-_func_5463:
+func_5463:
 	ld a,$04
 	ld (wScreenShakeCounterY),a
 	ret
 
-_func_5469:
+func_5469:
 	ld a,$09
-	ld hl,_table_5482
-	ld bc,_table_548b
-_func_5471:
+	ld hl,table_5482
+	ld bc,table_548b
+func_5471:
 	ld d,>wRoomCollisions
 	ld e,a
 -
@@ -527,31 +527,31 @@ _func_5471:
 	ldh a,(<hActiveObject)
 	ld d,a
 	ret
-_table_5482:
+table_5482:
 	.db $23 $24 $25
 	.db $33 $34 $35
 	.db $43 $44 $45
-_table_548b:
+table_548b:
 	; initial collisions
 	.db $00 $00 $00
 	.db $00 $00 $00
 	.db $04 $0c $08
-_table_5494:
+table_5494:
 	; collisions after rising
 	.db $01 $03 $02
 	.db $0f $0f $0f
 	.db $0f $0c $0f
-_func_549d:
-	ld hl,_table_54a9
+func_549d:
+	ld hl,table_54a9
 	rst_addAToHl
 	ld a,(hl)
 	call uniqueGfxFunc_380b
 	ldh a,(<hActiveObject)
 	ld d,a
 	ret
-_table_54a9:
+table_54a9:
 	.db $20 $21 $22 $23 $04
-_func_54ae:
+func_54ae:
 	ld a,(wFrameCounter)
 	and $01
 	ret nz
@@ -564,7 +564,7 @@ _func_54ae:
 	ld a,(wFrameCounter)
 	and $06
 	rrca
-	ld bc,_table_54e4
+	ld bc,table_54e4
 	call addAToBc
 	ld a,(bc)
 	ld (hl),a
@@ -583,7 +583,7 @@ _func_54ae:
 	add $48
 	ld (hl),a
 	ret
-_table_54e4:
+table_54e4:
 	.db $00 $01 $00 $00
 
 
@@ -858,7 +858,7 @@ interactionCode23:
 	and $0f
 	ld e,$43
 	ld (de),a
-	ld hl,_table_56a5
+	ld hl,table_56a5
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -883,18 +883,18 @@ interactionCode23:
 	jp c,interactionDelete
 	ret
 
-_table_56a5:
-	.dw _table_56af
-	.dw _table_56af
-	.dw _table_56af
-	.dw _table_56af
-	.dw _table_56b3
+table_56a5:
+	.dw table_56af
+	.dw table_56af
+	.dw table_56af
+	.dw table_56af
+	.dw table_56b3
 
-_table_56af:
+table_56af:
 	.dw mainScripts.seasonsSpiritsScript_winterTempleOrbBridge
 	.dw mainScripts.seasonsSpiritsScript_spiritStatue
 
-_table_56b3:
+table_56b3:
 	.dw mainScripts.seasonsSpiritsScript_enteringTempleArea
 
 
@@ -955,9 +955,9 @@ interactionCode3f:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
-	.dw _miscNPC_state0
-	.dw _miscNPC_state1
-_miscNPC_state0:
+	.dw miscNPC_state0
+	.dw miscNPC_state1
+miscNPC_state0:
 	ld a,$01
 	ld (de),a
 	ld h,d
@@ -970,7 +970,7 @@ _miscNPC_state0:
 	and $7f
 	ld (hl),a
 +
-	call _checkHoronVillageNPCShouldBeSeen
+	call checkHoronVillageNPCShouldBeSeen
 	jr nz,+
 	jp nc,interactionDelete
 	jr ++
@@ -991,11 +991,11 @@ _miscNPC_state0:
 	ld a,(de)
 	cp INTERACID_MAYORS_HOUSE_NPC
 	jr nz,+
-	call _checkMayorsHouseNPCshouldBeSeen
+	call checkMayorsHouseNPCshouldBeSeen
 	jp z,interactionDelete
 +
 	sub $24
-	ld hl,_miscNPC_scriptTable
+	ld hl,miscNPC_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1010,16 +1010,16 @@ _miscNPC_state0:
 	ld e,$41
 	ld a,(de)
 	cp INTERACID_DUNGEON_WISE_OLD_MAN
-	jp z,_dungeonWiseOldMan_textLookup
+	jp z,dungeonWiseOldMan_textLookup
 	cp INTERACID_MR_WRITE
-	jp z,_mrWrite_spawnLightableTorch
+	jp z,mrWrite_spawnLightableTorch
 	cp INTERACID_BATHING_SUBROSIANS
-	call z,_func_572c
+	call z,func_572c
 	ld e,$41
 	ld a,(de)
 	cp INTERACID_MASTER_DIVERS_SON
-	call z,_func_572c
-_func_5723:
+	call z,func_572c
+func_5723:
 	xor a
 	ld h,d
 	ld l,$78
@@ -1027,15 +1027,15 @@ _func_5723:
 	ld (hl),a
 	jp interactionAnimateAsNpc
 
-_func_572c:
+func_572c:
 	call interactionRunScript
 	jp interactionRunScript
 
-_mrWrite_spawnLightableTorch:
+mrWrite_spawnLightableTorch:
 	call getThisRoomFlags
 	and $40
 	jr z,+
-	jp _func_5723
+	jp func_5723
 +
 	call getFreePartSlot
 	jr nz,+
@@ -1045,9 +1045,9 @@ _mrWrite_spawnLightableTorch:
 	ld l,$cd
 	ld (hl),$68
 +
-	jp _func_5723
+	jp func_5723
 
-_dungeonWiseOldMan_textLookup:
+dungeonWiseOldMan_textLookup:
 	ld e,$42
 	ld a,(de)
 	or a
@@ -1067,7 +1067,7 @@ _dungeonWiseOldMan_textLookup:
 	ld a,>TX_3300
 	ld (de),a
 @ret:
-	jp _func_5723
+	jp func_5723
 @textLookup:
 	.db <TX_3300 $00 $00 <TX_3301
 	.db $00 $00 $00 $00
@@ -1075,7 +1075,7 @@ _dungeonWiseOldMan_textLookup:
 
 ;;
 ; @param[out]	zflag	set if NPC should not be seen
-_checkMayorsHouseNPCshouldBeSeen:
+checkMayorsHouseNPCshouldBeSeen:
 	; mayor disappears if unlinked game beat
 	; or seen villagers, but not zelda kidnapped
 	ld e,$42
@@ -1112,7 +1112,7 @@ _checkMayorsHouseNPCshouldBeSeen:
 	xor a
 	ret
 
-_miscNPC_state1:
+miscNPC_state1:
 	call interactionRunScript
 	ld e,$43
 	ld a,(de)
@@ -1120,7 +1120,7 @@ _miscNPC_state1:
 	jp nz,interactionAnimateAsNpc
 	jp npcFaceLinkAndAnimate
 
-_checkHoronVillageNPCShouldBeSeen:
+checkHoronVillageNPCShouldBeSeen:
 	ld e,$41
 	ld a,(de)
 	ld b,$00
@@ -1157,7 +1157,7 @@ checkHoronVillageNPCShouldBeSeen_body:
 	; from interactioncode3e - b = $04/$05/$06
 	; from interactioncode80 - b = $07
 	ld a,b
-	ld hl,_conditionalHoronNPCLookupTable
+	ld hl,conditionalHoronNPCLookupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1312,7 +1312,7 @@ getSunkenCityNPCVisibleSubId:
 	xor a
 	ret
 
-_conditionalHoronNPCLookupTable:
+conditionalHoronNPCLookupTable:
 	.dw @fickleLady
 	.dw @fickleMan
 	.dw @oldLadyFarmer
@@ -1432,7 +1432,7 @@ _conditionalHoronNPCLookupTable:
 @@table_5948:
 	.db $0b $00
 
-_miscNPC_scriptTable:
+miscNPC_scriptTable:
 	.dw @mayorsHouseScripts
 	.dw @stub
 	.dw @stub
@@ -1633,14 +1633,14 @@ interactionCode26:
 	ld a,($cceb)
 	or a
 	jp z,npcFaceLinkAndAnimate
-	call _func_5a99
+	call func_5a99
 	jp @animate
 @state2:
 	call interactionRunScript
 @animate:
 	jp interactionAnimateAsNpc
 	
-_func_5a99:
+func_5a99:
 	ld e,$78
 	ld a,(de)
 	rst_jumpTable
@@ -1818,7 +1818,7 @@ interactionCode27:
 	ret c
 	call interactionIncSubstate
 	call @@func_5bae
-	jp _beginJump
+	jp beginJump
 @@subid2:
 	ld a,(wDisabledObjects)
 	and $01
@@ -2020,7 +2020,7 @@ interactionCode2a:
 	ld l,$76
 	ld (hl),$1e
 	
-	call _beginJump
+	call beginJump
 	ld l,$42
 	ld a,(hl)
 	ld l,$72
@@ -2035,7 +2035,7 @@ interactionCode2a:
 	ld (hl),$b4
 	ld l,$50
 	ld (hl),$19
-	call _beginJump
+	call beginJump
 	call objectSetVisible82
 	jp objectSetInvisible
 @state1:
@@ -2083,7 +2083,7 @@ interactionCode2a:
 	ld e,$77
 	ld a,(de)
 	or a
-	jp nz,_updateSpeedZ
+	jp nz,updateSpeedZ
 
 	ld l,$76
 	ld (hl),$3c
@@ -2115,16 +2115,16 @@ interactionCode2a:
 	ret nz
 	ld l,$45
 	inc (hl)
-	call _func_5e04
+	call func_5e04
 	jp objectSetVisible
 @panickingBirdSubstate1:
 	call interactionAnimateAsNpc
-	call _updateSpeedZ
+	call updateSpeedZ
 	ld a,(wFrameCounter)
 	and $07
-	call z,_func_5e04
+	call z,func_5e04
 	ld c,$10
-	call _func_5e22
+	call func_5e22
 	jp nc,objectApplySpeed
 	ld h,d
 	ld l,$45
@@ -2133,7 +2133,7 @@ interactionCode2a:
 	ld (hl),$14
 	ld l,$4f
 	ld (hl),$00
-	jp _beginJump
+	jp beginJump
 @panickingBirdSubstate2:
 	call interactionAnimateAsNpc
 	call interactionDecCounter1
@@ -2152,19 +2152,19 @@ interactionCode2a:
 	or a
 	ret nz
 	ld c,$18
-	call _func_5e22
+	call func_5e22
 	ret c
 	ld h,d
 	ld l,$45
 	inc (hl)
-	call _beginJump
-	jp _func_5e04
+	call beginJump
+	jp func_5e04
 @panickingBirdSubstate4:
 	call interactionAnimateAsNpc
-	call _updateSpeedZ
+	call updateSpeedZ
 	ld a,(wFrameCounter)
 	and $07
-	call z,_func_5e04
+	call z,func_5e04
 	call objectApplySpeed
 	call objectCheckWithinScreenBoundary
 	jp nc,interactionDelete
@@ -2182,17 +2182,17 @@ interactionCode2a:
 	dec (hl)
 	ret
 
-_updateSpeedZ:
+updateSpeedZ:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
 	ld h,d
 
-_beginJump:
+beginJump:
 	ld bc,$ff40
 	jp objectSetSpeedZ
 
-_func_5e04:
+func_5e04:
 	call objectGetRelatedObject1Var
 	ld l,$4b
 	ld b,(hl)
@@ -2211,7 +2211,7 @@ _func_5e04:
 	ret z
 	ld (hl),a
 	jp interactionSetAnimation
-_func_5e22:
+func_5e22:
 	ld e,$4b
 	ld a,(de)
 	ld b,a
@@ -2324,7 +2324,7 @@ interactionCode2e:
 +
 	ld e,$42
 	ld a,(de)
-	ld hl,_table_5f7e
+	ld hl,table_5f7e
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2357,7 +2357,7 @@ interactionCode2e:
 	inc a
 	jr nz,@pushLinkAwayUpdateDrawPriority
 @func_5efa:
-	call _func_5f70
+	call func_5f70
 @pushLinkAwayUpdateDrawPriority:
 	jp interactionPushLinkAwayAndUpdateDrawPriority
 @var03_01:
@@ -2428,7 +2428,7 @@ interactionCode2e:
 	and $01
 	call interactionSetAnimation
 	call @func_5efa
-_func_5f70:
+func_5f70:
 	ld e,$76
 	ld a,$01
 	ld (de),a
@@ -2438,7 +2438,7 @@ _func_5f70:
 	ld (de),a
 	ret
 
-_table_5f7e:
+table_5f7e:
 	.dw mainScripts.sunkenCityFickleGirlScript_text1
 	.dw mainScripts.sunkenCityFickleGirlScript_text2
 	.dw mainScripts.sunkenCityFickleGirlScript_text2
@@ -2483,7 +2483,7 @@ interactionCode30:
 +
 	ld e,$42
 	ld a,(de)
-	ld hl,_table_607f
+	ld hl,table_607f
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2589,7 +2589,7 @@ interactionCode30:
 	ld (hl),$00
 	jr @substate0
 
-_table_607f:
+table_607f:
 	/* $00 */ .dw mainScripts.subrosianScript_smelterByAutumnTemple
 	/* $01 */ .dw mainScripts.subrosianScript_smelterText1 ; unused?
 	/* $02 */ .dw mainScripts.subrosianScript_smelterText1
@@ -3089,16 +3089,16 @@ interactionCode35:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _interac65_state1
+	.dw interac65_state1
 
 @state0:
-	call _childDetermineAnimationBase
+	call childDetermineAnimationBase
 	call interactionInitGraphics
 	call interactionIncState
 
 	ld e,Interaction.var03
 	ld a,(de)
-	ld hl,_childScriptTable
+	ld hl,childScriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -3143,11 +3143,11 @@ interactionCode35:
 	ld e,Interaction.var37
 	ld a,(de)
 	call interactionSetAnimation
-	jp _childUpdateSolidityAndVisibility
+	jp childUpdateSolidityAndVisibility
 
 @hyperactiveStage6:
 	ld a,$02
-	call _childLoadPositionListPointer
+	call childLoadPositionListPointer
 
 @hyperactiveStage4Or5:
 	ld h,d
@@ -3168,7 +3168,7 @@ interactionCode35:
 	ld l,Interaction.var37
 	add (hl)
 	call interactionSetAnimation
-	jp _childUpdateSolidityAndVisibility
+	jp childUpdateSolidityAndVisibility
 
 @val16:
 	call @hyperactiveStage4Or5
@@ -3179,12 +3179,12 @@ interactionCode35:
 
 @shyStage4Or5:
 	ld a,$00
-	call _childLoadPositionListPointer
+	call childLoadPositionListPointer
 	jr ++
 
 @shyStage6:
 	ld a,$01
-	call _childLoadPositionListPointer
+	call childLoadPositionListPointer
 ++
 	ld h,d
 	ld l,Interaction.var39
@@ -3207,12 +3207,12 @@ interactionCode35:
 
 @warrior:
 	ld a,$03
-	call _childLoadPositionListPointer
+	call childLoadPositionListPointer
 	jr ++
 
 @script0f:
 	ld a,$04
-	call _childLoadPositionListPointer
+	call childLoadPositionListPointer
 ++
 	ld h,d
 	ld l,Interaction.var39
@@ -3231,7 +3231,7 @@ interactionCode35:
 	jr @setAnimation
 
 
-_interac65_state1:
+interac65_state1:
 	ld e,Interaction.var03
 	ld a,(de)
 	rst_jumpTable
@@ -3271,25 +3271,25 @@ _interac65_state1:
 	ld a,(de)
 	or a
 	jr nz,+
-	call _childUpdateHyperactiveMovement
+	call childUpdateHyperactiveMovement
 +
 
 @arboristMovement:
 	call interactionRunScript
 
 @updateAnimationAndSolidity:
-	jp _childUpdateAnimationAndSolidity
+	jp childUpdateAnimationAndSolidity
 
 @val16:
-	call _childUpdateUnknownMovement
-	jp _childUpdateAnimationAndSolidity
+	call childUpdateUnknownMovement
+	jp childUpdateAnimationAndSolidity
 
 @shyMovement:
 	ld e,Interaction.counter1
 	ld a,(de)
 	or a
 	jr nz,+
-	call _childUpdateShyMovement
+	call childUpdateShyMovement
 +
 	jr @runScriptAndUpdateAnimation
 
@@ -3298,22 +3298,22 @@ _interac65_state1:
 	ld a,(de)
 	or a
 	jr nz,++
-	call _childUpdateAngleAndApplySpeed
-	call _childCheckAnimationDirectionChanged
-	call _childCheckReachedDestination
-	call c,_childIncPositionIndex
+	call childUpdateAngleAndApplySpeed
+	call childCheckAnimationDirectionChanged
+	call childCheckReachedDestination
+	call c,childIncPositionIndex
 ++
 	jr @runScriptAndUpdateAnimation
 
 @curiousMovement:
-	call _childUpdateCuriousMovement
+	call childUpdateCuriousMovement
 	ld e,Interaction.var3d
 	ld a,(de)
 	or a
 	call z,interactionRunScript
 
 @val1b:
-	jp _childUpdateAnimationAndSolidity
+	jp childUpdateAnimationAndSolidity
 
 @slackerMovement:
 	ld a,(wFrameCounter)
@@ -3347,15 +3347,15 @@ _interac65_state1:
 
 @runScriptAndUpdateAnimation:
 	call interactionRunScript
-	jp _childUpdateAnimationAndSolidity
+	jp childUpdateAnimationAndSolidity
 
 
 ;;
-_childUpdateAnimationAndSolidity:
+childUpdateAnimationAndSolidity:
 	call interactionAnimate
 
 ;;
-_childUpdateSolidityAndVisibility:
+childUpdateSolidityAndVisibility:
 	ld e,Interaction.var39
 	ld a,(de)
 	cp $01
@@ -3370,7 +3370,7 @@ _childUpdateSolidityAndVisibility:
 
 ;;
 ; Writes the "base" animation index to var37 based on subid (personality type)?
-_childDetermineAnimationBase:
+childDetermineAnimationBase:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld hl,@animations
@@ -3384,7 +3384,7 @@ _childDetermineAnimationBase:
 	.db $00 $02 $05 $08 $0b $11 $15 $17
 
 ;;
-_childUpdateHyperactiveMovement:
+childUpdateHyperactiveMovement:
 	call objectApplySpeed
 	ld h,d
 	ld l,Interaction.xh
@@ -3403,13 +3403,13 @@ _childUpdateHyperactiveMovement:
 	inc a
 	and $03
 	ld (hl),a
-	ld bc,_childHyperactiveMovementAngles
+	ld bc,childHyperactiveMovementAngles
 	call addAToBc
 	ld a,(bc)
 	ld l,Interaction.angle
 	ld (hl),a
 
-_childFlipAnimation:
+childFlipAnimation:
 	ld l,Interaction.var3a
 	ld a,(hl)
 	xor $01
@@ -3418,11 +3418,11 @@ _childFlipAnimation:
 	add (hl)
 	jp interactionSetAnimation
 
-_childHyperactiveMovementAngles:
+childHyperactiveMovementAngles:
 	.db $18 $0a $18 $06
 
 ;;
-_childUpdateUnknownMovement:
+childUpdateUnknownMovement:
 	call objectApplySpeed
 	ld e,Interaction.xh
 	ld a,(de)
@@ -3434,11 +3434,11 @@ _childUpdateUnknownMovement:
 	ld a,(hl)
 	xor $10
 	ld (hl),a
-	jr _childFlipAnimation
+	jr childFlipAnimation
 
 ;;
 ; Updates movement for "shy" personality type (runs away when Link approaches)
-_childUpdateShyMovement:
+childUpdateShyMovement:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3453,17 +3453,17 @@ _childUpdateShyMovement:
 	call interactionIncSubstate
 
 @substate1:
-	call _childUpdateAngleAndApplySpeed
-	call _childCheckReachedDestination
+	call childUpdateAngleAndApplySpeed
+	call childCheckReachedDestination
 	ret nc
 
 	ld h,d
 	ld l,Interaction.substate
 	ld (hl),$00
-	jp _childIncPositionIndex
+	jp childIncPositionIndex
 
 ;;
-_childUpdateAngleAndApplySpeed:
+childUpdateAngleAndApplySpeed:
 	ld h,d
 	ld l,Interaction.var3c
 	ld a,(hl)
@@ -3488,7 +3488,7 @@ _childUpdateAngleAndApplySpeed:
 ;;
 ; @param[out]	cflag	Set if the child's reached the position he's moving toward (or is
 ;			within 1 pixel from the destination on both axes)
-_childCheckReachedDestination:
+childCheckReachedDestination:
 	ld h,d
 	ld l,Interaction.var3c
 	ld a,(hl)
@@ -3520,7 +3520,7 @@ _childCheckReachedDestination:
 
 ;;
 ; Updates animation if the child's direction has changed?
-_childCheckAnimationDirectionChanged:
+childCheckAnimationDirectionChanged:
 	ld h,d
 	ld l,Interaction.angle
 	ld a,(hl)
@@ -3538,7 +3538,7 @@ _childCheckAnimationDirectionChanged:
 	jp interactionSetAnimation
 
 ;;
-_childIncPositionIndex:
+childIncPositionIndex:
 	ld h,d
 	ld l,Interaction.var3d
 	ld a,(hl)
@@ -3554,7 +3554,7 @@ _childIncPositionIndex:
 ; through (minus one) into var3d.
 ;
 ; @param	a	Data index
-_childLoadPositionListPointer:
+childLoadPositionListPointer:
 	add a
 	add a
 	ld hl,@positionTable
@@ -3623,7 +3623,7 @@ _childLoadPositionListPointer:
 	.db $18 $48
 
 ;;
-_childUpdateCuriousMovement:
+childUpdateCuriousMovement:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3678,7 +3678,7 @@ _childUpdateCuriousMovement:
 	jr @gotoSubstate1AndJump
 
 
-_childScriptTable:
+childScriptTable:
 	.dw mainScripts.childScript00
 	.dw mainScripts.childScript_stage4_hyperactive
 	.dw mainScripts.childScript_stage4_shy
@@ -3980,7 +3980,7 @@ interactionCode3e:
 	ld (de),a
 	inc e
 	ld a,(de)
-	ld hl,_table_6ac9
+	ld hl,table_6ac9
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -4037,7 +4037,7 @@ interactionCode3e:
 	.dw @@@substate0
 	.dw @@@substate1
 @@@substate0:
-	call _func_6abc
+	call func_6abc
 	jr nz,+
 	ld l,$60
 	ld (hl),$01
@@ -4072,9 +4072,9 @@ interactionCode3e:
 	ld l,$4e
 	ldi (hl),a
 	ld (hl),a
-	call _beginJump
+	call beginJump
 +
-	call _updateSpeedZ
+	call updateSpeedZ
 @@var03_03:
 	call interactionRunScript
 	jp interactionAnimateAsNpc
@@ -4105,8 +4105,8 @@ interactionCode3e:
 	ld l,$77
 	ld (hl),$0c
 +
-	call _func_6ac1
-	jp nz,_runScriptSetPriorityRelativeToLink_withTerrainEffects
+	call func_6ac1
+	jp nz,runScriptSetPriorityRelativeToLink_withTerrainEffects
 	call objectApplySpeed
 	cp $4b
 	jr c,+
@@ -4118,7 +4118,7 @@ interactionCode3e:
 	ld a,$09
 	call interactionSetAnimation
 +
-	jp _animateRunScript
+	jp animateRunScript
 @@@substate1:
 	ld a,($ccc3)
 	or a
@@ -4142,7 +4142,7 @@ interactionCode3e:
 	ld a,$06
 	jp interactionSetAnimation
 @@@substate3:
-	call _func_6abc
+	call func_6abc
 	ret nz
 	call interactionIncSubstate
 	ld a,$05
@@ -4175,7 +4175,7 @@ interactionCode3e:
 	ld (hl),$00
 	ret
 @@@substate6:
-	call _func_6abc
+	call func_6abc
 	ret nz
 	jp interactionIncSubstate
 @@@substate7:
@@ -4185,8 +4185,8 @@ interactionCode3e:
 	ld l,$77
 	ld (hl),$0c
 +
-	call _func_6ac1
-	jp nz,_runScriptSetPriorityRelativeToLink_withTerrainEffects
+	call func_6ac1
+	jp nz,runScriptSetPriorityRelativeToLink_withTerrainEffects
 	call objectApplySpeed
 	ld e,$4b
 	ld a,(de)
@@ -4198,10 +4198,10 @@ interactionCode3e:
 	ld l,$49
 	ld (hl),$18
 +
-	jp _animateRunScript
+	jp animateRunScript
 @@@substate8:
 @@@substateA:
-	call _func_6abc
+	call func_6abc
 	ret nz
 	ld l,$49
 	ld a,(hl)
@@ -4217,8 +4217,8 @@ interactionCode3e:
 	ld l,$77
 	ld (hl),$0c
 +
-	call _func_6ac1
-	jr nz,_runScriptSetPriorityRelativeToLink_withTerrainEffects
+	call func_6ac1
+	jr nz,runScriptSetPriorityRelativeToLink_withTerrainEffects
 	call objectApplySpeed
 	cp $18
 	jr nc,+
@@ -4228,7 +4228,7 @@ interactionCode3e:
 	ld l,$49
 	ld (hl),$10
 +
-	jp _animateRunScript
+	jp animateRunScript
 @@@substateB:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing
 	jr nc,+
@@ -4236,8 +4236,8 @@ interactionCode3e:
 	ld l,$77
 	ld (hl),$0c
 +
-	call _func_6ac1
-	jr nz,_runScriptSetPriorityRelativeToLink_withTerrainEffects
+	call func_6ac1
+	jr nz,runScriptSetPriorityRelativeToLink_withTerrainEffects
 	call objectApplySpeed
 	ld e,$4b
 	ld a,(de)
@@ -4249,29 +4249,29 @@ interactionCode3e:
 	ld l,$49
 	ld (hl),$08
 +
-	jp _animateRunScript
+	jp animateRunScript
 @@@substateC:
-	call _func_6abc
+	call func_6abc
 	ret nz
 	ld l,$45
 	ld (hl),$00
 	ld a,$06
 	jp interactionSetAnimation
 
-_animateRunScript:
+animateRunScript:
 	call interactionAnimate
 
-_runScriptSetPriorityRelativeToLink_withTerrainEffects:
+runScriptSetPriorityRelativeToLink_withTerrainEffects:
 	call interactionRunScript
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
 
-_func_6abc:
+func_6abc:
 	ld h,d
 	ld l,$76
 	dec (hl)
 	ret
 	
-_func_6ac1:
+func_6ac1:
 	ld h,d
 	ld l,$77
 	ld a,(hl)
@@ -4280,7 +4280,7 @@ _func_6ac1:
 	dec (hl)
 	ret
 
-_table_6ac9:
+table_6ac9:
 	.dw @var03_00
 	.dw @var03_01
 	.dw @var03_02
@@ -4366,7 +4366,7 @@ interactionCode41:
 	.dw @@subidD
 	.dw @@subidE
 @@subid0:
-	call _func_6c3c
+	call func_6c3c
 
 @@subid1:
 @@subid2:
@@ -4412,7 +4412,7 @@ interactionCode41:
 	ld a,$04
 @func_6b8b:
 	call interactionSetAnimation
-	jp _func_6bc4
+	jp func_6bc4
 @func_6b91:
 	call interactionInitGraphics
 	ld h,d
@@ -4420,10 +4420,10 @@ interactionCode41:
 	ld (hl),$01
 	ld a,>TX_3a00
 	call interactionSetHighTextIndex
-	call _func_6c29
+	call func_6c29
 	ld e,$42
 	ld a,(de)
-	ld hl,_table_6cbf
+	ld hl,table_6cbf
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -4435,24 +4435,24 @@ interactionCode41:
 	ld a,(de)
 	cp $08
 	jr nz,+
-	call _func_6c51
+	call func_6c51
 +
 	call interactionRunScript
 	jp c,interactionDelete
-	jp _func_6bc4
-_func_6bc4:
+	jp func_6bc4
+func_6bc4:
 	call interactionAnimate
 	ld e,$7c
 	ld a,(de)
 	or a
-	jr nz,_func_6be9
+	jr nz,func_6be9
 	ld e,$60
 	ld a,(de)
 	dec a
 	jr nz,+
 	call getRandomNumber_noPreserveVars
 	and $1f
-	ld hl,_table_6c09
+	ld hl,table_6c09
 	rst_addAToHl
 	ld a,(hl)
 	or a
@@ -4462,7 +4462,7 @@ _func_6bc4:
 +
 	call objectPreventLinkFromPassing
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
-_func_6be9:
+func_6be9:
 	ld e,$50
 	ld a,(de)
 	cp $28
@@ -4486,12 +4486,12 @@ _func_6be9:
 	ld a,$01
 	ld (de),a
 	ret
-_table_6c09:
+table_6c09:
 	.db $00 $00 $04 $04 $00 $00 $08 $08
 	.db $00 $00 $00 $00 $04 $04 $00 $00
 	.db $00 $08 $08 $00 $00 $00 $10 $10
 	.db $00 $00 $00 $20 $20 $00 $00 $00
-_func_6c29:
+func_6c29:
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
 	jr c,+
@@ -4505,7 +4505,7 @@ _func_6c29:
 	ld e,$7a
 	ld (de),a
 	ret
-_func_6c3c:
+func_6c3c:
 	ld a,TREASURE_PIRATES_BELL
 	call checkTreasureObtained
 	jr c,+
@@ -4520,15 +4520,15 @@ _func_6c3c:
 	ld e,$7b
 	ld (de),a
 	ret
-_func_6c51:
-	call _func_6c8b
+func_6c51:
+	call func_6c8b
 	jr z,++
 	ld a,($cc46)
 	bit 6,a
 	jr z,+
 	ld c,$01
 	ld b,$db
-	jp _func_6c78
+	jp func_6c78
 +
 	ld a,($cc45)
 	bit 6,a
@@ -4541,8 +4541,8 @@ _func_6c51:
 	ret z
 	ld c,$00
 	ld b,$d9
-	jp _func_6c78
-_func_6c78:
+	jp func_6c78
+func_6c78:
 	ld h,d
 	ld l,$7e
 	ld (hl),c
@@ -4554,8 +4554,8 @@ _func_6c78:
 	call setTile
 	ld a,$70
 	jp playSound
-_func_6c8b:
-	ld hl,_table_6cb2
+func_6c8b:
+	ld hl,table_6cb2
 	ld a,($d00b)
 	ld c,a
 	ld a,($d00d)
@@ -4583,13 +4583,13 @@ _func_6c8b:
 ++
 	inc hl
 	jr ---
-_table_6cb2:
+table_6cb2:
 	.db $18 $58 $00 $18
 	.db $68 $01 $18 $78
 	.db $02 $18 $88 $03
 	.db $00
 
-_table_6cbf:
+table_6cbf:
 	.dw mainScripts.piratianCaptainScript_inHouse
 	.dw mainScripts.piratian1FScript_text1BasedOnD6Beaten
 	.dw mainScripts.piratian1FScript_text1BasedOnD6Beaten
@@ -4631,7 +4631,7 @@ interactionCode42:
 	call interactionIncState
 	ld l,$42
 	ld a,(hl)
-	ld hl,_table_6d14
+	ld hl,table_6d14
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -4643,7 +4643,7 @@ interactionCode42:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
 
-_table_6d14:
+table_6d14:
 	.dw mainScripts.pirateHouseSubrosianScript_piratesAround
 	.dw mainScripts.pirateHouseSubrosianScript_piratesLeft
 
@@ -4873,16 +4873,16 @@ interactionCode44:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
-	.dw _zelda_state0
-	.dw _zelda_state1
+	.dw zelda_state0
+	.dw zelda_state1
 
-_zelda_state0:
+zelda_state0:
 	ld a,$01
 	ld (de),a
 	ld e,$42
 	ld a,(de)
 	ld b,a
-	ld hl,_table_6ea3
+	ld hl,table_6ea3
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -4899,7 +4899,7 @@ _zelda_state0:
 @setVisibleInitGraphicsIncState:
 	call objectSetVisible82
 	call interactionInitGraphics
-	jr _zelda_state1
+	jr zelda_state1
 
 @subid0:
 	ld a,$b0
@@ -4937,7 +4937,7 @@ _zelda_state0:
 	jp nz,interactionDelete
 	jr @setVisibleInitGraphicsIncState
 
-_zelda_state1:
+zelda_state1:
 	ld e,$42
 	ld a,(de)
 	rst_jumpTable
@@ -4979,7 +4979,7 @@ _zelda_state1:
 	jr nz,@faceLinkAndRunScript
 	jr @animateAndRunScript
 
-_table_6ea3:
+table_6ea3:
 	.dw mainScripts.zeldaScript_ganonBeat
 	.dw mainScripts.zeldaScript_afterEscapingRoomOfRites
 	.dw mainScripts.zeldaScript_zeldaKidnapped
@@ -5029,7 +5029,7 @@ interactionCode45:
 	ld (hl),$02
 	ld l,$78
 	ld (hl),$ff
-	call _func_6f3c
+	call func_6f3c
 	ld a,>TX_0b00
 	call interactionSetHighTextIndex
 	ld hl,mainScripts.returnedTalonScript
@@ -5060,9 +5060,9 @@ interactionCode45:
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
 @state2:
 	call interactionRunScript
-	call _func_6f3c
+	call func_6f3c
 	jp interactionAnimateAsNpc
-_func_6f3c:
+func_6f3c:
 	ld c,$28
 	call objectCheckLinkWithinDistance
 	jr nc,+
@@ -6071,7 +6071,7 @@ interactionCode4e:
 	ld (de),a
 	jr ++
 +
-	ld hl,_table_770a
+	ld hl,table_770a
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6310,7 +6310,7 @@ interactionCode4e:
 +
 	jp @@subid9@animate
 
-_table_770a:
+table_770a:
 	.dw mainScripts.troupeScript1
 	.dw mainScripts.troupeScript2
 	.dw mainScripts.troupeScript3
@@ -6331,10 +6331,10 @@ interactionCode4f:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _interactionCode4f_state0
-	.dw _interactionCode4f_state1
+	.dw interactionCode4f_state0
+	.dw interactionCode4f_state1
 
-_interactionCode4f_state0:
+interactionCode4f_state0:
 	call interactionIncState
 	call interactionInitGraphics
 	ld e,Interaction.subid
@@ -6440,7 +6440,7 @@ _interactionCode4f_state0:
 	ld (de),a
 	ret
 
-_interactionCode4f_state1:
+interactionCode4f_state1:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
@@ -6762,8 +6762,8 @@ _interactionCode4f_state1:
 	jr nz,+
 	call interactionDecCounter2
 	ret nz
-	call _interactionCode4f_state0@func_7784
-	call _interactionCode4f_state0@func_7796
+	call interactionCode4f_state0@func_7784
+	call interactionCode4f_state0@func_7796
 	call objectSetVisible
 	jp interactionIncSubstate
 +
@@ -6776,7 +6776,7 @@ _interactionCode4f_state1:
 	ld h,d
 	ld l,$45
 	ld (hl),$00
-	call _interactionCode4f_state0@setCounter2Between1To8
+	call interactionCode4f_state0@setCounter2Between1To8
 	jp objectSetInvisible
 
 @subid4:
@@ -6862,11 +6862,11 @@ interactionCode51:
 	jr nz,+
 	ld a,($cd19)
 	or a
-	call z,_func_7a9a
+	call z,func_7a9a
 +
 	call interactionDecCounter1
 	ret nz
-	call _func_7abe
+	call func_7abe
 	ld e,$42
 	ld a,(de)
 	or a
@@ -6895,7 +6895,7 @@ interactionCode51:
 	ld ($ccae),a
 	ld e,$42
 	ld a,(de)
-	ld hl,_table_7acb
+	ld hl,table_7acb
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6907,7 +6907,7 @@ interactionCode51:
 	ld a,h
 	ld (de),a
 	ret
-_func_7a9a:
+func_7a9a:
 	ld h,d
 	ld l,$58
 	ldi a,(hl)
@@ -6934,7 +6934,7 @@ _func_7a9a:
 	inc e
 	ld a,h
 	ld (de),a
-_func_7abe:
+func_7abe:
 	call getRandomNumber_noPreserveVars
 	ld h,d
 	ld l,$70
@@ -6945,11 +6945,11 @@ _func_7abe:
 	ld (hl),a
 	ret
 
-_table_7acb:
-	.dw _table_7acf
-	.dw _table_7ae8
+table_7acb:
+	.dw table_7acf
+	.dw table_7ae8
 
-_table_7acf:
+table_7acf:
 	; wScreenShakeCounterY - wScreenShakeCounterX - var30 - var31
 	.db $00 $0f $00 $ff
 	.db $0f $00 $00 $ff
@@ -6959,7 +6959,7 @@ _table_7acf:
 	.db $00 $78 $00 $ff
 	.db $ff
 
-_table_7ae8:
+table_7ae8:
 	; wScreenShakeCounterY - wScreenShakeCounterX - var30 - var31
 	.db $00 $1e $00 $ff
 	.db $1e $00 $00 $ff
@@ -7167,10 +7167,10 @@ interactionCode55:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _subrosianAtD8_subid0
-	.dw _subrosianAtD8_subid1
+	.dw subrosianAtD8_subid0
+	.dw subrosianAtD8_subid1
 
-_subrosianAtD8_subid0:
+subrosianAtD8_subid0:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -7179,7 +7179,7 @@ _subrosianAtD8_subid0:
 	.dw @state2
 
 @state0:
-	call _subrosianAtD8_getNumEssences
+	call subrosianAtD8_getNumEssences
 	cp $07
 	jp c,interactionDelete
 
@@ -7261,7 +7261,7 @@ _subrosianAtD8_subid0:
 	jp interactionRunScript
 
 
-_subrosianAtD8_subid1:
+subrosianAtD8_subid1:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -7269,7 +7269,7 @@ _subrosianAtD8_subid1:
 	.dw @state1
 
 @state0:
-	call _subrosianAtD8_getNumEssences
+	call subrosianAtD8_getNumEssences
 	cp $07
 	jp c,interactionDelete
 
@@ -7313,7 +7313,7 @@ _subrosianAtD8_subid1:
 	jp interactionDelete
 
 ;;
-_subrosianAtD8_getNumEssences:
+subrosianAtD8_getNumEssences:
 	ld a,(wEssencesObtained)
 	jp getNumSetBits
 
@@ -7414,17 +7414,17 @@ interactionCode58:
 	ld (hl),$01
 	ld l,$50
 	ld (hl),$0f
-	call _func_7e20
+	call func_7e20
 	ld a,>TX_0b00
 	call interactionSetHighTextIndex
 	ld hl,mainScripts.guruGuruScript
 	call interactionSetScript
-	jp _func_7ddc
+	jp func_7ddc
 @state1:
 	call interactionRunScript
-	call _func_7deb
-	jr _func_7ddc
-_func_7ddc:
+	call func_7deb
+	jr func_7ddc
+func_7ddc:
 	ld e,$79
 	ld a,(de)
 	or a
@@ -7433,17 +7433,17 @@ _func_7ddc:
 +
 	call objectPreventLinkFromPassing
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
-_func_7deb:
+func_7deb:
 	ld e,$78
 	ld a,(de)
 	rst_jumpTable
 	.dw @var38_00
-	.dw _func_7e38
+	.dw func_7e38
 @var38_00:
 	ld e,$7b
 	ld a,(de)
 	or a
-	jr z,_func_7e0f
+	jr z,func_7e0f
 	ld h,d
 	ld l,$77
 	dec (hl)
@@ -7458,7 +7458,7 @@ _func_7deb:
 	xor $02
 	ld (hl),a
 	jp interactionSetAnimation
-_func_7e0f:
+func_7e0f:
 	ld h,d
 	ld l,$78
 	ld (hl),$01
@@ -7467,22 +7467,22 @@ _func_7e0f:
 	ld a,($d00d)
 	ld l,$4d
 	cp (hl)
-	jr nc,_func_7e2c
-_func_7e20:
+	jr nc,func_7e2c
+func_7e20:
 	ld l,$49
 	ld (hl),$18
 	ld l,$7a
 	ld a,$03
 	ld (hl),a
 	jp interactionSetAnimation
-_func_7e2c:
+func_7e2c:
 	ld l,$49
 	ld (hl),$08
 	ld l,$7a
 	ld a,$01
 	ld (hl),a
 	jp interactionSetAnimation
-_func_7e38:
+func_7e38:
 	ld e,$7b
 	ld a,(de)
 	or a

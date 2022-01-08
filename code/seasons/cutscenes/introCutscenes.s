@@ -67,7 +67,7 @@ cutscene06Func1:
 	ld hl,$cbb6
 	ld (hl),$28
 	call fastFadeinFromWhite
-	call incCutsceneState
+	call incCutsceneState2
 	ld hl,$cbb5
 	ld (hl),$02
 	
@@ -141,7 +141,7 @@ cutscene06Func2:
 +
 	ld a,SND_CLOSEMENU
 	call playSound
-	call incCutsceneState
+	call incCutsceneState2
 	jp fastFadeoutToWhite
 	
 seasonsFunc_03_7458:
@@ -166,7 +166,7 @@ cutscene06Func3:
 	set 7,(hl)
 	xor a
 	ld ($cfd0),a
-	call incCutsceneState
+	call incCutsceneState2
 	jp reloadGraphicsOnExitMenu
 
 cutscene06Func4:
@@ -182,7 +182,7 @@ cutscene06Func4:
 	call func_13c6
 	ld a,SNDCTRL_STOPMUSIC
 	call playSound
-	jp incCutsceneState
+	jp incCutsceneState2
 
 seasonsFunc_03_74a3:
 	call decCbb3
@@ -253,7 +253,7 @@ cutscene06Func5:
 	ret nz
 	ld hl,$cbb3
 	ld (hl),$3c
-	jp incCutsceneState
+	jp incCutsceneState2
 
 seasonsFunc_03_7516:
 	ld de,$cfd2
@@ -322,7 +322,7 @@ cutsceneDinDancing_loadListOfTiles:
 cutscene06Func6:
 	call decCbb3
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	ld bc,$0c08
 	call checkIsLinkedGame
 	jr z,+
@@ -332,7 +332,7 @@ cutscene06Func6:
 	
 cutscene06Func7:
 	call retIfTextIsActive
-	call incCutsceneState
+	call incCutsceneState2
 	ld hl,seasonsTable_03_74fa
 	jp seasonsFunc_03_74b6
 	
@@ -347,7 +347,7 @@ cutscene06Func8:
 	inc l
 	ld (hl),$07
 +
-	jp incCutsceneState
+	jp incCutsceneState2
 	
 cutscene06Func9:
 	ld c,$09
@@ -363,7 +363,7 @@ seasonsFunc_03_75a5:
 	ld a,(hl)
 	cp b
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	ld b,$0c
 	jp showText
 	
@@ -371,7 +371,7 @@ cutscene06Funca:
 	call retIfTextIsActive
 	ld hl,$cfd0
 	ld (hl),$06
-	jp incCutsceneState
+	jp incCutsceneState2
 	
 cutscene06Funcb:
 	ld a,$08
@@ -382,14 +382,14 @@ cutscene06Funcc:
 	call retIfTextIsActive
 	ld hl,$cbb3
 	ld (hl),$1e
-	jp incCutsceneState
+	jp incCutsceneState2
 	
 cutscene06Funcd:
 	call decCbb3
 	ret nz
 	ld hl,$cfd0
 	ld (hl),$09
-	jp incCutsceneState
+	jp incCutsceneState2
 	
 cutscene06Funce:
 	ld hl,$cfd0
@@ -398,7 +398,7 @@ cutscene06Funce:
 	ret nz
 	ld hl,$cbb3
 	ld (hl),$3c
-	jp incCutsceneState
+	jp incCutsceneState2
 	
 cutscene06Funcf:
 	call decCbb3
@@ -458,7 +458,7 @@ cutsceneDinImprisoned:
 	jr nz,+
 	xor a
 	ld (wGfxRegs1.SCY),a
-	call incCutsceneState
+	call incCutsceneState2
 	jp fadeoutToWhite
 +
 	ld hl,$cbb3
@@ -478,7 +478,7 @@ cutsceneDinImprisoned:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	ld a,$0a
 	ld ($cfd0),a
 	call disableLcd
@@ -533,7 +533,7 @@ cutsceneDinImprisoned:
 	ld (hl),a
 	jr nz,-
 +
-	jp incCutsceneState
+	jp incCutsceneState2
 
 @state4:
 	ld a,($cfd0)
@@ -542,7 +542,7 @@ cutsceneDinImprisoned:
 	ld ($cbb3),a
 	dec a
 	ld ($cbba),a
-	jp incCutsceneState
+	jp incCutsceneState2
 
 @state5:
 	ld hl,$cbb3
@@ -570,7 +570,7 @@ cutsceneDinImprisoned:
 	ldh (<hCameraX),a
 	ld hl,$cfd0
 	ld (hl),$0d
-	jp incCutsceneState
+	jp incCutsceneState2
 
 @state6:
 	call retIfTextIsActive
@@ -586,7 +586,7 @@ cutsceneDinImprisoned:
 	ld (hl),$f0
 	xor a
 	ld ($cbcb),a
-	jp incCutsceneState
+	jp incCutsceneState2
 
 @state7:
 	ld a,(wPaletteThread_mode)
@@ -594,14 +594,14 @@ cutsceneDinImprisoned:
 	ret nz
 	call decCbb3
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	jp fadeoutToWhite
 
 @state8:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	ld a,$ff
 	ld (wTilesetAnimation),a
 	ld a,$0e
@@ -705,7 +705,7 @@ cutscene08Func1:
 	ld (hl),$b4
 	inc hl
 	ld (hl),$00
-	call incCutsceneState
+	call incCutsceneState2
 
 seasonsFunc_03_7827:
 	jp seasonsFunc_03_7981
@@ -720,7 +720,7 @@ cutscene08Func2:
 	ld hl,$cfd3
 	inc (hl)
 	set 7,(hl)
-	jp incCutsceneState
+	jp incCutsceneState2
 +
 	call seasonsFunc_03_7909
 	jp seasonsFunc_03_7981
@@ -750,7 +750,7 @@ cutscene08Func3:
 	ld hl,$cfd3
 	inc (hl)
 	res 7,(hl)
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene08Func4:
 	call decCbb3
 	jr nz,+
@@ -761,7 +761,7 @@ cutscene08Func4:
 	call seasonsFunc_03_7917
 	ld hl,$cfd3
 	ld (hl),$ff
-	call incCutsceneState
+	call incCutsceneState2
 	ld hl,$cbba
 	ld (hl),$02
 	ld hl,$cbb8
@@ -788,7 +788,7 @@ cutscene08Func5:
 	ld b,$01
 	call seasonsFunc_03_7aa9
 	call clearPaletteFadeVariablesAndRefreshPalettes
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene08Func6:
 	call decCbb3
 	ret nz
@@ -796,10 +796,10 @@ cutscene08Func6:
 	ld ($cc02),a
 	ld bc,$1e04
 	call showText
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene08Func7:
 	call retIfTextIsActive
-	call incCutsceneState
+	call incCutsceneState2
 	ld hl,$cbb3
 	ld (hl),$5a
 	jp fadeoutToBlack
@@ -1026,8 +1026,10 @@ seasonsTable_03_7a5e:
 	.db $10 $4a
 	.db $e0 $49
 	.db $40 $4a
-	
-incCutsceneState:
+
+;;
+; There is an identical function named "incCutsceneState" in bank3Cutscenes.s.
+incCutsceneState2:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
@@ -1153,13 +1155,13 @@ cutscene0dFunc0:
 	ldh (<hCameraY),a
 	ld a,$00
 	ld (wScrollMode),a
-	jp _clearFadingPalettes
+	jp clearFadingPalettes2
 cutscene0dFunc1:
 	ld e,$96
 -
 	call decCbb3
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	ld hl,$cbb3
 	ld (hl),e
 	ld a,SND_CREEPY_LAUGH
@@ -1170,7 +1172,7 @@ cutscene0dFunc2:
 cutscene0dFunc3:
 	call decCbb3
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	call fastFadeinFromBlack
 	ld a,$10
 	ld ($c4b2),a
@@ -1184,7 +1186,7 @@ cutscene0dFunc4:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	ld a,$0e
 	ld ($cbb3),a
 	call fadeinFromBlack
@@ -1202,11 +1204,11 @@ cutscene0dFunc5:
 	ld (wPaletteThread_mode),a
 	ld a,$78
 	ld ($cbb3),a
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene0dFunc6:
 	call decCbb3
 	ret nz
-	call incCutsceneState
+	call incCutsceneState2
 	ld a,$08
 	ld ($cbae),a
 	ld a,$03
@@ -1215,7 +1217,7 @@ cutscene0dFunc6:
 	jp showText
 cutscene0dFunc7:
 	call retIfTextIsActive
-	call incCutsceneState
+	call incCutsceneState2
 	ld ($cbb3),a
 	dec a
 	ld ($cbba),a
@@ -1227,7 +1229,7 @@ cutscene0dFunc8:
 	ld b,$03
 	call flashScreen
 	ret z
-	call incCutsceneState
+	call incCutsceneState2
 	ld a,$3c
 	ld ($cbb3),a
 	ld a,$02
@@ -1238,7 +1240,7 @@ cutscene0dFunc9:
 	ret nz
 	call decCbb3
 	ret nz
-	jp incCutsceneState
+	jp incCutsceneState2
 
 cutsceneOnoxTaunting:
 	call cutsceneOnoxTauntingHandler
@@ -1270,12 +1272,12 @@ cutscene0eFunc0:
 	res 7,(hl)
 	xor a
 	ld ($cfc0),a
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene0eFunc1:
 	call decCbb3
 	ret nz
 	ld (hl),$14
-	call incCutsceneState
+	call incCutsceneState2
 	ld hl,$cbae
 	ld (hl),$04
 	ld bc,$1719
@@ -1321,7 +1323,7 @@ cutscene0eFunc2:
 	ld ($cbba),a
 	ld a,SND_LIGHTNING
 	call playSound
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene0eFunc3:
 	ld hl,$cbb3
 	ld b,$01
@@ -1342,7 +1344,7 @@ cutscene0eFunc3:
 	ld (hl),$3c
 	ld a,MUS_DISASTER
 	call playSound
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene0eFunc4:
 	call decCbb3
 	ret nz
@@ -1354,7 +1356,7 @@ cutscene0eFunc4:
 	xor a
 	ld ($c4b1),a
 	ld ($c4b3),a
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene0eFunc5:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -1368,7 +1370,7 @@ cutscene0eFunc5:
 	ld a,$ff
 	ld ($c4b1),a
 	ld ($c4b3),a
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene0eFunc6:
 	call decCbb3
 	ret nz
@@ -1378,7 +1380,7 @@ cutscene0eFunc6:
 	inc l
 	ld (hl),$05
 +
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene0eFunc7:
 	ld a,($cfc0)
 	or a
@@ -1426,7 +1428,7 @@ cutscene0dFunca:
 	ld (hl),$0a
 	ld a,$00
 	ld (wScrollMode),a
-	call incCutsceneState
+	call incCutsceneState2
 	call clearPaletteFadeVariablesAndRefreshPalettes
 	xor a
 	ldh (<hCameraY),a
@@ -1440,7 +1442,7 @@ cutscene0dFuncb:
 	call clearLinkObject
 	ld hl,$cbb3
 	ld (hl),$3c
-	jp incCutsceneState
+	jp incCutsceneState2
 cutscene0dFuncc:
 	call decCbb3
 	ret nz

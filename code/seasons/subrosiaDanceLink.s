@@ -4,14 +4,14 @@ specialObjectCode_subrosiaDanceLink:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _subrosiaDance_state0
-	.dw _subrosiaDance_state1
-	.dw _subrosiaDance_state2
-	.dw _subrosiaDance_state3
-	.dw _subrosiaDance_state4
-	.dw _subrosiaDance_state5
+	.dw subrosiaDance_state0
+	.dw subrosiaDance_state1
+	.dw subrosiaDance_state2
+	.dw subrosiaDance_state3
+	.dw subrosiaDance_state4
+	.dw subrosiaDance_state5
 
-_subrosiaDance_state0:
+subrosiaDance_state0:
 	; Initialize, then go to state 1
 	call clearAllParentItems
 	call specialObjectSetOamVariables
@@ -32,7 +32,7 @@ _subrosiaDance_state0:
 	call specialObjectSetAnimation
 	jp objectSetVisiblec1
 
-_subrosiaDance_state1:
+subrosiaDance_state1:
 	call subrosiaDance_checkSpinOrCollapse
 	ld h,d
 	ld a,(wGameKeysJustPressed)
@@ -121,7 +121,7 @@ subrosiaDance_storeButtonPress:
 	ld ($cfd8),a
 	ret
 
-_subrosiaDance_state2:
+subrosiaDance_state2:
 	call subrosiaDance_checkSpinOrCollapse
 	call specialObjectAnimate
 	call subrosiaDance_moveLink
@@ -206,7 +206,7 @@ subrosiaDance_05_7dd7:
 	ret c
 	jp objectCenterOnTile
 
-_subrosiaDance_state3:
+subrosiaDance_state3:
 	; animate $100 times, then go to state 1
 	call subrosiaDance_checkSpinOrCollapse
 	call specialObjectAnimate
@@ -219,10 +219,10 @@ _subrosiaDance_state3:
 	ld (de),a
 	ret
 
-_subrosiaDance_state4:
+subrosiaDance_state4:
 	jp specialObjectAnimate
 
-_subrosiaDance_state5:
+subrosiaDance_state5:
 	ret
 
 subrosiaDance_checkSpinOrCollapse:

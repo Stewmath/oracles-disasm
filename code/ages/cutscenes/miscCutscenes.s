@@ -3,7 +3,7 @@
 func_03_6103:
 	ld a,($cfd1)
 	cp $07
-	jp z,_fairyCutscene_cfd1is07
+	jp z,fairyCutscene_cfd1is07
 	ld a,(wCutsceneState)
 	rst_jumpTable
 	.dw @state0
@@ -27,7 +27,7 @@ func_03_6103:
 	ld a,(w1Link.direction)
 	ld (hl),a
 	call fadeoutToWhite
-	jp _fairyCutscene_incState
+	jp fairyCutscene_incState
 @state1:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -35,7 +35,7 @@ func_03_6103:
 	ld a,<ROOM_AGES_081
 @loadNewFairyRoom:
 	ld (wActiveRoom),a
-	call _fairyCutscene_incState
+	call fairyCutscene_incState
 	xor a
 	ld ($cfd2),a
 	call disableLcd
@@ -65,7 +65,7 @@ func_03_6103:
 	ld (hl),INTERACID_FOREST_FAIRY
 	ld l,Interaction.var03
 	ld (hl),b
-	jp _fairyCutscene_incState
+	jp fairyCutscene_incState
 @state3:
 @state6:
 @state9:
@@ -74,7 +74,7 @@ func_03_6103:
 	or a
 	ret z
 	ld (hl),$00
-	call _fairyCutscene_incState
+	call fairyCutscene_incState
 	jp fadeoutToWhite
 @state4:
 	ld a,(wPaletteThread_mode)
@@ -130,7 +130,7 @@ func_03_6103:
 	ld bc,TX_1104
 	jp showText
 	
-_fairyCutscene_cfd1is07:
+fairyCutscene_cfd1is07:
 	ld a,(wCutsceneState)
 	rst_jumpTable
 	.dw @state0
@@ -145,12 +145,12 @@ _fairyCutscene_cfd1is07:
 	ret nz
 	ld bc,TX_110a
 	call showText
-	jp _fairyCutscene_incState
+	jp fairyCutscene_incState
 @state1:
 	ld a,(wTextIsActive)
 	or a
 	ret nz
-	call _fairyCutscene_incState
+	call fairyCutscene_incState
 	ld a,$0c
 	ld (wTmpcbb6),a
 	ld a,SND_MYSTERY_SEED
@@ -171,7 +171,7 @@ _fairyCutscene_cfd1is07:
 	ld hl,wTmpcbb6
 	dec (hl)
 	ret nz
-	call _fairyCutscene_incState
+	call fairyCutscene_incState
 	xor a
 	ld ($cfd0),a
 	ld a,SND_MYSTERY_SEED
@@ -182,7 +182,7 @@ _fairyCutscene_cfd1is07:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _fairyCutscene_incState
+	call fairyCutscene_incState
 	ld bc,TX_110b
 	jp showText
 @state5:
@@ -197,7 +197,7 @@ _fairyCutscene_cfd1is07:
 	ld (wCutsceneIndex),a
 	ret
 	
-_fairyCutscene_incState:
+fairyCutscene_incState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
@@ -276,18 +276,18 @@ func_03_6275:
 miscCutsceneHandler:
 	ld a,c
 	rst_jumpTable
-	.dw _nayruSingingCutsceneHandler
-	.dw _makuTreeDisappearingCutsceneHandler
-	.dw _blackTowerExplanationCutsceneHandler
-	.dw _nayruWarpToMakuTreeCutsceneHandler
-	.dw _turnToStoneCutsceneHandler
-	.dw _twinrovaRevealCutsceneHandler
-	.dw _pregameIntroCutsceneHandler
-	.dw _blackTowerCompleteCutsceneHandler
+	.dw nayruSingingCutsceneHandler
+	.dw makuTreeDisappearingCutsceneHandler
+	.dw blackTowerExplanationCutsceneHandler
+	.dw nayruWarpToMakuTreeCutsceneHandler
+	.dw turnToStoneCutsceneHandler
+	.dw twinrovaRevealCutsceneHandler
+	.dw pregameIntroCutsceneHandler
+	.dw blackTowerCompleteCutsceneHandler
 
 ;;
 ; CUTSCENE_NAYRU_SINGING
-_nayruSingingCutsceneHandler:
+nayruSingingCutsceneHandler:
 	call @runStates
 	ld hl,wCutsceneState
 	ld a,(hl)
@@ -315,10 +315,10 @@ _nayruSingingCutsceneHandler:
 	.dw @stateB
 	.dw @stateC
 	.dw @stateD
-	.dw _nayruSingingStateE
-	.dw _nayruSingingStateF
-	.dw _nayruSingingState10
-	.dw _nayruSingingState11
+	.dw nayruSingingStateE
+	.dw nayruSingingStateF
+	.dw nayruSingingState10
+	.dw nayruSingingState11
 @state0:
 	ld a,$01
 	ld (de),a
@@ -347,7 +347,7 @@ _nayruSingingCutsceneHandler:
 	ld hl,wTmpcbb6
 	ld (hl),$28
 	call fastFadeinFromWhite
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,wTmpcbb5
 	ld (hl),$02
 @func_6397:
@@ -382,7 +382,7 @@ _nayruSingingCutsceneHandler:
 +
 	ld a,SND_CLOSEMENU
 	call playSound
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	jp fastFadeoutToWhite
 @func_63db:
 	ld a,(wFrameCounter)
@@ -407,7 +407,7 @@ _nayruSingingCutsceneHandler:
 	set 7,(hl)
 	ld a,$09
 	ld ($cfd0),a
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,wTmpcbb3
 	ld (hl),$aa
 	jp reloadGraphicsOnExitMenu
@@ -415,7 +415,7 @@ _nayruSingingCutsceneHandler:
 	ld a,($cfd0)
 	cp $0f
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,$de90
 	ld bc,paletteData44a8
 	jp func_13c6
@@ -427,19 +427,19 @@ _nayruSingingCutsceneHandler:
 	call loadPaletteHeader
 	ld a,$10
 	ld ($cfd0),a
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state6:
 	ld a,($cfd0)
 	cp $14
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,wTmpcbb3
 	ld (hl),$3c
 	jp fadeoutToWhite
 @state7:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,$15
 	ld ($cfd0),a
 	ld a,$03
@@ -448,7 +448,7 @@ _nayruSingingCutsceneHandler:
 	ld a,($cfd0)
 	cp $18
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	xor a
 	ld ($cfd2),a
 	call getFreePartSlot
@@ -467,7 +467,7 @@ _nayruSingingCutsceneHandler:
 	ld a,($cfd2)
 	or a
 	ret z
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	call getThisRoomFlags
 	set 6,(hl)
 	ld c,$22
@@ -479,18 +479,18 @@ _nayruSingingCutsceneHandler:
 	ret nz
 	ld hl,wTmpcbb3
 	ld (hl),$78
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @stateB:
 	call decCbb3
 	ret nz
 	ld (hl),$5a
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld bc,TX_5607
 	jp showText
 @stateC:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	xor a
 	ld hl,$cfde
 	ldi (hl),a
@@ -500,17 +500,17 @@ _nayruSingingCutsceneHandler:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_incCutsceneState
+	call cutscene_loadRoomObjectSetAndFadein
 	ld a,$02
 	jp loadGfxRegisterStateIndex
 
 ;;
-_cutscene_loadRoomObjectSetAndFadein:
+cutscene_loadRoomObjectSetAndFadein:
 	ld hl,wTmpcfc0.genericCutscene.cfde
 	ld a,(hl)
 	push af
-	call _cutscene_disableLcdLoadRoomResetCamera
+	call cutscene_disableLcdLoadRoomResetCamera
 	pop af
 	ld b,a
 	call getEntryFromObjectTable2
@@ -520,7 +520,7 @@ _cutscene_loadRoomObjectSetAndFadein:
 	ld (wTmpcfc0.genericCutscene.cfd1),a
 	jp fadeinFromWhite
 
-_nayruSingingStateE:
+nayruSingingStateE:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -541,12 +541,12 @@ _nayruSingingStateE:
 	ld (hl),a
 	jp fadeoutToWhite
 	
-_nayruSingingStateF:
+nayruSingingStateF:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_incCutsceneState
+	call cutscene_loadRoomObjectSetAndFadein
 	ld a,PALH_99
 	call loadPaletteHeader
 	ld a,$08
@@ -563,24 +563,24 @@ _nayruSingingStateF:
 	ld (wPaletteThread_parameter),a
 	ld a,$24
 	ld b,$02
-	call _cutscene_loadAObjectGfxBTimes
+	call cutscene_loadAObjectGfxBTimes
 	call reloadObjectGfx
 	ld a,$02
 	jp loadGfxRegisterStateIndex
 	
-_nayruSingingState10:
+nayruSingingState10:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	ld a,($cfd0)
 	cp $1e
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,$de90
 	ld bc,paletteData4a30
 	jp func_13c6
 	
-_nayruSingingState11:
+nayruSingingState11:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -595,7 +595,7 @@ _nayruSingingState11:
 
 ;;
 ; CUTSCENE_MAKU_TREE_DISAPPEARING
-_makuTreeDisappearingCutsceneHandler:
+makuTreeDisappearingCutsceneHandler:
 	call @makuTreeDisappearing_body
 	jp updateAllObjects
 
@@ -640,7 +640,7 @@ _makuTreeDisappearingCutsceneHandler:
 
 ;;
 ; CUTSCENE_BLACK_TOWER_EXPLANATION
-_blackTowerExplanationCutsceneHandler:
+blackTowerExplanationCutsceneHandler:
 	call @runStates
 	jp updateAllObjects
 
@@ -657,7 +657,7 @@ _blackTowerExplanationCutsceneHandler:
 	.dw @@state0
 	.dw @@state1
 	.dw @@state2
-	.dw _func_6733
+	.dw func_6733
 @@state0:
 	ld a,(wPaletteThread_mode)
 	or a
@@ -687,7 +687,7 @@ _blackTowerExplanationCutsceneHandler:
 	or a
 	ld a,MUS_DISASTER
 	call z,playSound
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	xor a
 	ld (wTmpcbb9),a
 	call fadeinFromWhite
@@ -705,14 +705,14 @@ _blackTowerExplanationCutsceneHandler:
 	.db $80 $2e
 
 @@state1:
-	call _func_6ef7
-	call _func_6f44
+	call func_6ef7
+	call func_6f44
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	call decCbb3
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld bc,TX_1005
 	ld a,($cbb8)
 	or a
@@ -724,14 +724,14 @@ _blackTowerExplanationCutsceneHandler:
 	jp showText
 
 @@state2:
-	call _func_6ef7
-	call _func_6f44
+	call func_6ef7
+	call func_6f44
 	ld a,(wTextIsActive)
 	or a
 	ret nz
 	ld hl,wTmpcbb3
 	ld (hl),$3c
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 
 @cbb8_01:
 	ld de,wCutsceneState
@@ -747,19 +747,19 @@ _blackTowerExplanationCutsceneHandler:
 	.dw @@state7
 
 @@state5:
-	call _func_6ef7
-	call _func_6f44
+	call func_6ef7
+	call func_6f44
 	call decCbb3
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	jp fadeoutToWhite
 
 @@state6:
-	call _func_6f44
+	call func_6f44
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	call clearDynamicInteractions
 	ld bc, ROOM_AGES_0ba
 	call disableLcdAndLoadRoom
@@ -809,11 +809,11 @@ _blackTowerExplanationCutsceneHandler:
 	.dw @cbb8_00@state0
 	.dw @@state1
 	.dw @@state2
-	.dw _func_6733
+	.dw func_6733
 
 @@state1:
-	call _func_6ef7
-	call _func_6f44
+	call func_6ef7
+	call func_6f44
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -827,19 +827,19 @@ _blackTowerExplanationCutsceneHandler:
 	rst_addAToHl
 	ld a,(hl)
 	ld (wTmpcbb3),a
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @@table_6722:
 	.db $01 $61 $b1
 @@state2:
-	call _func_6ef7
-	call _func_6f26
-	jp nz,_func_6f44
+	call func_6ef7
+	call func_6f26
+	jp nz,func_6f44
 	ld (hl),$78
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 
-_func_6733:
-	call _func_6ef7
-	call _func_6f44
+func_6733:
+	call func_6ef7
+	call func_6f44
 	call decCbb3
 	ret nz
 	ld a,($cbb8)
@@ -876,7 +876,7 @@ _func_6733:
 
 ;;
 ; CUTSCENE_NAYRU_WARP_TO_MAKU_TREE
-_nayruWarpToMakuTreeCutsceneHandler:
+nayruWarpToMakuTreeCutsceneHandler:
 	call @runStates
 	call updateStatusBar
 	jp updateAllObjects
@@ -902,7 +902,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	call clearDynamicInteractions
 	ld bc, ROOM_AGES_038
 	call disableLcdAndLoadRoom
@@ -913,7 +913,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	call refreshObjectGfx
 	ld a,$04
 	ld b,$02
-	call _cutscene_loadAObjectGfxBTimes
+	call cutscene_loadAObjectGfxBTimes
 	call reloadObjectGfx
 	ld a,SNDCTRL_FAST_FADEOUT
 	call playSound
@@ -934,10 +934,10 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	call incMakuTreeState
 	jp fadeinFromWhiteToRoom
 @state1:
-	call _cutscene_decCBB3whenFadeDone
+	call cutscene_decCBB3whenFadeDone
 	ret nz
 	ld (hl),$3c
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,$68
 	ld bc,$5050
 	jp createEnergySwirlGoingIn
@@ -948,13 +948,13 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	ld (hl),a
 	dec a
 	ld (wTmpcbba),a
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state3:
 	ld hl,wTmpcbb3
 	ld b,$02
 	call flashScreen
 	ret z
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,wTmpcbb3
 	ld (hl),$3c
 	ld a,$01
@@ -975,14 +975,14 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	ld (hl),DIR_UP
 	ret
 @state4:
-	call _cutscene_decCBB3whenFadeDone
+	call cutscene_decCBB3whenFadeDone
 	ret nz
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state5:
 	ld a,($cfd0)
 	cp $02
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,SNDCTRL_FAST_FADEOUT
 	call playSound
 	xor a
@@ -995,8 +995,8 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_incCutsceneState
+	call cutscene_loadRoomObjectSetAndFadein
 	ld a,$02
 	jp loadGfxRegisterStateIndex
 @state7:
@@ -1025,21 +1025,21 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_incCutsceneState
+	call cutscene_loadRoomObjectSetAndFadein
 	call @func_6838
 	ld a,$01
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 	ld a,$04
 	ld b,$02
-	call _cutscene_loadAObjectGfxBTimes
+	call cutscene_loadAObjectGfxBTimes
 	ld a,$26
 	ld b,$02
-	call _cutscene_loadAintoHL_BTimes
+	call cutscene_loadAintoHL_BTimes
 	ld a,$24
 	ld b,$01
-	call _cutscene_loadAintoHL_BTimes
+	call cutscene_loadAintoHL_BTimes
 	ld b,l
 	call checkIsLinkedGame
 	jr z,+
@@ -1056,7 +1056,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	ld a,($cfd0)
 	cp $07
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,SNDCTRL_STOPSFX
 	call playSound
 	ld bc,TX_2800
@@ -1069,7 +1069,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	ld a,(wTextIsActive)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,wTmpcbb3
 	ld (hl),$b4
 	ld a,DIR_RIGHT
@@ -1101,9 +1101,9 @@ _nayruWarpToMakuTreeCutsceneHandler:
 	jr nz,@incCutsceneState
 	ld (hl),INTERACID_CLOAKED_TWINROVA
 @incCutsceneState:
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @func_6948:
-	call _cutscene_decCBB6
+	call cutscene_decCBB6
 	ret nz
 	ld l,<wGenericCutscene.cbb7
 	ld a,(hl)
@@ -1159,7 +1159,7 @@ _nayruWarpToMakuTreeCutsceneHandler:
 
 ;;
 ; CUTSCENE_BLACK_TOWER_COMPLETE
-_blackTowerCompleteCutsceneHandler:
+blackTowerCompleteCutsceneHandler:
 	call @runStates
 	call updateStatusBar
 	jp updateAllObjects
@@ -1177,11 +1177,11 @@ _blackTowerCompleteCutsceneHandler:
 @state0:
 	ld a,$3c
 	ld (wTmpcbb3),a
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state1:
 	call decCbb3
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,SNDCTRL_FAST_FADEOUT
 	call playSound
 	jp fastFadeoutToBlack
@@ -1210,7 +1210,7 @@ _blackTowerCompleteCutsceneHandler:
 	ld (wScreenOffsetY),a
 	call checkIsLinkedGame
 	jr z,@func_6a2b
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,wTmpcbb3
 	ld (hl),$1e
 	ret
@@ -1220,7 +1220,7 @@ _blackTowerCompleteCutsceneHandler:
 	ld a,$05
 	ld (wCutsceneState),a
 	ldbc INTERACID_CLOAKED_TWINROVA $01
-	jp _createInteraction
+	jp createInteraction
 @state3:
 	call decCbb3
 	ret nz
@@ -1232,16 +1232,16 @@ _blackTowerCompleteCutsceneHandler:
 	dec a
 	ld hl,wTmpcbba
 	ld (hl),a
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state4:
 	ld hl,wTmpcbb3
 	ld b,$02
 	call flashScreen
 	ret z
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,$10
 	ld ($cfde),a
-	callab _cutscene_loadRoomObjectSetAndFadein
+	callab cutscene_loadRoomObjectSetAndFadein
 	call showStatusBar
 	ld a,MUS_DISASTER
 	call playSound
@@ -1262,7 +1262,7 @@ _blackTowerCompleteCutsceneHandler:
 
 ;;
 ; CUTSCENE_TURN_TO_STONE
-_turnToStoneCutsceneHandler:
+turnToStoneCutsceneHandler:
 	call @runStates
 	call updateStatusBar
 	jp updateAllObjects
@@ -1279,7 +1279,7 @@ _turnToStoneCutsceneHandler:
 	.dw @state5
 	.dw @state6
 @state0:
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld b,$20
 	ld hl,$cfc0
 	call clearMemory
@@ -1293,8 +1293,8 @@ _turnToStoneCutsceneHandler:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_incCutsceneState
+	call cutscene_loadRoomObjectSetAndFadein
 	ld a,$02
 	jp loadGfxRegisterStateIndex
 @state2:
@@ -1341,13 +1341,13 @@ _turnToStoneCutsceneHandler:
 	ld a,($cfc0)
 	cp $03
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	jp fadeoutToWhite
 @state5:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	call clearDynamicInteractions
 	ld bc, ROOM_AGES_290
 	call disableLcdAndLoadRoom
@@ -1383,7 +1383,7 @@ _turnToStoneCutsceneHandler:
 
 ;;
 ; CUTSCENE_TWINROVA_REVEAL
-_twinrovaRevealCutsceneHandler:
+twinrovaRevealCutsceneHandler:
 	call @runStates
 	call updateStatusBar
 	jp updateAllObjects
@@ -1403,7 +1403,7 @@ _twinrovaRevealCutsceneHandler:
 	.dw @state8
 	.dw @state9
 @state0:
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld b,$20
 	ld hl,$cfc0
 	call clearMemory
@@ -1420,7 +1420,7 @@ _twinrovaRevealCutsceneHandler:
 	ld ($cfc0),a
 	jp showText
 @state1:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	ld a,SNDCTRL_STOPMUSIC
 	call playSound
@@ -1430,7 +1430,7 @@ _twinrovaRevealCutsceneHandler:
 	ld (hl),a
 	dec a
 	ld (wTmpcbba),a
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state2:
 	ld hl,wTmpcbb3
 	ld b,$01
@@ -1438,10 +1438,10 @@ _twinrovaRevealCutsceneHandler:
 	ret z
 	call checkIsLinkedGame
 	jr nz,@func_6be8
-	call _func_6fb0
+	call func_6fb0
 	jr ++
 @func_6be8:
-	call _func_6f9e
+	call func_6f9e
 ++
 	ld a,$01
 	ld (wDisabledObjects),a
@@ -1454,7 +1454,7 @@ _twinrovaRevealCutsceneHandler:
 	ld hl,objectData.objectData77a5
 +
 	call parseGivenObjectData
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state3:
 	ld a,($cfc0)
 	cp $03
@@ -1471,9 +1471,9 @@ _twinrovaRevealCutsceneHandler:
 	ret z
 	ld a,$12
 	ld ($cfde),a
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_loadRoomObjectSetAndFadein
 	call showStatusBar
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,MUS_ZELDA_SAVED
 	call playSound
 	ld a,$02
@@ -1496,7 +1496,7 @@ _twinrovaRevealCutsceneHandler:
 	ret z
 	ld hl,$cfde
 	inc (hl)
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_loadRoomObjectSetAndFadein
 	ld hl,w1Link.enabled
 	ld (hl),$03
 	ld l,<w1Link.yh
@@ -1507,8 +1507,8 @@ _twinrovaRevealCutsceneHandler:
 	ld (hl),DIR_UP
 	ld a,$2c
 	ld b,$03
-	call _cutscene_loadAObjectGfxBTimes
-	call _cutscene_incCutsceneState
+	call cutscene_loadAObjectGfxBTimes
+	call cutscene_incCutsceneState
 	xor a
 	ld (wPaletteThread_mode),a
 .ifndef REGION_JP
@@ -1522,7 +1522,7 @@ _twinrovaRevealCutsceneHandler:
 	call reloadObjectGfx
 	ld a,$02
 	call loadGfxRegisterStateIndex
-	jp _func_6fb0
+	jp func_6fb0
 @state7:
 	ld a,($cfd0)
 	cp $09
@@ -1536,12 +1536,12 @@ _twinrovaRevealCutsceneHandler:
 	ld a,$03
 	ld (wFadeBgPaletteSources),a
 	ld (wDirtyFadeBgPalettes),a
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state8:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	call showStatusBar
 	ld a,GLOBALFLAG_GOT_MAKU_SEED
 	call setGlobalFlag
@@ -1556,7 +1556,7 @@ _twinrovaRevealCutsceneHandler:
 	ld (wGfxRegs2.SCY),a
 	call fadeinFromBlack
 	ldbc INTERACID_MAKU_TREE $06
-	call _createInteraction
+	call createInteraction
 	ld bc,$4050
 	call interactionHSetPosition
 	ld a,(wActiveMusic2)
@@ -1574,7 +1574,7 @@ _twinrovaRevealCutsceneHandler:
 
 ;;
 ; CUTSCENE_PREGAME_INTRO
-_pregameIntroCutsceneHandler:
+pregameIntroCutsceneHandler:
 	call @runStates
 	jp updateAllObjects
 	
@@ -1626,13 +1626,13 @@ _pregameIntroCutsceneHandler:
 	ldh (<hCameraY),a
 	ld a,$00
 	ld (wScrollMode),a
-	jp _clearFadingPalettes
+	jp clearFadingPalettes2
 @state1:
 	ld e,$96
 --
 	call decCbb3
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld hl,wTmpcbb3
 	ld (hl),e
 	ret
@@ -1642,7 +1642,7 @@ _pregameIntroCutsceneHandler:
 @state3:
 	call decCbb3
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	call fastFadeinFromBlack
 	ld a,$40
 	ld (wDirtyFadeSprPalettes),a
@@ -1656,7 +1656,7 @@ _pregameIntroCutsceneHandler:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,$0e
 	ld (wTmpcbb3),a
 	call fadeinFromBlack
@@ -1674,11 +1674,11 @@ _pregameIntroCutsceneHandler:
 	ld (wPaletteThread_mode),a
 	ld a,$78
 	ld (wTmpcbb3),a
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @state6:
 	call decCbb3
 	ret nz
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,TEXTBOXFLAG_DONTCHECKPOSITION
 	ld (wTextboxFlags),a
 	ld a,$03
@@ -1687,7 +1687,7 @@ _pregameIntroCutsceneHandler:
 	jp showText
 @state7:
 	call retIfTextIsActive
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld (wTmpcbb3),a
 	dec a
 	ld (wTmpcbba),a
@@ -1699,7 +1699,7 @@ _pregameIntroCutsceneHandler:
 	ld b,$03
 	call flashScreen
 	ret z
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	ld a,$3c
 	ld (wTmpcbb3),a
 	ld a,$02
@@ -1710,7 +1710,7 @@ _pregameIntroCutsceneHandler:
 	ret nz
 	call decCbb3
 	ret nz
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @stateA:
 	call disableLcd
 	ld a,($ff00+R_SVBK)
@@ -1727,8 +1727,8 @@ _pregameIntroCutsceneHandler:
 	ld a,PALH_0f
 	call loadPaletteHeader
 	ld a,$02
-	call _func_6e9a
-	call _func_6eb7
+	call func_6e9a
+	call func_6eb7
 	ld a,MUS_ESSENCE_ROOM
 	call playSound
 	ld a,$08
@@ -1739,7 +1739,7 @@ _pregameIntroCutsceneHandler:
 	ld (hl),$0b
 	ld a,$00
 	ld (wScrollMode),a
-	call _cutscene_incCutsceneState
+	call cutscene_incCutsceneState
 	call clearPaletteFadeVariablesAndRefreshPalettes
 	xor a
 	ldh (<hCameraY),a
@@ -1753,7 +1753,7 @@ _pregameIntroCutsceneHandler:
 	call clearLinkObject
 	ld hl,wTmpcbb3
 	ld (hl),$3c
-	jp _cutscene_incCutsceneState
+	jp cutscene_incCutsceneState
 @stateC:
 	call decCbb3
 	ret nz
@@ -1766,7 +1766,7 @@ _pregameIntroCutsceneHandler:
 	ld a,GLOBALFLAG_3d
 	jp setGlobalFlag
 	
-_func_6e9a:
+func_6e9a:
 	ldh (<hFF8B),a
 	ld a,$01
 	ld ($ff00+R_VBK),a
@@ -1780,7 +1780,7 @@ _func_6e9a:
 	ld bc,$0400
 	jp clearMemoryBc
 
-_func_6eb7:
+func_6eb7:
 	ld a,($ff00+R_SVBK)
 	push af
 	
@@ -1800,7 +1800,7 @@ _func_6eb7:
 	ld ($ff00+R_SVBK),a
 	ret
 	
-_func_6ed6:
+func_6ed6:
 	ldh (<hFF8B),a
 	ld a,($ff00+R_SVBK)
 	push af
@@ -1817,10 +1817,10 @@ _func_6ed6:
 	ld ($ff00+R_SVBK),a
 	ret
 
-_func_6ef7:
+func_6ef7:
 	ld a,(wTmpcbb9)
 	or a
-	jr z,_func_6f0b
+	jr z,func_6f0b
 	ld hl,$cbb7
 	ld b,$01
 	call flashScreen
@@ -1829,7 +1829,7 @@ _func_6ef7:
 	ld (wTmpcbb9),a
 	ret
 	
-_func_6f0b:
+func_6f0b:
 	ld a,(wFrameCounter)
 	and $1f
 	ret nz
@@ -1843,7 +1843,7 @@ _func_6f0b:
 	ld a,SND_LIGHTNING
 	jp playSound
 
-_func_6f26:
+func_6f26:
 	ld hl,wTmpcbb6
 	dec (hl)
 	ret nz
@@ -1861,7 +1861,7 @@ _func_6f26:
 	or $01
 	ret
 
-_func_6f44:
+func_6f44:
 	ld a,(wGfxRegs1.SCY)
 	cpl
 	inc a
@@ -1899,23 +1899,23 @@ _func_6f44:
 +
 	jp addSpritesFromBankToOam_withOffset
 
-_cutscene_incCutsceneState:
+cutscene_incCutsceneState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
 
-_cutscene_decCBB6:
+cutscene_decCBB6:
 	ld hl,wTmpcbb6
 	dec (hl)
 	ret
 	
-_cutscene_decCBB3whenFadeDone:
+cutscene_decCBB3whenFadeDone:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	jp decCbb3
 
-_func_6f9e:
+func_6f9e:
 	ld a,($ff00+R_SVBK)
 	push af
 	ld a,$02
@@ -1925,7 +1925,7 @@ _func_6f9e:
 	call clearMemory
 	pop af
 	ld ($ff00+R_SVBK),a
-_func_6fb0:
+func_6fb0:
 	ld a,($ff00+R_SVBK)
 	push af
 	
@@ -1951,7 +1951,7 @@ _func_6fb0:
 ; @param	a	Index?
 ; @param[out]	b	Index for "objectTable2"?
 ; @param[out]	c
-_cutscene_disableLcdLoadRoomResetCamera:
+cutscene_disableLcdLoadRoomResetCamera:
 	ld hl,@data
 	rst_addDoubleIndex
 	ld b,(hl)
@@ -1983,19 +1983,19 @@ _cutscene_disableLcdLoadRoomResetCamera:
 	dwbe ROOM_AGES_038
 
 
-_cutscene_tickDownCBB4ThenSetTo30:
+cutscene_tickDownCBB4ThenSetTo30:
 	ld hl,$cbb4
 	dec (hl)
 	ret nz
 	ld (hl),30
 	ret
 	
-_cutscene_incState:
+cutscene_incState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
 	
-_cutscene_incCBB3:
+cutscene_incCBB3:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
@@ -2005,7 +2005,7 @@ _cutscene_incCBB3:
 func_701d:
 	ld a,(wDungeonIndex)
 	cp $08
-	jp z,_wallRetraction_dungeon8
+	jp z,wallRetraction_dungeon8
 	ld a,(wCutsceneState)
 	rst_jumpTable
 	.dw @state0
@@ -2027,26 +2027,26 @@ func_701d:
 	ld (wTmpcbb4),a
 	xor a
 	ld (wScrollMode),a
-	jr _cutscene_incState
+	jr cutscene_incState
 @state1:
 	ld a,(wTmpcbb3)
 	rst_jumpTable
 	.dw @cbb3_00
 	.dw @cbb3_01
 @cbb3_00:
-	call _cutscene_tickDownCBB4ThenSetTo30
+	call cutscene_tickDownCBB4ThenSetTo30
 	ret nz
 	ld (hl),$3c
-	jr _cutscene_incCBB3
+	jr cutscene_incCBB3
 @cbb3_01:
 	ld a,$3c
 	call setScreenShakeCounter
-	call _cutscene_tickDownCBB4ThenSetTo30
+	call cutscene_tickDownCBB4ThenSetTo30
 	ret nz
 	ld (hl),$19
 	callab tilesets.generateW3VramTilesAndAttributes
 	ld bc,$260c
-	call _func_70f7
+	call func_70f7
 	xor a
 	ld ($ff00+R_SVBK),a
 	call reloadTileMap
@@ -2057,12 +2057,12 @@ func_701d:
 	ld a,(hl)
 	cp $0f
 	ret c
-	call _func_7098
+	call func_7098
 	ld a,$0f
 	ld ($ce5d),a
 	ret
 
-_func_7098:
+func_7098:
 	ld a,SND_SOLVEPUZZLE
 	call playSound
 	ld a,CUTSCENE_INGAME
@@ -2075,7 +2075,7 @@ _func_7098:
 	call loadTilesetAndRoomLayout
 	jp loadRoomCollisions
 	
-_wallRetraction_dungeon8:
+wallRetraction_dungeon8:
 	ld a,(wCutsceneState)
 	rst_jumpTable
 	.dw @state0
@@ -2091,12 +2091,12 @@ _wallRetraction_dungeon8:
 @cbb3_01:
 	ld a,$3c
 	call setScreenShakeCounter
-	call _cutscene_tickDownCBB4ThenSetTo30
+	call cutscene_tickDownCBB4ThenSetTo30
 	ret nz
 	ld (hl),$19
 	callab tilesets.generateW3VramTilesAndAttributes
 	ld bc,$4d04
-	call _func_70f7
+	call func_70f7
 	xor a
 	ld ($ff00+R_SVBK),a
 	call reloadTileMap
@@ -2107,9 +2107,9 @@ _wallRetraction_dungeon8:
 	ld a,(hl)
 	cp $0b
 	ret c
-	jr _func_7098
+	jr func_7098
 	
-_func_70f7:
+func_70f7:
 	ld a,c
 	ldh (<hFF8C),a
 	ld a,b
@@ -2136,11 +2136,11 @@ _func_70f7:
 	push hl
 	ld c,d
 	ld de,$d000
-	call _func_712f
+	call func_712f
 	pop hl
 	set 2,h
 	ld de,$d400
-_func_712f:
+func_712f:
 	ldh a,(<hFF93)
 	ld c,a
 	ld a,$14
@@ -2171,18 +2171,18 @@ _func_712f:
 	ret
 	
 
-_d2Collapse_decCBB4:
+d2Collapse_decCBB4:
 	ld hl,wTmpcbb4
 	dec (hl)
 	ret nz
 	ret
 
-_d2Collapse_incState:
+d2Collapse_incState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
 
-_d2Collapse_incCBB3:
+d2Collapse_incCBB3:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
@@ -2209,12 +2209,12 @@ func_7168:
 	ld (wScrollMode),a
 	ld a,$3c
 	ld (wTmpcbb4),a
-	call _d2Collapse_incState
+	call d2Collapse_incState
 	jp reloadTileMap
 @state1:
-	call _d2Collapse_decCBB4
+	call d2Collapse_decCBB4
 	ret nz
-	call _d2Collapse_incState
+	call d2Collapse_incState
 	call getFreeInteractionSlot
 	jr nz,+
 	ld (hl),INTERACID_97
@@ -2228,7 +2228,7 @@ func_7168:
 @state2:
 	ld a,$0f
 	call setScreenShakeCounter
-	call _func_stub
+	call func_stub
 	ld a,(wTmpcbb3)
 	rst_jumpTable
 	.dw @cbb3_00
@@ -2246,11 +2246,11 @@ func_7168:
 	call playSound
 	ld a,$1e
 	ld (wTmpcbb4),a
-	jp _d2Collapse_incCBB3
+	jp d2Collapse_incCBB3
 @cbb3_01:
 	ld b,$51
 --
-	call _d2Collapse_decCBB4
+	call d2Collapse_decCBB4
 	ret nz
 	ld (hl),$1e
 	ld a,b
@@ -2260,17 +2260,17 @@ func_7168:
 	ld b,$52
 	jr --
 @cbb3_03:
-	call _d2Collapse_decCBB4
+	call d2Collapse_decCBB4
 	ret nz
 	callab roomGfxChanges.drawCollapsedWingDungeon
 	call @func_71d0
 	ld a,$3c
 	ld (wTmpcbb4),a
-	jp _d2Collapse_incState
+	jp d2Collapse_incState
 @state3:
-	call _d2Collapse_decCBB4
+	call d2Collapse_decCBB4
 	ret nz
-	jp _d2Collapse_incState
+	jp d2Collapse_incState
 @state4:
 	ld a,CUTSCENE_INGAME
 	ld (wCutsceneIndex),a
@@ -2283,7 +2283,7 @@ func_7168:
 	ld (wMenuDisabled),a
 	ld a,(wActiveMusic)
 	jp playSound
-_func_stub:
+func_stub:
 	ret
 
 
@@ -2291,18 +2291,18 @@ _func_stub:
 	.db $00 $01 $00 $00
 
 
-_timewarpCutscene_decCBB4:
+timewarpCutscene_decCBB4:
 	ld hl,wTmpcbb4
 	dec (hl)
 	ret nz
 	ret
 
-_timewarpCutscene_incState:
+timewarpCutscene_incState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
 
-_timewarpCutscene_incCBB3:
+timewarpCutscene_incCBB3:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
@@ -2320,7 +2320,7 @@ func_03_7244:
 	ld b,$10
 	ld hl,wTmpcbb3
 	call clearMemory
-	call _timewarpCutscene_incState
+	call timewarpCutscene_incState
 	call stopTextThread
 	xor a
 	ld hl,wLoadedTreeGfxActive
@@ -2357,9 +2357,9 @@ func_03_7244:
 @@cbb3_00:
 	ld hl,$d000
 --
-	call _func_7431
-	call _func_745c
-	jr _timewarpCutscene_incCBB3
+	call func_7431
+	call func_745c
+	jr timewarpCutscene_incCBB3
 @@cbb3_01:
 	ld hl,$d400
 	jr --
@@ -2371,13 +2371,13 @@ func_03_7244:
 	jr --
 @@cbb3_04:
 	ld hl,$d000
-	call _func_7431
-	call _func_7456
-	jp _timewarpCutscene_incCBB3
+	call func_7431
+	call func_7456
+	jp timewarpCutscene_incCBB3
 @@cbb3_05:
 	ld hl,$d400
-	call _func_7431
-	call _func_7450
+	call func_7431
+	call func_7450
 	ld hl,$cbb7
 	dec (hl)
 	jr z,@@func_72ec
@@ -2406,7 +2406,7 @@ func_03_7244:
 	ld ($cc20),a
 	ld hl,wTmpcbb3
 	ld (hl),$00
-	jp _timewarpCutscene_incState
+	jp timewarpCutscene_incState
 
 @state2:
 	ld a,(wTmpcbb3)
@@ -2431,7 +2431,7 @@ func_03_7244:
 	ld hl,$dc00
 	call clearMemoryBc
 	call reloadTileMap
-	jp _timewarpCutscene_incCBB3
+	jp timewarpCutscene_incCBB3
 @@cbb3_01:
 	call getFreeInteractionSlot
 	ld (hl),INTERACID_TIMEWARP
@@ -2450,9 +2450,9 @@ func_03_7244:
 	ld (wcc50),a
 	ld a,SND_TIMEWARP_INITIATED
 	call playSound
-	jp _timewarpCutscene_incCBB3
+	jp timewarpCutscene_incCBB3
 @@cbb3_02:
-	call _timewarpCutscene_decCBB4
+	call timewarpCutscene_decCBB4
 	ret nz
 	ld (hl),$3c
 	call getFreeInteractionSlot
@@ -2468,18 +2468,18 @@ func_03_7244:
 	ld (wTmpcbb9),a
 	ld de,$d000
 	call objectDelete_de
-	jp _timewarpCutscene_incCBB3
+	jp timewarpCutscene_incCBB3
 @@cbb3_03:
-	call _timewarpCutscene_decCBB4
+	call timewarpCutscene_decCBB4
 	ret nz
 	call fastFadeinFromBlack
-	jp _timewarpCutscene_incCBB3
+	jp timewarpCutscene_incCBB3
 @@cbb3_04:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	call fadeoutToWhite
-	jp _timewarpCutscene_incState
+	jp timewarpCutscene_incState
 
 @state3:
 	ld a,(wcddf)
@@ -2540,11 +2540,11 @@ func_03_7244:
 	dbrev %00000000 %00000000
 	dbrev %00000000 %00000000
 
-_func_7431:
+func_7431:
 	push hl
 	ld a,($cbb8)
 	and $07
-	ld hl,_table_7440
+	ld hl,table_7440
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld e,(hl)
@@ -2552,7 +2552,7 @@ _func_7431:
 	pop hl
 	ret
 
-_table_7440:
+table_7440:
 	.db $dd $ff
 	.db $dd $bb
 	.db $55 $bb
@@ -2562,17 +2562,17 @@ _table_7440:
 	.db $00 $88
 	.db $00 $00
 
-_func_7450:
+func_7450:
 	ld b,$2f
 	ld c,$06
 	jr ++
 
-_func_7456:
+func_7456:
 	ld b,$3f
 	ld c,$06
 	jr ++
 
-_func_745c:
+func_745c:
 	ld b,$3f
 	ld c,$05
 ++
@@ -2607,18 +2607,18 @@ _func_745c:
 	jp queueDmaTransfer
 
 
-_ambiPassageOpen_decCBB4:
+ambiPassageOpen_decCBB4:
 	ld hl,wTmpcbb4
 	dec (hl)
 	ret nz
 	ret
 	
-_ambiPassageOpen_incState:
+ambiPassageOpen_incState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
 	
-_ambiPassageOpen_incCBB3:
+ambiPassageOpen_incCBB3:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
@@ -2640,7 +2640,7 @@ func_03_7493:
 	call clearMemory
 	ld a,$3c
 	ld (wTmpcbb4),a
-	call _ambiPassageOpen_incState
+	call ambiPassageOpen_incState
 	call disableLcd
 	call clearOam
 	call clearScreenVariablesAndWramBank1
@@ -2664,7 +2664,7 @@ func_03_7493:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _ambiPassageOpen_decCBB4
+	call ambiPassageOpen_decCBB4
 	ret nz
 	ld (hl),$3e
 	ld a,(wTmpcbbd)
@@ -2685,7 +2685,7 @@ func_03_7493:
 	dec (hl)
 	ld l,Interaction.var30
 	ld (hl),c
-	jp _ambiPassageOpen_incCBB3
+	jp ambiPassageOpen_incCBB3
 
 @table_7513:
 	.db $33 $10
@@ -2693,14 +2693,14 @@ func_03_7493:
 	.db $35 $10
 	.db $36 $00
 @cbb3_01:
-	call _ambiPassageOpen_decCBB4
+	call ambiPassageOpen_decCBB4
 	ret nz
 	ld (hl),$1e
 	ld a,SND_SOLVEPUZZLE
 	call playSound
-	jp _ambiPassageOpen_incState
+	jp ambiPassageOpen_incState
 @state2:
-	call _ambiPassageOpen_decCBB4
+	call ambiPassageOpen_decCBB4
 	ret nz
 	call getThisRoomFlags
 	ld a,(wTmpcbbb)
@@ -2719,18 +2719,18 @@ func_03_7493:
 	ld (wMenuDisabled),a
 	jp fadeoutToWhite
 	
-_jabuOpen_decCBB4:
+jabuOpen_decCBB4:
 	ld hl,wTmpcbb4
 	dec (hl)
 	ret nz
 	ret
 	
-_jabuOpen_incState:
+jabuOpen_incState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
 	
-_jabuOpen_incCBB3:
+jabuOpen_incCBB3:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
@@ -2754,7 +2754,7 @@ func_03_7565:
 	ld (wTmpcbb4),a
 	xor a
 	ld (wScrollMode),a
-	jr _jabuOpen_incState
+	jr jabuOpen_incState
 @state1:
 	ld a,(wTmpcbb3)
 	rst_jumpTable
@@ -2763,24 +2763,24 @@ func_03_7565:
 	.dw @cbb3_02
 	.dw @cbb3_03
 @cbb3_00:
-	call _jabuOpen_decCBB4
+	call jabuOpen_decCBB4
 	ret nz
 	ld (hl),$3c
 	call reloadTileMap
 	callab bank1.checkInitUnderwaterWaves
-	jr _jabuOpen_incCBB3
+	jr jabuOpen_incCBB3
 @cbb3_01:
-	call _jabuOpen_decCBB4
+	call jabuOpen_decCBB4
 	ret nz
 	ld (hl),$3c
-	jr _jabuOpen_incCBB3
+	jr jabuOpen_incCBB3
 @cbb3_02:
 	ld a,$3c
 	call setScreenShakeCounter
-	call _jabuOpen_decCBB4
+	call jabuOpen_decCBB4
 	ret nz
 	ld (hl),$3c
-	call _jabuOpen_incCBB3
+	call jabuOpen_incCBB3
 	ldbc, INTERACID_97 $01
 	call objectCreateInteraction
 	ld a,$74
@@ -2792,14 +2792,14 @@ func_03_7565:
 @cbb3_03:
 	ld a,$3c
 	call setScreenShakeCounter
-	call _jabuOpen_decCBB4
+	call jabuOpen_decCBB4
 	ret nz
 	ld (hl),$3c
-	call _jabuOpen_incState
+	call jabuOpen_incState
 	ld a,$75
 	jr --
 @state2:
-	call _jabuOpen_decCBB4
+	call jabuOpen_decCBB4
 	ret nz
 	ld a,SND_SOLVEPUZZLE
 	call playSound
@@ -2814,18 +2814,18 @@ func_03_7565:
 	jp loadRoomCollisions
 	
 	
-_cleanSeas_decCBB4:
+cleanSeas_decCBB4:
 	ld hl,wTmpcbb4
 	dec (hl)
 	ret nz
 	ret
 	
-_cleanSeas_incState:
+cleanSeas_incState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
 	
-_cleanSeas_incCBB3:
+cleanSeas_incCBB3:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
@@ -2853,7 +2853,7 @@ func_03_7619:
 	call refreshObjectGfx
 	ld a,MUS_FAIRY_FOUNTAIN
 	call playSound
-	call _cleanSeas_incState
+	call cleanSeas_incState
 	xor a
 	ld bc, ROOM_AGES_1a5
 @func_764a:
@@ -2888,7 +2888,7 @@ func_03_7619:
 	ret nz
 	ld a,$f0
 	ld (wTmpcbb4),a
-	jp _cleanSeas_incCBB3
+	jp cleanSeas_incCBB3
 @@cbb3_01:
 	ld a,(wFrameCounter)
 	and $07
@@ -2906,36 +2906,36 @@ func_03_7619:
 	and $1f
 	ld a,SND_MAGIC_POWDER
 	call z,playSound
-	call _cleanSeas_decCBB4
+	call cleanSeas_decCBB4
 	ret nz
 	ld (hl),$78
 	ld a,$04
 	call fadeoutToWhiteWithDelay
 	ld a,SND_FADEOUT
 	call playSound
-	jp _cleanSeas_incCBB3
+	jp cleanSeas_incCBB3
 @@cbb3_02:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _func_782a
-	call _func_782a
-	call _func_782a
-	call _func_782a
+	call func_782a
+	call func_782a
+	call func_782a
+	call func_782a
 	ret z
 	ld a,$04
 	call fadeinFromWhiteWithDelay
 	ld a,SND_FAIRYCUTSCENE
 	call playSound
-	jp _cleanSeas_incCBB3
+	jp cleanSeas_incCBB3
 @@cbb3_03:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cleanSeas_decCBB4
+	call cleanSeas_decCBB4
 	ret nz
 	ld (hl),$3c
-	call _cleanSeas_incState
+	call cleanSeas_incState
 	xor a
 	ld (wTmpcbb3),a
 	ld bc, ROOM_AGES_1d2
@@ -2951,10 +2951,10 @@ func_03_7619:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cleanSeas_decCBB4
+	call cleanSeas_decCBB4
 	ret nz
 	ld (hl),$3c
-	call _cleanSeas_incState
+	call cleanSeas_incState
 	xor a
 	ld (wTmpcbb3),a
 	ld bc, ROOM_AGES_3b1
@@ -2976,7 +2976,7 @@ func_03_7619:
 	bit 7,(hl)
 	ret z
 	res 7,(hl)
-	call _cleanSeas_incState
+	call cleanSeas_incState
 	xor a
 	ld (wTmpcbb3),a
 	ld a,$3c
@@ -3001,7 +3001,7 @@ func_03_7619:
 	ret z
 	ld a,$3c
 	ld (wTmpcbb4),a
-	call _cleanSeas_incState
+	call cleanSeas_incState
 	xor a
 	ld (wTmpcbb3),a
 	ld bc, ROOM_AGES_1a3
@@ -3046,9 +3046,9 @@ func_03_7619:
 	ld (wTmpcbb4),a
 	ld a,SND_SOLVEPUZZLE_2
 	call playSound
-	jp _cleanSeas_incState
+	jp cleanSeas_incState
 @state6:
-	call _cleanSeas_decCBB4
+	call cleanSeas_decCBB4
 	ret nz
 	ld a,$01
 	ld (wScrollMode),a
@@ -3075,7 +3075,7 @@ func_03_7619:
 	call setGlobalFlag
 	jp setDeathRespawnPoint
 	
-_func_782a:
+func_782a:
 	ld a,$eb
 	call findTileInRoom
 	ret nz
@@ -3092,7 +3092,7 @@ _func_782a:
 
 .include "code/ages/cutscenes/linkedGameCutscenes.s"
 
-_blackTowerEscapeAttempt_incState:
+blackTowerEscapeAttempt_incState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
@@ -3102,12 +3102,12 @@ _blackTowerEscapeAttempt_incState:
 	inc (hl)
 	ret
 
-_blackTowerEscapeAttempt_decCBB4:
+blackTowerEscapeAttempt_decCBB4:
 	ld hl,wTmpcbb4
 	dec (hl)
 	ret
 
-_blackTowerEscapeAttempt_loadNewRoom:
+blackTowerEscapeAttempt_loadNewRoom:
 	call disableLcd
 	call loadScreenMusicAndSetRoomPack
 	call loadTilesetData
@@ -3140,7 +3140,7 @@ func_03_7cb7:
 	ld (wMenuDisabled),a
 	ld a,$3c
 	ld (wTmpcbb4),a
-	call _blackTowerEscapeAttempt_incState
+	call blackTowerEscapeAttempt_incState
 	ld hl,w1Link.enabled
 	ld (hl),$03
 	ld l,<w1Link.yh
@@ -3161,7 +3161,7 @@ func_03_7cb7:
 	ld a,(wTmpcbb5)
 	cp $04
 	ret nz
-	call _blackTowerEscapeAttempt_decCBB4
+	call blackTowerEscapeAttempt_decCBB4
 	jr z,@func_7d33
 	ld a,(hl)
 	cp $01
@@ -3175,7 +3175,7 @@ func_03_7cb7:
 	ret
 @func_7d33:
 	ld (hl),$10
-	call _blackTowerEscapeAttempt_incState
+	call blackTowerEscapeAttempt_incState
 	ld a,$04
 	jp fadeoutToWhiteWithDelay
 @state2:
@@ -3184,10 +3184,10 @@ func_03_7cb7:
 	ret nz
 	ld a,SNDCTRL_STOPMUSIC
 	call playSound
-	call _blackTowerEscapeAttempt_incState
+	call blackTowerEscapeAttempt_incState
 	ld a,$f3
 	ld (wActiveRoom),a
-	call _blackTowerEscapeAttempt_loadNewRoom
+	call blackTowerEscapeAttempt_loadNewRoom
 	ld hl,w1Link.yh
 	ld (hl),$78
 	inc l
@@ -3209,7 +3209,7 @@ func_03_7cb7:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _blackTowerEscapeAttempt_decCBB4
+	call blackTowerEscapeAttempt_decCBB4
 	ret nz
 	ld a,$0b
 	ld (wLinkForceState),a
@@ -3217,12 +3217,12 @@ func_03_7cb7:
 	ld (wLinkStateParameter),a
 	ld a,$10
 	ld ($d009),a
-	jp _blackTowerEscapeAttempt_incState
+	jp blackTowerEscapeAttempt_incState
 @state4:
 	ld a,(wTmpcbb5)
 	cp $06
 	ret nz
-	call _func_7e40
+	call func_7e40
 	ld a,(wScreenShakeCounterY)
 	dec a
 	jr z,@func_7dbc
@@ -3259,10 +3259,10 @@ func_03_7cb7:
 	ld (hl),a
 	ld a,SND_CLINK
 	call playSound
-	call _blackTowerEscapeAttempt_incState
+	call blackTowerEscapeAttempt_incState
 @state5:
-	call _func_7e40
-	call _blackTowerEscapeAttempt_decCBB4
+	call func_7e40
+	call blackTowerEscapeAttempt_decCBB4
 	ret nz
 	ld a,$0b
 	ld (wLinkForceState),a
@@ -3289,9 +3289,9 @@ func_03_7cb7:
 	ld a,(w1Link.xh)
 	inc l
 	ld (hl),a
-	jp _blackTowerEscapeAttempt_incState
+	jp blackTowerEscapeAttempt_incState
 @state6:
-	call _func_7e40
+	call func_7e40
 	ld a,(wTmpcbb5)
 	cp $08
 	ret nz
@@ -3307,7 +3307,7 @@ func_03_7cb7:
 @warpDest:
 	m_HardcodedWarpA ROOM_AGES_5d7, $05, $77, $03
 
-_func_7e40:
+func_7e40:
 	ld a,(wScreenShakeCounterY)
 	and $0f
 	ld a,SND_RUMBLE

@@ -4,7 +4,7 @@
 D3spawnPitSpreader:
 	; Part $0a, subid $00, yh $72
 	ld bc,$0072
-	jp _spawnPitSpreader
+	jp spawnPitSpreader
 
 
 D3StatuePuzzleCheck:
@@ -37,14 +37,14 @@ D3StatuePuzzleCheck:
 	ret
 
 
-_solvedPuzzleSetRoomFlag07:
+solvedPuzzleSetRoomFlag07:
 	call getThisRoomFlags
 	set 7,(hl)
 	ld a,SND_SOLVEPUZZLE
 	jp playSound
 
 
-_createBridgeSpawner:
+createBridgeSpawner:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_BRIDGE_SPAWNER
@@ -58,10 +58,10 @@ _createBridgeSpawner:
 
 
 D4spawnBridgeB2:
-	call _solvedPuzzleSetRoomFlag07
+	call solvedPuzzleSetRoomFlag07
 	ld bc,$0601
 	ld e,$59
-	jp _createBridgeSpawner
+	jp createBridgeSpawner
 
 
 D7spawnDarknutBridge:
@@ -69,31 +69,31 @@ D7spawnDarknutBridge:
 	call playSound
 	ld bc,$0801
 	ld e,$77
-	jp _createBridgeSpawner
+	jp createBridgeSpawner
 
 
 D8VerticalBridgeUnlockedByOrb:
-	call _solvedPuzzleSetRoomFlag07
+	call solvedPuzzleSetRoomFlag07
 	ld bc,$0c02
 	ld e,$3c
-	jp _createBridgeSpawner
+	jp createBridgeSpawner
 
 
 D8VerticalBridgeInLava:
-	call _solvedPuzzleSetRoomFlag07
+	call solvedPuzzleSetRoomFlag07
 	ld bc,$0e00
 	ld e,$7b
-	jp _createBridgeSpawner
+	jp createBridgeSpawner
 
 
 D8HorizontalBridgeByMoldorms:
-	call _solvedPuzzleSetRoomFlag07
+	call solvedPuzzleSetRoomFlag07
 	ld bc,$0e03
 	ld e,$88
-	jp _createBridgeSpawner
+	jp createBridgeSpawner
 
 
-_spawnPitSpreader:
+spawnPitSpreader:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_HOLES_FLOORTRAP
@@ -132,19 +132,19 @@ D6setFlagBit7InRoomWithLowIndexInAngle:
 	ld e,Interaction.angle
 	ld a,(de)
 	ld l,a
-	jr _setFlagBit7InRoomLowIndexInL
+	jr setFlagBit7InRoomLowIndexInL
 
 
 D6setFlagBit7InFirst4FRoom:
 	ld l,<ROOM_SEASONS_4d4
-	jr _setFlagBit7InRoomLowIndexInL
+	jr setFlagBit7InRoomLowIndexInL
 
 
 D6setFlagBit7InLast4FRoom:
 	ld l,<ROOM_SEASONS_4d3
 
 
-_setFlagBit7InRoomLowIndexInL:
+setFlagBit7InRoomLowIndexInL:
 	ld a,(wDungeonFlagsAddressH)
 	ld h,a
 	set 7,(hl)
@@ -176,7 +176,7 @@ D6spawnFloorDestroyerAndEscapeBridge:
 
 	ld bc,$0603
 	ld e,$14
-	jp _createBridgeSpawner
+	jp createBridgeSpawner
 
 
 D6spawnChestAfterCrystalTrapRoom_body:
@@ -335,7 +335,7 @@ D8SpawnLimitedFireKeese:
 	or a
 	ret nz
 	ld b,ENEMYID_FIRE_KEESE
-	call _countFireKeese
+	call countFireKeese
 	cp $04
 	ret nc
 	call getRandomNumber
@@ -349,7 +349,7 @@ D8SpawnLimitedFireKeese:
 	jp objectCopyPosition
 
 
-_countFireKeese:
+countFireKeese:
 	ld c,$00
 	ld hl,$d080
 -
@@ -464,16 +464,16 @@ D8createFiresGoingOut:
 	call findTileInRoom
 	ret nz
 
-	call _createLightableTorches
+	call createLightableTorches
 -
 	ld a,TILEINDEX_UNLIT_TORCH
 	call backwardsSearch
 	ret nz
-	call _createLightableTorches
+	call createLightableTorches
 	jr -
 
 
-_createLightableTorches:
+createLightableTorches:
 	push hl
 	ld c,l
 	call getFreePartSlot
@@ -1372,7 +1372,7 @@ headSmelter_loseBombFlower:
 headSmelter_loadHideFromBombScript:
 	ld hl,$cfde
 	ld bc,mainScripts.headSmelterAtTempleScript_hideFromBomb
-	jr _headSmelter_loadScriptIntoWram
+	jr headSmelter_loadScriptIntoWram
 
 headSmelter_loadDanceMovements:
 	ld a,$0b
@@ -1387,11 +1387,11 @@ headSmelter_loadDanceMovements:
 	ld (hl),ANGLE_DOWN
 	ld hl,$cfde
 	ld bc,mainScripts.headSmelterScript_danceMovementText1
-	call _headSmelter_loadScriptIntoWram
+	call headSmelter_loadScriptIntoWram
 	ld hl,$cfdc
 	ld bc,mainScripts.headSmelterScript_danceMovementText2
 
-_headSmelter_loadScriptIntoWram:
+headSmelter_loadScriptIntoWram:
 	ldi a,(hl)
 	ld l,(hl)
 	ld h,a
@@ -1604,7 +1604,7 @@ blainoScript_setBlainoPosition:
 	call clearEnemies
 	pop de
 	ld bc,$4040
-	call _spawnBlainoAtPosition
+	call spawnBlainoAtPosition
 	ret nz
 	ld l,Interaction.yh
 	ld b,(hl)
@@ -1620,7 +1620,7 @@ blainoScript_setBlainoPosition:
 
 blainoScript_spawnBlaino:
 	ld bc,$4050
-_spawnBlainoAtPosition:
+spawnBlainoAtPosition:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_BLAINO
@@ -1842,31 +1842,31 @@ strangeBrothersFunc_15_5dc4:
 	call incHlRefWithCap
 	call getThisRoomFlags
 	bit 5,(hl)
-	jr nz,_strangeBrothersFunc_15_5ddb
+	jr nz,strangeBrothersFunc_15_5ddb
 	ldbc TREASURE_FEATHER $02
-	jr _strangeBrothersFunc_15_5e00
+	jr strangeBrothersFunc_15_5e00
 	
-_strangeBrothersFunc_15_5ddb:
+strangeBrothersFunc_15_5ddb:
 	ld a,(wNumTimesPlayedStrangeBrothersGame)
 	cp $08
-	jr z,_strangeBrothersFunc_15_5dee
+	jr z,strangeBrothersFunc_15_5dee
 	call getRandomNumber
 	cp $60
-	jr nc,_strangeBrothersFunc_15_5e13
+	jr nc,strangeBrothersFunc_15_5e13
 --
 	ldbc TREASURE_GASHA_SEED $02
-	jr _strangeBrothersFunc_15_5e00
+	jr strangeBrothersFunc_15_5e00
 	
-_strangeBrothersFunc_15_5dee:
+strangeBrothersFunc_15_5dee:
 	call seasonsFunc_15_5e20
 	jr c,--
 	ld c,$03
 	call createRingTreasure
-	call _strangeBrothersFunc_15_5e0a
+	call strangeBrothersFunc_15_5e0a
 	ld a,GLOBALFLAG_S_14
 	jp setGlobalFlag
 
-_strangeBrothersFunc_15_5e00:
+strangeBrothersFunc_15_5e00:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_TREASURE
@@ -1874,7 +1874,7 @@ _strangeBrothersFunc_15_5e00:
 	ld (hl),b
 	inc l
 	ld (hl),c
-_strangeBrothersFunc_15_5e0a:
+strangeBrothersFunc_15_5e0a:
 	ld l,Interaction.yh
 	ld (hl),$48
 	inc l
@@ -1882,7 +1882,7 @@ _strangeBrothersFunc_15_5e0a:
 	ld (hl),$28
 	ret
 
-_strangeBrothersFunc_15_5e13:
+strangeBrothersFunc_15_5e13:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_S_MISCELLANEOUS_1
@@ -1890,7 +1890,7 @@ _strangeBrothersFunc_15_5e13:
 	ld (hl),$09
 	inc l
 	inc (hl)
-	jr _strangeBrothersFunc_15_5e0a
+	jr strangeBrothersFunc_15_5e0a
 
 seasonsFunc_15_5e20:
 	call getRandomNumber
@@ -1958,10 +1958,10 @@ stealingFeather_putLinkOnGround:
 stealingFeather_spawnStrangeBrothers:
 	ld bc,$30a8
 	ld e,$10
-	call _func_5e82
+	call func_5e82
 	ld bc,$34b8
 	ld e,$11
-_func_5e82:
+func_5e82:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_S_SUBROSIAN
@@ -2066,23 +2066,23 @@ trampoline_bounce:
 	xor $0f
 	ldh (<hFF8C),a
 	ld a,(wActiveGroup)
-	ld hl,_trampoline_group4Warps
+	ld hl,trampoline_group4Warps
 	cp $04
 	jr z,+
-	ld hl,_trampoline_group5Warps
+	ld hl,trampoline_group5Warps
 +
 	ld a,(wActiveRoom)
 	ld e,a
 -
 	ldi a,(hl)
 	or a
-	jr z,_trampoline_couldntFindRoom
+	jr z,trampoline_couldntFindRoom
 	cp e
-	jr z,_trampoline_foundRoom
+	jr z,trampoline_foundRoom
 	inc hl
 	inc hl
 	jr -
-_trampoline_foundRoom:
+trampoline_foundRoom:
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
@@ -2115,31 +2115,31 @@ _trampoline_foundRoom:
 	ld a,c
 	ld ($cc6b),a
 	ret
-_trampoline_couldntFindRoom:
+trampoline_couldntFindRoom:
 	ld a,$03
 	ld ($cc6b),a
 	ret
 
-_trampoline_group4Warps:
-	dbw $3e _trampoline_group4Room3e
-	dbw $3f _trampoline_group4Room3f
-	dbw $43 _trampoline_group4Room43
-	dbw $b4 _trampoline_group4Roomb4
-	dbw $c1 _trampoline_group4Roomc1
-	dbw $c2 _trampoline_group4Roomc2
-	dbw $d3 _trampoline_group4Roomd3
+trampoline_group4Warps:
+	dbw $3e trampoline_group4Room3e
+	dbw $3f trampoline_group4Room3f
+	dbw $43 trampoline_group4Room43
+	dbw $b4 trampoline_group4Roomb4
+	dbw $c1 trampoline_group4Roomc1
+	dbw $c2 trampoline_group4Roomc2
+	dbw $d3 trampoline_group4Roomd3
 	.db $00
 
-_trampoline_group5Warps:
-	dbw $37 _trampoline_group5Room37
-	dbw $38 _trampoline_group5Room38
-	dbw $3a _trampoline_group5Room3a
-	dbw $45 _trampoline_group5Room45
-	dbw $49 _trampoline_group5Room49
-	dbw $4d _trampoline_group5Room4d
+trampoline_group5Warps:
+	dbw $37 trampoline_group5Room37
+	dbw $38 trampoline_group5Room38
+	dbw $3a trampoline_group5Room3a
+	dbw $45 trampoline_group5Room45
+	dbw $49 trampoline_group5Room49
+	dbw $4d trampoline_group5Room4d
 	.db $00
 
-_trampoline_group4Room3e:
+trampoline_group4Room3e:
 	.dw %1111111111111111
 	.dw %1111111111111111
 	.dw %1111111111111111
@@ -2152,7 +2152,7 @@ _trampoline_group4Room3e:
 	.dw %1111111111111111
 	.dw %1111111111111111
 
-_trampoline_group4Room3f:
+trampoline_group4Room3f:
 	.dw %1111111111111111
 	.dw %1111111111111111
 	.dw %1111111111111111
@@ -2165,7 +2165,7 @@ _trampoline_group4Room3f:
 	.dw %1111111111111111
 	.dw %1111111111111111
 
-_trampoline_group4Room43:
+trampoline_group4Room43:
 	.dw %1111111111111111
 	.dw %1111111111111111
 	.dw %1111111111111111
@@ -2178,7 +2178,7 @@ _trampoline_group4Room43:
 	.dw %1111111111111111
 	.dw %1111111111111111
 
-_trampoline_group4Roomb4:
+trampoline_group4Roomb4:
 	.dw %1111111111111111
 	.dw %1001111111111111
 	.dw %1011111111111111
@@ -2191,7 +2191,7 @@ _trampoline_group4Roomb4:
 	.dw %1111111111111111
 	.dw %1111111111111111
 
-_trampoline_group4Roomc1:
+trampoline_group4Roomc1:
 	.dw %1111111111111111
 	.dw %1111111111100011
 	.dw %1111111111100011
@@ -2204,7 +2204,7 @@ _trampoline_group4Roomc1:
 	.dw %1111111111111111
 	.dw %1111111111111111
 
-_trampoline_group4Roomc2:
+trampoline_group4Roomc2:
 	.dw %1111111111111111
 	.dw %1111111111111111
 	.dw %1111111111111111
@@ -2217,7 +2217,7 @@ _trampoline_group4Roomc2:
 	.dw %1001111111001111
 	.dw %1111111111111111
 
-_trampoline_group4Roomd3:
+trampoline_group4Roomd3:
 	.dw %1111111111111111
 	.dw %1111111111111111
 	.dw %1111111111111111
@@ -2230,7 +2230,7 @@ _trampoline_group4Roomd3:
 	.dw %1111110001100111
 	.dw %1111111111111111
 
-_trampoline_group5Room37:
+trampoline_group5Room37:
 	.dw %1111111111111111
 	.dw %1111111111110011
 	.dw %1111111111110011
@@ -2243,7 +2243,7 @@ _trampoline_group5Room37:
 	.dw %1111111111110011
 	.dw %1111111111111111
 
-_trampoline_group5Room38:
+trampoline_group5Room38:
 	.dw %1111111111111111
 	.dw %1111111100011111
 	.dw %1111111111111111
@@ -2268,7 +2268,7 @@ _trampoline_group5Room38:
 	.dw %1111111111111111
 	.dw %1111111111111111
 
-_trampoline_group5Room3a:
+trampoline_group5Room3a:
 	.dw %1111111111111111
 	.dw %1111111111111111
 	.dw %1111000000011111
@@ -2293,7 +2293,7 @@ _trampoline_group5Room3a:
 	.dw %1111111111111111
 	.dw %1111111111111111
 
-_trampoline_group5Room45:
+trampoline_group5Room45:
 	.dw %1111111111111111
 	.dw %1111111111111111
 	.dw %1111011111111111
@@ -2306,7 +2306,7 @@ _trampoline_group5Room45:
 	.dw %1000000111111111
 	.dw %1111111111111111
 
-_trampoline_group5Room49:
+trampoline_group5Room49:
 	.dw %1111111111111111
 	.dw %1000111111111111
 	.dw %1111111111111111
@@ -2319,7 +2319,7 @@ _trampoline_group5Room49:
 	.dw %1111111111111111
 	.dw %1111111111111111
 
-_trampoline_group5Room4d:
+trampoline_group5Room4d:
 	.dw %1111111111111111
 	.dw %1111111111111111
 	.dw %1111111111111111
@@ -2350,11 +2350,11 @@ makuTree_showTextAndSetMapTextBasedOnStage:
 	jr +
 
 makuTree_showTextAndSetMapText:
-	call _makuTree_setMapText
+	call makuTree_setMapText
 	jr +
 
 makuTree_showText:
-	call _makuTree_add1bToLowTextIfLinked
+	call makuTree_add1bToLowTextIfLinked
 +
 	ld b,>TX_1700
 	jp showText
@@ -2364,13 +2364,13 @@ makuTree_setMapTextBasedOnStage:
 	ld hl,makuTreeTextIndices
 	rst_addAToHl
 	ld a,(hl)
-_makuTree_setMapText:
-	call _makuTree_add1bToLowTextIfLinked
+makuTree_setMapText:
+	call makuTree_add1bToLowTextIfLinked
 	ld hl,wMakuMapTextPresent
 	ld (hl),c
 	ret
 
-_makuTree_add1bToLowTextIfLinked:
+makuTree_add1bToLowTextIfLinked:
 	ld c,a
 	call checkIsLinkedGame
 	ret z
@@ -2388,7 +2388,7 @@ makuTreeTextIndices:
 makuTree_storeIntoVar37SpawnBubbleIf0:
 	cp $00
 	jr nz,+
-	call _makuTree_spawnBubble
+	call makuTree_spawnBubble
 	ld a,$00
 +
 	ld e,Interaction.var37
@@ -2422,7 +2422,7 @@ makuTree_dropGnarledKey:
 	ld (ws_c6e0),a
 	ret
 
-_makuTree_spawnBubble:
+makuTree_spawnBubble:
 	call getFreeEnemySlot
 	ret nz
 	ld (hl),ENEMYID_MAKU_TREE_BUBBLE
@@ -2482,7 +2482,7 @@ seasonsFunc_15_619a:
 ; INTERACID_JEWEL_HELPER
 ; ==============================================================================
 jewelHelper_createPuff:
-	ld bc,_table_61ca
+	ld bc,table_61ca
 	call addDoubleIndexToBc
 	call getFreeInteractionSlot
 	ret nz
@@ -2495,7 +2495,7 @@ jewelHelper_createPuff:
 	ld a,(bc)
 	ld (hl),a
 	ret
-_table_61ca:
+table_61ca:
 	.db $26 $26
 	.db $26 $30
 	.db $26 $3a
@@ -2564,7 +2564,7 @@ oldMan_takeRupees:
 	ld (de),a
 	ld e,$42
 	ld a,(de)
-	ld hl,_oldMan_rupeeValues
+	ld hl,oldMan_rupeeValues
 	rst_addAToHl
 	ld a,(hl)
 	jp removeRupeeValue
@@ -2572,13 +2572,13 @@ oldMan_takeRupees:
 oldMan_giveRupees:
 	ld e,$42
 	ld a,(de)
-	ld hl,_oldMan_rupeeValues
+	ld hl,oldMan_rupeeValues
 	rst_addAToHl
 	ld c,(hl)
 	ld a,$28
 	jp giveTreasure
 
-_oldMan_rupeeValues:
+oldMan_rupeeValues:
 	.db RUPEEVAL_300
 	.db RUPEEVAL_200
 	.db RUPEEVAL_100
@@ -2616,7 +2616,7 @@ samasaDesertGate_createNextPuff:
 	ld l,Interaction.var3e
 	ld a,(hl)
 	inc (hl)
-	ld bc,_samasaDesertGate_puffLocations
+	ld bc,samasaDesertGate_puffLocations
 	call addDoubleIndexToBc
 	call getFreeInteractionSlot
 	ret nz
@@ -2630,7 +2630,7 @@ samasaDesertGate_createNextPuff:
 	ld (hl),a
 	ret
 
-_samasaDesertGate_puffLocations:
+samasaDesertGate_puffLocations:
 	; yh - xh of puffs
 	.db $1e $2e
 	.db $1e $42
@@ -2910,22 +2910,22 @@ forceLinkState8AndSetDirection:
 ; INTERACID_ZELDA_KIDNAPPED_ROOM
 ; ==============================================================================
 zeldaKidnappedRoom_loadImpa:
-	ld bc,_zeldaKidnapped_impaData
-	jr _zeldaKidnapped_spawnInteraction
+	ld bc,zeldaKidnapped_impaData
+	jr zeldaKidnapped_spawnInteraction
 	
 zeldaKidnappedRoom_loadZeldaAndMoblins:
-	ld bc,_zeldaKidnapped_kingMoblinData
-	call _zeldaKidnapped_spawnInteraction
+	ld bc,zeldaKidnapped_kingMoblinData
+	call zeldaKidnapped_spawnInteraction
 	
-	ld bc,_zeldaKidnapped_zeldaData
-	call _zeldaKidnapped_spawnInteraction
+	ld bc,zeldaKidnapped_zeldaData
+	call zeldaKidnapped_spawnInteraction
 	
-	ld bc,_zeldaKidnapped_moblinData
-	call _zeldaKidnapped_spawnInteraction
-	call _zeldaKidnapped_spawnInteraction
-	call _zeldaKidnapped_spawnInteraction
+	ld bc,zeldaKidnapped_moblinData
+	call zeldaKidnapped_spawnInteraction
+	call zeldaKidnapped_spawnInteraction
+	call zeldaKidnapped_spawnInteraction
 	
-_zeldaKidnapped_spawnInteraction:
+zeldaKidnapped_spawnInteraction:
 	call getFreeInteractionSlot
 	ret nz
 	ld a,(bc)
@@ -2948,16 +2948,16 @@ _zeldaKidnapped_spawnInteraction:
 	ret
 
 ; id - subid - var03 - yh - xh
-_zeldaKidnapped_kingMoblinData:
+zeldaKidnapped_kingMoblinData:
 	.db INTERACID_KING_MOBLIN, $05 $00 $14 $50
 
-_zeldaKidnapped_zeldaData:
+zeldaKidnapped_zeldaData:
 	.db INTERACID_S_ZELDA,     $06 $00 $48 $50
 
-_zeldaKidnapped_impaData:
+zeldaKidnapped_impaData:
 	.db INTERACID_ba,          $03 $00 $88 $40
 
-_zeldaKidnapped_moblinData:
+zeldaKidnapped_moblinData:
 	.db INTERACID_S_MOBLIN,    $06 $00 $48 $38
 	.db INTERACID_S_MOBLIN,    $06 $01 $48 $68
 	.db INTERACID_S_MOBLIN,    $05 $02 $28 $30
@@ -3240,7 +3240,7 @@ dekuScrub_upgradeSatchel:
 	cp TREASURE_MYSTERY_SEEDS+1
 	jr c,-
 	ld a,(wSeedSatchelLevel)
-	ld hl,_table_65cf-1
+	ld hl,table_65cf-1
 	rst_addAToHl
 	ld b,(hl)
 	ld hl,wNumEmberSeeds
@@ -3256,5 +3256,5 @@ dekuScrub_upgradeSatchel:
 	ld l,Interaction.var38
 	ld (hl),$01
 	ret
-_table_65cf:
+table_65cf:
 	.db $20 $50 $99

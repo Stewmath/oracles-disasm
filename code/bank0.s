@@ -11782,7 +11782,6 @@ func_32fc:
 	jr _setDarkeningVariables
 
 ;;
-
 ; @param	a	Speed of darkening
 darkenRoomWithSpeed:
 	ld b,$f0

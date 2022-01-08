@@ -1909,7 +1909,7 @@ wLinkGrabState: ; $cc5a/$cc75
 
 wLinkGrabState2: ; $cc5b/$cc76
 ; bit 7: set when pulling a lever?
-; bits 4-6: weight of object (0-4 or 0-5?). (See _itemWeights.)
+; bits 4-6: weight of object (0-4 or 0-5?). (See itemWeights.)
 ; bits 0-3: should equal 0, 4, or 8; determines where the grabbed object is placed
 ;           relative to Link. (See "updateGrabbedObjectPosition".)
 	db
@@ -3517,7 +3517,7 @@ w7d0c1: ; $d0c1
 ; When bit 2 is set, an "\opt()" command has been encountered.
 ; When bit 3 is set, an option prompt has already been shown?
 ; When bit 4 is set, an extra text index will be shown when this text is done.
-; See _getExtraTextIndex.
+; See getExtraTextIndex.
 ; When bit 5 is set, it shows the heart icon like when you get a piece of heart.
 	db
 
@@ -3617,7 +3617,7 @@ w7TextboxOptionPositions: ; $d0e0
 ; This is 8 bytes. Each byte correspond to a position for an available option in the text prompt.
 ; The bytes can be written straight to w7TextboxMap as the indices for the tiles that would normally
 ; be in those positions. They can also be converted into an INDEX for w7TextboxMap with the
-; _getAddressInTextboxMap function.
+; getAddressInTextboxMap function.
 	dsb 8
 
 w7SelectedTextOption: ; $d0e8

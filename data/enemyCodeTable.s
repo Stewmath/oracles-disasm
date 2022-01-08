@@ -260,7 +260,7 @@ enemyCodeTable:
 .endif
 
 	; Could there be over 0x80 enemies? Things that would need to be changed:
-	; - _enemyGetObjectGfxIndex
+	; - enemyGetObjectGfxIndex
 	; - itemDropTables
 
 ;;

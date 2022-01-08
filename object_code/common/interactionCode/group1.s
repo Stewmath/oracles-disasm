@@ -900,7 +900,7 @@ interactionCode14:
 .else
 	ld a,(wActiveGroup)
 .endif
-	ld hl,_pushableTilePropertiesTable
+	ld hl,pushableTilePropertiesTable
 	rst_addAToHl
 	ld a,(hl)
 	rst_addAToHl
@@ -933,7 +933,7 @@ interactionCode14:
 	ret
 
 
-_pushableTilePropertiesTable:
+pushableTilePropertiesTable:
 	.db @collisions0-CADDR
 	.db @collisions1-CADDR
 	.db @collisions2-CADDR

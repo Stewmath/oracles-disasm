@@ -3,17 +3,17 @@
 ; Although the function names are the same in each bank, they won't cause conflicts
 ; because each bank is in its own namespace.
 ;
-; Function names are prefixed with "_ecom" to show they come from here.
+; Function names are prefixed with "ecom" to show they come from here.
 
 ;;
-_ecom_incState:
+ecom_incState:
 	ld h,d
 	ld l,Enemy.state
 	inc (hl)
 	ret
 
 ;;
-_ecom_incSubstate:
+ecom_incSubstate:
 	ld h,d
 	ld l,Enemy.substate
 	inc (hl)
@@ -21,12 +21,12 @@ _ecom_incSubstate:
 
 ;;
 ; Update knockback where solid tiles are defined "normally".
-_ecom_updateKnockback:
+ecom_updateKnockback:
 	xor a
 	ld e,Enemy.knockbackAngle
-	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle
+	call ecom_getSideviewAdjacentWallsBitsetGivenAngle
 
-_ecom_updateKnockback_common:
+ecom_updateKnockback_common:
 	ld a,(de)
 	ld c,a
 	ld e,Enemy.knockbackCounter
@@ -47,7 +47,7 @@ _ecom_updateKnockback_common:
 	call objectCreateInteraction
 	pop bc
 ++
-	call _ecom_applyGivenVelocityGivenAdjacentWalls
+	call ecom_applyGivenVelocityGivenAdjacentWalls
 	ret nz
 
 	; Enemy stopped moving; stop knockback early.
@@ -59,34 +59,34 @@ _ecom_updateKnockback_common:
 
 ;;
 ; Update knockback where the enemy can pass through anything except the screen boundary.
-_ecom_updateKnockbackNoSolidity:
+ecom_updateKnockbackNoSolidity:
 	ld a,$02
 	ld e,Enemy.knockbackAngle
-	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle
-	jr _ecom_updateKnockback_common
+	call ecom_getSideviewAdjacentWallsBitsetGivenAngle
+	jr ecom_updateKnockback_common
 
 ;;
-_ecom_updateKnockbackAndCheckHazardsNoAnimationsForHoles:
-	call _ecom_updateKnockback
-	call _ecom_checkHazardsNoAnimationForHoles
+ecom_updateKnockbackAndCheckHazardsNoAnimationsForHoles:
+	call ecom_updateKnockback
+	call ecom_checkHazardsNoAnimationForHoles
 	ret
 
 ;;
-; Like "_ecom_checkHazards", but the enemy doesn't animate when they fall into a hole.
+; Like "ecom_checkHazards", but the enemy doesn't animate when they fall into a hole.
 ; That is, they just get stuck on the last frame of their animation as they get sucked in.
-_ecom_checkHazardsNoAnimationForHoles:
+ecom_checkHazardsNoAnimationForHoles:
 	ldh (<hFF8F),a
 	xor a
 	ldh (<hFF8D),a
-	jr _ecom_checkHazardsCommon
+	jr ecom_checkHazardsCommon
 
 ;;
 ; Standard implementation of "enemy experiencing knockback" state?
 ; Also, doesn't "return from caller" if it fell in a hazard since it calls the
-; "_ecom_checkHazards" function instead of jumping to it.
-_ecom_updateKnockbackAndCheckHazards:
-	call _ecom_updateKnockback
-	call _ecom_checkHazards
+; "ecom_checkHazards" function instead of jumping to it.
+ecom_updateKnockbackAndCheckHazards:
+	call ecom_updateKnockback
+	call ecom_checkHazards
 	ret
 
 ;;
@@ -99,12 +99,12 @@ _ecom_updateKnockbackAndCheckHazards:
 ; @param	a	Returned 'c' value from enemyStandardUpdate
 ; @param[out]	zflag	z if returned 'a' is 0
 ; @param[out]	a	Same as passed in
-_ecom_checkHazards:
+ecom_checkHazards:
 	ldh (<hFF8F),a
 	ld a,$01
 	ldh (<hFF8D),a
 
-_ecom_checkHazardsCommon:
+ecom_checkHazardsCommon:
 	; If already touched a hazard, skip the checks below
 	ld e,Enemy.var3f
 	ld a,(de)
@@ -132,7 +132,7 @@ _ecom_checkHazardsCommon:
 	ld b,$01
 	jr c,@touchedHazard
 
-	call _ecom_updateMovingPlatform
+	call ecom_updateMovingPlatform
 
 @ret:
 	ldh a,(<hFF8F)
@@ -169,12 +169,12 @@ _ecom_checkHazardsCommon:
 	pop hl ; Discard return address (this enemy is about to be be deleted)
 	ld a,(de)
 	rrca
-	jr c,_ecom_makeSplashAndDelete
+	jr c,ecom_makeSplashAndDelete
 	rrca
-	jr c,_ecom_fallingInHole
-	jr _ecom_makeLavaSplashAndDelete
+	jr c,ecom_fallingInHole
+	jr ecom_makeLavaSplashAndDelete
 
-_enemyConveyorTilesTable:
+enemyConveyorTilesTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -214,29 +214,29 @@ _enemyConveyorTilesTable:
 .endif
 
 
-_ecom_makeSplashAndDelete:
+ecom_makeSplashAndDelete:
 	ld b,INTERACID_SPLASH
 	jr ++
 
-_ecom_makeLavaSplashAndDelete:
+ecom_makeLavaSplashAndDelete:
 	ld b,INTERACID_LAVASPLASH
 ++
 	call objectCreateInteractionWithSubid00
 
-_ecom_decNumEnemiesAndDelete:
+ecom_decNumEnemiesAndDelete:
 	call decNumEnemies
 	jp enemyDelete
 
-_ecom_fallDownHoleAndDelete:
+ecom_fallDownHoleAndDelete:
 	call objectCreateFallingDownHoleInteraction
-	jr _ecom_decNumEnemiesAndDelete
+	jr ecom_decNumEnemiesAndDelete
 
 
 ;;
 ; Enemy is currently falling down a hole.
-_ecom_fallingInHole:
-	call _ecom_decCounter1
-	jr z,_ecom_fallDownHoleAndDelete
+ecom_fallingInHole:
+	call ecom_decCounter1
+	jr z,ecom_fallDownHoleAndDelete
 
 	ld a,(hl) ; a = [Enemy.counter1]
 	and $07
@@ -244,12 +244,12 @@ _ecom_fallingInHole:
 
 	; Every 8 frames, move a half pixel closer to the hole.
 	call @checkInCenterOfHole
-	jr z,_ecom_fallDownHoleAndDelete
+	jr z,ecom_fallDownHoleAndDelete
 
 	call objectGetRelativeAngleWithTempVars
 	ld c,a
 	ld b,SPEED_80
-	call _ecom_applyGivenVelocity
+	call ecom_applyGivenVelocity
 ++
 	; If bit 0 of counter2 is set, animate the enemy as it's being sucked toward the
 	; hole.
@@ -292,7 +292,7 @@ _ecom_fallingInHole:
 
 ;;
 ; Updates enemy's position if he's on a moving platform.
-_ecom_updateMovingPlatform:
+ecom_updateMovingPlatform:
 	ld e,Enemy.zh
 	ld a,(de)
 	rlca
@@ -301,7 +301,7 @@ _ecom_updateMovingPlatform:
 	; Check if on a moving platform
 	ld bc,$0500
 	call objectGetRelativeTile
-	ld hl,_enemyConveyorTilesTable
+	ld hl,enemyConveyorTilesTable
 	call lookupCollisionTable
 	ret nc
 
@@ -316,32 +316,32 @@ _ecom_updateMovingPlatform:
 ; @param	b	Speed
 ; @param	c	Angle
 ; @param[out]	zflag	z if stopped
-_ecom_applyGivenVelocity:
-	ld hl,_ecom_sideviewAdjacentWallOffsetTable
+ecom_applyGivenVelocity:
+	ld hl,ecom_sideviewAdjacentWallOffsetTable
 	xor a
 	ldh (<hFF8A),a
 	push bc
 	ld a,c
-	call _ecom_getAdjacentWallsBitset
+	call ecom_getAdjacentWallsBitset
 	pop bc
-	jr _ecom_applyGivenVelocityGivenAdjacentWalls
+	jr ecom_applyGivenVelocityGivenAdjacentWalls
 
 ;;
 ; Apply an enemies velocity, accounting for walls. Enemy should be the "top-down" type
 ; (see below).
 ;
 ; Note: ALL of these functions assume a 16x16 size enemy.
-_ecom_applyVelocityForTopDownEnemy:
+ecom_applyVelocityForTopDownEnemy:
 	xor a
-	call _ecom_getTopDownAdjacentWallsBitset
-	jr _ecom_applyVelocityGivenAdjacentWalls
+	call ecom_getTopDownAdjacentWallsBitset
+	jr ecom_applyVelocityGivenAdjacentWalls
 
 ;;
 ; Same as above, but holes count as walls.
-_ecom_applyVelocityForTopDownEnemyNoHoles:
+ecom_applyVelocityForTopDownEnemyNoHoles:
 	ld a,$01
-	call _ecom_getTopDownAdjacentWallsBitset
-	jr _ecom_applyVelocityGivenAdjacentWalls
+	call ecom_getTopDownAdjacentWallsBitset
+	jr ecom_applyVelocityGivenAdjacentWalls
 
 ;;
 ; Like the above functions, but the enemy's collision box is slightly reduced for enemies
@@ -355,20 +355,20 @@ _ecom_applyVelocityForTopDownEnemyNoHoles:
 ;
 ; None of this has any effect on their collision boxes with other sprites, though - it's
 ; only for the terrain?
-_ecom_applyVelocityForSideviewEnemy:
+ecom_applyVelocityForSideviewEnemy:
 	xor a
 	jr ++
 
 ;;
-_ecom_applyVelocityForSideviewEnemyNoHoles:
+ecom_applyVelocityForSideviewEnemyNoHoles:
 	ld a,$01
 ++
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 
 ;;
 ; @param	de	Enemy's angle value
 ; @param	hFF8B	Collision bitset
-_ecom_applyVelocityGivenAdjacentWalls:
+ecom_applyVelocityGivenAdjacentWalls:
 	ld a,(de)
 	ld c,a
 	ld e,Enemy.speed
@@ -384,7 +384,7 @@ _ecom_applyVelocityGivenAdjacentWalls:
 ; @param	b	Speed
 ; @param	c	Angle
 ; @param[out]	zflag	nz if the enemy moved at least the equivalent of 1 pixel
-_ecom_applyGivenVelocityGivenAdjacentWalls:
+ecom_applyGivenVelocityGivenAdjacentWalls:
 	ld a,c
 	ldh (<hFF8C),a
 	call getPositionOffsetForVelocity
@@ -516,28 +516,28 @@ _ecom_applyGivenVelocityGivenAdjacentWalls:
 ; Unused?
 ; @param	a	Value for hFF8A (see below)
 ; @param	de	Pointer to Enemy.angle?
-_ecom_getTopDownAdjacentWallsBitsetGivenAngle:
-	ld hl,_ecom_topDownAdjacentWallOffsetTable
-	jr _ecom_getAdjacentWallsBitset
+ecom_getTopDownAdjacentWallsBitsetGivenAngle:
+	ld hl,ecom_topDownAdjacentWallOffsetTable
+	jr ecom_getAdjacentWallsBitset
 
 ;;
 ; @param	a	Value for hFF8A (see below)
-_ecom_getTopDownAdjacentWallsBitset:
+ecom_getTopDownAdjacentWallsBitset:
 	ld e,Enemy.angle
-	ld hl,_ecom_topDownAdjacentWallOffsetTable
-	jr _label_025
+	ld hl,ecom_topDownAdjacentWallOffsetTable
+	jr label_025
 
 ;;
 ; @param	a	Value for hFF8A (see below)
-_ecom_getSideviewAdjacentWallsBitset:
+ecom_getSideviewAdjacentWallsBitset:
 	ld e,Enemy.angle
 
 ;;
 ; @param	a	Value for hFF8A (see below)
 ; @param	de	Pointer to Enemy.angle?
-_ecom_getSideviewAdjacentWallsBitsetGivenAngle:
-	ld hl,_ecom_sideviewAdjacentWallOffsetTable
-_label_025:
+ecom_getSideviewAdjacentWallsBitsetGivenAngle:
+	ld hl,ecom_sideviewAdjacentWallOffsetTable
+label_025:
 	ldh (<hFF8A),a
 	ld a,(de)
 
@@ -553,9 +553,9 @@ _label_025:
 ; @param[out]	a,hFF8B	Bitset of adjacent walls
 ; @param[out]	zflag	nz if it's touching at least one wall (in the direction it's
 ;			moving toward?)
-_ecom_getAdjacentWallsBitset:
+ecom_getAdjacentWallsBitset:
 	push de
-	call _ecom_getAdjacentWallTableOffset
+	call ecom_getAdjacentWallTableOffset
 	ld b,d
 	rst_addAToHl
 	ld d,h
@@ -621,7 +621,7 @@ _ecom_getAdjacentWallsBitset:
 ;
 ; @param	a	Angle
 ; @param[out]	a	Offset into table to use
-_ecom_getAdjacentWallTableOffset:
+ecom_getAdjacentWallTableOffset:
 	rlca
 	ld b,a
 	and $0f
@@ -637,7 +637,7 @@ _ecom_getAdjacentWallTableOffset:
 ; NOTE: The game isn't even consistent about this. Octoroks use the "topdown" table when
 ; moving, but the "sideview" table for knockback, as an example.
 ;
-_ecom_sideviewAdjacentWallOffsetTable:
+ecom_sideviewAdjacentWallOffsetTable:
 	; Up
 	.db $fc $fb
 	.db $00 $09
@@ -687,7 +687,7 @@ _ecom_sideviewAdjacentWallOffsetTable:
 	.db $06 $00
 
 ; For enemies drawn in "top-down" view (ie. octoroks). Larger, more strict bounding box.
-_ecom_topDownAdjacentWallOffsetTable:
+ecom_topDownAdjacentWallOffsetTable:
 	; Up
 	.db $f7 $fa
 	.db $00 $0b
@@ -738,22 +738,22 @@ _ecom_topDownAdjacentWallOffsetTable:
 
 ;;
 ; Like below, but including walls and holes.
-_ecom_bounceOffWallsAndHoles:
+ecom_bounceOffWallsAndHoles:
 	ld a,$01
 	jr ++
 
 ;;
 ; Like below, but including walls.
-_ecom_bounceOffWalls:
+ecom_bounceOffWalls:
 	xor a
 	jr ++
 
 ;;
 ; When an enemy hits a screen boundary, its angle is updated to "bounce" off it.
-_ecom_bounceOffScreenBoundary:
+ecom_bounceOffScreenBoundary:
 	ld a,$02
 ++
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	call @getDirectionsHit
 	ld a,c
 	or a
@@ -813,7 +813,7 @@ _ecom_bounceOffScreenBoundary:
 ;;
 ; ANDs 'b', 'c', and 'e' with random values.
 ; @param[out]	a	Zero
-_ecom_randomBitwiseAndBCE:
+ecom_randomBitwiseAndBCE:
 	push bc
 	call getRandomNumber_noPreserveVars
 	pop bc
@@ -833,14 +833,14 @@ _ecom_randomBitwiseAndBCE:
 ;
 ; @param	a	Speed
 ; @param[out]	hl	Enemy.state
-_ecom_setSpeedAndState8AndVisible:
-	call _ecom_setSpeedAndState8
+ecom_setSpeedAndState8AndVisible:
+	call ecom_setSpeedAndState8
 	jp objectSetVisiblec2
 
 ;;
 ; @param	a	Speed
 ; @param[out]	hl	Enemy.state
-_ecom_setSpeedAndState8:
+ecom_setSpeedAndState8:
 	ld h,d
 	ld l,Enemy.speed
 	ld (hl),a
@@ -852,7 +852,7 @@ _ecom_setSpeedAndState8:
 ; @param	b	Enemy type
 ; @param[out]	hl	Enemy.subid
 ; @param[out]	zflag	z if successfully spawned
-_ecom_spawnUncountedEnemyWithSubid01:
+ecom_spawnUncountedEnemyWithSubid01:
 	call getFreeEnemySlot_uncounted
 	ret nz
 	jr ++
@@ -862,7 +862,7 @@ _ecom_spawnUncountedEnemyWithSubid01:
 ; @param[out]	a	$00 on success (but could be anything if not successful)
 ; @param[out]	hl	Enemy.subid
 ; @param[out]	zflag	z if successfully spawned
-_ecom_spawnEnemyWithSubid01:
+ecom_spawnEnemyWithSubid01:
 	call getFreeEnemySlot
 	ret nz
 ++
@@ -879,7 +879,7 @@ _ecom_spawnEnemyWithSubid01:
 ;
 ; @param	b	Part ID
 ; @param[out]	zflag	z if spawned successfully
-_ecom_spawnProjectile:
+ecom_spawnProjectile:
 	call getFreePartSlot
 	ret nz
 
@@ -907,7 +907,7 @@ _ecom_spawnProjectile:
 
 ;;
 ; @param[out]	zflag	z if counter1 reached 0
-_ecom_decCounter1:
+ecom_decCounter1:
 	ld h,d
 	ld l,Enemy.counter1
 	dec (hl)
@@ -916,13 +916,13 @@ _ecom_decCounter1:
 ;;
 ; Treats counter1 and counter2 as one 16-bit counter. (Unused?)
 ; @param[out]	zflag	z if counter reached 0
-_ecom_dec16BitCounter:
-	call _ecom_decCounter1
+ecom_dec16BitCounter:
+	call ecom_decCounter1
 	ret nz
 
 ;;
 ; @param[out]	zflag
-_ecom_decCounter2:
+ecom_decCounter2:
 	ld h,d
 	ld l,Enemy.counter2
 	ld a,(hl)
@@ -933,7 +933,7 @@ _ecom_decCounter2:
 
 ;;
 ; @param[out]	a	New angle
-_ecom_updateCardinalAngleAwayFromTarget:
+ecom_updateCardinalAngleAwayFromTarget:
 	call objectGetAngleTowardEnemyTarget
 	xor $10
 	ld e,Enemy.angle
@@ -943,7 +943,7 @@ _ecom_updateCardinalAngleAwayFromTarget:
 ;;
 ; Similar to below, but angle must be in a cardinal direction.
 ; @param[out]	a	New angle
-_ecom_updateCardinalAngleTowardTarget:
+ecom_updateCardinalAngleTowardTarget:
 	call objectGetAngleTowardEnemyTarget
 	add $04
 	and $18
@@ -954,7 +954,7 @@ _ecom_updateCardinalAngleTowardTarget:
 ;;
 ; Sets the enemy's angle to face its target (usually Link).
 ; @param[out]	a	New angle
-_ecom_updateAngleTowardTarget:
+ecom_updateAngleTowardTarget:
 	call objectGetAngleTowardEnemyTarget
 	ld e,Enemy.angle
 	ld (de),a
@@ -962,7 +962,7 @@ _ecom_updateAngleTowardTarget:
 
 ;;
 ; @param[out]	a	New angle
-_ecom_setRandomCardinalAngle:
+ecom_setRandomCardinalAngle:
 	call getRandomNumber_noPreserveVars
 	and $18
 	ld e,Enemy.angle
@@ -970,7 +970,7 @@ _ecom_setRandomCardinalAngle:
 	ret
 
 ;;
-_ecom_setRandomAngle:
+ecom_setRandomAngle:
 	call getRandomNumber_noPreserveVars
 	and $1f
 	ld e,Enemy.angle
@@ -983,7 +983,7 @@ _ecom_setRandomAngle:
 ;
 ; The current animation index is stored in "Enemy.direction".
 ;
-_ecom_updateAnimationFromAngle:
+ecom_updateAnimationFromAngle:
 	ld h,d
 	ld l,Enemy.angle
 	ldd a,(hl)
@@ -1019,7 +1019,7 @@ _ecom_updateAnimationFromAngle:
 	.db $03 $03 $03 $07 $07 $07 $00 $00
 
 ;;
-_ecom_flickerVisibility:
+ecom_flickerVisibility:
 	ld e,Enemy.visible
 	ld a,(de)
 	xor $80
@@ -1030,7 +1030,7 @@ _ecom_flickerVisibility:
 ; @param[out]	a	State
 ; @param[out]	b	Subid
 ; @param[out]	cflag	c if state < 8
-_ecom_getSubidAndCpStateTo08:
+ecom_getSubidAndCpStateTo08:
 	ld e,Enemy.subid
 	ld a,(de)
 	ld b,a
@@ -1043,21 +1043,21 @@ _ecom_getSubidAndCpStateTo08:
 ; @param	bc	YX position to get the direction toward
 ; @param	hFF8E	X position of object
 ; @param	hFF8F	Y position of object
-_ecom_moveTowardPosition:
+ecom_moveTowardPosition:
 	call objectGetRelativeAngleWithTempVars
 	ld e,Enemy.angle
 	ld (de),a
 	jp objectApplySpeed
 
 ;;
-; Call this just before calling "_ecom_moveTowardPosition" above.
+; Call this just before calling "ecom_moveTowardPosition" above.
 ;
 ; @param	hl	Position to read into bc (angle to move toward)
 ; @param[out]	a	[Enemy.x]
 ; @param[out]	bc	Position read from hl
 ; @param[out]	hFF8F	[Enemy.y]
 ; @param[out]	hFF8E	[Enemy.x]
-_ecom_readPositionVars:
+ecom_readPositionVars:
 	ld b,(hl)
 	inc l
 	ld c,(hl)
@@ -1075,12 +1075,12 @@ _ecom_readPositionVars:
 ; Moves toward Link?
 ; @param	a
 ; @param[out]	zflag
-_ecom_seasonsFunc_4446:
+ecom_seasonsFunc_4446:
 	ld b,a
 	ld a,(wMagnetGloveState) ; TODO: figure out what this corresponds to in ages (if anything)
 	or a
 	ld a,b
-	jp z,_ecom_checkHazards
+	jp z,ecom_checkHazards
 
 	ld h,d
 	ld l,Enemy.var3f
@@ -1093,7 +1093,7 @@ _ecom_seasonsFunc_4446:
 	call objectGetAngleTowardLink
 	ld c,a
 	ld b,SPEED_80
-	call _ecom_applyGivenVelocity
+	call ecom_applyGivenVelocity
 
 	pop af
 	or a
@@ -1106,7 +1106,7 @@ _ecom_seasonsFunc_4446:
 ;
 ; @param	c	Extra offset to subtract from Z position (make it further beyond
 ;			the screen)
-_ecom_setZAboveScreen:
+ecom_setZAboveScreen:
 	ld h,d
 	ld l,Enemy.yh
 	ld a,(hl)
@@ -1130,7 +1130,7 @@ _ecom_setZAboveScreen:
 ;;
 ; @param	h	Object index
 ; @param	l	Object type
-_ecom_killObjectH:
+ecom_killObjectH:
 	ld a,l
 	and $c0
 	or Object.health
@@ -1140,7 +1140,7 @@ _ecom_killObjectH:
 ; Sets an object's health to zero, disables their collisions.
 ;
 ; @param	hl	Pointer to object's health value
-_ecom_killRelatedObj:
+ecom_killRelatedObj:
 	ld (hl),$00
 	ld a,l
 	add Object.collisionType - Object.health
@@ -1149,23 +1149,23 @@ _ecom_killRelatedObj:
 	ret
 
 ;;
-_ecom_killRelatedObj1:
+ecom_killRelatedObj1:
 	ld a,Object.health
 	call objectGetRelatedObject1Var
-	jr _ecom_killRelatedObj
+	jr ecom_killRelatedObj
 
 ;;
-_ecom_killRelatedObj2:
+ecom_killRelatedObj2:
 	ld a,Object.health
 	call objectGetRelatedObject2Var
-	jr _ecom_killRelatedObj
+	jr ecom_killRelatedObj
 
 ;;
 ; Enemy shakes horizontally until counter2 reaches 0, then flies up above the screen.
 ;
 ; @param[out]	cflag	c if gale seed effect still persists, nc otherwise
-_ecom_galeSeedEffect:
-	call _ecom_decCounter2
+ecom_galeSeedEffect:
+	call ecom_decCounter2
 	jr z,@zero
 
 	ld a,(hl)
@@ -1203,8 +1203,8 @@ _ecom_galeSeedEffect:
 ;;
 ; Common implementation of "blown away by gale seed" state; enemy gets caught in the
 ; tornado and flies away, then gets deleted.
-_ecom_blownByGaleSeedState:
-	call _ecom_galeSeedEffect
+ecom_blownByGaleSeedState:
+	call ecom_galeSeedEffect
 	ret c
 	call decNumEnemies
 	jp enemyDelete
@@ -1212,7 +1212,7 @@ _ecom_blownByGaleSeedState:
 ;;
 ; If a scent seed is active, and this enemy should respond to it, this sets its state to
 ; 4.
-_ecom_checkScentSeedActive:
+ecom_checkScentSeedActive:
 	ld a,(wScentSeedActive)
 	or a
 	ret z
@@ -1232,7 +1232,7 @@ _ecom_checkScentSeedActive:
 ;;
 ; Every 16 frames, this function updates the enemy's angle relative to a scent seed
 ; (position in hFFB2/hFFB3). Uses Enemy.var3d as a counter for this.
-_ecom_updateAngleToScentSeed:
+ecom_updateAngleToScentSeed:
 	ld h,d
 	ld l,Enemy.var3d
 	dec (hl)
@@ -1250,7 +1250,7 @@ _ecom_updateAngleToScentSeed:
 	ret
 
 ;;
-_ecom_fallToGroundAndSetState8:
+ecom_fallToGroundAndSetState8:
 	ld b,$08
 
 ;;
@@ -1258,7 +1258,7 @@ _ecom_fallToGroundAndSetState8:
 ;
 ; @param	b	State to change to upon landing
 ; @param[out]	zflag	z if the enemy is on the ground
-_ecom_fallToGroundAndSetState:
+ecom_fallToGroundAndSetState:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz

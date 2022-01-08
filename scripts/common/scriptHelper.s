@@ -294,15 +294,15 @@ movingPlatform_loadScript:
 
 	; Not in dungeon
 .ifdef ROM_AGES
-	ld hl,_movingPlatform_scriptTable
+	ld hl,movingPlatform_scriptTable
 .else
-	ld hl,_movingPlatform_nonDungeonScriptTable
+	ld hl,movingPlatform_nonDungeonScriptTable
 .endif
 	jr @loadScript
 
 @inDungeon:
 	ld a,b
-	ld hl,_movingPlatform_scriptTable
+	ld hl,movingPlatform_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -315,7 +315,7 @@ movingPlatform_loadScript:
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	jr _movingPlatform_setScript
+	jr movingPlatform_setScript
 
 movingPlatform_runScript:
 	ld e,Interaction.scriptPtr
@@ -353,7 +353,7 @@ movingPlatform_runScript:
 	ld e,Interaction.substate
 	xor a
 	ld (de),a
-	jr _movingPlatform_setScript
+	jr movingPlatform_setScript
 
 ; Move at the current angle for the given number of frames
 @opcode01:
@@ -364,7 +364,7 @@ movingPlatform_runScript:
 	ld e,Interaction.substate
 	ld a,$01
 	ld (de),a
-	jr _movingPlatform_setScript
+	jr movingPlatform_setScript
 
 ; Set angle
 @opcode02:
@@ -407,7 +407,7 @@ movingPlatform_runScript:
 	xor a
 	ld e,Interaction.substate
 	ld (de),a
-	jr _movingPlatform_setScript
+	jr movingPlatform_setScript
 
 ; Move up
 @opcode08:
@@ -434,7 +434,7 @@ movingPlatform_runScript:
 	jr @opcode01
 
 ;;
-_movingPlatform_setScript:
+movingPlatform_setScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
 	ld (de),a

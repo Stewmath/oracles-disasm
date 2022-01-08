@@ -50,7 +50,7 @@ checkTreasureObtained_body:
 loseTreasure_body:
 	push hl
 	ld a,b
-	call _loseTreasure_helper
+	call loseTreasure_helper
 	pop hl
 	ret
 
@@ -59,7 +59,7 @@ loseTreasure_body:
 ; inventory item.
 ;
 ; @param	a	Treasure
-_loseTreasure_helper:
+loseTreasure_helper:
 	ld b,a
 	ld hl,wObtainedTreasureFlags
 	call unsetFlag
@@ -108,9 +108,9 @@ giveTreasure_body:
 	call @findItemInTable
 	jr z,+
 
-	call _loseTreasure_helper
+	call loseTreasure_helper
 	ld a,c
-	call _loseTreasure_helper
+	call loseTreasure_helper
 +
 	pop bc
 	ld a,b
@@ -156,7 +156,7 @@ giveTreasure_body:
 ; @param	c	Parameter
 @giveTreasure:
 	ldh (<hFF8B),a
-	call _checkIncreaseGashaMaturityForGettingTreasure
+	call checkIncreaseGashaMaturityForGettingTreasure
 	call addTreasureToInventory
 
 	ld hl,wObtainedTreasureFlags
@@ -787,7 +787,7 @@ decideItemDrop_body:
 	swap a
 	rrca
 	and $07
-	ld hl,_itemDropProbabilityTable
+	ld hl,itemDropProbabilityTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -799,7 +799,7 @@ decideItemDrop_body:
 
 	ld a,c
 	and $1f
-	ld hl,_itemDropSetTable
+	ld hl,itemDropSetTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -830,7 +830,7 @@ checkItemDropAvailable_body:
 .else
 	ld a,c
 .endif
-	ld hl,_itemDropAvailabilityTable
+	ld hl,itemDropAvailabilityTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld b,(hl)
@@ -872,30 +872,30 @@ ringTierTable:
 @tier4:
 	.db GREEN_RING		RANG_RING_L2
 
-_itemDropSetTable:
-	.dw _itemDropSet0
-	.dw _itemDropSet1
-	.dw _itemDropSet2
-	.dw _itemDropSet3
-	.dw _itemDropSet4
-	.dw _itemDropSet5
-	.dw _itemDropSet6
-	.dw _itemDropSet7
-	.dw _itemDropSet8
-	.dw _itemDropSet9
-	.dw _itemDropSetA
-	.dw _itemDropSetB
-	.dw _itemDropSetC
-	.dw _itemDropSetD
-	.dw _itemDropSetE
-	.dw _itemDropSetF
+itemDropSetTable:
+	.dw itemDropSet0
+	.dw itemDropSet1
+	.dw itemDropSet2
+	.dw itemDropSet3
+	.dw itemDropSet4
+	.dw itemDropSet5
+	.dw itemDropSet6
+	.dw itemDropSet7
+	.dw itemDropSet8
+	.dw itemDropSet9
+	.dw itemDropSetA
+	.dw itemDropSetB
+	.dw itemDropSetC
+	.dw itemDropSetD
+	.dw itemDropSetE
+	.dw itemDropSetF
 
 
 ; Each row corresponds to an item drop (see constants/itemDrops.s).
 ;   Byte 0: Variable in $c600 block to check
 ;   Byte 1: Value to AND with that variable to check availability; if nonzero, the item
 ;           can drop.
-_itemDropAvailabilityTable:
+itemDropAvailabilityTable:
 	.db <wc608, $ff				; ITEM_DROP_FAIRY
 	.db <wc608, $ff				; ITEM_DROP_HEART
 	.db <wc608, $ff				; ITEM_DROP_1_RUPEE
@@ -921,7 +921,7 @@ _itemDropAvailabilityTable:
 
 
 ; Each entry in this table is a bitset. A random bit is chosen. If the bit is 0, no item drops.
-_itemDropProbabilityTable:
+itemDropProbabilityTable:
 	.dw @probability0
 	.dw @probability1
 	.dw @probability2
@@ -974,105 +974,105 @@ subrosiaDropSet:
 .endif
 
 ; See constants/itemDrops.s for what these values are
-_itemDropSet0:
+itemDropSet0:
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 
-_itemDropSet1:
+itemDropSet1:
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $02 $02 $02 $02
 	.db $02 $02 $02 $03 $03 $00 $01 $02
 	.db $06 $06 $06 $06 $05 $05 $09 $05
 
-_itemDropSet2:
+itemDropSet2:
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $07 $08 $09 $07 $06 $05 $05 $05
 	.db $06 $06 $07 $07 $08 $08 $09 $05
 
-_itemDropSet3:
+itemDropSet3:
 	.db $0f $0f $0f $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $02 $02 $02 $02
 	.db $02 $02 $02 $02 $02 $02 $02 $01
 	.db $02 $03 $03 $03 $03 $02 $00 $00
 
-_itemDropSet4:
+itemDropSet4:
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 
-_itemDropSet5:
+itemDropSet5:
 	.db $05 $05 $05 $05 $05 $05 $06 $06
 	.db $06 $06 $06 $07 $07 $07 $07 $07
 	.db $07 $08 $08 $08 $08 $08 $09 $09
 	.db $09 $09 $09 $05 $06 $07 $08 $09
 
-_itemDropSet6:
+itemDropSet6:
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $02 $02 $02 $02 $02 $02
 	.db $02 $02 $02 $03 $03 $00 $04 $04
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 
-_itemDropSet7:
+itemDropSet7:
 	.db $01 $01 $01 $01 $01 $01 $01 $02
 	.db $02 $02 $02 $03 $03 $03 $03 $00
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 	.db $09 $08 $07 $07 $06 $06 $05 $05
 
-_itemDropSet8:
+itemDropSet8:
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $01 $01 $02 $02
 	.db $02 $02 $03 $03 $00 $04 $04 $04
 	.db $04 $09 $08 $07 $06 $05 $05 $07
 
-_itemDropSet9:
+itemDropSet9:
 	.db $0f $0f $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $02 $02 $02 $02
 	.db $02 $02 $02 $03 $03 $00 $01 $02
 	.db $06 $06 $06 $06 $05 $05 $09 $09
 
-_itemDropSetA:
+itemDropSetA:
 	.db $01 $01 $01 $01 $01 $01 $02 $02
 	.db $02 $02 $02 $03 $03 $03 $00 $04
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 	.db $04 $09 $08 $07 $07 $06 $05 $06
 
-_itemDropSetB:
+itemDropSetB:
 	.db $01 $01 $01 $01 $02 $02 $02 $02
 	.db $02 $03 $03 $03 $00 $04 $04 $04
 	.db $04 $09 $09 $08 $08 $08 $07 $07
 	.db $07 $06 $06 $06 $09 $05 $05 $05
 
-_itemDropSetC:
+itemDropSetC:
 	.db $01 $01 $01 $01 $02 $02 $02 $02
 	.db $02 $02 $03 $03 $03 $03 $03 $03
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 	.db $04 $04 $04 $04 $04 $04 $04 $04
 
-_itemDropSetD:
+itemDropSetD:
 	.db $02 $02 $02 $02 $02 $02 $02 $02
 	.db $02 $02 $03 $03 $03 $03 $03 $03
 	.db $09 $09 $08 $08 $08 $07 $07 $07
 	.db $06 $06 $06 $05 $05 $05 $09 $05
 
-_itemDropSetE:
+itemDropSetE:
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $01 $01 $01 $02
 	.db $01 $02 $02 $02 $02 $02 $02 $02
 	.db $02 $02 $02 $02 $03 $03 $03 $03
 
-_itemDropSetF:
+itemDropSetF:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
 ; Data format (per byte):
-;   Bits 0-2: Index for _itemDropProbabilityTable
-;   Bits 3-7: Index for _itemDropSetTable
+;   Bits 0-2: Index for itemDropProbabilityTable
+;   Bits 3-7: Index for itemDropSetTable
 ; Or it can be $ff for no item drop.
 ; Comments show changes in Seasons
 itemDropTables:
@@ -1119,7 +1119,7 @@ itemDropTables:
 ;;
 ; @param	a	Treasure index
 ; @param	c	Treasure "parameter"
-_checkIncreaseGashaMaturityForGettingTreasure:
+checkIncreaseGashaMaturityForGettingTreasure:
 	push bc
 	ld b,a
 	ld hl,@data-1

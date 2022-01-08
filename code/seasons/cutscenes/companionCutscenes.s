@@ -14,39 +14,39 @@ rickyCutscenes:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _rickyState1
+	.dw rickyState1
 
 @state0:
-	call _incState
+	call incState
 	ld h,d
 	ld l,SpecialObject.subid
 	ld a,(hl)
 	or a
-	jr z,_func_69fe
+	jr z,func_69fe
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_200
 	ld l,SpecialObject.angle
 	ld (hl),$08
 
-_func_69f3:
+func_69f3:
 	ld bc,-$200
 	call objectSetSpeedZ
 	ld a,$02
 	jp specialObjectSetAnimation
 
-_func_69fe:
+func_69fe:
 	xor a
 	ld ($cbb5),a
 	ld a,$1e
 	jp specialObjectSetAnimation
 
-_incState:
+incState:
 	ld a,$01
 	ld (de),a
 	callab bank5.specialObjectSetOamVariables
 	jp objectSetVisiblec0
 
-_rickyState1:
+rickyState1:
 	ld e,SpecialObject.subid
 	ld a,(de)
 	rst_jumpTable
@@ -100,7 +100,7 @@ _rickyState1:
 +
 	ld l,SpecialObject.substate
 	ld (hl),$00
-	jp _func_69fe
+	jp func_69fe
 
 @subid1:
 	ld e,SpecialObject.substate
@@ -156,7 +156,7 @@ _rickyState1:
 	ret nz
 	dec l
 	dec (hl)
-	jp _func_69f3
+	jp func_69f3
 
 @@substate3:
 	call itemDecCounter1
@@ -270,7 +270,7 @@ mooshCutscenes:
 	.dw @state1
 
 @state0:
-	call _incState
+	call incState
 	ld h,d
 	ld l,SpecialObject.counter1
 	ld (hl),90
@@ -380,7 +380,7 @@ dimitriCutscenes:
 	.dw @state1
 
 @state0:
-	call _incState
+	call incState
 	ld h,d
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_100
@@ -534,7 +534,7 @@ mapleCutscenes:
 	.dw @state1
 
 @state0:
-	call _incState
+	call incState
 	ld h,d
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_140
@@ -570,7 +570,7 @@ mapleCutscenes:
 	rst_jumpTable
 	.dw @@@substate0
 	.dw seasonsFunc_06_6d62
-	.dw _ret
+	.dw ret
 
 @@@substate0:
 	ld a,($cfc0)
@@ -608,7 +608,7 @@ seasonsFunc_06_6d62:
 seasonsFunc_06_6d74:
 	jp specialObjectAnimate
 
-_ret:
+ret:
 	ret
 
 seasonsFunc_06_6d78:

@@ -22,7 +22,7 @@ initTextbox:
 	ld hl,$d000
 	ld bc,w7TextVariablesEnd - $d000
 	call clearMemoryBc
-	jp _initTextboxStuff
+	jp initTextboxStuff
 
 ;;
 ; Called every frame while a textbox is being shown.
@@ -116,9 +116,9 @@ updateTextbox:
 @standardTextState0:
 	ld a,$01
 	ld (de),a
-	call _saveTilesUnderTextbox
-	call _initTextboxMapping
-	jp _dmaTextboxMap
+	call saveTilesUnderTextbox
+	call initTextboxMapping
+	jp dmaTextboxMap
 
 ;;
 ; Prepare to draw the top line.
@@ -131,8 +131,8 @@ updateTextbox:
 	ld l,<w7CharacterDisplayLength
 	ldi a,(hl)
 	ld (hl),a
-	call _drawLineOfText
-	jp _dmaTextGfxBuffer
+	call drawLineOfText
+	jp dmaTextGfxBuffer
 
 ;;
 ; Displaying a row of characters
@@ -142,23 +142,23 @@ updateTextbox:
 @standardTextState2:
 @standardTextState4:
 @standardTextStatea:
-	call _getNextCharacterToDisplay
+	call getNextCharacterToDisplay
 	jr z,+
 
-	call _updateCharacterDisplayTimer
+	call updateCharacterDisplayTimer
 	ret nz
 
-	call _displayNextTextCharacter
-	call _dmaTextboxMap
+	call displayNextTextCharacter
+	call dmaTextboxMap
 	ld d,>w7TextStatus
-	call _getNextCharacterToDisplay
+	call getNextCharacterToDisplay
 	ret nz
 +
-	call _func_53eb
+	call func_53eb
 	ret nz
 
 	ld d,>w7TextStatus
-	call _func_5296
+	call func_5296
 	ret nz
 
 	ld h,d
@@ -182,12 +182,12 @@ updateTextbox:
 ; Preparing to draw the bottom line
 @standardTextState3:
 @standardTextState9:
-	call _updateCharacterDisplayTimer
+	call updateCharacterDisplayTimer
 	ret nz
 
-	call _drawLineOfText
+	call drawLineOfText
 	ld a,$02
-	call _dmaTextGfxBuffer
+	call dmaTextGfxBuffer
 	ld hl,w7TextDisplayState
 	inc (hl)
 	ld l,<w7d0d3
@@ -202,7 +202,7 @@ updateTextbox:
 @standardTextState5:
 	ld a,(wKeysJustPressed)
 	and BTN_A | BTN_B
-	jp z,_updateTextboxArrow
+	jp z,updateTextboxArrow
 
 	ld a,SND_TEXT_2
 	call playSound
@@ -220,7 +220,7 @@ updateTextbox:
 	ld l,e
 	inc (hl)
 
-	jp _dmaTextboxMap
+	jp dmaTextboxMap
 
 ;;
 ; Shifts the text up one tile.
@@ -231,8 +231,8 @@ updateTextbox:
 	ld l,e
 	inc (hl)
 
-	call _shiftTextboxMapUp
-	jp _subFirstRowOfTextMapBy20
+	call shiftTextboxMapUp
+	jp subFirstRowOfTextMapBy20
 
 ;;
 ; The first of the next 2 lines of text is about to come up.
@@ -248,9 +248,9 @@ updateTextbox:
 
 	; Redraw the previous line of text to the top line.
 
-	call _dmaTextboxMap
+	call dmaTextboxMap
 	xor a
-	jp _dmaTextGfxBuffer
+	jp dmaTextGfxBuffer
 
 ;;
 ; A new line has just been drawn after scrolling text up. Another line of text
@@ -271,8 +271,8 @@ updateTextbox:
 	ld h,>w7TextboxMap
 	ld (hl),$02
 
-	call _shiftTextboxMapUp
-	jp _clearTopRowOfTextMap
+	call shiftTextboxMapUp
+	jp clearTopRowOfTextMap
 
 ;;
 ; The second new line is ready to be shown.
@@ -286,9 +286,9 @@ updateTextbox:
 	ldi a,(hl)
 	ld (hl),a
 
-	call _dmaTextboxMap
+	call dmaTextboxMap
 	xor a
-	jp _dmaTextGfxBuffer
+	jp dmaTextGfxBuffer
 
 ;;
 @standardTextStatef:
@@ -318,7 +318,7 @@ updateTextbox:
 
 	add $04
 	ld (wTextIndexH),a
-	call _checkInitialTextCommands
+	call checkInitialTextCommands
 	ld a,SND_FILLED_HEART_CONTAINER
 	call playSound
 	ld a,TREASURE_HEART_CONTAINER
@@ -343,7 +343,7 @@ updateTextbox:
 	ld c,$40
 	call giveTreasure
 +
-	jp _saveTilesUnderTextbox
+	jp saveTilesUnderTextbox
 
 ;;
 ; Unsets zero flag if the textbox should be exited from (usually, player has
@@ -379,7 +379,7 @@ updateTextbox:
 @standardTextState10:
 	xor a
 	ld (wTextIsActive),a
-	jp _dmaTextboxMap
+	jp dmaTextboxMap
 
 
 textOptionCode:
@@ -419,15 +419,15 @@ textOptionCode:
 	ld l,e
 	inc (hl)
 
-	jp _updateSelectedTextPositionAndDmaTextboxMap
+	jp updateSelectedTextPositionAndDmaTextboxMap
 
 ;;
 @state02:
 	ld a,(wKeysJustPressed)
 	and BTN_A | BTN_B
-	jp z,_textOptionCode_checkDirectionButtons
+	jp z,textOptionCode_checkDirectionButtons
 
-	call _textOptionCode_checkBButton
+	call textOptionCode_checkBButton
 	ret nz
 
 	; A button pressed
@@ -469,14 +469,14 @@ textOptionCode:
 	; behaviour
 
 	push hl
-	call _readNextTextByte
+	call readNextTextByte
 	pop hl
 	cp $ff
 	jp z,+
 
 	ld (wTextIndexL),a
-	call _checkInitialTextCommands
-	jp _func_53dd
+	call checkInitialTextCommands
+	jp func_53dd
 
 +
 	set 3,(hl)
@@ -512,8 +512,8 @@ textOptionCode:
 	ld b,$0a
 	call clearMemory
 
-	call _drawLineOfText
-	jp _dmaTextGfxBuffer
+	call drawLineOfText
+	jp dmaTextGfxBuffer
 
 
 inventoryTextCode:
@@ -540,7 +540,7 @@ inventoryTextCode:
 	ld l,<w7TextStatus
 	ld (hl),a
 
-	call _doInventoryTextFirstPass
+	call doInventoryTextFirstPass
 
 	ld d,>w7TextAddress
 	jr z,+
@@ -582,7 +582,7 @@ inventoryTextCode:
 ;;
 ; Text is paused on the name of the item being viewed
 @state01:
-	call _decInvTextScrollTimer
+	call decInvTextScrollTimer
 	ret nz
 
 	; hl = w7InvTextScrollTimer
@@ -599,12 +599,12 @@ inventoryTextCode:
 ;;
 ; Text is scrolling and more remains to be read
 @state02:
-	call _decInvTextScrollTimer
+	call decInvTextScrollTimer
 	ret nz
 
-	call _shiftTextGfxBufferLeft
+	call shiftTextGfxBufferLeft
 --
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 
 	cp $10
 	jr nc,@drawCharacter
@@ -612,7 +612,7 @@ inventoryTextCode:
 	cp $01
 	jr z,@drawSpace
 
-	call _handleTextControlCodeWithSpecialCase
+	call handleTextControlCodeWithSpecialCase
 	; Jump if it was command $06 (a special symbol)
 	jr z,@saveTextAddressAndDmaTextGfxBuffer
 
@@ -651,7 +651,7 @@ inventoryTextCode:
 ;;
 ; Text is scrolling but all of it has been displayed
 @state03:
-	call _decInvTextScrollTimer
+	call decInvTextScrollTimer
 	ret nz
 
 	; hl = w7InvTextSpaceCounter
@@ -671,10 +671,10 @@ inventoryTextCode:
 	ld (wTextIndexH),a
 
 	; This will get the start address of the text based on wTextIndexL/H.
-	call _checkInitialTextCommands
+	call checkInitialTextCommands
 
 @insertSpace:
-	call _shiftTextGfxBufferLeft
+	call shiftTextGfxBufferLeft
 
 @drawSpace:
 	; $20 = character for space
@@ -698,12 +698,12 @@ inventoryTextCode:
 ;;
 ; The name of the item is being read again.
 @state04:
-	call _decInvTextScrollTimer
+	call decInvTextScrollTimer
 	ret nz
 
-	call _shiftTextGfxBufferLeft
+	call shiftTextGfxBufferLeft
 ---
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	cp $10
 	jr nc,@drawCharacter
 
@@ -735,7 +735,7 @@ inventoryTextCode:
 	inc (hl)
 	ret
 ++
-	call _handleTextControlCodeWithSpecialCase
+	call handleTextControlCodeWithSpecialCase
 	jr z,@saveTextAddressAndDmaTextGfxBuffer
 
 	jr ---
@@ -743,7 +743,7 @@ inventoryTextCode:
 ;;
 ; The name of the item has been read, now it's scrolling to the middle.
 @state05:
-	call _decInvTextScrollTimer
+	call decInvTextScrollTimer
 	ret nz
 
 	; hl = w7InvTextSpaceCounter
@@ -762,7 +762,7 @@ inventoryTextCode:
 
 ;;
 @state06:
-	call _decInvTextScrollTimer
+	call decInvTextScrollTimer
 	ret nz
 
 	; hl = w7InvTextScrollTimer
@@ -775,7 +775,7 @@ inventoryTextCode:
 
 ;;
 @state07:
-	call _decInvTextScrollTimer
+	call decInvTextScrollTimer
 	ret nz
 
 	; hl = w7InvTextScrollTimer
@@ -796,7 +796,7 @@ inventoryTextCode:
 
 ;;
 ; Initializes text stuff, particularly position variables for the textbox.
-_initTextboxStuff:
+initTextboxStuff:
 	ld a,(wActiveLanguage)
 	ld b,a
 	add a
@@ -809,14 +809,14 @@ _initTextboxStuff:
 	ld (w7TextTableAddr+1),a
 	ld a,(hl)
 	ld (w7TextTableBank),a
-	call _checkInitialTextCommands
+	call checkInitialTextCommands
 
 	ld hl,w7TextSound
 	ld (hl),SND_TEXT
 
 	; w7CharacterDisplayLength
 	inc l
-	call _getCharacterDisplayLength
+	call getCharacterDisplayLength
 	ldi (hl),a
 
 	; w7TextAttribute
@@ -963,7 +963,7 @@ _initTextboxStuff:
 
 ;;
 ; Gets address of the text index in hl, stores bank number in [w7ActiveBank]
-_getTextAddress:
+getTextAddress:
 	push de
 	ld a,(w7TextTableAddr)
 	ld l,a
@@ -1081,9 +1081,9 @@ textTableTable:
 ; It deals with the textbox positioning command ("\pos()" in text.txt) and
 ; command 8 (displaying extra text after buying something).
 ; Most of the time this does nothing though.
-_checkInitialTextCommands:
+checkInitialTextCommands:
 	push de
-	call _getTextAddress
+	call getTextAddress
 	call readByteFromW7ActiveBank
 	cp $08
 	jr z,@cmd8
@@ -1094,7 +1094,7 @@ _checkInitialTextCommands:
 @cmdc:
 	ld d,h
 	ld e,l
-	call _incHlAndUpdateBank
+	call incHlAndUpdateBank
 	call readByteFromW7ActiveBank
 	ld b,a
 	and $fc
@@ -1113,7 +1113,7 @@ _checkInitialTextCommands:
 	and $07
 	ld (wTextboxPosition),a
 +
-	call _incHlAndUpdateBank
+	call incHlAndUpdateBank
 
 @end:
 	ld a,l
@@ -1124,14 +1124,14 @@ _checkInitialTextCommands:
 	ret
 
 @cmd8:
-	call _incHlAndUpdateBank
+	call incHlAndUpdateBank
 	call readByteFromW7ActiveBank
-	call _getExtraTextIndex
+	call getExtraTextIndex
 	cp $ff
 	jp z,@noExtraText
 
 	ld (wTextIndexL),a
-	jr _checkInitialTextCommands
+	jr checkInitialTextCommands
 
 @noExtraText:
 	ld a,$00
@@ -1151,7 +1151,7 @@ _checkInitialTextCommands:
 ;;
 ; Gets the graphics for a line of text and puts it into w7TextGfxBuffer.
 ; Also sets w7LineTextBuffer, w7LineAttributesBuffer, etc.
-_drawLineOfText:
+drawLineOfText:
 	ld h,d
 	ld l,<w7TextStatus
 	ld (hl),$ff
@@ -1161,16 +1161,16 @@ _drawLineOfText:
 	ld h,(hl)
 	ld l,a
 	push hl
-	call _clearTextGfxBuffer
-	call _clearLineTextBuffer
+	call clearTextGfxBuffer
+	call clearLineTextBuffer
 	pop hl
 	ld bc,w7TextGfxBuffer
 --
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	cp $10
 	jr nc,+
 
-	call _handleTextControlCode
+	call handleTextControlCode
 
 	; Check whether to stop? ($00 = end of textbox, $01 = newline)
 	ld a,(w7TextStatus)
@@ -1179,7 +1179,7 @@ _drawLineOfText:
 
 	jr ++
 +
-	call _setLineTextBuffers
+	call setLineTextBuffers
 	call retrieveTextCharacter
 	jr --
 ++
@@ -1195,14 +1195,14 @@ _drawLineOfText:
 	ret
 
 ;;
-_clearTextGfxBuffer:
+clearTextGfxBuffer:
 	ld hl,w7TextGfxBuffer
 	ld bc,$0200
 	ld a,$ff
 	jp fillMemoryBc
 
 ;;
-_clearLineTextBuffer:
+clearLineTextBuffer:
 	ld hl,w7LineTextBuffer
 	ld d,h
 	ld e,l
@@ -1214,7 +1214,7 @@ _clearLineTextBuffer:
 ; character in each LineBuffer to appropriate values.
 ; @param a Character
 ; @param de Address in w7LineTextBuffer
-_setLineTextBuffers:
+setLineTextBuffers:
 	; Write to w7LineTextBuffer
 	ld (de),a
 	push de
@@ -1259,7 +1259,7 @@ _setLineTextBuffers:
 
 ;;
 ; @param a Relative offset for where to write to. Should be $00 or $02.
-_dmaTextGfxBuffer:
+dmaTextGfxBuffer:
 	add $94
 	ld d,a
 	ld e,$00
@@ -1271,7 +1271,7 @@ _dmaTextGfxBuffer:
 	ret
 
 ;;
-_saveTilesUnderTextbox:
+saveTilesUnderTextbox:
 	ld hl,w7TextboxPos
 	ld e,(hl)
 	inc l
@@ -1377,7 +1377,7 @@ _saveTilesUnderTextbox:
 
 ;;
 ; Initialize the textbox map and attributes so it starts as a black box.
-_initTextboxMapping:
+initTextboxMapping:
 	ld a,(w7d0cc)
 	inc a
 	and $1f
@@ -1413,7 +1413,7 @@ _initTextboxMapping:
 ;;
 ; Sets up the textbox map and attributes for dma'ing.
 ; I have no idea what the branch instructions are for.
-_dmaTextboxMap:
+dmaTextboxMap:
 	ld a,(wTextMapAddress)
 	add $03
 	ld c,a
@@ -1465,7 +1465,7 @@ _dmaTextboxMap:
 
 ;;
 ; Updates the timer, and sets bit 0 of w7d0c1 if A or B is pressed.
-_updateCharacterDisplayTimer:
+updateCharacterDisplayTimer:
 	ld h,d
 	ld l,<w7TextSoundCooldownCounter
 	ld a,(hl)
@@ -1502,7 +1502,7 @@ _updateCharacterDisplayTimer:
 ;;
 ; This function updates the textbox's tilemap to display the next character, as
 ; well as playing associated sound effects and whatnot.
-_displayNextTextCharacter:
+displayNextTextCharacter:
 	ld e,<w7d0d3
 	ld a,(de)
 	ld c,a
@@ -1578,7 +1578,7 @@ _displayNextTextCharacter:
 	ld e,<w7d0c1
 	ld a,(de)
 	bit 0,a
-	jr nz,_displayNextTextCharacter
+	jr nz,displayNextTextCharacter
 +
 	call @readSubsequentLineBuffers
 	or d
@@ -1675,7 +1675,7 @@ _displayNextTextCharacter:
 ;;
 ; Get the next character to display based on w7NextTextColumnToDisplay.
 ; Sets the zero flag if there's nothing more to display this line.
-_getNextCharacterToDisplay:
+getNextCharacterToDisplay:
 	ld e,<w7NextTextColumnToDisplay
 	ld a,(de)
 	cp $10
@@ -1689,7 +1689,7 @@ _getNextCharacterToDisplay:
 	ret
 
 ;;
-_func_5296:
+func_5296:
 	ld h,d
 	ld l,<w7d0c1
 	ldd a,(hl)
@@ -1697,17 +1697,17 @@ _func_5296:
 	jr nz,@chooseOption
 
 	bit 1,a
-	jr nz,_label_3f_155
+	jr nz,label_3f_155
 
 	bit 4,a
 	ret z
 
-	call _readNextTextByte
+	call readNextTextByte
 	cp $ff
-	jr z,_label_3f_158
+	jr z,label_3f_158
 
 	ld (wTextIndexL),a
-	call _checkInitialTextCommands
+	call checkInitialTextCommands
 	ld e,<w7d0c1
 	xor a
 	ld (de),a
@@ -1721,7 +1721,7 @@ _func_5296:
 	ld e,<w7TextStatus
 	ld a,(de)
 	or a
-	jr nz,_label_3f_159
+	jr nz,label_3f_159
 
 	ld (hl),a ; [w7TextDisplayState]
 	ld a,$01
@@ -1729,35 +1729,35 @@ _func_5296:
 	or h
 	ret
 
-_label_3f_155:
+label_3f_155:
 	bit 0,a
 	jr z,+
 
 	inc l
 	res 0,(hl) ; [w7d0c1]
-	jr _label_3f_157
+	jr label_3f_157
 +
 	ld a,(wKeysJustPressed)
 	and (BTN_A | BTN_B)
-	jr z,_label_3f_157
+	jr z,label_3f_157
 	ld (hl),$00 ; [w7TextDisplayState]
 	ld l,<w7d0c1
 	res 1,(hl)
 	pop hl
 	ld a,SND_TEXT_2
 	jp playSound
-_label_3f_157:
-	call _updateTextboxArrow
+label_3f_157:
+	call updateTextboxArrow
 	or h
 	ret
-_label_3f_158:
+label_3f_158:
 	xor a
 	ld ($00c2),a ; ????????
 	ret
 
-_label_3f_159:
+label_3f_159:
 	ld hl,w7TextboxOptionPositions
-_label_3f_160:
+label_3f_160:
 	ld a,(hl)
 	or a
 	ret z
@@ -1766,22 +1766,22 @@ _label_3f_160:
 	ldi (hl),a
 	ld a,l
 	and $07
-	jr nz,_label_3f_160
+	jr nz,label_3f_160
 	ret
 
 ;;
-_readNextTextByte:
+readNextTextByte:
 	ld l,<w7TextAddress
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 
 ;;
 ; This is part of text command $08, used in shops when trying to buy something.
 ; @param a Index
-_getExtraTextIndex:
-	ld hl,_extraTextIndices
+getExtraTextIndex:
+	ld hl,extraTextIndices
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1797,7 +1797,7 @@ _getExtraTextIndex:
 
 ;;
 ; Update the little red arrow in the bottom-right of the textbox.
-_updateTextboxArrow:
+updateTextboxArrow:
 	ld a,(wFrameCounter)
 	and $0f
 	ret nz
@@ -1845,7 +1845,7 @@ _updateTextboxArrow:
 
 ;;
 ; This clears the very top row - only the 8x8 portion, not the 8x16 portion.
-_clearTopRowOfTextMap:
+clearTopRowOfTextMap:
 	ld h,>w7TextboxMap
 	ld a,(w7d0cc)
 	add $02
@@ -1880,7 +1880,7 @@ _clearTopRowOfTextMap:
 
 ;;
 ; Shifts everything in w7TextboxMap and w7TextboxAttributes up one tile.
-_shiftTextboxMapUp:
+shiftTextboxMapUp:
 	ld h,>w7TextboxMap
 	call @func
 
@@ -1927,7 +1927,7 @@ _shiftTextboxMapUp:
 ;;
 ; This resets bit 5 for every piece of text in the top row.
 ; This causes it to reference the values in the map $20 bytes earlier.
-_subFirstRowOfTextMapBy20:
+subFirstRowOfTextMapBy20:
 	ld h,>w7TextboxMap
 	ld b,$00
 	call @func
@@ -1959,17 +1959,17 @@ _subFirstRowOfTextMapBy20:
 	ret
 
 ;;
-_func_53dd:
+func_53dd:
 	ld h,d
 	ld l,<w7d0c1
 	res 1,(hl)
-	call _saveTilesUnderTextbox
-	call _initTextboxMapping
-	jp _dmaTextboxMap
+	call saveTilesUnderTextbox
+	call initTextboxMapping
+	jp dmaTextboxMap
 
 ;;
 ; Something to do with pieces of heart
-_func_53eb:
+func_53eb:
 	ld h,d
 	ld l,<w7d0c1
 	bit 5,(hl)
@@ -2056,7 +2056,7 @@ _func_53eb:
 	ld a,(de)
 	or $20
 	ld (de),a
-	call _dmaTextboxMap
+	call dmaTextboxMap
 	or d
 	ret
 
@@ -2089,8 +2089,8 @@ _func_53eb:
 ; This calculates w7InvTextSpacesAfterName such that the text will be centered.
 ; It also draws the initial line of text, because that should be visible
 ; immediately, not scrolled in.
-_doInventoryTextFirstPass:
-	call _clearTextGfxBuffer
+doInventoryTextFirstPass:
+	call clearTextGfxBuffer
 	ld h,d
 	ld l,<w7ActiveBank
 	ldi a,(hl)
@@ -2101,7 +2101,7 @@ _doInventoryTextFirstPass:
 	push hl
 	ld e,$00
 --
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	cp $00
 	jr z,@nullTerminator
 
@@ -2122,13 +2122,13 @@ _doInventoryTextFirstPass:
 	jr @lineEnd
 
 @nullTerminator:
-	call _popFromTextStack
+	call popFromTextStack
 	ld a,h
 	or a
 	jr nz,--
 
 @lineEnd:
-	call _popFromTextStack
+	call popFromTextStack
 
 	; pop the initial text address, store it into w7TextAddress
 	pop bc
@@ -2158,17 +2158,17 @@ _doInventoryTextFirstPass:
 	add $00
 	ld c,a
 
-	call _clearLineTextBuffer
+	call clearLineTextBuffer
 	ld b,>w7TextGfxBuffer
 	pop hl
 
 @nextCharacter:
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	cp $10
 	jr c,+
 
 	; Standard character
-	call _setLineTextBuffers
+	call setLineTextBuffers
 	call retrieveTextCharacter
 
 	; Stop at 16 characters
@@ -2177,7 +2177,7 @@ _doInventoryTextFirstPass:
 	ret
 +
 	; Control code
-	call _handleTextControlCode
+	call handleTextControlCode
 
 	; Stop at a newline or end of text
 	ld a,(w7TextStatus)
@@ -2214,12 +2214,12 @@ _doInventoryTextFirstPass:
 ;;
 @dictionary:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld (wTextIndexL),a
-	call _pushToTextStack
+	call pushToTextStack
 	ld a,b
 	ld (wTextIndexH),a
-	jp _getTextAddress
+	jp getTextAddress
 
 ;;
 ; Symbol
@@ -2227,23 +2227,23 @@ _doInventoryTextFirstPass:
 	inc e
 @controlCodeNil:
 	pop hl
-	jp _incHlAndUpdateBank
+	jp incHlAndUpdateBank
 
 ;;
 ; Jump to another text index
 @controlCode7:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld (wTextIndexL),a
-	jp _checkInitialTextCommands
+	jp checkInitialTextCommands
 
 ;;
 ; Link name, kid name, or secret
 @controlCodeA:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	push hl
-	ld hl,_nameAddressTable
+	ld hl,nameAddressTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2264,7 +2264,7 @@ _doInventoryTextFirstPass:
 ; Call another text index
 @controlCodeF:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	cp $fc
 	jr c,++
 
@@ -2276,13 +2276,13 @@ _doInventoryTextFirstPass:
 	pop hl
 ++
 	ld (wTextIndexL),a
-	call _pushToTextStack
-	jp _checkInitialTextCommands
+	call pushToTextStack
+	jp checkInitialTextCommands
 
 ;;
 ; Shift w7TextGfxBuffer such that each tile is moved one position to the left.
 ; @param[out] hl Text address
-_shiftTextGfxBufferLeft:
+shiftTextGfxBufferLeft:
 	ld hl,w7TextGfxBuffer
 	ld de,w7TextGfxBuffer+$20
 	ld bc,$01e0
@@ -2302,7 +2302,7 @@ _shiftTextGfxBufferLeft:
 	ret
 
 ;;
-_decInvTextScrollTimer:
+decInvTextScrollTimer:
 	ld h,d
 	ld l,<w7InvTextScrollTimer
 	dec (hl)
@@ -2316,11 +2316,11 @@ _decInvTextScrollTimer:
 ; Sets z flag if $06 is passed (command to read a trade item or symbol
 ; graphic). I think the reasoning is that the z flag is set when an actual
 ; character is drawn, since most control codes don't draw characters.
-_handleTextControlCodeWithSpecialCase:
+handleTextControlCodeWithSpecialCase:
 	cp $06
 	jr z,@cmd6
 
-	call _handleTextControlCode
+	call handleTextControlCode
 	or d
 	ret
 
@@ -2328,15 +2328,15 @@ _handleTextControlCodeWithSpecialCase:
 @cmd6:
 	ld bc,w7TextGfxBuffer+$1e0
 	ld de,w7d5e0
-	call _handleTextControlCode
+	call handleTextControlCode
 	xor a
 	ret
 
 ;;
 ; Updates w7SelectedTextPosition based on w7SelectedTextOption, and draws the
 ; cursor to that position in w7TextboxMap.
-_updateSelectedTextPosition:
-	call _getSelectedTextOptionAddress
+updateSelectedTextPosition:
+	call getSelectedTextOptionAddress
 	bit 5,(hl)
 	ld b,$60
 	jr nz,+
@@ -2348,14 +2348,14 @@ _updateSelectedTextPosition:
 	inc e
 	ld (de),a
 
-	call _getAddressInTextboxMap
+	call getAddressInTextboxMap
 	ld (hl),$04
 	ret
 
 ;;
 ; @param[out] hl The address in w7TextboxOptionPositions for the current
 ; selected option.
-_getSelectedTextOptionAddress:
+getSelectedTextOptionAddress:
 	ld e,<w7SelectedTextOption
 	ld a,(de)
 	add <w7TextboxOptionPositions
@@ -2367,7 +2367,7 @@ _getSelectedTextOptionAddress:
 ; @param a Value from w7TextboxOptionPositions
 ; @param b Offset to start of row ($20 for top row, $60 for bottom)
 ; @param[out] hl Pointer to somewhere in w7TextboxMap
-_getAddressInTextboxMap:
+getAddressInTextboxMap:
 	and $1e
 	rrca
 	ld l,a
@@ -2385,7 +2385,7 @@ _getAddressInTextboxMap:
 	ret
 
 ;;
-_removeCursorFromSelectedTextPosition:
+removeCursorFromSelectedTextPosition:
 	ld b,$60
 	ld e,<w7SelectedTextPosition
 	ld a,(de)
@@ -2394,18 +2394,18 @@ _removeCursorFromSelectedTextPosition:
 	jr nz,+
 	ld b,$20
 +
-	call _getAddressInTextboxMap
+	call getAddressInTextboxMap
 	ld (hl),c
 	ret
 
 ;;
-_moveSelectedTextOptionRight:
+moveSelectedTextOptionRight:
 	ld e,<w7SelectedTextOption
 	ld a,(de)
 	inc a
 	and $07
 	ld (de),a
-	call _getSelectedTextOptionAddress
+	call getSelectedTextOptionAddress
 	ld a,(hl)
 	or a
 	ret nz
@@ -2415,29 +2415,29 @@ _moveSelectedTextOptionRight:
 	ret
 
 ;;
-_moveSelectedTextOptionLeft:
+moveSelectedTextOptionLeft:
 	ld e,<w7SelectedTextOption
 	ld a,(de)
 	dec a
 	and $07
 	ld (de),a
-	call _getSelectedTextOptionAddress
+	call getSelectedTextOptionAddress
 	ld a,(hl)
 	or a
 	ret nz
-	jr _moveSelectedTextOptionLeft
+	jr moveSelectedTextOptionLeft
 
 ;;
-_textOptionCode_checkDirectionButtons:
+textOptionCode_checkDirectionButtons:
 	ld a,(wKeysJustPressed)
 	and BTN_UP|BTN_DOWN|BTN_LEFT|BTN_RIGHT
 	ret z
 
 	ld a,SND_MENU_MOVE
 	call playSound
-	call _removeCursorFromSelectedTextPosition
+	call removeCursorFromSelectedTextPosition
 	call @updateSelectedTextOption
-	jr _updateSelectedTextPositionAndDmaTextboxMap
+	jr updateSelectedTextPositionAndDmaTextboxMap
 
 ;;
 ; Updates w7SelectedTextOption depending on the input.
@@ -2447,15 +2447,15 @@ _textOptionCode_checkDirectionButtons:
 	sub $04
 
 	; Right
-	jr z,_moveSelectedTextOptionRight
+	jr z,moveSelectedTextOptionRight
 
 	; Left
 	dec a
-	jr z,_moveSelectedTextOptionLeft
+	jr z,moveSelectedTextOptionLeft
 
 	; Up or down
 
-	call _getSelectedTextOptionAddress
+	call getSelectedTextOptionAddress
 	ld b,(hl)
 	ld c,$ff
 	ld l,<w7TextboxOptionPositions
@@ -2495,15 +2495,15 @@ _textOptionCode_checkDirectionButtons:
 	ret
 
 ;;
-_updateSelectedTextPositionAndDmaTextboxMap:
-	call _updateSelectedTextPosition
-	jp _dmaTextboxMap
+updateSelectedTextPositionAndDmaTextboxMap:
+	call updateSelectedTextPosition
+	jp dmaTextboxMap
 
 ;;
 ; When the B button is pressed, move the cursor to the last option.
 ; Unsets zero flag if B is pressed.
 ; @param a Buttons pressed
-_textOptionCode_checkBButton:
+textOptionCode_checkBButton:
 	and BTN_B
 	ret z
 
@@ -2522,15 +2522,15 @@ _textOptionCode_checkBButton:
 
 	ld a,SND_MENU_MOVE
 	call playSound
-	call _removeCursorFromSelectedTextPosition
-	call _updateSelectedTextPositionAndDmaTextboxMap
+	call removeCursorFromSelectedTextPosition
+	call updateSelectedTextPositionAndDmaTextboxMap
 	or d
 	ret
 
 ;;
 ; Save the current address of text being read.
 ; @param hl Current address of text
-_pushToTextStack:
+pushToTextStack:
 	push de
 	push bc
 	push hl
@@ -2564,7 +2564,7 @@ _pushToTextStack:
 	ret
 
 ;;
-_popFromTextStack:
+popFromTextStack:
 	push de
 	push bc
 	ld hl,w7TextStack+3
@@ -2602,11 +2602,11 @@ _popFromTextStack:
 	ret
 
 ;;
-_readByteFromW7ActiveBankAndIncHl:
+readByteFromW7ActiveBankAndIncHl:
 	call readByteFromW7ActiveBank
 
 ;;
-_incHlAndUpdateBank:
+incHlAndUpdateBank:
 	inc l
 	ret nz
 
@@ -2625,7 +2625,7 @@ _incHlAndUpdateBank:
 ;;
 ; Handle control codes for text (any value under $10)
 ; @param a Control code
-_handleTextControlCode:
+handleTextControlCode:
 	push bc
 	push hl
 	rst_jumpTable
@@ -2657,7 +2657,7 @@ _handleTextControlCode:
 @controlCode0:
 	pop hl
 	pop bc
-	call _popFromTextStack
+	call popFromTextStack
 	ld a,h
 	or a
 	ret nz
@@ -2683,7 +2683,7 @@ _handleTextControlCode:
 ; triangle symbol which is used sometimes in the english version.
 @controlCode6:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld b,a
 	cp $80
 	jr c,@kanji
@@ -2708,7 +2708,7 @@ _handleTextControlCode:
 	pop bc
 	push af
 	ld a,$06
-	call _setLineTextBuffers
+	call setLineTextBuffers
 	pop af
 	jp retrieveTextCharacter
 
@@ -2737,12 +2737,12 @@ _handleTextControlCode:
 ++
 	ldh (<hFF8B),a
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld (wTextIndexL),a
-	call _pushToTextStack
+	call pushToTextStack
 	ldh a,(<hFF8B)
 	ld (wTextIndexH),a
-	call _getTextAddress
+	call getTextAddress
 	jr @popBcAndRet
 
 ;;
@@ -2750,7 +2750,7 @@ _handleTextControlCode:
 ; current text.
 @controlCodeF:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	cp $fc
 	jr c,+
 
@@ -2764,17 +2764,17 @@ _handleTextControlCode:
 	ld (wTextIndexL),a
 	ld a,(wTextIndexH_backup)
 	ld (wTextIndexH),a
-	call _pushToTextStack
-	call _checkInitialTextCommands
+	call pushToTextStack
+	call checkInitialTextCommands
 	jr @popBcAndRet
 
 ;;
 ; "Jump" to a different text index
 @controlCode7:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld (wTextIndexL),a
-	call _checkInitialTextCommands
+	call checkInitialTextCommands
 	jr @popBcAndRet
 
 ;;
@@ -2807,7 +2807,7 @@ _handleTextControlCode:
 	rrca
 	jr c,@@noColors
 
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	bit 7,a
 	jr nz,+
 
@@ -2825,7 +2825,7 @@ _handleTextControlCode:
 	jr @popBcAndRet
 
 @@noColors:
-	call _incHlAndUpdateBank
+	call incHlAndUpdateBank
 
 @popBcAndRet:
 	pop bc
@@ -2846,9 +2846,9 @@ _handleTextControlCode:
 @controlCodeA:
 	pop hl
 	pop bc
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	push hl
-	ld hl,_nameAddressTable
+	ld hl,nameAddressTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2858,7 +2858,7 @@ _handleTextControlCode:
 	or a
 	jr z,+
 
-	call _setLineTextBuffers
+	call setLineTextBuffers
 	call retrieveTextCharacter
 	jr --
 +
@@ -2869,13 +2869,13 @@ _handleTextControlCode:
 ; Play a sound effect
 @controlCodeE:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld (w7SoundEffect),a
 	jr @popBcAndRet
 
 ; Unused?
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld b,a
 	call @@func2
 	call @@func1
@@ -2906,7 +2906,7 @@ _handleTextControlCode:
 ; Set the sound that's made when each character is displayed
 @controlCodeB:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld (w7TextSound),a
 	jr @popBcAndRet
 
@@ -2914,7 +2914,7 @@ _handleTextControlCode:
 ; Set the number of frames until the textbox closes itself.
 @controlCodeD:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	ld (w7TextboxTimer),a
 	jr @popBcAndRet
 
@@ -2924,7 +2924,7 @@ _handleTextControlCode:
 ;  Bits 3-7: Action to perform. Values of 0-7 are valid.
 @controlCodeC:
 	pop hl
-	call _readByteFromW7ActiveBankAndIncHl
+	call readByteFromW7ActiveBankAndIncHl
 	push hl
 	ld b,a
 	and $03
@@ -2934,25 +2934,25 @@ _handleTextControlCode:
 	rlca
 	and $1f
 	rst_jumpTable
-	.dw _textControlCodeC_0
-	.dw _textControlCodeC_1
-	.dw _textControlCodeC_2
-	.dw _textControlCodeC_3
-	.dw _textControlCodeC_ret ; $04 is dealt with in _checkInitialTextCommands.
-	.dw _textControlCodeC_5
-	.dw _textControlCodeC_6
-	.dw _textControlCodeC_7
+	.dw textControlCodeC_0
+	.dw textControlCodeC_1
+	.dw textControlCodeC_2
+	.dw textControlCodeC_3
+	.dw textControlCodeC_ret ; $04 is dealt with in checkInitialTextCommands.
+	.dw textControlCodeC_5
+	.dw textControlCodeC_6
+	.dw textControlCodeC_7
 
 ;;
 ; Gets the number of frames each character is displayed for, based on
 ; wTextSpeed.
 ; @param[out] a Frames per character
-_getCharacterDisplayLength:
+getCharacterDisplayLength:
 	push hl
 	ld a,(wTextSpeed)
 	swap a
 	rrca
-	ld hl,_textSpeedData+2
+	ld hl,textSpeedData+2
 	rst_addAToHl
 	ld a,(hl)
 	pop hl
@@ -2961,21 +2961,21 @@ _getCharacterDisplayLength:
 ;;
 ; Sets the speed of the text. Value of $02 for c sets it to normal, lower
 ; values are faster, higher ones are slower.
-_textControlCodeC_0:
+textControlCodeC_0:
 	ld a,(wTextSpeed)
 	swap a
 	rrca
 	add c
-	ld hl,_textSpeedData
+	ld hl,textSpeedData
 	rst_addAToHl
 	ld a,(hl)
 	ld (w7CharacterDisplayLength),a
-	jr _textControlCodeC_ret
+	jr textControlCodeC_ret
 
 ; This is the structure which controls the values for each text speed. I don't
 ; know why there are 8 bytes per text speed, but the 3rd byte of each appears
 ; to be the only important one.
-_textSpeedData:
+textSpeedData:
 	.db $04 $05 $07 $08 $0a $0c $0e $0f ; Text speed 1
 	.db $03 $04 $05 $07 $08 $0a $0b $0c ; Text speed 2
 	.db $02 $03 $04 $05 $06 $08 $08 $0a ; 3
@@ -2983,32 +2983,32 @@ _textSpeedData:
 	.db $01 $01 $02 $02 $03 $03 $04 $05 ; 5
 ;;
 ; Slow down the text. Used for essences.
-_textControlCodeC_7:
+textControlCodeC_7:
 	ld a,$78
 	ld (w7TextSlowdownTimer),a
-	jr _textControlCodeC_ret
+	jr textControlCodeC_ret
 
 ;;
 ; Show the piece of heart icon.
-_textControlCodeC_5:
+textControlCodeC_5:
 	ld hl,w7d0c1
 	set 5,(hl)
 
 ;;
 ; Stop text here, clear textbox on next button press.
-_textControlCodeC_3:
+textControlCodeC_3:
 	ld hl,w7d0c1
 	set 1,(hl)
 
 ;;
-_textControlCodeC_ret:
+textControlCodeC_ret:
 	pop hl
 	pop bc
 	ret
 
 ;;
 ; Unused?
-_textControlCodeC_6:
+textControlCodeC_6:
 	ld a,($cbab)
 	ld (wTextNumberSubstitution+1),a
 	ld a,($cbaa)
@@ -3016,7 +3016,7 @@ _textControlCodeC_6:
 
 ;;
 ; Display a number of up to 3 digits. Usually bcd format.
-_textControlCodeC_1:
+textControlCodeC_1:
 	pop hl
 	pop bc
 
@@ -3045,13 +3045,13 @@ _textControlCodeC_1:
 
 @drawDigit:
 	add $30
-	call _setLineTextBuffers
+	call setLineTextBuffers
 	jp retrieveTextCharacter
 
 ;;
 ; An option is presented, ie. yes/no. This command marks a possible position
 ; for the cursor.
-_textControlCodeC_2:
+textControlCodeC_2:
 	call @getNextTextboxOptionPosition
 	ld a,(w7d0c1)
 	or $04
@@ -3072,7 +3072,7 @@ _textControlCodeC_2:
 
 	; Reserve this spot for the cursor
 	ld a,$20
-	call _setLineTextBuffers
+	call setLineTextBuffers
 	jp retrieveTextCharacter
 
 ;;
@@ -3086,7 +3086,7 @@ _textControlCodeC_2:
 	inc l
 	jr -
 
-_nameAddressTable:
+nameAddressTable:
 	.dw wLinkName wKidName
 	.dw w7SecretText1 w7SecretText2
 
@@ -3095,7 +3095,7 @@ _nameAddressTable:
 ; of text depending on the value.
 ;
 .ifdef ROM_AGES
-_extraTextIndices:
+extraTextIndices:
 	.dw $0000
 	.dw $0000
 	.dw $0000
@@ -3135,7 +3135,7 @@ _extraTextIndices:
 	.dw $cbad
 	.db <TX_0d0c <TX_0d08 <TX_0d07 <TX_0d03
 .else
-_extraTextIndices:
+extraTextIndices:
 	.dw @index00
 	.dw @index01
 	.dw @index02

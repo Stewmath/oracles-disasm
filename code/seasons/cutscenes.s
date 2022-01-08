@@ -47,13 +47,13 @@ cutscene0a:
 ; CUTSCENE_S_VOLCANO_ERUPTING
 cutscene0b:
 	callab bank3Cutscenes.cutsceneHandler_0b
-	jr _func_5d31
+	jr func_5d31
 
 ;;
 ; CUTSCENE_S_PIRATES_DEPART
 cutscene0c:
 	callab bank3Cutscenes.cutsceneHandler_0c
-	jr _func_5d31
+	jr func_5d31
 
 ;;
 ; CUTSCENE_S_PREGAME_INTRO
@@ -82,7 +82,7 @@ cutscene10:
 ; CUTSCENE_S_ZELDA_VILLAGERS
 cutscene11:
 	call zeldaAndVillagersCutsceneCaller
-	jp _func_5d31
+	jp func_5d31
 
 ;;
 ; CUTSCENE_S_ZELDA_KIDNAPPED

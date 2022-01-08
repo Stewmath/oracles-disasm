@@ -174,7 +174,7 @@ updateItemsPost:
 	ld e,Item.enabled
 	ld a,(de)
 	or a
-	call nz,_updateItemPost
+	call nz,updateItemPost
 	inc d
 	ld a,d
 	cp $e0
@@ -184,7 +184,7 @@ itemCodeNilPost:
 	ret
 
 ;;
-_updateItemPost:
+updateItemPost:
 	ld e,$01
 	ld a,(de)
 	rst_jumpTable
@@ -244,14 +244,14 @@ _updateItemPost:
 	.dw itemCodeNilPost	; 0x2b
 
 ;;
-_loadAttributesAndGraphicsAndIncState:
+loadAttributesAndGraphicsAndIncState:
 	call itemIncState
 	ld l,Item.enabled
 	ld (hl),$03
 
 ;;
 ; Loads values for Item.collisionRadiusY/X, Item.damage, Item.health, and loads graphics.
-_itemLoadAttributesAndGraphics:
+itemLoadAttributesAndGraphics:
 	ld e,Item.id
 	ld a,(de)
 	add a
@@ -290,11 +290,11 @@ _itemLoadAttributesAndGraphics:
 	ld a,c
 	ld (de),a
 
-	call _itemSetVar3cToFF
+	call itemSetVar3cToFF
 	jpab bank3f.itemLoadGraphics
 
 ;;
-_itemSetVar3cToFF:
+itemSetVar3cToFF:
 	ld e,Item.var3c
 	ld a,$ff
 	ld (de),a
@@ -308,7 +308,7 @@ _itemSetVar3cToFF:
 ; @param[out]	hl	Item.var2a
 ; @param[out]	zflag	Set if Item.var2a is zero.
 ; @param[out]	cflag	Set if health went below 0
-_itemUpdateDamageToApply:
+itemUpdateDamageToApply:
 	ld h,d
 	ld l,Item.damageToApply
 	ld a,(hl)
@@ -332,7 +332,7 @@ itemAnimate:
 	ret nz
 
 	ld l,Item.animPointer
-	jr _itemNextAnimationFrame
+	jr itemNextAnimationFrame
 
 ;;
 ; @param a Animation index
@@ -350,7 +350,7 @@ itemSetAnimation:
 	add hl,bc
 
 ;;
-_itemNextAnimationFrame:
+itemNextAnimationFrame:
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
@@ -409,7 +409,7 @@ _itemNextAnimationFrame:
 
 ;;
 ; Transfer an item's knockbackCounter and knockbackAngle to Link.
-_itemTransferKnockbackToLink:
+itemTransferKnockbackToLink:
 	ld h,d
 	ld l,Item.knockbackCounter
 	ld a,(hl)
@@ -436,7 +436,7 @@ _itemTransferKnockbackToLink:
 ; Applies speed based on Item.direction?
 ;
 ; @param	hl	Table of offsets for Y/X/Z positions based on Item.direction
-_applyOffsetTableHL:
+applyOffsetTableHL:
 	ld e,Item.direction
 	ld a,(de)
 
@@ -473,7 +473,7 @@ _applyOffsetTableHL:
 ; This function adds the Z position to the Y position, and zeroes the Z position.
 ;
 ; @param[out]	zflag	Set if not in a sidescrolling area
-_itemMergeZPositionIfSidescrollingArea:
+itemMergeZPositionIfSidescrollingArea:
 	ld h,d
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL
@@ -496,7 +496,7 @@ _itemMergeZPositionIfSidescrollingArea:
 ; caller.
 ;
 ; @param	c	Gravity
-_itemUpdateSpeedZAndCheckHazards:
+itemUpdateSpeedZAndCheckHazards:
 	ld e,Item.zh
 	ld a,e
 	ldh (<hFF8B),a
@@ -536,7 +536,7 @@ _itemUpdateSpeedZAndCheckHazards:
 ; Not used by bombchus, but IS used by scent seeds...
 ;
 ; @param[out]	cflag	Set when the bomb has reached the point (if such a point exists)
-_bombPullTowardPoint:
+bombPullTowardPoint:
 	ld h,d
 
 	; Return if object is above ground.
@@ -584,9 +584,9 @@ _bombPullTowardPoint:
 ;
 ; @param	c	Gravity
 ; @param[out]	cflag	Set if the item has landed.
-_itemUpdateThrowingVertically:
+itemUpdateThrowingVertically:
 	; Jump if in a sidescrolling area
-	call _itemMergeZPositionIfSidescrollingArea
+	call itemMergeZPositionIfSidescrollingArea
 	jr nz,@sidescrolling
 
 	; Update vertical speed, return if the object hasn't landed yet
@@ -704,7 +704,7 @@ _itemUpdateThrowingVertically:
 ;;
 ; Updates Item.var3b depending whether it's on a hole, lava, water tile.
 @checkHoleOrWater:
-	call _itemMergeZPositionIfSidescrollingArea
+	call itemMergeZPositionIfSidescrollingArea
 	jr nz,@@sidescrolling
 
 	; Note: a=0 here
@@ -741,15 +741,15 @@ _itemUpdateThrowingVertically:
 	ret
 
 ;;
-; Calls _itemUpdateThrowingVertically and creates an appropriate animation if this item
+; Calls itemUpdateThrowingVertically and creates an appropriate animation if this item
 ; has fallen into something (water, lava, or a hole). Caller still needs to delete the
 ; object.
 ;
 ; @param	c	Gravity
 ; @param[out]	cflag	Set if the object has landed in water, lava, or a hole.
 ; @param[out]	zflag	Set if the object is in midair.
-_itemUpdateThrowingVerticallyAndCheckHazards:
-	call _itemUpdateThrowingVertically
+itemUpdateThrowingVerticallyAndCheckHazards:
+	call itemUpdateThrowingVertically
 	jr c,@landed
 
 	; Object isn't on the ground, so only check for collisions in sidescrolling areas.
@@ -808,12 +808,12 @@ _itemUpdateThrowingVerticallyAndCheckHazards:
 
 ;;
 ; Creates an interaction to do the clinking animation.
-_objectCreateClinkInteraction:
+objectCreateClinkInteraction:
 	ld b,INTERACID_CLINK
 	jp objectCreateInteractionWithSubid00
 
 ;;
-_cpRelatedObject1ID:
+cpRelatedObject1ID:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld e,Item.id
@@ -826,7 +826,7 @@ _cpRelatedObject1ID:
 ; position.
 ;
 ; @param	bc	Position of tile to check
-_itemCheckCanPassSolidTileAt:
+itemCheckCanPassSolidTileAt:
 	call getTileAtPosition
 	jr ++
 
@@ -838,7 +838,7 @@ _itemCheckCanPassSolidTileAt:
 ; Also updates var3c, var3d (tile position and index).
 ;
 ; @param[out]	zflag	Set if there is no collision.
-_itemCheckCanPassSolidTile:
+itemCheckCanPassSolidTile:
 	call objectGetTileAtPosition
 ++
 	; Check if position / tile has changed? (var3c = position, var3d = tile index)
@@ -859,7 +859,7 @@ _itemCheckCanPassSolidTile:
 	ld (hl),e
 	ld l,Item.angle
 	ld b,(hl)
-	call _checkTileIsPassableFromDirection
+	call checkTileIsPassableFromDirection
 	jr nc,@collision
 	ret z
 
@@ -893,7 +893,7 @@ _itemCheckCanPassSolidTile:
 ;			this tile
 ; @param[out]	cflag	Set if the tile is passable
 ; @param[out]	zflag	Set if there will be no elevation change (ignore the value of a)
-_checkTileIsPassableFromDirection:
+checkTileIsPassableFromDirection:
 	; Check if the tile can be passed by items
 	ld hl,itemPassableTilesTable
 	call findByteInCollisionTable_paramE
@@ -908,7 +908,7 @@ _checkTileIsPassableFromDirection:
 	push af
 
 	ld a,(wActiveCollisions)
-	ld hl,_itemPassableCliffTilesTable
+	ld hl,itemPassableCliffTilesTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -955,7 +955,7 @@ _checkTileIsPassableFromDirection:
 ; Used by bombs, bombchus. Might not work well with other items due to assumptions about
 ; their size.
 ;
-_itemUpdateConveyorBelt:
+itemUpdateConveyorBelt:
 	; Return if in midair
 	ld e,Item.zh
 	ld a,(de)
@@ -972,7 +972,7 @@ _itemUpdateConveyorBelt:
 	push af
 	rrca
 	rrca
-	ld hl,_bombEdgeOffsets
+	ld hl,bombEdgeOffsets
 	rst_addAToHl
 
 	; Set 'bc' to the item's position + offset (where to check for a wall)
@@ -1007,7 +1007,7 @@ _itemUpdateConveyorBelt:
 
 ; These are offsets from a bomb or bombchu's center to check for wall collisions at.
 ; This might apply to all throwable items?
-_bombEdgeOffsets:
+bombEdgeOffsets:
 	.db $fd $00 ; DIR_UP
 	.db $00 $03 ; DIR_RIGHT
 	.db $07 $00 ; DIR_DOWN

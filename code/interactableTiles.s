@@ -7,7 +7,7 @@ interactWithTileBeforeLink:
 	or a
 	ret nz
 
-	call _specialObjectGetTileInFront
+	call specialObjectGetTileInFront
 
 	; Store tile index in hFF8B
 	ld e,a
@@ -21,24 +21,24 @@ interactWithTileBeforeLink:
 	; Setting it disables some of Link's per-frame update code?
 	ld hl,interactableTilesTable
 	call lookupCollisionTable_paramE
-	jp nc,_resetPushingAgainstTileCounter
+	jp nc,resetPushingAgainstTileCounter
 	ld b,a
 	and $0f
 	rst_jumpTable
-	.dw _nextToPushableBlock
-	.dw _nextToKeyBlock
-	.dw _nextToKeyDoor
-	.dw _nextToTileWithInfoText
-	.dw _nextToChestTile
-	.dw _nextToSignTile
-	.dw _nextToOverworldKeyhole
-	.dw _nextToSubrosiaKeydoor
-	.dw _nextToGhiniSpawner
+	.dw nextToPushableBlock
+	.dw nextToKeyBlock
+	.dw nextToKeyDoor
+	.dw nextToTileWithInfoText
+	.dw nextToChestTile
+	.dw nextToSignTile
+	.dw nextToOverworldKeyhole
+	.dw nextToSubrosiaKeydoor
+	.dw nextToGhiniSpawner
 
 ;;
-_nextToChestTile:
+nextToChestTile:
 	; This will return if Link isn't facing the tile or hasn't pressed A.
-	call _checkFacingBottomOfTileAndPressedA
+	call checkFacingBottomOfTileAndPressedA
 	jr z,++
 
 	; Show this text if he's facing the wrong way.
@@ -139,9 +139,9 @@ _nextToChestTile:
 	ret
 
 ;;
-_nextToSignTile:
+nextToSignTile:
 	; This will return if Link isn't facing the tile or hasn't pressed A.
-	call _checkFacingBottomOfTileAndPressedA
+	call checkFacingBottomOfTileAndPressedA
 
 	; Show this text if he's not facing the right way.
 	ld bc,TX_510e
@@ -197,7 +197,7 @@ _nextToSignTile:
 ;;
 ; Returns from the caller of the function if Link isn't facing a wall or pressing A.
 ; @param[out] zflag Set if the wall Link is facing is above him.
-_checkFacingBottomOfTileAndPressedA:
+checkFacingBottomOfTileAndPressedA:
 	ld a,(wGameKeysJustPressed)
 	and BTN_A
 	jr z,++
@@ -205,7 +205,7 @@ _checkFacingBottomOfTileAndPressedA:
 ;;
 ; Returns from the caller of the function if Link isn't facing a wall.
 ; @param[out] zflag Set if the wall Link is facing is above him.
-_checkFacingBottomOfTile:
+checkFacingBottomOfTile:
 	ld a,(w1Link.direction)
 	ld hl,@data
 	rst_addAToHl
@@ -226,7 +226,7 @@ _checkFacingBottomOfTile:
 
 ;;
 ; Deals with pushing blocks, pots, etc.
-_nextToPushableBlock:
+nextToPushableBlock:
 .ifdef ROM_AGES
 	; No pushing underwater
 	ld a,(wTilesetFlags)
@@ -235,9 +235,9 @@ _nextToPushableBlock:
 .endif
 
 	; Check that he's actually pushing and wait for counters
-	call _specialObjectCheckPushingAgainstTile
-	jp z,_resetPushingAgainstTileCounter
-	call _decPushingAgainstTileCounter
+	call specialObjectCheckPushingAgainstTile
+	jp z,resetPushingAgainstTileCounter
+	call decPushingAgainstTileCounter
 	ret nz
 
 	; Bit 6 of parameter: if set, power bracelet is required
@@ -262,7 +262,7 @@ _nextToPushableBlock:
 	jr nz,@end
 ++
 	; Check whether there is room on the next tile for it to be pushed there
-	call _checkTileAfterNext
+	call checkTileAfterNext
 	jr nc,@end
 
 .ifdef ROM_AGES
@@ -319,7 +319,7 @@ _nextToPushableBlock:
 
 @end:
 	xor a
-	jp _resetPushingAgainstTileCounter
+	jp resetPushingAgainstTileCounter
 
 .ifdef ROM_AGES
 	; For the somaria block, use its dedicated object to move it around.
@@ -337,19 +337,19 @@ _nextToPushableBlock:
 .endif
 
 ;;
-_nextToKeyBlock:
-	call _specialObjectCheckPushingAgainstTile
-	jp z,_resetPushingAgainstTileCounter
+nextToKeyBlock:
+	call specialObjectCheckPushingAgainstTile
+	jp z,resetPushingAgainstTileCounter
 
-	call _decPushingAgainstTileCounter
+	call decPushingAgainstTileCounter
 	ret nz
 
-	call _checkAndDecKeyCount
+	call checkAndDecKeyCount
 	; Show text if # keys was zero
 	ld a,$02
 	jp z,showInfoTextForTile
 
-	call _createKeySpriteInteraction
+	call createKeySpriteInteraction
 
 	ld a,TILEINDEX_STANDARD_FLOOR
 	call setTile
@@ -370,19 +370,19 @@ _nextToKeyBlock:
 	call setShortPosition
 ++
 	xor a
-	jr _resetPushingAgainstTileCounter
+	jr resetPushingAgainstTileCounter
 
 ;;
-_nextToKeyDoor:
-	call _specialObjectCheckPushingAgainstTile
-	jr z,_resetPushingAgainstTileCounter
+nextToKeyDoor:
+	call specialObjectCheckPushingAgainstTile
+	jr z,resetPushingAgainstTileCounter
 
-	call _decPushingAgainstTileCounter
+	call decPushingAgainstTileCounter
 	jr z,+
 	dec (hl)
 	ret nz
 +
-	call _checkAndDecKeyCount
+	call checkAndDecKeyCount
 	jr z,@noKey
 
 	; Check if w1ReservedInteraction0 is in use, and postpone the door opening if so.
@@ -392,7 +392,7 @@ _nextToKeyDoor:
 	jr nz,++
 
 	; Create the key sprite
-	call _createKeySpriteInteraction
+	call createKeySpriteInteraction
 
 	; Create the door opener
 	ld hl,w1ReservedInteraction0.enabled
@@ -421,7 +421,7 @@ _nextToKeyDoor:
 	pop de
 ++
 	xor a
-	jr _resetPushingAgainstTileCounter
+	jr resetPushingAgainstTileCounter
 
 	; If you don't have a key, show a message
 @noKey:
@@ -438,35 +438,35 @@ _nextToKeyDoor:
 
 ;;
 ; Sets wPushingAgainstTileCounter to 20 frames.
-_resetPushingAgainstTileCounter:
+resetPushingAgainstTileCounter:
 	ld a,20
 	ld (wPushingAgainstTileCounter),a
 	ret
 
 ;;
 ; @param[out] zflag Set if the counter has reached zero.
-_decPushingAgainstTileCounter:
+decPushingAgainstTileCounter:
 	ld hl,wPushingAgainstTileCounter
 	dec (hl)
 	ret
 
 ;;
-_nextToOverworldKeyhole:
+nextToOverworldKeyhole:
 	call getThisRoomFlags
 	and $80
 	ret nz
 
-	call _specialObjectCheckPushingAgainstTile
-	jr z,_resetPushingAgainstTileCounter
+	call specialObjectCheckPushingAgainstTile
+	jr z,resetPushingAgainstTileCounter
 
 	; This will return if Link isn't facing a wall.
-	call _checkFacingBottomOfTile
+	call checkFacingBottomOfTile
 	jr z,+
 
 	xor a
 	ret
 +
-	call _decPushingAgainstTileCounter
+	call decPushingAgainstTileCounter
 	jr z,+
 	dec (hl)
 	ret nz
@@ -475,11 +475,11 @@ _nextToOverworldKeyhole:
 	ld hl,@roomsWithKeyholesTable
 	call findRoomSpecificData
 	ld b,a
-	jr nc,_jumpToShowInfoText
+	jr nc,jumpToShowInfoText
 
 	; Check that you have the required key
 	call checkTreasureObtained
-	jr nc,_jumpToShowInfoText
+	jr nc,jumpToShowInfoText
 
 	; Play sound effect
 	ld a,SND_OPENCHEST
@@ -494,7 +494,7 @@ _nextToOverworldKeyhole:
 	set 0,(hl)
 
 	; Create the key sprite
-	call _createKeySpriteInteraction
+	call createKeySpriteInteraction
 
 	; Increment id to change it to INTERACID_OVERWORLD_KEY_SPRITE
 	ld l,Interaction.id
@@ -559,12 +559,12 @@ _nextToOverworldKeyhole:
 .endif ; ROM_SEASONS
 
 
-_jumpToShowInfoText:
+jumpToShowInfoText:
 	ld a,$08
 	jp showInfoTextForTile
 
 ;;
-_createKeySpriteInteraction:
+createKeySpriteInteraction:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_DUNGEON_KEY_SPRITE
@@ -579,23 +579,23 @@ _createKeySpriteInteraction:
 	jp setShortPosition
 
 ;;
-_nextToSubrosiaKeydoor:
+nextToSubrosiaKeydoor:
 .ifdef ROM_SEASONS
-	call _specialObjectCheckPushingAgainstTile
-	jp z,_resetPushingAgainstTileCounter
-	call _checkFacingBottomOfTile
+	call specialObjectCheckPushingAgainstTile
+	jp z,resetPushingAgainstTileCounter
+	call checkFacingBottomOfTile
 	jr z,+
 	xor a
 	ret
 +
-	call _decPushingAgainstTileCounter
+	call decPushingAgainstTileCounter
 	jr z,+
 	dec (hl)
 	ret nz
 +
 	ld a,GLOBALFLAG_DATING_ROSA
 	call checkGlobalFlag
-	jr z,_jumpToShowInfoText
+	jr z,jumpToShowInfoText
 
 	ld a,SND_OPENCHEST
 	call playSound
@@ -606,7 +606,7 @@ _nextToSubrosiaKeydoor:
 	ld a,TILEINDEX_OPEN_CAVE_DOOR
 	call setTile
 
-	call _createKeySpriteInteraction
+	call createKeySpriteInteraction
 .endif
 	; Stub in ages
 	scf
@@ -614,16 +614,16 @@ _nextToSubrosiaKeydoor:
 
 ;;
 ; From seasons: when next to certain tombstones, ghinis spawn
-_nextToGhiniSpawner:
+nextToGhiniSpawner:
 	; No enemies allowed while maple is on the screen
 	ld a,(wIsMaplePresent)
 	or a
 	ret nz
 
-	call _specialObjectCheckPushingAgainstTile
-	jp z,_resetPushingAgainstTileCounter
+	call specialObjectCheckPushingAgainstTile
+	jp z,resetPushingAgainstTileCounter
 
-	call _decPushingAgainstTileCounter
+	call decPushingAgainstTileCounter
 	ret nz
 
 	; Change the tile index so it won't keep making ghosts
@@ -653,14 +653,14 @@ _nextToGhiniSpawner:
 
 ;;
 ; Deals with showing text when pushing against certain tiles, ie. cracked walls, keyholes
-_nextToTileWithInfoText:
-	call _specialObjectCheckPushingAgainstTile
-	jp z,_resetPushingAgainstTileCounter
+nextToTileWithInfoText:
+	call specialObjectCheckPushingAgainstTile
+	jp z,resetPushingAgainstTileCounter
 
-	call _decPushingAgainstTileCounter
+	call decPushingAgainstTileCounter
 	ret nz
 
-	call _resetPushingAgainstTileCounter
+	call resetPushingAgainstTileCounter
 	ld a,b
 	swap a
 	and $0f
@@ -706,7 +706,7 @@ showInfoTextForTile:
 	ldi a,(hl)
 	ld b,a
 	ld c,(hl)
-	call _resetPushingAgainstTileCounter
+	call resetPushingAgainstTileCounter
 
 	ld hl,wInformativeTextsShown
 	ld a,(hl)
@@ -737,7 +737,7 @@ showInfoTextForTile:
 ;;
 ; @param d Special object (Link)
 ; @param[out] zflag Set if the object is pushing against the tile.
-_specialObjectCheckPushingAgainstTile:
+specialObjectCheckPushingAgainstTile:
 	ld a,(wLinkPushingDirection)
 	rlca
 	jr c,++
@@ -780,7 +780,7 @@ _specialObjectCheckPushingAgainstTile:
 ; @param	b	Parameter from interactableTilesTable. Will be $40 or above if the
 ;			door is a boss key door.
 ; @param[out]	zflag	Set if you have no keys, or don't have the boss key
-_checkAndDecKeyCount:
+checkAndDecKeyCount:
 .ifdef ROM_SEASONS
 	ld a,GLOBALFLAG_DATING_ROSA
 	call checkGlobalFlag
@@ -824,15 +824,15 @@ _checkAndDecKeyCount:
 ; @param	d	Special object (Link)
 ; @param[out]	a	The tile index in front of the object
 ; @param[out]	bc	The position of the tile in front
-_specialObjectGetTileInFront:
+specialObjectGetTileInFront:
 	ld e,SpecialObject.direction
 	ld a,(de)
-	ld hl,_nextTileOffsets
+	ld hl,nextTileOffsets
 	rst_addDoubleIndex
 
 ;;
 ; @param	hl	Address to get offsets to add to Y, X
-_specialObjectGetTileAtOffset:
+specialObjectGetTileAtOffset:
 	ld e,SpecialObject.yh
 	ld a,(de)
 	add (hl)
@@ -853,7 +853,7 @@ _specialObjectGetTileAtOffset:
 	ret
 
 ; Offsets to get the position of the tile link is standing directly against
-_nextTileOffsets:
+nextTileOffsets:
 	.db $fc $00 ; DIR_UP
 	.db $00 $07 ; DIR_RIGHT
 	.db $08 $00 ; DIR_DOWN
@@ -864,11 +864,11 @@ _nextTileOffsets:
 ; This is used to determine whether a pushable block has room to be pushed.
 ;
 ; @param[out]	cflag	Set if there is no obstruction (tile is not solid)
-_checkTileAfterNext:
+checkTileAfterNext:
 	ld a,(wLinkPushingDirection)
 	ld hl,@offsets
 	rst_addDoubleIndex
-	call _specialObjectGetTileAtOffset
+	call specialObjectGetTileAtOffset
 	ld b,>wRoomCollisions
 	ld a,(bc)
 	and $0f

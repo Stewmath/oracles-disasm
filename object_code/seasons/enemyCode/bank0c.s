@@ -6,7 +6,7 @@ enemyCode0f:
 	ret z
 	dec a
 	ret z
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 	rst_jumpTable
 	.dw @state00
@@ -44,7 +44,7 @@ enemyCode0f:
 	ret nz
 	call copyVar03ToVar30
 	ld b,ENEMYID_ROLLING_SPIKE_TRAP
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),$08
 	call seasonsFunc_0c_68c8
 	call seasonsFunc_0c_68fa
@@ -103,7 +103,7 @@ enemyCode0f:
 	jr ++
 
 @@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	ld e,Enemy.var30
 	ld a,(de)
@@ -142,7 +142,7 @@ seasonsFunc_0c_68d6:
 	call enemySetAnimation
 	ld a,$1e
 +
-	jp _ecom_setSpeedAndState8
+	jp ecom_setSpeedAndState8
 
 seasonsTable_0c_68ed:
 	.db $06 $06 $0e $16 $19
@@ -173,7 +173,7 @@ seasonsFunc_0c_68fa:
 	call seasonsFunc_0c_6925
 	push bc
 	ld b,ENEMYID_ROLLING_SPIKE_TRAP
-	call _ecom_spawnEnemyWithSubid01
+	call ecom_spawnEnemyWithSubid01
 	ld (hl),$09
 	pop bc
 	ld a,e
@@ -387,46 +387,46 @@ enemyCode11:
 	ld e,Enemy.var03
 	ld a,(de)
 	cp $03
-	jp nz,_pokeyFunc_0c_6ba8
-	call _ecom_killRelatedObj1
+	jp nz,pokeyFunc_0c_6ba8
+	call ecom_killRelatedObj1
 	ld l,$b3
 	ld (hl),$00
 	ld l,$b1
 	push hl
 	ld h,(hl)
-	call _ecom_killObjectH
+	call ecom_killObjectH
 	pop hl
 	inc l
 	ld h,(hl)
-	call _ecom_killObjectH
+	call ecom_killObjectH
 	jp enemyDie
 +
 	ld e,Enemy.var2a
 	ld a,(de)
 	cp $9a
-	call z,_pokeyFunc_0c_6bfe
-	call _pokeyFunc_0c_6c3e
+	call z,pokeyFunc_0c_6bfe
+	call pokeyFunc_0c_6c3e
 	ld e,Enemy.collisionType
 	ld a,(de)
 	rlca
 	ret nc
 ++
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 	rst_jumpTable
-	.dw _pokey_state_0
-	.dw _pokey_state_stub
-	.dw _pokey_state_stub
-	.dw _pokey_state_stub
-	.dw _pokey_state_stub
-	.dw _pokey_state_stub
-	.dw _pokey_state_stub
-	.dw _pokey_state_stub
+	.dw pokey_state_0
+	.dw pokey_state_stub
+	.dw pokey_state_stub
+	.dw pokey_state_stub
+	.dw pokey_state_stub
+	.dw pokey_state_stub
+	.dw pokey_state_stub
+	.dw pokey_state_stub
 +
 	ld e,Enemy.var03
 	ld a,(de)
 	or a
-	call z,_ecom_decCounter1
+	call z,ecom_decCounter1
 	ld a,$33
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -435,13 +435,13 @@ enemyCode11:
 	dec b
 	ld a,b
 	rst_jumpTable
-	.dw _pokey_6b05
-	.dw _pokey_6b2e
-	.dw _pokey_6b35
-	.dw _pokey_6b3c
-	.dw _pokey_state_stub
+	.dw pokey_6b05
+	.dw pokey_6b2e
+	.dw pokey_6b35
+	.dw pokey_6b3c
+	.dw pokey_state_stub
 
-_pokey_state_0:
+pokey_state_0:
 	ld a,b
 	or a
 	jr nz,+
@@ -449,7 +449,7 @@ _pokey_state_0:
 	call checkBEnemySlotsAvailable
 	ret nz
 	ld b,ENEMYID_POKEY
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),$05
 	ld l,$96
 	ld a,$80
@@ -463,7 +463,7 @@ _pokey_state_0:
 	inc l
 -
 	push hl
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld a,$04
 	sub e
 	ld (hl),a
@@ -492,7 +492,7 @@ _pokey_state_0:
 	ld a,$01
 	call nz,enemySetAnimation
 	ld a,$0f
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld l,$bf
 	set 5,(hl)
 	ld l,$82
@@ -533,10 +533,10 @@ _pokey_state_0:
 	ld (de),a
 	ret
 
-_pokey_state_stub:
+pokey_state_stub:
 	ret
 
-_pokey_6b05:
+pokey_6b05:
 	ld e,$8f
 	ld a,(de)
 	or a
@@ -557,23 +557,23 @@ _pokey_6b05:
 	ld l,$86
 	ld a,(hl)
 	and $3f
-	call z,_ecom_setRandomAngle
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call z,ecom_setRandomAngle
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jp objectSetPriorityRelativeToLink
 
-_pokey_6b2e:
+pokey_6b2e:
 	ld b,$f3
-	call _pokeyFunc_0c_6b8e
+	call pokeyFunc_0c_6b8e
 	jr +
 
-_pokey_6b35:
+pokey_6b35:
 	ld b,$e6
-	call _pokeyFunc_0c_6b8e
+	call pokeyFunc_0c_6b8e
 	jr +
 
-_pokey_6b3c:
+pokey_6b3c:
 	ld b,$d9
-	call _pokeyFunc_0c_6b8e
+	call pokeyFunc_0c_6b8e
 
 +
 	ld a,$06
@@ -589,10 +589,10 @@ _pokey_6b3c:
 	swap a
 	rrca
 	add b
-	ld hl,_pokeyTable_0c_6b6a
+	ld hl,pokeyTable_0c_6b6a
 	rst_addAToHl
 	ld b,(hl)
-	call _pokeyFunc_0c_6b82
+	call pokeyFunc_0c_6b82
 	ld l,$8b
 	ld e,l
 	ldi a,(hl)
@@ -604,12 +604,12 @@ _pokey_6b3c:
 	ld (de),a
 	jp objectSetPriorityRelativeToLink
 
-_pokeyTable_0c_6b6a:
+pokeyTable_0c_6b6a:
 	.db $ff $ff $00 $00 $01 $01 $00 $00
 	.db $01 $02 $01 $00 $ff $fe $ff $00
 	.db $ff $fe $ff $00 $01 $02 $01 $00
 
-_pokeyFunc_0c_6b82:
+pokeyFunc_0c_6b82:
 	ld e,$af
 	ld l,$82
 -
@@ -620,7 +620,7 @@ _pokeyFunc_0c_6b82:
 	dec a
 	jr nz,-
 	ret
-_pokeyFunc_0c_6b8e:
+pokeyFunc_0c_6b8e:
 	ld h,d
 	ld l,$8f
 	ld a,(hl)
@@ -642,7 +642,7 @@ _pokeyFunc_0c_6b8e:
 	ld (hl),a
 	ret
 
-_pokeyFunc_0c_6ba8:
+pokeyFunc_0c_6ba8:
 	ld a,$33
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -663,10 +663,10 @@ _pokeyFunc_0c_6ba8:
 	sub $b3
 	jr z,+
 	inc a
-	call nz,_pokeyFunc_0c_6bf5
-	call _pokeyFunc_0c_6bf5
+	call nz,pokeyFunc_0c_6bf5
+	call pokeyFunc_0c_6bf5
 +
-	call _pokeyFunc_0c_6bf5
+	call pokeyFunc_0c_6bf5
 	ld l,$a4
 	res 7,(hl)
 	ld l,$a9
@@ -674,7 +674,7 @@ _pokeyFunc_0c_6ba8:
 	ld l,$82
 	ld (hl),$05
 	ld b,$02
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	jr nz,+
 	ld l,$c7
 	ld (hl),$80
@@ -682,9 +682,9 @@ _pokeyFunc_0c_6ba8:
 	call playSound
 +
 	call objectSetInvisible
-	jp _pokeyFunc_0c_6c3e
+	jp pokeyFunc_0c_6c3e
 
-_pokeyFunc_0c_6bf5:
+pokeyFunc_0c_6bf5:
 	ld b,(hl)
 	inc l
 	ld a,(bc)
@@ -694,7 +694,7 @@ _pokeyFunc_0c_6bf5:
 	ld (bc),a
 	ret
 
-_pokeyFunc_0c_6bfe:
+pokeyFunc_0c_6bfe:
 	ld h,d
 	ld l,$b3
 	ld c,$82
@@ -712,7 +712,7 @@ _pokeyFunc_0c_6bfe:
 	jr nz,-
 	ld h,e
 	push hl
-	call _pokeyFunc_0c_6b82
+	call pokeyFunc_0c_6b82
 	ld l,$8b
 	ld c,l
 	ldi a,(hl)
@@ -746,7 +746,7 @@ _pokeyFunc_0c_6bfe:
 	ld (bc),a
 	jr -
 
-_pokeyFunc_0c_6c3e:
+pokeyFunc_0c_6c3e:
 	ld bc,$0404
 	ld l,$82
 	ld e,$b4
@@ -762,14 +762,14 @@ _pokeyFunc_0c_6c3e:
 	dec c
 	jr nz,-
 	ld a,b
-	ld bc,_pokeyTable_0c_6c5d
+	ld bc,pokeyTable_0c_6c5d
 	call addAToBc
 	ld l,$90
 	ld a,(bc)
 	ld (hl),a
 	ret
 
-_pokeyTable_0c_6c5d:
+pokeyTable_0c_6c5d:
 	.db $0a $0f $1e $3c
 
 
@@ -777,13 +777,13 @@ _pokeyTable_0c_6c5d:
 ; ENEMYID_IRON_MASK
 ; ==============================================================================
 enemyCode1c:
-	call _ecom_checkHazards
+	call ecom_checkHazards
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
 	jp z,enemyDie
 	dec a
-	jp nz,_ecom_updateKnockbackAndCheckHazards
+	jp nz,ecom_updateKnockbackAndCheckHazards
 
 	ld e,Enemy.subid
 	ld a,(de)
@@ -796,42 +796,42 @@ enemyCode1c:
 	jp enemyDelete
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 
 @commonState:
 	rst_jumpTable
-	.dw _ironMask_state_uninitialized
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
-	.dw _ecom_blownByGaleSeedState
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
+	.dw ironMask_state_uninitialized
+	.dw ironMask_state_stub
+	.dw ironMask_state_stub
+	.dw ironMask_state_stub
+	.dw ironMask_state_stub
+	.dw ecom_blownByGaleSeedState
+	.dw ironMask_state_stub
+	.dw ironMask_state_stub
 
 +
 	ld a,b
 	rst_jumpTable
-	.dw _ironMask_subid00
-	.dw _ironMask_subid01
+	.dw ironMask_subid00
+	.dw ironMask_subid01
 
-_ironMask_state_uninitialized:
+ironMask_state_uninitialized:
 	bit 0,b
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 	ld a,$14
-	call _ecom_setSpeedAndState8AndVisible
+	call ecom_setSpeedAndState8AndVisible
 	ld l,Enemy.counter1
 	inc (hl)
 	ret
 
 
-_ironMask_state_stub:
+ironMask_state_stub:
 	ret
 
 
 ; Iron mask with mask on
-_ironMask_subid00:
+ironMask_subid00:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -842,36 +842,36 @@ _ironMask_subid00:
 
 ; Standing in place
 @state8:
-	call _ironMask_magnetGloveCheck
-	call _ecom_decCounter1
-	jp nz,_ironMask_updateCollisionsFromLinkRelativeAngle
+	call ironMask_magnetGloveCheck
+	call ecom_decCounter1
+	jp nz,ironMask_updateCollisionsFromLinkRelativeAngle
 	ld l,Enemy.state
 	inc (hl)
-	call _ironMask_chooseRandomAngleAndCounter1
+	call ironMask_chooseRandomAngleAndCounter1
 
 ; Moving in some direction for [counter1] frames
 @state9:
-	call _ironMask_magnetGloveCheck
-	call _ecom_decCounter1
+	call ironMask_magnetGloveCheck
+	call ecom_decCounter1
 	jr nz,+
 	ld l,Enemy.state
 	dec (hl)
-	call _ironMask_chooseAmountOfTimeToStand
+	call ironMask_chooseAmountOfTimeToStand
 +
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
-	call _ironMask_updateCollisionsFromLinkRelativeAngle
+	call ecom_applyVelocityForSideviewEnemyNoHoles
+	call ironMask_updateCollisionsFromLinkRelativeAngle
 	jp enemyAnimate
 
 ; Maskless
 @stateA:
-	call _ecom_decCounter1
-	call z,_ironMask_chooseRandomAngleAndCounter1
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_decCounter1
+	call z,ironMask_chooseRandomAngleAndCounter1
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jp enemyAnimate
 
 
 ; Detached "mask"
-_ironMask_subid01:
+ironMask_subid01:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -895,7 +895,7 @@ _ironMask_subid01:
 	ld a,(wMagnetGloveState)
 	or a
 	jr z,+
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	jp objectApplySpeed
 +
 	ld h,d
@@ -905,15 +905,15 @@ _ironMask_subid01:
 	ld (hl),30
 
 @stateA:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	jp enemyDelete
 
 
 ;;
 ; Modifies this object's enemyCollisionMode based on if Link is directly behind the iron
 ; mask or not.
-_ironMask_updateCollisionsFromLinkRelativeAngle:
+ironMask_updateCollisionsFromLinkRelativeAngle:
 	call objectGetAngleTowardEnemyTarget
 	ld h,d
 	ld l,Enemy.angle
@@ -931,9 +931,9 @@ _ironMask_updateCollisionsFromLinkRelativeAngle:
 
 
 ;;
-_ironMask_chooseRandomAngleAndCounter1:
+ironMask_chooseRandomAngleAndCounter1:
 	ld bc,$0703
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld a,b
 	ld hl,@counter1Vals
 	rst_addAToHl
@@ -945,7 +945,7 @@ _ironMask_chooseRandomAngleAndCounter1:
 	ld e,Enemy.state
 	ld a,(de)
 	cp $0a
-	jp z,_ecom_setRandomCardinalAngle
+	jp z,ecom_setRandomCardinalAngle
 
 	; 1 in 4 chance of turning directly toward Link, otherwise just choose a random angle
 	call @chooseAngle
@@ -961,15 +961,15 @@ _ironMask_chooseRandomAngleAndCounter1:
 @chooseAngle:
 	ld a,c
 	or a
-	jp z,_ecom_updateCardinalAngleTowardTarget
-	jp _ecom_setRandomCardinalAngle
+	jp z,ecom_updateCardinalAngleTowardTarget
+	jp ecom_setRandomCardinalAngle
 
 @counter1Vals:
 	.db 25, 30, 35, 40, 45, 50, 55, 60
 
 
 ;;
-_ironMask_chooseAmountOfTimeToStand:
+ironMask_chooseAmountOfTimeToStand:
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld hl,@counter1Vals
@@ -983,7 +983,7 @@ _ironMask_chooseAmountOfTimeToStand:
 	.db 15, 30, 45, 60
 
 
-_ironMask_magnetGloveCheck:
+ironMask_magnetGloveCheck:
 	ld a,(wMagnetGloveState)
 	or a
 	jr z,+
@@ -1034,7 +1034,7 @@ _ironMask_magnetGloveCheck:
 	ld a,$04
 	call enemySetAnimation
 	ld b,ENEMYID_IRON_MASK
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 	jp objectCopyPosition
 	jr z,+
@@ -1042,7 +1042,7 @@ _ironMask_magnetGloveCheck:
 	ret c
 	jp z,enemyDie
 	dec a
-	jp nz,_ecom_updateKnockback
+	jp nz,ecom_updateKnockback
 	ret
 +
 	ld e,Enemy.state

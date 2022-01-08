@@ -3,11 +3,11 @@
 twinrovaCutsceneCaller:
 	ld a,c
 	rst_jumpTable
-	.dw _cutscene18_body
-	.dw _cutscene19_body
+	.dw cutscene18_body
+	.dw cutscene19_body
 
 ;;
-_incCutsceneState:
+incCutsceneState:
 	ld hl,wCutsceneState
 	inc (hl)
 	ret
@@ -20,38 +20,38 @@ unused_incTmpcbb3:
 	ret
 
 ;;
-_decTmpcbb4:
+decTmpcbb4:
 	ld hl,wTmpcbb4
 	dec (hl)
 	ret
 
 ;;
-_setScreenShakeCounterTo255:
+setScreenShakeCounterTo255:
 	ld a,$ff
 	jp setScreenShakeCounter
 
 ;;
 ; State 0: screen fadeout
-_twinrovaCutscene_state0:
+twinrovaCutscene_state0:
 	ld a,$04
 	call fadeoutToWhiteWithDelay
 	ld hl,wTmpcbb3
 	ld b,$10
 	call clearMemory
-	jr _incCutsceneState
+	jr incCutsceneState
 
 ;;
 ; State 1: fading out, then initialize fadein to zelda sacrifice room
-_twinrovaCutscene_state1:
+twinrovaCutscene_state1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 
-	call _incCutsceneState
+	call incCutsceneState
 
 	ld a,<ROOM_ZELDA_IN_FINAL_DUNGEON ; Room with zelda and torches
 	ld (wActiveRoom),a
-	call _twinrovaCutscene_fadeinToRoom
+	call twinrovaCutscene_fadeinToRoom
 
 	call refreshObjectGfx
 
@@ -80,7 +80,7 @@ _twinrovaCutscene_state1:
 	jp loadGfxRegisterStateIndex
 
 ;;
-_twinrovaCutscene_fadeinToRoom:
+twinrovaCutscene_fadeinToRoom:
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
 	call loadScreenMusicAndSetRoomPack
@@ -90,64 +90,64 @@ _twinrovaCutscene_fadeinToRoom:
 
 ;;
 ; CUTSCENE_FLAMES_FLICKERING
-_cutscene18_body:
+cutscene18_body:
 	ld a,(wCutsceneState)
 	rst_jumpTable
-	.dw _twinrovaCutscene_state0
-	.dw _twinrovaCutscene_state1
-	.dw _twinrovaCutscene_state2
-	.dw _twinrovaCutscene_state3
-	.dw _cutscene18_state4
-	.dw _cutscene18_state5
+	.dw twinrovaCutscene_state0
+	.dw twinrovaCutscene_state1
+	.dw twinrovaCutscene_state2
+	.dw twinrovaCutscene_state3
+	.dw cutscene18_state4
+	.dw cutscene18_state5
 
 ;;
 ; State 2: waiting for fadein to finish
-_twinrovaCutscene_state2:
+twinrovaCutscene_state2:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	ld a,$01
 	ld (wTmpcbb4),a
-	jp _incCutsceneState
+	jp incCutsceneState
 
 ;;
 ; State 3: initializes stuff for state 4
-_twinrovaCutscene_state3:
-	call _decTmpcbb4
+twinrovaCutscene_state3:
+	call decTmpcbb4
 	ret nz
 
 	ld (hl),180 ; Wait in state 4 for 180 frames
 
-	call _twinrovaCutscene_deleteAllInteractionsExceptFlames
-	call _twinrovaCutscene_loadAngryFlames
+	call twinrovaCutscene_deleteAllInteractionsExceptFlames
+	call twinrovaCutscene_loadAngryFlames
 	ld a,SND_OPENING
 	call playSound
-	jp _incCutsceneState
+	jp incCutsceneState
 
 ;;
 ; State 4: screen shaking, flames flickering with zelda on pedestal
-_cutscene18_state4:
-	call _setScreenShakeCounterTo255
+cutscene18_state4:
+	call setScreenShakeCounterTo255
 	ld a,(wFrameCounter)
 	and $3f
 	jr nz,+
 	ld a,SND_OPENING
 	call playSound
 +
-	call _decTmpcbb4
+	call decTmpcbb4
 	ret nz
 
 	; Fadeout
 	ld a,$04
 	call fadeoutToWhiteWithDelay
 
-	jp _incCutsceneState
+	jp incCutsceneState
 
 ;;
 ; State 5: fading out again. When done, it fades in to the next room, and the cutscene's
 ; over.
-_cutscene18_state5:
-	call _setScreenShakeCounterTo255
+cutscene18_state5:
+	call setScreenShakeCounterTo255
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -159,7 +159,7 @@ _cutscene18_state5:
 	ld a,$9e
 .endif
 	ld (wActiveRoom),a
-	call _twinrovaCutscene_fadeinToRoom
+	call twinrovaCutscene_fadeinToRoom
 
 	call getFreeEnemySlot
 	ld (hl),ENEMYID_TWINROVA
@@ -187,7 +187,7 @@ _cutscene18_state5:
 	jp loadGfxRegisterStateIndex
 
 ;;
-_twinrovaCutscene_deleteAllInteractionsExceptFlames:
+twinrovaCutscene_deleteAllInteractionsExceptFlames:
 	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start
 @next:
 	ld l,Interaction.start
@@ -211,7 +211,7 @@ _twinrovaCutscene_deleteAllInteractionsExceptFlames:
 
 ;;
 ; Loads the "angry-looking" version of the flames.
-_twinrovaCutscene_loadAngryFlames:
+twinrovaCutscene_loadAngryFlames:
 .ifdef ROM_AGES
 	ld a,PALH_af
 .else
@@ -223,84 +223,84 @@ _twinrovaCutscene_loadAngryFlames:
 
 ;;
 ; CUTSCENE_TWINROVA_SACRIFICE
-_cutscene19_body:
+cutscene19_body:
 	ld a,(wCutsceneState)
 	rst_jumpTable
-	.dw _twinrovaCutscene_state0
-	.dw _twinrovaCutscene_state1
-	.dw _twinrovaCutscene_state2
-	.dw _twinrovaCutscene_state3
-	.dw _cutscene19_state4
-	.dw _cutscene19_state5
-	.dw _cutscene19_state6
-	.dw _cutscene19_state7
-	.dw _cutscene19_state8
-	.dw _cutscene19_state9
+	.dw twinrovaCutscene_state0
+	.dw twinrovaCutscene_state1
+	.dw twinrovaCutscene_state2
+	.dw twinrovaCutscene_state3
+	.dw cutscene19_state4
+	.dw cutscene19_state5
+	.dw cutscene19_state6
+	.dw cutscene19_state7
+	.dw cutscene19_state8
+	.dw cutscene19_state9
 
 ;;
 ; After fading in to zelda on the pedestal, this shows the "angry flames" and waits for
 ; 3 seconds before striking the first flame with lightning.
-_cutscene19_state4:
-	call _decTmpcbb4
+cutscene19_state4:
+	call decTmpcbb4
 	ret nz
 
 	ld (hl),20
 	ld bc,$1878
-_cutscene19_strikeFlameWithLightning:
-	call _twinrovaCutscene_createLightningStrike
-	jp _incCutsceneState
+cutscene19_strikeFlameWithLightning:
+	call twinrovaCutscene_createLightningStrike
+	jp incCutsceneState
 
 ;;
 ; State 5: wait before striking the 2nd flame with lightning.
-_cutscene19_state5:
-	call _decTmpcbb4
+cutscene19_state5:
+	call decTmpcbb4
 	ret nz
 
 	ld (hl),20
 	ld bc,$48a8
-	jr _cutscene19_strikeFlameWithLightning
+	jr cutscene19_strikeFlameWithLightning
 
 ;;
 ; State 6: wait before striking the 3rd flame with lightning.
-_cutscene19_state6:
-	call _decTmpcbb4
+cutscene19_state6:
+	call decTmpcbb4
 	ret nz
 
 	ld (hl),40
 	ld bc,$4848
-	jr _cutscene19_strikeFlameWithLightning
+	jr cutscene19_strikeFlameWithLightning
 
 ;;
 ; State 7: wait before shaking screen around
-_cutscene19_state7:
-	call _decTmpcbb4
+cutscene19_state7:
+	call decTmpcbb4
 	ret nz
 
 	ld (hl),120
 	ld a,SND_BOSS_DEAD
 	call playSound
-	jp _incCutsceneState
+	jp incCutsceneState
 
 ;;
 ; State 8: shake the screen and repeatedly flash the screen white
-_cutscene19_state8:
-	call _setScreenShakeCounterTo255
+cutscene19_state8:
+	call setScreenShakeCounterTo255
 	ld a,(wFrameCounter)
 	and $07
 	call z,fastFadeinFromWhite
-	call _decTmpcbb4
+	call decTmpcbb4
 	ret nz
 
 	ld a,$04
 	call fadeoutToWhiteWithDelay
 	ld a,SND_FADEOUT
 	call playSound
-	jp _incCutsceneState
+	jp incCutsceneState
 
 ;;
 ; State 9: wait before fading back to twinrova. Cutscene ends here.
-_cutscene19_state9:
-	call _setScreenShakeCounterTo255
+cutscene19_state9:
+	call setScreenShakeCounterTo255
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -319,7 +319,7 @@ _cutscene19_state9:
 
 ;;
 ; @param	bc	Position to strike
-_twinrovaCutscene_createLightningStrike:
+twinrovaCutscene_createLightningStrike:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_LIGHTNING
@@ -351,30 +351,30 @@ runIntro:
 	ldh (<hSerialLinkState),a
 	ld a,(wKeysJustPressed)
 	and BTN_START
-	jr z,_intro_runStage
+	jr z,intro_runStage
 
 @nextStage:
 	ldh a,(<hIntroInputsEnabled)
 	add a
-	jr z,_intro_runStage
+	jr z,intro_runStage
 
 	ld a,(wIntroStage)
 	cp $03
-	jr nz,_intro_gotoTitlescreen
+	jr nz,intro_gotoTitlescreen
 
 ;;
-_intro_runStage:
+intro_runStage:
 	ld a,(wIntroStage)
 	rst_jumpTable
-	.dw _intro_japaneseOnlyScreen
-	.dw _intro_capcomScreen
+	.dw intro_japaneseOnlyScreen
+	.dw intro_capcomScreen
 	.dw intro_cinematic
-	.dw _intro_titlescreen
-	.dw _intro_restart
+	.dw intro_titlescreen
+	.dw intro_restart
 
 ;;
 ; Advance the intro to the next stage (eg. cinematic -> titlescreen)
-_intro_gotoTitlescreen:
+intro_gotoTitlescreen:
 	call clearPaletteFadeVariables
 	call cutscene_clearObjects
 	ld hl,wIntroVar
@@ -385,17 +385,17 @@ _intro_gotoTitlescreen:
 	ld (hl),$03 ; hl = wIntroStage
 	dec a
 	ld (wTilesetAnimation),a
-	jr _intro_runStage
+	jr intro_runStage
 
 ;;
-_intro_restart:
+intro_restart:
 	xor a
 	ld (wIntroStage),a
 	ld (wIntroVar),a
 	ret
 
 ;;
-_intro_gotoNextStage:
+intro_gotoNextStage:
 	call enableIntroInputs
 	call clearDynamicInteractions
 	ld hl,wIntroStage
@@ -405,13 +405,13 @@ _intro_gotoNextStage:
 	jp clearPaletteFadeVariables
 
 ;;
-_intro_incState:
+intro_incState:
 	ld hl,wIntroVar
 	inc (hl)
 	ret
 
 ;;
-_intro_japaneseOnlyScreen:
+intro_japaneseOnlyScreen:
 .ifndef REGION_JP
 	ld hl,wIntroStage
 	inc (hl)
@@ -435,7 +435,7 @@ _intro_japaneseOnlyScreen:
 	ld a,60
 	ld (wTmpcbb3),a
 
-	call _intro_incState
+	call intro_incState
 	xor a
 	jp loadGfxRegisterStateIndex
 
@@ -446,7 +446,7 @@ _intro_japaneseOnlyScreen:
 	dec (hl)
 	ret nz
 
-	call _intro_incState
+	call intro_incState
 	jp fadeoutToWhite
 
 ;;
@@ -456,12 +456,12 @@ _intro_japaneseOnlyScreen:
 	or a
 	ret nz
 
-	jr _intro_gotoNextStage
+	jr intro_gotoNextStage
 
 .endif ; REGION_JP
 
 ;;
-_intro_capcomScreen:
+intro_capcomScreen:
 	ld a,(wIntroVar)
 	rst_jumpTable
 	.dw @state0
@@ -483,7 +483,7 @@ _intro_capcomScreen:
 	inc hl
 	ld (hl),$00 ; [wTmpcbb4] = 0
 
-	call _intro_incState
+	call intro_incState
 	call fadeinFromWhite
 	xor a
 	jp loadGfxRegisterStateIndex
@@ -495,7 +495,7 @@ _intro_capcomScreen:
 	call decHlRef16WithCap
 	ret nz
 
-	call _intro_incState
+	call intro_incState
 	jp fadeoutToWhite
 
 ;;
@@ -519,7 +519,7 @@ _intro_capcomScreen:
 .endif
 
 ;;
-_intro_titlescreen:
+intro_titlescreen:
 	call getRandomNumber_noPreserveVars
 	call @runState
 	call clearOam
@@ -552,13 +552,13 @@ _intro_titlescreen:
 @runState:
 	ld a,(wIntroVar)
 	rst_jumpTable
-	.dw _intro_titlescreen_state0
-	.dw _intro_titlescreen_state1
-	.dw _intro_titlescreen_state2
-	.dw _intro_titlescreen_state3
+	.dw intro_titlescreen_state0
+	.dw intro_titlescreen_state1
+	.dw intro_titlescreen_state2
+	.dw intro_titlescreen_state3
 
 ;;
-_intro_titlescreen_state0:
+intro_titlescreen_state0:
 	call restartSound
 
 	; Stop any irrelevant threads.
@@ -579,7 +579,7 @@ _intro_titlescreen_state0:
 	ld a,$09
 	ldi (hl),a ; [wTmpcbb4] = $09
 
-	call _intro_incState
+	call intro_incState
 
 	ld a,MUS_TITLESCREEN
 	call playSound
@@ -589,7 +589,7 @@ _intro_titlescreen_state0:
 
 ;;
 ; State 1: waiting for player to press start
-_intro_titlescreen_state1:
+intro_titlescreen_state1:
 	ld a,(wKeysJustPressed)
 	and BTN_START
 	jr nz,@pressedStart
@@ -614,15 +614,15 @@ _intro_titlescreen_state1:
 
 ;;
 ; State 2: fading out to replay intro cinematic
-_intro_titlescreen_state2:
+intro_titlescreen_state2:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	jp _intro_gotoNextStage
+	jp intro_gotoNextStage
 
 ;;
 ; State 3: fading out to go to file select
-_intro_titlescreen_state3:
+intro_titlescreen_state3:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -677,32 +677,32 @@ titlescreenPressStartSprites:
 runIntroCinematic:
 	ld a,(wIntro.cinematicState)
 	rst_jumpTable
-	.dw _introCinematic_ridingHorse
-	.dw _introCinematic_inTemple
-	.dw _introCinematic_preTitlescreen
+	.dw introCinematic_ridingHorse
+	.dw introCinematic_inTemple
+	.dw introCinematic_preTitlescreen
 
 .ifdef ROM_AGES
 
 ;;
 ; Covers intro sections after the capcom screen and before the temple scene.
-_introCinematic_ridingHorse:
+introCinematic_ridingHorse:
 	ld a,(wIntroVar)
 	rst_jumpTable
-	.dw _introCinematic_ridingHorse_state0
-	.dw _introCinematic_ridingHorse_state1
-	.dw _introCinematic_ridingHorse_state2
-	.dw _introCinematic_ridingHorse_state3
-	.dw _introCinematic_ridingHorse_state4
-	.dw _introCinematic_ridingHorse_state5
-	.dw _introCinematic_ridingHorse_state6
-	.dw _introCinematic_ridingHorse_state7
-	.dw _introCinematic_ridingHorse_state8
-	.dw _introCinematic_ridingHorse_state9
-	.dw _introCinematic_ridingHorse_state10
+	.dw introCinematic_ridingHorse_state0
+	.dw introCinematic_ridingHorse_state1
+	.dw introCinematic_ridingHorse_state2
+	.dw introCinematic_ridingHorse_state3
+	.dw introCinematic_ridingHorse_state4
+	.dw introCinematic_ridingHorse_state5
+	.dw introCinematic_ridingHorse_state6
+	.dw introCinematic_ridingHorse_state7
+	.dw introCinematic_ridingHorse_state8
+	.dw introCinematic_ridingHorse_state9
+	.dw introCinematic_ridingHorse_state10
 
 ;;
 ; State 0: initialization
-_introCinematic_ridingHorse_state0:
+introCinematic_ridingHorse_state0:
 	call disableLcd
 	ld hl,wOamEnd
 	ld bc,$d000-wOamEnd
@@ -765,12 +765,12 @@ _introCinematic_ridingHorse_state0:
 	ld (wGfxRegs6.LCDC),a
 	xor a
 	ldh (<hCameraX),a
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 1: fading into the sunset
-_introCinematic_ridingHorse_state1:
-	call _introCinematic_moveBlackBarsIn
+introCinematic_ridingHorse_state1:
+	call introCinematic_moveBlackBarsIn
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
 	ret nz
@@ -779,12 +779,12 @@ _introCinematic_ridingHorse_state1:
 	call clearPaletteFadeVariablesAndRefreshPalettes
 	ld a,$06
 	ldh (<hNextLcdInterruptBehaviour),a
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 2: scrolling down to reveal Link on horse
-_introCinematic_ridingHorse_state2:
-	call _introCinematic_ridingHorse_updateScrollingGround
+introCinematic_ridingHorse_state2:
+	call introCinematic_ridingHorse_updateScrollingGround
 	call decCbb3
 	ret nz
 
@@ -801,12 +801,12 @@ _introCinematic_ridingHorse_state2:
 	ret nz
 	ld a,126
 	ld (wTmpcbb3),a
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; Decrements the SCX value for the scrolling ground, and recalculates the value of LYC to
 ; use for producing the scrolling effect for the ground.
-_introCinematic_ridingHorse_updateScrollingGround:
+introCinematic_ridingHorse_updateScrollingGround:
 	ld a,$a8
 	ld hl,wGfxRegs2.SCY
 	sub (hl)
@@ -827,8 +827,8 @@ _introCinematic_ridingHorse_updateScrollingGround:
 
 ;;
 ; State 3: camera has scrolled all the way down; not doing anything for a bit
-_introCinematic_ridingHorse_state3:
-	call _introCinematic_ridingHorse_updateScrollingGround
+introCinematic_ridingHorse_state3:
+	call introCinematic_ridingHorse_updateScrollingGround
 	call decCbb3
 	ret nz
 
@@ -852,7 +852,7 @@ _introCinematic_ridingHorse_state3:
 	ld (wTmpcbbc),a
 
 	ldbc INTERACID_INTRO_SPRITE, $03
-	call _createInteraction
+	call createInteraction
 
 	ld a,$0d
 	ld (wTmpcbb6),a
@@ -860,11 +860,11 @@ _introCinematic_ridingHorse_state3:
 	ld (wTmpcbbb),a
 	ld a,$03
 	ldh (<hNextLcdInterruptBehaviour),a
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 4: Link riding horse toward camera
-_introCinematic_ridingHorse_state4:
+introCinematic_ridingHorse_state4:
 	call @drawLinkOnHorseAndScrollScreen
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
@@ -889,7 +889,7 @@ _introCinematic_ridingHorse_state4:
 	ld a,$48
 	ld (wGfxRegs1.LYC),a
 	ld (wGfxRegs2.WINY),a
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 @drawLinkOnHorseAndScrollScreen:
@@ -935,8 +935,8 @@ _introCinematic_ridingHorse_state4:
 
 ;;
 ; State 5: closeup of Link's face; face is moving left
-_introCinematic_ridingHorse_state5:
-	call _introCinematic_moveBlackBarsOut
+introCinematic_ridingHorse_state5:
+	call introCinematic_moveBlackBarsOut
 	ld hl,wGfxRegs2.SCX
 	ld a,(hl)
 	add $08
@@ -945,17 +945,17 @@ _introCinematic_ridingHorse_state5:
 	ret c
 
 	ld (hl),$60
-	call _intro_incState
+	call intro_incState
 
 	ld hl,wTmpcbb3
 	ld (hl),24 ; Linger for another 24 frames
 
 	ldbc INTERACID_INTRO_SPRITE, $04
-	jp _createInteraction
+	jp createInteraction
 
 ;;
 ; State 6: closeup of Link's face; screen staying still for a moment
-_introCinematic_ridingHorse_state6:
+introCinematic_ridingHorse_state6:
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
 	ret nz
@@ -968,29 +968,29 @@ _introCinematic_ridingHorse_state6:
 	call clearDynamicInteractions
 	ld a,$0a
 	call loadGfxRegisterStateIndex
-	jp _intro_incState
+	jp intro_incState
 
 
 .else; ROM_SEASONS
 
 ;;
 ; Covers intro sections after the capcom screen and before the temple scene.
-_introCinematic_ridingHorse:
+introCinematic_ridingHorse:
 	ld a,(wIntroVar)
 	rst_jumpTable
 
-	.dw _introCinematic_ridingHorse_state0 ; First 3 states in Seasons are unique
-	.dw _introCinematic_ridingHorse_state1
-	.dw _introCinematic_ridingHorse_state2
+	.dw introCinematic_ridingHorse_state0 ; First 3 states in Seasons are unique
+	.dw introCinematic_ridingHorse_state1
+	.dw introCinematic_ridingHorse_state2
 
-	.dw _introCinematic_ridingHorse_state7 ; Last 4 are the same as in Ages
-	.dw _introCinematic_ridingHorse_state8
-	.dw _introCinematic_ridingHorse_state9
-	.dw _introCinematic_ridingHorse_state10
+	.dw introCinematic_ridingHorse_state7 ; Last 4 are the same as in Ages
+	.dw introCinematic_ridingHorse_state8
+	.dw introCinematic_ridingHorse_state9
+	.dw introCinematic_ridingHorse_state10
 
 ;;
 ; State 0: initialization
-_introCinematic_ridingHorse_state0:
+introCinematic_ridingHorse_state0:
 	call disableLcd
 	ld hl,wOamEnd
 	ld bc,$d000-wOamEnd
@@ -1034,12 +1034,12 @@ _introCinematic_ridingHorse_state0:
 	call fadeinFromWhiteWithDelay
 	ld hl,wLockBG7Color3ToBlack
 	ld (hl),$01
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 1: screen fading in as Link rides closer
-_introCinematic_ridingHorse_state1:
-	call _introCinematic_moveBlackBarsIn
+introCinematic_ridingHorse_state1:
+	call introCinematic_moveBlackBarsIn
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
 	ret nz
@@ -1053,16 +1053,16 @@ _introCinematic_ridingHorse_state1:
 	ld (wTmpcbbb),a
 	ld a,(wGfxRegs2.SCX)
 	ld (wTmpcbbc),a
-	call _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1
+	call introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1
 	ld hl,wTmpcbb3
 	ld (hl),$58
 	inc hl
 	ld (hl),$01
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 2: Image of Link bobbing up and down on horse
-_introCinematic_ridingHorse_state2:
+introCinematic_ridingHorse_state2:
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
 	jr nz,++
@@ -1074,16 +1074,16 @@ _introCinematic_ridingHorse_state2:
 	call loadGfxHeader
 	ld a,$0a
 	call loadGfxRegisterStateIndex
-	call _intro_incState
-	jr _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
+	call intro_incState
+	jr introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
 ++
-	call _seasonsFunc_03_5367
+	call seasonsFunc_03_5367
 
 	; Fall through
 
 ;;
 ; Draw the sprites that complement the image of Link on the horse (the 1st image)
-_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1:
+introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1:
 	ld hl,wGfxRegs2.SCY
 	ldi a,(hl)
 	cpl
@@ -1102,19 +1102,19 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1:
 
 ;;
 ; State 7 (3 in seasons): scrolling up on the link+horse shot
-_introCinematic_ridingHorse_state7:
+introCinematic_ridingHorse_state7:
 	ld hl,wGfxRegs1.SCY
 	dec (hl)
-	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
+	jr nz,introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
 
 	ld a,204 ; Linger on this shot for another 204 frames
 	ld (wTmpcbb6),a
-	call _intro_incState
+	call intro_incState
 
 ;;
 ; Draw the sprites that complement the image of Link on the horse (the 2nd image in
 ; seasons; the only such image in ages)
-_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
+introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 	; Calculate offset for sprites
 	ld a,(wGfxRegs1.SCY)
 	cpl
@@ -1137,10 +1137,10 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 
 ;;
 ; State 8 (4 in seasons): lingering on the link+horse shot
-_introCinematic_ridingHorse_state8:
+introCinematic_ridingHorse_state8:
 	ld hl,wTmpcbb6
 	dec (hl)
-	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
+	jr nz,introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
 
 .ifdef ROM_AGES
 	ld a,PALH_93
@@ -1172,7 +1172,7 @@ _introCinematic_ridingHorse_state8:
 	call clearPaletteFadeVariablesAndRefreshPalettes
 	ld a,$0b
 	call loadGfxRegisterStateIndex
-	call _introCinematic_ridingHorse_drawTempleSprites
+	call introCinematic_ridingHorse_drawTempleSprites
 
 	; Create 2 interactions of type INTERACID_INTRO_SPRITE with subid's 2 and 1.
 	; (These are the horse and cliff sprites.)
@@ -1186,33 +1186,33 @@ _introCinematic_ridingHorse_state8:
 	dec b
 	jr nz,--
 ++
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 9 (5 in seasons): showing Link on a cliff overlooking the temple
-_introCinematic_ridingHorse_state9:
+introCinematic_ridingHorse_state9:
 	ld hl,wTmpcbb3
 	call decHlRef16WithCap
 	jr nz,+
 	call fadeoutToWhite
-	call _intro_incState
-	jr _introCinematic_ridingHorse_drawTempleSprites
+	call intro_incState
+	jr introCinematic_ridingHorse_drawTempleSprites
 +
 	ld hl,wTmpcbb6
 	ld a,(hl)
 	or a
-	jr z,_introCinematic_ridingHorse_drawTempleSprites
+	jr z,introCinematic_ridingHorse_drawTempleSprites
 
 	; Check if the screen is done moving
 	dec (hl)
 	ld a,(wGfxRegs1.SCX)
 	or a
-	jr z,_introCinematic_ridingHorse_drawTempleSprites
+	jr z,introCinematic_ridingHorse_drawTempleSprites
 
 	; Shift screen once every 5 frames
 	ld hl,wTmpcbbb
 	dec (hl)
-	jr nz,_introCinematic_ridingHorse_drawTempleSprites
+	jr nz,introCinematic_ridingHorse_drawTempleSprites
 	ld (hl),$05
 	ld hl,wGfxRegs1.SCX
 	dec (hl)
@@ -1220,7 +1220,7 @@ _introCinematic_ridingHorse_state9:
 ;;
 ; In the scene overlooking the temple, a few sprites are used to touch up the appearance
 ; of the temple, even though it's mostly drawn on the background.
-_introCinematic_ridingHorse_drawTempleSprites:
+introCinematic_ridingHorse_drawTempleSprites:
 	xor a
 	ldh (<hOamTail),a
 	ld b,a
@@ -1242,17 +1242,17 @@ _introCinematic_ridingHorse_drawTempleSprites:
 
 ;;
 ; State 10 (6 in seasons): fading out, then proceed to next cinematic state (temple)
-_introCinematic_ridingHorse_state10:
+introCinematic_ridingHorse_state10:
 	ld a,(wPaletteThread_mode)
 	or a
-	jr nz,_introCinematic_ridingHorse_drawTempleSprites
+	jr nz,introCinematic_ridingHorse_drawTempleSprites
 
 	call clearDynamicInteractions
-	jr _incIntroCinematicState
+	jr incIntroCinematicState
 
 ;;
 ; @param[out]	zflag	nz if there's no more scrolling to be done
-_introCinematic_preTitlescreen_updateScrollingTree:
+introCinematic_preTitlescreen_updateScrollingTree:
 	ld hl,wTmpcbb6
 	dec (hl)
 	ret nz
@@ -1291,7 +1291,7 @@ _introCinematic_preTitlescreen_updateScrollingTree:
 	ret
 
 ;;
-_incIntroCinematicState:
+incIntroCinematicState:
 	ld hl,wIntro.cinematicState
 	inc (hl)
 	xor a
@@ -1299,27 +1299,27 @@ _incIntroCinematicState:
 	ret
 
 ;;
-_introCinematic_inTemple:
+introCinematic_inTemple:
 	ld a,(wIntroVar)
 	rst_jumpTable
-	.dw _introCinematic_inTemple_state0
-	.dw _introCinematic_inTemple_state1
+	.dw introCinematic_inTemple_state0
+	.dw introCinematic_inTemple_state1
 .ifdef ROM_SEASONS
-	.dw _introCinematic_inTemple_state1.5 ; Seasons has a pointless extra state
+	.dw introCinematic_inTemple_state1.5 ; Seasons has a pointless extra state
 .endif
-	.dw _introCinematic_inTemple_state2
-	.dw _introCinematic_inTemple_state3
-	.dw _introCinematic_inTemple_state4
-	.dw _introCinematic_inTemple_state5
-	.dw _introCinematic_inTemple_state6
-	.dw _introCinematic_inTemple_state7
-	.dw _introCinematic_inTemple_state8
-	.dw _introCinematic_inTemple_state9
-	.dw _introCinematic_inTemple_state10
+	.dw introCinematic_inTemple_state2
+	.dw introCinematic_inTemple_state3
+	.dw introCinematic_inTemple_state4
+	.dw introCinematic_inTemple_state5
+	.dw introCinematic_inTemple_state6
+	.dw introCinematic_inTemple_state7
+	.dw introCinematic_inTemple_state8
+	.dw introCinematic_inTemple_state9
+	.dw introCinematic_inTemple_state10
 
 ;;
 ; State 0: Load the room
-_introCinematic_inTemple_state0:
+introCinematic_inTemple_state0:
 	call disableLcd
 	call clearOam
 	ld a,$10
@@ -1402,11 +1402,11 @@ _introCinematic_inTemple_state0:
 	call fadeinFromWhite
 	xor a
 	ld (wTmpcbb9),a
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 1: walking up to triforce
-_introCinematic_inTemple_state1:
+introCinematic_inTemple_state1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -1414,35 +1414,35 @@ _introCinematic_inTemple_state1:
 .ifdef ROM_SEASONS
 
 	; Seasons has a pointless extra state; the devs removed this in Ages.
-	jp _intro_incState
+	jp intro_incState
 
-_introCinematic_inTemple_state1.5:
+introCinematic_inTemple_state1.5:
 
 .endif
 
 	; Check if simulated input is done (bit 7 set)
 	ld a,(wUseSimulatedInput)
 	rlca
-	jp nc,_introCinematic_inTemple_updateCamera
+	jp nc,introCinematic_inTemple_updateCamera
 	xor a
 	ld (wUseSimulatedInput),a
-	call _introCinematic_inTemple_updateCamera
-	jp _intro_incState
+	call introCinematic_inTemple_updateCamera
+	jp intro_incState
 
 ;;
 ; State 2: waiting for cutscene objects to do their thing (nothing to be done here)
-_introCinematic_inTemple_state2:
+introCinematic_inTemple_state2:
 	; The "link cutscene object" will write to wIntro.triforceState eventually
 	ld a,(wIntro.triforceState)
 	cp $03
 	ret nz
 
 	call fadeoutToWhite
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 3: screen fading out temporarily
-_introCinematic_inTemple_state3:
+introCinematic_inTemple_state3:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -1457,12 +1457,12 @@ _introCinematic_inTemple_state3:
 	ld a,$20
 	call initWaveScrollValues
 	call fadeinFromWhite
-	call _intro_incState
+	call intro_incState
 
 	; Fall through
 
 ;;
-_introCinematic_inTemple_updateWave:
+introCinematic_inTemple_updateWave:
 	ld hl,wFrameCounter
 	inc (hl)
 	ld a,$02
@@ -1470,19 +1470,19 @@ _introCinematic_inTemple_updateWave:
 
 ;;
 ; State 4: screen fading back in
-_introCinematic_inTemple_state4:
-	call _introCinematic_inTemple_updateWave
+introCinematic_inTemple_state4:
+	call introCinematic_inTemple_updateWave
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	ld hl,wTmpcbb6
 	ld (hl),120
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 5: waving the screen around
-_introCinematic_inTemple_state5:
-	call _introCinematic_inTemple_updateWave
+introCinematic_inTemple_state5:
+	call introCinematic_inTemple_updateWave
 	ld hl,wTmpcbb6
 	dec (hl)
 	ret nz
@@ -1492,14 +1492,14 @@ _introCinematic_inTemple_state5:
 	dec a
 	ld (wTmpcbba),a
 
-	call _intro_incState
+	call intro_incState
 
 	; Fall through
 
 ;;
 ; State 6: this is the instant where Link "falls"?
-_introCinematic_inTemple_state6:
-	call _introCinematic_inTemple_updateWave
+introCinematic_inTemple_state6:
+	call introCinematic_inTemple_updateWave
 	ld hl,wTmpcbb6
 	ld b,$00
 	call flashScreen_body
@@ -1510,12 +1510,12 @@ _introCinematic_inTemple_state6:
 	ld (wTmpcbb9),a
 	ld a,SND_FAIRYCUTSCENE
 	call playSound
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 7: link is in the process of falling
-_introCinematic_inTemple_state7:
-	call _introCinematic_inTemple_updateWave
+introCinematic_inTemple_state7:
+	call introCinematic_inTemple_updateWave
 	ld a,(wTmpcbb9)
 	cp $07
 	ret nz
@@ -1526,39 +1526,39 @@ _introCinematic_inTemple_state7:
 	call func_2d48
 	ld a,b
 	ld (wTmpcbb6),a
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 8: waiting?
-_introCinematic_inTemple_state8:
-	call _introCinematic_inTemple_updateWave
+introCinematic_inTemple_state8:
+	call introCinematic_inTemple_updateWave
 	ld hl,wTmpcbb6
 	dec (hl)
 	ret nz
 	ld (hl),$3c
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 9: waiting?
-_introCinematic_inTemple_state9:
-	call _introCinematic_inTemple_updateWave
+introCinematic_inTemple_state9:
+	call introCinematic_inTemple_updateWave
 	ld hl,wTmpcbb6
 	dec (hl)
 	ret nz
 	ld a,SND_FADEOUT
 	call playSound
 	call fadeoutToWhite
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 10: screen fading out, then moves on to the next cinematic state
-_introCinematic_inTemple_state10:
-	call _introCinematic_inTemple_updateWave
+introCinematic_inTemple_state10:
+	call introCinematic_inTemple_updateWave
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	call clearDynamicInteractions
-	jp _incIntroCinematicState
+	jp incIntroCinematicState
 
 ;;
 ; This function causes the screen to flash white. Based on parameter 'b', which acts as
@@ -1573,7 +1573,7 @@ flashScreen_body:
 	ld a,b
 	inc (hl)
 	ld b,(hl)
-	ld hl,_screenFlashingData
+	ld hl,screenFlashingData
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1628,7 +1628,7 @@ clearFadingPalettes_body:
 
 .ifdef ROM_AGES
 
-	_screenFlashingData:
+	screenFlashingData:
 		.dw @data0
 		.dw @data1
 		.dw @data2
@@ -1662,7 +1662,7 @@ clearFadingPalettes_body:
 
 .else; ROM_SEASONS
 
-	_screenFlashingData:
+	screenFlashingData:
 		.dw @data0
 		.dw @data1
 		.dw @data2
@@ -1687,17 +1687,17 @@ clearFadingPalettes_body:
 
 
 ;;
-_introCinematic_preTitlescreen:
+introCinematic_preTitlescreen:
 	ld a,(wIntroVar)
 	rst_jumpTable
-	.dw _introCinematic_preTitlescreen_state0
-	.dw _introCinematic_preTitlescreen_state1
-	.dw _introCinematic_preTitlescreen_state2
-	.dw _introCinematic_preTitlescreen_state3
+	.dw introCinematic_preTitlescreen_state0
+	.dw introCinematic_preTitlescreen_state1
+	.dw introCinematic_preTitlescreen_state2
+	.dw introCinematic_preTitlescreen_state3
 
 ;;
 ; State 0: load tree graphics
-_introCinematic_preTitlescreen_state0:
+introCinematic_preTitlescreen_state0:
 	call disableLcd
 
 	ld a,$ff
@@ -1750,17 +1750,17 @@ _introCinematic_preTitlescreen_state0:
 	ld a,MUS_INTRO_2
 	call playSound
 
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 1: scrolling up the tree
-_introCinematic_preTitlescreen_state1:
-	call _introCinematic_preTitlescreen_updateScrollingTree
+introCinematic_preTitlescreen_state1:
+	call introCinematic_preTitlescreen_updateScrollingTree
 	ret nz
 
 	; Initialize stuff for state 2.
 
-	call _intro_incState
+	call intro_incState
 	ld hl,wTmpcbb3
 	ld (hl),$02
 	inc hl
@@ -1797,7 +1797,7 @@ _introCinematic_preTitlescreen_state1:
 ; Updates the effect where the title comes into view.
 ;
 ; @param	a	Number of pixels of the title to show (divided by two)
-_introCinematic_preTitlescreen_updateScrollForTitle:
+introCinematic_preTitlescreen_updateScrollForTitle:
 	ld b,a
 
 	; Calculate c=$18/b (the amount that the title needs to be shrunk)
@@ -1847,7 +1847,7 @@ _introCinematic_preTitlescreen_updateScrollForTitle:
 
 ;;
 ; State 2: game title coming into view
-_introCinematic_preTitlescreen_state2:
+introCinematic_preTitlescreen_state2:
 	; Check whether to play the sound effect
 	ld hl,wTmpcbb6
 	ld a,(hl)
@@ -1869,35 +1869,35 @@ _introCinematic_preTitlescreen_state2:
 	jr nc,@titleDone
 	inc a
 	ld (hl),a
-	ld hl,_introCinematic_preTitlescreen_titleSizeData
+	ld hl,introCinematic_preTitlescreen_titleSizeData
 	rst_addAToHl
 	ld a,(hl)
-	jp _introCinematic_preTitlescreen_updateScrollForTitle
+	jp introCinematic_preTitlescreen_updateScrollForTitle
 
 @titleDone:
 	xor a
 	ld (wTmpcbb6),a
 	dec a
 	ld (wTmpcbba),a
-	jp _intro_incState
+	jp intro_incState
 
 ;;
 ; State 3: title fully in view; wait a bit, then go to the titlescreen.
-_introCinematic_preTitlescreen_state3:
+introCinematic_preTitlescreen_state3:
 	ld hl,wTmpcbb6
 	ld b,$01
 	call flashScreen_body
 	ret z
-	jp _intro_gotoTitlescreen
+	jp intro_gotoTitlescreen
 
 ; Each byte is the number of pixels of the title to show on a particular frame, divided by
 ; two.
-_introCinematic_preTitlescreen_titleSizeData:
+introCinematic_preTitlescreen_titleSizeData:
 	.db $01 $02 $03 $04 $06 $08 $0c $18
 
 ;;
 ; Updates camera position based on link's Y position.
-_introCinematic_inTemple_updateCamera:
+introCinematic_inTemple_updateCamera:
 	ld a,(wGfxRegs1.SCY)
 	ld b,a
 	ld de,w1Link.yh
@@ -1916,7 +1916,7 @@ _introCinematic_inTemple_updateCamera:
 ;;
 ; Moves the black bars in the intro cinematic in by 2 pixels, until it covers 24 pixels on
 ; each end.
-_introCinematic_moveBlackBarsIn:
+introCinematic_moveBlackBarsIn:
 	ld hl,wGfxRegs1.LYC
 	inc (hl)
 	inc (hl)
@@ -1940,7 +1940,7 @@ _introCinematic_moveBlackBarsIn:
 ;;
 ; Moves the black bars out until a certain area in the center of the screen is visible.
 ; Used for the closeup of Link's face.
-_introCinematic_moveBlackBarsOut:
+introCinematic_moveBlackBarsOut:
 	ld hl,wGfxRegs1.LYC
 	dec (hl)
 	dec (hl)
@@ -1961,7 +1961,7 @@ _introCinematic_moveBlackBarsOut:
 .else; ROM_SEASONS
 
 ;;
-_seasonsFunc_03_5367:
+seasonsFunc_03_5367:
 	call @func
 	ld bc,$0506
 	jr nz,+
@@ -2008,7 +2008,7 @@ cutscene_clearObjects:
 
 ;;
 ; @param	bc	ID of interaction to create
-_createInteraction:
+createInteraction:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),b
@@ -2148,15 +2148,15 @@ endgameCutsceneHandler_body:
 +
 	ld a,e
 	rst_jumpTable
-	.dw _endgameCutsceneHandler_09
-	.dw _endgameCutsceneHandler_0a
-	.dw _endgameCutsceneHandler_0f
+	.dw endgameCutsceneHandler_09
+	.dw endgameCutsceneHandler_0a
+	.dw endgameCutsceneHandler_0f
 .ifdef ROM_AGES
-	.dw _endgameCutsceneHandler_20
+	.dw endgameCutsceneHandler_20
 .endif
 
 ;;
-_clearFadingPalettes:
+clearFadingPalettes2:
 	; Clear w2FadingBgPalettes and w2FadingSprPalettes
 	ld a,:w2FadingBgPalettes
 	ld ($ff00+R_SVBK),a

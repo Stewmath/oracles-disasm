@@ -25,7 +25,7 @@ enemyCode01:
 	ld e,Enemy.var34
 	ld a,(de)
 	or a
-	jp z,_mergedTwinrova_deathCutscene
+	jp z,mergedTwinrova_deathCutscene
 
 	ld h,d
 	ld l,Enemy.var3a
@@ -92,45 +92,45 @@ enemyCode01:
 	jp playSound
 
 @normalStatus:
-	call _mergedTwinrova_checkTimeToSwapRoomFromDamage
-	call _mergedTwinrova_checkTimeToSwapRoomFromTimer
-	call _ecom_getSubidAndCpStateTo08
+	call mergedTwinrova_checkTimeToSwapRoomFromDamage
+	call mergedTwinrova_checkTimeToSwapRoomFromTimer
+	call ecom_getSubidAndCpStateTo08
 	cp $0c
 	jr nc,@stateCOrHigher
 	rst_jumpTable
-	.dw _mergedTwinrova_state_uninitialized
-	.dw _mergedTwinrova_state_stub
-	.dw _mergedTwinrova_state_stub
-	.dw _mergedTwinrova_state_stub
-	.dw _mergedTwinrova_state_stub
-	.dw _mergedTwinrova_state_stub
-	.dw _mergedTwinrova_state_stub
-	.dw _mergedTwinrova_state_stub
-	.dw _mergedTwinrova_state8
-	.dw _mergedTwinrova_state9
-	.dw _mergedTwinrova_stateA
-	.dw _mergedTwinrova_stateB
+	.dw mergedTwinrova_state_uninitialized
+	.dw mergedTwinrova_state_stub
+	.dw mergedTwinrova_state_stub
+	.dw mergedTwinrova_state_stub
+	.dw mergedTwinrova_state_stub
+	.dw mergedTwinrova_state_stub
+	.dw mergedTwinrova_state_stub
+	.dw mergedTwinrova_state_stub
+	.dw mergedTwinrova_state8
+	.dw mergedTwinrova_state9
+	.dw mergedTwinrova_stateA
+	.dw mergedTwinrova_stateB
 
 @stateCOrHigher:
 	ld a,b
 	rst_jumpTable
-	.dw _mergedTwinrova_lavaRoom
-	.dw _mergedTwinrova_iceRoom
+	.dw mergedTwinrova_lavaRoom
+	.dw mergedTwinrova_iceRoom
 
 
 ; Fight just starting
-_mergedTwinrova_state_uninitialized:
+mergedTwinrova_state_uninitialized:
 	ld a,ENEMYID_MERGED_TWINROVA
 	ld (wEnemyIDToLoadExtraGfx),a
 
 	ldh a,(<hActiveObject)
 	ld d,a
 	ld bc,$0012
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
 	ld a,SPEED_180
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 
 	ld l,Enemy.counter1
 	ld (hl),$08
@@ -146,13 +146,13 @@ _mergedTwinrova_state_uninitialized:
 	jp showText
 
 
-_mergedTwinrova_state_stub:
+mergedTwinrova_state_stub:
 	ret
 
 
 ; Delay before moving to centre?
-_mergedTwinrova_state8:
-	call _ecom_decCounter1
+mergedTwinrova_state8:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -188,7 +188,7 @@ _mergedTwinrova_state8:
 
 
 ; Moving toward centre of screen prior to swapping room
-_mergedTwinrova_state9:
+mergedTwinrova_state9:
 	ld bc,$4878
 	ld h,d
 	ld l,Enemy.yh
@@ -197,8 +197,8 @@ _mergedTwinrova_state9:
 	inc l
 	ld a,(hl)
 	ldh (<hFF8E),a
-	call _mergedTwinrova_checkPositionsCloseEnough
-	jp nc,_ecom_moveTowardPosition
+	call mergedTwinrova_checkPositionsCloseEnough
+	jp nc,ecom_moveTowardPosition
 
 	; Reached centre of screen.
 	ld l,e
@@ -219,7 +219,7 @@ _mergedTwinrova_state9:
 
 
 ; In the process of converting the room to lava or ice
-_mergedTwinrova_stateA:
+mergedTwinrova_stateA:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -230,7 +230,7 @@ _mergedTwinrova_stateA:
 	.dw @substate4
 
 @substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,++
 
 	; Flicker palettes?
@@ -264,7 +264,7 @@ _mergedTwinrova_stateA:
 	jp enemySetAnimation
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,++
 
 	; Flicker palettes?
@@ -343,32 +343,32 @@ _mergedTwinrova_stateA:
 
 
 ; Delay before attacking
-_mergedTwinrova_stateB:
-	call _ecom_decCounter1
+mergedTwinrova_stateB:
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	ld (hl),$0c ; [state]
 	ret
 
 
-_mergedTwinrova_lavaRoom:
+mergedTwinrova_lavaRoom:
 	ld a,(de)
 	sub $0c
 	rst_jumpTable
-	.dw _mergedTwinrova_lavaRoom_stateC
-	.dw _mergedTwinrova_lavaRoom_stateD
-	.dw _mergedTwinrova_lavaRoom_stateE
+	.dw mergedTwinrova_lavaRoom_stateC
+	.dw mergedTwinrova_lavaRoom_stateD
+	.dw mergedTwinrova_lavaRoom_stateE
 
 
-_mergedTwinrova_lavaRoom_stateC:
-	call _mergedTwinrova_decVar3bIfNonzero
+mergedTwinrova_lavaRoom_stateC:
+	call mergedTwinrova_decVar3bIfNonzero
 	ret nz
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_140
 
 
-_mergedTwinrova_chooseTargetPosition:
+mergedTwinrova_chooseTargetPosition:
 	ld l,e
 	inc (hl) ; [state]
 
@@ -407,7 +407,7 @@ _mergedTwinrova_chooseTargetPosition:
 
 
 ; Moving toward target position
-_mergedTwinrova_lavaRoom_stateD:
+mergedTwinrova_lavaRoom_stateD:
 	ld h,d
 	ld l,Enemy.var33
 	ld a,(hl)
@@ -416,9 +416,9 @@ _mergedTwinrova_lavaRoom_stateD:
 	dec (hl)
 +
 	ld l,Enemy.var37
-	call _ecom_readPositionVars
-	call _mergedTwinrova_checkPositionsCloseEnough
-	jp nc,_ecom_moveTowardPosition
+	call ecom_readPositionVars
+	call mergedTwinrova_checkPositionsCloseEnough
+	jp nc,ecom_moveTowardPosition
 
 	; Reached target position.
 
@@ -460,7 +460,7 @@ _mergedTwinrova_lavaRoom_stateD:
 
 
 ; Doing one of two attacks, depending on var03
-_mergedTwinrova_lavaRoom_stateE:
+mergedTwinrova_lavaRoom_stateE:
 	ld e,Enemy.var03
 	ld a,(de)
 	or a
@@ -495,7 +495,7 @@ _mergedTwinrova_lavaRoom_stateE:
 	jp objectCopyPositionWithOffset
 
 @flameAttack_substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld (hl),16
@@ -505,7 +505,7 @@ _mergedTwinrova_lavaRoom_stateE:
 	jp enemySetAnimation
 
 @flameAttack_substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 @doneAttack:
@@ -541,7 +541,7 @@ _mergedTwinrova_lavaRoom_stateE:
 	jp enemySetAnimation
 
 @keeseAttack_substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld (hl),20 ; [counter1]
@@ -582,24 +582,24 @@ _mergedTwinrova_lavaRoom_stateE:
 	.db $20 $00
 
 @keeseAttack_substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	jr @doneAttack
 
 
-_mergedTwinrova_iceRoom:
+mergedTwinrova_iceRoom:
 	ld a,(de)
 	sub $0c
 	rst_jumpTable
-	.dw _mergedTwinrova_iceRoom_stateC
-	.dw _mergedTwinrova_iceRoom_stateD
-	.dw _mergedTwinrova_iceRoom_stateE
-	.dw _mergedTwinrova_iceRoom_stateF
-	.dw _mergedTwinrova_iceRoom_state10
+	.dw mergedTwinrova_iceRoom_stateC
+	.dw mergedTwinrova_iceRoom_stateD
+	.dw mergedTwinrova_iceRoom_stateE
+	.dw mergedTwinrova_iceRoom_stateF
+	.dw mergedTwinrova_iceRoom_state10
 
 
 ; About to start spawning ice projectiles
-_mergedTwinrova_iceRoom_stateC:
+mergedTwinrova_iceRoom_stateC:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = $0d
@@ -630,7 +630,7 @@ _mergedTwinrova_iceRoom_stateC:
 
 
 ; Spawning ice projectiles (ENEMYID_TWINROVA_ICE)
-_mergedTwinrova_iceRoom_stateD:
+mergedTwinrova_iceRoom_stateD:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -638,7 +638,7 @@ _mergedTwinrova_iceRoom_stateD:
 	.dw @substate1
 
 @substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld (hl),30
@@ -703,7 +703,7 @@ _mergedTwinrova_iceRoom_stateD:
 	.db $10 $18 $0b $11
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),90
 	ld l,Enemy.state
@@ -713,21 +713,21 @@ _mergedTwinrova_iceRoom_stateD:
 
 
 ; About to move to a position to do a snowball attack.
-_mergedTwinrova_iceRoom_stateE:
-	call _mergedTwinrova_decVar3bIfNonzero
+mergedTwinrova_iceRoom_stateE:
+	call mergedTwinrova_decVar3bIfNonzero
 	ret nz
 	ld l,Enemy.speed
 	ld (hl),SPEED_180
-	jp _mergedTwinrova_chooseTargetPosition
+	jp mergedTwinrova_chooseTargetPosition
 
 
 ; Moving to position prior to snowball attack
-_mergedTwinrova_iceRoom_stateF:
+mergedTwinrova_iceRoom_stateF:
 	ld h,d
 	ld l,Enemy.var37
-	call _ecom_readPositionVars
-	call _mergedTwinrova_checkPositionsCloseEnough
-	jp nc,_ecom_moveTowardPosition
+	call ecom_readPositionVars
+	call mergedTwinrova_checkPositionsCloseEnough
+	jp nc,ecom_moveTowardPosition
 
 	; Reached target position. Begin charging attack.
 
@@ -752,7 +752,7 @@ _mergedTwinrova_iceRoom_stateF:
 
 
 ; Doing snowball attack?
-_mergedTwinrova_iceRoom_state10:
+mergedTwinrova_iceRoom_state10:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -760,7 +760,7 @@ _mergedTwinrova_iceRoom_state10:
 	.dw @substate1
 
 @substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld (hl),60
@@ -772,7 +772,7 @@ _mergedTwinrova_iceRoom_state10:
 	jp enemySetAnimation
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld l,Enemy.state
@@ -787,7 +787,7 @@ _mergedTwinrova_iceRoom_state10:
 	jp enemySetAnimation
 
 ;;
-_mergedTwinrova_checkTimeToSwapRoomFromTimer:
+mergedTwinrova_checkTimeToSwapRoomFromTimer:
 	ld a,(wFrameCounter)
 	and $03
 	ret nz
@@ -816,7 +816,7 @@ _mergedTwinrova_checkTimeToSwapRoomFromTimer:
 ; @param	bc
 ; @param	hFF8F
 ; @param[out]	cflag	c if within 2 pixels of position
-_mergedTwinrova_checkPositionsCloseEnough:
+mergedTwinrova_checkPositionsCloseEnough:
 	sub c
 	add $02
 	cp $05
@@ -830,7 +830,7 @@ _mergedTwinrova_checkPositionsCloseEnough:
 ;;
 ; Checks whether to begin changing the room. If so, it sets the state to 9 and returns
 ; from caller (pops return address).
-_mergedTwinrova_checkTimeToSwapRoomFromDamage:
+mergedTwinrova_checkTimeToSwapRoomFromDamage:
 	ld h,d
 	ld l,Enemy.var3a
 	ld a,(hl)
@@ -858,7 +858,7 @@ _mergedTwinrova_checkTimeToSwapRoomFromDamage:
 	jp enemySetAnimation
 
 
-_mergedTwinrova_deathCutscene:
+mergedTwinrova_deathCutscene:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
@@ -881,8 +881,8 @@ _mergedTwinrova_deathCutscene:
 	ld (wDisabledObjects),a
 	call clearAllParentItems
 ++
-	call _ecom_flickerVisibility
-	call _ecom_decCounter1
+	call ecom_flickerVisibility
+	call ecom_decCounter1
 	jr z,@doneExplosions
 
 	ld a,(hl) ; [counter1]
@@ -898,8 +898,8 @@ _mergedTwinrova_deathCutscene:
 	inc (hl)
 
 @substate1:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	ld l,e
 	inc (hl) ; [statae2] = 2
@@ -962,7 +962,7 @@ _mergedTwinrova_deathCutscene:
 	.db $fa $fc
 
 ;;
-_mergedTwinrova_decVar3bIfNonzero:
+mergedTwinrova_decVar3bIfNonzero:
 	ld h,d
 	ld l,Enemy.var3b
 	ld a,(hl)
@@ -1031,7 +1031,7 @@ enemyCode03:
 	call playSound
 
 @normalStatus:
-	call _twinrova_updateZPosition
+	call twinrova_updateZPosition
 	call @runState
 	ld e,Enemy.var32
 	ld a,(de)
@@ -1040,27 +1040,27 @@ enemyCode03:
 	ret
 
 @runState:
-	call _twinrova_checkFireProjectile
-	call _ecom_getSubidAndCpStateTo08
+	call twinrova_checkFireProjectile
+	call ecom_getSubidAndCpStateTo08
 	jr nc,@state8OrHigher
 	rst_jumpTable
-	.dw _twinrova_state_uninitialized
-	.dw _twinrova_state_spawner
-	.dw _twinrova_state_stub
-	.dw _twinrova_state_stub
-	.dw _twinrova_state_stub
-	.dw _twinrova_state_stub
-	.dw _twinrova_state_stub
-	.dw _twinrova_state_stub
+	.dw twinrova_state_uninitialized
+	.dw twinrova_state_spawner
+	.dw twinrova_state_stub
+	.dw twinrova_state_stub
+	.dw twinrova_state_stub
+	.dw twinrova_state_stub
+	.dw twinrova_state_stub
+	.dw twinrova_state_stub
 
 @state8OrHigher:
 	ld a,b
 	rst_jumpTable
-	.dw _twinrova_subid0
-	.dw _twinrova_subid1
+	.dw twinrova_subid0
+	.dw twinrova_subid1
 
 
-_twinrova_state_uninitialized:
+twinrova_state_uninitialized:
 	ld a,ENEMYID_TWINROVA
 	ld (wEnemyIDToLoadExtraGfx),a
 	ld a,$01
@@ -1070,7 +1070,7 @@ _twinrova_state_uninitialized:
 	ld l,Enemy.var03
 	bit 0,(hl)
 	ld a,SPEED_100
-	jp nz,_twinrova_initialize
+	jp nz,twinrova_initialize
 
 	ld l,e
 	inc (hl) ; [state] = 1
@@ -1082,9 +1082,9 @@ _twinrova_state_uninitialized:
 	ld (wMenuDisabled),a
 
 
-_twinrova_state_spawner:
+twinrova_state_spawner:
 	ld b,ENEMYID_TWINROVA
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 
 	; [child.var03] = [this.var03] + 1
@@ -1109,7 +1109,7 @@ _twinrova_state_spawner:
 	ld a,h
 	cp d
 	ld a,SPEED_100
-	jp nc,_twinrova_initialize
+	jp nc,twinrova_initialize
 
 	; Swap the twinrova objects; subid 0 must come before subid 1?
 	ld l,Enemy.enabled
@@ -1128,27 +1128,27 @@ _twinrova_state_spawner:
 	ret
 
 
-_twinrova_state_stub:
+twinrova_state_stub:
 	ret
 
 
-_twinrova_subid0:
+twinrova_subid0:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _twinrova_state8
-	.dw _twinrova_state9
-	.dw _twinrova_subid0_stateA
-	.dw _twinrova_subid0_stateB
-	.dw _twinrova_subid0_stateC
-	.dw _twinrova_stateD
-	.dw _twinrova_stateE
-	.dw _twinrova_stateF
-	.dw _twinrova_state10
+	.dw twinrova_state8
+	.dw twinrova_state9
+	.dw twinrova_subid0_stateA
+	.dw twinrova_subid0_stateB
+	.dw twinrova_subid0_stateC
+	.dw twinrova_stateD
+	.dw twinrova_stateE
+	.dw twinrova_stateF
+	.dw twinrova_state10
 
 
 ; Cutscene before fight
-_twinrova_state8:
+twinrova_state8:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = 9
@@ -1196,7 +1196,7 @@ _twinrova_state8:
 	call getRandomNumber_noPreserveVars
 	ld e,Enemy.var31
 	ld (de),a
-	jp _twinrova_updateAnimationFromAngle
+	jp twinrova_updateAnimationFromAngle
 
 ; Data per subid: x-position, oam flags, angle, var30
 @data:
@@ -1205,7 +1205,7 @@ _twinrova_state8:
 
 
 ; Moving down the screen in the pre-fight cutscene
-_twinrova_state9:
+twinrova_state9:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -1216,7 +1216,7 @@ _twinrova_state9:
 	.dw @substate4
 
 @substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@applySpeed
 
 	ld (hl),$08 ; [counter1]
@@ -1227,7 +1227,7 @@ _twinrova_state9:
 	jr @animate
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@applySpeed
 
 	ld (hl),$08 ; [counter1]
@@ -1240,8 +1240,8 @@ _twinrova_state9:
 	inc l
 	ld (hl),30 ; [counter1]
 
-	call _ecom_updateAngleTowardTarget
-	call _twinrova_calculateAnimationFromAngle
+	call ecom_updateAngleTowardTarget
+	call twinrova_calculateAnimationFromAngle
 	ld (hl),a
 	jp enemySetAnimation
 
@@ -1252,7 +1252,7 @@ _twinrova_state9:
 	add (hl)
 	and $1f
 	ld (de),a
-	call _twinrova_updateAnimationFromAngle
+	call twinrova_updateAnimationFromAngle
 
 @applySpeed:
 	call objectApplySpeed
@@ -1260,7 +1260,7 @@ _twinrova_state9:
 	jp enemyAnimate
 
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 
 	ld l,e
@@ -1307,15 +1307,15 @@ _twinrova_state9:
 	ld a,CUTSCENE_FLAMES_FLICKERING
 	ld (wCutsceneTrigger),a
 
-	call _ecom_updateAngleTowardTarget
-	call _twinrova_calculateAnimationFromAngle
+	call ecom_updateAngleTowardTarget
+	call twinrova_calculateAnimationFromAngle
 	add $04
 	ld (hl),a
 	jp enemySetAnimation
 
 
 ; Fight just starting
-_twinrova_subid0_stateA:
+twinrova_subid0_stateA:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = $0b
@@ -1323,29 +1323,29 @@ _twinrova_subid0_stateA:
 	ld a,MUS_TWINROVA
 	ld (wActiveMusic),a
 	call playSound
-	jp _twinrova_subid0_updateTargetPosition
+	jp twinrova_subid0_updateTargetPosition
 
 
 ; Moving normally
-_twinrova_subid0_stateB:
+twinrova_subid0_stateB:
 	ld a,(wFrameCounter)
 	and $7f
 	ld a,SND_FAIRYCUTSCENE
 	call z,playSound
 
-	call _twinrova_moveTowardTargetPosition
+	call twinrova_moveTowardTargetPosition
 	ret nc
-	call _twinrova_subid0_updateTargetPosition
+	call twinrova_subid0_updateTargetPosition
 	jr nz,@waypointChanged
 
 	; Done this movement pattern
-	call _ecom_incState ; [state] = $0c
+	call ecom_incState ; [state] = $0c
 	ld l,Enemy.counter1
 	ld (hl),30
 	ret
 
 @waypointChanged:
-	call _twinrova_checkAttackInProgress
+	call twinrova_checkAttackInProgress
 	ret nz
 
 	ld e,Enemy.var38
@@ -1355,7 +1355,7 @@ _twinrova_subid0_stateB:
 	ld (de),a
 	ld hl,@attackPattern
 	call checkFlag
-	jp nz,_twinrova_chooseObjectToAttack
+	jp nz,twinrova_chooseObjectToAttack
 	ret
 
 @attackPattern:
@@ -1363,8 +1363,8 @@ _twinrova_subid0_stateB:
 
 
 ; Delay before choosing new movement pattern and returning to state $0b
-_twinrova_subid0_stateC:
-	call _ecom_decCounter1
+twinrova_subid0_stateC:
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -1379,11 +1379,11 @@ _twinrova_subid0_stateC:
 	xor a
 	ld (de),a ; [var34]
 
-	jp _twinrova_subid0_updateTargetPosition
+	jp twinrova_subid0_updateTargetPosition
 
 
 ; Health just reached 0
-_twinrova_stateD:
+twinrova_stateD:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = $0e
@@ -1403,29 +1403,29 @@ _twinrova_stateD:
 
 
 ; Delay before showing text
-_twinrova_stateE:
+twinrova_stateE:
 	ld e,Enemy.animParameter
 	ld a,(de)
 	inc a
-	jr nz,_twinrova_animate
+	jr nz,twinrova_animate
 
 	ld e,Enemy.direction
 	ld a,(de)
 	add $04
 	call enemySetAnimation
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.zh
 	dec (hl)
 	ld bc,TX_2f09
 	call showText
-_twinrova_animate:
+twinrova_animate:
 	jp enemyAnimate
 
 
-_twinrova_stateF:
-	call _twinrova_rise2PixelsAboveGround
-	jr nz,_twinrova_animate
+twinrova_stateF:
+	call twinrova_rise2PixelsAboveGround
+	jr nz,twinrova_animate
 
 	; Wait for signal that twin has risen
 	ld a,Object.var32
@@ -1433,22 +1433,22 @@ _twinrova_stateF:
 	bit 4,(hl)
 	jr nz,@nextState
 
-	call _ecom_updateAngleTowardTarget
-	call _twinrova_updateMovingAnimation
-	jr _twinrova_animate
+	call ecom_updateAngleTowardTarget
+	call twinrova_updateMovingAnimation
+	jr twinrova_animate
 
 @nextState:
-	call _ecom_incState
+	call ecom_incState
 	inc l
 	ld (hl),$00 ; [substate] = 0
 
 	ld l,Enemy.var32
 	res 3,(hl)
-	jr _twinrova_animate
+	jr twinrova_animate
 
 
 ; Merging into one
-_twinrova_state10:
+twinrova_state10:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -1540,7 +1540,7 @@ _twinrova_state10:
 
 ; Delay before coming back down
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),48 ; [counter1]
@@ -1576,7 +1576,7 @@ _twinrova_state10:
 	ld a,(de)
 	add $08
 	and $1f
-	call _twinrova_updateMovingAnimationGivenAngle
+	call twinrova_updateMovingAnimationGivenAngle
 
 	ld h,d
 	ld l,Enemy.zh
@@ -1682,45 +1682,45 @@ _twinrova_state10:
 
 ; Subid 1 is nearly identical to subid 0, it just doesn't do a few things like playing
 ; sound effects.
-_twinrova_subid1:
+twinrova_subid1:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _twinrova_state8
-	.dw _twinrova_state9
-	.dw _twinrova_subid1_stateA
-	.dw _twinrova_subid1_stateB
-	.dw _twinrova_subid1_stateC
-	.dw _twinrova_stateD
-	.dw _twinrova_stateE
-	.dw _twinrova_stateF
-	.dw _twinrova_state10
+	.dw twinrova_state8
+	.dw twinrova_state9
+	.dw twinrova_subid1_stateA
+	.dw twinrova_subid1_stateB
+	.dw twinrova_subid1_stateC
+	.dw twinrova_stateD
+	.dw twinrova_stateE
+	.dw twinrova_stateF
+	.dw twinrova_state10
 
 
 ; Fight just starting
-_twinrova_subid1_stateA:
+twinrova_subid1_stateA:
 	ld a,$0b
 	ld (de),a ; [state] = $0b
-	jp _twinrova_subid1_updateTargetPosition
+	jp twinrova_subid1_updateTargetPosition
 
 
 ; Moving normally
-_twinrova_subid1_stateB:
-	call _twinrova_moveTowardTargetPosition
+twinrova_subid1_stateB:
+	call twinrova_moveTowardTargetPosition
 	ret nc
-	call _twinrova_subid1_updateTargetPosition
+	call twinrova_subid1_updateTargetPosition
 	ret nz
 
 	; Done this movement pattern
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),30
 	ret
 
 
 ; Delay before choosing new movement pattern and returning to state $0b
-_twinrova_subid1_stateC:
-	call _ecom_decCounter1
+twinrova_subid1_stateC:
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -1735,16 +1735,16 @@ _twinrova_subid1_stateC:
 	xor a
 	ld (de),a ; [var34]
 
-	jp _twinrova_subid1_updateTargetPosition
+	jp twinrova_subid1_updateTargetPosition
 
 
 ;;
 ; @param	a	Speed
-_twinrova_initialize:
+twinrova_initialize:
 	ld h,d
 	ld l,Enemy.var03
 	bit 7,(hl)
-	jp z,_ecom_setSpeedAndState8
+	jp z,ecom_setSpeedAndState8
 
 	xor a
 	ld (wDisabledObjects),a
@@ -1778,14 +1778,14 @@ _twinrova_initialize:
 	set 3,(hl)
 	set 7,(hl)
 
-	call _ecom_updateAngleTowardTarget
-	call _twinrova_calculateAnimationFromAngle
+	call ecom_updateAngleTowardTarget
+	call twinrova_calculateAnimationFromAngle
 	add $04
 	ld (hl),a
 	jp enemySetAnimation
 
 ;;
-_twinrova_updateZPosition:
+twinrova_updateZPosition:
 	ld h,d
 	ld l,Enemy.var37
 	ld a,(hl)
@@ -1818,7 +1818,7 @@ _twinrova_updateZPosition:
 	.db -3, -4, -5, -4
 
 ;;
-_twinrova_checkFireProjectile:
+twinrova_checkFireProjectile:
 	ld h,d
 	ld l,Enemy.var32
 	bit 0,(hl)
@@ -1848,7 +1848,7 @@ _twinrova_checkFireProjectile:
 
 	ld e,Enemy.angle
 	ld a,(de)
-	call _twinrova_calculateAnimationFromAngle
+	call twinrova_calculateAnimationFromAngle
 	ld (hl),a
 	add $04
 	jp enemySetAnimation
@@ -1880,13 +1880,13 @@ _twinrova_checkFireProjectile:
 	jr z,+
 	ld b,PARTID_BLUE_TWINROVA_PROJECTILE
 +
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 
 ;;
 ; Unused?
 ;
 ; @param	h	Object to set target position to
-_twinrova_setTargetPositionToObject:
+twinrova_setTargetPositionToObject:
 	ld l,Enemy.yh
 	ld e,l
 	ld b,(hl)
@@ -1897,28 +1897,28 @@ _twinrova_setTargetPositionToObject:
 	ld c,(hl)
 	ld a,(de)
 	ldh (<hFF8E),a
-	call _ecom_moveTowardPosition
-	jr _twinrova_updateMovingAnimation
+	call ecom_moveTowardPosition
+	jr twinrova_updateMovingAnimation
 
 
 ;;
-_twinrova_updateAnimationFromAngle:
+twinrova_updateAnimationFromAngle:
 	ld e,Enemy.angle
 	ld a,(de)
-	call _twinrova_calculateAnimationFromAngle
+	call twinrova_calculateAnimationFromAngle
 	ret z
 	ld (hl),a
 	jp enemySetAnimation
 
 ;;
-_twinrova_updateMovingAnimation:
+twinrova_updateMovingAnimation:
 	ld e,Enemy.angle
 	ld a,(de)
 
 ;;
 ; @param	a	angle
-_twinrova_updateMovingAnimationGivenAngle:
-	call _twinrova_calculateAnimationFromAngle
+twinrova_updateMovingAnimationGivenAngle:
+	call twinrova_calculateAnimationFromAngle
 	ret z
 
 	bit 7,(hl)
@@ -1943,7 +1943,7 @@ _twinrova_updateMovingAnimationGivenAngle:
 ; @param	a	Angle value
 ; @param[out]	hl	Enemy.direction
 ; @param[out]	zflag	z if calculated animation is the same as current animation
-_twinrova_calculateAnimationFromAngle:
+twinrova_calculateAnimationFromAngle:
 	ld c,a
 	add $04
 	and $18
@@ -1962,13 +1962,13 @@ _twinrova_calculateAnimationFromAngle:
 
 ;;
 ; @param[out]	zflag	z if reached the end of the movement pattern
-_twinrova_subid0_updateTargetPosition:
-	ld hl,_twinrova_subid0_targetPositions
+twinrova_subid0_updateTargetPosition:
+	ld hl,twinrova_subid0_targetPositions
 	jr ++
 
 ;;
-_twinrova_subid1_updateTargetPosition:
-	ld hl,_twinrova_subid1_targetPositions
+twinrova_subid1_updateTargetPosition:
+	ld hl,twinrova_subid1_targetPositions
 ++
 	ld e,Enemy.var37
 	xor a
@@ -2001,10 +2001,10 @@ _twinrova_subid1_updateTargetPosition:
 
 ;;
 ; @param[out]	cflag	c if reached target position
-_twinrova_moveTowardTargetPosition:
+twinrova_moveTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var35
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	inc a
 	cp $03
@@ -2017,15 +2017,15 @@ _twinrova_moveTowardTargetPosition:
 	ret c
 
 @moveToward:
-	call _ecom_moveTowardPosition
-	call _twinrova_updateMovingAnimation
+	call ecom_moveTowardPosition
+	call twinrova_updateMovingAnimation
 	call enemyAnimate
 	or d
 	ret
 
 ;;
 ; Randomly chooses either this object or its twin to begin an attack
-_twinrova_chooseObjectToAttack:
+twinrova_chooseObjectToAttack:
 	call getRandomNumber_noPreserveVars
 	rrca
 	ld h,d
@@ -2045,7 +2045,7 @@ _twinrova_chooseObjectToAttack:
 ; Checks if an attack is in progress, unsets bit 0 of var32 when attack is done?
 ;
 ; @param[out]	zflag	nz if either twinrova is currently doing an attack
-_twinrova_checkAttackInProgress:
+twinrova_checkAttackInProgress:
 	ld h,d
 	ld l,Enemy.var32
 	bit 0,(hl)
@@ -2067,7 +2067,7 @@ _twinrova_checkAttackInProgress:
 
 ;;
 ; @param[out]	zflag	z if Twinrova's risen to the desired height (-2)
-_twinrova_rise2PixelsAboveGround:
+twinrova_rise2PixelsAboveGround:
 	ld h,d
 	ld l,Enemy.zh
 	ld a,(hl)
@@ -2085,7 +2085,7 @@ _twinrova_rise2PixelsAboveGround:
 
 ;;
 ; Unused?
-_twinrova_incState2ForSelfAndTwin:
+twinrova_incState2ForSelfAndTwin:
 	ld a,Object.substate
 	call objectGetRelatedObject1Var
 	inc (hl)
@@ -2094,7 +2094,7 @@ _twinrova_incState2ForSelfAndTwin:
 	ret
 
 
-_twinrova_subid0_targetPositions:
+twinrova_subid0_targetPositions:
 	.dw @pattern0
 	.dw @pattern1
 	.dw @pattern2
@@ -2154,7 +2154,7 @@ _twinrova_subid0_targetPositions:
 	.db $00
 
 
-_twinrova_subid1_targetPositions:
+twinrova_subid1_targetPositions:
 	.dw @pattern0
 	.dw @pattern1
 	.dw @pattern2
@@ -2271,24 +2271,24 @@ enemyCode04:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _ganon_state_uninitialized
-	.dw _ganon_state1
-	.dw _ganon_state2
-	.dw _ganon_state3
-	.dw _ganon_state4
-	.dw _ganon_state5
-	.dw _ganon_state6
-	.dw _ganon_state7
-	.dw _ganon_state8
-	.dw _ganon_state9
-	.dw _ganon_stateA
-	.dw _ganon_stateB
-	.dw _ganon_stateC
-	.dw _ganon_stateD
-	.dw _ganon_stateE
+	.dw ganon_state_uninitialized
+	.dw ganon_state1
+	.dw ganon_state2
+	.dw ganon_state3
+	.dw ganon_state4
+	.dw ganon_state5
+	.dw ganon_state6
+	.dw ganon_state7
+	.dw ganon_state8
+	.dw ganon_state9
+	.dw ganon_stateA
+	.dw ganon_stateB
+	.dw ganon_stateC
+	.dw ganon_stateD
+	.dw ganon_stateE
 
 
-_ganon_state_uninitialized:
+ganon_state_uninitialized:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = 1
@@ -2339,7 +2339,7 @@ _ganon_state_uninitialized:
 
 	; Shadow as relatedObj2
 	ld bc,$0012
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ld e,Enemy.relatedObj2
 	ld a,Part.start
 	ld (de),a
@@ -2385,7 +2385,7 @@ _ganon_state_uninitialized:
 
 
 ; Spawning ENEMYID_GANON_REVIVAL_CUTSCENE
-_ganon_state1:
+ganon_state1:
 	call getFreeEnemySlot_uncounted
 	ret nz
 	ld (hl),ENEMYID_GANON_REVIVAL_CUTSCENE
@@ -2394,20 +2394,20 @@ _ganon_state1:
 	inc l
 	ld (hl),d
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter2
 	ld (hl),60
 	ret
 
 
-_ganon_state2:
+ganon_state2:
 	; Wait for signal?
 	ld e,Enemy.counter1
 	ld a,(de)
 	or a
 	ret z
-	call _ecom_decCounter2
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter2
+	jp nz,ecom_flickerVisibility
 
 	dec l
 	ld (hl),193 ; [counter1]
@@ -2419,8 +2419,8 @@ _ganon_state2:
 
 
 ; Rumbling while "skull" is on-screen
-_ganon_state3:
-	call _ecom_decCounter1
+ganon_state3:
+	call ecom_decCounter1
 	jr z,@nextState
 
 	ld a,(hl) ; [counter1]
@@ -2442,13 +2442,13 @@ _ganon_state3:
 
 
 ; "Ball-like" animation, then ganon himself appears
-_ganon_state4:
+ganon_state4:
 	ld e,Enemy.animParameter
 	ld a,(de)
 	inc a
 	jp nz,enemyAnimate
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),15
 
@@ -2469,8 +2469,8 @@ _ganon_state4:
 
 
 ; Brief delay
-_ganon_state5:
-	call _ecom_decCounter1
+ganon_state5:
+	call ecom_decCounter1
 	ret nz
 
 	ld a,120
@@ -2493,8 +2493,8 @@ _ganon_state5:
 
 
 ; "Roaring" as fight is about to begin
-_ganon_state6:
-	call _ecom_decCounter1
+ganon_state6:
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld (hl),30 ; [counter1]
@@ -2519,55 +2519,55 @@ _ganon_state6:
 
 
 ; Fight begins
-_ganon_state7:
+ganon_state7:
 	ld a,MUS_GANON
 	ld (wActiveMusic),a
 	call playSound
-	jp _ganon_decideNextMove
+	jp ganon_decideNextMove
 
 
 ; 3-projectile attack
-_ganon_state8:
+ganon_state8:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
-	.dw _ganon_state8_substate0
-	.dw _ganon_state8_substate1
-	.dw _ganon_state8_substate2
-	.dw _ganon_state8_substate3
-	.dw _ganon_state8_substate4
-	.dw _ganon_state8_substate5
-	.dw _ganon_state8_substate6
-	.dw _ganon_state8_substate7
+	.dw ganon_state8_substate0
+	.dw ganon_state8_substate1
+	.dw ganon_state8_substate2
+	.dw ganon_state8_substate3
+	.dw ganon_state8_substate4
+	.dw ganon_state8_substate5
+	.dw ganon_state8_substate6
+	.dw ganon_state8_substate7
 
 ; Also used by state D
-_ganon_state8_substate0:
-	call _ganon_updateTeleportVarsAndPlaySound
+ganon_state8_substate0:
+	call ganon_updateTeleportVarsAndPlaySound
 	ld l,Enemy.substate
 	inc (hl)
 	ret
 
 ; Disappearing. Also used by state D
-_ganon_state8_substate1:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationGoingOut
+ganon_state8_substate1:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationGoingOut
 	ld l,e
 	inc (hl) ; [substate]
-	call _ganon_decideTeleportLocationAndCounter
+	call ganon_decideTeleportLocationAndCounter
 	jp objectSetInvisible
 
 ; Delay before reappearing. Also used by state 9, C, D
-_ganon_state8_substate2:
-	call _ecom_decCounter1
+ganon_state8_substate2:
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [substate]
-	jp _ganon_updateTeleportVarsAndPlaySound
+	jp ganon_updateTeleportVarsAndPlaySound
 
 ; Reappearing.
-_ganon_state8_substate3:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationComingIn
+ganon_state8_substate3:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationComingIn
 
 	; Done teleporting, he will become solid again
 	ld (hl),$08 ; [counter1]
@@ -2583,8 +2583,8 @@ _ganon_state8_substate3:
 	set 7,(hl)
 	jp objectSetVisible83
 
-_ganon_state8_substate4:
-	call _ecom_decCounter1
+ganon_state8_substate4:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$02
 	ld l,e
@@ -2592,20 +2592,20 @@ _ganon_state8_substate4:
 	ld a,GFXH_b3
 	jp ganon_loadGfxHeader
 
-_ganon_state8_substate5:
-	call _ecom_decCounter1
+ganon_state8_substate5:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),45
 	ld l,e
 	inc (hl)
 	ld a,$05
 	call enemySetAnimation
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	ldbc $00,SPEED_180
-	jr _ganon_state8_spawnProjectile
+	jr ganon_state8_spawnProjectile
 
-_ganon_state8_substate6:
-	call _ecom_decCounter1
+ganon_state8_substate6:
+	call ecom_decCounter1
 	jr nz,++
 	ld (hl),60
 	ld l,e
@@ -2618,13 +2618,13 @@ _ganon_state8_substate6:
 	ret nz
 
 	ldbc $02,SPEED_280
-	call _ganon_state8_spawnProjectile
+	call ganon_state8_spawnProjectile
 
 	ldbc $fe,SPEED_280
 
-_ganon_state8_spawnProjectile:
+ganon_state8_spawnProjectile:
 	ld e,PARTID_52
-	call _ganon_spawnPart
+	call ganon_spawnPart
 	ret nz
 	ld l,Part.angle
 	ld e,Enemy.angle
@@ -2636,36 +2636,36 @@ _ganon_state8_spawnProjectile:
 	ld (hl),c
 	jp objectCopyPosition
 
-_ganon_state8_substate7:
-	call _ecom_decCounter1
+ganon_state8_substate7:
+	call ecom_decCounter1
 	ret nz
-	jp _ganon_finishAttack
+	jp ganon_finishAttack
 
 
 ; Projectile attack (4 projectiles turn into 3 smaller ones each)
-_ganon_state9:
+ganon_state9:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ganon_state9_substate0
-	.dw _ganon_state9_substate1
-	.dw _ganon_state8_substate2
-	.dw _ganon_state9_substate3
-	.dw _ganon_state9_substate4
-	.dw _ganon_state9_substate5
-	.dw _ganon_state9_substate6
-	.dw _ganon_state9_substate7
+	.dw ganon_state9_substate0
+	.dw ganon_state9_substate1
+	.dw ganon_state8_substate2
+	.dw ganon_state9_substate3
+	.dw ganon_state9_substate4
+	.dw ganon_state9_substate5
+	.dw ganon_state9_substate6
+	.dw ganon_state9_substate7
 
 ; Also used by state A, B, C
-_ganon_state9_substate0:
-	call _ganon_updateTeleportVarsAndPlaySound
+ganon_state9_substate0:
+	call ganon_updateTeleportVarsAndPlaySound
 	ld l,Enemy.substate
 	inc (hl)
 	ret
 
-_ganon_state9_substate1:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationGoingOut
+ganon_state9_substate1:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationGoingOut
 	ld (hl),120 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
@@ -2675,9 +2675,9 @@ _ganon_state9_substate1:
 	ld (hl),$78
 	jp objectSetInvisible
 
-_ganon_state9_substate3:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationComingIn
+ganon_state9_substate3:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationComingIn
 	ld (hl),$08 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
@@ -2685,8 +2685,8 @@ _ganon_state9_substate3:
 	set 7,(hl)
 	jp objectSetVisible83
 
-_ganon_state9_substate4:
-	call _ecom_decCounter1
+ganon_state9_substate4:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),40 ; [counter1]
 	ld l,e
@@ -2706,7 +2706,7 @@ _ganon_state9_substate4:
 
 @spawnProjectile:
 	ld e,PARTID_52
-	call _ganon_spawnPart
+	call ganon_spawnPart
 	ld l,Part.subid
 	inc (hl) ; [subid] = 1
 	ld l,Part.angle
@@ -2717,8 +2717,8 @@ _ganon_state9_substate4:
 	ld (hl),Enemy.start
 	jp objectCopyPosition
 
-_ganon_state9_substate5:
-	call _ecom_decCounter1
+ganon_state9_substate5:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),40 ; [counter1]
 	ld l,e
@@ -2728,8 +2728,8 @@ _ganon_state9_substate5:
 	ld a,$07
 	jp enemySetAnimation
 
-_ganon_state9_substate6:
-	call _ecom_decCounter1
+ganon_state9_substate6:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),80
 	ld l,e
@@ -2737,30 +2737,30 @@ _ganon_state9_substate6:
 	ld a,$02
 	jp enemySetAnimation
 
-_ganon_state9_substate7:
-	call _ecom_decCounter1
+ganon_state9_substate7:
+	call ecom_decCounter1
 	ret nz
-	jp _ganon_finishAttack
+	jp ganon_finishAttack
 
 
 ; "Slash" move
-_ganon_stateA:
+ganon_stateA:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
-	.dw _ganon_state9_substate0
-	.dw _ganon_stateA_substate1
-	.dw _ganon_stateA_substate2
-	.dw _ganon_stateA_substate3
-	.dw _ganon_stateA_substate4
-	.dw _ganon_stateA_substate5
-	.dw _ganon_stateA_substate6
-	.dw _ganon_stateA_substate7
+	.dw ganon_state9_substate0
+	.dw ganon_stateA_substate1
+	.dw ganon_stateA_substate2
+	.dw ganon_stateA_substate3
+	.dw ganon_stateA_substate4
+	.dw ganon_stateA_substate5
+	.dw ganon_stateA_substate6
+	.dw ganon_stateA_substate7
 
 ; Teleporting out
-_ganon_stateA_substate1:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationGoingOut
+ganon_stateA_substate1:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationGoingOut
 
 	ld (hl),120
 	ld l,e
@@ -2768,8 +2768,8 @@ _ganon_stateA_substate1:
 	jp objectSetInvisible
 
 ; Delay before reappearing
-_ganon_stateA_substate2:
-	call _ecom_decCounter1
+ganon_stateA_substate2:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -2800,11 +2800,11 @@ _ganon_stateA_substate2:
 	ld a,(de)
 	add $07
 	call enemySetAnimation
-	jp _ganon_updateTeleportVarsAndPlaySound
+	jp ganon_updateTeleportVarsAndPlaySound
 
-_ganon_stateA_substate3:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationComingIn
+ganon_stateA_substate3:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationComingIn
 	ld (hl),$02
 	ld l,e
 	inc (hl) ; [substate]
@@ -2812,13 +2812,13 @@ _ganon_stateA_substate3:
 	set 7,(hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_300
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	ld e,PARTID_GANON_TRIDENT
-	call _ganon_spawnPart
+	call ganon_spawnPart
 	jp objectSetVisible83
 
-_ganon_stateA_substate4:
-	call _ecom_decCounter1
+ganon_stateA_substate4:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$04
 	ld l,e
@@ -2830,8 +2830,8 @@ _ganon_stateA_substate4:
 	add $08
 	call enemySetAnimation
 
-_ganon_stateA_substate5:
-	call _ecom_decCounter1
+ganon_stateA_substate5:
+	call ecom_decCounter1
 	jr nz,+++
 	ld (hl),16
 	ld l,e
@@ -2843,8 +2843,8 @@ _ganon_stateA_substate5:
 	add $09
 	jp enemySetAnimation
 
-_ganon_stateA_substate6:
-	call _ecom_decCounter1
+ganon_stateA_substate6:
+	call ecom_decCounter1
 	jr nz,+++
 	ld l,e
 	inc (hl) ; [substate]
@@ -2864,41 +2864,41 @@ _ganon_stateA_substate6:
 	ret nc
 	jp objectApplySpeed
 
-_ganon_stateA_substate7:
-	call _ecom_decCounter1
+ganon_stateA_substate7:
+	call ecom_decCounter1
 	ret nz
 	ld a,$02
 	call enemySetAnimation
-	jp _ganon_finishAttack
+	jp ganon_finishAttack
 
 
 ; The attack with the big exploding ball
-_ganon_stateB:
+ganon_stateB:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ganon_state9_substate0
-	.dw _ganon_stateB_substate1
-	.dw _ganon_stateB_substate2
-	.dw _ganon_stateB_substate3
-	.dw _ganon_stateB_substate4
-	.dw _ganon_stateB_substate5
-	.dw _ganon_stateB_substate6
-	.dw _ganon_stateB_substate7
-	.dw _ganon_stateB_substate8
-	.dw _ganon_stateB_substate9
-	.dw _ganon_stateB_substateA
+	.dw ganon_state9_substate0
+	.dw ganon_stateB_substate1
+	.dw ganon_stateB_substate2
+	.dw ganon_stateB_substate3
+	.dw ganon_stateB_substate4
+	.dw ganon_stateB_substate5
+	.dw ganon_stateB_substate6
+	.dw ganon_stateB_substate7
+	.dw ganon_stateB_substate8
+	.dw ganon_stateB_substate9
+	.dw ganon_stateB_substateA
 
-_ganon_stateB_substate1:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationGoingOut
+ganon_stateB_substate1:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationGoingOut
 	ld (hl),180
 	ld l,e
 	inc (hl) ; [substate]
 	jp objectSetInvisible
 
-_ganon_stateB_substate2:
-	call _ecom_decCounter1
+ganon_stateB_substate2:
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [substate]
@@ -2910,11 +2910,11 @@ _ganon_stateB_substate2:
 	call ganon_loadGfxHeader
 	ld a,$04
 	call enemySetAnimation
-	jp _ganon_updateTeleportVarsAndPlaySound
+	jp ganon_updateTeleportVarsAndPlaySound
 
-_ganon_stateB_substate3:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationComingIn
+ganon_stateB_substate3:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationComingIn
 	ld (hl),$40 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
@@ -2922,13 +2922,13 @@ _ganon_stateB_substate3:
 	set 7,(hl)
 	call objectSetVisible83
 	ld e,PARTID_51
-	call _ganon_spawnPart
+	call ganon_spawnPart
 	ret nz
 	ld bc,$f810
 	jp objectCopyPositionWithOffset
 
-_ganon_stateB_substate4:
-	call _ecom_decCounter1
+ganon_stateB_substate4:
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [substate]
@@ -2941,7 +2941,7 @@ _ganon_stateB_substate4:
 	ld a,$05
 	jp enemySetAnimation
 
-_ganon_stateB_substate5:
+ganon_stateB_substate5:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jr z,++
@@ -2965,8 +2965,8 @@ _ganon_stateB_substate5:
 	ld a,SND_EXPLOSION
 	jp playSound
 
-_ganon_stateB_substate6:
-	call _ecom_decCounter1
+ganon_stateB_substate6:
+	call ecom_decCounter1
 	jr z,++
 	ld a,(hl)
 	cp 105
@@ -2988,22 +2988,22 @@ _ganon_stateB_substate6:
 	ld a,$04
 	jp enemySetAnimation
 
-_ganon_stateB_substate7:
-	call _ecom_decCounter1
+ganon_stateB_substate7:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),24 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
 	ld e,PARTID_51
-	call _ganon_spawnPart
+	call ganon_spawnPart
 	ret nz
 	ld l,Part.subid
 	inc (hl)
 	ld bc,$f810
 	jp objectCopyPositionWithOffset
 
-_ganon_stateB_substate8:
-	call _ecom_decCounter1
+ganon_stateB_substate8:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),60
 	ld l,e
@@ -3014,8 +3014,8 @@ _ganon_stateB_substate8:
 	ld a,$05
 	jp enemySetAnimation
 
-_ganon_stateB_substate9:
-	call _ecom_decCounter1
+ganon_stateB_substate9:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),60
 	ld l,e
@@ -3023,32 +3023,32 @@ _ganon_stateB_substate9:
 	ld a,$02
 	jp enemySetAnimation
 
-_ganon_stateB_substateA:
-	call _ecom_decCounter1
+ganon_stateB_substateA:
+	call ecom_decCounter1
 	ret nz
-	jp _ganon_finishAttack
+	jp ganon_finishAttack
 
 
 ; Inverted controls
-_ganon_stateC:
+ganon_stateC:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ganon_state9_substate0
-	.dw _ganon_stateC_substate1
-	.dw _ganon_state8_substate2
-	.dw _ganon_stateC_substate3
-	.dw _ganon_stateC_substate4
-	.dw _ganon_stateC_substate5
-	.dw _ganon_stateC_substate6
-	.dw _ganon_stateC_substate7
-	.dw _ganon_stateC_substate8
-	.dw _ganon_stateC_substate9
-	.dw _ganon_stateC_substateA
+	.dw ganon_state9_substate0
+	.dw ganon_stateC_substate1
+	.dw ganon_state8_substate2
+	.dw ganon_stateC_substate3
+	.dw ganon_stateC_substate4
+	.dw ganon_stateC_substate5
+	.dw ganon_stateC_substate6
+	.dw ganon_stateC_substate7
+	.dw ganon_stateC_substate8
+	.dw ganon_stateC_substate9
+	.dw ganon_stateC_substateA
 
-_ganon_stateC_substate1:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationGoingOut
+ganon_stateC_substate1:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationGoingOut
 	ld (hl),90 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
@@ -3058,9 +3058,9 @@ _ganon_stateC_substate1:
 	ld (hl),$78
 	jp objectSetInvisible
 
-_ganon_stateC_substate3:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationComingIn
+ganon_stateC_substate3:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationComingIn
 	ld (hl),90 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
@@ -3070,8 +3070,8 @@ _ganon_stateC_substate3:
 	ld a,SND_FADEOUT
 	jp playSound
 
-_ganon_stateC_substate4:
-	call _ecom_decCounter1
+ganon_stateC_substate4:
+	call ecom_decCounter1
 	jr z,@nextSubstate
 	ld a,(hl) ; [counter1]
 	cp 60
@@ -3103,17 +3103,17 @@ _ganon_stateC_substate4:
 	ld a,$02
 	jp fadeoutToBlackWithDelay
 
-_ganon_stateC_substate5:
+ganon_stateC_substate5:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	ld a,$06
 	ld (de),a ; [substate]
 	ld a,$04
-	call _ganon_setTileReplacementMode
-	jp _ganon_makeRoomBoundarySolid
+	call ganon_setTileReplacementMode
+	jp ganon_makeRoomBoundarySolid
 
-_ganon_stateC_substate6:
+ganon_stateC_substate6:
 	ld h,d
 	ld l,e
 	inc (hl) ; [substate]
@@ -3137,13 +3137,13 @@ _ganon_stateC_substate6:
 @counter2Vals:
 	.db 50,80,80,90,90,90,90,150
 
-_ganon_stateC_substate7:
+ganon_stateC_substate7:
 	ld a,$02
 	ld (wUseSimulatedInput),a
 	ld a,(wFrameCounter)
 	and $03
 	jr nz,++
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr nz,++
 
 	ld l,Enemy.substate
@@ -3153,7 +3153,7 @@ _ganon_stateC_substate7:
 	res 7,(hl)
 	jp fastFadeoutToWhite
 ++
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,++
 	ld l,e
 	inc (hl) ; [substate] = 8
@@ -3162,20 +3162,20 @@ _ganon_stateC_substate7:
 	ld a,GFXH_b3
 	jp ganon_loadGfxHeader
 ++
-	call _ecom_updateAngleTowardTarget
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_updateAngleTowardTarget
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	call enemyAnimate
-	jp _ganon_updateSeizurePalette
+	jp ganon_updateSeizurePalette
 
-_ganon_stateC_substate8:
+ganon_stateC_substate8:
 	ld a,$02
 	ld (wUseSimulatedInput),a
-	call _ganon_updateSeizurePalette
+	call ganon_updateSeizurePalette
 
 	ld a,(wFrameCounter)
 	and $03
-	call z,_ecom_decCounter2
-	call _ecom_decCounter1
+	call z,ecom_decCounter2
+	call ecom_decCounter1
 	jr z,@nextSubstate
 
 	ld a,(hl) ; [counter1]
@@ -3185,7 +3185,7 @@ _ganon_stateC_substate8:
 	ld a,$05
 	call enemySetAnimation
 	ld e,PARTID_52
-	call _ganon_spawnPart
+	call ganon_spawnPart
 	ret nz
 	ld l,Part.subid
 	ld (hl),$02
@@ -3199,14 +3199,14 @@ _ganon_stateC_substate8:
 	ld a,$02
 	jp enemySetAnimation
 
-_ganon_stateC_substate9:
+ganon_stateC_substate9:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	ld a,$0a
 	ld (de),a ; [substate]
 	ld a,$03
-	call _ganon_setTileReplacementMode
+	call ganon_setTileReplacementMode
 .ifdef ROM_AGES
 	ld a,PALH_b1
 .else
@@ -3215,28 +3215,28 @@ _ganon_stateC_substate9:
 	ld (wExtraBgPaletteHeader),a
 	jp loadPaletteHeader
 
-_ganon_stateC_substateA:
+ganon_stateC_substateA:
 	ld h,d
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	call clearPaletteFadeVariablesAndRefreshPalettes
-	jp _ganon_finishAttack
+	jp ganon_finishAttack
 
 
 ; Teleports in an out without doing anything
-_ganon_stateD:
+ganon_stateD:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ganon_state8_substate0
-	.dw _ganon_state8_substate1
-	.dw _ganon_state8_substate2
-	.dw _ganon_stateD_substate3
-	.dw _ganon_finishAttack
+	.dw ganon_state8_substate0
+	.dw ganon_state8_substate1
+	.dw ganon_state8_substate2
+	.dw ganon_stateD_substate3
+	.dw ganon_finishAttack
 
-_ganon_stateD_substate3:
-	call _ecom_decCounter1
-	jp nz,_ganon_updateTeleportAnimationComingIn
+ganon_stateD_substate3:
+	call ecom_decCounter1
+	jp nz,ganon_updateTeleportAnimationComingIn
 	ld l,e
 	inc (hl) ; [substate]
 	ld l,Enemy.var30
@@ -3247,22 +3247,22 @@ _ganon_stateD_substate3:
 
 
 ; Just died
-_ganon_stateE:
+ganon_stateE:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
-	.dw _ganon_stateE_substate0
-	.dw _ganon_stateE_substate1
-	.dw _ganon_stateE_substate2
-	.dw _ganon_stateE_substate3
+	.dw ganon_stateE_substate0
+	.dw ganon_stateE_substate1
+	.dw ganon_stateE_substate2
+	.dw ganon_stateE_substate3
 
-_ganon_stateE_substate0:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+ganon_stateE_substate0:
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	inc (hl)
 	ld e,PARTID_BOSS_DEATH_EXPLOSION
-	call _ganon_spawnPart
+	call ganon_spawnPart
 	ret nz
 	ld l,Part.subid
 	inc (hl) ; [subid] = 1
@@ -3286,7 +3286,7 @@ _ganon_stateE_substate0:
 	ld a,SND_BIG_EXPLOSION_2
 	jp playSound
 
-_ganon_stateE_substate1:
+ganon_stateE_substate1:
 	ld a,Object.animParameter
 	call objectGetRelatedObject2Var
 	bit 7,(hl)
@@ -3298,23 +3298,23 @@ _ganon_stateE_substate1:
 	ld (hl),$08 ; [counter1]
 	jp fastFadeoutToWhite
 
-_ganon_stateE_substate2:
-	call _ecom_decCounter1
+ganon_stateE_substate2:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),30 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
 	xor a
 	ld (wExtraBgPaletteHeader),a
-	call _ganon_setTileReplacementMode
+	call ganon_setTileReplacementMode
 	ld a,$02
 	jp fadeinFromWhiteWithDelay
 
-_ganon_stateE_substate3:
+ganon_stateE_substate3:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	xor a
 	ld (wDisableLinkCollisionsAndMenu),a
@@ -3341,7 +3341,7 @@ ganon_loadGfxHeader:
 ; X-position alternates left & right each frame while teleporting.
 ;
 ; @param	hl	counter1?
-_ganon_updateTeleportAnimationGoingOut:
+ganon_updateTeleportAnimationGoingOut:
 	ld a,(hl)
 	and $3e
 	rrca
@@ -3349,7 +3349,7 @@ _ganon_updateTeleportAnimationGoingOut:
 	ld a,$20
 	sub b
 
-_ganon_updateFlickeringXPosition:
+ganon_updateFlickeringXPosition:
 	bit 1,(hl)
 	jr z,+
 	cpl
@@ -3359,10 +3359,10 @@ _ganon_updateFlickeringXPosition:
 	add (hl)
 	ld l,Enemy.xh
 	ld (hl),a
-	jp _ecom_flickerVisibility
+	jp ecom_flickerVisibility
 
 ;;
-_ganon_updateTeleportVarsAndPlaySound:
+ganon_updateTeleportVarsAndPlaySound:
 	ld a,SND_TELEPORT
 	call playSound
 
@@ -3380,14 +3380,14 @@ _ganon_updateTeleportVarsAndPlaySound:
 
 ;;
 ; @param	hl	counter1?
-_ganon_updateTeleportAnimationComingIn:
+ganon_updateTeleportAnimationComingIn:
 	ld a,(hl)
 	and $3e
 	rrca
-	jr _ganon_updateFlickeringXPosition
+	jr ganon_updateFlickeringXPosition
 
 ;;
-_ganon_finishAttack:
+ganon_finishAttack:
 	ld h,d
 	ld l,Enemy.var35
 	ldi a,(hl)
@@ -3395,9 +3395,9 @@ _ganon_finishAttack:
 	ld l,a
 	ldi a,(hl)
 	or a
-	jr z,_ganon_decideNextMove
+	jr z,ganon_decideNextMove
 
-_label_10_135:
+label_10_135:
 	ld e,Enemy.state
 	ld (de),a
 	inc e
@@ -3414,7 +3414,7 @@ _label_10_135:
 
 ;;
 ; Sets state to something randomly?
-_ganon_decideNextMove:
+ganon_decideNextMove:
 	ld e,Enemy.health
 	ld a,(de)
 	cp $41
@@ -3431,7 +3431,7 @@ _ganon_decideNextMove:
 	ld h,(hl)
 	ld l,a
 	ldi a,(hl)
-	jr _label_10_135
+	jr label_10_135
 
 @stateTable:
 	.dw @choice0
@@ -3476,9 +3476,9 @@ _ganon_decideNextMove:
 
 
 ;;
-_ganon_decideTeleportLocationAndCounter:
+ganon_decideTeleportLocationAndCounter:
 	ld bc,$0e0f
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld a,b
 	ld hl,@teleportTargetTable
 	rst_addAToHl
@@ -3515,7 +3515,7 @@ _ganon_decideTeleportLocationAndCounter:
 
 ;;
 ; @param	e	Part ID
-_ganon_spawnPart:
+ganon_spawnPart:
 	call getFreePartSlot
 	ret nz
 	ld (hl),e
@@ -3529,7 +3529,7 @@ _ganon_spawnPart:
 ;;
 ; Sets the boundaries of the room to be solid when "reversed controls" happen; most likely because
 ; the wall tiles are removed when in this state, so collisions must be set manually.
-_ganon_makeRoomBoundarySolid:
+ganon_makeRoomBoundarySolid:
 	ld hl,wRoomCollisions+$10
 	ld b,LARGE_ROOM_HEIGHT-2
 --
@@ -3568,7 +3568,7 @@ _ganon_makeRoomBoundarySolid:
 
 ;;
 ; Updates palettes in reversed-control mode
-_ganon_updateSeizurePalette:
+ganon_updateSeizurePalette:
 	ld a,(wScrollMode)
 	and $01
 	ret z
@@ -3593,7 +3593,7 @@ _ganon_updateSeizurePalette:
 
 
 ;;
-_ganon_setTileReplacementMode:
+ganon_setTileReplacementMode:
 	ld (wTwinrovaTileReplacementMode),a
 	call func_131f
 	ldh a,(<hActiveObject)

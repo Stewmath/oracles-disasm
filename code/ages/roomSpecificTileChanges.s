@@ -426,13 +426,13 @@ tileReplacement_group5Map25:
 	and $40
 	ret nz
 
-	ld hl,_d6RetractingWallRectPresent
+	ld hl,d6RetractingWallRectPresent
 	call fillRectInRoomLayout
 	jr ++
 
-_d6RetractingWallRectPresent:
+d6RetractingWallRectPresent:
 	.db $17 $09 $04 $a6
-_d6RetractingWallRectPast:
+d6RetractingWallRectPast:
 	.db $17 $09 $04 $a7
 
 ;;
@@ -442,7 +442,7 @@ tileReplacement_group5Map43:
 	and $40
 	jr nz,@pastRetracted
 
-	ld hl,_d6RetractingWallRectPast
+	ld hl,d6RetractingWallRectPast
 	call fillRectInRoomLayout
 ++
 	ld hl,@wallEdge1
@@ -1247,10 +1247,10 @@ tileReplacement_group0Mape0:
 	ld a,(wEssencesObtained)
 	bit 4,a
 	ld l,$46
-	call nz,_setTileToDoor
+	call nz,setTileToDoor
 	ld c,$1b
 ;;
-_createInteraction90:
+createInteraction90:
 	call getFreeInteractionSlot
 	ret nz
 
@@ -1263,22 +1263,22 @@ _createInteraction90:
 ; Present, on top of maku tree (middle)
 tileReplacement_group0Mape1:
 	ld c,$1c
-	call _createInteraction90
+	call createInteraction90
 	ld a,(wEssencesObtained)
 	rrca
 	ld l,$26
-	call c,_setTileToDoor
+	call c,setTileToDoor
 	rrca
 	ret nc
 
 	ld l,$53
-	jr _setTileToDoor
+	jr setTileToDoor
 
 ;;
 ; Present, on top of maku tree (right)
 tileReplacement_group0Mape2:
 	ld c,$1d
-	call _createInteraction90
+	call createInteraction90
 	ld a,(wEssencesObtained)
 	bit 2,a
 	ret z
@@ -1286,7 +1286,7 @@ tileReplacement_group0Mape2:
 	ld l,$54
 
 ;;
-_setTileToDoor:
+setTileToDoor:
 	ld h,>wRoomLayout
 	ld (hl),$dd
 	ret

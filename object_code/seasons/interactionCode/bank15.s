@@ -103,24 +103,24 @@ interactionCodedc:
 	ld e,$42
 	ld a,(de)
 	rst_jumpTable
-	.dw _interactionCodedc_subid0
-	.dw _interactionCodedc_subid1
-	.dw _interactionCodedc_subid2
-	.dw _interactionCodedc_subid3
-	.dw _interactionCodedc_subid4
-	.dw _interactionCodedc_subid5
-	.dw _interactionCodedc_subid6
-	.dw _interactionCodedc_subid7
-	.dw _interactionCodedc_subid8
-	.dw _interactionCodedc_subid9
-	.dw _interactionCodedc_subidA
-	.dw _interactionCodedc_subidB
-	.dw _interactionCodedc_subidC
-	.dw _interactionCodedc_subidD
-	.dw _interactionCodedc_subidE
-	.dw _interactionCodedc_subidF
+	.dw interactionCodedc_subid0
+	.dw interactionCodedc_subid1
+	.dw interactionCodedc_subid2
+	.dw interactionCodedc_subid3
+	.dw interactionCodedc_subid4
+	.dw interactionCodedc_subid5
+	.dw interactionCodedc_subid6
+	.dw interactionCodedc_subid7
+	.dw interactionCodedc_subid8
+	.dw interactionCodedc_subid9
+	.dw interactionCodedc_subidA
+	.dw interactionCodedc_subidB
+	.dw interactionCodedc_subidC
+	.dw interactionCodedc_subidD
+	.dw interactionCodedc_subidE
+	.dw interactionCodedc_subidF
 
-_interactionCodedc_subidF:
+interactionCodedc_subidF:
 	call interactionDeleteAndRetIfEnabled02
 	call getThisRoomFlags
 	and $20
@@ -167,7 +167,7 @@ _interactionCodedc_subidF:
 	ld l,$4b
 	jp setShortPosition_paramC
 
-_interactionCodedc_subid0:
+interactionCodedc_subid0:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
@@ -193,11 +193,11 @@ _interactionCodedc_subid0:
 	cp $03
 	jr z,+
 	inc (hl)
-	ld hl,_table_675a
+	ld hl,table_675a
 	rst_addAToHl
 	ld a,(hl)
 	ld b,$6d
-	jr _func_6744
+	jr func_6744
 +
 	call interactionIncState
 	ld l,$46
@@ -216,11 +216,11 @@ _interactionCodedc_subid0:
 	jp z,interactionIncState
 	dec (hl)
 	ld a,(hl)
-	ld hl,_table_675a
+	ld hl,table_675a
 	rst_addAToHl
 	ld a,(hl)
 	ld b,$fd
-	call _func_6744
+	call func_6744
 	ld (hl),$1e
 	ret
 @state4:
@@ -231,7 +231,7 @@ _interactionCodedc_subid0:
 	ld e,$44
 	ld (de),a
 	ret
-_func_6744:
+func_6744:
 	ld c,a
 	ld a,b
 	call setTile
@@ -244,10 +244,10 @@ _func_6744:
 	ld l,$46
 	ld (hl),$0f
 	ret
-_table_675a:
+table_675a:
 	.db $65 $64 $63
 
-_interactionCodedc_subid1:
+interactionCodedc_subid1:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
@@ -289,11 +289,11 @@ _interactionCodedc_subid1:
 	ld (wWarpTransition2),a
 	jp interactionDelete
 
-_interactionCodedc_subid2:
+interactionCodedc_subid2:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
-	.dw _interactionCodedc_subid1@state0
+	.dw interactionCodedc_subid1@state0
 	.dw @state1
 @state1:
 	ld a,$01
@@ -317,7 +317,7 @@ _interactionCodedc_subid2:
 	ld (wLinkForceState),a
 	jp interactionDelete
 
-_interactionCodedc_subid3:
+interactionCodedc_subid3:
 	ld h,d
 	ld l,$4b
 	ld a,(wActiveTriggers)
@@ -332,7 +332,7 @@ _interactionCodedc_subid3:
 	res 7,(hl)
 	ret
 
-_interactionCodedc_subid4:
+interactionCodedc_subid4:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
@@ -390,7 +390,7 @@ _interactionCodedc_subid4:
 	ret nz
 	jp interactionDelete
 
-_interactionCodedc_subid5:
+interactionCodedc_subid5:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
@@ -419,7 +419,7 @@ _interactionCodedc_subid5:
 	inc l
 	ld a,(hl)
 	ld b,$6d
-	call _func_6744
+	call func_6744
 	ld a,c
 	cp $7d
 	jp z,interactionIncState
@@ -437,7 +437,7 @@ _interactionCodedc_subid5:
 	inc l
 	ld a,(hl)
 	ld b,$f4
-	call _func_6744
+	call func_6744
 	ld a,c
 	cp $73
 	jr z,+
@@ -450,7 +450,7 @@ _interactionCodedc_subid5:
 	ld (hl),$01
 	ret
 
-_interactionCodedc_subid6:
+interactionCodedc_subid6:
 	ld e,$44
 	ld a,(de)
 	or a
@@ -473,7 +473,7 @@ _interactionCodedc_subid6:
 	call objectCopyPosition
 	jp interactionDelete
 
-_interactionCodedc_subid7:
+interactionCodedc_subid7:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
@@ -580,7 +580,7 @@ _interactionCodedc_subid7:
 	ld (de),a
 	ret
 
-_interactionCodedc_subid8:
+interactionCodedc_subid8:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
@@ -596,7 +596,7 @@ _interactionCodedc_subid8:
 	ld b,a
 	ld e,$47
 	ld a,(de)
-	ld hl,_table_6a02
+	ld hl,table_6a02
 	rst_addAToHl
 	ld a,(hl)
 	cp b
@@ -624,7 +624,7 @@ _interactionCodedc_subid8:
 	bit 5,a
 	jr nz,@spawnRupeeTreasure
 	set 7,(hl)
-	call _func_6a18
+	call func_6a18
 	ld a,$4f
 	call setTile
 	ld a,SND_SOLVEPUZZLE
@@ -658,17 +658,17 @@ _interactionCodedc_subid8:
 	xor a
 	ld ($ccbc),a
 	ret
-_table_6a02:
+table_6a02:
 	.db $66 $5b $43 $3b
 	.db $59 $23 $73 $35
 
-_interactionCodedc_subid9:
+interactionCodedc_subid9:
 	call getThisRoomFlags
 	and $80
 	jp z,interactionDelete
-	call _func_6a18
+	call func_6a18
 	jp interactionDelete
-_func_6a18:
+func_6a18:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_PORTAL_SPAWNER
@@ -678,17 +678,17 @@ _func_6a18:
 	ld l,$4b
 	jp setShortPosition_paramC
 
-_interactionCodedc_subidA:
+interactionCodedc_subidA:
 	ld hl,$c904
 	set 4,(hl)
 	jp interactionDelete
 
-_interactionCodedc_subidB:
+interactionCodedc_subidB:
 	xor a
 	ld (wToggleBlocksState),a
 	jp interactionDelete
 
-_interactionCodedc_subidC:
+interactionCodedc_subidC:
 	call checkInteractionState
 	jr nz,+
 	call objectGetTileAtPosition
@@ -711,7 +711,7 @@ _interactionCodedc_subidC:
 	ld ($cc02),a
 	jp interactionDelete
 
-_interactionCodedc_subidD:
+interactionCodedc_subidD:
 	ld a,(wWarpDestPos)
 	cp $22
 	jr nz,+
@@ -721,7 +721,7 @@ _interactionCodedc_subidD:
 +
 	jp interactionDelete
 
-_interactionCodedc_subidE:
+interactionCodedc_subidE:
 	ld a,(wScrollMode)
 	and $01
 	ret z
@@ -845,7 +845,7 @@ interactionCodede:
 	jp interactionIncState
 @@state2:
 	call objectApplySpeed
-	call _func_6c94
+	call func_6c94
 	call interactionDecCounter1
 	ret nz
 	ld (hl),$78
@@ -861,8 +861,8 @@ interactionCodede:
 	call fadeinFromWhiteWithDelay
 	jp interactionIncState
 @@state3:
-	call _func_6c94
-	call _func_6ccb
+	call func_6c94
+	call func_6ccb
 	ld e,$45
 	ld a,(de)
 	rst_jumpTable
@@ -1023,14 +1023,14 @@ interactionCodede:
 	ld (hl),a
 	ld e,l
 	or a
-	call z,_func_6c8f
+	call z,func_6c8f
 	ld bc,$2850
 	ld a,($cfc1)
 	jp objectSetPositionInCircleArc
-_func_6c8f:
+func_6c8f:
 	ld a,SND_CIRCLING
 	jp playSound
-_func_6c94:
+func_6c94:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
@@ -1041,7 +1041,7 @@ _func_6c94:
 	and $38
 	swap a
 	rlca
-	ld bc,_table_6cbb
+	ld bc,table_6cbb
 	call addDoubleIndexToBc
 	ld l,$4b
 	ld a,(bc)
@@ -1053,7 +1053,7 @@ _func_6c94:
 	add (hl)
 	ld (hl),a
 	ret
-_table_6cbb:
+table_6cbb:
 	.db $10 $02
 	.db $10 $fe
 	.db $08 $05
@@ -1062,7 +1062,7 @@ _table_6cbb:
 	.db $0c $f8
 	.db $06 $0b
 	.db $06 $f5
-_func_6ccb:
+func_6ccb:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
@@ -1070,13 +1070,13 @@ _func_6ccb:
 	and $38
 	swap a
 	rlca
-	ld hl,_table_6ce2
+	ld hl,table_6ce2
 	rst_addAToHl
 	ld e,$4f
 	ld a,(hl)
 	ld (de),a
 	ret
-_table_6ce2:
+table_6ce2:
 	.db $ff $fe $ff $00
 	.db $01 $02 $01 $00
 
@@ -1278,12 +1278,12 @@ interactionCodee1:
 	cp $e6
 	ret nz
 +
-	call _func_6e06
+	call func_6e06
 	ld a,$02
 	ld e,$44
 	ld (de),a
 	jp objectSetVisible83
-_func_6e06:
+func_6e06:
 	ld e,$42
 	ld a,(de)
 	or a
@@ -1336,7 +1336,7 @@ interactionCodee3:
 	.dw @substate2
 	.dw @substate3
 @substate0:
-	call _func_6ede
+	call func_6ede
 	ld e,$4f
 	ld a,(de)
 	cp $e0
@@ -1362,7 +1362,7 @@ interactionCodee3:
 	ld bc,$fc00
 	call objectSetSpeedZ
 @substate2:
-	call _func_6ede
+	call func_6ede
 	ld e,$4f
 	ld a,(de)
 	cp $b0
@@ -1396,7 +1396,7 @@ interactionCodee3:
 	ld (hl),a
 +
 	jp interactionDelete
-_func_6ede:
+func_6ede:
 	ldh a,(<hActiveObjectType)
 	add $0e
 	ld l,a
@@ -1434,7 +1434,7 @@ linkedHerosCaveOldMan_spawnChests:
 	ld (wcca2),a
 	ld b,$08
 -
-	call _func_6f39
+	call func_6f39
 	call getFreeInteractionSlot
 	jr nz,+
 	ld (hl),INTERACID_PUFF
@@ -1449,15 +1449,15 @@ linkedHerosCaveOldMan_spawnChests:
 	jr nz,-
 	ret
 
-_func_6f39:
+func_6f39:
 	ld a,b
 	dec a
-	ld hl,_table_6f41
+	ld hl,table_6f41
 	rst_addAToHl
 	ld c,(hl)
 	ret
 
-_table_6f41:
+table_6f41:
 	.db $23 $35 $3b $43
 	.db $59 $5b $66 $73
 
@@ -1486,10 +1486,10 @@ interactionCodee6:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _interactionCodee6_state0
-	.dw _interactionCodee6_state1
+	.dw interactionCodee6_state0
+	.dw interactionCodee6_state1
 
-_interactionCodee6_state0:
+interactionCodee6_state0:
 	ld a,$01
 	ld (de),a
 
@@ -1577,7 +1577,7 @@ _interactionCodee6_state0:
 	call interactionSetAlwaysUpdateBit
 	jp objectSetVisible82
 
-_interactionCodee6_state1:
+interactionCodee6_state1:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable

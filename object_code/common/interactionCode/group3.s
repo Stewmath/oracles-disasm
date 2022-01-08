@@ -10,10 +10,10 @@ interactionCode6f:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _bomb_flower_subid0
-	.dw _bomb_flower_subid1
+	.dw bomb_flower_subid0
+	.dw bomb_flower_subid1
 
-_bomb_flower_subid0:
+bomb_flower_subid0:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -106,7 +106,7 @@ _bomb_flower_subid0:
 	call updateLinkLocalRespawnPosition
 	jp interactionDelete
 
-_bomb_flower_subid1:
+bomb_flower_subid1:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -682,7 +682,7 @@ interactionCode7d:
 	rst_jumpTable
 	.dw @subid00
 	.dw @subid01
-	.dw _spinner_subid02
+	.dw spinner_subid02
 
 @subid00:
 @subid01:
@@ -783,18 +783,18 @@ interactionCode7d:
 @counterClockwise:
 	ld a,b
 	add a
-	ld hl,_spinner_counterClockwiseData
+	ld hl,spinner_counterClockwiseData
 	rst_addDoubleIndex
 	jr ++
 
 @clockwise:
 	ld a,b
 	add a
-	ld hl,_spinner_clockwiseData
+	ld hl,spinner_clockwiseData
 	rst_addDoubleIndex
 
 ++
-	call _spinner_setLinkRelativePosition
+	call spinner_setLinkRelativePosition
 	ldi a,(hl)
 	ld c,<w1Link.direction
 	ld (bc),a
@@ -819,7 +819,7 @@ interactionCode7d:
 
 ; State 3: In the process of turning
 @state3:
-	call _spinner_updateLinkPosition
+	call spinner_updateLinkPosition
 
 	ld e,Interaction.animParameter
 	ld a,(de)
@@ -886,7 +886,7 @@ interactionCode7d:
 
 
 ; Arrow rotating around a spinner
-_spinner_subid02:
+spinner_subid02:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -939,7 +939,7 @@ _spinner_subid02:
 	jp interactionAnimate
 
 ;;
-_spinner_updateLinkPosition:
+spinner_updateLinkPosition:
 	; Check that the animParameter signals Link should change position (nonzero and
 	; not $ff)
 	ld e,Interaction.animParameter
@@ -962,12 +962,12 @@ _spinner_updateLinkPosition:
 	ld a,(de)
 	add b
 	and $0f
-	ld hl,_spinner_linkRelativePositions
+	ld hl,spinner_linkRelativePositions
 	rst_addDoubleIndex
 
 ;;
 ; @param	hl	Address of 2 bytes (Y/X offset for Link relative to spinner)
-_spinner_setLinkRelativePosition:
+spinner_setLinkRelativePosition:
 	ld b,>w1Link
 	ld e,Interaction.yh
 	ld c,<w1Link.yh
@@ -988,14 +988,14 @@ _spinner_setLinkRelativePosition:
 ;   b0: Y offset for Link relative to spinner
 ;   b1: X offset for Link relative to spinner
 ;   b2: Value for w1Link.direction
-;   b3: Value for spinner.var39 (relative index for _spinner_linkRelativePositions)
-_spinner_counterClockwiseData:
+;   b3: Value for spinner.var39 (relative index for spinner_linkRelativePositions)
+spinner_counterClockwiseData:
 	.db $f4 $00 $03 $08 ; DIR_UP (Link enters from above)
 	.db $00 $0c $00 $04 ; DIR_RIGHT
 	.db $0c $00 $01 $00 ; DIR_DOWN
 	.db $00 $f4 $02 $0c ; DIR_LEFT
 
-_spinner_clockwiseData:
+spinner_clockwiseData:
 	.db $f4 $00 $01 $08 ; DIR_UP
 	.db $00 $0c $02 $04 ; DIR_RIGHT
 	.db $0c $00 $03 $00 ; DIR_DOWN
@@ -1004,7 +1004,7 @@ _spinner_clockwiseData:
 
 ; Each row is a Y/X offset for Link. The row is selected from the animation's
 ; "animParameter" and "var39".
-_spinner_linkRelativePositions:
+spinner_linkRelativePositions:
 	.db $0c $00
 	.db $0a $02
 	.db $08 $08
@@ -1326,13 +1326,13 @@ interactionCode7f:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _interaction7f_subid00
-	.dw _interaction7f_subid01
-	.dw _interaction7f_subid02
+	.dw interaction7f_subid00
+	.dw interaction7f_subid01
+	.dw interaction7f_subid02
 
 
 ; Subid $00: the essence itself
-_interaction7f_subid00:
+interaction7f_subid00:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -1677,7 +1677,7 @@ _interaction7f_subid00:
 
 ;;
 ; Pedestal for an essence
-_interaction7f_subid01:
+interaction7f_subid01:
 	call checkInteractionState
 	jp nz,objectPreventLinkFromPassing
 
@@ -1709,7 +1709,7 @@ _interaction7f_subid01:
 
 ;;
 ; The glowing thing behind the essence
-_interaction7f_subid02:
+interaction7f_subid02:
 	call checkInteractionState
 	jr nz,@state1
 

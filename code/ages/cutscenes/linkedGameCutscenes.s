@@ -7,8 +7,8 @@
 func_03_7841:
 	ld a,(wCutsceneState)
 	rst_jumpTable
-	.dw _func_03_7851
-	.dw _flameOfSorrowState1
+	.dw func_03_7851
+	.dw flameOfSorrowState1
 
 ;;
 ; Called from "func_3ee4" in bank 0.
@@ -16,11 +16,11 @@ func_03_7841:
 func_03_7849:
 	ld a,(wCutsceneState)
 	rst_jumpTable
-	.dw _func_03_7851
-	.dw _zeldaKidnappedState1
+	.dw func_03_7851
+	.dw zeldaKidnappedState1
 
 ;;
-_func_03_7851:
+func_03_7851:
 	ld b,$10
 	ld hl,wTmpcbb3
 	call clearMemory
@@ -34,7 +34,7 @@ _func_03_7851:
 	ret
 
 ;;
-_flameOfSorrowState1:
+flameOfSorrowState1:
 	ld a,(wTmpcbb3)
 	rst_jumpTable
 	.dw @substate0
@@ -52,11 +52,11 @@ _flameOfSorrowState1:
 @substate0:
 	ld a,$28
 	ld (wTmpcbb5),a
-	jp _linkedCutscene_incSubstate
+	jp linkedCutscene_incSubstate
 @substate1:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
-	call _func_7bab
+	call func_7bab
 	call getFreeInteractionSlot
 	jr nz,+
 	ld (hl),INTERACID_TWINROVA_FLAME
@@ -72,14 +72,14 @@ _flameOfSorrowState1:
 	ld (wTmpcbb6),a
 	dec a
 	ld (wTmpcbba),a
-	call _linkedCutscene_incSubstate
+	call linkedCutscene_incSubstate
 @substate2:
 	ld hl,wTmpcbb5
 	ld b,$05
 	call flashScreen
 	ret z
 	call clearPaletteFadeVariablesAndRefreshPalettes
-	jp _linkedCutscene_incSubstate
+	jp linkedCutscene_incSubstate
 @substate3:
 	call getFreeInteractionSlot
 	jr nz,+
@@ -87,27 +87,27 @@ _flameOfSorrowState1:
 +
 	ld a,SNDCTRL_STOPMUSIC
 	call playSound
-	call _clearFadingPalettes
+	call clearFadingPalettes2
 	ld a,$bf
 	ldh (<hSprPaletteSources),a
 	ldh (<hDirtySprPalettes),a
 	ld a,$04
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate4:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 
 	ld a,TEXTBOXFLAG_ALTPALETTE1
 	ld (wTextboxFlags),a
 	ld c,<TX_281b
-	jp _func_03_7b81
+	jp func_03_7b81
 @substate5:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld b,$10
 	call @func_78fd
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @func_78fd:
 	call fastFadeinFromBlack
 	ld a,b
@@ -119,45 +119,45 @@ _flameOfSorrowState1:
 	ld a,SND_LIGHTTORCH
 	jp playSound
 @substate6:
-	call _func_7ba1
+	call func_7ba1
 	ret nz
 	call fadeinFromBlack
 	ld a,$af
 	ld (wDirtyFadeSprPalettes),a
 	ld (wFadeSprPaletteSources),a
-	call _func_7bd0
+	call func_7bd0
 	ld a,MUS_DISASTER
 	ld (wActiveMusic),a
 	call playSound
 	xor a
 	ld ($cfc6),a
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate7:
-	call _func_7ba1
+	call func_7ba1
 	ret nz
 	ld c,<TX_2829
-	jp _func_03_7b81
+	jp func_03_7b81
 @substate8:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld c,<TX_281c
-	jp _func_03_7b81
+	jp func_03_7b81
 @substate9:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld c,<TX_281d
-	jp _func_03_7b81
+	jp func_03_7b81
 @substateA:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld c,<TX_281e
-	call _func_03_7b81
+	call func_03_7b81
 	ld a,$3c
 	ld (wTmpcbb5),a
 	ret
 @substateB:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	xor a
 	ld (wMenuDisabled),a
@@ -171,7 +171,7 @@ _flameOfSorrowState1:
 @warpDest:
 	m_HardcodedWarpA ROOM_AGES_4ea, $0c, $87, $83
 
-_zeldaKidnappedState1:
+zeldaKidnappedState1:
 	call @runStates
 	jp updateStatusBar
 @runStates:
@@ -211,75 +211,75 @@ _zeldaKidnappedState1:
 	ld a,$02
 	call loadGfxRegisterStateIndex
 	call restartSound
-	call _func_7c2a
+	call func_7c2a
 	call fadeinFromWhite
 	ld a,$3c
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate1:
-	call _func_7ba1
+	call func_7ba1
 	ret nz
 	ld hl,$cfc0
 	set 0,(hl)
 	ld a,$01
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate2:
 	ld hl,$cfc0
 	bit 1,(hl)
 	ret z
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	xor a
-	call _func_7c68
+	call func_7c68
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate3:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	xor a
-	call _func_7c83
+	call func_7c83
 	ld hl,$cfc0
 	set 2,(hl)
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate4:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	ld a,$01
-	call _func_7c68
+	call func_7c68
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate5:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	ld a,$01
-	call _func_7c83
+	call func_7c83
 	ld hl,$cfc0
 	set 3,(hl)
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate6:
 	ld hl,$cfc0
 	bit 4,(hl)
 	ret z
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate7:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	ld hl,$cfc0
 	set 5,(hl)
 	ld a,$28
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate8:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	ld c,<TX_281f
-	call _func_03_7b81
+	call func_03_7b81
 	ld a,$5a
 	ld (wTmpcbb5),a
 	ret
 @substate9:
-	call _func_7b9a
+	call func_7b9a
 	jr z,@func_7a63
 	ld a,$3c
 	cp (hl)
@@ -291,12 +291,12 @@ _zeldaKidnappedState1:
 	ld hl,$cfc0
 	set 7,(hl)
 	ld a,$3c
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substateA:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
-	call _func_7c1f
-	call _func_7beb
+	call func_7c1f
+	call func_7beb
 	ld a,MUS_DISASTER
 	ld (wActiveMusic),a
 	call playSound
@@ -304,31 +304,31 @@ _zeldaKidnappedState1:
 	ld ($cfc0),a
 	ld ($cfc6),a
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substateB:
 	ld a,($cfc0)
 	bit 0,a
 	ret z
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	ld c,<TX_2820
-	jp _func_03_7b81
+	jp func_03_7b81
 @substateC:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld c,<TX_2821
-	jp _func_03_7b81
+	jp func_03_7b81
 @substateD:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld c,<TX_2822
-	jp _func_03_7b81
+	jp func_03_7b81
 @substateE:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld hl,$cfc0
 	res 0,(hl)
-	jp _linkedCutscene_incSubstate
+	jp linkedCutscene_incSubstate
 @substateF:
 	ld a,($cfc0)
 	bit 0,a
@@ -337,9 +337,9 @@ _zeldaKidnappedState1:
 	call playSound
 	xor a
 	ld (wTmpcbb4),a
-	call _linkedCutscene_incSubstate
+	call linkedCutscene_incSubstate
 @substate10:
-	call _func_7b48
+	call func_7b48
 	ret nz
 	call clearDynamicInteractions
 	ld hl,$cfc0
@@ -347,38 +347,38 @@ _zeldaKidnappedState1:
 	xor a
 	ld ($cfc6),a
 	ld a,$04
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate11:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
-	call _func_7c1f
-	call _func_7bf6
-	call _func_7c2f
+	call func_7c1f
+	call func_7bf6
+	call func_7c2f
 	ld a,$04
 	call fadeinFromWhiteWithDelay
 	ld a,$1e
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate12:
-	call _func_7ba1
+	call func_7ba1
 	ret nz
 	ld c,<TX_2823
-	jp _func_03_7b81
+	jp func_03_7b81
 @substate13:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld c,<TX_2824
-	jp _func_03_7b81
+	jp func_03_7b81
 @substate14:
-	call _func_7b9a
+	call func_7b9a
 	ret nz
 	ld a,SND_BEAM2
 	call playSound
 	ld hl,$cfc0
 	set 0,(hl)
 	ld a,$5a
-	jp _linkedCutscene_aIntoCBB5_incSubstate
+	jp linkedCutscene_aIntoCBB5_incSubstate
 @substate15:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	dec a
 	ld (wTmpcbba),a
@@ -386,7 +386,7 @@ _zeldaKidnappedState1:
 	call playSound
 	ld a,SNDCTRL_STOPMUSIC
 	call playSound
-	jp _linkedCutscene_incSubstate
+	jp linkedCutscene_incSubstate
 @substate16:
 	ld hl,wTmpcbb5
 	ld b,$02
@@ -400,7 +400,7 @@ _zeldaKidnappedState1:
 	ld (wCutsceneTrigger),a
 	ret
 
-_func_7b48:
+func_7b48:
 	ld a,(wTmpcbb4)
 	rst_jumpTable
 	.dw @cbb4_00
@@ -414,60 +414,60 @@ _func_7b48:
 ---
 	ld (wTmpcbb5),a
 	call clearFadingPalettes
-	jp _func_03_7b90
+	jp func_03_7b90
 @cbb4_01:
 @cbb4_02:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	ld a,$0a
 --
 	ld (wTmpcbb5),a
 	call fastFadeoutToWhite
-	jp _func_03_7b90
+	jp func_03_7b90
 @cbb4_03:
 	ld a,$14
 	jr ---
 @cbb4_04:
-	call _func_03_7b95
+	call func_03_7b95
 	ret nz
 	ld a,$1e
 	jr --
 @cbb4_05:
-	jp _func_7ba1
+	jp func_7ba1
 
 
 ;;
 ; @param c Low byte of text index
-_func_03_7b81:
+func_03_7b81:
 	ld b,$28
 	call showText
 	ld a,$1e
-_linkedCutscene_aIntoCBB5_incSubstate:
+linkedCutscene_aIntoCBB5_incSubstate:
 	ld (wTmpcbb5),a
-_linkedCutscene_incSubstate:
+linkedCutscene_incSubstate:
 	ld hl,wTmpcbb3
 	inc (hl)
 	ret
 
 ;;
-_func_03_7b90:
+func_03_7b90:
 	ld hl,wTmpcbb4
 	inc (hl)
 	ret
 
 ;;
-_func_03_7b95:
+func_03_7b95:
 	ld hl,wTmpcbb5
 	dec (hl)
 	ret
 
-_func_7b9a:
+func_7b9a:
 	ld a,(wTextIsActive)
 	or a
 	ret nz
 	jr ++
 
-_func_7ba1:
+func_7ba1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -477,7 +477,7 @@ _func_7ba1:
 	ret
 
 
-_func_7bab:
+func_7bab:
 	xor a
 	ld bc,ROOM_ZELDA_IN_FINAL_DUNGEON
 	call disableLcdAndLoadRoom
@@ -496,11 +496,11 @@ _func_7bab:
 	jp clearWramBank1
 
 
-_func_7bd0:
-	ld bc,_table_7be5
-	call _func_7bd9
-	ld bc,_table_7be8
-_func_7bd9:
+func_7bd0:
+	ld bc,table_7be5
+	call func_7bd9
+	ld bc,table_7be8
+func_7bd9:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_TWINROVA_IN_CUTSCENE
@@ -508,25 +508,25 @@ _func_7bd9:
 	ld a,(bc)
 	inc bc
 	ld (hl),a
-	jr _func_7c09
-_table_7be5:
+	jr func_7c09
+table_7be5:
 	.db $02 $4c $8e
-_table_7be8:
+table_7be8:
 	.db $03 $4c $62
 
 
-_func_7beb:
-	ld bc,_table_7c13
-	call _func_7bff
-	ld bc,_table_7c16
-	jr _func_7bff
+func_7beb:
+	ld bc,table_7c13
+	call func_7bff
+	ld bc,table_7c16
+	jr func_7bff
 
 
-_func_7bf6:
-	ld bc,_table_7c19
-	call _func_7bff
-	ld bc,_table_7c1c
-_func_7bff:
+func_7bf6:
+	ld bc,table_7c19
+	call func_7bff
+	ld bc,table_7c1c
+func_7bff:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_TWINROVA_3
@@ -534,7 +534,7 @@ _func_7bff:
 	ld a,(bc)
 	inc bc
 	ld (hl),a
-_func_7c09:
+func_7c09:
 	ld l,Interaction.yh
 	ld a,(bc)
 	inc bc
@@ -543,21 +543,21 @@ _func_7c09:
 	ld a,(bc)
 	ld (hl),a
 	ret
-_table_7c13:
+table_7c13:
 	nop
 	nop
 	ld b,b
-_table_7c16:
+table_7c16:
 	.db $01 $00 $60
 
-_table_7c19:
+table_7c19:
 	.db $02 $50 $68
 
-_table_7c1c:
+table_7c1c:
 	.db $03 $50 $38
 
 
-_func_7c1f:
+func_7c1f:
 	ld a,$01
 	ld (wLoadedTreeGfxIndex),a
 	ld a,$bc
@@ -565,14 +565,14 @@ _func_7c1f:
 	ret
 
 
-_func_7c2a:
-	ld bc,_table_7c4e
-	jr _spawnZeldaKidnappedNPCs
+func_7c2a:
+	ld bc,table_7c4e
+	jr spawnZeldaKidnappedNPCs
 
-_func_7c2f:
-	ld bc,_table_7c5d
+func_7c2f:
+	ld bc,table_7c5d
 
-_spawnZeldaKidnappedNPCs:
+spawnZeldaKidnappedNPCs:
 	ld a,(bc)
 	or a
 	ret z
@@ -595,21 +595,21 @@ _spawnZeldaKidnappedNPCs:
 	ld a,(bc)
 	ld (hl),a
 	inc bc
-	jr _spawnZeldaKidnappedNPCs
+	jr spawnZeldaKidnappedNPCs
 
-_table_7c4e:
+table_7c4e:
 	; id - subid - var03 - yh - xh
 	.db INTERACID_BOY,              $0f $03 $48 $48
 	.db INTERACID_IMPA_IN_CUTSCENE, $08 $03 $48 $58
 	.db INTERACID_ZELDA,            $09 $02 $38 $50
-_table_7c5d:
+table_7c5d:
 	.db INTERACID_VILLAGER,         $0e $01 $48 $38
 	.db INTERACID_PAST_GUY,         $07 $00 $28 $78
 	.db $00
 
 
-_func_7c68:
-	ld bc,_table_7c7f
+func_7c68:
+	ld bc,table_7c7f
 	call addDoubleIndexToBc
 	call getFreePartSlot
 	ret nz
@@ -625,12 +625,12 @@ _func_7c68:
 	ld (hl),a
 	ret
 
-_table_7c7f:
+table_7c7f:
 	.db $58 $38
 	.db $48 $68
 
-_func_7c83:
-	ld bc,_table_7c7f
+func_7c83:
+	ld bc,table_7c7f
 	call addDoubleIndexToBc
 	call getFreeInteractionSlot
 	ret nz
@@ -639,4 +639,4 @@ _func_7c83:
 	ld (hl),$16
 	ld l,Interaction.counter1
 	ld (hl),$78
-	jp _func_7c09
+	jp func_7c09

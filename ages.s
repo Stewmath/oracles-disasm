@@ -167,7 +167,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	ld l,<w1Companion.var32
 	ld a,(hl)
-	call _getSpecialObjectGraphicsFrame
+	call getSpecialObjectGraphicsFrame
 	ret z
 
 	ld a,l

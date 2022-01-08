@@ -5,14 +5,14 @@
 ; @param	ff8f	Type of breakage (digging, sword slashing). Set bit 7 if no tiles
 ;			should be modified, in that case this function will only check if
 ;			it can be broken.
-; @param[out]	hFF8D	4th parameter from "_breakableTileModes"
+; @param[out]	hFF8D	4th parameter from "breakableTileModes"
 ; @param[out]	hFF8E	The interaction ID to create when the tile is destroyed
 ; @param[out]	hFF92	Former tile index
 ; @param[out]	hFF93	Tile position
 ; @param[out]	cflag	Set if the tile was broken (or can be broken).
 ;
 ; Internal variables:
-;  ff8d-ff8e: values read from _breakableTileModes
+;  ff8d-ff8e: values read from breakableTileModes
 ;  ff90: Y
 ;  ff91: X
 ;
@@ -32,14 +32,14 @@ tryToBreakTile_body:
 	ld a,l
 	ldh (<hFF93),a
 
-	ld hl,_breakableTileCollisionTable
+	ld hl,breakableTileCollisionTable
 	call lookupCollisionTable_paramE
 	ret nc
 
-	; hl = _breakableTileModes + a*5
+	; hl = breakableTileModes + a*5
 	ld e,a
 	add a
-	ld hl,_breakableTileModes
+	ld hl,breakableTileModes
 	rst_addDoubleIndex
 	ld a,e
 	rst_addAToHl
@@ -150,7 +150,7 @@ tryToBreakTile_body:
 	jr z,@done
 	cp $12
 	ldh a,(<hFF8E)
-	call nz,_makeInteractionForBreakableTile
+	call nz,makeInteractionForBreakableTile
 @done:
 	pop de
 	scf
@@ -196,7 +196,7 @@ itemMakeInteractionForBreakableTile:
 	ld l,Item.var03
 	ld a,(hl)
 ;;
-_makeInteractionForBreakableTile:
+makeInteractionForBreakableTile:
 	and $1f
 	cp $1f
 	ret z

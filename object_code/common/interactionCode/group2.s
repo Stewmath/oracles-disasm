@@ -40,15 +40,15 @@ interactionCode46:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _shopkeeperState0
-	.dw _shopkeeperState1
-	.dw _shopkeeperState2
-	.dw _shopkeeperState3
-	.dw _shopkeeperState4
-	.dw _shopkeeperState5
-	.dw _shopkeeperState6
+	.dw shopkeeperState0
+	.dw shopkeeperState1
+	.dw shopkeeperState2
+	.dw shopkeeperState3
+	.dw shopkeeperState4
+	.dw shopkeeperState5
+	.dw shopkeeperState6
 
-_shopkeeperState0:
+shopkeeperState0:
 	ld a,$01
 	ld (de),a
 
@@ -104,7 +104,7 @@ _shopkeeperState0:
 
 
 ; State 1: waiting for Link to do something
-_shopkeeperState1:
+shopkeeperState1:
 	call retIfTextIsActive
 
 	ld e,Interaction.pressedAButton
@@ -179,12 +179,12 @@ _shopkeeperState1:
 
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_shopkeeperTheftPreventionScriptTable
+	ld hl,shopkeeperTheftPreventionScriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	jp _shopkeeperLoadScript
+	jp shopkeeperLoadScript
 
 @setNormalCollisionRadii:
 	ld bc,$0614
@@ -194,7 +194,7 @@ _shopkeeperState1:
 	xor a
 	ld (de),a
 	call objectRemoveFromAButtonSensitiveObjectList
-	call _shopkeeperTurnToFaceLink
+	call shopkeeperTurnToFaceLink
 
 	ld a,$81
 	ld (wDisabledObjects),a
@@ -217,7 +217,7 @@ _shopkeeperState1:
 
 
 ; State 6: ?
-_shopkeeperState6:
+shopkeeperState6:
 	ld e,Interaction.pressedAButton
 	ld a,(de)
 	or a
@@ -228,7 +228,7 @@ _shopkeeperState6:
 	ld a,(de)
 	cp (hl)
 	ret nc
-	jp _shopkeeperGotoState1
+	jp shopkeeperGotoState1
 
 @pressedA:
 	xor a
@@ -241,21 +241,21 @@ _shopkeeperState6:
 	ld e,Interaction.state
 	ld a,$02
 	ld (de),a
-	jp _shopkeeperTurnToFaceLink
+	jp shopkeeperTurnToFaceLink
 
 
 ; State 2: talking to Link (this code still runs even while text is up)
-_shopkeeperState2:
+shopkeeperState2:
 	ld e,Interaction.subid
 	ld a,(de)
 	and $80
-	jr nz,_shopkeeperPromptChestGame
+	jr nz,shopkeeperPromptChestGame
 
 .ifdef ROM_SEASONS
 	ld a,TREASURE_SWORD
 	call checkTreasureObtained
 	ld hl,mainScripts.shopkeeperScript_notOpenYet
-	jr nc,_shopkeeperLoadScript
+	jr nc,shopkeeperLoadScript
 .endif
 
 	ld a,(wLinkGrabState)
@@ -273,55 +273,55 @@ _shopkeeperState2:
 	ld e,Interaction.var37
 	ld (de),a
 
-	call _shopkeeperGetItemPrice
+	call shopkeeperGetItemPrice
 
 	ld e,Interaction.var37
 	ld a,(de)
-	call _shopkeeperCheckLinkHasItemAlready
+	call shopkeeperCheckLinkHasItemAlready
 	ld hl,mainScripts.shopkeeperScript_purchaseItem
-	jp _shopkeeperLoadScript
+	jp shopkeeperLoadScript
 
 @holdingNothing:
 	call shopkeeperCheckAllItemsBought
-	jr nz,_shopkeeperLoadScript
+	jr nz,shopkeeperLoadScript
 
 	ld e,Interaction.subid
 	ld a,(de)
 	cp $02
 	ld hl,mainScripts.shopkeeperScript_lynnaShopWelcome
-	jr nz,_shopkeeperLoadScript
+	jr nz,shopkeeperLoadScript
 	ld hl,mainScripts.shopkeeperScript_advanceShopWelcome
 
 
-_shopkeeperLoadScript:
+shopkeeperLoadScript:
 	ld e,Interaction.state
 	ld a,$04
 	ld (de),a
 	jp interactionSetScript
 
 
-_shopkeeperPromptChestGame:
+shopkeeperPromptChestGame:
 	ld a,$0c
-	call _shopkeeperGetItemPrice
+	call shopkeeperGetItemPrice
 	ld hl,mainScripts.shopkeeperChestGameScript
-	jr _shopkeeperLoadScript
+	jr shopkeeperLoadScript
 
 
 ; State 3: Seasons - block Link access
-_shopkeeperState3:
+shopkeeperState3:
 .ifdef ROM_SEASONS
 	ld hl,mainScripts.shopkeeperScript_blockLinkAccess
-	jp _shopkeeperLoadScript
+	jp shopkeeperLoadScript
 .endif
 
 
 ; State 4: Running a script (prompting whether to buy, playing chest game, etc...)
-_shopkeeperState4:
+shopkeeperState4:
 	ld e,Interaction.subid
 	ld a,(de)
 	and $80
 	ld a,$0c
-	call nz,_shopkeeperGetItemPrice
+	call nz,shopkeeperGetItemPrice
 	call interactionRunScript
 	ret nc
 
@@ -345,7 +345,7 @@ _shopkeeperState4:
 
 	ld a,$01
 	ld (wDisabledObjects),a
-	jr _shopkeeperGotoState1
+	jr shopkeeperGotoState1
 
 @notRing:
 	; Check var3a to see what the response from the script was (purchase succeeded or
@@ -353,7 +353,7 @@ _shopkeeperState4:
 	ld e,Interaction.var3a
 	ld a,(de)
 	or a
-	jr z,_shopkeeperGotoState1
+	jr z,shopkeeperGotoState1
 
 	; Set the item to state 4 to put it back (purchase failed)
 	inc a
@@ -378,7 +378,7 @@ _shopkeeperState4:
 	call dropLinkHeldItem
 
 
-_shopkeeperGotoState1:
+shopkeeperGotoState1:
 	ld e,Interaction.state
 	ld a,$01
 	ld (de),a
@@ -418,7 +418,7 @@ _shopkeeperGotoState1:
 ; Playing the chest-choosing minigame. The script tends to change the state.
 ; It jumps to state 5, substate 0 after relinquishing control for Link to pick a chest.
 ; It jumps to state 5, substate 2 after relinquishing control for Link to pick a chest.
-_shopkeeperState5:
+shopkeeperState5:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -437,7 +437,7 @@ _shopkeeperState5:
 	ld e,Interaction.var39
 	ld (de),a
 
-	call _shopkeeperCloseOpenedChest
+	call shopkeeperCloseOpenedChest
 	xor a
 	ld (wcca2),a
 	ld e,Interaction.var3f
@@ -454,7 +454,7 @@ _shopkeeperState5:
 	xor a
 	ld (de),a
 	ld hl,mainScripts.shopkeeperScript_talkDuringChestGame
-	jp _shopkeeperLoadScript
+	jp shopkeeperLoadScript
 ++
 	; Check if Link's opened a chest
 	ld a,(wcca2)
@@ -482,7 +482,7 @@ _shopkeeperState5:
 	; Wrong chest
 	ld (hl),a
 	ld hl,mainScripts.shopkeeperScript_openedWrongChest
-	jp _shopkeeperLoadScript
+	jp shopkeeperLoadScript
 
 @correctChest:
 	; Increment round (var3c)
@@ -504,7 +504,7 @@ _shopkeeperState5:
 	; Determine position for rupee treasure
 	ld e,Interaction.var39
 	ld a,(de)
-	ld bc,_shopkeeperChestXPositions
+	ld bc,shopkeeperChestXPositions
 	call addAToBc
 	ld l,Interaction.yh
 	ld (hl),$20
@@ -513,7 +513,7 @@ _shopkeeperState5:
 	ld (hl),a
 
 	ld hl,mainScripts.shopkeeperScript_openedCorrectChest
-	jp _shopkeeperLoadScript
+	jp shopkeeperLoadScript
 
 @substate2:
 	; Close the chest that the shopkeeper is facing toward.
@@ -526,7 +526,7 @@ _shopkeeperState5:
 	xor (hl)
 	jr nz,@substate3
 
-	call _shopkeeperCloseOpenedChest
+	call shopkeeperCloseOpenedChest
 	ld e,Interaction.substate
 	ld a,$03
 	ld (de),a
@@ -541,7 +541,7 @@ _shopkeeperState5:
 
 ;;
 ; @param	a	Item index?
-_shopkeeperGetItemPrice:
+shopkeeperGetItemPrice:
 	ld hl,shopItemPrices
 	rst_addAToHl
 	ld a,(hl)
@@ -555,7 +555,7 @@ _shopkeeperGetItemPrice:
 	ret
 
 ;;
-_shopkeeperCloseOpenedChest:
+shopkeeperCloseOpenedChest:
 	ld a,(wcca2)
 	bit 7,a
 	ld c,a
@@ -568,7 +568,7 @@ _shopkeeperCloseOpenedChest:
 ; he can carry.
 ;
 ; @param	a	Item index
-_shopkeeperCheckLinkHasItemAlready:
+shopkeeperCheckLinkHasItemAlready:
 	ld b,a
 	xor a
 	ld e,Interaction.var38
@@ -645,7 +645,7 @@ shopkeeperCheckAllItemsBought:
 	or d
 	ret
 
-_shopkeeperTurnToFaceLink:
+shopkeeperTurnToFaceLink:
 	call objectGetAngleTowardLink
 	ld e,Interaction.angle
 	ld (de),a
@@ -655,7 +655,7 @@ _shopkeeperTurnToFaceLink:
 	jp interactionSetAnimation
 
 
-_shopkeeperTheftPreventionScriptTable:
+shopkeeperTheftPreventionScriptTable:
 .ifdef ROM_AGES
 	.dw mainScripts.shopkeeperSubid0Script_stopLink
 .else
@@ -666,7 +666,7 @@ _shopkeeperTheftPreventionScriptTable:
 
 
 ; X positions of the chests in the chest minigame (used for spawning rupee "prizes")
-_shopkeeperChestXPositions:
+shopkeeperChestXPositions:
 	.db $78, $58
 
 
@@ -680,15 +680,15 @@ interactionCode47:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _shopItemState0
+	.dw shopItemState0
 	.dw objectAddToGrabbableObjectBuffer
-	.dw _shopItemState2
-	.dw _shopItemState3
-	.dw _shopItemState4
-	.dw _shopItemState5
+	.dw shopItemState2
+	.dw shopItemState3
+	.dw shopItemState4
+	.dw shopItemState5
 
 
-_shopItemState0:
+shopItemState0:
 	; Check that we're actually in a shop
 	ld a,(wInShop)
 	and $02
@@ -720,13 +720,13 @@ _shopItemState0:
 	jr nz,++
 	ld a,TREASURE_BOMBS
 	call checkTreasureObtained
-	jp nc,_shopItemPopStackAndDeleteSelf
+	jp nc,shopItemPopStackAndDeleteSelf
 	jr @checkFlutePurchasable
 ++
 .else
 	ld a,TREASURE_SWORD
 	call checkTreasureObtained
-	jp nc,_shopItemPopStackAndDeleteSelf
+	jp nc,shopItemPopStackAndDeleteSelf
 	ld e,Interaction.subid
 	ld a,(de)
 .endif
@@ -786,14 +786,14 @@ _shopItemState0:
 	or c
 	ld (wBoughtShopItems2),a
 
-	; Check whether the item can be sold by reading from "_shopItemReplacementTable".
+	; Check whether the item can be sold by reading from "shopItemReplacementTable".
 	; This checks for particular bits in memory to see if an item is purchasable. If
 	; it's not, it may be replaced with a different item.
 @checkReplaceItem:
 	ld e,Interaction.subid
 	ld a,(de)
 	add a
-	ld hl,_shopItemReplacementTable
+	ld hl,shopItemReplacementTable
 	rst_addDoubleIndex
 
 	; Check the bit in memory stating if the item should be replaced with another
@@ -808,7 +808,7 @@ _shopItemState0:
 	inc hl
 	ldi a,(hl)
 	bit 7,a
-	jr nz,_shopItemPopStackAndDeleteSelf
+	jr nz,shopItemPopStackAndDeleteSelf
 
 	; Try this item. Need to run the above checks again.
 	ld (de),a
@@ -832,9 +832,9 @@ _shopItemState0:
 	ldi (hl),a
 
 	call objectSetVisible83
-	jr _shopItemUpdateRupeeDisplay
+	jr shopItemUpdateRupeeDisplay
 
-_shopItemState5:
+shopItemState5:
 	call retIfTextIsActive
 	xor a
 	ld (wDisabledObjects),a
@@ -845,13 +845,13 @@ _shopItemState5:
 ; The fact that this pops the stack means that it will return one level higher than it's
 ; supposed to? This ultimately isn't a big deal, it just means that other interactions
 ; won't be updated until next frame, but it's probably unintentional...
-_shopItemPopStackAndDeleteSelf:
+shopItemPopStackAndDeleteSelf:
 	pop af
 	jp interactionDelete
 
 
 ; State 2: item picked up by Link
-_shopItemState2:
+shopItemState2:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -867,17 +867,17 @@ _shopItemState2:
 	ld (wLinkGrabState2),a
 
 	call objectSetVisible80
-	jr _shopItemClearRupeeDisplay
+	jr shopItemClearRupeeDisplay
 
 @substate1:
-	call _shopItemCheckGrabbed
+	call shopItemCheckGrabbed
 	ret nz
 
 	; Fall through to state 4 if Link pressed the button near the selection area
 
 
 ; State 4: Return to selection area
-_shopItemState4:
+shopItemState4:
 	; Set Y/X to selection area
 	ld h,d
 	ld e,Interaction.yh
@@ -894,7 +894,7 @@ _shopItemState4:
 	ld l,Interaction.state
 	ld (hl),$01
 
-	call _shopItemUpdateRupeeDisplay
+	call shopItemUpdateRupeeDisplay
 	call objectSetVisible83
 	jp dropLinkHeldItem
 
@@ -902,8 +902,8 @@ _shopItemState4:
 ; Clears the tiles in w3VramLayout corresponding to item price, and sets bit 2 of wInShop
 ; in order to request a tilemap update.
 ;
-_shopItemClearRupeeDisplay:
-	call _shopItemGetTilesForRupeeDisplay
+shopItemClearRupeeDisplay:
+	call shopItemGetTilesForRupeeDisplay
 	ret nc
 
 	; Replace the tiles generated by above function call with spaces
@@ -923,8 +923,8 @@ _shopItemClearRupeeDisplay:
 ; Updates the tiles in w3VramLayout corresponding to item price, and sets bit 2 of wInShop
 ; in order to request a tilemap update.
 ;
-_shopItemUpdateRupeeDisplay:
-	call _shopItemGetTilesForRupeeDisplay
+shopItemUpdateRupeeDisplay:
+	call shopItemGetTilesForRupeeDisplay
 	ret nc
 ++
 	ld a,($ff00+R_SVBK)
@@ -959,7 +959,7 @@ _shopItemUpdateRupeeDisplay:
 
 
 ; State 3: Link obtains the item (he just bought it, the shopkeeper set the state to this)
-_shopItemState3:
+shopItemState3:
 	; Take rupees
 	ld e,Interaction.subid
 	ld a,(de)
@@ -1000,7 +1000,7 @@ _shopItemState3:
 	; Show text for the item
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_shopItemTextTable
+	ld hl,shopItemTextTable
 	rst_addAToHl
 	ld a,(hl)
 	ld c,a
@@ -1019,7 +1019,7 @@ _shopItemState3:
 ;				* Tile index (byte)
 ;				* Tile attribute (byte
 ; @param[out]	cflag	nc if nothing to do?
-_shopItemGetTilesForRupeeDisplay:
+shopItemGetTilesForRupeeDisplay:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld c,a
@@ -1142,7 +1142,7 @@ shopItemPrices:
 
 ;;
 ; @param[out]	zflag	z if Link should grab or release the item
-_shopItemCheckGrabbed:
+shopItemCheckGrabbed:
 	ld a,(wGameKeysJustPressed)
 	and (BTN_A|BTN_B)
 	jr z,@dontGrab
@@ -1228,7 +1228,7 @@ shopItemTreasureToGive:
 ;       If the result is nonzero, a different item is sold instead based on b2.
 ;   b2: Item to sell if the first one is unavailable (or $ff to sell nothing)
 ;   b3: Value to add to x position if the first item was sold out
-_shopItemReplacementTable:
+shopItemReplacementTable:
 	/* $00 */ .db <wBoughtShopItems1  $01 $ff $00
 	/* $01 */ .db <wBoughtShopItems2  $08 $0d $04
 	/* $02 */ .db <wBoughtShopItems1  $02 $06 $00
@@ -1256,7 +1256,7 @@ _shopItemReplacementTable:
 
 
 ; Text to show upon buying a shop item (or $00 for no text)
-_shopItemTextTable:
+shopItemTextTable:
 .ifdef ROM_AGES
 	/* $00 */ .db <TX_0058
 .else
@@ -1299,10 +1299,10 @@ interactionCode4a:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _introSpritesState1
+	.dw introSpritesState1
 
 @state0:
-	call _introSpriteIncStateAndLoadGraphics
+	call introSpriteIncStateAndLoadGraphics
 	ld e,$42
 	ld a,(de)
 	rst_jumpTable
@@ -1311,8 +1311,8 @@ interactionCode4a:
 	.dw @initSubid02
 	.dw @initSubid03
 	.dw @initSubid04
-	.dw _introSpriteIncStateAndLoadGraphics
-	.dw _introSpriteIncStateAndLoadGraphics
+	.dw introSpriteIncStateAndLoadGraphics
+	.dw introSpriteIncStateAndLoadGraphics
 	.dw @initSubid07
 	.dw objectSetVisible82
 	.dw @initSubid09
@@ -1335,7 +1335,7 @@ interactionCode4a:
 	ld a,(de)
 	inc a
 	ld (hl),a
-	call _introSpriteSetChildRelatedObject1ToSelf
+	call introSpriteSetChildRelatedObject1ToSelf
 ++
 	jp objectSetVisible82
 
@@ -1352,7 +1352,7 @@ interactionCode4a:
 	ld (hl),a
 
 	call interactionSetAlwaysUpdateBit
-	call _introSpriteFunc_461a
+	call introSpriteFunc_461a
 	jp objectSetVisible80
 
 @initSubid09:
@@ -1378,7 +1378,7 @@ interactionCode4a:
 	inc l
 	ld (hl),b
 	dec (hl)
-	call _introSpriteSetChildRelatedObject1ToSelf
+	call introSpriteSetChildRelatedObject1ToSelf
 	dec b
 	jr nz,--
 ++
@@ -1396,7 +1396,7 @@ interactionCode4a:
 	ret
 
 ;;
-_introSpriteIncStateAndLoadGraphics:
+introSpriteIncStateAndLoadGraphics:
 	ld h,d
 	ld l,Interaction.state
 	inc (hl)
@@ -1404,7 +1404,7 @@ _introSpriteIncStateAndLoadGraphics:
 
 ;;
 ; Sets up X and Y positions with some slight random variance?
-_introSpriteFunc_461a:
+introSpriteFunc_461a:
 	call objectGetRelatedObject1Var
 	call objectTakePosition
 	push bc
@@ -1482,7 +1482,7 @@ _introSpriteFunc_461a:
 
 
 ;;
-_introSpritesState1:
+introSpritesState1:
 	ld e,Interaction.subid
 	ld a,(de)
 	cp $05
@@ -1495,21 +1495,21 @@ _introSpritesState1:
 ++
 	ld a,(de)
 	rst_jumpTable
-	.dw _introSpriteTriforceSubid
-	.dw _introSpriteTriforceSubid
-	.dw _introSpriteTriforceSubid
-	.dw _introSpriteRunTriforceGlowSubid
-	.dw _introSpriteRunSubid04
-	.dw _introSpriteRunSubid05
-	.dw _introSpriteRunSubid06
-	.dw _introSpriteRunSubid07
-	.dw _introSpriteRunSubid08
+	.dw introSpriteTriforceSubid
+	.dw introSpriteTriforceSubid
+	.dw introSpriteTriforceSubid
+	.dw introSpriteRunTriforceGlowSubid
+	.dw introSpriteRunSubid04
+	.dw introSpriteRunSubid05
+	.dw introSpriteRunSubid06
+	.dw introSpriteRunSubid07
+	.dw introSpriteRunSubid08
 	.dw interactionAnimate
-	.dw _introSpriteRunTriforceGlowSubid
+	.dw introSpriteRunTriforceGlowSubid
 
 
 ; Triforce pieces
-_introSpriteTriforceSubid:
+introSpriteTriforceSubid:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -1616,7 +1616,7 @@ _introSpriteTriforceSubid:
 	jp playSound
 
 
-_introSpriteRunSubid07:
+introSpriteRunSubid07:
 	call objectSetVisible
 	ld e,Interaction.var03
 	ld a,(de)
@@ -1627,16 +1627,16 @@ _introSpriteRunSubid07:
 	xor b
 	call z,objectSetInvisible
 
-_introSpriteRunTriforceGlowSubid:
+introSpriteRunTriforceGlowSubid:
 	ld e,Interaction.animParameter
 	ld a,(de)
 	inc a
-	call z,_introSpriteFunc_461a
+	call z,introSpriteFunc_461a
 	jp interactionAnimate
 
-_introSpriteRunSubid04:
-_introSpriteRunSubid05:
-_introSpriteRunSubid06:
+introSpriteRunSubid04:
+introSpriteRunSubid05:
+introSpriteRunSubid06:
 	call interactionAnimate
 
 	ld a,Object.start
@@ -1658,7 +1658,7 @@ _introSpriteRunSubid06:
 
 
 ; Extra tree branches in intro
-_introSpriteRunSubid08:
+introSpriteRunSubid08:
 	ld a,(wGfxRegs1.SCY)
 	or a
 	jp z,interactionDelete
@@ -1673,7 +1673,7 @@ _introSpriteRunSubid08:
 
 ;;
 ; Sets relatedObj1 of object 'h' to object 'd' (self).
-_introSpriteSetChildRelatedObject1ToSelf:
+introSpriteSetChildRelatedObject1ToSelf:
 	ld l,Interaction.relatedObj1
 	ld (hl),Interaction.start
 	inc l

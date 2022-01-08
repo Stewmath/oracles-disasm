@@ -283,33 +283,33 @@ interactionCode6b:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _interaction6b_subid00
-	.dw _interaction6b_subid01
-	.dw _interaction6b_subid02
-	.dw _interaction6b_subid03
-	.dw _interaction6b_subid04
-	.dw _interaction6b_subid05
-	.dw _interaction6b_subid06
-	.dw _interaction6b_subid07
-	.dw _interaction6b_subid08
-	.dw _interaction6b_subid09
-	.dw _interaction6b_subid0a
-	.dw _interaction6b_subid0b
-	.dw _interaction6b_subid0c
-	.dw _interaction6b_subid0d
-	.dw _interaction6b_subid0e
-	.dw _interaction6b_subid0f
-	.dw _interaction6b_subid10
-	.dw _interaction6b_subid11
-	.dw _interaction6b_subid12
-	.dw _interaction6b_subid13
-	.dw _interaction6b_subid14
-	.dw _interaction6b_subid15
-	.dw _interaction6b_subid16
+	.dw interaction6b_subid00
+	.dw interaction6b_subid01
+	.dw interaction6b_subid02
+	.dw interaction6b_subid03
+	.dw interaction6b_subid04
+	.dw interaction6b_subid05
+	.dw interaction6b_subid06
+	.dw interaction6b_subid07
+	.dw interaction6b_subid08
+	.dw interaction6b_subid09
+	.dw interaction6b_subid0a
+	.dw interaction6b_subid0b
+	.dw interaction6b_subid0c
+	.dw interaction6b_subid0d
+	.dw interaction6b_subid0e
+	.dw interaction6b_subid0f
+	.dw interaction6b_subid10
+	.dw interaction6b_subid11
+	.dw interaction6b_subid12
+	.dw interaction6b_subid13
+	.dw interaction6b_subid14
+	.dw interaction6b_subid15
+	.dw interaction6b_subid16
 
 
 ; Handles showing Impa's "Help" text when Link's about to screen transition
-_interaction6b_subid00:
+interaction6b_subid00:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -324,7 +324,7 @@ _interaction6b_subid00:
 	jr nz,@substate1
 
 @substate0:
-	call _interaction6b_checkLinkPressedUpAtScreenEdge
+	call interaction6b_checkLinkPressedUpAtScreenEdge
 	ret z
 
 	ld a,$01
@@ -367,7 +367,7 @@ _interaction6b_subid00:
 
 
 ; Spawns nayru, ralph, animals before she's possessed
-_interaction6b_subid01:
+interaction6b_subid01:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -402,7 +402,7 @@ _interaction6b_subid01:
 
 
 ; Script for cutscene with Ralph outside Ambi's palace, before getting mystery seeds
-_interaction6b_subid02:
+interaction6b_subid02:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -412,7 +412,7 @@ _interaction6b_subid02:
 	jp c,interactionDelete
 
 @loadScript:
-	jp _interaction6b_loadScript
+	jp interaction6b_loadScript
 
 @state1:
 	call interactionRunScript
@@ -421,25 +421,25 @@ _interaction6b_subid02:
 
 
 ; Seasons troupe member with guitar / tambourine?
-_interaction6b_subid03:
-_interaction6b_subid12:
+interaction6b_subid03:
+interaction6b_subid12:
 	call checkInteractionState
 	jp nz,interactionAnimate
 
 @state0:
-	call _interaction6b_initGraphicsAndIncState
+	call interaction6b_initGraphicsAndIncState
 	jp objectSetVisible82
 
 
 ; Script for cutscene where moblins attack maku sapling
-_interaction6b_subid04:
+interaction6b_subid04:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
 	xor a
 	ld (wccd4),a
-	call _interaction6b_loadScript
+	call interaction6b_loadScript
 @state1:
 	call interactionRunScript
 	jp c,interactionDelete
@@ -447,11 +447,11 @@ _interaction6b_subid04:
 
 
 ; Cutscene in intro where lightning strikes a guy
-_interaction6b_subid05:
+interaction6b_subid05:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _interaction6b_subid02@loadScript
+	.dw interaction6b_subid02@loadScript
 	.dw @state1
 
 @state1:
@@ -509,7 +509,7 @@ _interaction6b_subid05:
 
 
 ; Manages cutscene after beating d3
-_interaction6b_subid06:
+interaction6b_subid06:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -587,12 +587,12 @@ _interaction6b_subid06:
 
 
 ; A seed satchel that slowly falls toward Link. Unused?
-_interaction6b_subid07:
+interaction6b_subid07:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _interaction6b_initGraphicsAndIncState
+	call interaction6b_initGraphicsAndIncState
 	ld bc,$0000
 	ld hl,w1Link.yh
 	call objectTakePositionWithOffset
@@ -618,7 +618,7 @@ _interaction6b_subid07:
 
 
 ; Part of the cutscene where tokays steal your stuff?
-_interaction6b_subid08:
+interaction6b_subid08:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -643,12 +643,12 @@ _interaction6b_subid08:
 
 
 ; Shovel that Rosa gives to you in linked game
-_interaction6b_subid09:
+interaction6b_subid09:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _interaction6b_initGraphicsAndIncState
+	call interaction6b_initGraphicsAndIncState
 	ld bc,$3848
 	call interactionSetPosition
 	jp objectSetVisible80
@@ -677,9 +677,9 @@ _interaction6b_subid09:
 
 
 ; Flippers, cheval rope, and bomb treasures
-_interaction6b_subid0a:
-_interaction6b_subid0b:
-_interaction6b_subid0c:
+interaction6b_subid0a:
+interaction6b_subid0b:
+interaction6b_subid0c:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -692,7 +692,7 @@ _interaction6b_subid0c:
 	sub $0a
 	inc e
 	ld (de),a
-	call _interaction6b_initGraphicsAndLoadScript
+	call interaction6b_initGraphicsAndLoadScript
 
 @state1:
 	call interactionRunScript
@@ -708,12 +708,12 @@ _interaction6b_subid0c:
 
 
 ; Blocks that move over when pulling lever to get flippers
-_interaction6b_subid0d:
+interaction6b_subid0d:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _interaction6b_initGraphicsAndIncState
+	call interaction6b_initGraphicsAndIncState
 	ld a,PALH_a3
 	call loadPaletteHeader
 
@@ -786,7 +786,7 @@ _interaction6b_subid0d:
 
 
 ; Stone statue of Link that appears unconditionally
-_interaction6b_subid0e:
+interaction6b_subid0e:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -798,7 +798,7 @@ _interaction6b_subid0e:
 	dec a
 +
 	call loadPaletteHeader
-	call _interaction6b_initGraphicsAndIncState
+	call interaction6b_initGraphicsAndIncState
 	ld bc,$080a
 	call objectSetCollideRadii
 
@@ -825,7 +825,7 @@ _interaction6b_subid0e:
 
 
 ; Switch that opens path to Nuun Highlands
-_interaction6b_subid0f:
+interaction6b_subid0f:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -886,14 +886,14 @@ _interaction6b_subid0f:
 
 
 ; Unfinished stone statue of Link in credits cutscene
-_interaction6b_subid10:
+interaction6b_subid10:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
 	ld a,PALH_c8
 	call loadPaletteHeader
-	call _interaction6b_initGraphicsAndLoadScript
+	call interaction6b_initGraphicsAndLoadScript
 	jp objectSetVisiblec2
 
 @state1:
@@ -985,7 +985,7 @@ _interaction6b_subid10:
 
 
 ; Triggers cutscene after beating Jabu-Jabu
-_interaction6b_subid11:
+interaction6b_subid11:
 	ld a,(wEssencesObtained)
 	bit 6,a
 	jr z,@delete
@@ -1004,13 +1004,13 @@ _interaction6b_subid11:
 
 
 ; Goron bomb statue (left/right)
-_interaction6b_subid13:
-_interaction6b_subid14:
+interaction6b_subid13:
+interaction6b_subid14:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _interaction6b_initGraphicsAndIncState
+	call interaction6b_initGraphicsAndIncState
 
 	; Make this position solid
 	call objectGetShortPosition
@@ -1026,9 +1026,9 @@ _interaction6b_subid14:
 
 
 ; Stone statue of Link, as seen in-game
-_interaction6b_subid15:
+interaction6b_subid15:
 	call checkInteractionState
-	jp nz,_interaction6b_subid0e@state1
+	jp nz,interaction6b_subid0e@state1
 
 @state0:
 	ld a,GLOBALFLAG_FINISHEDGAME
@@ -1038,16 +1038,16 @@ _interaction6b_subid15:
 	ld h,>wRoomCollisions
 	ld l,a
 	ld (hl),$0f
-	jp _interaction6b_subid0e@state0
+	jp interaction6b_subid0e@state0
 
 
 ; A flame that appears for [counter1] frames.
-_interaction6b_subid16:
+interaction6b_subid16:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _interaction6b_initGraphicsAndIncState
+	call interaction6b_initGraphicsAndIncState
 	call objectSetVisible81
 	ld a,SND_LIGHTTORCH
 	jp playSound
@@ -1059,19 +1059,19 @@ _interaction6b_subid16:
 
 
 ;;
-_interaction6b_initGraphicsAndIncState:
+interaction6b_initGraphicsAndIncState:
 	call interactionInitGraphics
 	jp interactionIncState
 
 ;;
-_interaction6b_initGraphicsAndLoadScript:
+interaction6b_initGraphicsAndLoadScript:
 	call interactionInitGraphics
 
 ;;
-_interaction6b_loadScript:
+interaction6b_loadScript:
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_interaction6b_scriptTable
+	ld hl,interaction6b_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1081,7 +1081,7 @@ _interaction6b_loadScript:
 
 ;;
 ; @param[out]	zflag	nz if Link pressed up at screen edge
-_interaction6b_checkLinkPressedUpAtScreenEdge:
+interaction6b_checkLinkPressedUpAtScreenEdge:
 	ld a,(wScrollMode)
 	cp $01
 	jr nz,+
@@ -1098,7 +1098,7 @@ _interaction6b_checkLinkPressedUpAtScreenEdge:
 	and BTN_UP
 	ret
 
-_interaction6b_scriptTable:
+interaction6b_scriptTable:
 	.dw mainScripts.interaction6b_stubScript
 	.dw mainScripts.interaction6b_stubScript
 	.dw mainScripts.interaction6b_subid02Script
@@ -1125,13 +1125,13 @@ interactionCode6c:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _fairyHidingMinigame_subid00
-	.dw _fairyHidingMinigame_subid01
-	.dw _fairyHidingMinigame_subid02
+	.dw fairyHidingMinigame_subid00
+	.dw fairyHidingMinigame_subid01
+	.dw fairyHidingMinigame_subid02
 
 
 ; Begins fairy-hiding minigame
-_fairyHidingMinigame_subid00:
+fairyHidingMinigame_subid00:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -1170,10 +1170,10 @@ _fairyHidingMinigame_subid00:
 	ld (w1Link.direction),a
 
 @spawn3Fairies:
-	jp _fairyHidingMinigame_spawn3FairiesAndDelete
+	jp fairyHidingMinigame_spawn3FairiesAndDelete
 
 @state1:
-	call _fairyHidingMinigame_checkBeginCutscene
+	call fairyHidingMinigame_checkBeginCutscene
 	ret nc
 	ld a,(wScreenTransitionDirection)
 	ld (w1Link.direction),a
@@ -1191,7 +1191,7 @@ _fairyHidingMinigame_subid00:
 
 
 ; Hiding spot for fairy
-_fairyHidingMinigame_subid01:
+fairyHidingMinigame_subid01:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -1201,7 +1201,7 @@ _fairyHidingMinigame_subid01:
 	.dw @state3
 
 @state0:
-	call _fairyHidingMinigame_checkMinigameActive
+	call fairyHidingMinigame_checkMinigameActive
 	jp nc,interactionDelete
 
 	; [var38] = original tile index
@@ -1248,7 +1248,7 @@ _fairyHidingMinigame_subid01:
 
 	call interactionDecCounter1
 	ret nz
-	call _fairyHidingMinigame_checkBeginCutscene
+	call fairyHidingMinigame_checkBeginCutscene
 	ret nc
 	ld a,$01
 	ld (wDisableScreenTransitions),a
@@ -1299,7 +1299,7 @@ _fairyHidingMinigame_subid01:
 
 
 ; Checks for Link leaving the hide-and-seek area
-_fairyHidingMinigame_subid02:
+fairyHidingMinigame_subid02:
 	ld e,Interaction.state
 	ld a,(de)
 	or a
@@ -1316,7 +1316,7 @@ _fairyHidingMinigame_subid02:
 	jp interactionDelete
 
 @state0:
-	call _fairyHidingMinigame_checkMinigameActive
+	call fairyHidingMinigame_checkMinigameActive
 	jp nc,interactionDelete
 	call interactionIncState
 	ld hl,mainScripts.fairyHidingMinigame_subid02Script
@@ -1324,7 +1324,7 @@ _fairyHidingMinigame_subid02:
 
 ;;
 ; Spawns the 3 fairies; they should delete themselves if they're not found yet?
-_fairyHidingMinigame_spawn3FairiesAndDelete:
+fairyHidingMinigame_spawn3FairiesAndDelete:
 	ld b,$03
 
 @spawnFairy:
@@ -1341,7 +1341,7 @@ _fairyHidingMinigame_spawn3FairiesAndDelete:
 
 ;;
 ; @param[out]	cflag	c if Link is vulnerable (ready to begin cutscene?)
-_fairyHidingMinigame_checkBeginCutscene:
+fairyHidingMinigame_checkBeginCutscene:
 	call checkLinkVulnerable
 	ret nc
 
@@ -1359,7 +1359,7 @@ _fairyHidingMinigame_checkBeginCutscene:
 
 ;;
 ; @param[out]	cflag	c if minigame is active
-_fairyHidingMinigame_checkMinigameActive:
+fairyHidingMinigame_checkMinigameActive:
 	ld a,GLOBALFLAG_WON_FAIRY_HIDING_GAME
 	call checkGlobalFlag
 	ret nz
@@ -1376,12 +1376,12 @@ interactionCode6d:
 	ld a,(de)
 	ld e,Interaction.state
 	rst_jumpTable
-	.dw _possessedNayru_subid00
-	.dw _possessedNayru_ghost
-	.dw _possessedNayru_ghost
+	.dw possessedNayru_subid00
+	.dw possessedNayru_ghost
+	.dw possessedNayru_ghost
 
 
-_possessedNayru_subid00:
+possessedNayru_subid00:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -1462,7 +1462,7 @@ _possessedNayru_subid00:
 	jp interactionDelete
 
 
-_possessedNayru_ghost:
+possessedNayru_ghost:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -1509,15 +1509,15 @@ interactionCode6e:
 	ld a,(de)
 	ld e,Interaction.state
 	rst_jumpTable
-	.dw _interaction6e_subid00
-	.dw _interaction6e_subid01
-	.dw _interaction6e_subid02
-	.dw _interaction6e_subid03
-	.dw _interaction6e_subid04
+	.dw interaction6e_subid00
+	.dw interaction6e_subid01
+	.dw interaction6e_subid02
+	.dw interaction6e_subid03
+	.dw interaction6e_subid04
 
 
 ; Nayru waking up after being freed from possession
-_interaction6e_subid00:
+interaction6e_subid00:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -1581,7 +1581,7 @@ _interaction6e_subid00:
 
 
 ; Queen Ambi
-_interaction6e_subid01:
+interaction6e_subid01:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -1697,7 +1697,7 @@ _interaction6e_subid01:
 
 
 ; Ghost Veran
-_interaction6e_subid02:
+interaction6e_subid02:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -1818,16 +1818,16 @@ _interaction6e_subid02:
 
 
 ; Ralph
-_interaction6e_subid03:
+interaction6e_subid03:
 	ld a,(de)
 	or a
-	jr z,_interaction6e_initRalph
+	jr z,interaction6e_initRalph
 
-_interaction6e_runScriptAndAnimate:
+interaction6e_runScriptAndAnimate:
 	call interactionRunScript
 	jp interactionAnimate
 
-_interaction6e_initRalph:
+interaction6e_initRalph:
 	call interactionInitGraphics
 	call interactionIncState
 	ld l,Interaction.speed
@@ -1838,10 +1838,10 @@ _interaction6e_initRalph:
 
 
 ; Guards that run into the room
-_interaction6e_subid04:
+interaction6e_subid04:
 	ld a,(de)
 	or a
-	jr nz,_interaction6e_runScriptAndAnimate
+	jr nz,interaction6e_runScriptAndAnimate
 
 	call interactionInitGraphics
 	call interactionIncState
@@ -2223,43 +2223,43 @@ interactionCode71:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _companionScript_subid00
-	.dw _companionScript_subid01
-	.dw _companionScript_subid02
-	.dw _companionScript_subid03
-	.dw _companionScript_subid04
-	.dw _companionScript_subid05
-	.dw _companionScript_subid06
-	.dw _companionScript_subid07
-	.dw _companionScript_subid08
-	.dw _companionScript_subid09
-	.dw _companionScript_subid0a
-	.dw _companionScript_subid0b
-	.dw _companionScript_subid0c
-	.dw _companionScript_subid0d
+	.dw companionScript_subid00
+	.dw companionScript_subid01
+	.dw companionScript_subid02
+	.dw companionScript_subid03
+	.dw companionScript_subid04
+	.dw companionScript_subid05
+	.dw companionScript_subid06
+	.dw companionScript_subid07
+	.dw companionScript_subid08
+	.dw companionScript_subid09
+	.dw companionScript_subid0a
+	.dw companionScript_subid0b
+	.dw companionScript_subid0c
+	.dw companionScript_subid0d
 
 
-_companionScript_subid00:
+companionScript_subid00:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_subid00_state1
+	.dw companionScript_subid00_state1
 
 @state0:
 	ld a,$01
 	ld (de),a
 	ld a,(wEssencesObtained)
 	bit 1,a
-	jp z,_companionScript_deleteSelf
+	jp z,companionScript_deleteSelf
 
 	ld a,(wPastRoomFlags+$79)
 	bit 6,a
-	jp z,_companionScript_deleteSelf
+	jp z,companionScript_deleteSelf
 
 	ld a,(wMooshState)
 	and $60
-	jp nz,_companionScript_deleteSelf
+	jp nz,companionScript_deleteSelf
 
 	ld a,$01
 	ld (wDisableScreenTransitions),a
@@ -2268,41 +2268,41 @@ _companionScript_subid00:
 	jp interactionSetScript
 
 
-_companionScript_subid01:
+companionScript_subid01:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _companionScript_genericState0
-	.dw _companionScript_restrictHigherX
+	.dw companionScript_genericState0
+	.dw companionScript_restrictHigherX
 
-_companionScript_subid02:
+companionScript_subid02:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _companionScript_genericState0
-	.dw _companionScript_restrictLowerY
+	.dw companionScript_genericState0
+	.dw companionScript_restrictLowerY
 
-_companionScript_subid04:
+companionScript_subid04:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _companionScript_genericState0
-	.dw _companionScript_restrictHigherY
+	.dw companionScript_genericState0
+	.dw companionScript_restrictHigherY
 
-_companionScript_subid05:
+companionScript_subid05:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _companionScript_genericState0
-	.dw _companionScript_restrictLowerX
+	.dw companionScript_genericState0
+	.dw companionScript_restrictLowerX
 
 
 ; Delete self if game is completed; otherwise, stay in state 0 until Link mounts the
 ; companion.
-_companionScript_genericState0:
+companionScript_genericState0:
 	ld a,(wFileIsCompleted)
 	or a
-	jp nz,_companionScript_deleteSelf
+	jp nz,companionScript_deleteSelf
 	ld a,(wLinkObjectIndex)
 	rrca
 	ret nc
@@ -2318,27 +2318,27 @@ _companionScript_genericState0:
 	ld l,a
 	ld h,>wRickyState
 	bit 7,(hl)
-	jp nz,_companionScript_deleteSelf
+	jp nz,companionScript_deleteSelf
 	ret
 
-_companionScript_restrictHigherX:
-	call _companionScript_cpXToCompanion
+companionScript_restrictHigherX:
+	call companionScript_cpXToCompanion
 	ret c
 	inc a
 	jr ++
 
-_companionScript_restrictLowerX:
-	call _companionScript_cpXToCompanion
+companionScript_restrictLowerX:
+	call companionScript_cpXToCompanion
 	ret nc
 	jr ++
 
-_companionScript_restrictLowerY:
-	call _companionScript_cpYToCompanion
+companionScript_restrictLowerY:
+	call companionScript_cpYToCompanion
 	ret nc
 	jr ++
 
-_companionScript_restrictHigherY:
-	call _companionScript_cpYToCompanion
+companionScript_restrictHigherY:
+	call companionScript_cpYToCompanion
 	ret c
 	inc a
 	jr ++
@@ -2357,21 +2357,21 @@ _companionScript_restrictHigherY:
 
 	ld e,Interaction.var30
 	ld a,(de)
-	ld hl,_companionScript_companionBarrierText
+	ld hl,companionScript_companionBarrierText
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld b,(hl)
 	ld c,a
 	jp showText
 
-_companionScript_cpYToCompanion:
+companionScript_cpYToCompanion:
 	ld e,Interaction.yh
 	ld a,(de)
 	ld hl,w1Companion.yh
 	cp (hl)
 	ret
 
-_companionScript_cpXToCompanion:
+companionScript_cpXToCompanion:
 	ld e,Interaction.xh
 	ld a,(de)
 	ld hl,w1Companion.xh
@@ -2379,17 +2379,17 @@ _companionScript_cpXToCompanion:
 	ret
 
 ; Text to show when you try to pass the "barriers" imposed.
-_companionScript_companionBarrierText:
+companionScript_companionBarrierText:
 	.dw TX_2007 ; Ricky
 	.dw TX_2105 ; Dimitri
 	.dw TX_2209 ; Moosh
 
 
 ; Companion barrier to Symmetry City, until the tuni nut is restored
-_companionScript_subid0d:
+companionScript_subid0d:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED
 	call checkGlobalFlag
-	jp nz,_companionScript_deleteSelf
+	jp nz,companionScript_deleteSelf
 
 	ld a,(wScrollMode)
 	and (SCROLLMODE_08 | SCROLLMODE_04 | SCROLLMODE_02)
@@ -2452,12 +2452,12 @@ _companionScript_subid0d:
 
 
 ; Ricky script when he loses his gloves
-_companionScript_subid03:
+companionScript_subid03:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScript
+	.dw companionScript_runScript
 
 @state0:
 	ld a,$01
@@ -2465,23 +2465,23 @@ _companionScript_subid03:
 	ld hl,wRickyState
 	ld a,(hl)
 	and $20
-	jr nz,_companionScript_deleteSelf
+	jr nz,companionScript_deleteSelf
 	ld hl,mainScripts.companionScript_subid03Script
 	jp interactionSetScript
 
 
 ; Dimitri script where he's harrassed by tokays
-_companionScript_subid07:
+companionScript_subid07:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScript
+	.dw companionScript_runScript
 
 @state0:
 	ld a,(wDimitriState)
 	and $20
-	jr nz,_companionScript_deleteSelf
+	jr nz,companionScript_deleteSelf
 	ld a,$01
 	ld (de),a
 	ld hl,mainScripts.companionScript_subid07Script
@@ -2489,22 +2489,22 @@ _companionScript_subid07:
 
 
 ; Dimitri script where he leaves Link after bringing him to the mainland
-_companionScript_subid06:
+companionScript_subid06:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScript
+	.dw companionScript_runScript
 
 @state0:
 	; Delete self if dimitri isn't here or the event has happened already
 	ld a,(wDimitriState)
 	and $40
-	jr nz,_companionScript_deleteSelf
+	jr nz,companionScript_deleteSelf
 	ld hl,w1Companion.id
 	ld a,(hl)
 	cp SPECIALOBJECTID_DIMITRI
-	jr nz,_companionScript_deleteSelf
+	jr nz,companionScript_deleteSelf
 
 	; Return if Dimitri's still in the water
 	ld l,SpecialObject.var38
@@ -2530,18 +2530,18 @@ _companionScript_subid06:
 	ld hl,mainScripts.companionScript_subid06Script
 	jp interactionSetScript
 
-_companionScript_deleteSelf:
+companionScript_deleteSelf:
 	jp interactionDelete
 
 
 ; A fairy appears to tell you about the animal companion in the forest
-_companionScript_subid08:
+companionScript_subid08:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
 	.dw @state1
-	.dw _companionScript_runScript
+	.dw companionScript_runScript
 
 @state0:
 	; Clear $10 bytes starting at $cfd0
@@ -2565,15 +2565,15 @@ _companionScript_subid08:
 
 	ld a,(wScreenTransitionDirection)
 	cp DIR_LEFT
-	jr nz,_companionScript_deleteSelf
+	jr nz,companionScript_deleteSelf
 
 	ld a,GLOBALFLAG_TALKED_TO_HEAD_CARPENTER
 	call checkGlobalFlag
-	jr z,_companionScript_deleteSelf
+	jr z,companionScript_deleteSelf
 
 	call getThisRoomFlags
 	bit 6,a
-	jr nz,_companionScript_deleteSelf
+	jr nz,companionScript_deleteSelf
 	jp interactionIncState
 
 @state1:
@@ -2597,12 +2597,12 @@ _companionScript_subid08:
 
 
 ; Companion script where they're found in the fairy forest
-_companionScript_subid09:
+companionScript_subid09:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScript
+	.dw companionScript_runScript
 
 @state0:
 	ld a,$01
@@ -2614,11 +2614,11 @@ _companionScript_subid09:
 	; Check whether the event is applicable right now
 	ld a,GLOBALFLAG_TALKED_TO_HEAD_CARPENTER
 	call checkGlobalFlag
-	jr z,_companionScript_deleteSelf
+	jr z,companionScript_deleteSelf
 
 	ld a,GLOBALFLAG_GOT_FLUTE
 	call checkGlobalFlag
-	jp nz,_companionScript_deleteSelf
+	jp nz,companionScript_deleteSelf
 
 	; Put companion index (0-2) in var39
 	ld hl,wAnimalCompanion
@@ -2665,23 +2665,23 @@ _companionScript_subid09:
 
 
 ; Script just outside the forest, where you get the flute
-_companionScript_subid0a:
+companionScript_subid0a:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScript
-	.dw _companionScript_subid0a_state2
-	.dw _companionScript_subid0a_state3
+	.dw companionScript_runScript
+	.dw companionScript_subid0a_state2
+	.dw companionScript_subid0a_state3
 
 @state0:
 	ld a,GLOBALFLAG_SAVED_COMPANION_FROM_FOREST
 	call checkGlobalFlag
-	jp z,_companionScript_delete
+	jp z,companionScript_delete
 
 	ld a,GLOBALFLAG_GOT_FLUTE
 	call checkGlobalFlag
-	jp nz,_companionScript_delete
+	jp nz,companionScript_delete
 
 	ld a,$01
 	ld (de),a ; [state] = 1
@@ -2739,24 +2739,24 @@ _companionScript_subid0a:
 
 
 ; Script in first screen of forest, where fairy leads you to the companion
-_companionScript_subid0b:
+companionScript_subid0b:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScript
+	.dw companionScript_runScript
 
 @state0:
 	ld a,(wScreenTransitionDirection)
 	cp DIR_DOWN
-	jr nz,_companionScript_delete
+	jr nz,companionScript_delete
 	ld a,GLOBALFLAG_COMPANION_LOST_IN_FOREST
 	call checkGlobalFlag
-	jr z,_companionScript_delete
+	jr z,companionScript_delete
 
 	ld a,GLOBALFLAG_GOT_FLUTE
 	call checkGlobalFlag
-	jr nz,_companionScript_delete
+	jr nz,companionScript_delete
 
 	ldbc INTERACID_FOREST_FAIRY, $03
 	call objectCreateInteraction
@@ -2776,40 +2776,40 @@ _companionScript_subid0b:
 
 
 ; Sets bit 6 of wDimitriState so he disappears from Tokay Island
-_companionScript_subid0c:
+companionScript_subid0c:
 	ld a,(wDimitriState)
 	bit 5,a
-	jr z,_companionScript_delete
+	jr z,companionScript_delete
 	or $40
 	ld (wDimitriState),a
-	jr _companionScript_delete
+	jr companionScript_delete
 
 ;;
-_companionScript_subid00_state1:
+companionScript_subid00_state1:
 	; If var3a is nonzero, make Moosh shake in fear
 	ld e,Interaction.var3a
 	ld a,(de)
 	or a
-	jr z,_companionScript_runScript
+	jr z,companionScript_runScript
 
 	dec a
 	ld (de),a
 	and $03
-	jr nz,_companionScript_runScript
+	jr nz,companionScript_runScript
 	ld a,(w1Companion.xh)
 	xor $02
 	ld (w1Companion.xh),a
 
-_companionScript_runScript:
+companionScript_runScript:
 	call interactionRunScript
 	ret nc
 	call setStatusBarNeedsRefreshBit1
-_companionScript_delete:
+companionScript_delete:
 	jp interactionDelete
 
 
 ; This is the part which gives Link the flute.
-_companionScript_subid0a_state2:
+companionScript_subid0a_state2:
 	ld a,TREASURE_FLUTE
 	call checkTreasureObtained
 	ld c,<TX_0038
@@ -2880,7 +2880,7 @@ _companionScript_subid0a_state2:
 	jp interactionRunScript
 
 
-_companionScript_subid0a_state3:
+companionScript_subid0a_state3:
 	call retIfTextIsActive
 
 	; ??
@@ -2899,7 +2899,7 @@ _companionScript_subid0a_state3:
 	xor a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
-	jp _companionScript_delete
+	jp companionScript_delete
 
 
 ; ==============================================================================
@@ -4193,11 +4193,11 @@ interactionCode83:
 	ld a,(de)
 	ld e,Interaction.state
 	rst_jumpTable
-	.dw _bombUpgradeFairy_subid00
-	.dw _bombUpgradeFairy_subid01
-	.dw _bombUpgradeFairy_subid02
+	.dw bombUpgradeFairy_subid00
+	.dw bombUpgradeFairy_subid01
+	.dw bombUpgradeFairy_subid02
 
-_bombUpgradeFairy_subid00:
+bombUpgradeFairy_subid00:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -4339,7 +4339,7 @@ _bombUpgradeFairy_subid00:
 
 
 ; Bombs that surround Link (depending on his answer)
-_bombUpgradeFairy_subid01:
+bombUpgradeFairy_subid01:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -4407,7 +4407,7 @@ _bombUpgradeFairy_subid01:
 
 
 ; Gold/silver bombs
-_bombUpgradeFairy_subid02:
+bombUpgradeFairy_subid02:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -5791,44 +5791,44 @@ interactionCode90:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _miscPuzzles_subid00
-	.dw _miscPuzzles_subid01
-	.dw _miscPuzzles_subid02
-	.dw _miscPuzzles_subid03
-	.dw _miscPuzzles_subid04
-	.dw _miscPuzzles_subid05
-	.dw _miscPuzzles_subid06
-	.dw _miscPuzzles_subid07
-	.dw _miscPuzzles_subid08
-	.dw _miscPuzzles_subid09
-	.dw _miscPuzzles_subid0a
-	.dw _miscPuzzles_subid0b
-	.dw _miscPuzzles_subid0c
-	.dw _miscPuzzles_subid0d
-	.dw _miscPuzzles_subid0e
-	.dw _miscPuzzles_subid0f
-	.dw _miscPuzzles_subid10
-	.dw _miscPuzzles_subid11
-	.dw _miscPuzzles_subid12
-	.dw _miscPuzzles_subid13
-	.dw _miscPuzzles_subid14
-	.dw _miscPuzzles_subid15
-	.dw _miscPuzzles_subid16
-	.dw _miscPuzzles_subid17
-	.dw _miscPuzzles_subid18
-	.dw _miscPuzzles_subid19
-	.dw _miscPuzzles_subid1a
-	.dw _miscPuzzles_subid1b
-	.dw _miscPuzzles_subid1c
-	.dw _miscPuzzles_subid1d
-	.dw _miscPuzzles_subid1e
-	.dw _miscPuzzles_subid1f
-	.dw _miscPuzzles_subid20
-	.dw _miscPuzzles_subid21
+	.dw miscPuzzles_subid00
+	.dw miscPuzzles_subid01
+	.dw miscPuzzles_subid02
+	.dw miscPuzzles_subid03
+	.dw miscPuzzles_subid04
+	.dw miscPuzzles_subid05
+	.dw miscPuzzles_subid06
+	.dw miscPuzzles_subid07
+	.dw miscPuzzles_subid08
+	.dw miscPuzzles_subid09
+	.dw miscPuzzles_subid0a
+	.dw miscPuzzles_subid0b
+	.dw miscPuzzles_subid0c
+	.dw miscPuzzles_subid0d
+	.dw miscPuzzles_subid0e
+	.dw miscPuzzles_subid0f
+	.dw miscPuzzles_subid10
+	.dw miscPuzzles_subid11
+	.dw miscPuzzles_subid12
+	.dw miscPuzzles_subid13
+	.dw miscPuzzles_subid14
+	.dw miscPuzzles_subid15
+	.dw miscPuzzles_subid16
+	.dw miscPuzzles_subid17
+	.dw miscPuzzles_subid18
+	.dw miscPuzzles_subid19
+	.dw miscPuzzles_subid1a
+	.dw miscPuzzles_subid1b
+	.dw miscPuzzles_subid1c
+	.dw miscPuzzles_subid1d
+	.dw miscPuzzles_subid1e
+	.dw miscPuzzles_subid1f
+	.dw miscPuzzles_subid20
+	.dw miscPuzzles_subid21
 
 
 ; Boss key puzzle in D6
-_miscPuzzles_subid00:
+miscPuzzles_subid00:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -5922,12 +5922,12 @@ _miscPuzzles_subid00:
 
 
 ; Underwater switch hook puzzle in past d6
-_miscPuzzles_subid01:
+miscPuzzles_subid01:
 	call interactionDeleteAndRetIfEnabled02
-	call _miscPuzzles_deleteSelfAndRetIfItemFlagSet
+	call miscPuzzles_deleteSelfAndRetIfItemFlagSet
 
 	ld hl,@diamondPositions
-	call _miscPuzzles_verifyTilesAtPositions
+	call miscPuzzles_verifyTilesAtPositions
 	ret nz
 	jpab agesInteractionsBank08.spawnChestAndDeleteSelf
 
@@ -5940,7 +5940,7 @@ _miscPuzzles_subid01:
 
 
 ; Spot to put a rolling colored block on in present d6
-_miscPuzzles_subid02:
+miscPuzzles_subid02:
 	call interactionDeleteAndRetIfEnabled02
 
 	; Check that the tile at this position matches the cube color
@@ -5969,12 +5969,12 @@ _miscPuzzles_subid02:
 
 
 ; Chest from solving colored cube puzzle in d6 (related to subid $02)
-_miscPuzzles_subid03:
+miscPuzzles_subid03:
 	call interactionDeleteAndRetIfEnabled02
-	call _miscPuzzles_deleteSelfAndRetIfItemFlagSet
+	call miscPuzzles_deleteSelfAndRetIfItemFlagSet
 
 	ld hl,@wantedFloorTiles
-	call _miscPuzzles_verifyTilesAtPositions
+	call miscPuzzles_verifyTilesAtPositions
 	ret nz
 	jpab agesInteractionsBank08.spawnChestAndDeleteSelf
 
@@ -5988,7 +5988,7 @@ _miscPuzzles_subid03:
 ;			number of positions in the room where that tile should be; $ff to
 ;			give a new tile index; $00 to stop.
 ; @param[out]	zflag	z if all tiles matched as expected.
-_miscPuzzles_verifyTilesAtPositions:
+miscPuzzles_verifyTilesAtPositions:
 	ld b,>wRoomLayout
 @newTileIndex:
 	ldi a,(hl)
@@ -6010,7 +6010,7 @@ _miscPuzzles_verifyTilesAtPositions:
 
 
 ; Floor changer in present D6, triggered by orb
-_miscPuzzles_subid04:
+miscPuzzles_subid04:
 	call checkInteractionState
 	jr z,@state0
 
@@ -6061,8 +6061,8 @@ _miscPuzzles_subid04:
 
 
 ; Helpers for floor changer (subid $04)
-_miscPuzzles_subid05:
-_miscPuzzles_subid06:
+miscPuzzles_subid05:
+miscPuzzles_subid06:
 	ld e,Interaction.substate
 	ld a,(de)
 	or a
@@ -6147,7 +6147,7 @@ _miscPuzzles_subid06:
 
 
 ; Wall retraction event after lighting torches in past d6
-_miscPuzzles_subid07:
+miscPuzzles_subid07:
 	call checkInteractionState
 	jr z,@state0
 
@@ -6282,7 +6282,7 @@ _miscPuzzles_subid07:
 
 
 ; Checks to set the "bombable wall open" bit in d6 (north)
-_miscPuzzles_subid08:
+miscPuzzles_subid08:
 	call interactionDeleteAndRetIfEnabled02
 	call getThisRoomFlags
 	bit ROOMFLAG_BIT_KEYDOOR_UP,(hl)
@@ -6294,7 +6294,7 @@ _miscPuzzles_subid08:
 
 
 ; Checks to set the "bombable wall open" bit in d6 (east)
-_miscPuzzles_subid09:
+miscPuzzles_subid09:
 	call interactionDeleteAndRetIfEnabled02
 	call getThisRoomFlags
 	bit ROOMFLAG_BIT_KEYDOOR_RIGHT,(hl)
@@ -6306,7 +6306,7 @@ _miscPuzzles_subid09:
 
 
 ; Jabu-jabu water level controller script, in the room with the 3 buttons
-_miscPuzzles_subid0a:
+miscPuzzles_subid0a:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -6430,11 +6430,11 @@ _miscPuzzles_subid0a:
 
 
 ; Ladder spawner in d7 miniboss room
-_miscPuzzles_subid0b:
+miscPuzzles_subid0b:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set
+	.dw miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set
 	.dw @state1
 	.dw @state2
 
@@ -6495,23 +6495,23 @@ _miscPuzzles_subid0b:
 
 
 ; Switch hook puzzle early in d7 for a small key
-_miscPuzzles_subid0c:
+miscPuzzles_subid0c:
 	call interactionDeleteAndRetIfEnabled02
-	call _miscPuzzles_deleteSelfAndRetIfItemFlagSet
+	call miscPuzzles_deleteSelfAndRetIfItemFlagSet
 
-	ld hl,_miscPuzzles_subid0c_wantedTiles
-	call _miscPuzzles_verifyTilesAtPositions
+	ld hl,miscPuzzles_subid0c_wantedTiles
+	call miscPuzzles_verifyTilesAtPositions
 	ret nz
 
 ;;
-_miscPuzzles_dropSmallKeyHere:
+miscPuzzles_dropSmallKeyHere:
 	ldbc TREASURE_SMALL_KEY, $01
 	call createTreasure
 	ret nz
 	call objectCopyPosition
 	jp interactionDelete
 
-_miscPuzzles_subid0c_wantedTiles:
+miscPuzzles_subid0c_wantedTiles:
 	.db TILEINDEX_SWITCH_DIAMOND
 	.db $36 $3a $76 $7a
 	.db $00
@@ -6519,7 +6519,7 @@ _miscPuzzles_subid0c_wantedTiles:
 
 
 ; Staircase spawner after moving first set of stone panels in d8
-_miscPuzzles_subid0d:
+miscPuzzles_subid0d:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -6585,7 +6585,7 @@ _miscPuzzles_subid0d:
 
 
 ; Staircase spawner after putting in slates in d8
-_miscPuzzles_subid0e:
+miscPuzzles_subid0e:
 	call checkInteractionState
 	jp nz,@state1
 
@@ -6624,7 +6624,7 @@ _miscPuzzles_subid0e:
 
 
 ; Octogon boss initialization (in the room just before the boss)
-_miscPuzzles_subid0f:
+miscPuzzles_subid0f:
 	ld hl,wTmpcfc0.octogonBoss.loadedExtraGfx
 	xor a
 	ldi (hl),a
@@ -6643,7 +6643,7 @@ _miscPuzzles_subid0f:
 
 
 ; Something at the top of Talus Peaks?
-_miscPuzzles_subid10:
+miscPuzzles_subid10:
 	ld hl,wTmpcfc0.patchMinigame.fixingSword
 	ld b,$08
 	call clearMemory
@@ -6652,7 +6652,7 @@ _miscPuzzles_subid10:
 
 
 ; D5 keyhole opening
-_miscPuzzles_subid11:
+miscPuzzles_subid11:
 	call checkInteractionState
 	jp nz,interactionRunScript
 
@@ -6667,7 +6667,7 @@ _miscPuzzles_subid11:
 	ld hl,mainScripts.miscPuzzles_crownDungeonOpeningScript
 
 ;;
-_miscPuzzles_setScriptAndIncState:
+miscPuzzles_setScriptAndIncState:
 	call interactionSetScript
 	call interactionSetAlwaysUpdateBit
 	jp interactionIncState
@@ -6675,7 +6675,7 @@ _miscPuzzles_setScriptAndIncState:
 
 
 ; D6 present/past keyhole opening
-_miscPuzzles_subid12:
+miscPuzzles_subid12:
 	call checkInteractionState
 	jp nz,interactionRunScript
 
@@ -6683,12 +6683,12 @@ _miscPuzzles_subid12:
 	and ROOMFLAG_80
 	jp nz,interactionDelete
 	ld hl,mainScripts.miscPuzzles_mermaidsCaveDungeonOpeningScript
-	jr _miscPuzzles_setScriptAndIncState
+	jr miscPuzzles_setScriptAndIncState
 
 
 
 ; Eyeglass library keyhole opening
-_miscPuzzles_subid13:
+miscPuzzles_subid13:
 	call checkInteractionState
 	jp nz,interactionRunScript
 
@@ -6696,14 +6696,14 @@ _miscPuzzles_subid13:
 	and ROOMFLAG_80
 	jp nz,interactionDelete
 	ld hl,mainScripts.miscPuzzles_eyeglassLibraryOpeningScript
-	jr _miscPuzzles_setScriptAndIncState
+	jr miscPuzzles_setScriptAndIncState
 
 
 
 ; Spot to put a rolling colored block on in Hero's Cave
-_miscPuzzles_subid14:
+miscPuzzles_subid14:
 	call checkInteractionState
-	jp z,_miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set
+	jp z,miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set
 
 	; Check that the tile at this position matches the cube color
 	call objectGetTileAtPosition
@@ -6737,9 +6737,9 @@ _miscPuzzles_subid14:
 
 
 ; Stairs from solving colored cube puzzle in Hero's Cave (related to subid $14)
-_miscPuzzles_subid15:
+miscPuzzles_subid15:
 	call checkInteractionState
-	jp z,_miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set
+	jp z,miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set
 
 	ld a,(wActiveTriggers)
 	cp $07
@@ -6757,11 +6757,11 @@ _miscPuzzles_subid15:
 
 
 ; Warps Link out of Hero's Cave upon opening the chest
-_miscPuzzles_subid16:
+miscPuzzles_subid16:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _miscPuzzles_deleteSelfOrIncStateIfItemFlagSet
+	.dw miscPuzzles_deleteSelfOrIncStateIfItemFlagSet
 	.dw @state1
 	.dw @state2
 
@@ -6786,7 +6786,7 @@ _miscPuzzles_subid16:
 
 
 ; Enables portal in Hero's Cave first room if its other end is active
-_miscPuzzles_subid17:
+miscPuzzles_subid17:
 	call getThisRoomFlags
 	push hl
 	ld l,<ROOM_AGES_4c9
@@ -6800,9 +6800,9 @@ _miscPuzzles_subid17:
 
 
 ; Drops a key in hero's cave block-pushing puzzle
-_miscPuzzles_subid18:
+miscPuzzles_subid18:
 	call checkInteractionState
-	jp z,_miscPuzzles_deleteSelfOrIncStateIfItemFlagSet
+	jp z,miscPuzzles_deleteSelfOrIncStateIfItemFlagSet
 
 	ld hl,wRoomLayout+$95
 	ld a,(hl)
@@ -6812,12 +6812,12 @@ _miscPuzzles_subid18:
 	ld a,(hl)
 	cp TILEINDEX_PUSHABLE_STATUE
 	ret nz
-	jp _miscPuzzles_dropSmallKeyHere
+	jp miscPuzzles_dropSmallKeyHere
 
 
 
 ; Bridge controller in d5 room after the miniboss
-_miscPuzzles_subid19:
+miscPuzzles_subid19:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -6920,12 +6920,12 @@ _miscPuzzles_subid19:
 
 
 ; Checks solution to pushblock puzzle in Hero's Cave
-_miscPuzzles_subid1a:
+miscPuzzles_subid1a:
 	call interactionDeleteAndRetIfEnabled02
-	call _miscPuzzles_deleteSelfAndRetIfItemFlagSet
+	call miscPuzzles_deleteSelfAndRetIfItemFlagSet
 
 	ld hl,@wantedTiles
-	call _miscPuzzles_verifyTilesAtPositions
+	call miscPuzzles_verifyTilesAtPositions
 	ret nz
 	jpab agesInteractionsBank08.spawnChestAndDeleteSelf
 
@@ -6938,15 +6938,15 @@ _miscPuzzles_subid1a:
 
 ; Subids $1b-$1d: Spawn gasha seeds at the top of the maku tree at specific times.
 ; b = essence that must be obtained; c = position to spawn it at.
-_miscPuzzles_subid1b:
+miscPuzzles_subid1b:
 	ldbc $08, $53
 	jr ++
 
-_miscPuzzles_subid1c:
+miscPuzzles_subid1c:
 	ldbc $40, $34
 	jr ++
 
-_miscPuzzles_subid1d:
+miscPuzzles_subid1d:
 	ldbc $20, $34
 ++
 	push bc
@@ -6971,7 +6971,7 @@ _miscPuzzles_subid1d:
 
 
 ; Play "puzzle solved" sound after navigating eyeball puzzle in final dungeon
-_miscPuzzles_subid1e:
+miscPuzzles_subid1e:
 	call returnIfScrollMode01Unset
 	ld a,(wScreenTransitionDirection)
 	or a
@@ -6983,7 +6983,7 @@ _miscPuzzles_subid1e:
 
 
 ; Checks if Link gets stuck in the d5 boss key puzzle, resets the room if so
-_miscPuzzles_subid1f:
+miscPuzzles_subid1f:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -7076,7 +7076,7 @@ _miscPuzzles_subid1f:
 
 
 ; Money in sidescrolling room in Hero's Cave
-_miscPuzzles_subid20:
+miscPuzzles_subid20:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
 	jr nz,@delete
@@ -7091,7 +7091,7 @@ _miscPuzzles_subid20:
 
 
 ; Creates explosions while screen is fading out; used in some cutscene?
-_miscPuzzles_subid21:
+miscPuzzles_subid21:
 	call checkInteractionState
 	jr z,@state0
 
@@ -7133,7 +7133,7 @@ _miscPuzzles_subid21:
 	jp fadeoutToWhiteWithDelay
 
 ;;
-_miscPuzzles_deleteSelfAndRetIfItemFlagSet:
+miscPuzzles_deleteSelfAndRetIfItemFlagSet:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
 	ret z
@@ -7141,14 +7141,14 @@ _miscPuzzles_deleteSelfAndRetIfItemFlagSet:
 	jp interactionDelete
 
 ;;
-_miscPuzzles_deleteSelfOrIncStateIfItemFlagSet:
+miscPuzzles_deleteSelfOrIncStateIfItemFlagSet:
 	call getThisRoomFlags
 	and ROOMFLAG_ITEM
 	jp nz,interactionDelete
 	jp interactionIncState
 
 ;;
-_miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set:
+miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set:
 	call getThisRoomFlags
 	and ROOMFLAG_80
 	jp nz,interactionDelete
@@ -7156,7 +7156,7 @@ _miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set:
 
 ;;
 ; Unused
-_miscPuzzles_deleteSelfOrIncStateIfRoomFlag6Set:
+miscPuzzles_deleteSelfOrIncStateIfRoomFlag6Set:
 	call getThisRoomFlags
 	and ROOMFLAG_40
 	jp nz,interactionDelete
@@ -7171,17 +7171,17 @@ interactionCode92:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _fallingRock_subid00
-	.dw _fallingRock_subid01
-	.dw _fallingRock_subid02
-	.dw _fallingRock_subid03
-	.dw _fallingRock_subid04
-	.dw _fallingRock_subid05
-	.dw _fallingRock_subid06
+	.dw fallingRock_subid00
+	.dw fallingRock_subid01
+	.dw fallingRock_subid02
+	.dw fallingRock_subid03
+	.dw fallingRock_subid04
+	.dw fallingRock_subid05
+	.dw fallingRock_subid06
 
 
 ; Spawner of falling rocks; stops when $cfdf is nonzero. Used when freeing goron elder.
-_fallingRock_subid00:
+fallingRock_subid00:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -7212,11 +7212,11 @@ _fallingRock_subid00:
 
 
 ; Instance of falling rock spawned by subid $00
-_fallingRock_subid01:
+fallingRock_subid01:
 	call checkInteractionState
 	jr nz,@state1
-	call _fallingRock_initGraphicsAndIncState
-	call _fallingRock_chooseRandomPosition
+	call fallingRock_initGraphicsAndIncState
+	call fallingRock_chooseRandomPosition
 
 @state1:
 	ld c,$10
@@ -7259,12 +7259,12 @@ _fallingRock_subid01:
 
 
 ; Used by gorons when freeing elder?
-_fallingRock_subid02:
+fallingRock_subid02:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _fallingRock_initGraphicsAndIncState
+	call fallingRock_initGraphicsAndIncState
 	call interactionSetAlwaysUpdateBit
 	ld l,Interaction.var03
 	ld a,(hl)
@@ -7322,7 +7322,7 @@ _fallingRock_subid02:
 	or a
 	jp nz,interactionDelete
 
-_fallingRock_updateSpeedAndDeleteWhenLanded:
+fallingRock_updateSpeedAndDeleteWhenLanded:
 	ld c,$18
 	call objectUpdateSpeedZ_paramC
 	jp z,interactionDelete
@@ -7330,14 +7330,14 @@ _fallingRock_updateSpeedAndDeleteWhenLanded:
 
 
 ; A twinkle? angle is a value from 0-3, indicating a diagonal to move in.
-_fallingRock_subid03:
+fallingRock_subid03:
 	call checkInteractionState
-	jr nz,_fallingRock_subid03_state1
+	jr nz,fallingRock_subid03_state1
 
 @state0:
-	call _fallingRock_initGraphicsAndIncState
+	call fallingRock_initGraphicsAndIncState
 	call interactionSetAlwaysUpdateBit
-_fallingRock_initDiagonalAngle:
+fallingRock_initDiagonalAngle:
 	ld l,Interaction.angle
 	ld a,(hl)
 	ld bc,@diagonalAngles
@@ -7351,7 +7351,7 @@ _fallingRock_initDiagonalAngle:
 @diagonalAngles:
 	.db $04 $0c $14 $1c
 
-_fallingRock_subid03_state1:
+fallingRock_subid03_state1:
 	ld e,Interaction.animParameter
 	ld a,(de)
 	cp $ff
@@ -7361,17 +7361,17 @@ _fallingRock_subid03_state1:
 
 
 ; Blue/Red rock debris, moving straight on a diagonal? (angle from 0-3)
-_fallingRock_subid04:
-_fallingRock_subid05:
+fallingRock_subid04:
+fallingRock_subid05:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _fallingRock_initGraphicsAndIncState
+	call fallingRock_initGraphicsAndIncState
 	call interactionSetAlwaysUpdateBit
 	ld l,Interaction.counter1
 	ld (hl),$0c
-	jr _fallingRock_initDiagonalAngle
+	jr fallingRock_initDiagonalAngle
 @state1:
 	call interactionDecCounter1
 	jp z,interactionDelete
@@ -7380,12 +7380,12 @@ _fallingRock_subid05:
 
 
 ; Debris from pickaxe workers?
-_fallingRock_subid06:
+fallingRock_subid06:
 	call checkInteractionState
-	jp nz,_fallingRock_updateSpeedAndDeleteWhenLanded
+	jp nz,fallingRock_updateSpeedAndDeleteWhenLanded
 
 @state0:
-	call _fallingRock_initGraphicsAndIncState
+	call fallingRock_initGraphicsAndIncState
 	call interactionSetAlwaysUpdateBit
 	ld l,Interaction.var03
 	ld a,(hl)
@@ -7423,7 +7423,7 @@ _fallingRock_subid06:
 	.db $08 $18
 
 ;;
-_fallingRock_initGraphicsAndIncState:
+fallingRock_initGraphicsAndIncState:
 	call interactionInitGraphics
 	call objectSetVisiblec1
 	jp interactionIncState
@@ -7431,7 +7431,7 @@ _fallingRock_initGraphicsAndIncState:
 ;;
 ; Randomly choose a position from a list of possible positions. var03 determines which
 ; list it reads from?
-_fallingRock_chooseRandomPosition:
+fallingRock_chooseRandomPosition:
 	ld e,Interaction.var03
 	ld a,(de)
 	or a
@@ -7506,7 +7506,7 @@ interactionCode93:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _twinrova_state1
+	.dw twinrova_state1
 
 @state0:
 	ld e,Interaction.subid
@@ -7518,7 +7518,7 @@ interactionCode93:
 	ld a,(wTmpcfc0.genericCutscene.cfd0)
 	cp $08
 	ret nz
-	call _twinrova_loadGfx
+	call twinrova_loadGfx
 	jr ++
 
 @subid2AndUp:
@@ -7533,17 +7533,17 @@ interactionCode93:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _twinrova_initSubid00
-	.dw _twinrova_initOtherHalf
-	.dw _twinrova_initSubid02
-	.dw _twinrova_initOtherHalf
-	.dw _twinrova_initSubid04
-	.dw _twinrova_initOtherHalf
-	.dw _twinrova_initSubid06
-	.dw _twinrova_initOtherHalf
+	.dw twinrova_initSubid00
+	.dw twinrova_initOtherHalf
+	.dw twinrova_initSubid02
+	.dw twinrova_initOtherHalf
+	.dw twinrova_initSubid04
+	.dw twinrova_initOtherHalf
+	.dw twinrova_initSubid06
+	.dw twinrova_initOtherHalf
 
 ;;
-_twinrova_loadGfx:
+twinrova_loadGfx:
 	ld hl,wLoadedObjectGfx+10
 	ld b,$03
 	ld a,AGES_OBJ_GFXH_2c
@@ -7559,15 +7559,15 @@ _twinrova_loadGfx:
 	pop de
 	ret
 
-_twinrova_initSubid06:
+twinrova_initSubid06:
 	ld h,d
 	ld l,Interaction.var3a
 	ld (hl),$00
-	call _twinrova_loadScript
+	call twinrova_loadScript
 	ld bc,$4234
-	jr _twinrova_genericInitialize
+	jr twinrova_genericInitialize
 
-_twinrova_initSubid02:
+twinrova_initSubid02:
 	ld h,d
 	ld l,Interaction.var3a
 	ld (hl),$04
@@ -7575,20 +7575,20 @@ _twinrova_initSubid02:
 	ld (hl),$02
 	call objectSetInvisible
 	ld bc,$3850
-	jr _twinrova_genericInitialize
+	jr twinrova_genericInitialize
 
-_twinrova_initSubid04:
+twinrova_initSubid04:
 	ld h,d
 	ld l,Interaction.var38
 	ld (hl),$1e
 
-_twinrova_initSubid00:
+twinrova_initSubid00:
 	ld h,d
 	ld l,Interaction.var3a
 	ld (hl),$00
 	ld bc,$f888
 
-_twinrova_genericInitialize:
+twinrova_genericInitialize:
 	call interactionSetPosition
 	call interactionSetAlwaysUpdateBit
 	ld l,Interaction.oamFlags
@@ -7612,14 +7612,14 @@ _twinrova_genericInitialize:
 	inc l
 	ld (hl),d
 ++
-	call _twinrova_loadAngleAndCounterPreset
-	call _twinrova_updateDirectionFromAngle
+	call twinrova_loadAngleAndCounterPreset
+	call twinrova_updateDirectionFromAngle
 	ld a,SND_BEAM2
 	call playSound
 	jpab scriptHelp.objectWritePositionTocfd5
 
 ;;
-_twinrova_loadAngleAndCounterPreset:
+twinrova_loadAngleAndCounterPreset:
 	ld e,Interaction.var3a
 	ld a,(de)
 	ld b,a
@@ -7635,7 +7635,7 @@ _twinrova_loadAngleAndCounterPreset:
 ; @param[out]	b	Zero if end of data reached; nonzero otherwise.
 loadAngleAndCounterPreset:
 	ld a,b
-	ld hl,_presetInteractionAnglesAndCounters
+	ld hl,presetInteractionAnglesAndCounters
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -7661,7 +7661,7 @@ loadAngleAndCounterPreset:
 	ret
 
 ;;
-_twinrova_updateDirectionFromAngle:
+twinrova_updateDirectionFromAngle:
 	ld e,Interaction.angle
 	call convertAngleDeToDirection
 	and $03
@@ -7673,7 +7673,7 @@ _twinrova_updateDirectionFromAngle:
 
 
 ; Initialize odd subids (the half of twinrova that just follows along)
-_twinrova_initOtherHalf:
+twinrova_initOtherHalf:
 	call interactionSetAlwaysUpdateBit
 	ld l,Interaction.oamFlags
 	ld (hl),$01
@@ -7684,7 +7684,7 @@ _twinrova_initOtherHalf:
 
 ;;
 ; @param	h	Object to copy visiblility, direction, position from
-_twinrova_takeInvertedPositionFromObject:
+twinrova_takeInvertedPositionFromObject:
 	ld l,Interaction.visible
 	ld e,l
 	ld a,(hl)
@@ -7721,7 +7721,7 @@ _twinrova_takeInvertedPositionFromObject:
 
 
 ; This data contains "presets" for an interacton's angle and counter1.
-_presetInteractionAnglesAndCounters:
+presetInteractionAnglesAndCounters:
 	.dw @data0
 	.dw @data1
 	.dw @data2
@@ -7812,7 +7812,7 @@ _presetInteractionAnglesAndCounters:
 	.db $00 $00
 
 
-_twinrova_state1:
+twinrova_state1:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
@@ -7838,10 +7838,10 @@ _twinrova_state1:
 	call interactionAnimate
 	call objectApplySpeed
 	call interactionDecCounter1
-	call z,_twinrova_loadAngleAndCounterPreset
-	jp nz,_twinrova_updateDirectionFromAngle
+	call z,twinrova_loadAngleAndCounterPreset
+	jp nz,twinrova_updateDirectionFromAngle
 	call interactionIncSubstate
-	jp _twinrova_loadScript
+	jp twinrova_loadScript
 
 @subid00State1:
 	call interactionAnimate
@@ -7857,15 +7857,15 @@ _twinrova_state1:
 	ld (hl),$00
 	ld l,Interaction.var3a
 	inc (hl)
-	jp _twinrova_loadAngleAndCounterPreset
+	jp twinrova_loadAngleAndCounterPreset
 
 @subid00State2:
 	callab scriptHelp.objectWritePositionTocfd5
 	call interactionAnimate
 	call objectApplySpeed
 	call interactionDecCounter1
-	call z,_twinrova_loadAngleAndCounterPreset
-	jp nz,_twinrova_updateDirectionFromAngle
+	call z,twinrova_loadAngleAndCounterPreset
+	jp nz,twinrova_updateDirectionFromAngle
 	ld a,$09
 	ld (wTmpcfc0.genericCutscene.cfd0),a
 	jp interactionDelete
@@ -7877,7 +7877,7 @@ _twinrova_state1:
 	ld a,(hl)
 	or a
 	jp z,interactionDelete
-	jp _twinrova_takeInvertedPositionFromObject
+	jp twinrova_takeInvertedPositionFromObject
 
 @runSubid02:
 @runSubid04:
@@ -7905,7 +7905,7 @@ _twinrova_state1:
 	.dw @subid00State2
 
 ;;
-_twinrova_loadScript:
+twinrova_loadScript:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld hl,@scriptTable
@@ -7948,18 +7948,18 @@ interactionCode94:
 	ld a,(de)
 	ld e,Interaction.state
 	rst_jumpTable
-	.dw _patch_subid00
-	.dw _patch_subid01
-	.dw _patch_subid02
-	.dw _patch_subid03
-	.dw _patch_subid04
-	.dw _patch_subid05
-	.dw _patch_subid06
-	.dw _patch_subid07
+	.dw patch_subid00
+	.dw patch_subid01
+	.dw patch_subid02
+	.dw patch_subid03
+	.dw patch_subid04
+	.dw patch_subid05
+	.dw patch_subid06
+	.dw patch_subid07
 
 
 ; Patch in the upstairs room
-_patch_subid00:
+patch_subid00:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -8066,7 +8066,7 @@ _patch_subid00:
 
 
 ; Patch in his minigame room
-_patch_subid01:
+patch_subid01:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -8301,7 +8301,7 @@ _patch_subid01:
 
 
 ; The minecart in Patch's minigame
-_patch_subid02:
+patch_subid02:
 	ld a,(wActiveTriggers)
 	ld (wSwitchState),a
 	ld e,Interaction.state
@@ -8438,7 +8438,7 @@ _patch_subid02:
 ;   counter1: Number of beetles to be killed (starts at 4 or 8)
 ;   var3a: Set to 1 when another beetle should be spawned
 ;   var3b: Number of extra beetles spawned so far
-_patch_subid03:
+patch_subid03:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -8551,8 +8551,8 @@ _patch_subid03:
 
 
 ; Broken tuni nut (4) or sword (5) sprite
-_patch_subid04:
-_patch_subid05:
+patch_subid04:
+patch_subid05:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -8607,8 +8607,8 @@ _patch_subid05:
 
 
 ; Fixed tuni nut (6) or sword (7) sprite
-_patch_subid06:
-_patch_subid07:
+patch_subid06:
+patch_subid07:
 	call checkInteractionState
 	jr z,@state0
 
@@ -8813,10 +8813,10 @@ interactionCode97:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _interaction97_subid00
-	.dw _interaction97_subid01
+	.dw interaction97_subid00
+	.dw interaction97_subid01
 
-_interaction97_subid00:
+interaction97_subid00:
 	call checkInteractionState
 	jr z,@state0
 
@@ -8854,7 +8854,7 @@ _interaction97_subid00:
 	ret
 
 
-_interaction97_subid01:
+interaction97_subid01:
 	call checkInteractionState
 	jr z,@state0
 

@@ -10,7 +10,7 @@ func_4000:
 	ld a,SERIAL_WRAM_BANK
 	ldh (<SVBK),a
 	push de
-	call _func_4036
+	call func_4036
 	pop de
 	ldh a,(<SC)
 	rlca
@@ -35,25 +35,25 @@ func_4000:
 	ret
 
 
-_func_4036:
+func_4036:
 	ldh a,(<hFFBE)
 	rst_jumpTable
-	.dw _FFBE_00
-	.dw _FFBE_01
-	.dw _FFBE_02
-	.dw _FFBE_03
-	.dw _FFBE_04
+	.dw FFBE_00
+	.dw FFBE_01
+	.dw FFBE_02
+	.dw FFBE_03
+	.dw FFBE_04
 
 
-_func_4043:
-	call _waitForSerialByte
+func_4043:
+	call waitForSerialByte
 	cp $80
 	ret z
 
 
 ;;
 ; Send the byte [w4PacketBuffer+[w4PacketByteIndex]] over the link cable.
-_sendPacketByte:
+sendPacketByte:
 	ld a,(w4PacketByteIndex)
 	ld hl,w4PacketBuffer
 	rst_addAToHl
@@ -95,7 +95,7 @@ _sendPacketByte:
 	ret
 
 
-_func_4087:
+func_4087:
 	ldh a,(<hReceivedSerialByte)
 	or a
 	ret z
@@ -107,24 +107,24 @@ _func_4087:
 	ret
 
 
-_func_4096:
-	call _waitForSerialByte
+func_4096:
+	call waitForSerialByte
 	cp $80
 	jp z,disableSerialPort
-	jp _prepareForNextPacket
+	jp prepareForNextPacket
 
 ;;
-_disableSerialIfByteReceived:
-	call _waitForSerialByte
+disableSerialIfByteReceived:
+	call waitForSerialByte
 	jp disableSerialPort
 
 
 ;;
 ; If available, receive another byte and write it to w4PacketBuffer+[w4PacketByteIndex].
-_receivePacketByte:
+receivePacketByte:
 	xor a
 	ld ($d98b),a
-	call _waitForSerialByte
+	call waitForSerialByte
 	cp $80
 	ret z
 
@@ -195,75 +195,75 @@ _receivePacketByte:
 
 
 ; "game link" option, maybe also ring linking?
-_FFBE_04:
+FFBE_04:
 	ldh a,(<hSerialLinkState)
 	rst_jumpTable
-	.dw _gameLink_getFile1
-	.dw _waitForNextPacket
-	.dw _gameLink_getFile2
-	.dw _waitForNextPacket
-	.dw _gameLink_getFile3
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _func_4087
-	.dw _gameLinkState08
-	.dw _gameLinkState09
-	.dw _func_438e
-	.dw _gameLinkState0b
-	.dw _gameLinkState0c
-	.dw _gameLinkState0d
-	.dw _func_438e
-	.dw _gameLinkState0f
-	.dw _waitForNextPacket
-	.dw _func_4096
-	.dw _gameLinkState12
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _sendAckPacket
-	.dw _waitForNextPacket
-	.dw _func_4096
-	.dw _func_437b
+	.dw gameLink_getFile1
+	.dw waitForNextPacket
+	.dw gameLink_getFile2
+	.dw waitForNextPacket
+	.dw gameLink_getFile3
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw func_4087
+	.dw gameLinkState08
+	.dw gameLinkState09
+	.dw func_438e
+	.dw gameLinkState0b
+	.dw gameLinkState0c
+	.dw gameLinkState0d
+	.dw func_438e
+	.dw gameLinkState0f
+	.dw waitForNextPacket
+	.dw func_4096
+	.dw gameLinkState12
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw sendAckPacket
+	.dw waitForNextPacket
+	.dw func_4096
+	.dw func_437b
 
 
 ; Game is in "receive" mode (titlescreen or earlier)
-_FFBE_03:
+FFBE_03:
 	ldh a,(<hSerialLinkState)
 	rst_jumpTable
-	.dw _receiveLinkState00
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _receiveLinkState03
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _receiveLinkState06
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _sendAckPacket
-	.dw _waitForNextPacket
-	.dw _receiveLinkState0b
-	.dw _waitForNextPacket
-	.dw _disableSerialIfByteReceived
-	.dw _waitForNextPacket
-	.dw _func_4096
-	.dw _receiveLinkState10
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _receiveLinkState13
-	.dw _sendAckPacket
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _func_437b
+	.dw receiveLinkState00
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw receiveLinkState03
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw receiveLinkState06
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw sendAckPacket
+	.dw waitForNextPacket
+	.dw receiveLinkState0b
+	.dw waitForNextPacket
+	.dw disableSerialIfByteReceived
+	.dw waitForNextPacket
+	.dw func_4096
+	.dw receiveLinkState10
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw receiveLinkState13
+	.dw sendAckPacket
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw func_437b
 
 
-_receiveLinkState00:
+receiveLinkState00:
 	xor a
 	jr ++
 
-_receiveLinkState03:
+receiveLinkState03:
 	ld a,$01
 	jr ++
 
-_receiveLinkState06:
+receiveLinkState06:
 	ld a,$02
 ++
 	ldh (<hActiveFileSlot),a
@@ -273,8 +273,8 @@ _receiveLinkState06:
 ;;
 ; Sends the "header" of the file (information necessary to display the file, also the first $16
 ; bytes of data starting at $c600)
-_sendFileHeader:
-	call _prepareForNextPacket
+sendFileHeader:
+	call prepareForNextPacket
 	ld hl,w4PacketBuffer
 	ld a,$21
 	ldi (hl),a		; w4PacketBuffer
@@ -336,14 +336,14 @@ _sendFileHeader:
 	ldi (hl),a		; w4PacketBuffer+$20
 	ld a,$01
 	ld (w4WaitingForNextByte),a
-	jp _sendPacketByte
+	jp sendPacketByte
 
 
 ;;
 ; Returns from caller if no new byte has been read from the serial port.
 ;
 ; @param[out]	a	$80 if timeout occurred.
-_waitForSerialByte:
+waitForSerialByte:
 	ldh a,(<hReceivedSerialByte)
 	or a
 	jr nz,@byteReceived
@@ -370,7 +370,7 @@ _waitForSerialByte:
 	ldh (<hReceivedSerialByte),a
 	ldh (<hFFBD),a
 
-_setLinkTimerTo180:
+setLinkTimerTo180:
 	ld a,180
 	ld (w4FileLinkTimer),a
 	ld a,$00
@@ -378,39 +378,39 @@ _setLinkTimerTo180:
 	ret
 
 
-_FFBE_00:
-_FFBE_01:
+FFBE_00:
+FFBE_01:
 	ldh a,(<hSerialLinkState)
 	rst_jumpTable
-	.dw _sendFileHeader
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _func_4293
-	.dw _waitForNextPacket
-	.dw _func_4096
-	.dw _determineRingFortuneRing
+	.dw sendFileHeader
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw func_4293
+	.dw waitForNextPacket
+	.dw func_4096
+	.dw determineRingFortuneRing
 
 
-_FFBE_02:
+FFBE_02:
 	ldh a,(<hSerialLinkState)
 	rst_jumpTable
-	.dw _func_4293
-	.dw _waitForNextPacket
-	.dw _func_4096
-	.dw _sendFileHeader
-	.dw _waitForNextPacket
-	.dw _func_438e
-	.dw _determineRingFortuneRing
+	.dw func_4293
+	.dw waitForNextPacket
+	.dw func_4096
+	.dw sendFileHeader
+	.dw waitForNextPacket
+	.dw func_438e
+	.dw determineRingFortuneRing
 
 
 ;;
-_determineRingFortuneRing:
+determineRingFortuneRing:
 	call disableSerialPort
 	xor a
 	ldh (<hFFBD),a
 
 	; Can't do ring fortune if name & GameID of files are the same?
-	call _compareFileHeader
+	call compareFileHeader
 	jr z,@sameFileLineage
 
 	; Add high bytes of GameIDs together to determine which set of rings to pull from?
@@ -429,7 +429,7 @@ _determineRingFortuneRing:
 	inc l
 	ld c,(hl)
 	ld a,b
-	ld hl,_ringFortuneTable
+	ld hl,ringFortuneTable
 	rst_addAToHl
 	ld a,(hl)
 	rst_addAToHl
@@ -452,11 +452,11 @@ _determineRingFortuneRing:
 
 ;;
 ; Increment hSerialLinkState, clear various variables in preparation for a new packet?
-_prepareForNextPacket:
+prepareForNextPacket:
 	ldh a,(<hSerialLinkState)
 	inc a
 	ldh (<hSerialLinkState),a
-_func_426e:
+func_426e:
 	xor a
 	ld (w4PacketByteIndex),a
 	ldh (<hFFBD),a
@@ -464,35 +464,35 @@ _func_426e:
 	ld ($d984),a
 	inc a
 	ld (w4WaitingForNextByte),a
-	jr _setLinkTimerTo180
+	jr setLinkTimerTo180
 
 
 ;;
-_waitForNextPacket:
-	call _func_4043
-	call _returnIfPacketNotComplete
+waitForNextPacket:
+	call func_4043
+	call returnIfPacketNotComplete
 	ld a,(w4LinkRetryCounter)
 	or a
-	jr z,_prepareForNextPacket
+	jr z,prepareForNextPacket
 	ldh a,(<hSerialLinkState)
 	dec a
 	ldh (<hSerialLinkState),a
-	jr _func_426e
+	jr func_426e
 
 
 ;;
-_func_4293:
-	call _receivePacketByte
-	call _returnIfPacketNotComplete
+func_4293:
+	call receivePacketByte
+	call returnIfPacketNotComplete
 	ld hl,w4RingFortuneStuff
 	ld de,w4PacketBuffer+9
 	ld b,$07
 	call copyMemoryReverse
-	jp _sendAckPacket
+	jp sendAckPacket
 
 
 ;;
-_receiveLinkState0b:
+receiveLinkState0b:
 	ld a,(w4PacketByteIndex)
 	or a
 	ld a,$00
@@ -500,19 +500,19 @@ _receiveLinkState0b:
 	inc a
 +
 	ld (w4DisableLinkTimeout),a
-	call _receivePacketByte
+	call receivePacketByte
 	ld a,(w4WaitingForNextByte)
 	or a
 	ret nz
 	ld a,(w4PacketBuffer+1)
 	cp $c0
-	jr nz,_func_42c5
-	jp _sendAckPacket
+	jr nz,func_42c5
+	jp sendAckPacket
 
 
-_func_42c5:
+func_42c5:
 	cp $b0
-	jp nz,_sendRetryPacket
+	jp nz,sendRetryPacket
 	ld a,(w4PacketBuffer+2)
 	ldh (<hActiveFileSlot),a
 	cp $03
@@ -520,20 +520,20 @@ _func_42c5:
 	call loadFile
 	ld a,$0d
 	ldh (<hSerialLinkState),a
-	jp _sendAckPacket
+	jp sendAckPacket
 
 
-_receiveLinkState10:
-	call _prepareForNextPacket
+receiveLinkState10:
+	call prepareForNextPacket
 	ld hl,w4RingFortuneStuff
 	ld de,wRingsObtained
 	ld b,$08
 	call copyMemoryReverse
-	jr _func_4350
+	jr func_4350
 
 
-_gameLinkState08:
-	call _prepareForNextPacket
+gameLinkState08:
+	call prepareForNextPacket
 	ld hl,w4PacketBuffer
 	ld a,$03
 	ldi (hl),a
@@ -543,35 +543,35 @@ _gameLinkState08:
 	ld (hl),a
 	ld a,$01
 	ld (w4WaitingForNextByte),a
-	jp _sendPacketByte
+	jp sendPacketByte
 
 
-_gameLinkState09:
-_gameLinkState0d:
-	call _func_4043
-	call _returnIfPacketNotComplete
-	jp _prepareForNextPacket
+gameLinkState09:
+gameLinkState0d:
+	call func_4043
+	call returnIfPacketNotComplete
+	jp prepareForNextPacket
 
 
-_receiveLinkState13:
-	call _receivePacketByte
-	call _returnIfPacketNotComplete
+receiveLinkState13:
+	call receivePacketByte
+	call returnIfPacketNotComplete
 
 	; Check if previous packet's checksum failed
 	ldh a,(<hFFBD)
 	cp $81
-	jp z,_prepareForNextPacket
+	jp z,prepareForNextPacket
 
 	ld hl,w4RingFortuneStuff
 	ld de,w4PacketBuffer+1
 	ld b,$08
 	call copyMemoryReverse
-	jp _prepareForNextPacket
+	jp prepareForNextPacket
 
 
-_gameLinkState0f:
-	call _receivePacketByte
-	call _returnIfPacketNotComplete
+gameLinkState0f:
+	call receivePacketByte
+	call returnIfPacketNotComplete
 	ld hl,wRingsObtained
 	ld de,w4PacketBuffer+1
 	ld b,$08
@@ -587,12 +587,12 @@ _gameLinkState0f:
 	ld de,w4PacketBuffer+1
 	ld b,$08
 	call copyMemoryReverse
-	jp _sendAckPacket
+	jp sendAckPacket
 
 
-_gameLinkState12:
-	call _prepareForNextPacket
-_func_4350:
+gameLinkState12:
+	call prepareForNextPacket
+func_4350:
 	ld a,$0a
 	ld c,a
 	ld (w4PacketBuffer),a
@@ -611,17 +611,17 @@ _func_4350:
 	ld (de),a
 	ld a,$01
 	ld (w4WaitingForNextByte),a
-	jp _sendPacketByte
+	jp sendPacketByte
 
 
-_gameLinkState0b:
-	call _waitForSerialByte
+gameLinkState0b:
+	call waitForSerialByte
 	cp $80
 	jp z,disableSerialPort
 	jp disableSerialPort
 
 
-_func_437b:
+func_437b:
 	call disableSerialPort
 	ldh (<hFFBD),a
 	ld de,w4RingFortuneStuff
@@ -631,29 +631,29 @@ _func_437b:
 	jp saveFile
 
 
-_func_438e:
-	call _func_439a
-	call _returnIfPacketNotComplete
-	call _prepareForNextPacket
-	jp _func_4036
+func_438e:
+	call func_439a
+	call returnIfPacketNotComplete
+	call prepareForNextPacket
+	jp func_4036
 
 
-_func_439a:
-	call _receivePacketByte
+func_439a:
+	call receivePacketByte
 	ld a,(w4WaitingForNextByte)
 	or a
 	ret nz
 	ldh a,(<hFFBD)
 	or a
-	jr z,_func_43ab
+	jr z,func_43ab
 	pop af
 	jp disableSerialPort
 
 
-_func_43ab:
+func_43ab:
 	ld a,(w4PacketBuffer+1)
 	cp SERIAL_UPPER_NIBBLE + $a1
-	jr nz,_func_43bd
+	jr nz,func_43bd
 	xor a
 	ld (w4LinkRetryCounter),a
 	ldh a,(<hSerialLinkState)
@@ -662,7 +662,7 @@ _func_43ab:
 	ret
 
 
-_func_43bd:
+func_43bd:
 	cp SERIAL_UPPER_NIBBLE + $a0
 	ret z
 	ld a,$82
@@ -670,8 +670,8 @@ _func_43bd:
 	ret
 
 
-_gameLinkState0c:
-	call _prepareForNextPacket
+gameLinkState0c:
+	call prepareForNextPacket
 	ld hl,w4PacketBuffer
 	ld a,$04
 	ldi (hl),a
@@ -683,18 +683,18 @@ _gameLinkState0c:
 	ldi (hl),a
 	ld a,$01
 	ld (w4WaitingForNextByte),a
-	jp _sendPacketByte
+	jp sendPacketByte
 
 
 ;;
 ; This seems to be used when something fails and the game tries again?
-_sendRetryPacket:
-	ld hl,_retryPacket
+sendRetryPacket:
+	ld hl,retryPacket
 	ld a,(w4LinkRetryCounter)
 	inc a
 	ld (w4LinkRetryCounter),a
 	cp $05
-	jr c,_setPacketBuffer
+	jr c,setPacketBuffer
 	ld a,$80
 	ldh (<hFFBD),a
 	jp disableSerialPort
@@ -702,15 +702,15 @@ _sendRetryPacket:
 
 ;;
 ; TODO: I don't know if this actually represents an ACK
-_sendAckPacket:
+sendAckPacket:
 	xor a
 	ld (w4LinkRetryCounter),a
-	ld hl,_ackPacket
+	ld hl,ackPacket
 
 ;;
 ; @param	hl	Packet data to send (copied to w4PacketBuffer; 1st byte is size)
-_setPacketBuffer:
-	call _prepareForNextPacket
+setPacketBuffer:
+	call prepareForNextPacket
 	ld a,(hl)
 	ld b,a
 	ld de,w4PacketBuffer
@@ -720,27 +720,27 @@ _setPacketBuffer:
 	inc de
 	dec b
 	jr nz,-
-	jp _sendPacketByte
+	jp sendPacketByte
 
 
-_gameLink_getFile1:
+gameLink_getFile1:
 	ld a,$00
 	jr ++
 
-_gameLink_getFile2:
+gameLink_getFile2:
 	ld a,$01
 	jr ++
 
-_gameLink_getFile3:
+gameLink_getFile3:
 	ld a,$02
 ++
 	ldh (<hFF8B),a
-	call _receivePacketByte
-	call _returnIfPacketNotComplete
+	call receivePacketByte
+	call returnIfPacketNotComplete
 
 	ldh a,(<hFF8B) ; File index
 	ld hl,w4PacketBuffer+32
-	jr nz,_sendRetryPacket
+	jr nz,sendRetryPacket
 
 	; Copy file display variables to w4FileDisplayVariables + fileIndex * 8
 	swap a
@@ -792,15 +792,15 @@ _gameLink_getFile3:
 ; and not a hero game
 @ringLink:
 	ld de,w4PacketBuffer+9
-	call _compareFileIDsAndNames
-	jr nz,_markFileAsBlank
+	call compareFileIDsAndNames
+	jr nz,markFileAsBlank
 	ld hl,w4PacketBuffer+27 ; wFileIsLinkedGame
 	ldi a,(hl)
 	or (hl) ; w4PacketBuffer+28 (wFileIsHeroGame)
 	inc l
 	or (hl) ; w4PacketBuffer+29 (wFileIsCompleted)
-	jr z,_markFileAsBlank 
-	jp _sendAckPacket
+	jr z,markFileAsBlank
+	jp sendAckPacket
 
 
 ; Ignore file (mark as "blank") if wrong game, or if not completed
@@ -811,17 +811,17 @@ _gameLink_getFile3:
 .else
 	cp SERIAL_UPPER_NIBBLE + $91
 .endif
-	jr nz,_markFileAsBlank
+	jr nz,markFileAsBlank
 	ld a,(w4PacketBuffer+29) ; wFileIsCompleted
 	or a
-	jr z,_markFileAsBlank
-	jp _sendAckPacket
+	jr z,markFileAsBlank
+	jp sendAckPacket
 
 
 ;;
 ; This is used when the game chooses to ignore a file, ie. because it's not completed or the GameID
 ; is wrong.
-_markFileAsBlank:
+markFileAsBlank:
 	ldh a,(<hFF8B)
 	ld d,FileDisplayStruct.b0
 	swap a
@@ -839,7 +839,7 @@ _markFileAsBlank:
 	rst_addAToHl
 	ld b,$06
 	call clearMemory
-	jp _sendAckPacket
+	jp sendAckPacket
 
 ;;
 ; Called upon selecting "Game Link" in file select, and other things. "Initializes" linking?
@@ -861,7 +861,7 @@ func_44ac:
 	ldh (<hFFBE),a
 	ldh (<hSerialLinkState),a
 	ldh (<hFFBD),a
-	call _setLinkTimerTo180
+	call setLinkTimerTo180
 
 	ld a,SERIAL_UPPER_NIBBLE + $d1
 	ldh (<R_SB),a
@@ -878,7 +878,7 @@ func_44ac:
 ; This returns from the caller until a packet has been fully received, or there was an error?
 ;
 ; @param[out]	zflag	z on success; nz if there was a problem receiving the data.
-_returnIfPacketNotComplete:
+returnIfPacketNotComplete:
 	ld a,(w4WaitingForNextByte)
 	or a
 	jr z,++
@@ -891,21 +891,21 @@ _returnIfPacketNotComplete:
 
 	; Check if previous packet's checksum failed
 	cp $81
-	jp z,_sendRetryPacket
+	jp z,sendRetryPacket
 
 	pop af
 	jp disableSerialPort
 
 
 ;;
-_compareFileHeader:
+compareFileHeader:
 	ld de,w4RingFortuneStuff
 
 ;;
 ; @param	de	Pointer to first 7 bytes of some file data
 ;
 ; @param[out]	zflag	z if it matches the current file
-_compareFileIDsAndNames:
+compareFileIDsAndNames:
 	ld hl,wGameID
 	ld b,$07
 -
@@ -919,14 +919,14 @@ _compareFileIDsAndNames:
 	ret
 
 
-_ackPacket:
+ackPacket:
 	.db $03, SERIAL_UPPER_NIBBLE + $a0, SERIAL_UPPER_NIBBLE + $a3
 
-_retryPacket:
+retryPacket:
 	.db $03, SERIAL_UPPER_NIBBLE + $a1, SERIAL_UPPER_NIBBLE + $a4
 
 
-_ringFortuneTable:
+ringFortuneTable:
 	.db @rings0 - CADDR
 	.db @rings1 - CADDR
 	.db @rings2 - CADDR

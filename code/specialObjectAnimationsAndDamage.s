@@ -9,11 +9,11 @@ specialObjectSetAnimationWithLinkData:
 	ld c,a
 	ld b,$00
 	ld a,(w1Link.id)
-	jr _label_06_032
+	jr label_06_032
 
 ;;
 ; Same as "specialObjectAnimate" in bank 0, but optimized for this bank?
-_specialObjectAnimate:
+specialObjectAnimate_optimized:
 	ld h,d
 	ld l,SpecialObject.animCounter
 	dec (hl)
@@ -31,7 +31,7 @@ specialObjectSetAnimation_body:
 	ld e,SpecialObject.id
 	ld a,(de)
 
-_label_06_032:
+label_06_032:
 	ld hl,specialObjectAnimationTable
 	rst_addDoubleIndex
 	ldi a,(hl)
@@ -92,7 +92,7 @@ loadLinkAndCompanionAnimationFrame_body:
 	rlca
 	jr nc,++
 
-	call _func_4553
+	call func_4553
 	ld a,(w1Link.id)
 	ld hl,@data
 	rst_addAToHl
@@ -124,7 +124,7 @@ loadLinkAndCompanionAnimationFrame_body:
 	ret z
 
 	ld (hl),a
-	call _getSpecialObjectGraphicsFrame
+	call getSpecialObjectGraphicsFrame
 	ret z
 
 	ld e,SpecialObject.id
@@ -163,7 +163,7 @@ loadLinkAndCompanionAnimationFrame_body:
 ; @param[out]	c	Bank of graphics
 ; @param[out]	hl	Address of graphics
 ; @param[out]	zflag	Set if there are no graphics to load.
-_getSpecialObjectGraphicsFrame:
+getSpecialObjectGraphicsFrame:
 	ld c,a
 	ld b,$00
 	ld d,h
@@ -229,7 +229,7 @@ _getSpecialObjectGraphicsFrame:
 ;;
 ; @param[out]	b	Frame index to use (not accounting for direction)
 ;
-_func_4553:
+func_4553:
 	ld a,(w1Link.id)
 	or a
 	jr z,+
