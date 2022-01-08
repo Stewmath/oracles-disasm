@@ -12141,7 +12141,7 @@ dismountCompanionAndSetRememberedPositionToScreenCenter:
 seasonsFunc_331b:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 seasonsFunc_0f_6f75
+	callfrombank0 bank0f.seasonsFunc_0f_6f75
 	pop af
 	setrombank
 	ret
@@ -12151,8 +12151,8 @@ seasonsFunc_332f:
 	push af
 	ld a,$0f
 	setrombank
-	call seasonsFunc_0f_704d
-	call seasonsFunc_0f_7182
+	call bank0f.seasonsFunc_0f_704d
+	call bank0f.seasonsFunc_0f_7182
 	pop af
 	setrombank
 	ret
@@ -12283,7 +12283,7 @@ seasonsFunc_34a0:
 	callfrombank0 updateEnemies
 	callfrombank0 partCode.updateParts
 	callfrombank0 updateInteractions
-	callfrombank0 seasonsFunc_0f_7159
+	callfrombank0 bank0f.seasonsFunc_0f_7159
 
 	ld a,:bank6.updateGrabbedObjectPosition
 	setrombank
@@ -12293,7 +12293,7 @@ seasonsFunc_34a0:
 
 	call loadLinkAndCompanionAnimationFrame
 	callfrombank0 itemCode.updateItemsPost
-	callfrombank0 seasonsFunc_0f_7182
+	callfrombank0 bank0f.seasonsFunc_0f_7182
 	callfrombank0 tilesets.updateChangedTileQueue
 
 	xor a

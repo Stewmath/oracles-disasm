@@ -3379,7 +3379,7 @@ interactionCodea1:
 .ifdef ROM_AGES
 	ld hl,bank0e.movingSidescrollPlatformScriptTable
 .else
-	ld hl,movingSidescrollPlatformScriptTable
+	ld hl,bank0d.movingSidescrollPlatformScriptTable
 .endif
 	call objectLoadMovementScript
 	call interactionInitGraphics
@@ -3508,7 +3508,7 @@ interactionCodea2:
 .ifdef ROM_AGES
 	ld hl,bank0e.movingSidescrollConveyorScriptTable
 .else
-	ld hl,movingSidescrollConveyorScriptTable
+	ld hl,bank0d.movingSidescrollConveyorScriptTable
 .endif
 	call objectLoadMovementScript
 	call interactionInitGraphics

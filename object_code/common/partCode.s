@@ -1499,7 +1499,7 @@ partCode0b:
 .ifdef ROM_AGES
 	ld hl,bank0e.orbMovementScript
 .else
-	ld hl,orbMovementScript
+	ld hl,bank0d.orbMovementScript
 .endif
 	call objectLoadMovementScript
 
