@@ -4,15 +4,15 @@
 fileManagementFunction:
 	ld a,c
 	rst_jumpTable
-	.dw _initializeFile
-	.dw _saveFile
-	.dw _loadFile
-	.dw _eraseFile
+	.dw initializeFile
+	.dw saveFile
+	.dw loadFile
+	.dw eraseFile
 
 ;;
-_initializeFile:
-	ld hl,_initialFileVariables
-	call _initializeFileVariables
+initializeFile:
+	ld hl,initialFileVariables
+	call initializeFileVariables
 
 	; Load in a: wFileIsHeroGame (bit 1), wFileIsLinkedGame (bit 0)
 	ld hl,wFileIsHeroGame
@@ -22,12 +22,12 @@ _initializeFile:
 	push af
 
 	; Initialize data differently based on whether it's a linked or hero game
-	ld hl,_initialFileVariablesTable
+	ld hl,initialFileVariablesTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	call _initializeFileVariables
+	call initializeFileVariables
 
 	; Clear unappraised rings
 	pop af
@@ -62,7 +62,7 @@ _initializeFile:
 ;;
 ; In addition to saving, this is called after creating a file, as well as when it's about
 ; to be loaded (for some reason)
-_saveFile:
+saveFile:
 	; Write $01 here for "ages", $00 for "seasons"
 	ld hl,wWhichGame
 .ifdef ROM_AGES
@@ -73,58 +73,58 @@ _saveFile:
 
 	; String to verify save integrity (unique between ages/seasons)
 	ld hl,wSavefileString
-	ld de,_saveVerificationString
+	ld de,saveVerificationString
 	ld b,$08
 	call copyMemoryReverse
 
 	; Calculate checksum
 	ld l,<wFileStart
-	call _calculateFileChecksum
+	call calculateFileChecksum
 	ld (hl),e
 	inc l
 	ld (hl),d
 
 	; Save file
 	ld l,<wFileStart
-	call _getFileAddress1
+	call getFileAddress1
 	ld e,c
 	ld d,b
-	call _copyFileFromHlToDe
+	call copyFileFromHlToDe
 
 	; Save file to backup slot?
-	call _getFileAddress2
+	call getFileAddress2
 	ld e,c
 	ld d,b
-	call _copyFileFromHlToDe
+	call copyFileFromHlToDe
 
 	; Redundant?
-	jr _verifyFileCopies
+	jr verifyFileCopies
 
 ;;
-_loadFile:
-	call _verifyFileCopies
+loadFile:
+	call verifyFileCopies
 	push af
 	or a
 	jr nz,+
 
-	call _getFileAddress1
+	call getFileAddress1
 	jr ++
 +
-	call _getFileAddress2
+	call getFileAddress2
 ++
 	ld l,c
 	ld h,b
 	ld de,wFileStart
-	call _copyFileFromHlToDe
+	call copyFileFromHlToDe
 	pop af
 	ret
 
 ;;
-_eraseFile:
-	call _getFileAddress1
+eraseFile:
+	call getFileAddress1
 	call @clearFile
 
-	call _getFileAddress2
+	call getFileAddress2
 ;;
 ; @param bc
 @clearFile:
@@ -132,14 +132,14 @@ _eraseFile:
 	ld ($1111),a
 	ld l,c
 	ld h,b
-	call _clearFileAtHl
+	call clearFileAtHl
 	xor a
 	ld ($1111),a
 	ret
 
 ;;
 ; Clear $0550 bytes at hl
-_clearFileAtHl:
+clearFileAtHl:
 	ld bc,$0550
 	jp clearMemoryBc
 
@@ -148,18 +148,18 @@ _clearFileAtHl:
 ; If one is valid but not the other, this also updates the invalid copy with the valid
 ; copy's data.
 ; @param[out] a $01 if copy 2 was valid while copy 1 wasn't
-_verifyFileCopies:
-	call _getFileAddress2
+verifyFileCopies:
+	call getFileAddress2
 	ld l,c
 	ld h,b
-	call _verifyFileAtHl
+	call verifyFileAtHl
 	and $01
 	push af
 
-	call _getFileAddress1
+	call getFileAddress1
 	ld l,c
 	ld h,b
-	call _verifyFileAtHl
+	call verifyFileAtHl
 	pop bc
 	rl b
 
@@ -173,13 +173,13 @@ _verifyFileCopies:
 
 ;;
 @copy2Invalid:
-	call _getFileAddress2
+	call getFileAddress2
 	ld e,c
 	ld d,b
-	call _getFileAddress1
+	call getFileAddress1
 	ld l,c
 	ld h,b
-	call _copyFileFromHlToDe
+	call copyFileFromHlToDe
 
 ;;
 @bothCopiesValid:
@@ -188,13 +188,13 @@ _verifyFileCopies:
 
 ;;
 @copy1Invalid:
-	call _getFileAddress1
+	call getFileAddress1
 	ld e,c
 	ld d,b
-	call _getFileAddress2
+	call getFileAddress2
 	ld l,c
 	ld h,b
-	call _copyFileFromHlToDe
+	call copyFileFromHlToDe
 	ld a,$01
 	ret
 
@@ -207,7 +207,7 @@ _verifyFileCopies:
 ; Copy a file ($0550 bytes) from hl to de.
 ; @param de Destination address
 ; @param hl Source address
-_copyFileFromHlToDe:
+copyFileFromHlToDe:
 	push hl
 	ld a,$0a
 	ld ($1111),a
@@ -222,13 +222,13 @@ _copyFileFromHlToDe:
 ; @param hl Address of file
 ; @param[out] a Equals $ff if verification failed
 ; @param[out] cflag Set if verification failed
-_verifyFileAtHl:
+verifyFileAtHl:
 	push hl
 	ld a,$0a
 	ld ($1111),a
 
 	; Verify checksum
-	call _calculateFileChecksum
+	call calculateFileChecksum
 	ldi a,(hl)
 	cp e
 	jr nz,@verifyFailed
@@ -237,7 +237,7 @@ _verifyFileAtHl:
 	jr nz,@verifyFailed
 
 	; Verify the savefile string
-	ld de,_saveVerificationString
+	ld de,saveVerificationString
 	ld b,$08
 @nextChar:
 	ld a,(de)
@@ -261,7 +261,7 @@ _verifyFileAtHl:
 @verifyFailed:
 	pop hl
 	push hl
-	call _clearFileAtHl
+	call clearFileAtHl
 	ld b,$ff
 	jr @verifyDone
 
@@ -269,7 +269,7 @@ _verifyFileAtHl:
 ; Calculate a checksum over $550 bytes (excluding the first 2) for a save file
 ; @param hl Address to start at
 ; @param[out] de Checksum
-_calculateFileChecksum:
+calculateFileChecksum:
 	push hl
 	ld a,$02
 	rst_addAToHl
@@ -294,7 +294,7 @@ _calculateFileChecksum:
 ; Get the first address of the save data
 ; @param hActiveFileSlot Save slot
 ; @param[out] bc Address
-_getFileAddress1:
+getFileAddress1:
 	ld c,$00
 	jr +
 
@@ -302,7 +302,7 @@ _getFileAddress1:
 ; Get the second (backup?) address of the save data
 ; @param hActiveFileSlot Save slot
 ; @param[out] bc Address
-_getFileAddress2:
+getFileAddress2:
 	ld c,$03
 +
 	push hl
@@ -326,9 +326,9 @@ _getFileAddress2:
 	.dw $baa0
 
 ;;
-; @param hl Address of initial values (should point to _initialFileVariables or some
+; @param hl Address of initial values (should point to initialFileVariables or some
 ; variant)
-_initializeFileVariables:
+initializeFileVariables:
 	ld d,>wc600Block
 --
 	ldi a,(hl)
@@ -344,14 +344,14 @@ _initializeFileVariables:
 
 ; Table to distinguish initial file data based on whether it's a standard, linked, or hero
 ; game.
-_initialFileVariablesTable:
-	.dw _initialFileVariables_standardGame
-	.dw _initialFileVariables_linkedGame
-	.dw _initialFileVariables_heroGame
-	.dw _initialFileVariables_linkedGame
+initialFileVariablesTable:
+	.dw initialFileVariables_standardGame
+	.dw initialFileVariables_linkedGame
+	.dw initialFileVariables_heroGame
+	.dw initialFileVariables_linkedGame
 
 ; Initial values for variables in the c6xx block.
-_initialFileVariables:
+initialFileVariables:
 	.db <wTextSpeed				$02
 	.db <wc608				$01
 	.db <wLinkName+5			$00 ; Ensure names have null terminator
@@ -382,13 +382,13 @@ _initialFileVariables:
 	.db $00
 
 ; Standard game (not linked or hero)
-_initialFileVariables_standardGame:
+initialFileVariables_standardGame:
 	.db <wLinkHealth			$0c
 	.db <wLinkMaxHealth			$0c
 	; Continue reading the following data
 
 ; Hero game (not linked+hero game)
-_initialFileVariables_heroGame:
+initialFileVariables_heroGame:
 	.db <wChildStatus			$00
 	.db <wShieldLevel			$01
 .ifdef ROM_AGES
@@ -399,7 +399,7 @@ _initialFileVariables_heroGame:
 	.db $00
 
 ; Linked game, or linked+hero game
-_initialFileVariables_linkedGame:
+initialFileVariables_linkedGame:
 	.db <wSwordLevel			$01
 	.db <wShieldLevel			$01
 	.db <wInventoryStorage			ITEMID_SWORD
@@ -411,7 +411,7 @@ _initialFileVariables_linkedGame:
 	.db $00
 
 ; This string is different in ages and seasons.
-_saveVerificationString:
+saveVerificationString:
 .ifdef ROM_AGES
 	.ASC "Z21216-0"
 .else

@@ -6,15 +6,15 @@ interactionCode11:
 	ld a,(de)
 	and $0f
 	rst_jumpTable
-	.dw _interac11_subid00
-	.dw _interac11_subid01
+	.dw interac11_subid00
+	.dw interac11_subid01
 
 
 ; Subid 0 is the "parent" which controls the cutscene and the "children" (subid 1).
 ; The parent uses 2 variables to control the children:
 ;   * [$cfd8] is the distance away from the center of the circle the sparkles should be.
 ;   * [$cfd9] is set to 1 when the sparkles should start moving off-screen.
-_interac11_subid00:
+interac11_subid00:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -133,7 +133,7 @@ _interac11_subid00:
 
 
 ; Subid 1 is a "sparkle" which is controlled by the parent, subid 0.
-_interac11_subid01:
+interac11_subid01:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable

@@ -2,13 +2,13 @@
 ; ENEMYID_IRON_MASK
 ; ==============================================================================
 enemyCode1c:
-	call _ecom_checkHazards
+	call ecom_checkHazards
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
 	jp z,enemyDie
 	dec a
-	jp nz,_ecom_updateKnockbackAndCheckHazards
+	jp nz,ecom_updateKnockbackAndCheckHazards
 
 	; Delete detached mask when it touches Link (if being pulled with magnet gloves)
 	ld e,Enemy.subid
@@ -26,29 +26,29 @@ enemyCode1c:
 	jp enemyDelete
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,@subidTable
 
 @commonState:
 	rst_jumpTable
-	.dw _ironMask_state_uninitialized
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_switchHook
-	.dw _ironMask_state_stub
-	.dw _ecom_blownByGaleSeedState
-	.dw _ironMask_state_stub
-	.dw _ironMask_state_stub
+	.dw ironMask_state_uninitialized
+	.dw ironMask_state_stub
+	.dw ironMask_state_stub
+	.dw ironMask_state_switchHook
+	.dw ironMask_state_stub
+	.dw ecom_blownByGaleSeedState
+	.dw ironMask_state_stub
+	.dw ironMask_state_stub
 
 @subidTable:
 	ld a,b
 	rst_jumpTable
-	.dw _ironMask_subid00
-	.dw _ironMask_subid01
+	.dw ironMask_subid00
+	.dw ironMask_subid01
 
-_ironMask_state_uninitialized:
+ironMask_state_uninitialized:
 	ld a,SPEED_80
-	call _ecom_setSpeedAndState8AndVisible
+	call ecom_setSpeedAndState8AndVisible
 
 	ld l,Enemy.counter1
 	inc (hl)
@@ -64,7 +64,7 @@ _ironMask_state_uninitialized:
 	jp enemySetAnimation
 
 
-_ironMask_state_switchHook:
+ironMask_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -86,7 +86,7 @@ _ironMask_state_switchHook:
 	jr z,@dontRemoveMask
 
 	ld b,ENEMYID_IRON_MASK
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	jr nz,@dontRemoveMask
 
 	ld l,Enemy.knockbackCounter
@@ -120,7 +120,7 @@ _ironMask_state_switchHook:
 ++
 	ld e,Enemy.counter1
 	ld (de),a
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @substate1:
 @substate2:
@@ -130,27 +130,27 @@ _ironMask_state_switchHook:
 	ld e,Enemy.subid
 	ld a,(de)
 	or a
-	jp nz,_ecom_fallToGroundAndSetState8
+	jp nz,ecom_fallToGroundAndSetState8
 
 	ld e,Enemy.enemyCollisionMode
 	ld a,(de)
 	cp ENEMYCOLLISION_IRON_MASK
-	jp nz,_ecom_fallToGroundAndSetState8
+	jp nz,ecom_fallToGroundAndSetState8
 
 	ld b,$0a
-	call _ecom_fallToGroundAndSetState
+	call ecom_fallToGroundAndSetState
 
 	ld l,Enemy.collisionType
 	res 7,(hl)
 	ret
 
 
-_ironMask_state_stub:
+ironMask_state_stub:
 	ret
 
 
 ; Iron mask (with or without mask on)
-_ironMask_subid00:
+ironMask_subid00:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -164,31 +164,31 @@ _ironMask_subid00:
 
 ; Standing in place
 @state8:
-	call _ironMask_magnetGloveCheck
-	call _ecom_decCounter1
-	jp nz,_ironMask_updateCollisionsFromLinkRelativeAngle
+	call ironMask_magnetGloveCheck
+	call ecom_decCounter1
+	jp nz,ironMask_updateCollisionsFromLinkRelativeAngle
 	ld l,Enemy.state
 	inc (hl) ; [state]
-	call _ironMask_chooseRandomAngleAndCounter1
+	call ironMask_chooseRandomAngleAndCounter1
 
 ; Moving in some direction for [counter1] frames
 @state9:
-	call _ironMask_magnetGloveCheck
-	call _ecom_decCounter1
+	call ironMask_magnetGloveCheck
+	call ecom_decCounter1
 	jr nz,++
 	ld l,Enemy.state
 	dec (hl) ; [state]
-	call _ironMask_chooseAmountOfTimeToStand
+	call ironMask_chooseAmountOfTimeToStand
 ++
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
-	call _ironMask_updateCollisionsFromLinkRelativeAngle
+	call ecom_applyVelocityForSideviewEnemyNoHoles
+	call ironMask_updateCollisionsFromLinkRelativeAngle
 	jp enemyAnimate
 
 ; This enemy has turned into the mask that was removed, using the switch hook; will delete self
 ; after [counter1] frames.
 @stateA:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	jp enemyDelete
 
 ; This enemy has turned into the mask being pulled off with magnet gloves
@@ -208,7 +208,7 @@ _ironMask_subid00:
 	ld a,(wMagnetGloveState)
 	or a
 	jr z,+
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	jp objectApplySpeed
 +
 	ld h,d
@@ -218,23 +218,23 @@ _ironMask_subid00:
 	ld (hl),30
 
 @stateD:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	jp enemyDelete
 
 
 ; Iron mask without mask on
-_ironMask_subid01:
-	call _ecom_decCounter1
-	call z,_ironMask_chooseRandomAngleAndCounter1
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+ironMask_subid01:
+	call ecom_decCounter1
+	call z,ironMask_chooseRandomAngleAndCounter1
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jp enemyAnimate
 
 
 ;;
 ; Modifies this object's enemyCollisionMode based on if Link is directly behind the iron
 ; mask or not.
-_ironMask_updateCollisionsFromLinkRelativeAngle:
+ironMask_updateCollisionsFromLinkRelativeAngle:
 	call objectGetAngleTowardEnemyTarget
 	ld h,d
 	ld l,Enemy.angle
@@ -252,9 +252,9 @@ _ironMask_updateCollisionsFromLinkRelativeAngle:
 
 
 ;;
-_ironMask_chooseRandomAngleAndCounter1:
+ironMask_chooseRandomAngleAndCounter1:
 	ld bc,$0703
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld a,b
 	ld hl,@counter1Vals
 	rst_addAToHl
@@ -266,7 +266,7 @@ _ironMask_chooseRandomAngleAndCounter1:
 	ld e,Enemy.subid
 	ld a,(de)
 	or a
-	jp nz,_ecom_setRandomCardinalAngle
+	jp nz,ecom_setRandomCardinalAngle
 
 	; Masked version only: 1 in 4 chance of turning directly toward Link, otherwise just choose
 	; a random angle
@@ -283,14 +283,14 @@ _ironMask_chooseRandomAngleAndCounter1:
 @chooseAngle:
 	ld a,c
 	or a
-	jp z,_ecom_updateCardinalAngleTowardTarget
-	jp _ecom_setRandomCardinalAngle
+	jp z,ecom_updateCardinalAngleTowardTarget
+	jp ecom_setRandomCardinalAngle
 
 @counter1Vals:
 	.db 25, 30, 35, 40, 45, 50, 55, 60
 
 ;;
-_ironMask_chooseAmountOfTimeToStand:
+ironMask_chooseAmountOfTimeToStand:
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld hl,@counter1Vals
@@ -304,7 +304,7 @@ _ironMask_chooseAmountOfTimeToStand:
 	.db 15, 30, 45, 60
 
 
-_ironMask_magnetGloveCheck:
+ironMask_magnetGloveCheck:
 	ld a,(wMagnetGloveState)
 	or a
 	jr z,+
@@ -356,6 +356,6 @@ _ironMask_magnetGloveCheck:
 
 	; Spawn the maskless version of the enemy
 	ld b,ENEMYID_IRON_MASK
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 	jp objectCopyPosition

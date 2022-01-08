@@ -9,163 +9,163 @@
 ; @param hl Current address of script
 runScriptCommand:
 	bit 7,a
-	jp z,_scriptCmd_jump
+	jp z,scriptCmd_jump
 	push hl
 	and $7f
 	rst_jumpTable
-	.dw _scriptCmd_setState ; 0x80
-	.dw _scriptCmd_setSubstate ; 0x81
-	.dw _scriptCmd_jump ; 0x82
+	.dw scriptCmd_setState ; 0x80
+	.dw scriptCmd_setSubstate ; 0x81
+	.dw scriptCmd_jump ; 0x82
 	.dw scriptCmd_loadScript ; 0x83
-	.dw _scriptCmd_spawnInteraction ; 0x84
-	.dw _scriptCmd_spawnEnemy ; 0x85
-	.dw _scriptCmd_showPasswordScreen ; 0x86
-	.dw _scriptCmd_jumpTable_memoryAddress ; 0x87
-	.dw _scriptCmd_setCoords ; 0x88
-	.dw _scriptCmd_setAngle ; 0x89
-	.dw _scriptCmd_8a ; 0x8a
-	.dw _scriptCmd_setSpeed ; 0x8b
-	.dw _scriptCmd_checkCounter2ZeroAndReset ; 0x8c
-	.dw _scriptCmd_setCollideRadii ; 0x8d
-	.dw _scriptCmd_writeInteractionByte ; 0x8e
-	.dw _scriptCmd_loadSprite ; 0x8f
-	.dw _scriptCmd_cpLinkX ; 0x90
-	.dw _scriptCmd_writeMemory ; 0x91
-	.dw _scriptCmd_orMemory ; 0x92
-	.dw _scriptCmd_getRandomBits ; 0x93
-	.dw _scriptCmd_addinteractionByte ; 0x94
-	.dw _scriptCmd_setZSpeed ; 0x95
-	.dw _scriptCmd_setAngleAndExtra ; 0x96
-	.dw _scriptCmd_runGenericNpc ; 0x97
-	.dw _scriptCmd_showText ; 0x98
-	.dw _scriptCmd_waitForText ; 0x99
-	.dw _scriptCmd_showTextNonExitable ; 0x9a
-	.dw _scriptCmd_checkSomething ; 0x9b
-	.dw _scriptCmd_setTextID ; 0x9c
-	.dw _scriptCmd_showLoadedText ; 0x9d
-	.dw _scriptCmd_checkAButton ; 0x9e
-	.dw _scriptCmd_showTextDifferentForLinked ; 0x9f
-	.dw _scriptCmd_checkCFC0Bit ; 0xa0
-	.dw _scriptCmd_checkCFC0Bit ; 0xa1
-	.dw _scriptCmd_checkCFC0Bit ; 0xa2
-	.dw _scriptCmd_checkCFC0Bit ; 0xa3
-	.dw _scriptCmd_checkCFC0Bit ; 0xa4
-	.dw _scriptCmd_checkCFC0Bit ; 0xa5
-	.dw _scriptCmd_checkCFC0Bit ; 0xa6
-	.dw _scriptCmd_checkCFC0Bit ; 0xa7
-	.dw _scriptCmd_xorCFC0Bit ; 0xa8
-	.dw _scriptCmd_xorCFC0Bit ; 0xa9
-	.dw _scriptCmd_xorCFC0Bit ; 0xaa
-	.dw _scriptCmd_xorCFC0Bit ; 0xab
-	.dw _scriptCmd_xorCFC0Bit ; 0xac
-	.dw _scriptCmd_xorCFC0Bit ; 0xad
-	.dw _scriptCmd_xorCFC0Bit ; 0xae
-	.dw _scriptCmd_xorCFC0Bit ; 0xaf
-	.dw _scriptCmd_jumpIfRoomFlagSet ; 0xb0
-	.dw _scriptCmd_orRoomFlags ; 0xb1
-	.dw _scriptCmd_none ; 0xb2
-	.dw _scriptCmd_jumpIfC6xxSet ; 0xb3
-	.dw _scriptCmd_writeC6xx ; 0xb4
-	.dw _scriptCmd_jumpIfGlobalFlagSet ; 0xb5
-	.dw _scriptCmd_setOrUnsetGlobalFlag ; 0xb6
-	.dw _scriptCmd_none ; 0xb7
-	.dw _scriptCmd_setLinkCantMoveTo91 ; 0xb8
-	.dw _scriptCmd_setLinkCantMoveTo00 ; 0xb9
-	.dw _scriptCmd_setLinkCantMoveTo11 ; 0xba
-	.dw _scriptCmd_disableMenu ; 0xbb
-	.dw _scriptCmd_enableMenu ; 0xbc
-	.dw _scriptCmd_disableInput ; 0xbd
-	.dw _scriptCmd_enableInput ; 0xbe
-	.dw _scriptCmd_none ; 0xbf
-	.dw _scriptCmd_callScript ; 0xc0
-	.dw _scriptCmd_ret ; 0xc1
-	.dw _scriptCmd_none ; 0xc2
-	.dw _scriptCmd_jumpIfCBA5Eq ; 0xc3
-	.dw _scriptCmd_jumpRandom ; 0xc4
-	.dw _scriptCmd_none ; 0xc5
-	.dw _scriptCmd_jumpTable ; 0xc6
-	.dw _scriptCmd_jumpIfMemorySet ; 0xc7
-	.dw _scriptCmd_jumpIfSomething ; 0xc8
-	.dw _scriptCmd_jumpIfNoEnemies ; 0xc9
-	.dw _scriptCmd_jumpIfLinkVariableNe ; 0xca
-	.dw _scriptCmd_jumpIfMemoryEq ; 0xcb
-	.dw _scriptCmd_jumpIfInteractionByteEq ; 0xcc
-	.dw _scriptCmd_stopIfItemFlagSet ; 0xcd
-	.dw _scriptCmd_stopIfRoomFlag40Set ; 0xce
-	.dw _scriptCmd_stopIfRoomFlag80Set ; 0xcf
-	.dw _scriptCmd_checkCollidedWithLink_onGround ; 0xd0
-	.dw _scriptCmd_checkPaletteFadeDone ; 0xd1
-	.dw _scriptCmd_checkNoEnemies ; 0xd2
-	.dw _scriptCmd_checkFlagSet ; 0xd3
-	.dw _scriptCmd_checkInteractionByteEq ; 0xd4
-	.dw _scriptCmd_checkMemoryEq ; 0xd5
-	.dw _scriptCmd_checkNotCollidedWithLink_ignoreZ ; 0xd6
-	.dw _scriptCmd_setCounter1 ; 0xd7
-	.dw _scriptCmd_checkCounter2Zero ; 0xd8
-	.dw _scriptCmd_checkHeartDisplayUpdated ; 0xd9
-	.dw _scriptCmd_checkRupeeDisplayUpdated ; 0xda
-	.dw _scriptCmd_checkCollidedWithLink_ignoreZ ; 0xdb
-	.dw _scriptCmd_none ; 0xdc
-	.dw _scriptCmd_spawnItem ; 0xdd
-	.dw _scriptCmd_spawnItem ; 0xde
-	.dw _scriptCmd_df ; 0xdf
+	.dw scriptCmd_spawnInteraction ; 0x84
+	.dw scriptCmd_spawnEnemy ; 0x85
+	.dw scriptCmd_showPasswordScreen ; 0x86
+	.dw scriptCmd_jumpTable_memoryAddress ; 0x87
+	.dw scriptCmd_setCoords ; 0x88
+	.dw scriptCmd_setAngle ; 0x89
+	.dw scriptCmd_8a ; 0x8a
+	.dw scriptCmd_setSpeed ; 0x8b
+	.dw scriptCmd_checkCounter2ZeroAndReset ; 0x8c
+	.dw scriptCmd_setCollideRadii ; 0x8d
+	.dw scriptCmd_writeInteractionByte ; 0x8e
+	.dw scriptCmd_loadSprite ; 0x8f
+	.dw scriptCmd_cpLinkX ; 0x90
+	.dw scriptCmd_writeMemory ; 0x91
+	.dw scriptCmd_orMemory ; 0x92
+	.dw scriptCmd_getRandomBits ; 0x93
+	.dw scriptCmd_addinteractionByte ; 0x94
+	.dw scriptCmd_setZSpeed ; 0x95
+	.dw scriptCmd_setAngleAndExtra ; 0x96
+	.dw scriptCmd_runGenericNpc ; 0x97
+	.dw scriptCmd_showText ; 0x98
+	.dw scriptCmd_waitForText ; 0x99
+	.dw scriptCmd_showTextNonExitable ; 0x9a
+	.dw scriptCmd_checkSomething ; 0x9b
+	.dw scriptCmd_setTextID ; 0x9c
+	.dw scriptCmd_showLoadedText ; 0x9d
+	.dw scriptCmd_checkAButton ; 0x9e
+	.dw scriptCmd_showTextDifferentForLinked ; 0x9f
+	.dw scriptCmd_checkCFC0Bit ; 0xa0
+	.dw scriptCmd_checkCFC0Bit ; 0xa1
+	.dw scriptCmd_checkCFC0Bit ; 0xa2
+	.dw scriptCmd_checkCFC0Bit ; 0xa3
+	.dw scriptCmd_checkCFC0Bit ; 0xa4
+	.dw scriptCmd_checkCFC0Bit ; 0xa5
+	.dw scriptCmd_checkCFC0Bit ; 0xa6
+	.dw scriptCmd_checkCFC0Bit ; 0xa7
+	.dw scriptCmd_xorCFC0Bit ; 0xa8
+	.dw scriptCmd_xorCFC0Bit ; 0xa9
+	.dw scriptCmd_xorCFC0Bit ; 0xaa
+	.dw scriptCmd_xorCFC0Bit ; 0xab
+	.dw scriptCmd_xorCFC0Bit ; 0xac
+	.dw scriptCmd_xorCFC0Bit ; 0xad
+	.dw scriptCmd_xorCFC0Bit ; 0xae
+	.dw scriptCmd_xorCFC0Bit ; 0xaf
+	.dw scriptCmd_jumpIfRoomFlagSet ; 0xb0
+	.dw scriptCmd_orRoomFlags ; 0xb1
+	.dw scriptCmd_none ; 0xb2
+	.dw scriptCmd_jumpIfC6xxSet ; 0xb3
+	.dw scriptCmd_writeC6xx ; 0xb4
+	.dw scriptCmd_jumpIfGlobalFlagSet ; 0xb5
+	.dw scriptCmd_setOrUnsetGlobalFlag ; 0xb6
+	.dw scriptCmd_none ; 0xb7
+	.dw scriptCmd_setLinkCantMoveTo91 ; 0xb8
+	.dw scriptCmd_setLinkCantMoveTo00 ; 0xb9
+	.dw scriptCmd_setLinkCantMoveTo11 ; 0xba
+	.dw scriptCmd_disableMenu ; 0xbb
+	.dw scriptCmd_enableMenu ; 0xbc
+	.dw scriptCmd_disableInput ; 0xbd
+	.dw scriptCmd_enableInput ; 0xbe
+	.dw scriptCmd_none ; 0xbf
+	.dw scriptCmd_callScript ; 0xc0
+	.dw scriptCmd_ret ; 0xc1
+	.dw scriptCmd_none ; 0xc2
+	.dw scriptCmd_jumpIfCBA5Eq ; 0xc3
+	.dw scriptCmd_jumpRandom ; 0xc4
+	.dw scriptCmd_none ; 0xc5
+	.dw scriptCmd_jumpTable ; 0xc6
+	.dw scriptCmd_jumpIfMemorySet ; 0xc7
+	.dw scriptCmd_jumpIfSomething ; 0xc8
+	.dw scriptCmd_jumpIfNoEnemies ; 0xc9
+	.dw scriptCmd_jumpIfLinkVariableNe ; 0xca
+	.dw scriptCmd_jumpIfMemoryEq ; 0xcb
+	.dw scriptCmd_jumpIfInteractionByteEq ; 0xcc
+	.dw scriptCmd_stopIfItemFlagSet ; 0xcd
+	.dw scriptCmd_stopIfRoomFlag40Set ; 0xce
+	.dw scriptCmd_stopIfRoomFlag80Set ; 0xcf
+	.dw scriptCmd_checkCollidedWithLink_onGround ; 0xd0
+	.dw scriptCmd_checkPaletteFadeDone ; 0xd1
+	.dw scriptCmd_checkNoEnemies ; 0xd2
+	.dw scriptCmd_checkFlagSet ; 0xd3
+	.dw scriptCmd_checkInteractionByteEq ; 0xd4
+	.dw scriptCmd_checkMemoryEq ; 0xd5
+	.dw scriptCmd_checkNotCollidedWithLink_ignoreZ ; 0xd6
+	.dw scriptCmd_setCounter1 ; 0xd7
+	.dw scriptCmd_checkCounter2Zero ; 0xd8
+	.dw scriptCmd_checkHeartDisplayUpdated ; 0xd9
+	.dw scriptCmd_checkRupeeDisplayUpdated ; 0xda
+	.dw scriptCmd_checkCollidedWithLink_ignoreZ ; 0xdb
+	.dw scriptCmd_none ; 0xdc
+	.dw scriptCmd_spawnItem ; 0xdd
+	.dw scriptCmd_spawnItem ; 0xde
+	.dw scriptCmd_df ; 0xdf
 	.dw scriptCmd_asmCall ; 0xe0
 	.dw scriptCmd_asmCallWithParam ; 0xe1
-	.dw _scriptCmd_createPuff ; 0xe2
-	.dw _scriptCmd_playSound ; 0xe3
-	.dw _scriptCmd_setMusic ; 0xe4
-	.dw _scriptCmd_setLinkCantMove ; 0xe5
-	.dw _scriptCmd_spawnEnemyHere ; 0xe6
-	.dw _scriptCmd_setTile ; 0xe7
-	.dw _scriptCmd_setTileHere ; 0xe8
-	.dw _scriptCmd_updateLinkLocalRespawnPosition ; 0xe9
-	.dw _scriptCmd_shakeScreen ; 0xea
-	.dw _scriptCmd_initNpcHitbox ; 0xeb
-	.dw _scriptCmd_moveNpcUp ; 0xec
-	.dw _scriptCmd_moveNpcRight ; 0xed
-	.dw _scriptCmd_moveNpcDown ; 0xee
-	.dw _scriptCmd_moveNpcLeft ; 0xef
-	.dw _scriptCmd_delay ; 0xf0
-	.dw _scriptCmd_delay ; 0xf1
-	.dw _scriptCmd_delay ; 0xf2
-	.dw _scriptCmd_delay ; 0xf3
-	.dw _scriptCmd_delay ; 0xf4
-	.dw _scriptCmd_delay ; 0xf5
-	.dw _scriptCmd_delay ; 0xf6
-	.dw _scriptCmd_delay ; 0xf7
-	.dw _scriptCmd_delay ; 0xf8
-	.dw _scriptCmd_delay ; 0xf9
-	.dw _scriptCmd_delay ; 0xfa
-	.dw _scriptCmd_delay ; 0xfb
-	.dw _scriptCmd_delay ; 0xfc
+	.dw scriptCmd_createPuff ; 0xe2
+	.dw scriptCmd_playSound ; 0xe3
+	.dw scriptCmd_setMusic ; 0xe4
+	.dw scriptCmd_setLinkCantMove ; 0xe5
+	.dw scriptCmd_spawnEnemyHere ; 0xe6
+	.dw scriptCmd_setTile ; 0xe7
+	.dw scriptCmd_setTileHere ; 0xe8
+	.dw scriptCmd_updateLinkLocalRespawnPosition ; 0xe9
+	.dw scriptCmd_shakeScreen ; 0xea
+	.dw scriptCmd_initNpcHitbox ; 0xeb
+	.dw scriptCmd_moveNpcUp ; 0xec
+	.dw scriptCmd_moveNpcRight ; 0xed
+	.dw scriptCmd_moveNpcDown ; 0xee
+	.dw scriptCmd_moveNpcLeft ; 0xef
+	.dw scriptCmd_delay ; 0xf0
+	.dw scriptCmd_delay ; 0xf1
+	.dw scriptCmd_delay ; 0xf2
+	.dw scriptCmd_delay ; 0xf3
+	.dw scriptCmd_delay ; 0xf4
+	.dw scriptCmd_delay ; 0xf5
+	.dw scriptCmd_delay ; 0xf6
+	.dw scriptCmd_delay ; 0xf7
+	.dw scriptCmd_delay ; 0xf8
+	.dw scriptCmd_delay ; 0xf9
+	.dw scriptCmd_delay ; 0xfa
+	.dw scriptCmd_delay ; 0xfb
+	.dw scriptCmd_delay ; 0xfc
 
 ;;
-_scriptCmd_none:
+scriptCmd_none:
 	pop hl
 	ret
 
 ;;
-_scriptCmd_stopIfItemFlagSet:
+scriptCmd_stopIfItemFlagSet:
 	ld b,ROOMFLAG_ITEM
-	jr _scriptFunc_checkRoomFlag
+	jr scriptFunc_checkRoomFlag
 ;;
-_scriptCmd_stopIfRoomFlag40Set:
+scriptCmd_stopIfRoomFlag40Set:
 	ld b,ROOMFLAG_40
-	jr _scriptFunc_checkRoomFlag
+	jr scriptFunc_checkRoomFlag
 ;;
-_scriptCmd_stopIfRoomFlag80Set:
+scriptCmd_stopIfRoomFlag80Set:
 	ld b,ROOMFLAG_80
-_scriptFunc_checkRoomFlag:
+scriptFunc_checkRoomFlag:
 	call getThisRoomFlags
 	and b
-	jp z,_scriptFunc_popHlAndInc
+	jp z,scriptFunc_popHlAndInc
 	pop hl
 	ld hl,stubScript
 	scf
 	ret
 
 ;;
-_scriptCmd_showPasswordScreen:
+scriptCmd_showPasswordScreen:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -211,49 +211,49 @@ _scriptCmd_showPasswordScreen:
 	ret
 
 ;;
-_scriptCmd_disableInput:
+scriptCmd_disableInput:
 	ld a,$81
 	ld (wDisabledObjects),a
-_scriptCmd_disableMenu:
+scriptCmd_disableMenu:
 	ld a,$80
 	ld (wMenuDisabled),a
 	call clearAllParentItems
 	call dropLinkHeldItem
-	call _func_0c_4177
-_scriptFunc_popHlAndInc:
+	call func_0c_4177
+scriptFunc_popHlAndInc:
 	pop hl
 	inc hl
 	scf
 	ret
 
 ;;
-_scriptCmd_enableInput:
+scriptCmd_enableInput:
 	xor a
 	ld (wDisabledObjects),a
-_scriptCmd_enableMenu:
+scriptCmd_enableMenu:
 	xor a
 	ld (wMenuDisabled),a
-	jr _scriptFunc_popHlAndInc
+	jr scriptFunc_popHlAndInc
 
-_scriptCmd_setLinkCantMoveTo91:
+scriptCmd_setLinkCantMoveTo91:
 	ld a,$91
-_scriptFunc_setLinkCantMove:
+scriptFunc_setLinkCantMove:
 	ld (wDisabledObjects),a
 	pop hl
 	inc hl
 	ret
 
 ;;
-_scriptCmd_setLinkCantMoveTo00:
+scriptCmd_setLinkCantMoveTo00:
 	xor a
-	jr _scriptFunc_setLinkCantMove
+	jr scriptFunc_setLinkCantMove
 ;;
-_scriptCmd_setLinkCantMoveTo11:
+scriptCmd_setLinkCantMoveTo11:
 	ld a,$11
-	jr _scriptFunc_setLinkCantMove
+	jr scriptFunc_setLinkCantMove
 
 ;;
-_func_0c_4177:
+func_0c_4177:
 	push hl
 	ld a,(wLinkObjectIndex)
 	ld h,a
@@ -265,12 +265,12 @@ _func_0c_4177:
 	ret
 
 ;;
-_scriptCmd_setState:
+scriptCmd_setState:
 	pop hl
 	inc hl
 	ld e,Interaction.state
 ;;
-_scriptFunc_setState:
+scriptFunc_setState:
 	ldi a,(hl)
 	cp $ff
 	jr z,++
@@ -286,15 +286,15 @@ _scriptFunc_setState:
 	ret
 
 ;;
-_scriptCmd_setSubstate:
+scriptCmd_setSubstate:
 	pop hl
 	inc hl
 	ld e,Interaction.substate
-	jr _scriptFunc_setState
+	jr scriptFunc_setState
 
 ;;
 ; This is for all commands under $80.
-_scriptCmd_jump:
+scriptCmd_jump:
 
 .ifdef ROM_AGES
 	ld a,h
@@ -326,17 +326,17 @@ _scriptCmd_jump:
 	ret
 
 ;;
-_scriptCmd_spawnInteraction:
+scriptCmd_spawnInteraction:
 	pop hl
 	inc hl
-	call _scriptFunc_loadBcAndDe
+	call scriptFunc_loadBcAndDe
 	push hl
 	call getFreeInteractionSlot
-	jr nz,_scriptFunc_restoreActiveObject
+	jr nz,scriptFunc_restoreActiveObject
 
 	ld a,Interaction.yh
-	call _scriptFunc_initializeObject
-_scriptFunc_restoreActiveObject:
+	call scriptFunc_initializeObject
+scriptFunc_restoreActiveObject:
 	ldh a,(<hActiveObject)
 	ld d,a
 	pop hl
@@ -344,7 +344,7 @@ _scriptFunc_restoreActiveObject:
 
 ;;
 ; Loads bc and de from hl (bc first, de second, big-endian).
-_scriptFunc_loadBcAndDe:
+scriptFunc_loadBcAndDe:
 	ldi a,(hl)
 	ld b,a
 	ldi a,(hl)
@@ -360,7 +360,7 @@ _scriptFunc_loadBcAndDe:
 ; @param[in] bc ID of the object
 ; @param[in] de YX coordinates
 ; @param[in] hl Address of object
-_scriptFunc_initializeObject:
+scriptFunc_initializeObject:
 	ld (hl),b
 	inc l
 	ld (hl),c
@@ -373,19 +373,19 @@ _scriptFunc_initializeObject:
 	ret
 
 ;;
-_scriptCmd_spawnEnemy:
+scriptCmd_spawnEnemy:
 	pop hl
 	inc hl
-	call _scriptFunc_loadBcAndDe
+	call scriptFunc_loadBcAndDe
 	push hl
 	call getFreeEnemySlot
-	jr nz,_scriptFunc_restoreActiveObject
+	jr nz,scriptFunc_restoreActiveObject
 
 	ld a,Enemy.yh
-	call _scriptFunc_initializeObject
-	jr _scriptFunc_restoreActiveObject
+	call scriptFunc_initializeObject
+	jr scriptFunc_restoreActiveObject
 
-_scriptCmd_spawnEnemyHere:
+scriptCmd_spawnEnemyHere:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -401,12 +401,12 @@ _scriptCmd_spawnEnemyHere:
 	ld e,a
 	ld d,l
 	call getFreeEnemySlot
-	jr nz,_scriptFunc_restoreActiveObject
+	jr nz,scriptFunc_restoreActiveObject
 	ld a,Enemy.yh
-	call _scriptFunc_initializeObject
-	jr _scriptFunc_restoreActiveObject
+	call scriptFunc_initializeObject
+	jr scriptFunc_restoreActiveObject
 
-_scriptCmd_jumpTable_memoryAddress:
+scriptCmd_jumpTable_memoryAddress:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -417,7 +417,7 @@ _scriptCmd_jumpTable_memoryAddress:
 	rst_addDoubleIndex
 	jp scriptFunc_jump
 
-_scriptCmd_setCoords:
+scriptCmd_setCoords:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -433,7 +433,7 @@ _scriptCmd_setCoords:
 	pop hl
 	ret
 
-_scriptCmd_setAngle:
+scriptCmd_setAngle:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -441,7 +441,7 @@ _scriptCmd_setAngle:
 	ld (de),a
 	ret
 
-_scriptCmd_setSpeed:
+scriptCmd_setSpeed:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -449,7 +449,7 @@ _scriptCmd_setSpeed:
 	ld (de),a
 	ret
 
-_scriptCmd_setZSpeed:
+scriptCmd_setZSpeed:
 	pop hl
 	inc hl
 	ld e,Interaction.speedZ
@@ -461,7 +461,7 @@ _scriptCmd_setZSpeed:
 	scf
 	ret
 
-_scriptCmd_checkCounter2ZeroAndReset:
+scriptCmd_checkCounter2ZeroAndReset:
 	pop hl
 	ld e,Interaction.counter2
 	ld a,(de)
@@ -473,7 +473,7 @@ _scriptCmd_checkCounter2ZeroAndReset:
 	ld (de),a
 	ret
 
-_scriptCmd_setCollideRadii:
+scriptCmd_setCollideRadii:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -484,7 +484,7 @@ _scriptCmd_setCollideRadii:
 	ld (de),a
 	ret
 
-_scriptCmd_writeInteractionByte:
+scriptCmd_writeInteractionByte:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -493,7 +493,7 @@ _scriptCmd_writeInteractionByte:
 	ld (de),a
 	ret
 
-_scriptCmd_addinteractionByte:
+scriptCmd_addinteractionByte:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -506,7 +506,7 @@ _scriptCmd_addinteractionByte:
 	scf
 	ret
 
-_scriptCmd_getRandomBits:
+scriptCmd_getRandomBits:
 	pop hl
 	inc hl
 	call getRandomNumber
@@ -518,7 +518,7 @@ _scriptCmd_getRandomBits:
 	ld (de),a
 	ret
 
-_scriptCmd_loadSprite:
+scriptCmd_loadSprite:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -539,20 +539,20 @@ _scriptCmd_loadSprite:
 	push hl
 	call interactionSetAnimation
 	pop hl
-	ld a,:_scriptCmd_loadSprite
+	ld a,:scriptCmd_loadSprite
 	setrombank
 	ret
 
-_scriptCmd_8a:
+scriptCmd_8a:
 	call objectGetAngleTowardEnemyTarget
 	add $04
 	and $18
 	swap a
 	rlca
 	call interactionSetAnimation
-	jp _scriptFunc_popHlAndInc
+	jp scriptFunc_popHlAndInc
 
-_scriptCmd_setAngleAndExtra:
+scriptCmd_setAngleAndExtra:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -565,10 +565,10 @@ _scriptCmd_setAngleAndExtra:
 	scf
 	ret
 
-_scriptCmd_runGenericNpc:
+scriptCmd_runGenericNpc:
 	pop hl
 	inc hl
-	call _scriptFunc_getTextIndex
+	call scriptFunc_getTextIndex
 	ld a,c
 	ld e,Interaction.textID
 	ld (de),a
@@ -579,7 +579,7 @@ _scriptCmd_runGenericNpc:
 	ret
 
 ;;
-_scriptFunc_getTextIndex:
+scriptFunc_getTextIndex:
 	ld e,Interaction.useTextID
 	ld a,(de)
 	or a
@@ -597,16 +597,16 @@ _scriptFunc_getTextIndex:
 	ld c,a
 	ret
 
-_scriptCmd_showText:
+scriptCmd_showText:
 	pop hl
 	inc hl
-	call _scriptFunc_getTextIndex
+	call scriptFunc_getTextIndex
 	push hl
 	call showText
 	pop hl
 	ret
 
-_scriptCmd_showTextDifferentForLinked:
+scriptCmd_showTextDifferentForLinked:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -627,16 +627,16 @@ _scriptCmd_showTextDifferentForLinked:
 	pop hl
 	ret
 
-_scriptCmd_showTextNonExitable:
+scriptCmd_showTextNonExitable:
 	pop hl
 	inc hl
-	call _scriptFunc_getTextIndex
+	call scriptFunc_getTextIndex
 	push hl
 	call showTextNonExitable
 	pop hl
 	ret
 
-_scriptCmd_waitForText:
+scriptCmd_waitForText:
 	pop hl
 	ld a,(wTextIsActive)
 	or a
@@ -644,17 +644,17 @@ _scriptCmd_waitForText:
 	inc hl
 	ret
 
-_scriptCmd_setCounter1:
+scriptCmd_setCounter1:
 	pop hl
 	inc hl
 	ldi a,(hl)
-_scriptFunc_4310:
+scriptFunc_4310:
 	ld e,Interaction.counter1
 	ld (de),a
 	xor a
 	ret
 
-_scriptCmd_cpLinkX:
+scriptCmd_cpLinkX:
 	pop hl
 	inc hl
 	push hl
@@ -673,14 +673,14 @@ _scriptCmd_cpLinkX:
 	scf
 	ret
 
-_scriptCmd_shakeScreen:
+scriptCmd_shakeScreen:
 	pop hl
 	inc hl
 	ldi a,(hl)
 	ld (wScreenShakeCounterX),a
 	ret
 
-_scriptCmd_writeMemory:
+scriptCmd_writeMemory:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -692,7 +692,7 @@ _scriptCmd_writeMemory:
 	scf
 	ret
 
-_scriptCmd_checkPaletteFadeDone:
+scriptCmd_checkPaletteFadeDone:
 	pop hl
 	ld a,(wPaletteThread_mode)
 	or a
@@ -700,7 +700,7 @@ _scriptCmd_checkPaletteFadeDone:
 	inc hl
 	ret
 
-_scriptCmd_checkCFC0Bit:
+scriptCmd_checkCFC0Bit:
 	pop hl
 	ld a,(hl)
 	and $07
@@ -715,7 +715,7 @@ _scriptCmd_checkCFC0Bit:
 	inc hl
 	ret
 
-_scriptCmd_xorCFC0Bit:
+scriptCmd_xorCFC0Bit:
 	pop hl
 	ld a,(hl)
 	and $07
@@ -730,7 +730,7 @@ _scriptCmd_xorCFC0Bit:
 	inc hl
 	ret
 
-_scriptCmd_jumpIfNoEnemies:
+scriptCmd_jumpIfNoEnemies:
 	pop hl
 	ld a,(wNumEnemies)
 	or a
@@ -738,7 +738,7 @@ _scriptCmd_jumpIfNoEnemies:
 	inc hl
 	jp scriptFunc_jump
 
-_scriptCmd_jumpIfC6xxSet:
+scriptCmd_jumpIfC6xxSet:
 	pop hl
 	inc hl
 	ld b,$c6
@@ -750,7 +750,7 @@ _scriptCmd_jumpIfC6xxSet:
 	inc hl
 	jp scriptFunc_jump
 
-_scriptCmd_playSound:
+scriptCmd_playSound:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -759,13 +759,13 @@ _scriptCmd_playSound:
 	pop hl
 	ret
 
-_scriptCmd_updateLinkLocalRespawnPosition:
+scriptCmd_updateLinkLocalRespawnPosition:
 	call updateLinkLocalRespawnPosition
 	pop hl
 	inc hl
 	ret
 
-_scriptCmd_jumpIfLinkVariableNe:
+scriptCmd_jumpIfLinkVariableNe:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -784,7 +784,7 @@ _scriptCmd_jumpIfLinkVariableNe:
 	ld d,a
 	ret
 
-_scriptCmd_jumpIfMemoryEq:
+scriptCmd_jumpIfMemoryEq:
 	pop hl
 	inc hl
 	ld c,(hl)
@@ -798,7 +798,7 @@ _scriptCmd_jumpIfMemoryEq:
 	inc hl
 	jp scriptFunc_jump_scf
 
-_scriptCmd_jumpIfInteractionByteEq:
+scriptCmd_jumpIfInteractionByteEq:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -806,7 +806,7 @@ _scriptCmd_jumpIfInteractionByteEq:
 	ld a,(de)
 	jr --
 
-_scriptCmd_jumpIfRoomFlagSet:
+scriptCmd_jumpIfRoomFlagSet:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -825,7 +825,7 @@ _scriptCmd_jumpIfRoomFlagSet:
 	pop hl
 	jp scriptFunc_jump_scf
 
-_scriptCmd_orRoomFlags:
+scriptCmd_orRoomFlags:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -837,7 +837,7 @@ _scriptCmd_orRoomFlags:
 	pop hl
 	ret
 
-_scriptCmd_checkSomething:
+scriptCmd_checkSomething:
 	ld e,Interaction.pressedAButton
 	call objectAddToAButtonSensitiveObjectList
 	pop hl
@@ -846,7 +846,7 @@ _scriptCmd_checkSomething:
 +
 	ret
 
-_scriptCmd_showLoadedText:
+scriptCmd_showLoadedText:
 	ld e,Interaction.textID
 	ld a,(de)
 	ld c,a
@@ -858,7 +858,7 @@ _scriptCmd_showLoadedText:
 	inc hl
 	ret
 
-_scriptCmd_setTextID:
+scriptCmd_setTextID:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -870,7 +870,7 @@ _scriptCmd_setTextID:
 	scf
 	ret
 
-_scriptCmd_setMusic:
+scriptCmd_setMusic:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -884,7 +884,7 @@ _scriptCmd_setMusic:
 	pop hl
 	ret
 
-_scriptCmd_orMemory:
+scriptCmd_orMemory:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -898,7 +898,7 @@ _scriptCmd_orMemory:
 	scf
 	ret
 
-_scriptCmd_spawnItem:
+scriptCmd_spawnItem:
 	pop hl
 	ld e,(hl)
 	inc hl
@@ -908,7 +908,7 @@ _scriptCmd_spawnItem:
 	ld c,a
 	push hl
 	call getFreeInteractionSlot
-	jp nz,_scriptFunc_restoreActiveObject
+	jp nz,scriptFunc_restoreActiveObject
 	ld (hl),INTERACID_TREASURE
 	inc l
 	ld (hl),b
@@ -918,16 +918,16 @@ _scriptCmd_spawnItem:
 	cp $de
 	jr z,+
 	call objectCopyPosition
-	jp _scriptFunc_restoreActiveObject
+	jp scriptFunc_restoreActiveObject
 +
 	ld e,Interaction.counter1
 	ld a,$03
 	ld (de),a
 	ld de,w1Link.yh
 	call objectCopyPosition_rawAddress
-	jp _scriptFunc_restoreActiveObject
+	jp scriptFunc_restoreActiveObject
 
-_scriptCmd_df:
+scriptCmd_df:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -940,7 +940,7 @@ _scriptCmd_df:
 	inc hl
 	ret
 
-_scriptCmd_jumpIfSomething:
+scriptCmd_jumpIfSomething:
 	pop hl
 	inc hl
 	ld a,TREASURE_TRADEITEM
@@ -960,14 +960,14 @@ _scriptCmd_jumpIfSomething:
 	inc hl
 	ret
 
-_scriptCmd_setLinkCantMove:
+scriptCmd_setLinkCantMove:
 	pop hl
 	inc hl
 	ldi a,(hl)
 	ld (wDisabledObjects),a
 	ret
 
-_scriptCmd_checkCounter2Zero:
+scriptCmd_checkCounter2Zero:
 	pop hl
 	ld e,Interaction.counter2
 	ld a,(de)
@@ -976,7 +976,7 @@ _scriptCmd_checkCounter2Zero:
 	inc hl
 	ret
 
-_scriptCmd_setTile:
+scriptCmd_setTile:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -989,13 +989,13 @@ _scriptCmd_setTile:
 	scf
 	ret
 
-_scriptCmd_setTileHere:
+scriptCmd_setTileHere:
 	pop hl
 	inc hl
 	call objectGetShortPosition
 	jr --
 
-_scriptCmd_callScript:
+scriptCmd_callScript:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -1012,7 +1012,7 @@ _scriptCmd_callScript:
 	ld h,b
 	ret
 
-_scriptCmd_ret:
+scriptCmd_ret:
 	pop hl
 	ld e,Interaction.scriptRet
 	ld a,(de)
@@ -1025,7 +1025,7 @@ _scriptCmd_ret:
 --
 	inc hl
 	jp scriptFunc_jump_scf
-_scriptCmd_jumpIfCBA5Eq:
+scriptCmd_jumpIfCBA5Eq:
 	pop hl
 	inc hl
 	ld a,(wSelectedTextOption)
@@ -1033,7 +1033,7 @@ _scriptCmd_jumpIfCBA5Eq:
 	jr z,--
 	jp scriptFunc_add3ToHl_scf
 
-_scriptCmd_jumpRandom:
+scriptCmd_jumpRandom:
 .ifdef ROM_AGES
 	pop hl
 	inc hl
@@ -1049,7 +1049,7 @@ _scriptCmd_jumpRandom:
 	jp scriptFunc_jump_scf
 .endif
 
-_scriptCmd_jumpTable:
+scriptCmd_jumpTable:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -1058,7 +1058,7 @@ _scriptCmd_jumpTable:
 	rst_addDoubleIndex
 	jp scriptFunc_jump
 
-_scriptCmd_jumpIfMemorySet:
+scriptCmd_jumpIfMemorySet:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -1071,7 +1071,7 @@ _scriptCmd_jumpIfMemorySet:
 	inc hl
 	jp scriptFunc_jump_scf
 
-_scriptCmd_writeC6xx:
+scriptCmd_writeC6xx:
 	pop hl
 	inc hl
 	ld b,$c6
@@ -1081,22 +1081,22 @@ _scriptCmd_writeC6xx:
 	ld (bc),a
 	ret
 
-_scriptCmd_checkCollidedWithLink_ignoreZ:
+scriptCmd_checkCollidedWithLink_ignoreZ:
 	call objectCheckCollidedWithLink_ignoreZ
 	pop hl
 	ret nc
 	jr ++
 
-_scriptCmd_checkCollidedWithLink_onGround:
+scriptCmd_checkCollidedWithLink_onGround:
 	call objectCheckCollidedWithLink_onGround
 	pop hl
 	ret nc
 ++
-	call _func_0c_4177
+	call func_0c_4177
 	inc hl
 	ret
 
-_scriptCmd_checkAButton:
+scriptCmd_checkAButton:
 	ld e,Interaction.pressedAButton
 	ld a,(de)
 	or a
@@ -1105,12 +1105,12 @@ _scriptCmd_checkAButton:
 
 	xor a
 	ld (de),a
-	call _func_0c_4177
+	call func_0c_4177
 	inc hl
 	scf
 	ret
 
-_scriptCmd_checkNoEnemies:
+scriptCmd_checkNoEnemies:
 	pop hl
 	ld a,(wNumEnemies)
 	or a
@@ -1118,7 +1118,7 @@ _scriptCmd_checkNoEnemies:
 	inc hl
 	ret
 
-_scriptCmd_checkFlagSet:
+scriptCmd_checkFlagSet:
 	pop hl
 	push hl
 	inc hl
@@ -1136,7 +1136,7 @@ _scriptCmd_checkFlagSet:
 	scf
 	ret
 
-_scriptCmd_checkInteractionByteEq:
+scriptCmd_checkInteractionByteEq:
 	pop hl
 	push hl
 	inc hl
@@ -1154,7 +1154,7 @@ _scriptCmd_checkInteractionByteEq:
 	inc hl
 	ret
 
-_scriptCmd_checkMemoryEq:
+scriptCmd_checkMemoryEq:
 	pop hl
 	push hl
 	inc hl
@@ -1174,7 +1174,7 @@ _scriptCmd_checkMemoryEq:
 	inc hl
 	ret
 
-_scriptCmd_checkHeartDisplayUpdated:
+scriptCmd_checkHeartDisplayUpdated:
 	pop hl
 	ld a,(wDisplayedHearts)
 	ld b,a
@@ -1188,7 +1188,7 @@ _scriptCmd_checkHeartDisplayUpdated:
 	scf
 	ret
 
-_scriptCmd_checkRupeeDisplayUpdated:
+scriptCmd_checkRupeeDisplayUpdated:
 	ld hl,wNumRupees
 	ld a,(wDisplayedRupees)
 	cp (hl)
@@ -1197,13 +1197,13 @@ _scriptCmd_checkRupeeDisplayUpdated:
 	inc l
 	ld a,(wDisplayedRupees+1)
 	cp (hl)
-	jp z,_scriptFunc_popHlAndInc
+	jp z,scriptFunc_popHlAndInc
 +
 	pop hl
 	xor a
 	ret
 
-_scriptCmd_checkNotCollidedWithLink_ignoreZ:
+scriptCmd_checkNotCollidedWithLink_ignoreZ:
 	call objectCheckCollidedWithLink_ignoreZ
 	pop hl
 	jr c,+
@@ -1213,13 +1213,13 @@ _scriptCmd_checkNotCollidedWithLink_ignoreZ:
 	xor a
 	ret
 
-_scriptCmd_createPuff:
+scriptCmd_createPuff:
 	call objectCreatePuff
 	pop hl
 	inc hl
 	ret
 
-_scriptCmd_jumpIfGlobalFlagSet:
+scriptCmd_jumpIfGlobalFlagSet:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -1234,7 +1234,7 @@ _scriptCmd_jumpIfGlobalFlagSet:
 	scf
 	ret
 
-_scriptCmd_setOrUnsetGlobalFlag:
+scriptCmd_setOrUnsetGlobalFlag:
 	pop hl
 	inc hl
 	ldi a,(hl)
@@ -1254,7 +1254,7 @@ _scriptCmd_setOrUnsetGlobalFlag:
 	scf
 	ret
 
-_scriptCmd_initNpcHitbox:
+scriptCmd_initNpcHitbox:
 .ifdef ROM_AGES
 	ld e,Interaction.collisionRadiusY
 	ld a,(de)
@@ -1276,7 +1276,7 @@ _scriptCmd_initNpcHitbox:
 	scf
 	ret
 
-_scriptCmd_moveNpcUp:
+scriptCmd_moveNpcUp:
 	ld a,$00
 --
 	ld e,Interaction.angle
@@ -1291,26 +1291,26 @@ _scriptCmd_moveNpcUp:
 	xor a
 	ret
 
-_scriptCmd_moveNpcRight:
+scriptCmd_moveNpcRight:
 	ld a,$08
 	jr --
 
-_scriptCmd_moveNpcDown:
+scriptCmd_moveNpcDown:
 	ld a,$10
 	jr --
 
-_scriptCmd_moveNpcLeft:
+scriptCmd_moveNpcLeft:
 	ld a,$18
 	jr --
 
-_scriptCmd_delay:
+scriptCmd_delay:
 	pop hl
 	ldi a,(hl)
 	and $0f
 	ld bc,@delayLengths
 	call addAToBc
 	ld a,(bc)
-	jp _scriptFunc_4310
+	jp scriptFunc_4310
 
 @delayLengths:
 	.db 1 4 8 10 15 20 30 40 60 90 120 180 240

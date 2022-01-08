@@ -3,14 +3,14 @@
 cutsceneHandler_0b:
 	ld a,(wCutsceneState)
 	rst_jumpTable
-	.dw _cutsceneHandler_0b_stage0
-	.dw _cutsceneHandler_0b_stage1
-	.dw _cutsceneHandler_0b_stage2
-	.dw _cutsceneHandler_0b_stage3
-	.dw _cutsceneHandler_0b_stage4
-	.dw _cutsceneHandler_0b_stage5
+	.dw cutsceneHandler_0b_stage0
+	.dw cutsceneHandler_0b_stage1
+	.dw cutsceneHandler_0b_stage2
+	.dw cutsceneHandler_0b_stage3
+	.dw cutsceneHandler_0b_stage4
+	.dw cutsceneHandler_0b_stage5
 
-_cutsceneHandler_0b_stage0:
+cutsceneHandler_0b_stage0:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -38,7 +38,7 @@ _cutsceneHandler_0b_stage0:
 	ld a,$02
 	jp loadGfxRegisterStateIndex
 
-_cutsceneHandler_0b_stage1:
+cutsceneHandler_0b_stage1:
 	call seasonsFunc_03_6df8
 	ld a,($cbb3)
 	rst_jumpTable
@@ -110,7 +110,7 @@ seasonsFunc_03_6c5f:
 	ld (hl),$00
 	ret
 
-_cutsceneHandler_0b_stage2:
+cutsceneHandler_0b_stage2:
 	call seasonsFunc_03_6df8
 	ld bc,$1430
 	ld hl,$cbb5
@@ -124,7 +124,7 @@ _cutsceneHandler_0b_stage2:
 	call seasonsFunc_03_6c5f
 	jp fastFadeoutToWhite
 
-_cutsceneHandler_0b_stage3:
+cutsceneHandler_0b_stage3:
 	ld a,($cbb3)
 	rst_jumpTable
 	.dw @state0
@@ -196,14 +196,14 @@ _cutsceneHandler_0b_stage3:
 	ld a,$02
 	jp fadeoutToWhiteWithDelay
 
-_cutsceneHandler_0b_stage4:
+cutsceneHandler_0b_stage4:
 	ld a,($cbb3)
 	rst_jumpTable
 	.dw @state0
-	.dw _cutsceneHandler_0b_stage3@state1
-	.dw _cutsceneHandler_0b_stage3@state2
-	.dw _cutsceneHandler_0b_stage3@state3
-	.dw _cutsceneHandler_0b_stage3@state4
+	.dw cutsceneHandler_0b_stage3@state1
+	.dw cutsceneHandler_0b_stage3@state2
+	.dw cutsceneHandler_0b_stage3@state3
+	.dw cutsceneHandler_0b_stage3@state4
 
 @state0:
 	ld a,(wPaletteThread_mode)
@@ -222,13 +222,13 @@ _cutsceneHandler_0b_stage4:
 	inc (hl)
 	jp seasonsFunc_03_6d9f
 
-_cutsceneHandler_0b_stage5:
+cutsceneHandler_0b_stage5:
 	ld a,($cbb3)
 	rst_jumpTable
 	.dw @state0
-	.dw _cutsceneHandler_0b_stage3@state1
-	.dw _cutsceneHandler_0b_stage3@state2
-	.dw _cutsceneHandler_0b_stage3@state3
+	.dw cutsceneHandler_0b_stage3@state1
+	.dw cutsceneHandler_0b_stage3@state2
+	.dw cutsceneHandler_0b_stage3@state3
 	.dw @state4
 
 @state0:

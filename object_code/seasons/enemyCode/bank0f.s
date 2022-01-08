@@ -33,14 +33,14 @@ enemyCode02:
 	ld a,$67
 	call playSound
 @dead:
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 @justHit:
 	ld e,$82
 	ld a,(de)
 	or a
-	call z,_generalOnox_func_5c75
+	call z,generalOnox_func_5c75
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 	rst_jumpTable
 	.dw @state0
@@ -54,38 +54,38 @@ enemyCode02:
 +
 	ld a,b
 	rst_jumpTable
-	.dw _generalOnox_subid0
-	.dw _generalOnox_subid1
-	.dw _generalOnox_subid2
+	.dw generalOnox_subid0
+	.dw generalOnox_subid1
+	.dw generalOnox_subid2
 
 @state0:
 	ld a,b
 	cp $02
 	jr z,+
 	ld bc,$0210
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 	ld a,$02
 	ld b,$89
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	ld a,$01
 	ld (wLoadedTreeGfxIndex),a
 	ld a,$0a
-	jp _ecom_setSpeedAndState8
+	jp ecom_setSpeedAndState8
 +
 	ld a,$89
 	call loadPaletteHeader
 	ld a,$01
 	ld ($cfcf),a
 	ld ($cbca),a
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld a,$53
 	jp playSound
 	
 @stateStub:
 	ret
 	
-_generalOnox_subid0:
+generalOnox_subid0:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -97,7 +97,7 @@ _generalOnox_subid0:
 
 @state8:
 	ld b,PARTID_47
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	ld h,d
 	ld l,$84
@@ -132,7 +132,7 @@ _generalOnox_subid0:
 	ld (hl),$1e
 	
 @@substate1:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 	ld a,(wFrameCounter)
 	and $1f
@@ -150,7 +150,7 @@ _generalOnox_subid0:
 	ld (hl),$08
 	
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -184,7 +184,7 @@ _generalOnox_subid0:
 	jp enemySetAnimation
 	
 @stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$b4
 	inc l
@@ -202,7 +202,7 @@ _generalOnox_subid0:
 	.dw @@substate2
 
 @@substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@func_598b
 	ld a,$24
 	call objectGetRelatedObject2Var
@@ -214,10 +214,10 @@ _generalOnox_subid0:
 	jr @func_5a06
 
 @@func_598b:
-	call _generalOnox_subid2@func_5c3b
+	call generalOnox_subid2@func_5c3b
 	jr nc,+
 	call enemyAnimate
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr nz,@@func_59c0
 	ld a,$09
 	call objectGetRelatedObject2Var
@@ -237,8 +237,8 @@ _generalOnox_subid0:
 	ld (hl),$0a
 	ld a,(wFrameCounter)
 	and $07
-	call z,_generalOnox_func_59c0
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call z,generalOnox_func_59c0
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 
 @@func_59c0:
 	jp enemyAnimate
@@ -307,7 +307,7 @@ _generalOnox_subid0:
 	.dw @@substate2
 
 @@substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -336,17 +336,17 @@ _generalOnox_subid0:
 	ret
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	jp @func_594f
 	
-_generalOnox_subid1:
+generalOnox_subid1:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
 	.dw @state8
 	.dw @state9
-	.dw _generalOnox_subid0@stateA
+	.dw generalOnox_subid0@stateA
 	.dw @stateB
 	.dw @stateC
 	.dw @stateD
@@ -421,7 +421,7 @@ _generalOnox_subid1:
 	ret
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,$a4
 	set 7,(hl)
@@ -449,12 +449,12 @@ _generalOnox_subid1:
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
-	.dw _generalOnox_subid0@stateB@substate1
+	.dw generalOnox_subid0@stateB@substate1
 	.dw @@substate2
 
 @@substate0:
-	call _ecom_decCounter1
-	jp nz,_generalOnox_subid0@stateB@func_598b
+	call ecom_decCounter1
+	jp nz,generalOnox_subid0@stateB@func_598b
 	ld a,$24
 	call objectGetRelatedObject2Var
 	res 7,(hl)
@@ -487,7 +487,7 @@ _generalOnox_subid1:
 	ldd a,(hl)
 	ldi (hl),a
 	ld (hl),$02
-	call _generalOnox_func_5c63
+	call generalOnox_func_5c63
 	ld e,$86
 	ld a,(de)
 	dec a
@@ -510,12 +510,12 @@ _generalOnox_subid1:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _generalOnox_subid0@stateC@substate0
-	.dw _generalOnox_subid0@stateC@substate1
+	.dw generalOnox_subid0@stateC@substate0
+	.dw generalOnox_subid0@stateC@substate1
 	.dw @@substate2
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	jp @func_5ae5
 
@@ -528,7 +528,7 @@ _generalOnox_subid1:
 	.dw @func_5b22
 
 @@substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	inc (hl)
 	inc l
@@ -538,12 +538,12 @@ _generalOnox_subid1:
 	ld a,$03
 	jp enemySetAnimation
 +
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call objectApplySpeed
 	jp enemyAnimate
 
 @@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$2d
 	inc l
@@ -559,7 +559,7 @@ _generalOnox_subid1:
 	inc (hl)
 	ret
 	
-_generalOnox_subid2:
+generalOnox_subid2:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -608,7 +608,7 @@ _generalOnox_subid2:
 	call objectSetVisible82
 
 @stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	and $1c
@@ -671,7 +671,7 @@ _generalOnox_subid2:
 	cp $21
 	ret
 
-_generalOnox_func_59c0:
+generalOnox_func_59c0:
 	ldh a,(<hEnemyTargetY)
 	sub $18
 	cp $98
@@ -686,7 +686,7 @@ _generalOnox_func_59c0:
 	ld (de),a
 	ret
 
-_generalOnox_func_5c63:
+generalOnox_func_5c63:
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld hl,@table_5c71
@@ -702,7 +702,7 @@ _generalOnox_func_5c63:
 	.db $3c
 	.db $5a
 	
-_generalOnox_func_5c75:
+generalOnox_func_5c75:
 	ld e,$a9
 	ld a,(de)
 	cp $28
@@ -828,7 +828,7 @@ enemyCode05:
 dragonOnox_bodyPartSpawner:
 	ld a,ENEMYID_DRAGON_ONOX
 	ld b,$8a
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	xor a
 	ld (wLinkForceState),a
 	inc a
@@ -838,7 +838,7 @@ dragonOnox_bodyPartSpawner:
 	call checkBEnemySlotsAvailable
 	ret nz
 	ld b,ENEMYID_DRAGON_ONOX
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,Enemy.enabled
 	ld e,l
 	ld a,(de)
@@ -850,7 +850,7 @@ dragonOnox_bodyPartSpawner:
 	ld c,$08
 -
 	push hl
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	; spawn from subids $02 to $09, storing in $cfd8 to $cfdf
 	ld a,$0a
 	sub c
@@ -990,7 +990,7 @@ dragonOnox_mainBody_state1:
 	jr nz,++
 
 	; substate is 0
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $3c
@@ -1072,7 +1072,7 @@ dragonOnox_mainBody_state2:
 	ret
 
 @substate1:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp z,seasonsFunc_0f_665c
 	ld l,e
 	; go to substate2
@@ -1080,7 +1080,7 @@ dragonOnox_mainBody_state2:
 	call seasonsFunc_0f_6637
 	
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	ld (hl),$1e
 	ld a,($cfcc)
@@ -1123,7 +1123,7 @@ dragonOnox_mainBody_state2:
 	jp seasonsFunc_0f_650d
 
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -1157,7 +1157,7 @@ dragonOnox_mainBody_state3:
 dragonOnox_mainBody_state6:
 dragonOnox_mainBody_state9:
 dragonOnox_mainBody_stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@seasonsFunc_0f_5ecb
 	ld l,e
 	inc (hl)
@@ -1234,7 +1234,7 @@ dragonOnox_mainBody_state5:
 	ret
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(w1Link.xh)
 	sub $50
@@ -1252,7 +1252,7 @@ dragonOnox_mainBody_state5:
 	jp dragonOnoxLoadaIntoVar30Andcfc9
 
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -1265,7 +1265,7 @@ dragonOnox_mainBody_state5:
 	jp dragonOnoxLoadaIntoVar30Andcfc9
 
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@seasonsFunc_0f_5f6c
 	ld a,(hl)
 	cp $14
@@ -1284,7 +1284,7 @@ dragonOnox_mainBody_state5:
 	and $01
 	add $00
 	call dragonOnoxLoadaIntoVar30Andcfc9
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp z,seasonsFunc_0f_665c
 	; var2f
 	dec l
@@ -1375,7 +1375,7 @@ dragonOnox_mainBody_state8:
 	jp dragonOnoxLoadaIntoVar30Andcfc9
 
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -1411,7 +1411,7 @@ dragonOnox_mainBody_state8:
 	jp dragonOnoxLoadaIntoVar30Andcfc9
 
 @substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ld a,(hl)
 	and $03
 	jr nz,+
@@ -1430,7 +1430,7 @@ dragonOnox_mainBody_state8:
 	ret
 
 @substate5:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ld bc,$b000
 	ld a,($cfcd)
 	or a
@@ -1519,7 +1519,7 @@ dragonOnox_mainBody_stateB:
 	jp dragonOnoxLoadaIntoVar30Andcfc9
 
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $1e
@@ -1543,7 +1543,7 @@ dragonOnox_mainBody_stateB:
 	ret
 
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$14
 	ld l,Enemy.var33
@@ -1566,7 +1566,7 @@ dragonOnox_mainBody_stateB:
 	inc a
 	and $1f
 	ld (de),a
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 	ld l,Enemy.state
 	inc (hl)
@@ -1654,7 +1654,7 @@ dragonOnox_mainBody_stateE:
 	and $0f
 	ld a,SND_RUMBLE
 	call z,playSound
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ld a,(hl)
 	and $03
 	ld hl,@seasonsTable_0f_61b9
@@ -1860,7 +1860,7 @@ dragonOnox_leftClaw:
 	jp objectTakePositionWithOffset
 
 @@substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	; counter1 set to $14
 	ld (hl),$14
@@ -1876,7 +1876,7 @@ dragonOnox_leftClaw:
 	jp playSound
 
 @@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	ld (hl),$06
 	ld l,e
@@ -1887,7 +1887,7 @@ dragonOnox_leftClaw:
 	jp @@seasonsFunc_0f_6386
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $04
@@ -1914,8 +1914,8 @@ dragonOnox_leftClaw:
 @@substate3:
 	ld h,d
 	ld l,Enemy.var35
-	call _ecom_readPositionVars
-	call _ecom_moveTowardPosition
+	call ecom_readPositionVars
+	call ecom_moveTowardPosition
 	call @@seasonsFunc_0f_6386
 	ld e,Enemy.yh
 	ld a,(de)
@@ -1933,7 +1933,7 @@ dragonOnox_leftClaw:
 	jp playSound
 
 @@substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $0a
@@ -2626,7 +2626,7 @@ enemyCode06:
 	ld e,Enemy.subid
 	ld a,(de)
 	dec a
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 	ld e,$a4
 	ld a,(de)
 	or a
@@ -2684,7 +2684,7 @@ enemyCode06:
 	jp enemySetAnimation
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 	rst_jumpTable
 	.dw @state0
@@ -2713,21 +2713,21 @@ enemyCode06:
 	ld a,b
 	or a
 	jp z,+
-	call _ecom_setSpeedAndState8AndVisible
-	jp _func_6c6b
+	call ecom_setSpeedAndState8AndVisible
+	jp func_6c6b
 +
 	inc a
 	ld (de),a
 	ld a,$06
 	ld b,$87
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 
 @state1:
 	ld b,$09
 	call checkBEnemySlotsAvailable
 	ret nz
 	ld b,ENEMYID_GLEEOK
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,$80
 	ld e,l
 	ld a,(de)
@@ -2737,7 +2737,7 @@ enemyCode06:
 	ld e,$08
 -
 	push hl
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld a,$0a
 	sub e
 	ld (hl),a
@@ -2822,11 +2822,11 @@ enemyCode06:
 	jp playSound
 	
 @@stateA:
-	call _ecom_decCounter2
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter2
+	jp nz,ecom_flickerVisibility
 	ld bc,$020c
-	call _enemyBoss_spawnShadow
-	jp nz,_ecom_flickerVisibility
+	call enemyBoss_spawnShadow
+	jp nz,ecom_flickerVisibility
 	ld h,d
 	ld l,$84
 	inc (hl)
@@ -2836,8 +2836,8 @@ enemyCode06:
 	call enemySetAnimation
 	
 @@stateB:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	inc (hl)
 	ld l,e
 	inc (hl)
@@ -2849,7 +2849,7 @@ enemyCode06:
 	ld e,$84
 	
 @@stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	ld l,e
 	inc (hl)
@@ -2879,7 +2879,7 @@ enemyCode06:
 	jp playSound
 	
 @@stateE:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $87
@@ -2897,12 +2897,12 @@ enemyCode06:
 	inc (hl)
 	ld l,$90
 	ld (hl),$50
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	jr @@animate
 	
 @@stateF:
 	ld a,$01
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	jr nz,+
 	call objectApplySpeed
 	jr @@animate
@@ -2923,7 +2923,7 @@ enemyCode06:
 	jr @@animate
 	
 @@stateG:
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jr nz,@@animate
@@ -2964,7 +2964,7 @@ enemyCode06:
 	ret
 	
 @@incStateWhenCounter1Is0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,objectApplySpeed
 	ld l,e
 	inc (hl)
@@ -3066,7 +3066,7 @@ enemyCode06:
 	cp b
 	jr z,++
 +
-	jp _ecom_moveTowardPosition
+	jp ecom_moveTowardPosition
 ++
 	ld l,e
 	inc (hl)
@@ -3082,7 +3082,7 @@ enemyCode06:
 	jp enemySetAnimation
 	
 @@@@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $08
@@ -3092,7 +3092,7 @@ enemyCode06:
 	sub $04
 	ld (hl),a
 	ld b,PARTID_43
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 +
 	ld l,$8b
 	ld a,(hl)
@@ -3141,7 +3141,7 @@ enemyCode06:
 	jp enemySetAnimation
 	
 @@@@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$41
 	ld l,e
@@ -3154,7 +3154,7 @@ enemyCode06:
 	ret
 	
 @@@@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@@@func_69bc
 	ld a,(hl)
 	and $0f
@@ -3228,7 +3228,7 @@ enemyCode06:
 	jp enemySetAnimation
 
 @@@@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -3236,11 +3236,11 @@ enemyCode06:
 
 @@@@substate2:
 	ld b,PARTID_43
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	ld l,$c2
 	ld (hl),$02
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp z,@@@func_69bc
 	dec l
 	ld (hl),$14
@@ -3259,7 +3259,7 @@ enemyCode06:
 @@@var03_04:
 @@@var03_05:
 	call @@@func_6a9f
-	call z,_func_6cf6
+	call z,func_6cf6
 	jp objectApplySpeed
 @@@func_6a9f:
 	ld h,d
@@ -3292,7 +3292,7 @@ enemyCode06:
 	jp enemySetAnimation
 	
 @@stateD:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr nz,@@stateB@var03_04
 	ld l,e
 	ld (hl),$0a
@@ -3302,7 +3302,7 @@ enemyCode06:
 	ld a,(wFrameCounter)
 	rrca
 	jr c,+
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	ld l,e
 	inc (hl)
@@ -3310,7 +3310,7 @@ enemyCode06:
 	ld (hl),$28
 +
 	call objectApplySpeed
-	jp _ecom_bounceOffScreenBoundary
+	jp ecom_bounceOffScreenBoundary
 	
 @@stateF:
 	ld h,d
@@ -3333,7 +3333,7 @@ enemyCode06:
 	cp b
 	jr z,++
 +
-	jp _ecom_moveTowardPosition
+	jp ecom_moveTowardPosition
 ++
 	ld l,e
 	inc (hl)
@@ -3441,8 +3441,8 @@ enemyCode06:
 	ld (de),a
 
 @@state9:
-	call _func_6cb2
-	call _func_6cbf
+	call func_6cb2
+	call func_6cbf
 	ret nz
 	ld e,$8b
 	ld a,b
@@ -3466,7 +3466,7 @@ enemyCode06:
 	ret
 
 @@stateA:
-	call _func_6cb2
+	call func_6cb2
 	ld e,$82
 	ld a,(de)
 	rrca
@@ -3518,8 +3518,8 @@ enemyCode06:
 	ld (de),a
 
 @@state9:
-	call _func_6cb2
-	call _func_6cbf
+	call func_6cb2
+	call func_6cbf
 	ret nz
 	ld e,$8b
 	ld a,b
@@ -3568,8 +3568,8 @@ enemyCode06:
 	ld (de),a
 	
 @@state9:
-	call _func_6cb2
-	call _func_6cbf
+	call func_6cb2
+	call func_6cbf
 	ret nz
 	ld e,$8b
 	ld a,b
@@ -3587,9 +3587,9 @@ enemyCode06:
 	ld (de),a
 	ret
 
-_func_6c6b:
+func_6c6b:
 	dec b
-	jr z,_func_6c8a
+	jr z,func_6c8a
 	ld c,$76
 	ld l,$82
 	bit 0,(hl)
@@ -3607,7 +3607,7 @@ _func_6c6b:
 	ld a,$02
 	jp enemySetAnimation
 	
-_func_6c8a:
+func_6c8a:
 	ld l,$a4
 	res 7,(hl)
 	ld l,$a6
@@ -3631,7 +3631,7 @@ _func_6c8a:
 	call enemySetAnimation
 	jp objectSetVisible83
 
-_func_6cb2:
+func_6cb2:
 	ld a,$01
 	call objectGetRelatedObject2Var
 	ld a,(hl)
@@ -3640,11 +3640,11 @@ _func_6cb2:
 	pop hl
 	jp enemyDelete
 
-_func_6cbf:
+func_6cbf:
 	ld l,$84
 	ld a,(hl)
 	cp $0e
-	jr nz,_func_6cd8
+	jr nz,func_6cd8
 	ld h,d
 	inc (hl)
 	ld l,$a4
@@ -3656,7 +3656,7 @@ _func_6cbf:
 	call c,objectCreateInteractionWithSubid00
 	jp objectSetInvisible
 	
-_func_6cd8:
+func_6cd8:
 	ld l,$8b
 	ldi a,(hl)
 	sub $24
@@ -3679,7 +3679,7 @@ _func_6cd8:
 	xor a
 	ret
 	
-_func_6cf6:
+func_6cf6:
 	ld e,$b0
 	ld a,(de)
 	and $1f
@@ -3689,7 +3689,7 @@ _func_6cf6:
 	ld (de),a
 +
 	ld a,(de)
-	ld hl,_table_6d14
+	ld hl,table_6d14
 	rst_addAToHl
 	ld e,Enemy.angle
 	ld a,(hl)
@@ -3701,7 +3701,7 @@ _func_6cf6:
 	ld (hl),$06
 	ret
 
-_table_6d14:
+table_6d14:
 	.db $15 $16 $17 $17 $19 $19 $1a $1b
 	.db $05 $06 $07 $07 $09 $09 $0a $0b
 	.db $0b $0a $09 $09 $07 $07 $06 $05
@@ -3730,7 +3730,7 @@ enemyCode07:
 	ld e,$a9
 	ld a,(de)
 	or a
-	call nz,_func_6f20
+	call nz,func_6f20
 	ld a,$63
 	jp playSound
 @dead:
@@ -3767,7 +3767,7 @@ enemyCode07:
 	ld a,$8c
 	call loadPaletteHeader
 	ld a,$14
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld e,$88
 	ld a,$02
 	ld (de),a
@@ -3846,18 +3846,18 @@ enemyCode07:
 	jr nc,@animate
 	ld l,$84
 	inc (hl)
-	call _func_6f2e
+	call func_6f2e
 	ld e,$88
 	xor a
 	ld (de),a
 	jp enemySetAnimation
 
 @stateB:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 	inc (hl)
 	ld b,PARTID_KING_MOBLIN_BOMB
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	ld e,$84
 	ld a,$0c
@@ -3868,21 +3868,21 @@ enemyCode07:
 	jp enemySetAnimation
 
 @stateC:
-	call _func_6f40
+	call func_6f40
 	ret nc
 	inc a
 	ret nz
 	ld e,$84
 	ld a,$0d
 	ld (de),a
-	call _func_6f2e
+	call func_6f2e
 	ld e,$88
 	ld a,$02
 	ld (de),a
 	jp enemySetAnimation
 
 @stateD:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 	ld l,e
 	ld (hl),$09
@@ -3934,7 +3934,7 @@ enemyCode07:
 	jp enemySetAnimation
 	
 @substate1:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 	ld l,$b3
 	bit 0,(hl)
@@ -3971,7 +3971,7 @@ enemyCode07:
 	ret
 	
 @substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	inc (hl)
 	inc l
@@ -3995,7 +3995,7 @@ enemyCode07:
 	ld c,a
 	ld a,$ac
 	call setTile
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ld l,$86
 	ld (hl),$0f
 	ret nz
@@ -4016,40 +4016,40 @@ enemyCode07:
 @substateStub:
 	ret
 
-_func_6f20:
+func_6f20:
 	dec a
-	ld hl,_table_6f20
+	ld hl,table_6f20
 	rst_addAToHl
 	ld e,$90
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_table_6f20:
+table_6f20:
 	.db SPEED_200
 	.db SPEED_180
 	.db SPEED_100
 	.db SPEED_0c0
 	
-_func_6f2e:
+func_6f2e:
 	ld e,$a9
 	ld a,(de)
 	dec a
-	ld hl,_table_6f3b
+	ld hl,table_6f3b
 	rst_addAToHl
 	ld e,$86
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_table_6f3b:
+table_6f3b:
 	.db $14
 	.db $1e
 	.db $28
 	.db $32
 	.db $3c
 	
-_func_6f40:
+func_6f40:
 	call enemyAnimate
 	ld e,$a1
 	ld a,(de)
@@ -4068,7 +4068,7 @@ _func_6f40:
 +
 	ld e,$a1
 	ld a,(de)
-	ld hl,_table_6f6f
+	ld hl,table_6f6f
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld b,a
@@ -4079,7 +4079,7 @@ _func_6f40:
 	or d
 	ret
 
-_table_6f6f:
+table_6f6f:
 	.db $08 $00
 	.db $f6 $00
 	.db $ee $00

@@ -747,7 +747,7 @@ interactionCoded2:
 ;;
 ; This is used by INTERACID_TITLESCREEN_CLOUDS and INTERACID_INTRO_BIRD.
 ; @param[out]	a	X position
-_introObject_applySpeed:
+introObject_applySpeed:
 	ld h,d
 	ld l,Interaction.angle
 	ld c,(hl)
@@ -881,7 +881,7 @@ interactionCoded3:
 	ld (de),a
 +
 	call interactionAnimate
-	call _introObject_applySpeed
+	call introObject_applySpeed
 	cp $b0
 	ret c
 

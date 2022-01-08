@@ -69,7 +69,7 @@ replaceBreakableTileOverPortal:
 
 	inc l
 	ld c,(hl)
-_removeBreakableTileForTimeWarp:
+removeBreakableTileForTimeWarp:
 	ld b,>wRoomLayout
 	ld a,(bc)
 	ld e,a
@@ -95,7 +95,7 @@ replaceBreakableTileOverLinkTimeWarpingIn:
 
 	ld a,(wWarpDestPos)
 	ld c,a
-	jr _removeBreakableTileForTimeWarp
+	jr removeBreakableTileForTimeWarp
 
 ;;
 replacePollutionWithWaterIfPollutionFixed:

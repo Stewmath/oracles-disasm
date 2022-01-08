@@ -7,7 +7,7 @@ enemyCode3c:
 	ret c
 	jp z,enemyDie
 	dec a
-	jp nz,_ecom_updateKnockback
+	jp nz,ecom_updateKnockback
 	ret
 +
 	call magunesuFunc_0d_6ccd
@@ -34,7 +34,7 @@ enemyCode3c:
 @state0:
 	call magunesuFunc_0d_6d06
 	ld a,$14
-	call _ecom_setSpeedAndState8AndVisible
+	call ecom_setSpeedAndState8AndVisible
 	jr @magunesuFunc_0d_6c54
 
 @state_stub:
@@ -42,8 +42,8 @@ enemyCode3c:
 
 @state8:
 	call magunesuFunc_0d_6d18
-	call _ecom_decCounter1
-	jp nz,_ecom_applyVelocityForTopDownEnemy
+	call ecom_decCounter1
+	jp nz,ecom_applyVelocityForTopDownEnemy
 	ld l,Enemy.state
 	inc (hl)
 	ld a,$01
@@ -78,8 +78,8 @@ enemyCode3c:
 
 @stateB:
 	call magunesuFunc_0d_6d18
-	call _ecom_decCounter1
-	jp nz,_ecom_applyVelocityForTopDownEnemy
+	call ecom_decCounter1
+	jp nz,ecom_applyVelocityForTopDownEnemy
 	ld l,$84
 	inc (hl)
 	ld a,$04
@@ -115,7 +115,7 @@ enemyCode3c:
 	jp enemySetAnimation
 
 @stateE:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr nz,+
 	ld l,$90
 	ld (hl),$14
@@ -128,7 +128,7 @@ enemyCode3c:
 	ld (hl),$0b
 	ret
 +
-	call _ecom_applyVelocityForTopDownEnemy
+	call ecom_applyVelocityForTopDownEnemy
 	ret nz
 	call objectGetAngleTowardEnemyTarget
 	xor $10
@@ -145,7 +145,7 @@ enemyCode3c:
 	and $18
 	ld (hl),a
 	xor a
-	call _ecom_getTopDownAdjacentWallsBitset
+	call ecom_getTopDownAdjacentWallsBitset
 	ret z
 	ld e,$89
 	ld a,(de)
@@ -160,10 +160,10 @@ magunesuFunc_0d_6ca9:
 	ld l,$86
 	ld (hl),$1e
 	call enemySetAnimation
-	jp _ecom_setRandomCardinalAngle
+	jp ecom_setRandomCardinalAngle
 
 magunesuFunc_0d_6cb7:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret z
 	ld a,(hl)
 	cp $0f
@@ -200,7 +200,7 @@ magunesuFunc_0d_6ce6:
 	ret z
 	call magunesuFunc_0d_6cf3
 	ld b,$46
-	jp _ecom_applyGivenVelocity
+	jp ecom_applyGivenVelocity
 
 magunesuFunc_0d_6cf3:
 	call objectGetAngleTowardEnemyTarget
@@ -259,7 +259,7 @@ magunesuFunc_0d_6d18:
 	ret c
 	jp z,enemyDie
 	dec a
-	jp nz,_ecom_updateKnockbackNoSolidity
+	jp nz,ecom_updateKnockbackNoSolidity
 	ret
 +
 
@@ -278,20 +278,20 @@ enemyCodeTemplate0:
 	.dw @state2
 
 @state0:
-	jp _ecom_setSpeedAndState8AndVisible
+	jp ecom_setSpeedAndState8AndVisible
 
 @state_stub:
 	ret
 
 @state2:
 	jp enemyAnimate
-	call _ecom_checkHazards
+	call ecom_checkHazards
 	jr z,+
 	sub $03
 	ret c
 	jp z,enemyDie
 	dec a
-	jp nz,_ecom_updateKnockbackAndCheckHazards
+	jp nz,ecom_updateKnockbackAndCheckHazards
 	ret
 +
 
@@ -343,30 +343,30 @@ enemyCode46:
 	ld a,$0d
 	ld (de),a
 ++
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	cp $0a
 	jr nc,+
 	rst_jumpTable
-	.dw _gohma_gel_state0
-	.dw _gohma_gel_state_stub
-	.dw _gohma_gel_state_stub
-	.dw _gohma_gel_state_stub
-	.dw _gohma_gel_state_stub
-	.dw _gohma_gel_state5
-	.dw _gohma_gel_state_stub
-	.dw _gohma_gel_state_stub
-	.dw _gohma_gel_state8
-	.dw _gohma_gel_state9
+	.dw gohma_gel_state0
+	.dw gohma_gel_state_stub
+	.dw gohma_gel_state_stub
+	.dw gohma_gel_state_stub
+	.dw gohma_gel_state_stub
+	.dw gohma_gel_state5
+	.dw gohma_gel_state_stub
+	.dw gohma_gel_state_stub
+	.dw gohma_gel_state8
+	.dw gohma_gel_state9
 +
 	ld a,b
 	rst_jumpTable
-	.dw _gohma_gel_subid0
-	.dw _gohma_gel_subid1
-	.dw _gohma_gel_subid2
-	.dw _gohma_gel_subid3
+	.dw gohma_gel_subid0
+	.dw gohma_gel_subid1
+	.dw gohma_gel_subid2
+	.dw gohma_gel_subid3
 
-_gohma_gel_state0:
-	call _ecom_setSpeedAndState8
+gohma_gel_state0:
+	call ecom_setSpeedAndState8
 	ld l,$82
 	ld a,(hl)
 	cp $02
@@ -376,35 +376,35 @@ _gohma_gel_state0:
 +
 	jp objectSetVisiblec1
 
-_gohma_gel_state5:
-	call _ecom_galeSeedEffect
+gohma_gel_state5:
+	call ecom_galeSeedEffect
 	ret c
 	ld a,$32
 	call objectGetRelatedObject1Var
 	dec (hl)
 	jp enemyDelete
 
-_gohma_gel_state_stub:
+gohma_gel_state_stub:
 	ret
 
-_gohma_gel_state8:
+gohma_gel_state8:
 	ld bc,$ff00
 	call objectSetSpeedZ
 	ld l,e
 	inc (hl)
 	ld l,$90
 	ld (hl),$1e
-	call _ecom_setRandomAngle
+	call ecom_setRandomAngle
 
-_gohma_gel_state9:
+gohma_gel_state9:
 	ld c,$0e
 	call objectUpdateSpeedZ_paramC
-	jp nz,_ecom_applyVelocityForSideviewEnemyNoHoles
+	jp nz,ecom_applyVelocityForSideviewEnemyNoHoles
 	ld l,$84
 	inc (hl)
 	ret
 
-_gohma_gel_subid0:
+gohma_gel_subid0:
 	ld a,(de)
 	sub $0a
 	rst_jumpTable
@@ -423,7 +423,7 @@ _gohma_gel_subid0:
 	ld c,$0c
 	call objectUpdateSpeedZ_paramC
 	jr z,+
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 	jp objectApplySpeed
 +
 	call getRandomNumber_noPreserveVars
@@ -446,7 +446,7 @@ _gohma_gel_subid0:
 
 @stateC:
 	call enemyAnimate
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	call objectSetVisiblec1
 ++
@@ -456,9 +456,9 @@ _gohma_gel_subid0:
 	ld a,$80
 	ldi (hl),a
 	ld (hl),$fe
-	jp _ecom_updateAngleTowardTarget
+	jp ecom_updateAngleTowardTarget
 
-_gohma_gel_subid1:
+gohma_gel_subid1:
 	ld a,(de)
 	sub $0a
 	rst_jumpTable
@@ -483,15 +483,15 @@ _gohma_gel_subid1:
 	jr +++
 
 @stateB:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,++
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jr +++
 
 @stateC:
 	ld h,d
 	ld l,$b0
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	cp c
 	jr nz,+
 	ldh a,(<hFF8F)
@@ -505,16 +505,16 @@ _gohma_gel_subid1:
 	call objectGetRelativeAngleWithTempVars
 	ld e,$89
 	ld (de),a
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jr z,+
 	jr +++
 +
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+++
 	jr ++
 
 @stateD:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+++
 ++
 	ld l,$84
@@ -529,13 +529,13 @@ _gohma_gel_subid1:
 +++
 	jp enemyAnimate
 
-_gohma_gel_subid2:
+gohma_gel_subid2:
 	ld a,(de)
 	sub $0a
 	rst_jumpTable
-	.dw _gohma_gel_subid0@stateA
-	.dw _gohma_gel_subid0@stateB
-	.dw _gohma_gel_subid0@stateC
+	.dw gohma_gel_subid0@stateA
+	.dw gohma_gel_subid0@stateB
+	.dw gohma_gel_subid0@stateC
 	.dw @stateD
 	.dw @seasonsFunc_0d_6f33
 
@@ -546,7 +546,7 @@ _gohma_gel_subid2:
 	ld a,($d00d)
 	ld e,$8d
 	ld (de),a
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,++
 	ld a,($cc46)
 	or a
@@ -576,7 +576,7 @@ _gohma_gel_subid2:
 @seasonsFunc_0d_6f25:
 	ld a,($d009)
 	bit 7,a
-	jp nz,_ecom_setRandomAngle
+	jp nz,ecom_setRandomAngle
 	xor $10
 	ld e,$89
 	ld (de),a
@@ -585,7 +585,7 @@ _gohma_gel_subid2:
 @seasonsFunc_0d_6f33:
 	ld c,$0e
 	call objectUpdateSpeedZ_paramC
-	jp nz,_ecom_applyVelocityForSideviewEnemyNoHoles
+	jp nz,ecom_applyVelocityForSideviewEnemyNoHoles
 	ld l,$84
 	ld (hl),$0b
 	ld l,$a4
@@ -593,7 +593,7 @@ _gohma_gel_subid2:
 +++
 	jp enemyAnimate
 
-_gohma_gel_subid3:
+gohma_gel_subid3:
 	ld a,(de)
 	sub $0a
 	rst_jumpTable
@@ -614,7 +614,7 @@ _gohma_gel_subid3:
 	inc (hl)
 	ld l,$86
 	ld (hl),$5a
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call getRandomNumber_noPreserveVars
 	and $01
 	ld hl,@seasonsTable_0d_6f73
@@ -630,13 +630,13 @@ _gohma_gel_subid3:
 	.db $04 $fc
 
 @stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	ld l,e
 	dec (hl)
 	jr ++
 +
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 	call objectApplySpeed
 ++
 	jp enemyAnimate
@@ -667,10 +667,10 @@ enemyCode47:
 	ret c
 	jp z,enemyDie_uncounted
 	dec a
-	jp nz,_ecom_updateKnockbackNoSolidity
+	jp nz,ecom_updateKnockbackNoSolidity
 	ret
 +
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 	rst_jumpTable
 	.dw @state0
@@ -692,7 +692,7 @@ enemyCode47:
 @state0:
 	bit 7,b
 	ld a,$46
-	jp z,_ecom_setSpeedAndState8AndVisible
+	jp z,ecom_setSpeedAndState8AndVisible
 	ld a,$01
 	ld (de),a
 
@@ -714,7 +714,7 @@ enemyCode47:
 -
 	push bc
 	ld b,ENEMYID_MOTHULA_CHILD
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	dec (hl)
 	call objectCopyPosition
 	dec l
@@ -738,7 +738,7 @@ enemyCode47:
 	.db $05 $0b $10 $15 $1b
 
 @state5:
-	call _ecom_galeSeedEffect
+	call ecom_galeSeedEffect
 	ret c
 	jp enemyDelete
 
@@ -766,9 +766,9 @@ enemyCode47:
 	jp objectSetVisible82
 
 @@state9:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr z,+
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	ld (hl),$04
 	call objectGetAngleTowardEnemyTarget
@@ -839,7 +839,7 @@ enemyCode54:
 	ret c
 	jp z,enemyDelete
 	dec a
-	jp nz,_ecom_updateKnockback
+	jp nz,ecom_updateKnockback
 	ld e,$aa
 	ld a,(de)
 	res 7,a
@@ -1025,7 +1025,7 @@ enemyCode54:
 	ret
 
 @stateF:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld a,$24
 	call objectGetRelatedObject2Var
@@ -1060,7 +1060,7 @@ enemyCode54:
 	ld (hl),$3c
 
 @@state1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	jp seasonsFunc_0d_736d
 
@@ -1086,14 +1086,14 @@ enemyCode54:
 	ld (de),a
 
 @@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,objectApplySpeed
 	ld (hl),$04
 	ld l,e
 	inc (hl)
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$1e
 	ld l,e
@@ -1106,7 +1106,7 @@ enemyCode54:
 	ld (hl),a
 
 @@substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $1a
@@ -1118,7 +1118,7 @@ enemyCode54:
 	inc (hl)
 
 @@substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	jp seasonsFunc_0d_736d
 
@@ -1140,7 +1140,7 @@ enemyCode54:
 @@substate1:
 	call seasonsFunc_0d_7312
 	ret nz
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$0a
 	dec l
@@ -1150,14 +1150,14 @@ enemyCode54:
 	call seasonsFunc_0d_73cd
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,objectApplySpeed
 	ld (hl),$28
 	ld l,e
 	inc (hl)
 
 @@substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	jp seasonsFunc_0d_736d
 
@@ -1176,7 +1176,7 @@ enemyCode54:
 	ld (hl),$28
 	ld l,$a4
 	res 7,(hl)
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	ld a,$04
 	jp enemySetAnimation
 
@@ -1313,7 +1313,7 @@ seasonsFunc_0d_7340:
 seasonsFunc_0d_7350:
 	ld c,$20
 	call objectCheckLinkWithinDistance
-	jp nc,_ecom_updateAngleTowardTarget
+	jp nc,ecom_updateAngleTowardTarget
 	call getRandomNumber_noPreserveVars
 	and $01
 	ld b,$f8
@@ -1440,7 +1440,7 @@ enemyCode55:
 	ld a,$04
 	call enemySetAnimation
 +
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	jp enemyDie_uncounted
 ++
@@ -1468,7 +1468,7 @@ enemyCode55:
 
 @state0:
 	ld bc,$011f
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld e,$89
 	ld a,c
 	ld (de),a
@@ -1485,7 +1485,7 @@ enemyCode55:
 	ldi (hl),a
 	ld (hl),$fe
 	ld a,$32
-	jp _ecom_setSpeedAndState8AndVisible
+	jp ecom_setSpeedAndState8AndVisible
 
 @seasonsTable_0d_7462:
 	.db $3c $50
@@ -1555,7 +1555,7 @@ enemyCode55:
 	jp enemyDelete
 
 @bounceOffWallsAndHoles:
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 
 @animateAndApplySpeed:
 	call seasonsFunc_0d_74ce
@@ -1823,7 +1823,7 @@ enemyCode5b:
 	jp loadPaletteHeader
 
 @state1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -1858,7 +1858,7 @@ enemyCode5c:
 	ret
 
 @state1:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 	ld (hl),$10
 	call getFreePartSlot
@@ -1929,7 +1929,7 @@ enemyCode5f:
 	.dw @state1zh5
 
 @state2:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr z,+
 	ld a,$2e
 	call objectGetRelatedObject1Var
@@ -2034,14 +2034,14 @@ enemyCode5f:
 	call seasonsFunc_0d_78ce
 
 @@substate1:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp nz,seasonsFunc_0d_78bc
 	ld (hl),$04
 	ld l,e
 	inc (hl)
 
 @@substate2:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp nz,seasonsFunc_0d_78ab
 	ld (hl),$0a
 	ld l,e
@@ -2054,14 +2054,14 @@ enemyCode5f:
 	ld (hl),a
 
 @@substate3:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp nz,seasonsFunc_0d_78bc
 	ld (hl),$14
 	ld l,e
 	inc (hl)
 
 @@substate4:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp nz,seasonsFunc_0d_78ab
 	ld (hl),$14
 	ld l,e
@@ -2074,7 +2074,7 @@ enemyCode5f:
 	ld (hl),a
 
 @@substate5:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp nz,seasonsFunc_0d_78bc
 	jp @seasonsFunc_0d_76fa
 
@@ -2117,7 +2117,7 @@ enemyCode5f:
 	ld (hl),$50
 
 @@substate2:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr nz,+
 	ld (hl),$08
 	ld l,e
@@ -2133,7 +2133,7 @@ enemyCode5f:
 	jp seasonsFunc_0d_78e1
 
 @@substate3:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp z,@seasonsFunc_0d_76fa
 	ld l,$8f
 	inc (hl)
@@ -2179,7 +2179,7 @@ enemyCode5f:
 	ld (hl),$fb
 
 @@substate2:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr z,+
 	ld l,$a6
 	ld a,$06

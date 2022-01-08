@@ -101,7 +101,7 @@ applyWarpDest_b04:
 .ifdef ROM_SEASONS
 	and $0f
 	cp $02
-	jr nz,_label_04_032
+	jr nz,label_04_032
 
 	ld hl,warpDestTable
 	rst_addDoubleIndex
@@ -112,17 +112,17 @@ applyWarpDest_b04:
 	ld b,a
 	ld a,(wc6e5)
 	add b
-	jr _label_04_033
+	jr label_04_033
 .endif
 
-_label_04_032:
+label_04_032:
 	ld hl,warpDestTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 	ld a,(wWarpDestRoom)
-_label_04_033:
+label_04_033:
 	ld c,a
 	ld b,$00
 	add hl,bc
@@ -165,21 +165,21 @@ _label_04_033:
 .else; ROM_SEASONS
 	ld a,(wWarpDestGroup)
 	bit 6,a
-	jr nz,_label_04_036
+	jr nz,label_04_036
 	ld a,(wActiveGroup)
 	or a
-	jr nz,_label_04_036
+	jr nz,label_04_036
 	ldh a,(<hFF8B)
 	cp $03
-	jr c,_label_04_035
-	jr z,_label_04_036
+	jr c,label_04_035
+	jr z,label_04_036
 	ld a,(wDungeonIndex)
 	cp $ff
-	jr z,_label_04_036
-_label_04_035:
+	jr z,label_04_036
+label_04_035:
 	call loadScreenMusicAndSetRoomPack
 	jp checkRoomPackAfterWarp
-_label_04_036:
+label_04_036:
 	jp loadScreenMusicAndSetRoomPack
 .endif
 

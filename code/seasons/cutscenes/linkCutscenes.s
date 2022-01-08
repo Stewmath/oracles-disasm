@@ -2,21 +2,21 @@ specialObjectCode_linkInCutscene:
 	ld e,SpecialObject.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _linkCutscene0
-	.dw _linkCutscene1
-	.dw _linkCutscene2
-	.dw _linkCutscene3
-	.dw _linkCutscene4
-	.dw _linkCutscene5
-	.dw _linkCutscene6
-	.dw _linkCutscene7
-	.dw _linkCutscene8
-	.dw _linkCutscene9
-	.dw _linkCutsceneA
+	.dw linkCutscene0
+	.dw linkCutscene1
+	.dw linkCutscene2
+	.dw linkCutscene3
+	.dw linkCutscene4
+	.dw linkCutscene5
+	.dw linkCutscene6
+	.dw linkCutscene7
+	.dw linkCutscene8
+	.dw linkCutscene9
+	.dw linkCutsceneA
 
 ;;
 ; Opening cutscene with the triforce
-_linkCutscene0:
+linkCutscene0:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -24,7 +24,7 @@ _linkCutscene0:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	call objectSetVisible81
 	xor a
 	call specialObjectSetAnimation
@@ -39,7 +39,7 @@ _linkCutscene0:
 	.dw @substate3
 	.dw @substate4
 	.dw @substate5
-	.dw _linkCutscene0_substate6
+	.dw linkCutscene0_substate6
 
 @substate0:
 	ld a,(wLinkAngle)
@@ -105,16 +105,16 @@ _linkCutscene0:
 	ld e,SpecialObject.counter1
 	ld (de),a
 ++
-	ld hl,_linkCutscene_zOscillation0
+	ld hl,linkCutscene_zOscillation0
 .ifdef ROM_AGES
-	jr _linkCutscene_oscillateZ
+	jr linkCutscene_oscillateZ
 .else
-	jp _linkCutscene_oscillateZ
+	jp linkCutscene_oscillateZ
 .endif
 
 @substate4:
 	call itemDecCounter1
-	jp nz,_linkCutscene_oscillateZ_1
+	jp nz,linkCutscene_oscillateZ_1
 	ld a,$03
 	ld (wTmpcbb9),a
 	call itemIncSubstate
@@ -122,11 +122,11 @@ _linkCutscene0:
 @substate5:
 	ld a,(wTmpcbb9)
 	cp $06
-	jr nz,_linkCutscene_oscillateZ_1
+	jr nz,linkCutscene_oscillateZ_1
 
 ;;
 ; Creates the colored orb that appears under Link in the opening cutscene
-_linkCutscene_createGlowingOrb:
+linkCutscene_createGlowingOrb:
 	ldbc INTERACID_SPARKLE, $06
 	call objectCreateInteraction
 	jr nz,+
@@ -140,11 +140,11 @@ _linkCutscene_createGlowingOrb:
 	jp specialObjectSetAnimation
 
 ;;
-_linkCutscene_oscillateZ_1:
-	ld hl,_linkCutscene_zOscillation1
+linkCutscene_oscillateZ_1:
+	ld hl,linkCutscene_zOscillation1
 
 ;;
-_linkCutscene_oscillateZ:
+linkCutscene_oscillateZ:
 	ld a,($cbb7)
 .ifdef ROM_SEASONS
 	ld b,a
@@ -176,17 +176,17 @@ _linkCutscene_oscillateZ:
 ++
 	jp specialObjectAnimate
 
-_linkCutscene_zOscillation0:
+linkCutscene_zOscillation0:
 	.db $ff $fe $fe $ff $00 $01 $01 $00
 
-_linkCutscene_zOscillation1:
+linkCutscene_zOscillation1:
 	.db $ff $ff $ff $00 $01 $01 $01 $00
 
-_linkCutscene_zOscillation2:
+linkCutscene_zOscillation2:
 	.db $02 $03 $04 $03 $02 $00 $ff $00
 
 
-_linkCutscene0_substate6:
+linkCutscene0_substate6:
 	ld e,SpecialObject.animParameter
 	ld a,(de)
 	inc a
@@ -203,7 +203,7 @@ _linkCutscene0_substate6:
 
 
 ; Dancing with Din
-_linkCutscene1:
+linkCutscene1:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -211,7 +211,7 @@ _linkCutscene1:
 	.dw @state1
 
 @state0:
-	jp _linkCutscene_initOam_setVisible_incState
+	jp linkCutscene_initOam_setVisible_incState
 
 @state1:
 	ld e,Item.substate
@@ -508,7 +508,7 @@ _linkCutscene1:
 	jp itemIncSubstate
 
 
-_linkCutscene2:
+linkCutscene2:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -516,7 +516,7 @@ _linkCutscene2:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	ld a,$09
 	call specialObjectSetAnimation
 
@@ -622,7 +622,7 @@ setRelatedObj2Animation:
 	ret
 
 
-_linkCutscene3:
+linkCutscene3:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -630,7 +630,7 @@ _linkCutscene3:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	ld l,Item.counter1
 	ld (hl),$a8
 	ld a,$0c
@@ -681,7 +681,7 @@ _linkCutscene3:
 	ret
 
 
-_linkCutscene4:
+linkCutscene4:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -689,7 +689,7 @@ _linkCutscene4:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	ld l,Item.angle
 	ld (hl),ANGLE_UP
 	ld l,Item.speed
@@ -769,7 +769,7 @@ _linkCutscene4:
 
 
 ; Sokra?
-_linkCutscene5:
+linkCutscene5:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -777,7 +777,7 @@ _linkCutscene5:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	ld l,Item.counter1
 	ld (hl),$f0
 	ld a,$03
@@ -823,7 +823,7 @@ _linkCutscene5:
 ;;
 ; Link being kissed by Zelda in ending cutscene - cutsceneA in ages
 ;
-_linkCutscene6:
+linkCutscene6:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -831,7 +831,7 @@ _linkCutscene6:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	call objectSetInvisible
 
 	call @checkShieldEquipped
@@ -926,24 +926,24 @@ _linkCutscene6:
 
 
 ; Sokra?
-_linkCutscene7:
+linkCutscene7:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _linkCutscene5@ret
+	.dw linkCutscene5@ret
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
-	jp _linkCutscene5@seasonsFunc_06_72d0
+	call linkCutscene_initOam_setVisible_incState
+	jp linkCutscene5@seasonsFunc_06_72d0
 
-_linkCutscene_initOam_setVisible_incState:
+linkCutscene_initOam_setVisible_incState:
 	callab bank5.specialObjectSetOamVariables
 	call objectSetVisiblec1
 	jp itemIncState
 
 
-_linkCutscene8:
+linkCutscene8:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -951,7 +951,7 @@ _linkCutscene8:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	ld l,Item.speed
 	ld (hl),SPEED_100
 	ld a,$00
@@ -967,7 +967,7 @@ _linkCutscene8:
 	jp setLinkIDOverride
 
 
-_linkCutscene9:
+linkCutscene9:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -975,7 +975,7 @@ _linkCutscene9:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	push de
 	call clearItems
 	pop de
@@ -1069,7 +1069,7 @@ _linkCutscene9:
 ;;
 ; Cutscene played on starting a new game ("accept our quest, hero") - cutsceneA in ages
 ;
-_linkCutsceneA:
+linkCutsceneA:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -1077,7 +1077,7 @@ _linkCutsceneA:
 	.dw @state1
 
 @state0:
-	call _linkCutscene_initOam_setVisible_incState
+	call linkCutscene_initOam_setVisible_incState
 	call objectSetVisible81
 
 	ld l,SpecialObject.counter1
@@ -1118,7 +1118,7 @@ _linkCutsceneA:
 	.dw @substate3
 
 @substate0:
-	call _linkCutscene_oscillateZ_2
+	call linkCutscene_oscillateZ_2
 	ld hl,w1Link.counter1
 	call decHlRef16WithCap
 	ret nz
@@ -1127,7 +1127,7 @@ _linkCutsceneA:
 	jp itemIncSubstate
 
 @substate1:
-	call _linkCutscene_oscillateZ_2
+	call linkCutscene_oscillateZ_2
 	call itemDecCounter1
 	ret nz
 
@@ -1140,8 +1140,8 @@ _linkCutsceneA:
 	jp showText
 
 @substate2:
-	ld hl,_linkCutscene_zOscillation1
-	call _linkCutscene_oscillateZ
+	ld hl,linkCutscene_zOscillation1
+	call linkCutscene_oscillateZ
 	ld a,(wTextIsActive)
 	or a
 	ret nz
@@ -1150,7 +1150,7 @@ _linkCutsceneA:
 	ld (wTmpcbb9),a
 	ld a,SND_FAIRYCUTSCENE
 	call playSound
-	jp _linkCutscene_createGlowingOrb
+	jp linkCutscene_createGlowingOrb
 
 @substate3:
 	ld e,SpecialObject.animParameter
@@ -1168,9 +1168,9 @@ _linkCutsceneA:
 	jp objectSetVisible
 
 
-_linkCutscene_oscillateZ_2:
-	ld hl,_linkCutscene_zOscillation2
-	jp _linkCutscene_oscillateZ
+linkCutscene_oscillateZ_2:
+	ld hl,linkCutscene_zOscillation2
+	jp linkCutscene_oscillateZ
 
 
 angleToY48X50:

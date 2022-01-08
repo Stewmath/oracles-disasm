@@ -108,7 +108,7 @@ interactionCode8c:
 	ld e,Interaction.subid
 	ld a,(de)
 	bit 7,a
-	jp nz,_flyingRooster_subidBit7Set
+	jp nz,flyingRooster_subidBit7Set
 
 	ld a,(wLinkDeathTrigger)
 	or a
@@ -132,7 +132,7 @@ interactionCode8c:
 	ld a,$02
 	call objectSetCollideRadius
 
-	call _flyingRooster_getSubidAndInitSpeed
+	call flyingRooster_getSubidAndInitSpeed
 
 	; Save initial position into var30/var31
 	ld e,Interaction.yh
@@ -236,7 +236,7 @@ interactionCode8c:
 	ld e,Interaction.angle
 	ld (de),a
 
-	call _flyingRooster_applySpeedAndUpdatePositions
+	call flyingRooster_applySpeedAndUpdatePositions
 
 	ld h,d
 	ld l,Interaction.var30
@@ -276,7 +276,7 @@ interactionCode8c:
 	jr nz,@incState
 
 	; Subid 0 (on top of d4) only: stay in this state until reaching cliff edge.
-	call _flyingRooster_applySpeedAndUpdatePositions
+	call flyingRooster_applySpeedAndUpdatePositions
 	ld l,<w1Link.xh
 	ldi a,(hl)
 	cp $30
@@ -309,7 +309,7 @@ interactionCode8c:
 ; The state where Link can adjust the rooster's height.
 @state3:
 	call interactionAnimate
-	call _flyingRooster_applySpeedAndUpdatePositions
+	call flyingRooster_applySpeedAndUpdatePositions
 
 	; Cap y-position?
 	ld l,<w1Link.yh
@@ -324,7 +324,7 @@ interactionCode8c:
 	cp (hl)
 	jr c,@reachedTargetXPosition
 
-	call _flyingRooster_updateGravityAndCheckCaps
+	call flyingRooster_updateGravityAndCheckCaps
 	ld a,(wGameKeysJustPressed)
 	and (BTN_A|BTN_B)
 	ret z
@@ -343,7 +343,7 @@ interactionCode8c:
 	jp interactionAnimate
 
 @reachedTargetXPosition:
-	call _flyingRooster_getVisualLinkYPosition
+	call flyingRooster_getVisualLinkYPosition
 	ld e,Interaction.var32
 	ld a,(de)
 	add $08
@@ -412,7 +412,7 @@ interactionCode8c:
 ; Lost control; moving onto cliff
 @state4:
 	call interactionAnimate
-	call _flyingRooster_applySpeedAndUpdatePositions
+	call flyingRooster_applySpeedAndUpdatePositions
 	ld e,Interaction.var35
 	ld a,(de)
 	add $20
@@ -426,7 +426,7 @@ interactionCode8c:
 	ret nz
 
 	; Update Link's Y/Z positions
-	call _flyingRooster_getVisualLinkYPosition
+	call flyingRooster_getVisualLinkYPosition
 	add $08
 	ld l,<w1Link.yh
 	ld (hl),a
@@ -536,13 +536,13 @@ interactionCode8c:
 
 	ld l,Interaction.visible
 	set 6,(hl)
-	call _flyingRooster_getSubidAndInitSpeed
+	call flyingRooster_getSubidAndInitSpeed
 	ld a,$01
 	jp interactionSetAnimation
 
 ;;
 ; @param[out]	bc	Y/X positions for Link
-_flyingRooster_applySpeedAndUpdatePositions:
+flyingRooster_applySpeedAndUpdatePositions:
 	ld hl,w1Link.yh
 	ld e,Interaction.yh
 	ldi a,(hl)
@@ -566,7 +566,7 @@ _flyingRooster_applySpeedAndUpdatePositions:
 	ret
 
 ;;
-_flyingRooster_updateGravityAndCheckCaps:
+flyingRooster_updateGravityAndCheckCaps:
 	; [this.z] = [w1Link.z]
 	ld l,<w1Link.z
 	ld e,Interaction.z
@@ -588,7 +588,7 @@ _flyingRooster_updateGravityAndCheckCaps:
 	ld a,(de)
 	ld (hl),a
 
-	call _flyingRooster_getVisualLinkYPosition
+	call flyingRooster_getVisualLinkYPosition
 	ld e,Interaction.var32
 	ld a,(de)
 	cp b
@@ -619,7 +619,7 @@ _flyingRooster_updateGravityAndCheckCaps:
 
 ;;
 ; @param[out]	a,b	Link's Y-position + Z-position
-_flyingRooster_getVisualLinkYPosition:
+flyingRooster_getVisualLinkYPosition:
 	ld l,<w1Link.yh
 	ld a,(hl)
 	ld l,<w1Link.zh
@@ -629,7 +629,7 @@ _flyingRooster_getVisualLinkYPosition:
 
 
 ; Helper object which handles the screen transition when Link falls down
-_flyingRooster_subidBit7Set:
+flyingRooster_subidBit7Set:
 	ld hl,w1Link.zh
 	ld a,(wActiveRoom)
 	and $f0
@@ -658,7 +658,7 @@ _flyingRooster_subidBit7Set:
 	jp interactionDelete
 
 ;;
-_flyingRooster_getSubidAndInitSpeed:
+flyingRooster_getSubidAndInitSpeed:
 	ld l,Interaction.subid
 	ld c,(hl)
 	ld l,Interaction.speed
@@ -1542,7 +1542,7 @@ interactionCode95:
 	adc $00
 	sla b
 	adc $00
-	ld hl,_table_55bf
+	ld hl,table_55bf
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1733,7 +1733,7 @@ interactionCode95:
 	call playSound
 +
 	jp interactionAnimate
-_table_55bf:
+table_55bf:
 	; based on room flags
 	.dw mainScripts.script73ab ; bit 6 and 7 both not set
 	.dw mainScripts.script73b5 ; 1 of bit 6 and 7 set
@@ -1764,13 +1764,13 @@ interactionCode96:
 	.dw @@subid5
 	.dw @@subid6
 @@subid0:
-	ld hl,_table_57d0
+	ld hl,table_57d0
 --
-	call _func_57ba
+	call func_57ba
 	jr @state1
 @@subid1:
 	call objectSetVisible81
-	ld hl,_table_57d6
+	ld hl,table_57d6
 	jr --
 @@subid3:
 	ld a,$02
@@ -1792,7 +1792,7 @@ interactionCode96:
 @@subid6:
 	ld e,$43
 	ld a,(de)
-	ld hl,_table_57dc
+	ld hl,table_57dc
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -1841,7 +1841,7 @@ interactionCode96:
 	ld hl,$cfd0
 	ld a,(hl)
 	cp $02
-	jp z,_func_5768
+	jp z,func_5768
 	inc a
 	jp z,interactionDelete
 	call interactionRunScript
@@ -1976,7 +1976,7 @@ interactionCode96:
 	call interactionRunScript
 	jp c,interactionDelete
 	jp interactionAnimateAsNpc
-_func_5768:
+func_5768:
 	call interactionIncSubstate
 	ld l,$46
 	ld (hl),$20
@@ -1986,7 +1986,7 @@ _func_5768:
 	ld hl,w1Link.yh
 	ld a,(hl)
 	sub b
-	call _func_57ad
+	call func_57ad
 	ld h,d
 	ld l,$50
 	ld (hl),c
@@ -2007,7 +2007,7 @@ _func_5768:
 +
 	add c
 	sub b
-	call _func_57ad
+	call func_57ad
 	ld h,d
 	ld l,$52
 	ld (hl),c
@@ -2020,7 +2020,7 @@ _func_5768:
 	dec e
 	ld (de),a
 	jp interactionSetAnimation
-_func_57ad:
+func_57ad:
 	ld b,a
 	ld c,$00
 	ld a,$05
@@ -2030,7 +2030,7 @@ _func_57ad:
 	dec a
 	jr nz,-
 	ret
-_func_57ba:
+func_57ba:
 	push hl
 	call getThisRoomFlags
 	ld b,a
@@ -2045,15 +2045,15 @@ _func_57ba:
 	ld h,(hl)
 	ld l,a
 	jp interactionSetScript
-_table_57d0:
+table_57d0:
 	.dw mainScripts.script73f3
 	.dw mainScripts.script73f3
 	.dw mainScripts.script73f3
-_table_57d6:
+table_57d6:
 	.dw mainScripts.script73f6
 	.dw mainScripts.script73f6
 	.dw mainScripts.script73f6
-_table_57dc:
+table_57dc:
 	.dw mainScripts.script7443
 	.dw mainScripts.script7456
 	.dw mainScripts.script7469
@@ -2137,7 +2137,7 @@ interactionCode99:
 	call interactionSetHighTextIndex
 	ld e,$42
 	ld a,(de)
-	ld hl,_table_587b
+	ld hl,table_587b
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2151,7 +2151,7 @@ interactionCode99:
 @state1:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
-_table_587b:
+table_587b:
 	.dw mainScripts.oldManScript_givesRupees
 	.dw mainScripts.oldManScript_givesRupees
 	.dw mainScripts.oldManScript_givesRupees
@@ -2211,7 +2211,7 @@ interactionCode9a:
 	jr ++
 @bit7NotSet:
 	call getThisRoomFlags
-	call _func_5b49@func_5b65
+	call func_5b49@func_5b65
 	ld c,(hl)
 	ld a,$03
 	ld b,$aa
@@ -2235,7 +2235,7 @@ interactionCode9a:
 	.dw @@subid0
 	.dw @@subid1
 	.dw @@subid2
-	.dw _state1_subid3
+	.dw state1_subid3
 @@subid0:
 	call interactionAnimate
 	ld e,$61
@@ -2251,7 +2251,7 @@ interactionCode9a:
 	or a
 	ret z
 	dec a
-	ld hl,_table_5a5e
+	ld hl,table_5a5e
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2339,7 +2339,7 @@ interactionCode9a:
 	pop de
 @@@substate2:
 	xor a
-	call _func_5a82
+	call func_5a82
 	ret nz
 	ld hl,$cc69
 	res 1,(hl)
@@ -2386,7 +2386,7 @@ interactionCode9a:
 	.db INTERACID_S_MOBLIN,    $03 $60 $58
 	.db INTERACID_S_MOBLIN,    $03 $40 $58
 
-_state1_subid3:
+state1_subid3:
 	ld e,$45
 	ld a,(de)
 	rst_jumpTable
@@ -2410,7 +2410,7 @@ _state1_subid3:
 	call fadeoutToWhite
 +
 	xor a
-	jp _func_5a82
+	jp func_5a82
 @substate2:
 	ld a,($c4ab)
 	or a
@@ -2445,7 +2445,7 @@ _state1_subid3:
 	xor a
 	ld (wLinkHealth),a
 	jp interactionDelete
-_table_5a5e:
+table_5a5e:
 	; tile replacement tables
 	; position - tiletype
 	.dw @5a6a
@@ -2475,13 +2475,13 @@ _table_5a5e:
 	.db $02
 	.db $46 $fb
 	.db $47 $fd
-_func_5a82:
+func_5a82:
 	ld h,d
 	ld e,Interaction.counter1
 	ld l,e
 	dec (hl)
 	ret nz
-	ld hl,_table_5ac4
+	ld hl,table_5ac4
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2530,7 +2530,7 @@ _func_5a82:
 	pop de
 	or $01
 	ret
-_table_5ac4:
+table_5ac4:
 	.dw @5ac8
 	.dw @5ae1
 @5ac8:
@@ -2577,7 +2577,7 @@ interactionCode9b:
 @state1:
 	ld a,($cfd0)
 	cp $02
-	jr nz,_func_5b49
+	jr nz,func_5b49
 	ld hl,$cfd1
 	ld a,(hl)
 	cp $03
@@ -2594,7 +2594,7 @@ interactionCode9b:
 	ldi (hl),a
 	ld (hl),$03
 	jp interactionDelete
-_func_5b49:
+func_5b49:
 	ld e,$45
 	ld a,(de)
 	rst_jumpTable
@@ -2641,7 +2641,7 @@ _func_5b49:
 	ret
 @substate2:
 	ld a,$01
-	call _func_5a82
+	call func_5a82
 	ret nz
 	ld a,$40
 	ld (w1Link.yh),a
@@ -2749,7 +2749,7 @@ interactionCode9c:
 	call interactionSetAlwaysUpdateBit
 	xor a
 	ld e,$61
-	call _func_5cf2
+	call func_5cf2
 	ld e,$4d
 	ld a,(de)
 	ld (w1Link.xh),a
@@ -2768,11 +2768,11 @@ interactionCode9c:
 	inc a
 	jr z,@func_5ca0
 	cp $02
-	call nc,_func_5cf2
+	call nc,func_5cf2
 	ret
 @func_5ca0:
 	ld a,$06
-	call _func_5cf2
+	call func_5cf2
 	xor a
 	ld (wDisabledObjects),a
 	ld e,$44
@@ -2816,8 +2816,8 @@ interactionCode9c:
 	cp $02
 	ret c
 	jp objectSetVisible82
-_func_5cf2:
-	ld hl,_table_5d08
+func_5cf2:
+	ld hl,table_5d08
 	rst_addDoubleIndex
 	xor a
 	ld (de),a
@@ -2832,7 +2832,7 @@ _func_5cf2:
 	or (hl)
 	ld (de),a
 	ret
-_table_5d08:
+table_5d08:
 	; yh - xh
 	.db $f9 $03
 	.db $f9 $03
@@ -2944,7 +2944,7 @@ interactionCode9d:
 	jp z,interactionDelete
 	ld a,$09
 @@func_5dd5:
-	ld hl,_table_5ec8
+	ld hl,table_5ec8
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2964,8 +2964,8 @@ interactionCode9d:
 	jp nz,interactionDelete
 	ld bc,$ff00
 	call objectSetSpeedZ
-	ld hl,_simulatedInput_5ec3
-	ld a,:_simulatedInput_5ec3
+	ld hl,simulatedInput_5ec3
+	ld a,:simulatedInput_5ec3
 	push de
 	call setSimulatedInputAddress
 	pop de
@@ -3046,7 +3046,7 @@ interactionCode9d:
 	jp interactionAnimateAsNpc
 @@subid4:
 	call checkInteractionSubstate
-	jr nz,_func_5eb1
+	jr nz,func_5eb1
 	ld a,($cbc3)
 	rlca
 	ret nc
@@ -3056,7 +3056,7 @@ interactionCode9d:
 	ld (wDisabledObjects),a
 	call interactionIncSubstate
 	jp objectSetVisible
-_func_5eb1:
+func_5eb1:
 	ld a,($cba0)
 	or a
 	call nz,seasonsFunc_0a_6710
@@ -3066,10 +3066,10 @@ _func_5eb1:
 	or a
 	jp nz,interactionAnimate
 	ret
-_simulatedInput_5ec3:
+simulatedInput_5ec3:
 	dwb 32 BTN_UP
 	.dw $ffff
-_table_5ec8:
+table_5ec8:
 	; for subid1, if Zelda Kidnapped not seen,
 	; the rest are indexed by highest essence count
 	.dw mainScripts.impaScript_after1stEssence
@@ -3102,7 +3102,7 @@ interactionCode9e:
 	jp nz,interactionDelete
 	call interactionInitGraphics
 	call interactionIncState
-	ld bc,_table_604d
+	ld bc,table_604d
 	ld l,$7b
 	ld (hl),b
 	inc hl
@@ -3118,7 +3118,7 @@ interactionCode9e:
 	.dw @substate3
 	.dw @substate4
 @substate0:
-	call _func_5f8c
+	call func_5f8c
 	ld e,$79
 	ld a,(de)
 	cp $ff
@@ -3133,7 +3133,7 @@ interactionCode9e:
 	ld hl,mainScripts.script7556
 	jp interactionSetScript
 @substate1:
-	call _func_5f87
+	call func_5f87
 	ret nz
 	call interactionIncSubstate
 	ld l,$7d
@@ -3141,8 +3141,8 @@ interactionCode9e:
 	ld a,$b8
 	jp playSound
 @substate2:
-	call _func_606a
-	call _func_5f87
+	call func_606a
+	call func_5f87
 	ret nz
 	call interactionIncSubstate
 	ld l,$7d
@@ -3150,10 +3150,10 @@ interactionCode9e:
 	ret
 @substate3:
 	call interactionRunScript
-	call _func_606a
-	call _func_5f87
+	call func_606a
+	call func_5f87
 	ret nz
-	call _func_602c
+	call func_602c
 	jr z,@func_5f67
 	ld h,d
 	ld l,$7d
@@ -3166,7 +3166,7 @@ interactionCode9e:
 	ld (hl),$28
 	ret
 @substate4:
-	call _func_5f87
+	call func_5f87
 	ret nz
 	xor a
 	ld ($cc02),a
@@ -3176,23 +3176,23 @@ interactionCode9e:
 	call getThisRoomFlags
 	set 7,(hl)
 	jp interactionDelete
-_func_5f87:
+func_5f87:
 	ld h,d
 	ld l,$7d
 	dec (hl)
 	ret
-_func_5f8c:
-	call _func_5fcd
+func_5f8c:
+	call func_5fcd
 	jr z,++
 	call checkLinkID0AndControlNormal
 	ret nc
 	ld a,($cc46)
 	bit 6,a
-	jr z,_func_5fa3
+	jr z,func_5fa3
 	ld c,$01
 	ld b,$b0
-	jp _func_5fba
-_func_5fa3:
+	jp func_5fba
+func_5fa3:
 	ld a,($cc45)
 	bit 6,a
 	ret nz
@@ -3204,9 +3204,9 @@ _func_5fa3:
 	ret z
 	ld c,$00
 	ld b,$b1
-	call _func_5fba
-	jp _func_6001
-_func_5fba:
+	call func_5fba
+	jp func_6001
+func_5fba:
 	ld h,d
 	ld l,$78
 	ld (hl),c
@@ -3219,8 +3219,8 @@ _func_5fba:
 	ld a,$70
 	jp playSound
 
-_func_5fcd:
-	ld hl,_table_5ff4
+func_5fcd:
+	ld hl,table_5ff4
 	ld a,(w1Link.yh)
 	ld c,a
 	ld a,(w1Link.xh)
@@ -3250,7 +3250,7 @@ _func_5fcd:
 	inc hl
 	jr --
 
-_table_5ff4:
+table_5ff4:
 	; Byte 0: yh of door
 	; Byte 1: xh of door
 	; Byte 2: door index for checking later
@@ -3260,11 +3260,11 @@ _table_5ff4:
 	.db $20 $68 $03
 	.db $00
 
-_func_6001:
+func_6001:
 	ld h,d
 	ld l,$7a
 	ld a,(hl)
-	ld bc,_table_6024
+	ld bc,table_6024
 	call addAToBc
 	ld a,(bc)
 	ld b,a
@@ -3272,28 +3272,28 @@ _func_6001:
 	ld a,(hl)
 	ld l,$7a
 	cp b
-	jr nz,_func_601c
+	jr nz,func_601c
 	ld a,(hl)
 	cp $07
-	jr z,_func_601f
+	jr z,func_601f
 	inc (hl)
 	ret
 
-_func_601c:
+func_601c:
 	ld (hl),$00
 	ret
 
-_func_601f:
+func_601f:
 	ld l,$79
 	ld (hl),$ff
 	ret
 
-_table_6024:
+table_6024:
 	; order of samasa gate-pushing
 	.db $02 $02 $01 $00
 	.db $00 $03 $03 $03
 
-_func_602c:
+func_602c:
 	ld e,$7b
 	ld a,(de)
 	ld h,a
@@ -3323,7 +3323,7 @@ _func_602c:
 @ret:
 	ret
 
-_table_604d:
+table_604d:
 	; pairs of tile location - tile to replace with
 	.db $03 TILEINDEX_SAND
 	.db $13 TILEINDEX_COLLAPSING_SAMASA_GATE
@@ -3347,7 +3347,7 @@ _table_604d:
 	.db $16 TILEINDEX_SAND
 	.db $ff
 
-_func_606a:
+func_606a:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
@@ -3359,9 +3359,9 @@ _func_606a:
 ; INTERACID_MOVING_SIDESCROLL_PLATFORM
 ; ==============================================================================
 interactionCodea1:
-	call _sidescrollPlatform_checkLinkOnPlatform
+	call sidescrollPlatform_checkLinkOnPlatform
 	call @updateSubid
-	jp _sidescrollingPlatformCommon
+	jp sidescrollingPlatformCommon
 
 @updateSubid:
 	ld e,Interaction.state
@@ -3373,13 +3373,13 @@ interactionCodea1:
 	.dw @state9
 	.dw @stateA
 	.dw @stateB
-	.dw _movingPlatform_stateC
+	.dw movingPlatform_stateC
 
 @state0To7:
 .ifdef ROM_AGES
 	ld hl,bank0e.movingSidescrollPlatformScriptTable
 .else
-	ld hl,movingSidescrollPlatformScriptTable
+	ld hl,bank0d.movingSidescrollPlatformScriptTable
 .endif
 	call objectLoadMovementScript
 	call interactionInitGraphics
@@ -3416,7 +3416,7 @@ interactionCodea1:
 +
 	ld a,(de)
 	ld (hl),a
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 @state9:
 	ld e,Interaction.xh
@@ -3435,7 +3435,7 @@ interactionCodea1:
 ++
 	ld a,(hl)
 	ld (de),a
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 @stateA:
 	ld e,Interaction.yh
@@ -3454,7 +3454,7 @@ interactionCodea1:
 ++
 	ld a,(hl)
 	ld (de),a
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 @stateB:
 	ld e,Interaction.var33
@@ -3473,13 +3473,13 @@ interactionCodea1:
 ++
 	ld a,(de)
 	ld (hl),a
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 
-_movingPlatform_stateC:
+movingPlatform_stateC:
 	call interactionDecCounter1
 	ret nz
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 
 ; ==============================================================================
@@ -3487,10 +3487,10 @@ _movingPlatform_stateC:
 ; ==============================================================================
 interactionCodea2:
 	call interactionAnimate
-	call _sidescrollPlatform_checkLinkOnPlatform
-	call nz,_sidescrollPlatform_updateLinkKnockbackForConveyor
+	call sidescrollPlatform_checkLinkOnPlatform
+	call nz,sidescrollPlatform_updateLinkKnockbackForConveyor
 	call @updateState
-	jp _sidescrollingPlatformCommon
+	jp sidescrollingPlatformCommon
 
 @updateState:
 	ld e,Interaction.state
@@ -3502,13 +3502,13 @@ interactionCodea2:
 	.dw @state9
 	.dw @stateA
 	.dw @stateB
-	.dw _movingPlatform_stateC
+	.dw movingPlatform_stateC
 
 @state0To7:
 .ifdef ROM_AGES
 	ld hl,bank0e.movingSidescrollConveyorScriptTable
 .else
-	ld hl,movingSidescrollConveyorScriptTable
+	ld hl,bank0d.movingSidescrollConveyorScriptTable
 .endif
 	call objectLoadMovementScript
 	call interactionInitGraphics
@@ -3531,7 +3531,7 @@ interactionCodea2:
 	jr c,@applySpeed
 	ld a,(de)
 	ld (hl),a
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 @state9:
 	ld e,Interaction.xh
@@ -3542,7 +3542,7 @@ interactionCodea2:
 	jr c,@applySpeed
 	ld a,(hl)
 	ld (de),a
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 @stateA:
 	ld e,Interaction.yh
@@ -3561,7 +3561,7 @@ interactionCodea2:
 ++
 	ld a,(hl)
 	ld (de),a
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 @stateB:
 	ld e,Interaction.var33
@@ -3572,7 +3572,7 @@ interactionCodea2:
 	jr c,@applySpeed
 	ld a,(de)
 	ld (hl),a
-	jp _sidescrollPlatformFunc_5bfc
+	jp sidescrollPlatformFunc_5bfc
 
 @applySpeed:
 	call objectApplySpeed
@@ -3616,8 +3616,8 @@ interactionCodea3:
 	jr z,++
 
 	; Only do this if the platform isn't invisible
-	call _sidescrollPlatform_checkLinkOnPlatform
-	call _sidescrollingPlatformCommon
+	call sidescrollPlatform_checkLinkOnPlatform
+	call sidescrollingPlatformCommon
 ++
 	ld e,Interaction.state
 	ld a,(de)
@@ -3659,7 +3659,7 @@ interactionCodea3:
 	.db $01,  60
 
 @state1:
-	call _sidescrollPlatform_decCounter1
+	call sidescrollPlatform_decCounter1
 	ret nz
 	ld (hl),30
 	ld l,e
@@ -3668,7 +3668,7 @@ interactionCodea3:
 	ret
 
 @state2:
-	call _sidescrollPlatform_decCounter1
+	call sidescrollPlatform_decCounter1
 	jr nz,@flickerVisibility
 	ld (hl),150
 	ld l,e
@@ -3689,7 +3689,7 @@ interactionCodea3:
 	jp playSound
 
 @state4:
-	call _sidescrollPlatform_decCounter1
+	call sidescrollPlatform_decCounter1
 	jr nz,@flickerVisibility
 	ld (hl),120
 	ld l,e
@@ -3700,7 +3700,7 @@ interactionCodea3:
 ;;
 ; Used by:
 ; * INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM
-_sidescrollingPlatformCommon:
+sidescrollingPlatformCommon:
 	ld a,(w1Link.state)
 	cp LINK_STATE_NORMAL
 	ret nz
@@ -3709,12 +3709,12 @@ _sidescrollingPlatformCommon:
 
 	; Platform has collided with Link.
 
-	call _sidescrollPlatform_checkLinkIsClose
+	call sidescrollPlatform_checkLinkIsClose
 	jr c,@label_0b_183
-	call _sidescrollPlatform_getTileCollisionBehindLink
-	jp z,_sidescrollPlatform_pushLinkAwayHorizontal
+	call sidescrollPlatform_getTileCollisionBehindLink
+	jp z,sidescrollPlatform_pushLinkAwayHorizontal
 
-	call _sidescrollPlatform_checkLinkSquished
+	call sidescrollPlatform_checkLinkSquished
 	ret c
 
 	ld e,Interaction.yh
@@ -3728,12 +3728,12 @@ _sidescrollingPlatformCommon:
 	jr @moveLinkAtAngle
 
 @label_0b_183:
-	call _sidescrollPlatformFunc_5b51
+	call sidescrollPlatformFunc_5b51
 	ld a,(hl)
 	or a
-	jp z,_sidescrollPlatform_pushLinkAwayVertical
+	jp z,sidescrollPlatform_pushLinkAwayVertical
 
-	call _sidescrollPlatform_checkLinkSquished
+	call sidescrollPlatform_checkLinkSquished
 	ret c
 	ld a,(wLinkRidingObject)
 	cp d
@@ -3743,7 +3743,7 @@ _sidescrollingPlatformCommon:
 	jr z,@label_0b_184
 
 	push af
-	call _sidescrollPlatform_pushLinkAwayVertical
+	call sidescrollPlatform_pushLinkAwayVertical
 	pop af
 	rrca
 	jr ++
@@ -3767,7 +3767,7 @@ _sidescrollingPlatformCommon:
 
 ;;
 ; @param[out]	cflag	c if Link got squished
-_sidescrollPlatform_checkLinkSquished:
+sidescrollPlatform_checkLinkSquished:
 	ld h,d
 	ld l,Interaction.collisionRadiusY
 	ld a,(hl)
@@ -3810,7 +3810,7 @@ _sidescrollPlatform_checkLinkSquished:
 
 ;;
 ; @param[out]	cflag	c if Link's close enough to the platform?
-_sidescrollPlatform_checkLinkIsClose:
+sidescrollPlatform_checkLinkIsClose:
 	ld a,(wLinkInAir)
 	or a
 	ld b,$05
@@ -3851,7 +3851,7 @@ _sidescrollPlatform_checkLinkIsClose:
 ;;
 ; @param[out]	a	Collision value
 ; @param[out]	zflag	nz if a valid collision value is returned
-_sidescrollPlatform_getTileCollisionBehindLink:
+sidescrollPlatform_getTileCollisionBehindLink:
 	ld l,Interaction.xh
 	ld a,(w1Link.xh)
 	cp (hl)
@@ -3873,7 +3873,7 @@ _sidescrollPlatform_getTileCollisionBehindLink:
 
 ;;
 ; @param[out]	hl
-_sidescrollPlatformFunc_5b51:
+sidescrollPlatformFunc_5b51:
 	ld h,d
 	ld l,Interaction.yh
 	ld a,(w1Link.yh)
@@ -3906,7 +3906,7 @@ _sidescrollPlatformFunc_5b51:
 ; Checks if Link's on the platform, updates wLinkRidingObject if so.
 ;
 ; @param[out]	zflag	nz if Link is standing on the platform
-_sidescrollPlatform_checkLinkOnPlatform:
+sidescrollPlatform_checkLinkOnPlatform:
 	call objectCheckCollidedWithLink
 	jr nc,@notOnPlatform
 
@@ -3921,7 +3921,7 @@ _sidescrollPlatform_checkLinkOnPlatform:
 	cp b
 	jr nc,@notOnPlatform
 
-	call _sidescrollPlatform_checkLinkIsClose
+	call sidescrollPlatform_checkLinkIsClose
 	jr nc,@notOnPlatform
 
 	ld e,Interaction.var34
@@ -3930,7 +3930,7 @@ _sidescrollPlatform_checkLinkOnPlatform:
 	jr nz,@onPlatform
 	ld a,$01
 	ld (de),a
-	call _sidescrollPlatform_updateLinkSubpixels
+	call sidescrollPlatform_updateLinkSubpixels
 
 @onPlatform:
 	ld a,d
@@ -3948,7 +3948,7 @@ _sidescrollPlatform_checkLinkOnPlatform:
 	ret
 
 ;;
-_sidescrollPlatform_updateLinkKnockbackForConveyor:
+sidescrollPlatform_updateLinkKnockbackForConveyor:
 	ld e,Interaction.angle
 	ld a,(de)
 	bit 3,a
@@ -3968,7 +3968,7 @@ _sidescrollPlatform_updateLinkKnockbackForConveyor:
 
 ;;
 ; @param[out]	hl	counter1
-_sidescrollPlatform_decCounter1:
+sidescrollPlatform_decCounter1:
 	ld h,d
 	ld l,Interaction.counter1
 	ld a,(hl)
@@ -3978,7 +3978,7 @@ _sidescrollPlatform_decCounter1:
 	ret
 
 ;;
-_sidescrollPlatform_pushLinkAwayVertical:
+sidescrollPlatform_pushLinkAwayVertical:
 	ld hl,w1Link.collisionRadiusY
 	ld e,Interaction.collisionRadiusY
 	ld a,(de)
@@ -3989,7 +3989,7 @@ _sidescrollPlatform_pushLinkAwayVertical:
 	jr +++
 
 ;;
-_sidescrollPlatform_pushLinkAwayHorizontal:
+sidescrollPlatform_pushLinkAwayHorizontal:
 	ld hl,w1Link.collisionRadiusX
 	ld e,Interaction.collisionRadiusX
 	ld a,(de)
@@ -4012,14 +4012,14 @@ _sidescrollPlatform_pushLinkAwayHorizontal:
 	ret
 
 ;;
-_sidescrollPlatformFunc_5bfc:
+sidescrollPlatformFunc_5bfc:
 	call objectRunMovementScript
 	ld a,(wLinkRidingObject)
 	cp d
 	ret nz
 
 ;;
-_sidescrollPlatform_updateLinkSubpixels:
+sidescrollPlatform_updateLinkSubpixels:
 	ld e,Interaction.y
 	ld a,(de)
 	ld (w1Link.y),a
@@ -4060,24 +4060,24 @@ interactionCodea4:
 	jr nc,+
 	or a
 	ld a,$01
-	jr z,_smithyLoadIntoVar3f
+	jr z,smithyLoadIntoVar3f
 +
 	ld a,TREASURE_HARD_ORE
 	call checkTreasureObtained
 	jr nc,+
 	ld a,$02
-	jr _smithyLoadIntoVar3f
+	jr smithyLoadIntoVar3f
 	
 +
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	jr nz,+
 	ld a,$00
-	jr _smithyLoadIntoVar3f
+	jr smithyLoadIntoVar3f
 +
 	ld a,$03
 
-_smithyLoadIntoVar3f:
+smithyLoadIntoVar3f:
 	; $00 if none of the below
 	; $01 if rusty bell
 	; $02 if hard ore
@@ -4094,9 +4094,9 @@ interactionCodea5:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
-	.dw _dinState0
-	.dw _dinState1
-_dinState0:
+	.dw dinState0
+	.dw dinState1
+dinState0:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
@@ -4174,22 +4174,22 @@ _dinState0:
 	ld hl,mainScripts.dinScript_discoverLinkCollapsed
 	jp interactionSetScript
 
-_dinState1:
+dinState1:
 	ld e,$42
 	ld a,(de)
 	rst_jumpTable
-	.dw _dinState1_subid0
-	.dw _dinState1_subid0@ret
-	.dw _dinState1_subid2
-	.dw _dinState1_subid3
-	.dw _dinState1_subid4
+	.dw dinState1_subid0
+	.dw dinState1_subid0@ret
+	.dw dinState1_subid2
+	.dw dinState1_subid3
+	.dw dinState1_subid4
 	.dw interactionAnimate
-	.dw _dinState1_subid6
-	.dw _dinState1_subid7
-	.dw _dinState1_subid8
-	.dw _dinState1_subid9
+	.dw dinState1_subid6
+	.dw dinState1_subid7
+	.dw dinState1_subid8
+	.dw dinState1_subid9
 
-_dinState1_subid0:
+dinState1_subid0:
 	ld e,$45
 	ld a,(de)
 	rst_jumpTable
@@ -4334,14 +4334,14 @@ _dinState1_subid0:
 	ld ($cfdf),a
 	ret
 
-_dinState1_subid2:
+dinState1_subid2:
 	ld a,($c4ab)
 	or a
 	ret nz
 	call interactionAnimate
 	jp interactionRunScript
 
-_dinState1_subid3:
+dinState1_subid3:
 	ld e,$45
 	ld a,(de)
 	rst_jumpTable
@@ -4371,7 +4371,7 @@ _dinState1_subid3:
 	ld a,$06
 	jp interactionSetAnimation
 
-_dinState1_subid4:
+dinState1_subid4:
 	ld e,$45
 	ld a,(de)
 	rst_jumpTable
@@ -4403,11 +4403,11 @@ _dinState1_subid4:
 @substate2:
 	jp interactionAnimate
 
-_dinState1_subid6:
+dinState1_subid6:
 	call objectOscillateZ
 	jp interactionAnimate
 
-_dinState1_subid7:
+dinState1_subid7:
 	ld e,$45
 	ld a,(de)
 	rst_jumpTable
@@ -4459,7 +4459,7 @@ _dinState1_subid7:
 +
 	jp interactionAnimate
 	
-_dinState1_subid8:
+dinState1_subid8:
 	call interactionRunScript
 	ld e,$78
 	ld a,(de)
@@ -4468,7 +4468,7 @@ _dinState1_subid8:
 	call objectPreventLinkFromPassing
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
 	
-_dinState1_subid9:
+dinState1_subid9:
 	ld e,$78
 	ld a,(de)
 	bit 7,a
@@ -4906,7 +4906,7 @@ interactionCodeab:
 	call interactionSetHighTextIndex
 	ld e,$42
 	ld a,(de)
-	ld hl,_moblinKeepScene_scriptTable
+	ld hl,moblinKeepScene_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -5015,7 +5015,7 @@ moblinKeepScene_spawn2MoblinsAfterKeepDestroyed:
 	.db $00 $56 $28 $00
 	.db $01 $56 $68 $00
 
-_moblinKeepScene_scriptTable:
+moblinKeepScene_scriptTable:
 	.dw mainScripts.moblinKeepSceneScript_linkSeenOnRightSide
 	.dw mainScripts.moblinKeepSceneScript_settingUpFight
 	.dw mainScripts.moblinKeepSceneScript_postKeepDestruction
@@ -5053,7 +5053,7 @@ interactionCodead:
 	ld e,$42
 	ld a,(de)
 	and $01
-	call nz,_func_6ae7
+	call nz,func_6ae7
 	call interactionAnimateAsNpc
 	ld e,$45
 	ld a,(de)
@@ -5116,7 +5116,7 @@ interactionCodead:
 	call objectApplySpeed
 	call interactionAnimate
 	jp interactionAnimateAsNpc
-_func_6ae7:
+func_6ae7:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -5152,16 +5152,16 @@ interactionCodeae:
 	ld h,d
 	ld l,Interaction.subid
 	ld a,(hl)
-	ld hl,_horizontalCreditsText_scriptTable
+	ld hl,horizontalCreditsText_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	call _creditsTextHorizontal_6559
+	call creditsTextHorizontal_6559
 
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_horizontalCreditsText_65b1
+	ld hl,horizontalCreditsText_65b1
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld e,Interaction.var32
@@ -5203,7 +5203,7 @@ interactionCodeae:
 	ld e,Interaction.var03
 	ld a,(de)
 	or a
-	jp nz,_horizontalCreditsText_var03Nonzero
+	jp nz,horizontalCreditsText_var03Nonzero
 
 	ld a,(wPaletteThread_mode)
 	or a
@@ -5220,7 +5220,7 @@ interactionCodeae:
 	ld l,Interaction.var30
 	call decHlRef16WithCap
 	ret nz
-	call _creditsTextHorizontal_6537
+	call creditsTextHorizontal_6537
 
 @func_6457:
 	ld e,Interaction.var30
@@ -5279,7 +5279,7 @@ interactionCodeae:
 	sbc $00
 	ld (hl),a
 
-	call _creditsTextHorizontal_6554
+	call creditsTextHorizontal_6554
 	ld h,d
 	ld l,Interaction.counter1
 	ld (hl),30
@@ -5398,7 +5398,7 @@ interactionCodeae:
 	jp interactionDelete
 
 ;;
-_creditsTextHorizontal_6537:
+creditsTextHorizontal_6537:
 	call getFreeInteractionSlot
 	jr nz,++
 	ld (hl),INTERACID_CREDITS_TEXT_HORIZONTAL
@@ -5422,7 +5422,7 @@ _creditsTextHorizontal_6537:
 	inc (hl)
 
 ;;
-_creditsTextHorizontal_6554:
+creditsTextHorizontal_6554:
 	ld l,Interaction.scriptPtr
 	ldi a,(hl)
 	ld h,(hl)
@@ -5430,7 +5430,7 @@ _creditsTextHorizontal_6554:
 
 ;;
 ; @param	hl	Script pointer
-_creditsTextHorizontal_6559:
+creditsTextHorizontal_6559:
 	ldi a,(hl)
 	ld e,Interaction.var30
 	ld (de),a
@@ -5463,10 +5463,10 @@ _creditsTextHorizontal_6559:
 	ld a,(de) ; [var30]
 	or a
 	ret nz
-	jp _creditsTextHorizontal_6537
+	jp creditsTextHorizontal_6537
 
 ;;
-_horizontalCreditsText_var03Nonzero:
+horizontalCreditsText_var03Nonzero:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -5507,13 +5507,13 @@ _horizontalCreditsText_var03Nonzero:
 	jp z,interactionDelete
 	ret
 
-_horizontalCreditsText_65b1:
+horizontalCreditsText_65b1:
 	.db $00 $00 $01 $04 $00 $0b $01 $13
 	.db $00 $00 $01 $04 $00 $0b $01 $13
 
 
 ; Custom script format? TODO: figure this out
-_horizontalCreditsText_scriptTable:
+horizontalCreditsText_scriptTable:
 	.dw @script0
 	.dw @script1
 	.dw @script2
@@ -5577,8 +5577,8 @@ interactionCodeaf:
 	ld a,(de)
 	or a
 	jr nz,@@subid1
-	ld hl,_table_6dd2
-	jp _func_6db4
+	ld hl,table_6dd2
+	jp func_6db4
 @@subid1:
 	ld h,d
 	ld l,$50
@@ -5588,7 +5588,7 @@ interactionCodeaf:
 	ld e,$42
 	ld a,(de)
 	or a
-	jr nz,_state1_subid1
+	jr nz,state1_subid1
 	ld a,($c4ab)
 	or a
 	ret nz
@@ -5620,9 +5620,9 @@ interactionCodeaf:
 	ld l,$46
 	inc (hl)
 	ld a,(hl)
-	ld hl,_table_6dd2
+	ld hl,table_6dd2
 	rst_addDoubleIndex
-_func_6db4:
+func_6db4:
 	ldi a,(hl)
 	ld e,$70
 	ld (de),a
@@ -5630,7 +5630,7 @@ _func_6db4:
 	ldi a,(hl)
 	ld (de),a
 	ret
-_state1_subid1:
+state1_subid1:
 	ld a,($c4ab)
 	or a
 	ret nz
@@ -5644,7 +5644,7 @@ _state1_subid1:
 	inc l
 	ld c,(hl)
 	jp interactionFunc_3e6d
-_table_6dd2:
+table_6dd2:
 	; var30 - var31
 	.db $20 $00
 	.db $e0 $00
@@ -5789,13 +5789,13 @@ interactionCodeb1:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
-	.dw _piratian_state0
-	.dw _piratian_state1
-	.dw _piratian_state2
-	.dw _piratian_state3
-	.dw _piratian_state4
-	.dw _piratian_state5
-	.dw _piratian_state6
+	.dw piratian_state0
+	.dw piratian_state1
+	.dw piratian_state2
+	.dw piratian_state3
+	.dw piratian_state4
+	.dw piratian_state5
+	.dw piratian_state6
 
 
 ; ==============================================================================
@@ -5805,11 +5805,11 @@ interactionCodeb2:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
-	.dw _piratianCaptain_state0
-	.dw _piratian_state2
-	.dw _piratian_state1
+	.dw piratianCaptain_state0
+	.dw piratian_state2
+	.dw piratian_state1
 
-_piratian_state0:
+piratian_state0:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
@@ -5830,7 +5830,7 @@ _piratian_state0:
 +
 	call interactionSetHighTextIndex
 	ld a,b
-	ld hl,_table_6f4b
+	ld hl,table_6f4b
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -5842,13 +5842,13 @@ _piratian_state0:
 	jp c,interactionDelete
 	ret
 
-_piratianCaptain_state0:
+piratianCaptain_state0:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
 	ld e,$42
 	ld a,(de)
-	ld hl,_table_6f81
+	ld hl,table_6f81
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -5860,28 +5860,28 @@ _piratianCaptain_state0:
 	call interactionRunScript
 	jp interactionRunScript
 
-_piratian_state1:
+piratian_state1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	call interactionRunScript
 	jp c,interactionDelete
 	jp npcFaceLinkAndAnimate
 
-_piratian_state2:
+piratian_state2:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	call interactionRunScript
 	jp c,interactionDelete
 	jp interactionAnimate
 
-_piratian_state3:
+piratian_state3:
 	ld a,$10
 	call setScreenShakeCounter
 	call interactionRunScript
 	jp c,interactionDelete
 	ret
 
-_piratian_state4:
+piratian_state4:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	call interactionAnimate
@@ -5897,7 +5897,7 @@ _piratian_state4:
 	ld (de),a
 	jp interactionSetAnimation
 
-_piratian_state5:
+piratian_state5:
 	call objectPreventLinkFromPassing
 	call interactionAnimate
 	call interactionRunScript
@@ -5907,7 +5907,7 @@ _piratian_state5:
 	jp c,objectSetInvisible
 	jp objectSetVisible
 
-_piratian_state6:
+piratian_state6:
 	ld a,($cfc0)
 	or a
 	jp nz,interactionDelete
@@ -5915,7 +5915,7 @@ _piratian_state6:
 	jp c,interactionDelete
 	jp objectSetInvisible
 
-_table_6f4b:
+table_6f4b:
 	.dw mainScripts.stubScript
 	.dw mainScripts.shipPirationScript_piratianComingDownHandler
 	.dw mainScripts.shipPiratianScript_piratianFromAbove
@@ -5943,7 +5943,7 @@ _table_6f4b:
 	.dw mainScripts.shipPiratianScript_ghostPiratian
 	.dw mainScripts.shipPiratianScript_NWofGhostPiration
 	.dw mainScripts.shipPiratianScript_NEofGhostPiration
-_table_6f81:
+table_6f81:
 	.dw mainScripts.shipPiratianCaptainScript_leavingSubrosia
 	.dw mainScripts.shipPiratianCaptainScript_gettingSick
 	.dw mainScripts.shipPiratianCaptainScript_arrivingInWestCoast
@@ -6050,10 +6050,10 @@ interactionCodeb4:
 	ld e,$44
 	ld a,(de)
 	rst_jumpTable
-	.dw _twinrovaWitches_state0
-	.dw _twinrovaWitches_state1
+	.dw twinrovaWitches_state0
+	.dw twinrovaWitches_state1
 
-_twinrovaWitches_state0:
+twinrovaWitches_state0:
 	ld e,$42
 	ld a,(de)
 	rst_jumpTable
@@ -6067,56 +6067,56 @@ _twinrovaWitches_state0:
 	.dw @subid7
 @subid0:
 @subid1:
-	call _twinrovaWitches_state0Init
+	call twinrovaWitches_state0Init
 	ld l,$42
 	ld a,(hl)
-	call _func_7266
-	jp _twinrovaWitches_state1
+	call func_7266
+	jp twinrovaWitches_state1
 @subid2:
 @subid3:
-	call _twinrovaWitches_state0Init
+	call twinrovaWitches_state0Init
 	ld l,$4f
 	ld (hl),$fb
 	ld l,$42
 	ld a,(hl)
-	call _func_7266
-	jp _twinrovaWitches_state1
+	call func_7266
+	jp twinrovaWitches_state1
 @subid4:
-	call _twinrovaWitches_state0Init
+	call twinrovaWitches_state0Init
 	ld l,$4f
 	ld (hl),$f0
 	ld a,$04
-	call _func_7266
+	call func_7266
 	ld a,$04
 	call interactionSetAnimation
-	jp _twinrovaWitches_state1
+	jp twinrovaWitches_state1
 @subid5:
-	call _twinrovaWitches_state0Init
+	call twinrovaWitches_state0Init
 	ld a,$04
-	call _func_7266
+	call func_7266
 	ld a,$01
 	call interactionSetAnimation
-	jp _twinrovaWitches_state1
+	jp twinrovaWitches_state1
 @subid6:
-	call _twinrovaWitches_state0Init
+	call twinrovaWitches_state0Init
 	ld l,$4f
 	ld (hl),$00
 	ld a,$05
 	call interactionSetAnimation
-	jp _twinrovaWitches_state1
+	jp twinrovaWitches_state1
 @subid7:
-	call _twinrovaWitches_state0Init
+	call twinrovaWitches_state0Init
 	ld l,$4f
 	ld (hl),$00
 	ld a,$06
 	call interactionSetAnimation
-	jp _twinrovaWitches_state1
+	jp twinrovaWitches_state1
 
-_twinrovaWitches_state0Init:
+twinrovaWitches_state0Init:
 	call interactionInitGraphics
 	call objectSetVisiblec0
 	call interactionSetAlwaysUpdateBit
-	call _twinrovaWitches_getOamFlags
+	call twinrovaWitches_getOamFlags
 	call interactionIncState
 	ld l,$50
 	ld (hl),$50
@@ -6126,7 +6126,7 @@ _twinrovaWitches_state0Init:
 	ld (hl),$ff
 	ret
 
-_twinrovaWitches_state1:
+twinrovaWitches_state1:
 	ld e,$42
 	ld a,(de)
 	rst_jumpTable
@@ -6151,10 +6151,10 @@ _twinrovaWitches_state1:
 	.dw @@substate3
 	.dw @@substate4
 @@substate0:
-	call _func_71ee
-	call _func_7220
-	call _func_720a
-	call c,_func_7232
+	call func_71ee
+	call func_7220
+	call func_720a
+	call c,func_7232
 	jp nc,@animate
 	ld h,d
 	ld l,$45
@@ -6211,25 +6211,25 @@ _twinrovaWitches_state1:
 	ld l,$42
 	ld a,(hl)
 	add $04
-	jp _func_7266
+	jp func_7266
 @@substate3:
 	ld e,$42
 	ld a,(de)
 	cp $02
 	jr c,++
 @@func_715c:
-	call _func_71ee
-	call _func_720a
-	call c,_func_7232
+	call func_71ee
+	call func_720a
+	call c,func_7232
 	jr c,+++
 ++
-	call _func_71ee
+	call func_71ee
 	ld e,$42
 	ld a,(de)
 	cp $04
-	call nz,_func_7220
-	call _func_720a
-	call c,_func_7232
+	call nz,func_7220
+	call func_720a
+	call c,func_7232
 	jr nc,@animate
 +++
 	ld e,$42
@@ -6274,7 +6274,7 @@ _twinrovaWitches_state1:
 @animate:
 	jp interactionAnimate
 
-_twinrovaWitches_getOamFlags:
+twinrovaWitches_getOamFlags:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld hl,@oamFlagsData
@@ -6296,18 +6296,18 @@ seasonsFunc_0a_71ce:
 	and $38
 	swap a
 	rlca
-	ld hl,_table_71e6
+	ld hl,table_71e6
 	rst_addAToHl
 	ld e,$4f
 	ld a,(de)
 	add (hl)
 	ld (de),a
 	ret
-_table_71e6:
+table_71e6:
 	.db $ff $fe $ff $00
 	.db $01 $02 $01 $00
 	
-_func_71ee:
+func_71ee:
 	ld h,d
 	ld l,$7c
 	ld a,(hl)
@@ -6329,8 +6329,8 @@ _func_71ee:
 	ld (de),a
 	jp objectApplySpeed
 	
-_func_720a:
-	call _func_7253
+func_720a:
+	call func_7253
 	ld l,$4b
 	ld a,(bc)
 	sub (hl)
@@ -6345,7 +6345,7 @@ _func_720a:
 	cp $05
 	ret
 	
-_func_7220:
+func_7220:
 	ld h,d
 	ld l,$49
 	ld a,(hl)
@@ -6358,8 +6358,8 @@ _func_7220:
 	ld (hl),a
 	jp interactionSetAnimation
 	
-_func_7232:
-	call _func_7242
+func_7232:
+	call func_7242
 	ld h,d
 	ld l,$7d
 	ld a,(hl)
@@ -6371,8 +6371,8 @@ _func_7232:
 	scf
 	ret
 	
-_func_7242:
-	call _func_7253
+func_7242:
+	call func_7253
 	ld l,$4a
 	xor a
 	ldi (hl),a
@@ -6386,7 +6386,7 @@ _func_7242:
 	ld (hl),a
 	ret
 
-_func_7253:
+func_7253:
 	ld h,d
 	ld l,$7c
 	ld a,(hl)
@@ -6402,10 +6402,10 @@ _func_7253:
 	call addAToBc
 	ret
 
-_func_7266:
+func_7266:
 	add a
 	add a
-	ld hl,_table_7279
+	ld hl,table_7279
 	rst_addAToHl
 	ld e,$7f
 	ldi a,(hl)
@@ -6418,47 +6418,47 @@ _func_7266:
 	ld (de),a
 	ret
 
-_table_7279:
+table_7279:
 	; var3f - var3e - var3d - unused
 	; var3e/3f are pointers to below tables
 	; var3d is index of last pair of entries in below tables
-	dwbb _table_7299 $08 $00
-	dwbb _table_72ab $08 $00
-	dwbb _table_72e5 $0b $00
-	dwbb _table_72fd $0b $00
-	dwbb _table_72bd $09 $00
-	dwbb _table_72d1 $09 $00
-	dwbb _table_7315 $04 $00
-	dwbb _table_731f $04 $00
+	dwbb table_7299 $08 $00
+	dwbb table_72ab $08 $00
+	dwbb table_72e5 $0b $00
+	dwbb table_72fd $0b $00
+	dwbb table_72bd $09 $00
+	dwbb table_72d1 $09 $00
+	dwbb table_7315 $04 $00
+	dwbb table_731f $04 $00
 
-_table_7299:
+table_7299:
 	.db $22 $68 $28 $80 $2e $8a $34 $90
 	.db $3a $8a $40 $80 $46 $68 $4a $50
 	.db $50 $28
-_table_72ab:
+table_72ab:
 	.db $22 $38 $28 $20 $2e $16 $34 $10
 	.db $3a $16 $40 $20 $46 $38 $4a $50
 	.db $50 $78
-_table_72bd:
+table_72bd:
 	.db $54 $18 $58 $0e $60 $08 $68 $0c
 	.db $72 $18 $78 $28 $80 $48 $88 $68
 	.db $90 $80 $a0 $a0
-_table_72d1:
+table_72d1:
 	.db $54 $88 $58 $92 $60 $98 $68 $94
 	.db $72 $88 $78 $78 $80 $58 $88 $38
 	.db $90 $20 $a0 $00
-_table_72e5:
+table_72e5:
 	.db $01 $40 $29 $18 $39 $10 $45 $0c
 	.db $51 $10 $61 $18 $71 $28 $77 $38
 	.db $79 $48 $77 $58 $71 $68 $61 $78
-_table_72fd:
+table_72fd:
 	.db $01 $60 $29 $88 $39 $90 $45 $94
 	.db $51 $90 $61 $88 $71 $78 $77 $68
 	.db $79 $58 $77 $48 $71 $38 $61 $28
-_table_7315:
+table_7315:
 	.db $5d $90 $4d $98 $39 $90 $2d $78
 	.db $29 $60
-_table_731f:
+table_731f:
 	.db $5d $10 $4d $08 $39 $10 $2d $28
 	.db $29 $40
 
@@ -6553,7 +6553,7 @@ interactionCodeb8:
 @state0:
 	call checkIsLinkedGame
 	jp z,interactionDelete
-	call _func_740a
+	call func_740a
 	ld e,$42
 	ld a,(de)
 	cp $03
@@ -6574,7 +6574,7 @@ interactionCodeb8:
 	call interactionIncState
 	ld e,$42
 	ld a,(de)
-	ld hl,_table_7432
+	ld hl,table_7432
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6603,7 +6603,7 @@ interactionCodeb8:
 ;   $02 - if 5th+ essence gotten
 ;   $01 - if 3rd+ essence gotten
 ;   $00 - otherwise
-_func_740a:
+func_740a:
 	ld a,GLOBALFLAG_PIRATES_LEFT_FOR_SHIP
 	call checkGlobalFlag
 	jr nz,@piratesLeftForShip
@@ -6631,7 +6631,7 @@ _func_740a:
 	ld (de),a
 	ret
 
-_table_7432:
+table_7432:
 	.dw mainScripts.ambiScript_mrsRuulsHouse
 	.dw mainScripts.ambiScript_outsideSyrupHut
 	.dw mainScripts.ambiScript_samasaShore
@@ -6831,24 +6831,24 @@ interactionCodeb9:
 	ld e,$42
 	ld a,(de)
 	or a
-	jr nz,_func_7573
+	jr nz,func_7573
 	ld b,a
 	ld h,d
 	ld l,$46
 	call decHlRef16WithCap
-	jr nz,_func_757f
+	jr nz,func_757f
 	ld hl,$cfdf
 	ld (hl),$01
 	ret
-_func_7573:
+func_7573:
 	cp $07
-	jr nz,_func_757f
+	jr nz,func_757f
 	call interactionRunScript
 	ld e,$47
 	ld a,(de)
 	or a
 	ret z
-_func_757f:
+func_757f:
 	jp interactionAnimate
 
 
@@ -6868,13 +6868,13 @@ interactionCodeba:
 	.dw @@state0
 	.dw @@state1
 @@state0:
-	call _func_7867
+	call func_7867
 	ld l,$43
 	ld a,(hl)
 	call interactionSetAnimation
 @@state1:
 	call interactionRunScript
-	jp _func_7886
+	jp func_7886
 @subid3:
 	ld e,$44
 	ld a,(de)
@@ -6882,11 +6882,11 @@ interactionCodeba:
 	.dw @@state0
 	.dw @@state1
 @@state0:
-	call _func_7867
+	call func_7867
 @@state1:
 	call interactionRunScript
 	jp c,interactionDelete
-	jp _func_7886
+	jp func_7886
 
 
 interactionCodebb:
@@ -6906,32 +6906,32 @@ interactionCodebb:
 	.dw @@state3
 	.dw @@state4
 @@state0:
-	call _func_7867
+	call func_7867
 	ld l,$43
 	ld a,(hl)
 	call interactionSetAnimation
 @@state1:
 	call interactionRunScript
-	call _func_7886
+	call func_7886
 	ld a,($cfc0)
 	bit 7,a
 	ret z
-	call _func_788e
+	call func_788e
 	jp interactionIncState
 @@state2:
 	call interactionRunScript
-	call _func_7886
-	call _decVar3c
+	call func_7886
+	call decVar3c
 	ret nz
 	ld l,$44
 	inc (hl)
 	ld l,$7c
 	ld (hl),$0a
-	jp _func_78c3
+	jp func_78c3
 @@state3:
 	call interactionRunScript
-	call _func_7886
-	call _decVar3c
+	call func_7886
+	call decVar3c
 	ret nz
 	ld l,$44
 	inc (hl)
@@ -6939,15 +6939,15 @@ interactionCodebb:
 	ld (hl),$28
 	ld l,$7c
 	ld (hl),$58
-	call _func_78b3
+	call func_78b3
 	ld a,$d2
 	jp playSound
 @@state4:
-	call _decVar3c
+	call decVar3c
 	jp z,interactionDelete
 	call objectApplySpeed
 	call interactionRunScript
-	jp _func_7886
+	jp func_7886
 @subid1:
 @subid2:
 	ld e,$44
@@ -7021,10 +7021,10 @@ interactionCodebb:
 @@substate2:
 	call interactionDecCounter1
 	ret nz
-	call _func_77eb
+	call func_77eb
 	jp interactionIncSubstate
 @@substate3:
-	call _func_77e5
+	call func_77e5
 	ld a,($cfd0)
 	cp $01
 	ret nz
@@ -7083,9 +7083,9 @@ interactionCodebb:
 	ld (hl),$1e
 	ld l,$77
 	inc (hl)
-	jp _func_77eb
+	jp func_77eb
 @@var77_02:
-	call _func_77e5
+	call func_77e5
 	call interactionDecCounter1
 	ret nz
 	xor a
@@ -7181,9 +7181,9 @@ interactionCodebb:
 	call interactionDecCounter1
 	ret nz
 	call interactionIncSubstate
-	jr _func_77eb
+	jr func_77eb
 @@substate9:
-	call _func_77e5
+	call func_77e5
 	ld a,($cfd0)
 	cp $04
 	ret nz
@@ -7210,11 +7210,11 @@ interactionCodebb:
 	call interactionDecCounter1
 	jp z,interactionDelete
 	ret
-_func_77e5:
+func_77e5:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-_func_77eb:
+func_77eb:
 	ld bc,$ff20
 	jp objectSetSpeedZ
 
@@ -7237,7 +7237,7 @@ interactionCodebe:
 	.dw @@state0
 	.dw @runScriptAnimateAsNPC
 @@state0:
-	call _func_7867
+	call func_7867
 	ld e,$41
 	ld a,(de)
 	cp $bd
@@ -7256,7 +7256,7 @@ interactionCodebe:
 	.dw @@state0
 	.dw @runScriptAnimateAsNPC
 @@state0:
-	call _func_7867
+	call func_7867
 	ld a,$02
 	ld e,$7b
 	ld (de),a
@@ -7271,7 +7271,7 @@ interactionCodebe:
 @@state0:
 	call checkIsLinkedGame
 	jp z,interactionDelete
-	call _func_78ce
+	call func_78ce
 	ld e,$78
 	ld a,(de)
 	or a
@@ -7286,18 +7286,18 @@ interactionCodebe:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
 	
-_decVar3c:
+decVar3c:
 	ld h,d
 	ld l,$7c
 	dec (hl)
 	ret
 
-_func_7867:
+func_7867:
 	call interactionInitGraphics
 	ld e,$41
 	ld a,(de)
 	sub $ba
-	ld hl,_ba_to_beScripts
+	ld hl,ba_to_beScripts
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -7312,18 +7312,18 @@ _func_7867:
 	call objectSetVisible81
 	jp interactionIncState
 	
-_func_7886:
+func_7886:
 	ld e,$7d
 	ld a,(de)
 	or a
 	ret nz
 	jp interactionAnimate
 
-_func_788e:
+func_788e:
 	ld e,$41
 	ld a,(de)
 	sub $ba
-	ld hl,_table_78a9
+	ld hl,table_78a9
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld e,$7c
@@ -7337,14 +7337,14 @@ _func_788e:
 	rlca
 	jp interactionSetAnimation
 
-_table_78a9:
+table_78a9:
 	.db $50 $1e
 	.db $01 $02
 	.db $3c $16
 	.db $28 $1c
 	.db $78 $18
 
-_func_78b3:
+func_78b3:
 	call getFreeInteractionSlot ; $78b3
 	ret nz
 	ld (hl),INTERACID_D1_RISING_STONES
@@ -7354,7 +7354,7 @@ _func_78b3:
 	ld (hl),$78
 	jp objectCopyPosition
 
-_func_78c3:
+func_78c3:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_LIGHTNING
@@ -7362,7 +7362,7 @@ _func_78c3:
 	inc (hl)
 	jp objectCopyPosition
 
-_func_78ce:
+func_78ce:
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
 	jr c,+
@@ -7376,28 +7376,28 @@ _func_78ce:
 	ld (hl),$01
 	ret
 	
-_ba_to_beScripts:
-	.dw _baScripts
-	.dw _bbScripts
-	.dw _bcScripts
-	.dw _bdScripts
-	.dw _beScripts
-_baScripts:
+ba_to_beScripts:
+	.dw baScripts
+	.dw bbScripts
+	.dw bcScripts
+	.dw bdScripts
+	.dw beScripts
+baScripts:
 	.dw mainScripts.zeldaNPCScript_stub
 	.dw mainScripts.zeldaNPCScript_ba_subid1
 	.dw mainScripts.zeldaNPCScript_stub
 	.dw mainScripts.zeldaNPCScript_ba_subid3
-_bbScripts:
+bbScripts:
 	.dw mainScripts.zeldaNPCScript_stub
-_bcScripts:
+bcScripts:
 	.dw mainScripts.zeldaNPCScript_stub
 	.dw mainScripts.zeldaNPCScript_bc_subid1
 	.dw mainScripts.zeldaNPCScript_bc_subid2
-_bdScripts:
+bdScripts:
 	.dw mainScripts.zeldaNPCScript_stub
 	.dw mainScripts.zeldaNPCScript_bd_subid1
 	.dw mainScripts.zeldaNPCScript_bd_subid2
-_beScripts:
+beScripts:
 	.dw mainScripts.zeldaNPCScript_stub
 	.dw mainScripts.zeldaNPCScript_be_subid1
 	.dw mainScripts.zeldaNPCScript_be_subid2
@@ -7618,7 +7618,7 @@ interactionCodec4:
 	jp z,interactionDelete
 	ld a,$01
 +
-	ld hl,_zeldaVillagersRoom_interactionsTableLookup
+	ld hl,zeldaVillagersRoom_interactionsTableLookup
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -7679,7 +7679,7 @@ checkGotMakuSeedDidNotSeeZeldaKidnapped_body:
 	jp checkGlobalFlag
 
 
-_zeldaVillagersRoom_interactionsTableLookup:
+zeldaVillagersRoom_interactionsTableLookup:
 	.dw @villagersSeenInteractions ; checkZeldaVillagersSeenButNoMakuSeed
 	.dw @gotMakuSeedInteractions ; checkGotMakuSeedDidNotSeeZeldaKidnapped
 
@@ -7714,8 +7714,8 @@ interactionCodec5:
 	and $20
 	jp nz,interactionDelete
 	call interactionIncState
-	ld bc,_d4floorTrapRoom_tilesToBreak
-	jp _d4floorTrapRoom_storeAddressOfFirstHoleTilePosition
+	ld bc,d4floorTrapRoom_tilesToBreak
+	jp d4floorTrapRoom_storeAddressOfFirstHoleTilePosition
 @state1:
 	ld a,($ccba)
 	or a
@@ -7751,36 +7751,36 @@ interactionCodec5:
 	jr z,+
 	ld (hl),a
 +
-	call _d4floorTrapRoom_storeNextHoleTileAddressIntoHL
+	call d4floorTrapRoom_storeNextHoleTileAddressIntoHL
 	ldi a,(hl)
 	ld c,a
-	call _d4floorTrapRoom_storeIncrementedAddressOfNextHoleTile
+	call d4floorTrapRoom_storeIncrementedAddressOfNextHoleTile
 	ld a,c
 	or a
 	jp z,interactionDelete
 	ld a,TILEINDEX_BLANK_HOLE
 	jp breakCrackedFloor
-_d4floorTrapRoom_tilesToBreak:
+d4floorTrapRoom_tilesToBreak:
 	.db $9d $8d $8c $9b $7b $8a $89 $98
 	.db $77 $76 $86 $96 $74 $83 $72 $81
 	.db $61 $21 $11 $22 $52 $33 $14 $44
 	.db $35 $15 $16 $47 $37 $27 $17 $18
 	.db $48 $49 $39 $19 $00
-_d4floorTrapRoom_storeAddressOfFirstHoleTilePosition:
+d4floorTrapRoom_storeAddressOfFirstHoleTilePosition:
 	ld h,d
 	ld l,$58
 	ld (hl),c
 	inc l
 	ld (hl),b
 	ret
-_d4floorTrapRoom_storeNextHoleTileAddressIntoHL:
+d4floorTrapRoom_storeNextHoleTileAddressIntoHL:
 	ld h,d
 	ld l,$58
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 	ret
-_d4floorTrapRoom_storeIncrementedAddressOfNextHoleTile:
+d4floorTrapRoom_storeIncrementedAddressOfNextHoleTile:
 	ld e,$58
 	ld a,l
 	ld (de),a

@@ -134,7 +134,7 @@ seasonsSpiritsScript_winterTempleOrbBridge:
 	loadscript scripts2.seasonsSpirits_createBridgeOnOrbHit
 	
 seasonsSpiritsScript_spiritStatue:
-	jumpifroomflagset $40, _seasonsSpiritsScript_seasonsGotten
+	jumpifroomflagset $40, seasonsSpiritsScript_seasonsGotten
 	jumpifitemobtained TREASURE_ROD_OF_SEASONS, @haveRodOfSeasons
 	setcoords $28, $70
 	setcollisionradii $04, $10
@@ -163,7 +163,7 @@ seasonsSpiritsScript_spiritStatue:
 	xorcfc0bit 0
 	playsound SND_CIRCLING
 	checkcfc0bit 1
-	callscript _seasonsSpiritsScript_showIntroText
+	callscript seasonsSpiritsScript_showIntroText
 	asm15 scriptHelp.seasonsSpirit_createSwirl
 	wait 10
 	playsound SND_FADEOUT
@@ -179,7 +179,7 @@ seasonsSpiritsScript_spiritStatue:
 	wait 20
 	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
-	callscript _seasonsSpiritsScript_imbueSeason
+	callscript seasonsSpiritsScript_imbueSeason
 	asm15 scriptHelp.seasonsSpirits_checkPostSeasonGetText
 	jumptable_objectbyte $7f
 	.dw @@notAllSeasonsGotten
@@ -196,7 +196,7 @@ seasonsSpiritsScript_spiritStatue:
 @@notAllSeasonsGotten:
 	orroomflag $40
 	enableinput
-_seasonsSpiritsScript_seasonsGotten:
+seasonsSpiritsScript_seasonsGotten:
 	setcoords $28, $70
 	setcollisionradii $04, $10
 	makeabuttonsensitive
@@ -209,16 +209,16 @@ _seasonsSpiritsScript_seasonsGotten:
 	playsound SND_CIRCLING
 	checkcfc0bit 1
 	wait 40
-	callscript _seasonsSpirits_postSeasonGetText
+	callscript seasonsSpirits_postSeasonGetText
 	wait 8
 	xorcfc0bit 2
 	wait 30
 	enableinput
 	scriptjump -
 
-_seasonsSpirits_postSeasonGetText:
-	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, _seasonsSpirits_lastTextGameFinished
-	jumpifobjectbyteeq $7e, $01, _seasonsSpirits_lastTextSaveZeldaText
+seasonsSpirits_postSeasonGetText:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, seasonsSpirits_lastTextGameFinished
+	jumpifobjectbyteeq $7e, $01, seasonsSpirits_lastTextSaveZeldaText
 	jumptable_objectbyte $43
 	.dw @spring
 	.dw @summer
@@ -238,7 +238,7 @@ _seasonsSpirits_postSeasonGetText:
 	showtextlowindex <TX_0805
 	retscript
 
-_seasonsSpirits_lastTextGameFinished:
+seasonsSpirits_lastTextGameFinished:
 	jumptable_objectbyte $43
 	.dw @spring
 	.dw @summer
@@ -258,7 +258,7 @@ _seasonsSpirits_lastTextGameFinished:
 	showtextlowindex <TX_081b
 	retscript
 	
-_seasonsSpirits_lastTextSaveZeldaText:
+seasonsSpirits_lastTextSaveZeldaText:
 	jumptable_objectbyte $43
 	.dw script4f80
 	.dw script4f83
@@ -278,7 +278,7 @@ script4f8d:
 	showtextlowindex <TX_0817
 	retscript
 
-_seasonsSpiritsScript_showIntroText:
+seasonsSpiritsScript_showIntroText:
 	jumptable_objectbyte $43
 	.dw @spring
 	.dw @summer
@@ -298,7 +298,7 @@ _seasonsSpiritsScript_showIntroText:
 	showtextlowindex <TX_0804
 	retscript
 
-_seasonsSpiritsScript_imbueSeason:
+seasonsSpiritsScript_imbueSeason:
 	jumptable_objectbyte $43
 	.dw @spring
 	.dw @summer
@@ -697,7 +697,7 @@ oldLadyFarmerScript_text7:
 fountainOldManScript_text1:
 	settextid TX_1000
 	jumpifmemoryeq wIsLinkedGame, $01, fountainOldManScript_text2
-_fountainOldManScript_showText:
+fountainOldManScript_showText:
 	setcollisionradii $03, $0b
 	makeabuttonsensitive
 -
@@ -707,39 +707,39 @@ _fountainOldManScript_showText:
 	
 fountainOldManScript_text2:
 	settextid TX_1001
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 fountainOldManScript_text3:
 	settextid TX_1002
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 fountainOldManScript_text4:
 	settextid TX_1003
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 fountainOldManScript_text5:
 	settextid TX_1004
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 fountainOldManScript_text6:
 	settextid TX_1005
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 fountainOldManScript_text7:
 	settextid TX_1006
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 fountainOldManScript_text8:
 	settextid TX_1007
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 fountainOldManScript_text9:
 	settextid TX_1008
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 fountainOldManScript_textA:
 	settextid TX_1009
-	scriptjump _fountainOldManScript_showText
+	scriptjump fountainOldManScript_showText
 	
 	
 ; ==============================================================================
@@ -1006,7 +1006,7 @@ bipinScript1:
 	setanimation $02
 	asm15 scriptHelp.bipin_showText_subid1To9
 	wait 30
-	callscript _bipinSayRandomTip
+	callscript bipinSayRandomTip
 	enableallobjects
 	scriptjump @loop
 
@@ -1021,7 +1021,7 @@ bipinScript2:
 	enableallobjects
 	scriptjump @loop
 
-_bipinSayRandomTip:
+bipinSayRandomTip:
 	; Show a random text index from TX_4309-TX_4310
 	writeobjectbyte  Interaction.textID+1, >TX_4300
 	getrandombits    Interaction.textID,   $07
@@ -1488,7 +1488,7 @@ subrosianScript_beachText1:
 	rungenericnpc TX_2912
 @datingRosa:
 	settextid TX_2917
-	scriptjump _subrosian_jump
+	scriptjump subrosian_jump
 	
 subrosianScript_beachText2:
 	jumpifglobalflagset GLOBALFLAG_DATING_ROSA, @datingRosa
@@ -1498,7 +1498,7 @@ subrosianScript_beachText2:
 	rungenericnpc TX_2913
 @datingRosa:
 	settextid TX_2918
-	scriptjump _subrosian_jump
+	scriptjump subrosian_jump
 	
 subrosianScript_beachText3:
 	jumpifglobalflagset GLOBALFLAG_DATING_ROSA, @datingRosa
@@ -1529,9 +1529,9 @@ subrosianScript_villageText2:
 	rungenericnpc TX_2911
 @datingRosa:
 	settextid TX_2919
-	scriptjump _subrosian_jump
+	scriptjump subrosian_jump
 	
-_subrosian_jump:
+subrosian_jump:
 	initcollisions
 -
 	checkabutton
@@ -2614,19 +2614,19 @@ springBloomBoyScript_text3:
 	rungenericnpc TX_1304
 	
 sunkenCityBoyScript_text1:
-	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, _sunkenCityBoyScript_text1_moblinsKeepDestroyed
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, sunkenCityBoyScript_text1_moblinsKeepDestroyed
 	rungenericnpc TX_1a00
 sunkenCityBoyScript_text2:
-	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, _sunkenCityBoyScript_text2_moblinsKeepDestroyed
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, sunkenCityBoyScript_text2_moblinsKeepDestroyed
 	scriptjump sunkenCityBoyScript_text3
-_sunkenCityBoyScript_text2_moblinsKeepDestroyed:
+sunkenCityBoyScript_text2_moblinsKeepDestroyed:
 	initcollisions
 	checkabutton
 	showtext TX_1a02
 	checkabutton
 	showtext TX_1a01
-	scriptjump _sunkenCityBoyScript_text2_moblinsKeepDestroyed
-_sunkenCityBoyScript_text1_moblinsKeepDestroyed:
+	scriptjump sunkenCityBoyScript_text2_moblinsKeepDestroyed
+sunkenCityBoyScript_text1_moblinsKeepDestroyed:
 	rungenericnpc TX_1a02
 sunkenCityBoyScript_text3:
 	rungenericnpc TX_1a01
@@ -3106,7 +3106,7 @@ syrupScript_purchaseItem:
 .ifdef ROM_AGES
 	jumptable_objectbyte Interaction.var38
 	.dw @buy
-	.dw _shopkeeperCantBuy
+	.dw shopkeeperCantBuy
 @buy:
 	writeobjectbyte Interaction.var3a, $01
 .else
@@ -3708,7 +3708,7 @@ ingoScript_tradingVase:
 	scriptjump -
 @tradingVase:
 	wait 30
-	callscript _ingoScript_yahoo
+	callscript ingoScript_yahoo
 	showtextlowindex <TX_0b51
 	wait 30
 	showtextlowindex <TX_0b2d
@@ -3760,7 +3760,7 @@ ingoScript_LinkApproachingVases:
 	enableinput
 	scriptend
 
-_ingoScript_yahoo:
+ingoScript_yahoo:
 	asm15 scriptHelp.ingo_animatePlaySound
 -
 	asm15 scriptHelp.ingo_jump
@@ -4106,7 +4106,7 @@ d8ArmosScript_pattern1:
 	setangle $00
 	applyspeed $20
 
-_d8Armos_finishedMoving:
+d8Armos_finishedMoving:
 	wait 30
 	createpuff
 	enableallobjects
@@ -4129,7 +4129,7 @@ d8ArmosScript_pattern2:
 	applyspeed $60
 	setangle $08
 	applyspeed $40
-	scriptjump _d8Armos_finishedMoving
+	scriptjump d8Armos_finishedMoving
 	
 d8ArmosScript_pattern3:
 	setspeed SPEED_080
@@ -4152,7 +4152,7 @@ d8ArmosScript_pattern3:
 	applyspeed $20
 	setangle $18
 	applyspeed $20
-	scriptjump _d8Armos_finishedMoving
+	scriptjump d8Armos_finishedMoving
 	
 d8ArmosScript_pattern4:
 	setspeed SPEED_080
@@ -4173,7 +4173,7 @@ d8ArmosScript_pattern4:
 	applyspeed $a0
 	setangle $08
 	applyspeed $40
-	scriptjump _d8Armos_finishedMoving
+	scriptjump d8Armos_finishedMoving
 
 d8ArmosScript_giveKey:
 	setcoords $58, $b8
@@ -4464,7 +4464,7 @@ strangeBrother1Script_1stScreen:
 @halfChanceWhenFeatherNotGotten:
 	setcoords $18, $48
 	setangleandanimation $18
-	callscript _strangeBrother1Script_1stScreenInit
+	callscript strangeBrother1Script_1stScreenInit
 	moveleft $30
 	callscript strangeBrotherScript_lookRightLeftUpDown
 	movedown $60
@@ -4475,7 +4475,7 @@ strangeBrother1Script_1stScreen:
 @otherPattern:
 	setcoords $48, $18
 	setangleandanimation $00
-	callscript _strangeBrother1Script_1stScreenInit
+	callscript strangeBrother1Script_1stScreenInit
 	moveup $30
 	callscript strangeBrotherScript_lookDownUpRightLeft
 	moveright $30
@@ -4488,9 +4488,9 @@ strangeBrother1Script_1stScreen:
 	xorcfc0bit 0
 	scriptend
 	
-_strangeBrother1Script_1stScreenInit:
+strangeBrother1Script_1stScreenInit:
 	jumpifglobalflagset GLOBALFLAG_JUST_CAUGHT_BY_STRANGE_BROTHERS, +
-_strangeBrotherScript_1stScreenInit:
+strangeBrotherScript_1stScreenInit:
 	asm15 scriptHelp.subrosianHiding_store02Intocc9e
 	wait 60
 	asm15 scriptHelp.subrosianHiding_createDetectionHelper
@@ -4501,14 +4501,14 @@ _strangeBrotherScript_1stScreenInit:
 	showtext TX_2806
 	enableinput
 	xorcfc0bit 0
-	scriptjump _strangeBrotherScript_1stScreenInit
+	scriptjump strangeBrotherScript_1stScreenInit
 	
-_toStrangeBrotherScript_1stScreenInit:
+toStrangeBrotherScript_1stScreenInit:
 	jumpifglobalflagset GLOBALFLAG_JUST_CAUGHT_BY_STRANGE_BROTHERS, @seenBefore
-	scriptjump _strangeBrotherScript_1stScreenInit
+	scriptjump strangeBrotherScript_1stScreenInit
 @seenBefore:
 	checkcfc0bit 0
-	scriptjump _strangeBrotherScript_1stScreenInit
+	scriptjump strangeBrotherScript_1stScreenInit
 
 strangeBrother1Script_2ndScreen:
 	jumptable_memoryaddress $cfd0
@@ -4729,12 +4729,12 @@ strangeBrother2Script_1stScreen:
 @halfChanceWhenFeatherNotGotten:
 	setcoords $28, $18
 	setangleandanimation $10
-	callscript _toStrangeBrotherScript_1stScreenInit
+	callscript toStrangeBrotherScript_1stScreenInit
 	loadscript scripts2.strangeBrother2Script_1stScreenPattern1
 @otherPattern:
 	setcoords $48, $28
 	setangleandanimation $00
-	callscript _toStrangeBrotherScript_1stScreenInit
+	callscript toStrangeBrotherScript_1stScreenInit
 	loadscript scripts2.strangeBrother2Script_1stScreenPattern2
 
 strangeBrother2Script_2ndScreen:
@@ -4859,28 +4859,28 @@ hollyScript_enteredFromChimney:
 	initcollisions
 	wait 120
 	setzspeed -$0100
-	jumpifroomflagset $20, _hollyScript_shovelGiven
-	scriptjump _hollyScript_shovelNotYetGiven
+	jumpifroomflagset $20, hollyScript_shovelGiven
+	scriptjump hollyScript_shovelNotYetGiven
 	
 hollyScript_enteredNormally:
 	initcollisions
-	jumpifroomflagset $20, _hollyScript_shovelGiven
-_hollyScript_shovelNotYetGiven:
+	jumpifroomflagset $20, hollyScript_shovelGiven
+hollyScript_shovelNotYetGiven:
 	checkabutton
 	showtext TX_2c00
 	disableinput
 	giveitem TREASURE_SHOVEL, $00
 	enablemenu
-_hollyScript_shovelGiven:
+hollyScript_shovelGiven:
 	enableallobjects
 	checkabutton
 	setdisabledobjectsto91
 	jumpifglobalflagset GLOBALFLAG_ALL_HOLLYS_SNOW_SHOVELLED, @snowAlreadyShovelled
 	showtext TX_2c01
-	scriptjump _hollyScript_shovelGiven
+	scriptjump hollyScript_shovelGiven
 @snowAlreadyShovelled:
 	showtext TX_2c02
-	scriptjump _hollyScript_shovelGiven
+	scriptjump hollyScript_shovelGiven
 
 
 ; ==============================================================================
@@ -5053,12 +5053,12 @@ companionScript_dimitriInSpoolSwamp:
 	showtext TX_2115
 	writeobjectbyte $44, $02
 	showtext TX_0039
-	scriptjump _companionScript_dimitriTutorial
+	scriptjump companionScript_dimitriTutorial
 @unlinked:
 	showtext TX_210b
 	writeobjectbyte $44, $02
 	showtext TX_0069
-_companionScript_dimitriTutorial:
+companionScript_dimitriTutorial:
 	showtext TX_211f
 	writememory $d126, $06
 	writememory $d127, $08
@@ -5078,7 +5078,7 @@ companionScript_dimitriBeingBullied:
 +
 	disablemenu
 	showtext TX_2120
-	scriptjump _companionScript_dimitriTutorial
+	scriptjump companionScript_dimitriTutorial
 
 companionScript_mooshEnteringSunkenCity:
 	writememory $d13f, $14
@@ -5150,7 +5150,7 @@ moblinBulliesScript_dimitriBully1BeforeSaving:
 	disablemenu
 	setdisabledobjectsto11
 	writememory $ccab, $00
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 @animalBulliedInitDone:
 	jumptable_objectbyte $77
 	.dw @animalBulliedInitDone
@@ -5209,7 +5209,7 @@ moblinBulliesScript_dimitriBully2BeforeSaving:
 	jumpifc6xxset <wDimitriState, $01, +
 	scriptjump -
 +
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5231,7 +5231,7 @@ moblinBulliesScript_dimitriBully3BeforeSaving:
 	jumpifc6xxset <wDimitriState, $02, +
 	scriptjump -
 +
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5260,7 +5260,7 @@ moblinBulliesScript_dimitriBully1AfterSaving:
 
 moblinBulliesScript_dimitriBully2AfterSaving:
 	setangleandanimation $10
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5286,7 +5286,7 @@ moblinBulliesScript_dimitriBully3AfterSaving:
 	scriptjump moblinBulliesScript_dimitriBully3AfterSaving
 +
 	setangleandanimation $10
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5306,7 +5306,7 @@ moblinBulliesScript_mooshBully1:
 	jumpifc6xxset <wMooshState, $02, @startFight
 	jumpifc6xxset <wMooshState, $01, @waitToStartFight
 	setdisabledobjectsto11
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 	jumptable_objectbyte $77
 	.dw moblinBulliesScript_dimitriBully1BeforeSaving@animalBulliedInitDone
 	.dw +
@@ -5320,7 +5320,7 @@ moblinBulliesScript_mooshBully1:
 +
 	setcounter1 $20
 	showtext TX_2203
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5351,14 +5351,14 @@ moblinBulliesScript_mooshBully1:
 @startFight:
 	setdisabledobjectsto11
 	moveleft $30
-	callscript _moblinBulliesScript_spawnMoblins
+	callscript moblinBulliesScript_spawnMoblins
 	setcounter1 $70
 	showtext TX_220e
 	scriptjump @moblinsSpawned
 @revengeWanted:
 	setdisabledobjectsto11
 	moveleft $30
-	callscript _moblinBulliesScript_spawnMoblins
+	callscript moblinBulliesScript_spawnMoblins
 	setcounter1 $70
 	showtext TX_220b
 @moblinsSpawned:
@@ -5382,7 +5382,7 @@ moblinBulliesScript_mooshBully1:
 	ormemory wMooshState, $04
 	scriptend
 	
-_moblinBulliesScript_spawnMoblins:
+moblinBulliesScript_spawnMoblins:
 	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $03, $88, $30
 	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $04, $88, $50
 	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $05, $18, $b0
@@ -5393,7 +5393,7 @@ moblinBulliesScript_mooshBully2:
 	jumpifmemoryset $d13e, $01, +
 	scriptjump moblinBulliesScript_mooshBully2
 +
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5429,7 +5429,7 @@ moblinBulliesScript_mooshBully3:
 	jumpifmemoryset $d13e, $02, +
 	scriptjump moblinBulliesScript_mooshBully3
 +
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5452,9 +5452,9 @@ moblinBulliesScript_maskedMoblin1MovingUp:
 	setangle $00
 	applyspeed $30
 	ormemory wMooshState, $08
-_moblinBulliesScript_spawnMoblin:
+moblinBulliesScript_spawnMoblin:
 	jumpifmemoryset $d13e, $80, +
-	scriptjump _moblinBulliesScript_spawnMoblin
+	scriptjump moblinBulliesScript_spawnMoblin
 +
 	spawnenemyhere ENEMYID_MASKED_MOBLIN, $00
 	scriptend
@@ -5462,14 +5462,14 @@ _moblinBulliesScript_spawnMoblin:
 moblinBulliesScript_maskedMoblin2MovingUp:
 	setangle $00
 	applyspeed $2f
-	scriptjump _moblinBulliesScript_spawnMoblin
+	scriptjump moblinBulliesScript_spawnMoblin
 
 moblinBulliesScript_maskedMoblinMovingLeft:
 	setangle $18
 	applyspeed $2f
-	scriptjump _moblinBulliesScript_spawnMoblin
+	scriptjump moblinBulliesScript_spawnMoblin
 	
-_moblinBulliesScript_hop:
+moblinBulliesScript_hop:
 	setzspeed -$0300
 	wait 8
 	retscript
@@ -5497,7 +5497,7 @@ sunkenCityBulliesScript1_bully1:
 	jumpifc6xxset <wDimitriState, $04, @promptForPayment
 	disablemenu
 	setdisabledobjectsto11
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5547,7 +5547,7 @@ sunkenCityBulliesScript1_bully2:
 	jumpifc6xxset <wDimitriState, $01, @initialHop
 	scriptjump -
 @initialHop:
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5569,7 +5569,7 @@ sunkenCityBulliesScript1_bully3:
 	jumpifc6xxset <wDimitriState, $02, @initialHop
 	scriptjump -
 @initialHop:
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5596,7 +5596,7 @@ sunkenCityBulliesScript2_bully1:
 	
 sunkenCityBulliesScript2_bully2:
 	setangleandanimation $10
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumpifc6xxset <wDimitriState, $10, +
 	scriptjump -
@@ -5607,7 +5607,7 @@ sunkenCityBulliesScript2_bully2:
 	
 sunkenCityBulliesScript2_bully3:
 	setangleandanimation $10
-	callscript _moblinBulliesScript_hop
+	callscript moblinBulliesScript_hop
 -
 	jumptable_objectbyte $77
 	.dw -
@@ -5668,13 +5668,13 @@ fickleOldManScript_text6:
 ; ==============================================================================
 subrosianShopScript_ribbon:
 	showtextnonexitable TX_2b00
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	ormemory wBoughtSubrosianShopItems, $01
 	scriptend
 	
 subrosianShopScript_bombUpgrade:
 	showtextnonexitable TX_2b02
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	ormemory wBoughtSubrosianShopItems, $04
 	showtext TX_2b0d
 	setdisabledobjectsto11
@@ -5682,71 +5682,71 @@ subrosianShopScript_bombUpgrade:
 	
 subrosianShopScript_gashaSeed:
 	showtextnonexitable TX_2b04
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	ormemory wBoughtSubrosianShopItems, $08
 	scriptend
 	
 subrosianShopScript_pieceOfHeart:
 	showtextnonexitable TX_2b01
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	ormemory wBoughtSubrosianShopItems, $02
 	scriptend
 	
 subrosianShopScript_ring1:
 	showtextnonexitable TX_2b03
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	ormemory wBoughtSubrosianShopItems, $10
 	scriptend
 	
 subrosianShopScript_ring2:
 	showtextnonexitable TX_2b03
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	ormemory wBoughtSubrosianShopItems, $20
 	scriptend
 	
 subrosianShopScript_ring3:
 	showtextnonexitable TX_2b03
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	ormemory wBoughtSubrosianShopItems, $40
 	scriptend
 	
 subrosianShopScript_ring4:
 	showtextnonexitable TX_2b03
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	ormemory wBoughtSubrosianShopItems, $80
 	scriptend
 	
 subrosianShopScript_emberSeeds:
 	showtextnonexitable TX_2b09
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	scriptend
 	
 subrosianShopScript_shield:
 	showtextnonexitable TX_2b05
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	scriptend
 	
 subrosianShopScript_pegasusSeeds:
 	showtextnonexitable TX_2b0a
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	scriptend
 	
 subrosianShopScript_heartRefill:
 	showtextnonexitable TX_2b06
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	scriptend
 	
 subrosianShopScript_membersCard:
 	showtextnonexitable TX_2b10
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	scriptend
 	
 subrosianShopScript_oreChunks:
 	showtextnonexitable TX_2b08
-	callscript _subrosianShopScript_buyItem
+	callscript subrosianShopScript_buyItem
 	scriptend
 	
-_subrosianShopScript_buyItem:
+subrosianShopScript_buyItem:
 	jumpiftextoptioneq $00, @buying
 	writememory $cba0, $01
 	writeobjectbyte $7d, $ff
@@ -5780,11 +5780,11 @@ script7102:
 ; ==============================================================================
 script710b:
 	jumptable_memoryaddress wIsLinkedGame
-	.dw _unlinked
-	.dw _linked
-_unlinked:
+	.dw unlinked
+	.dw linked
+unlinked:
 	jumptable_memoryaddress $cc39
-	.dw _stage0
+	.dw stage0
 	.dw script71a2
 	.dw script71a2
 	.dw script71a2
@@ -5796,12 +5796,12 @@ _unlinked:
 	.dw script71a2
 	.dw script71a2 ; dungeons 1 to 5 except 4
 	.dw script71a2 ; as above, but finally did 4
-	.dw _stageMakuSeedGotten
+	.dw stageMakuSeedGotten
 	.dw script7223 ; highest essence gotten is 8, but wc6e5 is not $09
-	.dw _stageFinishedGame
-_linked:
+	.dw stageFinishedGame
+linked:
 	jumptable_memoryaddress $cc39
-	.dw _stage0
+	.dw stage0
 	.dw script71a2
 	.dw script71a2
 	.dw script71b1
@@ -5813,34 +5813,34 @@ _linked:
 	.dw script71a2
 	.dw script71b1
 	.dw script71b1
-	.dw _stageMakuSeedGotten
+	.dw stageMakuSeedGotten
 	.dw script7223
-	.dw _stageFinishedGame
-_stage0:
+	.dw stageFinishedGame
+stage0:
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	asm15 scriptHelp.makuTree_setMakuMapText, $03
-	jumpifroomflagset $40, _gnarledKeySpawned@loop
+	jumpifroomflagset $40, gnarledKeySpawned@loop
 	callscript makuTreeScript_waitForBubblePopped
 	disableinput
-	jumpifglobalflagset GLOBALFLAG_GNARLED_KEY_GIVEN, _givenGnarledKey
+	jumpifglobalflagset GLOBALFLAG_GNARLED_KEY_GIVEN, givenGnarledKey
 	setglobalflag GLOBALFLAG_GNARLED_KEY_GIVEN
 	asm15 scriptHelp.makuTree_showText, <TX_1700
 	wait 30
-_longText:
+longText:
 	asm15 scriptHelp.makuTree_showText, <TX_1701
 	wait 1
-	jumpiftextoptioneq $01, _acceptedQuest
+	jumpiftextoptioneq $01, acceptedQuest
 	wait 30
-	scriptjump _longText
-_acceptedQuest:
+	scriptjump longText
+acceptedQuest:
 	wait 30
-_givenGnarledKey:
+givenGnarledKey:
 	asm15 scriptHelp.makuTree_showText, <TX_1702
 	wait 1
-	jumpifroomflagset $80, _gnarledKeySpawned
+	jumpifroomflagset $80, gnarledKeySpawned
 	orroomflag $80
 	asm15 scriptHelp.makuTree_dropGnarledKey
-_gnarledKeySpawned:
+gnarledKeySpawned:
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $02
 	checkobjectbyteeq Interaction.animParameter, $ff
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
@@ -5896,7 +5896,7 @@ script71c8:
 	scriptend
 	
 	
-_stageMakuSeedGotten:
+stageMakuSeedGotten:
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	asm15 scriptHelp.seasonsFunc_15_619a
 	setmusic MUS_MAKU_TREE
@@ -5926,7 +5926,7 @@ script7223:
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $04
 	scriptjump @loop
 
-_stageFinishedGame:
+stageFinishedGame:
 	asm15 scriptHelp.makuTree_storeIntoVar37SpawnBubbleIf0, $00
 	asm15 scriptHelp.makuTree_setMakuMapText, <TX_1739
 @loop:
@@ -6005,23 +6005,23 @@ floodedHouseGirlScript_text5:
 	
 masterDiversWifeScript_text1:
 	initcollisions
-	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, _masterDiversWifeScript_cityQuietText
-	jumpifitemobtained TREASURE_FLIPPERS, _masterDiversWifeScript_metMasterDiverText
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, masterDiversWifeScript_cityQuietText
+	jumpifitemobtained TREASURE_FLIPPERS, masterDiversWifeScript_metMasterDiverText
 	rungenericnpc TX_1800
 	
 masterDiversWifeScript_text2:
 	initcollisions
-	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, _masterDiversWifeScript_text2_moblinsKeepDestroyed
-	scriptjump _masterDiversWifeScript_metMasterDiverText
-_masterDiversWifeScript_text2_moblinsKeepDestroyed:
+	jumpifglobalflagset GLOBALFLAG_MOBLINS_KEEP_DESTROYED, masterDiversWifeScript_text2_moblinsKeepDestroyed
+	scriptjump masterDiversWifeScript_metMasterDiverText
+masterDiversWifeScript_text2_moblinsKeepDestroyed:
 	checkabutton
 	showtext TX_1802
 	checkabutton
 	showtext TX_1801
-	scriptjump _masterDiversWifeScript_text2_moblinsKeepDestroyed
-_masterDiversWifeScript_metMasterDiverText:
+	scriptjump masterDiversWifeScript_text2_moblinsKeepDestroyed
+masterDiversWifeScript_metMasterDiverText:
 	rungenericnpc TX_1801
-_masterDiversWifeScript_cityQuietText:
+masterDiversWifeScript_cityQuietText:
 	rungenericnpc TX_1802
 	
 masterDiversWifeScript_text3:
@@ -6155,22 +6155,22 @@ jewelHelperScript_XjewelMoldorm:
 jewelHelperScript_spoolSwampSquareJewel:
 	stopifitemflagset
 	jumptable_memoryaddress wIsLinkedGame
-	.dw _jewelHelperScript_squareJewel
-	.dw _jewelHelperScript_40Rupees
+	.dw jewelHelperScript_squareJewel
+	.dw jewelHelperScript_40Rupees
 
 jewelHelperScript_eyeglassLakeSquareJewel:
 	stopifitemflagset
 	jumptable_memoryaddress wIsLinkedGame
-	.dw _jewelHelperScript_40Rupees
-	.dw _jewelHelperScript_squareJewel
+	.dw jewelHelperScript_40Rupees
+	.dw jewelHelperScript_squareJewel
 
-_jewelHelperScript_squareJewel:
+jewelHelperScript_squareJewel:
 	writememory $ccbd, TREASURE_SQUARE_JEWEL
 	writememory $ccbe, $00
 	settileat $57, TILEINDEX_CHEST
 	scriptend
 
-_jewelHelperScript_40Rupees:
+jewelHelperScript_40Rupees:
 	writememory $ccbd, TREASURE_RUPEES
 	writememory $ccbe, RUPEEVAL_040
 	settileat $57, TILEINDEX_CHEST
@@ -6480,18 +6480,18 @@ impaScript_afterZeldaKidnapped:
 ; ==============================================================================
 script7556:
 	playsound SND_RUMBLE2
-	callscript _samasaDesertGateScript_createNext7Puffs
+	callscript samasaDesertGateScript_createNext7Puffs
 	setcounter1 $23
-	callscript _samasaDesertGateScript_createNext7Puffs
+	callscript samasaDesertGateScript_createNext7Puffs
 	setcounter1 $23
 	playsound SND_RUMBLE2
-	callscript _samasaDesertGateScript_createNext7Puffs
+	callscript samasaDesertGateScript_createNext7Puffs
 	setcounter1 $23
-	callscript _samasaDesertGateScript_createNext7Puffs
+	callscript samasaDesertGateScript_createNext7Puffs
 	setcounter1 $ff
 	scriptend
 
-_samasaDesertGateScript_createNext7Puffs:
+samasaDesertGateScript_createNext7Puffs:
 	playsound SND_KILLENEMY
 	asm15 scriptHelp.samasaDesertGate_createNext2Puffs
 	setcounter1 $05
@@ -6526,7 +6526,7 @@ subrosianSmithyScript:
 @haveRustyBell:
 	checkabutton
 	disableinput
-	callscript _smithyScript_introText
+	callscript smithyScript_introText
 	showtextlowindex <TX_3b03
 	jumpiftextoptioneq $00, @please
 	; Do it!
@@ -6535,9 +6535,9 @@ subrosianSmithyScript:
 	setanimation $01
 	wait 30
 	showtextlowindex <TX_3b07
-	callscript _smithyScript_smithItem
+	callscript smithyScript_smithItem
 	giveitem TREASURE_PIRATES_BELL, $02
-	scriptjump _smithyScript_smithingDone
+	scriptjump smithyScript_smithingDone
 @please:
 	wait 30
 	showtextlowindex <TX_3b04
@@ -6550,7 +6550,7 @@ subrosianSmithyScript:
 @haveHardOre:
 	checkabutton
 	disableinput
-	callscript _smithyScript_introText
+	callscript smithyScript_introText
 	jumpifitemobtained TREASURE_SHIELD, @haveShield
 	scriptjump @noShield
 @haveShield:
@@ -6562,9 +6562,9 @@ subrosianSmithyScript:
 	setanimation $01
 	wait 30
 	showtextlowindex <TX_3b0d
-	callscript _smithyScript_smithItem
+	callscript smithyScript_smithItem
 	asm15 scriptHelp.subrosianSmith_takeHardOre
-	scriptjump _smithyScript_smithingDone
+	scriptjump smithyScript_smithingDone
 @makeItFine:
 	wait 30
 	showtextlowindex <TX_3b0b
@@ -6583,7 +6583,7 @@ subrosianSmithyScript:
 @notDoneSecret:
 	checkabutton
 	disableinput
-	callscript _smithyScript_introText
+	callscript smithyScript_introText
 	jumpifitemobtained TREASURE_SHIELD, @finishedGameHaveShield
 	enableinput
 -
@@ -6614,7 +6614,7 @@ subrosianSmithyScript:
 @correctSecret:
 	setglobalflag GLOBALFLAG_BEGAN_SMITH_SECRET
 	showtextlowindex <TX_3b12
-	callscript _smithyScript_smithItem
+	callscript smithyScript_smithItem
 	asm15 scriptHelp.subrosianSmith_giveUpgradedShield
 	setglobalflag GLOBALFLAG_DONE_SMITH_SECRET
 	wait 30
@@ -6633,7 +6633,7 @@ subrosianSmithyScript:
 	disableinput
 	scriptjump @generateReturnSecret
 	
-_smithyScript_introText:
+smithyScript_introText:
 	showtextlowindex <TX_3b00
 	wait 30
 	showtextlowindex <TX_3b01
@@ -6644,7 +6644,7 @@ _smithyScript_introText:
 	wait 30
 	retscript
 	
-_smithyScript_smithItem:
+smithyScript_smithItem:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	setcoords $50, $70
@@ -6667,7 +6667,7 @@ _smithyScript_smithItem:
 	showtextlowindex <TX_3b08
 	retscript
 	
-_smithyScript_smithingDone:
+smithyScript_smithingDone:
 	wait 4
 	enableinput
 -
@@ -6870,9 +6870,9 @@ script779e:
 ; INTERACID_SHIP_PIRATIAN
 ; INTERACID_SHIP_PIRATIAN_CAPTAIN
 ; ==============================================================================
-_pirateShipLoop:
+pirateShipLoop:
 	wait 30
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 
 shipPirationScript_piratianComingDownHandler:
 	setstate $03
@@ -6921,7 +6921,7 @@ shipPiratianScript_piratianFromAbove:
 	wait 30
 	showtextlowindex <TX_4e08
 	xorcfc0bit 0
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 @moveLeftThenUp:
 	setangleandanimation $18
 	wait 30
@@ -6944,7 +6944,7 @@ shipPirationScript_inShipLeavingSubrosia:
 	setangleandanimation $10
 	checkcfc0bit 7
 	setzspeed -$01c0
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 
 shipPiratianScript_leavingSamasaDesert:
 	setcoords $f8, $f8
@@ -6981,23 +6981,23 @@ shipPiratianScript_swapShip:
 	scriptjump -
 
 shipPiratianScript_1stDizzyPirateDescending:
-	callscript _shipPiratian_spinAround
+	callscript shipPiratian_spinAround
 	showtextlowindex <TX_4e0a
-	callscript _shipPiratian_spinFromDizziness
-	callscript _shipPiratian_spinFromDizziness
-	callscript _shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
 	writememory $d008, $03
-	callscript _shipPiratian_spinFromDizziness
-	callscript _shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
 	writememory $d008, $00
 	wait 30
 	showtextlowindex <TX_4e0b
 	spawninteraction INTERACID_SHIP_PIRATIAN, $0b, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 
-_shipPiratian_spinFromDizziness:
+shipPiratian_spinFromDizziness:
 	setangle $19
 	applyspeed $10
 	setangle $04
@@ -7008,14 +7008,14 @@ _shipPiratian_spinFromDizziness:
 	applyspeed $10
 	retscript
 
-_shipPiratian_spinAround:
+shipPiratian_spinAround:
 	setstate $04
 	setspeed SPEED_080
 	wait 60
 	retscript
 
 shipPirationScript_2ndDizzyPirateDescending:
-	callscript _shipPiratian_spinAround
+	callscript shipPiratian_spinAround
 	showtextlowindex <TX_4e0c
 	writememory $d008, $02
 	callscript @moveAroundUncontrollably
@@ -7029,7 +7029,7 @@ shipPirationScript_2ndDizzyPirateDescending:
 	spawninteraction INTERACID_SHIP_PIRATIAN, $0c, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 @moveAroundUncontrollably:
 	setangle $07
 	applyspeed $0f
@@ -7042,25 +7042,25 @@ shipPirationScript_2ndDizzyPirateDescending:
 	retscript
 
 shipPirationScript_3rdDizzyPirateDescending:
-	callscript _shipPiratian_spinAround
+	callscript shipPiratian_spinAround
 	showtextlowindex <TX_4e0e
 	writememory $d008, $02
-	callscript _shipPiratian_spinFromDizziness
-	callscript _shipPiratian_spinFromDizziness
-	callscript _shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
 	wait 30
 	writememory $d008, $03
 	showtextlowindex <TX_4e0f
 	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN, $01, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 
 shipPiratianScript_dizzyPiratiansAlreadyInside:
 	setstate $04
 	checkcfc0bit 7
 	setzspeed -$01c0
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 
 shipPiratianScript_landedInWestCoast_shipTopHalf:
 	jumpifroomflagset $40, @landedInWestCoast
@@ -7140,7 +7140,7 @@ shipPiratianCaptainScript_leavingSubrosia:
 	xorcfc0bit 2
 	checkcfc0bit 7
 	setzspeed -$01c0
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 @hop:
 	checkcfc0bit 1
 	xorcfc0bit 1
@@ -7150,12 +7150,12 @@ shipPiratianCaptainScript_leavingSubrosia:
 
 shipPiratianCaptainScript_gettingSick:
 	setspeed SPEED_080
-	callscript _shipPiratian_spinFromDizziness
-	callscript _shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
+	callscript shipPiratian_spinFromDizziness
 	writememory $d008, $02
 	showtextlowindex <TX_4e10
 	xorcfc0bit 7
-	scriptjump _pirateShipLoop
+	scriptjump pirateShipLoop
 
 shipPiratianCaptainScript_arrivingInWestCoast:
 	jumpifroomflagset $40, @arrived
@@ -7391,7 +7391,7 @@ zeldaNPCScript_ba_subid3:
 zeldaNPCScript_bc_subid1:
 	settextid TX_0601
 	
-_zeldaNPCScript_faceLinkShowText:
+zeldaNPCScript_faceLinkShowText:
 	initcollisions
 -
 	checkabutton
@@ -7403,23 +7403,23 @@ _zeldaNPCScript_faceLinkShowText:
 	
 zeldaNPCScript_bc_subid2:
 	settextid TX_0604
-	scriptjump _zeldaNPCScript_faceLinkShowText
+	scriptjump zeldaNPCScript_faceLinkShowText
 	
 zeldaNPCScript_bd_subid1:
 	settextid TX_0603
-	scriptjump _zeldaNPCScript_faceLinkShowText
+	scriptjump zeldaNPCScript_faceLinkShowText
 	
 zeldaNPCScript_bd_subid2:
 	settextid TX_0606
-	scriptjump _zeldaNPCScript_faceLinkShowText
+	scriptjump zeldaNPCScript_faceLinkShowText
 	
 zeldaNPCScript_be_subid1:
 	settextid TX_0602
-	scriptjump _zeldaNPCScript_faceLinkShowText
+	scriptjump zeldaNPCScript_faceLinkShowText
 	
 zeldaNPCScript_be_subid2:
 	settextid TX_0605
-	scriptjump _zeldaNPCScript_faceLinkShowText
+	scriptjump zeldaNPCScript_faceLinkShowText
 	
 	
 ; ==============================================================================
@@ -8138,7 +8138,7 @@ dekuScrubScript_beginningSecret:
 	wait 20
 	showtextlowindex <TX_4c42
 	wait 20
-_dekuScrubScript_finishSecret:
+dekuScrubScript_finishSecret:
 	asm15 scriptHelp.dekuScrub_upgradeSatchel
 	jumpifobjectbyteeq Interaction.var38, $00, dekuScrubScript_gaveSecret
 	showtextlowindex <TX_4c44
@@ -8149,7 +8149,7 @@ _dekuScrubScript_finishSecret:
 	showtextlowindex <TX_4c45
 	wait 20
 	setglobalflag GLOBALFLAG_DONE_DEKU_SECRET
-	scriptjump _dekuScrubScript_giveReturnSecret
+	scriptjump dekuScrubScript_giveReturnSecret
 
 
 dekuScrubScript_doneSecret:
@@ -8157,11 +8157,11 @@ dekuScrubScript_doneSecret:
 --
 	checkabutton
 	disableinput
-_dekuScrubScript_giveReturnSecret:
+dekuScrubScript_giveReturnSecret:
 	generatesecret DEKU_RETURN_SECRET
 	showtextlowindex <TX_4c46
 	wait 20
-	jumpiftextoptioneq $00, _dekuScrubScript_giveReturnSecret
+	jumpiftextoptioneq $00, dekuScrubScript_giveReturnSecret
 	showtextlowindex <TX_4c47
 	enableinput
 	scriptjump --
@@ -8174,7 +8174,7 @@ dekuScrubScript_gaveSecret:
 	disableinput
 	showtextlowindex <TX_4c43
 	wait 30
-	scriptjump _dekuScrubScript_finishSecret
+	scriptjump dekuScrubScript_finishSecret
 
 
 ; ==============================================================================

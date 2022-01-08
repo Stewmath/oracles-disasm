@@ -40,7 +40,7 @@ partCode01:
 
 	call getRandomNumber_noPreserveVars
 	cp $e0
-	jp c,_itemDrop_spawnEnemy
+	jp c,itemDrop_spawnEnemy
 .ifdef ROM_SEASONS
 	ld a,(wTilesetFlags)
 	cp (TILESETFLAG_SUBROSIA|TILESETFLAG_OUTDOORS)
@@ -48,7 +48,7 @@ partCode01:
 .endif
 
 @normalItem:
-	call _itemDrop_initGfx
+	call itemDrop_initGfx
 
 	ld h,d
 	ld l,Part.speedZ
@@ -83,18 +83,18 @@ partCode01:
 @label_11_008:
 	ld e,Part.subid
 	ld a,(de)
-	call _itemDrop_initSpeed
+	call itemDrop_initSpeed
 	ld e,Part.subid
 	ld a,(de)
 	jp partSetAnimation
 
 @state1:
-	call _partCommon_getTileCollisionInFront_allowHoles
-	call nc,_itemDrop_updateSpeed
+	call partCommon_getTileCollisionInFront_allowHoles
+	call nc,itemDrop_updateSpeed
 	ld c,$20
 	call objectUpdateSpeedZAndBounce
 	jr c,@doneBouncing
-	call _itemDrop_checkHitGround
+	call itemDrop_checkHitGround
 	jr nc,@label_11_010
 
 @doneBouncing:
@@ -107,10 +107,10 @@ partCode01:
 
 @label_11_010:
 .ifdef ROM_SEASONS
-	call _itemDrop_pullOreChunksWithMagnetGloves
+	call itemDrop_pullOreChunksWithMagnetGloves
 	jr c,+
 .endif
-	call _itemDrop_checkOnHazard
+	call itemDrop_checkOnHazard
 	ret c
 +
 	ld e,Part.zh
@@ -121,25 +121,25 @@ partCode01:
 	; On solid ground; check for conveyor tiles
 	ld bc,$0500
 	call objectGetRelativeTile
-	ld hl,_itemDrop_conveyorTilesTable
+	ld hl,itemDrop_conveyorTilesTable
 	call lookupCollisionTable
 	ret nc
 	ld c,a
 	ld b,SPEED_80
-	jp _itemDrop_applySpeed
+	jp itemDrop_applySpeed
 
 ; Item has stopped bouncing; waiting to be picked up
 @state2:
-	call _itemDrop_checkSidescrollingConditions
-	call _itemDrop_moveTowardPoint
+	call itemDrop_checkSidescrollingConditions
+	call itemDrop_moveTowardPoint
 	jp c,@reachedPoint
-	call _itemDrop_countdownToDisappear
+	call itemDrop_countdownToDisappear
 	jp c,partDelete
 	ld e,Part.subid
 	ld a,(de)
 	or a ; ITEM_DROP_FAIRY
 	jr nz,@label_11_010
-	jp _itemDrop_updateFairyMovement
+	jp itemDrop_updateFairyMovement
 
 @reachedPoint:
 	ld h,d
@@ -265,7 +265,7 @@ partCode01:
 
 
 ;;
-_itemDrop_initGfx:
+itemDrop_initGfx:
 	ld e,Part.subid
 	ld a,(de)
 	ld hl,@spriteData
@@ -307,7 +307,7 @@ _itemDrop_initGfx:
 
 ;;
 ; @param[out]	cflag	c if time to disappear
-_itemDrop_countdownToDisappear:
+itemDrop_countdownToDisappear:
 	ld a,(wFrameCounter)
 	xor d
 	rrca
@@ -344,7 +344,7 @@ _itemDrop_countdownToDisappear:
 
 ;;
 ; @param	a	Subid
-_itemDrop_initSpeed:
+itemDrop_initSpeed:
 	ld h,d
 	or a
 	jr z,@fairy
@@ -363,16 +363,16 @@ _itemDrop_initSpeed:
 	ld l,Part.yh
 	add (hl)
 	ld (hl),a
-	jp _itemDrop_chooseRandomFairyMovement
+	jp itemDrop_chooseRandomFairyMovement
 
 ;;
-_itemDrop_updateSpeed:
+itemDrop_updateSpeed:
 	call objectCheckTileCollision_allowHoles
 	ret c
 	jp objectApplySpeed
 
 ;;
-_itemDrop_spawnEnemy:
+itemDrop_spawnEnemy:
 	ld c,a
 	ld a,(wDiggingUpEnemiesForbidden)
 	or a
@@ -409,7 +409,7 @@ _itemDrop_spawnEnemy:
 
 ;;
 ; Delete and return from caller if it goes out of bounds in a sidescrolling room
-_itemDrop_checkSidescrollingConditions:
+itemDrop_checkSidescrollingConditions:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL
 	ret z
@@ -453,7 +453,7 @@ _itemDrop_checkSidescrollingConditions:
 ; Enables collisions once the item comes to rest
 ;
 ; @param[out]	cflag	c if it's a fairy and some condition is met?
-_itemDrop_checkHitGround:
+itemDrop_checkHitGround:
 	ld e,Part.subid
 	ld a,(de)
 	or a
@@ -482,7 +482,7 @@ _itemDrop_checkHitGround:
 
 ;;
 ; @param[out]	cflag	c if it's over a hazard (and deleted itself)
-_itemDrop_checkOnHazard:
+itemDrop_checkOnHazard:
 	call objectCheckIsOnHazard
 	jr c,@onHazard
 
@@ -531,18 +531,18 @@ _itemDrop_checkOnHazard:
 	jp objectCreateInteractionWithSubid00
 
 ;;
-_itemDrop_updateFairyMovement:
+itemDrop_updateFairyMovement:
 	ld h,d
 	ld l,Part.counter2
 	dec (hl)
-	jr z,_itemDrop_chooseRandomFairyMovement
-	call _partCommon_getTileCollisionInFront
+	jr z,itemDrop_chooseRandomFairyMovement
+	call partCommon_getTileCollisionInFront
 	inc a
 	jp nz,objectApplySpeed
 
 ;;
 ; Initializes speed, counter2, and angle randomly.
-_itemDrop_chooseRandomFairyMovement:
+itemDrop_chooseRandomFairyMovement:
 	call getRandomNumber_noPreserveVars
 	and $3e
 	add $08
@@ -583,7 +583,7 @@ _itemDrop_chooseRandomFairyMovement:
 ; Moves toward position stored in var31/var32 if it's not there already?
 ;
 ; @param[out]	cflag	c if reached target position
-_itemDrop_moveTowardPoint:
+itemDrop_moveTowardPoint:
 	ld l,Part.var31
 	ld h,d
 	xor a
@@ -608,7 +608,7 @@ _itemDrop_moveTowardPoint:
 	ret
 
 .ifdef ROM_SEASONS
-_itemDrop_pullOreChunksWithMagnetGloves:
+itemDrop_pullOreChunksWithMagnetGloves:
 	ld e,Part.subid
 	ld a,(de)
 	sub $0c
@@ -646,7 +646,7 @@ _itemDrop_pullOreChunksWithMagnetGloves:
 	jr z,+
 	ld a,$07
 +
-	ld hl,_itemDrop_magnetGlovePullSpeed
+	ld hl,itemDrop_magnetGlovePullSpeed
 	rst_addAToHl
 	ld b,(hl)
 .endif
@@ -654,10 +654,10 @@ _itemDrop_pullOreChunksWithMagnetGloves:
 ;;
 ; @param	b	Speed
 ; @param	c	Angle
-_itemDrop_applySpeed:
+itemDrop_applySpeed:
 	push bc
 	ld a,c
-	call _partCommon_getTileCollisionAtAngle_allowHoles
+	call partCommon_getTileCollisionAtAngle_allowHoles
 	pop bc
 	ret c
 	ld e,Part.angle
@@ -666,12 +666,12 @@ _itemDrop_applySpeed:
 	ret
 
 .ifdef ROM_SEASONS
-_itemDrop_magnetGlovePullSpeed:
+itemDrop_magnetGlovePullSpeed:
 	.db SPEED_280 SPEED_280 SPEED_200 SPEED_180
 	.db SPEED_100 SPEED_0c0 SPEED_080 SPEED_040
 .endif
 
-_itemDrop_conveyorTilesTable:
+itemDrop_conveyorTilesTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -1499,7 +1499,7 @@ partCode0b:
 .ifdef ROM_AGES
 	ld hl,bank0e.orbMovementScript
 .else
-	ld hl,orbMovementScript
+	ld hl,bank0d.orbMovementScript
 .endif
 	call objectLoadMovementScript
 
@@ -2139,11 +2139,11 @@ partCode11:
 	ld a,(de)
 	ld e,Part.state
 	rst_jumpTable
-	.dw _volcanoRock_subid0
-	.dw _volcanoRock_subid1
-	.dw _volcanoRock_subid2
+	.dw volcanoRock_subid0
+	.dw volcanoRock_subid1
+	.dw volcanoRock_subid2
 
-_volcanoRock_subid0:
+volcanoRock_subid0:
 	ld a,(de)
 	or a
 	jr z,@state0
@@ -2166,7 +2166,7 @@ _volcanoRock_subid0:
 
 @setAngleAndSpeed:
 	ld (de),a
-	jp _volcanoRock_subid0_setSpeedFromAngle
+	jp volcanoRock_subid0_setSpeedFromAngle
 
 @state0:
 	ld bc,-$280
@@ -2183,15 +2183,15 @@ _volcanoRock_subid0:
 	jr @setAngleAndSpeed
 
 
-_volcanoRock_subid1:
+volcanoRock_subid1:
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _volcanoRock_common_substate2
-	.dw _volcanoRock_common_substate3
-	.dw _volcanoRock_common_substate4
-	.dw _volcanoRock_common_substate5
+	.dw volcanoRock_common_substate2
+	.dw volcanoRock_common_substate3
+	.dw volcanoRock_common_substate4
+	.dw volcanoRock_common_substate5
 
 @substate0:
 	ld h,d
@@ -2244,9 +2244,9 @@ _volcanoRock_subid1:
 	ld l,Part.counter1
 	ld (hl),30
 	call objectSetInvisible
-	jr _volcanoRock_setRandomPosition
+	jr volcanoRock_setRandomPosition
 
-_volcanoRock_common_substate2:
+volcanoRock_common_substate2:
 	call partCommon_decCounter1IfNonzero
 	ret nz
 	ld (hl),$10 ; [counter1]
@@ -2254,7 +2254,7 @@ _volcanoRock_common_substate2:
 	inc (hl) ; [substate]++
 	jp objectSetVisiblec0
 
-_volcanoRock_common_substate3:
+volcanoRock_common_substate3:
 	call partAnimate
 	ld h,d
 	ld l,Part.zh
@@ -2274,7 +2274,7 @@ _volcanoRock_common_substate3:
 	ld (hl),a
 	jp objectSetVisible82
 
-_volcanoRock_common_substate4:
+volcanoRock_common_substate4:
 	call partAnimate
 	ld c,$16
 	call objectUpdateSpeedZ_paramC
@@ -2291,29 +2291,29 @@ _volcanoRock_common_substate4:
 	ld a,SND_STRONG_POUND
 	jp playSound
 
-_volcanoRock_common_substate5:
+volcanoRock_common_substate5:
 	ld e,Part.animParameter
 	ld a,(de)
 	inc a
 	jp z,partDelete
-	call _volcanoRock_setCollisionSize
+	call volcanoRock_setCollisionSize
 	jp partAnimate
 
 
-_volcanoRock_subid2:
+volcanoRock_subid2:
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
-	.dw _volcanoRock_common_substate2
-	.dw _volcanoRock_common_substate3
-	.dw _volcanoRock_common_substate4
-	.dw _volcanoRock_common_substate5
+	.dw volcanoRock_common_substate2
+	.dw volcanoRock_common_substate3
+	.dw volcanoRock_common_substate4
+	.dw volcanoRock_common_substate5
 
 @substate0:
 	ld a,$01
 	ld (de),a ; [substate]
 
-_volcanoRock_setRandomPosition:
+volcanoRock_setRandomPosition:
 	call getRandomNumber_noPreserveVars
 	ld b,a
 	ld hl,hCameraY
@@ -2342,7 +2342,7 @@ _volcanoRock_setRandomPosition:
 
 ;;
 ; @param	a	Angle
-_volcanoRock_subid0_setSpeedFromAngle:
+volcanoRock_subid0_setSpeedFromAngle:
 	ld b,SPEED_80
 	cp $0d
 	jr c,@setSpeed
@@ -2358,7 +2358,7 @@ _volcanoRock_subid0_setSpeedFromAngle:
 
 ;;
 ; @param	a	Value from [animParameter] (should be multiple of 2)
-_volcanoRock_setCollisionSize:
+volcanoRock_setCollisionSize:
 	dec a
 	ld hl,@data
 	rst_addAToHl
@@ -2931,7 +2931,7 @@ partCode17:
 	ld e,Part.subid
 	ld a,(de)
 	add a
-	ld hl,_table_501e
+	ld hl,table_501e
 	rst_addDoubleIndex
 	ld e,Part.var2a
 	ld a,(de)
@@ -3038,18 +3038,18 @@ partCode17:
 @substate2:
 	ld c,$18
 	call objectUpdateSpeedZAndBounce
-	jr nc,_func_5010
-	call _func_5010
+	jr nc,func_5010
+	call func_5010
 	jp partDelete
 
-_func_5010:
+func_5010:
 	call objectCheckTileCollision_allowHoles
 	call nc,objectApplySpeed
 	ld a,$00
 	call objectGetRelatedObject1Var
 	jp objectCopyPosition
 
-_table_501e:
+table_501e:
 	.db $f0 $03 $00 $00
 	.db $f0 $03 $00 $00
 
@@ -3077,7 +3077,7 @@ partCode18:
 	.dw @state0
 	.dw @state1
 	.dw @state2
-	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	.dw partCommon_updateSpeedAndDeleteWhenCounter1Is0
 
 @state0:
 	ld h,d
@@ -3103,7 +3103,7 @@ partCode18:
 	ld a,$03
 	ld (de),a
 	xor a
-	jp _partCommon_bounceWhenCollisionsEnabled
+	jp partCommon_bounceWhenCollisionsEnabled
 
 
 ; ==============================================================================
@@ -3190,7 +3190,7 @@ partCode1a:
 	rst_jumpTable
 	.dw @@state0
 	.dw @@state1
-	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	.dw partCommon_updateSpeedAndDeleteWhenCounter1Is0
 
 @@state0:
 	ld h,d
@@ -3202,7 +3202,7 @@ partCode1a:
 	ld b,(hl)
 	ld l,$cd
 	ld c,(hl)
-	call _partCommon_setPositionOffsetAndRadiusFromAngle
+	call partCommon_setPositionOffsetAndRadiusFromAngle
 	ld e,$c9
 	ld a,(de)
 	swap a
@@ -3223,7 +3223,7 @@ partCode1a:
 	.dw @@state0
 	.dw @@state1
 	.dw @subid0@state1
-	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	.dw partCommon_updateSpeedAndDeleteWhenCounter1Is0
 
 @@state0:
 	ld h,d
@@ -3264,7 +3264,7 @@ partCode1a:
 	ld e,$c4
 	ld (de),a
 	ld a,$04
-	jp _partCommon_bounceWhenCollisionsEnabled
+	jp partCommon_bounceWhenCollisionsEnabled
 
 
 ; ==============================================================================
@@ -3303,7 +3303,7 @@ partCode1b:
 	ld b,(hl)
 	ld l,$cd
 	ld c,(hl)
-	call _partCommon_setPositionOffsetAndRadiusFromAngle
+	call partCommon_setPositionOffsetAndRadiusFromAngle
 	ld e,$c9
 	ld a,(de)
 	swap a
@@ -3369,7 +3369,7 @@ partCode1c:
 	ld a,$02
 	ld (de),a
 	xor a
-	jp _partCommon_bounceWhenCollisionsEnabled
+	jp partCommon_bounceWhenCollisionsEnabled
 
 
 ; ==============================================================================
@@ -3513,7 +3513,7 @@ partCode1e:
 	ld a,(de)
 	cp $80
 	jr z,@normalStatus
-	call _func_52fd
+	call func_52fd
 	ld h,d
 	ld l,$c4
 	ld (hl),$03
@@ -3527,7 +3527,7 @@ partCode1e:
 	.dw @state1
 	.dw @state2
 	.dw @state3
-	.dw _partCommon_updateSpeedAndDeleteWhenCounter1Is0
+	.dw partCommon_updateSpeedAndDeleteWhenCounter1Is0
 	.dw @state5
 
 @state0:
@@ -3551,7 +3551,7 @@ partCode1e:
 @state2:
 	call partCommon_checkTileCollisionOrOutOfBounds
 	jr nc,+
-	jr nz,_func_52f4
+	jr nz,func_52f4
 	jr @state5
 +
 	call objectCheckWithinScreenBoundary
@@ -3559,57 +3559,57 @@ partCode1e:
 	jr @state5
 
 @state3:
-	call _func_5336
+	call func_5336
 	jr @state2
 
 @state5:
 	jp partDelete
 
-_func_52f4:
+func_52f4:
 	ld e,$c4
 	ld a,$04
 	ld (de),a
 	xor a
-	jp _partCommon_bounceWhenCollisionsEnabled
+	jp partCommon_bounceWhenCollisionsEnabled
 
-_func_52fd:
+func_52fd:
 	ld e,$c9
 	ld a,(de)
 	bit 2,a
-	jr nz,_func_5313
+	jr nz,func_5313
 	sub $08
 	rrca
 	ld b,a
 	ld a,(w1Link.direction)
 	add b
-	ld hl,_table_532a
+	ld hl,table_532a
 	rst_addAToHl
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_func_5313:
+func_5313:
 	sub $0c
 	rrca
 	ld b,a
 	ld a,(w1Link.direction)
 	add b
-	ld hl,_table_5322
+	ld hl,table_5322
 	rst_addAToHl
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_table_5322:
+table_5322:
 	.db $04 $08 $10 $14
 	.db $1c $0c $10 $18
 
-_table_532a:
+table_532a:
 	.db $04 $08 $0c $18
 	.db $00 $0c $10 $14
 	.db $1c $08 $14 $18
 
-_func_5336:
+func_5336:
 	ld a,$24
 	call objectGetRelatedObject1Var
 	bit 7,(hl)
@@ -3636,7 +3636,7 @@ partCode1f:
 	ld e,$c4
 	ld a,(de)
 	or a
-	jr z,_func_5369
+	jr z,func_5369
 	call objectCheckWithinScreenBoundary
 	jr nc,@normalStatus
 	call partCommon_checkTileCollisionOrOutOfBounds
@@ -3644,7 +3644,7 @@ partCode1f:
 @normalStatus:
 	jp partDelete
 
-_func_5369:
+func_5369:
 	ld h,d
 	ld l,e
 	inc (hl)
@@ -3724,15 +3724,15 @@ partCode21:
 	jr nz,@func_53ee
 	call partCommon_decCounter1IfNonzero
 	jr z,@func_53ee
-	call _func_542a
+	call func_542a
 @objectApplySpeed:
 	call objectApplySpeed
 @animate:
 	jp partAnimate
 
 @state2:
-	call _func_541a
-	call _func_53f5
+	call func_541a
+	call func_53f5
 	jr nc,@objectApplySpeed
 	ld a,$18
 	call objectGetRelatedObject1Var
@@ -3748,7 +3748,7 @@ partCode21:
 	ld (de),a
 	jr @animate
 
-_func_53f5:
+func_53f5:
 	ld a,$0b
 	call objectGetRelatedObject1Var
 	push hl
@@ -3773,7 +3773,7 @@ _func_53f5:
 	cp $09
 	ret
 
-_func_541a:
+func_541a:
 	ld a,(wFrameCounter)
 	and $03
 	ret nz
@@ -3785,7 +3785,7 @@ _func_541a:
 	ld (de),a
 	ret
 
-_func_542a:
+func_542a:
 	ld h,d
 	ld l,$c7
 	dec (hl)
@@ -3939,7 +3939,7 @@ partCode23:
 	jr z,@func_54f6
 	call partCommon_decCounter1IfNonzero
 	ret nz
-	call _func_553f
+	call func_553f
 ++
 	call getFreePartSlot
 	ret nz
@@ -3955,7 +3955,7 @@ partCode23:
 @subid2:
 	ld a,(de)
 	or a
-	jr z,_func_5535
+	jr z,func_5535
 	ld h,d
 	ld l,$cb
 	ld a,(hl)
@@ -3973,7 +3973,7 @@ partCode23:
 	ld (hl),a
 	jp partAnimate
 
-_func_5535:
+func_5535:
 	ld h,d
 	ld l,e
 	inc (hl)
@@ -3981,20 +3981,20 @@ _func_5535:
 	set 7,(hl)
 	jp objectSetVisible81
 
-_func_553f:
+func_553f:
 	ld e,$87
 	ld a,(de)
 	inc a
 	and $03
 	ld (de),a
-	ld hl,_table_554f
+	ld hl,table_554f
 	rst_addAToHl
 	ld e,$c6
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_table_554f:
+table_554f:
 .ifdef ROM_AGES
 	.db $78 $78
 .else
@@ -4181,7 +4181,7 @@ partCode28:
 @state1:
 	call partCommon_decCounter1IfNonzero
 	jr z,+
-	call _func_56cd
+	call func_56cd
 	jp c,objectApplySpeed
 +
 	call getRandomNumber_noPreserveVars
@@ -4201,7 +4201,7 @@ partCode28:
 	ld h,d
 	ld l,$c9
 	ld (hl),a
-	jp _func_56b6
+	jp func_56b6
 
 @table_5666:
 	.db $0a
@@ -4255,7 +4255,7 @@ partCode28:
 	call giveTreasure
 	jp partDelete
 
-_func_56b6:
+func_56b6:
 	ld e,$c9
 	ld a,(de)
 	and $0f
@@ -4273,7 +4273,7 @@ _func_56b6:
 	ld (hl),a
 	jp partSetAnimation
 
-_func_56cd:
+func_56cd:
 	ld e,$c9
 	ld a,(de)
 	and $07
@@ -4284,7 +4284,7 @@ _func_56cd:
 +
 	and $1c
 	rrca
-	ld hl,_table_56f5
+	ld hl,table_56f5
 	rst_addAToHl
 	ld e,$cb
 	ld a,(de)
@@ -4302,7 +4302,7 @@ _func_56cd:
 	cp $50
 	ret
 
-_table_56f5:
+table_56f5:
 	.db $fc $00 $fc $04
 	.db $00 $04 $04 $04
 	.db $04 $00 $04 $fc
@@ -4353,17 +4353,17 @@ partCode29:
 
 @state1:
 	call partCommon_decCounter1IfNonzero
-	jr nz,_func_5758
+	jr nz,func_5758
 	ld l,e
 	inc (hl)
 
 @state2:
-	call _func_5758
+	call func_5758
 	call partCommon_checkTileCollisionOrOutOfBounds
 	jp c,partDelete
 	ret
 
-_func_5758:
+func_5758:
 	call objectApplyComponentSpeed
 	ld e,$c2
 	ld a,(de)
@@ -4420,14 +4420,14 @@ partCode2a:
 	ld e,Part.state
 	ld a,b
 	rst_jumpTable
-	.dw _spikedBall_head
-	.dw _spikedBall_chain
-	.dw _spikedBall_chain
-	.dw _spikedBall_chain
+	.dw spikedBall_head
+	.dw spikedBall_chain
+	.dw spikedBall_chain
+	.dw spikedBall_chain
 
 
 ; The main part of the spiked ball (actually has collisions, etc)
-_spikedBall_head:
+spikedBall_head:
 	; Check if parent was deleted
 	ld a,Object.id
 	call objectGetRelatedObject1Var
@@ -4436,20 +4436,20 @@ _spikedBall_head:
 	jp nz,partDelete
 
 	ld b,h
-	call _spikedBall_updateStateFromParent
+	call spikedBall_updateStateFromParent
 	ld e,Part.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _spikedBall_head_state0
-	.dw _spikedBall_head_state1
-	.dw _spikedBall_head_state2
-	.dw _spikedBall_head_state3
-	.dw _spikedBall_head_state4
-	.dw _spikedBall_head_state5
+	.dw spikedBall_head_state0
+	.dw spikedBall_head_state1
+	.dw spikedBall_head_state2
+	.dw spikedBall_head_state3
+	.dw spikedBall_head_state4
+	.dw spikedBall_head_state5
 
 
 ; Initialization
-_spikedBall_head_state0:
+spikedBall_head_state0:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -4460,32 +4460,32 @@ _spikedBall_head_state0:
 
 
 ; Rotating slowly
-_spikedBall_head_state1:
+spikedBall_head_state1:
 	ld e,Part.angle
 	ld a,(de)
 	inc a
 	and $1f
 	ld (de),a
-	jr _spikedBall_head_setDefaultDistanceAway
+	jr spikedBall_head_setDefaultDistanceAway
 
 
 ; Rotating faster
-_spikedBall_head_state2:
+spikedBall_head_state2:
 	ld e,Part.angle
 	ld a,(de)
 	add $02
 	and $1f
 	ld (de),a
 
-_spikedBall_head_setDefaultDistanceAway:
+spikedBall_head_setDefaultDistanceAway:
 	ld e,Part.var30
 	ld a,$0a
 	ld (de),a
 
 ;;
 ; @param	b	Enemy object
-_spikedBall_updatePosition:
-	call _spikedBall_copyParentPosition
+spikedBall_updatePosition:
+	call spikedBall_copyParentPosition
 	ld e,Part.var30
 	ld a,(de)
 	ld e,Part.angle
@@ -4493,8 +4493,8 @@ _spikedBall_updatePosition:
 
 
 ; About to throw the ball; waiting for it to rotate into a good position for throwing.
-_spikedBall_head_state3:
-	call _spikedBall_copyParentPosition
+spikedBall_head_state3:
+	call spikedBall_copyParentPosition
 
 	; Compare the ball's angle with Link; must keep rotating it until it's aligned
 	; perfectly.
@@ -4515,7 +4515,7 @@ _spikedBall_head_state3:
 	inc a
 	and $1f
 	cp $03
-	jr nc,_spikedBall_head_state2 ; keep rotating
+	jr nc,spikedBall_head_state2 ; keep rotating
 
 	; It's aligned perfectly; begin throwing it.
 	ld a,e
@@ -4528,11 +4528,11 @@ _spikedBall_head_state3:
 
 	ld l,Part.var30
 	ld (hl),$0d
-	jp _spikedBall_updatePosition
+	jp spikedBall_updatePosition
 
 
 ; Ball has just been released
-_spikedBall_head_state4:
+spikedBall_head_state4:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -4557,17 +4557,17 @@ _spikedBall_head_state4:
 	ldi (hl),a
 	ld (hl),>($0340)
 
-	jp _spikedBall_updatePosition
+	jp spikedBall_updatePosition
 
 
-_spikedBall_head_state5:
-	call _spikedBall_checkCollisionWithItem
-	call _spikedBall_head_updateDistanceFromOrigin
-	jp _spikedBall_updatePosition
+spikedBall_head_state5:
+	call spikedBall_checkCollisionWithItem
+	call spikedBall_head_updateDistanceFromOrigin
+	jp spikedBall_updatePosition
 
 
 ; The chain part of the ball (just decorative)
-_spikedBall_chain:
+spikedBall_chain:
 	ld a,(de)
 	or a
 	jr nz,@state1
@@ -4591,15 +4591,15 @@ _spikedBall_chain:
 	ld a,(hl)
 	ld (de),a
 
-	call _spikedBall_chain_updateDistanceFromOrigin
+	call spikedBall_chain_updateDistanceFromOrigin
 	ld l,Part.relatedObj1+1
 	ld b,(hl)
-	jp _spikedBall_updatePosition
+	jp spikedBall_updatePosition
 
 
 ;;
 ; @param	b	Enemy object
-_spikedBall_copyParentPosition:
+spikedBall_copyParentPosition:
 	ld h,b
 	ld l,Enemy.yh
 	ldi a,(hl)
@@ -4619,7 +4619,7 @@ _spikedBall_copyParentPosition:
 ;;
 ; If the ball collides with any item other than Link, this sets its speed to 0 (begins
 ; retracting earlier).
-_spikedBall_checkCollisionWithItem:
+spikedBall_checkCollisionWithItem:
 	; Check for collision with any item other than Link himself
 	ld h,d
 	ld l,Part.var2a
@@ -4639,7 +4639,7 @@ _spikedBall_checkCollisionWithItem:
 
 
 ;;
-_spikedBall_head_updateDistanceFromOrigin:
+spikedBall_head_updateDistanceFromOrigin:
 	ld h,d
 	ld e,Part.var30
 	ld l,Part.speed+1
@@ -4670,7 +4670,7 @@ _spikedBall_head_updateDistanceFromOrigin:
 
 ;;
 ; Reads parent's var30 to decide whether to update state>
-_spikedBall_updateStateFromParent:
+spikedBall_updateStateFromParent:
 	ld l,Enemy.var30
 
 	; Check state between 1-3
@@ -4710,7 +4710,7 @@ _spikedBall_updateStateFromParent:
 
 ;;
 ; @param	h	Parent object (the actual ball)
-_spikedBall_chain_updateDistanceFromOrigin:
+spikedBall_chain_updateDistanceFromOrigin:
 	ld l,Part.var30
 	push hl
 	ld e,Part.subid
@@ -5160,7 +5160,7 @@ partCode50:
 	ld e,$e1
 	ld a,(de)
 	inc a
-	jr nz,_func_5b2b
+	jr nz,func_5b2b
 	ld h,d
 	ld l,$c4
 	inc (hl)
@@ -5179,7 +5179,7 @@ partCode50:
 	ld bc,$2000
 	jp objectTakePositionWithOffset
 
-_func_5b2b:
+func_5b2b:
 	ld h,d
 	ld l,e
 	bit 7,(hl)
@@ -5192,7 +5192,7 @@ _func_5b2b:
 	ld l,$e1
 +
 	ld a,(hl)
-	ld hl,_table_5b5b
+	ld hl,table_5b5b
 	rst_addAToHl
 	ld e,$e6
 	ldi a,(hl)
@@ -5215,7 +5215,7 @@ _func_5b2b:
 +
 	jp objectTakePositionWithOffset
 
-_table_5b5b:
+table_5b5b:
 	.db $07 $07 $d8 $f1
 	.db $0b $07 $e7 $1a
 	.db $20 $0c $f7 $19
@@ -5624,7 +5624,7 @@ partCode53:
 	ld l,$c3
 	add (hl)
 	call partSetAnimation
-	call _func_5e1a
+	call func_5e1a
 	jp objectSetVisible
 +
 	call objectApplySpeed
@@ -5711,7 +5711,7 @@ createEnergySwirlGoingIn_body:
 	ld a,SND_ENERGYTHING
 	jp playSound
 
-_func_5e1a:
+func_5e1a:
 	ld h,d
 	ld l,Part.var32
 	ldd a,(hl)
@@ -5746,7 +5746,7 @@ _func_5e1a:
 .endif
 
 
-_label_11_212:
+label_11_212:
 	ld d,$d0
 	ld a,d
 -
@@ -5762,7 +5762,7 @@ _label_11_212:
 	or a
 	jr nz,++
 +
-	call _func_11_5e8a
+	call func_11_5e8a
 ++
 	inc d
 	ld a,d
@@ -5776,14 +5776,14 @@ updateParts:
 	ldh (<hActiveObjectType),a
 	ld a,(wScrollMode)
 	cp $08
-	jr z,_label_11_212
+	jr z,label_11_212
 	ld a,(wTextIsActive)
 	or a
-	jr nz,_label_11_212
+	jr nz,label_11_212
 
 	ld a,(wDisabledObjects)
 	and $88
-	jr nz,_label_11_212
+	jr nz,label_11_212
 
 	ld d,FIRST_PART_INDEX
 	ld a,d
@@ -5794,7 +5794,7 @@ updateParts:
 	or a
 	jr z,+
 
-	call _func_11_5e8a
+	call func_11_5e8a
 	ld h,d
 	ld l,Part.var2a
 	res 7,(hl)
@@ -5806,7 +5806,7 @@ updateParts:
 	ret
 
 ;;
-_func_11_5e8a:
+func_11_5e8a:
 	call partCommon_standardUpdate
 
 	; hl = partCodeTable + [Part.id] * 2

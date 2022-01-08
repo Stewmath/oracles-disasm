@@ -315,7 +315,7 @@ partCode16:
 	ld a,(wLinkDeathTrigger)
 	or a
 	jp nz,@normalStatus
-	call _func_6515
+	call func_6515
 	inc a
 	ld (wDisableScreenTransitions),a
 	ld ($cca4),a
@@ -376,7 +376,7 @@ partCode16:
 	ld a,($cc34)
 	or a
 	jp nz,+
-	call _func_6515
+	call func_6515
 	inc a
 	ld (wDisableScreenTransitions),a
 	ld ($cfd0),a
@@ -403,7 +403,7 @@ partCode16:
 	ld (hl),a
 	ret
 
-_func_6515:
+func_6515:
 	ld a,(wLinkObjectIndex)
 	ld b,a
 	ld c,$2b
@@ -452,12 +452,12 @@ partCode24:
 	cp (hl)
 	ret nc
 +
-	call _func_65b8
+	call func_65b8
 	ret nc
 	call getRandomNumber_noPreserveVars
 	cp $50
 	ret nc
-	call _func_65a6
+	call func_65a6
 	ret nz
 	ld l,$c9
 	ld (hl),$08
@@ -509,7 +509,7 @@ partCode24:
 	ld (de),a
 	ret
 
-_func_65a6:
+func_65a6:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_SHOOTING_DRAGON_HEAD
@@ -521,7 +521,7 @@ _func_65a6:
 	xor a
 	ret
 
-_func_65b8:
+func_65b8:
 	ld l,$cb
 	ldh a,(<hEnemyTargetY)
 	sub (hl)
@@ -572,8 +572,8 @@ partCode25:
 	ld e,$c6
 	ld a,$21
 	ld (de),a
-	ld hl,_table_6661
-	jr _func_6649
+	ld hl,table_6661
+	jr func_6649
 
 
 ; ==============================================================================
@@ -583,7 +583,7 @@ partCode2c:
 	ld e,$c4
 	ld a,(de)
 	or a
-	jr nz,_label_10_270
+	jr nz,label_10_270
 	ld h,d
 	ld l,e
 	inc (hl)
@@ -602,7 +602,7 @@ partCode2c:
 	ld (de),a
 	call objectMakeTileSolid
 	jp objectSetVisible82
-_label_10_270:
+label_10_270:
 	ldh a,(<hCameraY)
 	add $80
 	ld b,a
@@ -624,9 +624,9 @@ _label_10_270:
 	add $20
 	ld e,$c6
 	ld (de),a
-	ld hl,_table_6669
+	ld hl,table_6669
 
-_func_6649:
+func_6649:
 	ld e,$c2
 	ld a,(de)
 	rst_addDoubleIndex
@@ -645,13 +645,13 @@ _func_6649:
 	ld (hl),a
 	ret
 
-_table_6661:
+table_6661:
 	.db $fc $00 ; shooting up
 	.db $00 $04 ; shooting right
 	.db $04 $00 ; shooting down
 	.db $00 $fc ; shooting left
 
-_table_6669:
+table_6669:
 	.db $f8 $00
 	.db $00 $08
 	.db $08 $00
@@ -669,7 +669,7 @@ partCode26:
 	cp $03
 	jp nc,seasonsFunc_10_670c
 @normalStatus:
-	call _func_66e7
+	call func_66e7
 	jp c,seasonsFunc_10_670c
 	ld e,$c4
 	ld a,(de)
@@ -735,7 +735,7 @@ partCode26:
 	ld (hl),a
 	jr @func_66bd
 
-_func_66e7:
+func_66e7:
 	ld e,$e6
 	ld a,(de)
 	add $09
@@ -846,8 +846,8 @@ partCode2d:
 	ret z
 	ld bc,$fa13
 	dec a
-	jr z,_func_67a4
-	jr _func_6797
+	jr z,func_67a4
+	jr func_6797
 @subid1:
 	ld a,(de)
 	or a
@@ -859,16 +859,16 @@ partCode2d:
 	ret z
 	ld bc,$faed
 	dec a
-	jr z,_func_67a4
-_func_6797:
+	jr z,func_67a4
+func_6797:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_KING_MOBLIN_BOMB
 	inc l
 	inc (hl)
 	call objectCopyPositionWithOffset
-	jr _func_67b7
-_func_67a4:
+	jr func_67b7
+func_67a4:
 	ld (de),a
 	ld a,$81
 	call playSound
@@ -878,7 +878,7 @@ _func_67a4:
 	ld l,$42
 	ld (hl),$80
 	jp objectCopyPositionWithOffset
-_func_67b7:
+func_67b7:
 	ld e,$c2
 	ld a,(de)
 	bit 1,a
@@ -898,14 +898,14 @@ seasonsFunc_10_67cc:
 	jp z,partDelete
 	ld a,(hl)
 	cp $35
-	jr z,_func_67f8
+	jr z,func_67f8
 	and $0f
 	ret nz
 	ld a,(hl)
 	and $f0
 	swap a
 	dec a
-	ld hl,_table_67f0
+	ld hl,table_67f0
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld c,(hl)
@@ -914,10 +914,10 @@ seasonsFunc_10_67cc:
 	ret nz
 	ld (hl),INTERACID_EXPLOSION
 	jp objectCopyPositionWithOffset
-_table_67f0:
+table_67f0:
 	.db $f8 $04 $08 $fe
 	.db $fa $f8 $02 $0c
-_func_67f8:
+func_67f8:
 	ld e,$cb
 	ld a,(de)
 	sub $08
@@ -958,7 +958,7 @@ partCode2e:
 	jr z,+
 	bit 7,a
 	jp nz,partDelete
-	call _func_6853
+	call func_6853
 +
 	jp partAnimate
 ++
@@ -975,7 +975,7 @@ partCode2e:
 	call playSound
 	jp objectSetVisible83
 	
-_func_6853:
+func_6853:
 	push af
 	xor a
 	ld (de),a
@@ -1019,8 +1019,8 @@ partCode32:
 	ld e,$c5
 	ld a,(de)
 	or a
-	jr nz,_func_68d5
-	call _func_68cc
+	jr nz,func_68d5
+	call func_68cc
 	ld a,$af
 	jp playSound
 @normalStatus:
@@ -1056,19 +1056,19 @@ partCode32:
 	ld e,$c5
 	ld a,(de)
 	or a
-	jr nz,_func_68d5
+	jr nz,func_68d5
 	call objectApplySpeed
 	call partCommon_decCounter1IfNonzero
 	jp nz,seasonsFunc_10_68e0
 
-_func_68cc:
+func_68cc:
 	ld h,d
 	ld l,$c5
 	inc (hl)
 	ld a,$02
 	jp partSetAnimation
 
-_func_68d5:
+func_68d5:
 	call partAnimate
 	ld e,$e1
 	ld a,(de)
@@ -1269,7 +1269,7 @@ partCode39:
 	ld a,(de)
 	inc a
 	jp z,partDelete
-	call _func_6a28
+	call func_6a28
 	ret nz
 	call partCode.partCommon_checkOutOfBounds
 	jp z,partDelete
@@ -1283,7 +1283,7 @@ partCode39:
 +
 	jp objectApplySpeed
 
-_func_6a28:
+func_6a28:
 	ld e,$c6
 	ld a,(de)
 	or a
@@ -1322,7 +1322,7 @@ partCode3a:
 	res 7,a
 	cp $04
 	jp c,partDelete
-	jp _func_6bdd
+	jp func_6bdd
 @normalStatus:
 	ld e,$c2
 	ld a,(de)
@@ -1342,18 +1342,18 @@ partCode3a:
 	call objectApplySpeed
 	jp partAnimate
 +
-	call _func_6be3
+	call func_6be3
 	call objectGetAngleTowardEnemyTarget
 	ld e,$c9
 	ld (de),a
-	call _func_6bf0
+	call func_6bf0
 	jp objectSetVisible80
 @subid1:
 	ld a,(de)
 	or a
 	jr nz,@func_6a7e
-	call _func_6be3
-	call _func_6bc2
+	call func_6be3
+	call func_6bc2
 	ld e,$c3
 	ld a,(de)
 	or a
@@ -1401,12 +1401,12 @@ partCode3a:
 	jr z,+
 	ld l,e
 	ld (hl),$03
-	call _func_6bf0
+	call func_6bf0
 	ld a,$01
 	call partSetAnimation
 	jp objectSetVisible82
 +
-	call _func_6be3
+	call func_6be3
 	ld l,$f0
 	ldh a,(<hEnemyTargetY)
 	ldi (hl),a
@@ -1491,7 +1491,7 @@ partCode3a:
 	inc (hl)
 	ld l,$c9
 	ld (hl),$1d
-	call _func_6bf0
+	call func_6bf0
 	ld a,$01
 	call partSetAnimation
 	jp objectSetVisible82
@@ -1503,7 +1503,7 @@ partCode3a:
 	or a
 	jr z,++
 	call partCommon_decCounter1IfNonzero
-	jp z,_func_6bdd
+	jp z,func_6bdd
 	inc l
 	dec (hl)
 	jr nz,+
@@ -1514,7 +1514,7 @@ partCode3a:
 	call objectApplySpeed
 	jp partAnimate
 ++
-	call _func_6be3
+	call func_6be3
 	ld l,$c6
 	ld (hl),$f0
 	inc l
@@ -1526,7 +1526,7 @@ partCode3a:
 	call objectGetAngleTowardEnemyTarget
 	ld e,$c9
 	ld (de),a
-_func_6bc2:
+func_6bc2:
 	ld a,$29
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -1542,10 +1542,10 @@ _func_6bc2:
 	ld a,b
 	ld (de),a
 	jp objectSetVisible80
-_func_6bdd:
+func_6bdd:
 	call objectCreatePuff
 	jp partDelete
-_func_6be3:
+func_6be3:
 	ld h,d
 	ld l,e
 	inc (hl)
@@ -1556,7 +1556,7 @@ _func_6be3:
 	add (hl)
 	ld (hl),a
 	ret
-_func_6bf0:
+func_6bf0:
 	ld a,$29
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -1728,7 +1728,7 @@ partCode3d:
 	ld (hl),$05
 	inc l
 	ld (hl),$04
-	call _func_6e13
+	call func_6e13
 @func_6cf4:
 	ld a,$6f
 	call playSound
@@ -1849,12 +1849,12 @@ partCode3e:
 	ld (de),a
 	jp objectSetVisible81
 @substate1:
-	call _func_6e70
+	call func_6e70
 	ret z
 	call dropLinkHeldItem
 	jp partDelete
 @substate2:
-	call _func_6e37
+	call func_6e37
 	jp c,partDelete
 	ld e,$cf
 	ld a,(de)
@@ -1870,7 +1870,7 @@ partCode3e:
 	ret nz
 	jp partDelete
 @state3:
-	call _func_6e70
+	call func_6e70
 	jp nz,partDelete
 	call partCommon_decCounter1IfNonzero
 	jr z,+
@@ -1896,7 +1896,7 @@ partCode3e:
 	ld a,(de)
 	cp $ff
 	ret z
-	ld hl,_table_6e10
+	ld hl,table_6e10
 	rst_addAToHl
 	ld e,$e6
 	ld a,(hl)
@@ -1904,10 +1904,10 @@ partCode3e:
 	inc e
 	ld (de),a
 	ret
-_table_6e10:
+table_6e10:
 	.db $02 $04 $06
 
-_func_6e13:
+func_6e13:
 	ld e,$c2
 	ld a,(de)
 	cp $03
@@ -1931,7 +1931,7 @@ _func_6e13:
 	ldi (hl),a
 	ld (hl),$ff
 	jp objectCopyPosition
-_func_6e37:
+func_6e37:
 	ld a,$00
 	call objectGetRelatedObject1Var
 	call checkObjectsCollided
@@ -1966,7 +1966,7 @@ _func_6e37:
 seasonsFunc_10_6e6a:
 	call objectAddToGrabbableObjectBuffer
 	jp objectPushLinkAwayOnCollision
-_func_6e70:
+func_6e70:
 	ld a,$01
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -1991,31 +1991,31 @@ partCode3f:
 	cp $95
 	jr nz,@normalStatus
 	ld h,d
-	call _kingMoblinBomb_explode
+	call kingMoblinBomb_explode
 @normalStatus:
 	ld e,$c2
 	ld a,(de)
 	ld e,$c4
 	rst_jumpTable
-	.dw _kingMoblinBomb_subid0
-	.dw _kingMoblinBomb_subid1
+	.dw kingMoblinBomb_subid0
+	.dw kingMoblinBomb_subid1
 
 
-_kingMoblinBomb_subid0:
+kingMoblinBomb_subid0:
 	ld a,(de)
 	rst_jumpTable
-	.dw _kingMoblinBomb_state0
-	.dw _seasons_kingMoblinBomb_state1
-	.dw _kingMoblinBomb_state2
-	.dw _kingMoblinBomb_state3
-	.dw _kingMoblinBomb_state4
-	.dw _kingMoblinBomb_state5
-	.dw _kingMoblinBomb_state6
-	.dw _kingMoblinBomb_state7
-	.dw _kingMoblinBomb_state8
+	.dw kingMoblinBomb_state0
+	.dw seasons_kingMoblinBomb_state1
+	.dw kingMoblinBomb_state2
+	.dw kingMoblinBomb_state3
+	.dw kingMoblinBomb_state4
+	.dw kingMoblinBomb_state5
+	.dw kingMoblinBomb_state6
+	.dw kingMoblinBomb_state7
+	.dw kingMoblinBomb_state8
 
 
-_kingMoblinBomb_state0:
+kingMoblinBomb_state0:
 	ld h,d
 	ld l,e
 	inc (hl)
@@ -2033,12 +2033,12 @@ _kingMoblinBomb_state0:
 	jp objectSetVisiblec2
 
 
-_seasons_kingMoblinBomb_state1:
+seasons_kingMoblinBomb_state1:
 	ret
 
 
 ; Being held by Link
-_kingMoblinBomb_state2:
+kingMoblinBomb_state2:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -2059,7 +2059,7 @@ _kingMoblinBomb_state2:
 .endif
 
 @beingHeld:
-	call _common_kingMoblinBomb_state1
+	call common_kingMoblinBomb_state1
 	ret nz
 	jp dropLinkHeldItem
 
@@ -2086,7 +2086,7 @@ _kingMoblinBomb_state2:
 	ld l,Item.speed
 	ld (hl),SPEED_40
 
-	jp _common_kingMoblinBomb_state1
+	jp common_kingMoblinBomb_state1
 
 @atRest:
 	ld e,Part.state
@@ -2094,34 +2094,34 @@ _kingMoblinBomb_state2:
 	ld (de),a
 
 	call objectSetVisiblec2
-	jr _kingMoblinBomb_state4
+	jr kingMoblinBomb_state4
 
 
 ; Being thrown. (King moblin sets the state to this.)
-_kingMoblinBomb_state3:
+kingMoblinBomb_state3:
 	ld c,$20
 	call objectUpdateSpeedZAndBounce
 	jr c,@doneBouncing
 
-	call z,_kingMoblinBomb_playSound
+	call z,kingMoblinBomb_playSound
 	jp objectApplySpeed
 
 @doneBouncing:
 	ld h,d
 	ld l,Part.state
 	inc (hl)
-	call _kingMoblinBomb_playSound
+	call kingMoblinBomb_playSound
 
 
 ; Waiting to be picked up (by link or king moblin)
-_kingMoblinBomb_state4:
-	call _common_kingMoblinBomb_state1
+kingMoblinBomb_state4:
+	call common_kingMoblinBomb_state1
 	ret z
 	jp objectAddToGrabbableObjectBuffer
 
 
 ; Exploding
-_kingMoblinBomb_state5:
+kingMoblinBomb_state5:
 	ld h,d
 	ld l,Part.animParameter
 	ld a,(hl)
@@ -2134,13 +2134,13 @@ _kingMoblinBomb_state5:
 	ld l,Part.collisionRadiusY
 	ldi (hl),a
 	ld (hl),a
-	call _kingMoblinBomb_checkCollisionWithLink
-	call _kingMoblinBomb_checkCollisionWithKingMoblin
+	call kingMoblinBomb_checkCollisionWithLink
+	call kingMoblinBomb_checkCollisionWithKingMoblin
 @animate:
 	jp partAnimate
 
 
-_kingMoblinBomb_state6:
+kingMoblinBomb_state6:
 	ld bc,-$240
 	call objectSetSpeedZ
 
@@ -2167,7 +2167,7 @@ _kingMoblinBomb_state6:
 	ret
 
 
-_kingMoblinBomb_state7:
+kingMoblinBomb_state7:
 	call partCommon_decCounter1IfNonzero
 	ret nz
 
@@ -2175,23 +2175,23 @@ _kingMoblinBomb_state7:
 	inc (hl) ; [state] = 8
 
 
-_kingMoblinBomb_state8:
+kingMoblinBomb_state8:
 	ld c,$20
 	call objectUpdateSpeedZAndBounce
 	jp nc,objectApplySpeed
 
 	ld h,d
-	jp _kingMoblinBomb_explode
+	jp kingMoblinBomb_explode
 
 
-_kingMoblinBomb_subid1:
+kingMoblinBomb_subid1:
 	ld a,(de)
 	rst_jumpTable
-	.dw _kingMoblinBomb_subid1_state0
-	.dw _kingMoblinBomb_subid1_state1
-	.dw _kingMoblinBomb_subid1_state2
+	.dw kingMoblinBomb_subid1_state0
+	.dw kingMoblinBomb_subid1_state1
+	.dw kingMoblinBomb_subid1_state2
 
-_kingMoblinBomb_subid1_state0:
+kingMoblinBomb_subid1_state0:
 	ld h,d
 	ld l,e
 	inc (hl)
@@ -2204,11 +2204,11 @@ _kingMoblinBomb_subid1_state0:
 	jp objectSetVisiblec2
 
 
-_kingMoblinBomb_subid1_state1:
+kingMoblinBomb_subid1_state1:
 	ld c,$20
 	call objectUpdateSpeedZAndBounce
 	jr c,@doneBouncing
-	call z,_kingMoblinBomb_playSound
+	call z,kingMoblinBomb_playSound
 	jp objectApplySpeed
 @doneBouncing:
 	ld h,d
@@ -2216,12 +2216,12 @@ _kingMoblinBomb_subid1_state1:
 	inc (hl)
 
 
-_kingMoblinBomb_playSound:
+kingMoblinBomb_playSound:
 	ld a,SND_BOMB_LAND
 	jp playSound
 
 
-_kingMoblinBomb_subid1_state2:
+kingMoblinBomb_subid1_state2:
 	ld h,d
 	ld l,Part.animParameter
 	bit 0,(hl)
@@ -2234,10 +2234,10 @@ _kingMoblinBomb_subid1_state2:
 	jp c,partAnimate
 	ld l,Part.subid
 	dec (hl)
-	jr _kingMoblinBomb_explode
+	jr kingMoblinBomb_explode
 
 
-_common_kingMoblinBomb_state1:
+common_kingMoblinBomb_state1:
 	ld h,d
 
 	ld l,Part.animParameter
@@ -2250,7 +2250,7 @@ _common_kingMoblinBomb_state1:
 
 	ld a,(hl)
 	cp $08
-	jr nc,_kingMoblinBomb_explode
+	jr nc,kingMoblinBomb_explode
 
 @animate:
 	jp partAnimate
@@ -2259,7 +2259,7 @@ _common_kingMoblinBomb_state1:
 	or d
 	ret
 
-_kingMoblinBomb_explode:
+kingMoblinBomb_explode:
 	ld l,Part.state
 	ld (hl),$05
 
@@ -2284,7 +2284,7 @@ _kingMoblinBomb_explode:
 
 
 ;;
-_kingMoblinBomb_checkCollisionWithLink:
+kingMoblinBomb_checkCollisionWithLink:
 	ld e,Part.var30
 	ld a,(de)
 	or a
@@ -2318,7 +2318,7 @@ _kingMoblinBomb_checkCollisionWithLink:
 
 
 ;;
-_kingMoblinBomb_checkCollisionWithKingMoblin:
+kingMoblinBomb_checkCollisionWithKingMoblin:
 	ld e,Part.relatedObj1+1
 	ld a,(de)
 	or a
@@ -2370,7 +2370,7 @@ partCode40:
 	ld e,$c2
 	ld a,(de)
 	or a
-	jr z,_func_7081
+	jr z,func_7081
 	ret
 @state1:
 	call partCommon_decCounter1IfNonzero
@@ -2396,14 +2396,14 @@ partCode40:
 	and $03
 	ld (de),a
 	ret
-_func_7081:
+func_7081:
 	call objectGetAngleTowardEnemyTarget
 	ld e,$c9
 	ld (de),a
 	ld c,$03
-	call _func_708e
+	call func_708e
 	ld c,$fd
-_func_708e:
+func_708e:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_AQUAMENTUS_PROJECTILE
@@ -2458,7 +2458,7 @@ partCode41:
 	swap a
 	rlca
 	ld b,a
-	ld hl,_table_70f3
+	ld hl,table_70f3
 	rst_addAToHl
 	ld a,(de)
 	add (hl)
@@ -2472,7 +2472,7 @@ partCode41:
 	or a
 	jp z,objectSetVisible82
 	jp objectSetVisible81
-_table_70f3:
+table_70f3:
 	.db $ee $12 $10 $ee
 
 
@@ -2523,7 +2523,7 @@ partCode42:
 @delete:
 	jp partDelete
 @state0:
-	call _func_7174
+	call func_7174
 	ret nz
 	call objectSetVisible82
 	ld h,d
@@ -2558,11 +2558,11 @@ partCode42:
 	ld (hl),a
 	ld a,$01
 	jp partSetAnimation
-_func_7174:
+func_7174:
 	ld e,$c2
 	ld a,(de)
 	bit 7,a
-	jr z,_func_71b5
+	jr z,func_71b5
 	rrca
 	ld a,$04
 	ld bc,$0300
@@ -2582,7 +2582,7 @@ _func_7174:
 	ld a,b
 	ldh (<hFF8B),a
 	ld a,c
-	ld bc,_table_71fc
+	ld bc,table_71fc
 	call addAToBc
 -
 	push bc
@@ -2598,7 +2598,7 @@ _func_7174:
 	dec (hl)
 	jr nz,-
 	ret
-_func_71b5:
+func_71b5:
 	dec a
 	jr z,+
 	xor a
@@ -2621,14 +2621,14 @@ _func_71b5:
 	ld (hl),a
 	ld l,$c2
 	ld (hl),c
-	call _func_71e2
+	call func_71e2
 	ld a,b
 	add $0c
 	and $1f
 	ld b,a
 	ld c,$03
 
-_func_71e2:
+func_71e2:
 	push bc
 	call getFreePartSlot
 	ld (hl),PARTID_MOTHULA_PROJECTILE_2
@@ -2643,9 +2643,9 @@ _func_71e2:
 	and $1f
 	ld b,a
 	dec c
-	jr nz,_func_71e2
+	jr nz,func_71e2
 	ret
-_table_71fc:
+table_71fc:
 	.db $0c $14 $1c $08
 	.db $0d $13 $18 $1d
 
@@ -2747,7 +2747,7 @@ partCode43:
 	set 7,(hl)
 	ld b,$3c
 @@func_729a:
-	call _func_733d
+	call func_733d
 	call objectSetVisible81
 	ld a,$72
 	jp playSound
@@ -2818,7 +2818,7 @@ partCode43:
 	inc l
 	ld (hl),$02
 	ld b,$3c
-	call _func_733d
+	call func_733d
 	call objectSetVisible82
 	ld a,$01
 	jp partSetAnimation
@@ -2830,12 +2830,12 @@ partCode43:
 	ld l,e
 	inc (hl)
 	ld b,$3c
-	call _func_733d
+	call func_733d
 	call objectSetVisible82
 	ld e,$c3
 	ld a,(de)
 	jp partSetAnimation
-_func_733d:
+func_733d:
 	ld e,$c9
 	ld a,(de)
 	ld c,a
@@ -2871,7 +2871,7 @@ partCode44:
 +
 	ld a,$13
 	ld ($cc6a),a
-	jr _func_73db
+	jr func_73db
 ++
 	ld e,$c4
 	ld a,$02
@@ -2889,7 +2889,7 @@ partCode44:
 	call playSound
 @normalStatus:
 	call partCommon_checkOutOfBounds
-	jr z,_func_73db
+	jr z,func_73db
 	ld e,$c4
 	ld a,(de)
 	rst_jumpTable
@@ -2902,7 +2902,7 @@ partCode44:
 	call objectSetVisible82
 	ld e,$c2
 	ld a,(de)
-	ld hl,_table_73de
+	ld hl,table_73de
 	rst_addAToHl
 	ld e,$c9
 	ld a,(hl)
@@ -2932,9 +2932,9 @@ partCode44:
 	ld (hl),a
 	ld a,$4e
 	call playSound
-_func_73db:
+func_73db:
 	jp partDelete
-_table_73de:
+table_73de:
 	.db $02 $04 $06 $08
 	.db $0a $0c $0e $10
 	.db $12 $14 $16 $18
@@ -3055,15 +3055,15 @@ partCode46:
 	inc (hl)
 @@state2:
 	ld b,$03
-	call _func_7517
+	call func_7517
 	ret nz
 	ld a,b
 	sub $08
 	and $1f
 	ld b,a
-	call _func_74fd
-	call _func_74fd
-	call _func_74fd
+	call func_74fd
+	call func_74fd
+	call func_74fd
 	ld a,$ba
 	call playSound
 	ld h,d
@@ -3078,14 +3078,14 @@ partCode46:
 	ld l,e
 	inc (hl)
 	ld b,$02
-	call _func_7517
+	call func_7517
 	ret nz
 	ld a,b
 	sub $06
 	and $1f
 	ld b,a
-	call _func_74fd
-	call _func_74fd
+	call func_74fd
+	call func_74fd
 	ld a,$ba
 	call playSound
 @delete:
@@ -3102,7 +3102,7 @@ partCode46:
 	ld (hl),$64
 	ld l,$c6
 	ld (hl),$08
-	call _func_7524
+	call func_7524
 	call objectSetVisible82
 @@state1:
 	call partCommon_decCounter1IfNonzero
@@ -3115,7 +3115,7 @@ partCode46:
 +
 	call objectApplySpeed
 	jp partAnimate
-_func_74fd:
+func_74fd:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_S_46
@@ -3135,15 +3135,15 @@ _func_74fd:
 	ld a,(de)
 	ld (hl),a
 	ret
-_func_7517:
+func_7517:
 	call checkBPartSlotsAvailable
 	ret nz
-	call _func_7524
+	call func_7524
 	call objectGetAngleTowardEnemyTarget
 	ld b,a
 	xor a
 	ret
-_func_7524:
+func_7524:
 	ld a,$0b
 	call objectGetRelatedObject1Var
 	ld bc,$0a00
@@ -3899,7 +3899,7 @@ partCode4a:
 	jp objectSetVisible81
 	
 @state1:
-	call _seasonsFunc_10_79ab
+	call seasonsFunc_10_79ab
 	ld e,$cb
 	ld a,(de)
 	cp $88
@@ -3918,7 +3918,7 @@ partCode4a:
 	jr c,@animate
 	jp partDelete
 	
-_seasonsFunc_10_79ab:
+seasonsFunc_10_79ab:
 	ld e,$f1
 	ld a,(de)
 	ld c,a
@@ -3944,7 +3944,7 @@ partCode4f:
 	cp $04
 	jr c,@normalStatus
 	cp $0c
-	jp z,_seasonsFunc_10_7bc2
+	jp z,seasonsFunc_10_7bc2
 	cp $20
 	jr nz,+
 	ld a,Object.collisionType
@@ -4111,7 +4111,7 @@ partCode4f:
 	ld a,(hl)
 	cp $02
 	jr nz,+++
-	call _seasonsFunc_10_7bd6
+	call seasonsFunc_10_7bd6
 	ld l,$8b
 	ldi a,(hl)
 	srl a
@@ -4167,7 +4167,7 @@ partCode4f:
 	ret
 
 @state5:
-	call _seasonsFunc_10_7bd6
+	call seasonsFunc_10_7bd6
 	call partCommon_decCounter1IfNonzero
 	jr z,+
 	call objectCheckTileCollision_allowHoles
@@ -4277,7 +4277,7 @@ partCode4f:
 	ld (hl),a
 	jp objectApplySpeed
 
-_seasonsFunc_10_7bc2:
+seasonsFunc_10_7bc2:
 	ld h,d
 	ld l,Part.counter1
 	ld (hl),$78
@@ -4291,7 +4291,7 @@ _seasonsFunc_10_7bc2:
 	ld (hl),SPEED_200
 	ret
 
-_seasonsFunc_10_7bd6:
+seasonsFunc_10_7bd6:
 	ld e,Part.var33
 	ld a,(de)
 	or a

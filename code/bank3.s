@@ -24,7 +24,7 @@ init:
 	ld ($ff00+R_RP),a
 	ld ($ff00+R_SVBK),a
 	ld ($ff00+R_VBK),a
-	call _setCpuToDoubleSpeed
+	call setCpuToDoubleSpeed
 +
 	ld hl,hActiveFileSlot
 	ld b,hramEnd-hActiveFileSlot
@@ -38,9 +38,9 @@ init:
 	call clearVram
 
 	; Copy DMA function to hram
-	ld hl,_oamDmaFunction
+	ld hl,oamDmaFunction
 	ld de,hOamFunc
-	ld b,_oamDmaFunctionEnd-_oamDmaFunction
+	ld b,oamDmaFunctionEnd-oamDmaFunction
 	call copyMemory
 
 	; Initialize DMG palettes
@@ -69,7 +69,7 @@ init:
 	jp startGame
 
 ;;
-_setCpuToDoubleSpeed:
+setCpuToDoubleSpeed:
 	ld a,($ff00+R_KEY1)
 	rlca
 	ret c
@@ -96,7 +96,7 @@ _setCpuToDoubleSpeed:
 
 ;;
 ; This is copied to RAM and run from there.
-_oamDmaFunction:
+oamDmaFunction:
 	ld a,>wOam
 	ld ($ff00+R_DMA),a
 	ld a,$28
@@ -104,7 +104,7 @@ _oamDmaFunction:
 	dec a
 	jr nz,-
 	ret
-_oamDmaFunctionEnd:
+oamDmaFunctionEnd:
 
 
 ; Speed table for objects.
@@ -188,11 +188,11 @@ secretFunctionCaller_body:
 @jumpTable:
 	ld a,b
 	rst_jumpTable
-	.dw _generateSecret
-	.dw _unpackSecret
-	.dw _verifyUnpackedSecretGameID
-	.dw _generateGameIDIfNeeded
-	.dw _loadUnpackedSecretData
+	.dw generateSecret
+	.dw unpackSecret
+	.dw verifyUnpackedSecretGameID
+	.dw generateGameIDIfNeeded
+	.dw loadUnpackedSecretData
 
 
 ;;
@@ -200,13 +200,13 @@ secretFunctionCaller_body:
 ; should be set to the corresponding secret's index (?) before calling this.
 ;
 ; @param	c	Value for wSecretType
-_generateSecret:
+generateSecret:
 	ld hl,w7SecretText1
 	ld b,$40
 	call clearMemory
 
-	call _andCWith3
-	call _generateGameIDIfNeeded
+	call andCWith3
+	call generateGameIDIfNeeded
 
 	call @determineXorCipher
 	ld hl,wSecretXorCipherIndex
@@ -214,22 +214,22 @@ _generateSecret:
 	ld (hl),c ; hl = wSecretType
 
 	ld a,$04 ; Encode the gameID
-	call _encodeSecretData
+	call encodeSecretData
 	; Encode everything else (c is unmodified from before)
-	call _encodeSecretData_paramC
+	call encodeSecretData_paramC
 
 	; Calculate checksum (4 bits) and insert it at the end
 	ld b,$04
 	xor a
-	call _insertBitsIntoSecretGenerationBuffer
-	call _getSecretBufferChecksum
+	call insertBitsIntoSecretGenerationBuffer
+	call getSecretBufferChecksum
 	ld hl,w7SecretGenerationBuffer+19
 	or (hl)
 	ld (hl),a
 
-	call _shiftSecretBufferContentsToFront
-	call _runXorCipherOnSecretBuffer
-	jp _convertSecretBufferToText
+	call shiftSecretBufferContentsToFront
+	call runXorCipherOnSecretBuffer
+	jp convertSecretBufferToText
 
 ;;
 ; Decides which xor cipher to use based on GameID (and, for 5-letter secrets, based on
@@ -266,16 +266,16 @@ _generateSecret:
 
 ;;
 ; @param	c	Secret type to encode (0-4)
-_encodeSecretData_paramC:
+encodeSecretData_paramC:
 	ld a,c
 
 ;;
 ; Encodes data into a secret by shifting in the required bits.
 ;
 ; @param	a	Secret type to encode (0-4)
-_encodeSecretData:
+encodeSecretData:
 	push bc
-	ld hl,_secretDataToEncodeTable
+	ld hl,secretDataToEncodeTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -290,7 +290,7 @@ _encodeSecretData:
 	ld b,a
 	ld d,>wc600Block
 	ld a,(de)
-	call _insertBitsIntoSecretGenerationBuffer
+	call insertBitsIntoSecretGenerationBuffer
 	dec c
 	jr nz,--
 	pop bc
@@ -304,7 +304,7 @@ _encodeSecretData:
 ;
 ; @param	a	Byte to encode
 ; @param	b	Number of bits to encode
-_insertBitsIntoSecretGenerationBuffer:
+insertBitsIntoSecretGenerationBuffer:
 	push hl
 	push bc
 	ld c,a
@@ -338,25 +338,25 @@ _insertBitsIntoSecretGenerationBuffer:
 	ret
 
 ;;
-; Unpacks a secret's data to wTmpcec0. (each entry in "_secretDataToEncodeTable" gets
+; Unpacks a secret's data to wTmpcec0. (each entry in "secretDataToEncodeTable" gets
 ; a separate byte in the output.)
 ;
 ; Input (the secret in ascii) and output (the unpacked data) are both in wTmpcec0.
 ;
 ; @param	c	Secret type
 ; @param[out]	b	$00 if secret was valid, $01 otherwise
-_unpackSecret:
+unpackSecret:
 	ld hl,w7SecretText1
 	ld b,$40
 	call clearMemory
-	call _andCWith3
-	call _loadSecretBufferFromText
+	call andCWith3
+	call loadSecretBufferFromText
 	jr c,@fail
 
-	call _runXorCipherOnSecretBuffer
+	call runXorCipherOnSecretBuffer
 
 	; Retrieve checksum in 'e', then remove the checksum bits from the secret buffer
-	call _getNumCharactersForSecretType
+	call getNumCharactersForSecretType
 	ld hl,w7SecretGenerationBuffer-1
 	rst_addAToHl
 	ld a,(hl)
@@ -365,7 +365,7 @@ _unpackSecret:
 	xor (hl)
 	ld (hl),a
 
-	call _getSecretBufferChecksum
+	call getSecretBufferChecksum
 	cp e
 	jr nz,@fail
 
@@ -394,7 +394,7 @@ _unpackSecret:
 ; @param	a	Secret type
 ; @param	de	Address to write the extracted data to
 @unpack:
-	ld hl,_secretDataToEncodeTable
+	ld hl,secretDataToEncodeTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -460,8 +460,8 @@ _unpackSecret:
 ; Loads the data associated with an unpacked secret (ie. for game-transfer secrets, copies
 ; over player name, animal companion, game type, etc.)
 ;
-_loadUnpackedSecretData:
-	call _andCWith3
+loadUnpackedSecretData:
+	call andCWith3
 	rst_jumpTable
 	.dw @type0
 	.dw @type1
@@ -470,7 +470,7 @@ _loadUnpackedSecretData:
 
 @type0: ; Game-transfer secret
 @type1:
-	ld hl,_secretDataToEncodeTable@entry0
+	ld hl,secretDataToEncodeTable@entry0
 	ldi a,(hl)
 	ld b,a
 	ld de,wTmpcec0+4 ; Start from +4 to skip the "header"
@@ -498,7 +498,7 @@ _loadUnpackedSecretData:
 	ret
 
 @type2: ; Ring secret
-	ld hl,_secretDataToEncodeTable@entry2+1
+	ld hl,secretDataToEncodeTable@entry2+1
 	ld b,$08
 	ld de,wTmpcec0+4 ; Start from +4 to skip the "header"
 --
@@ -517,7 +517,7 @@ _loadUnpackedSecretData:
 	ret
 
 ;;
-_verifyUnpackedSecretGameID:
+verifyUnpackedSecretGameID:
 	; Get the gameID of an unpacked secret
 	ld hl,wTmpcec0+2
 	ldi a,(hl)
@@ -547,7 +547,7 @@ _verifyUnpackedSecretGameID:
 
 ;;
 ; Generates a gameID if one hasn't been calculated yet.
-_generateGameIDIfNeeded:
+generateGameIDIfNeeded:
 	ld hl,wGameID
 	ldi a,(hl)
 	or (hl)
@@ -576,7 +576,7 @@ _generateGameIDIfNeeded:
 ; Copies the data from w7SecretGenerationBuffer to w7SecretText1. The former consists of
 ; "raw bytes", while the latter is ascii.
 ;
-_convertSecretBufferToText:
+convertSecretBufferToText:
 	ld a,c
 	ld hl,@secretSpacingData
 	rst_addDoubleIndex
@@ -637,8 +637,8 @@ _convertSecretBufferToText:
 ;
 ; @param	wTmpcec0	Buffer with the secret in text format
 ; @param[out]	cflag		Set if there's a problem with the secret (invalid char)
-_loadSecretBufferFromText:
-	call _getNumCharactersForSecretType
+loadSecretBufferFromText:
+	call getNumCharactersForSecretType
 	ld hl,wTmpcec0
 	ld de,w7SecretGenerationBuffer
 --
@@ -678,15 +678,15 @@ _loadSecretBufferFromText:
 ; This xors all bytes in w7SecretGenerationBuffer with the corresponding cipher
 ; (determined by the first 3 bits in the secret buffer).
 ;
-_runXorCipherOnSecretBuffer:
-	call _getNumCharactersForSecretType
+runXorCipherOnSecretBuffer:
+	call getNumCharactersForSecretType
 
 	; Determine cipher ID from the first 3 bits of the secret (corresponds to
 	; wSecretXorCipherIndex)
 	ld a,(w7SecretGenerationBuffer)
 	and $38
 	rrca
-	ld de,_secretXorCipher
+	ld de,secretXorCipher
 	call addAToDe
 
 	ld hl,w7SecretGenerationBuffer
@@ -706,7 +706,7 @@ _runXorCipherOnSecretBuffer:
 
 ;;
 ; @param[out]	a	The last 4 bits of the sum of all bytes in w7SecretGenerationBuffer
-_getSecretBufferChecksum:
+getSecretBufferChecksum:
 	ld hl,w7SecretGenerationBuffer
 	ld b,20
 	xor a
@@ -723,8 +723,8 @@ _getSecretBufferChecksum:
 ; of the buffer.
 ;
 ; @param	c	Secret type
-_shiftSecretBufferContentsToFront:
-	call _getNumCharactersForSecretType
+shiftSecretBufferContentsToFront:
+	call getNumCharactersForSecretType
 	ld a,20
 	sub b
 	ret z
@@ -742,7 +742,7 @@ _shiftSecretBufferContentsToFront:
 	ret
 
 ;;
-_andCWith3:
+andCWith3:
 	ld a,c
 	and $03
 	ld c,a
@@ -750,7 +750,7 @@ _andCWith3:
 
 
 ; This lists the data that a particular secret type must encode.
-_secretDataToEncodeTable:
+secretDataToEncodeTable:
 	.dw @entry0
 	.dw @entry1
 	.dw @entry2
@@ -815,7 +815,7 @@ _secretDataToEncodeTable:
 ;;
 ; @param	c	Secret type
 ; @param[out]	a,b	Number of characters in secret
-_getNumCharactersForSecretType:
+getNumCharactersForSecretType:
 	ld a,c
 	ld hl,@lengths
 	rst_addAToHl
@@ -830,7 +830,7 @@ _getNumCharactersForSecretType:
 ; and subsequently xoring every byte in the secret with the proceeding values.
 ; (The bits corresponding to the cipher index in the secret are not xored, though, so that
 ; it can be deciphered properly.)
-_secretXorCipher:
+secretXorCipher:
 
 .ifdef REGION_JP
 	.db $31 $09 $29 $3b $18 $3c $17 $33

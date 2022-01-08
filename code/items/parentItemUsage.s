@@ -4,17 +4,17 @@
 functionCaller:
 	ld a,c
 	rst_jumpTable
-	.dw _clearAllParentItems
-	.dw _updateParentItemButtonAssignment_body
+	.dw clearAllParentItems_body
+	.dw updateParentItemButtonAssignment_body
 	.dw checkUseItems
 
 ;;
 ; Clears all variables related to items being used?
-_clearAllParentItems:
+clearAllParentItems_body:
 	push de
 	ld d,>w1ParentItem2
 --
-	call _clearParentItem
+	call clearParentItem
 	inc d
 	ld a,d
 	cp WEAPON_ITEM_INDEX
@@ -33,7 +33,7 @@ _clearAllParentItems:
 ; Updates var03 of a parent item to correspond to the equipped A or B button item. This is
 ; called after closing a menu (since button assignments may be changed).
 ;
-_updateParentItemButtonAssignment_body:
+updateParentItemButtonAssignment_body:
 	ld h,>w1ParentItem2
 @itemLoop:
 	ld l,Item.enabled
@@ -86,7 +86,7 @@ checkUseItems:
 
 	ld a,(wInShop)
 	or a
-	jp nz,_checkShopInput
+	jp nz,checkShopInput
 
 	; Set carry flag if in a spinner or bit 7 of wInAir is set.
 	ld a,(wcc95)
@@ -117,7 +117,7 @@ checkUseItems:
 	; When underwater, only check the A button
 @underwater:
 	ldde BTN_A, <wInventoryA
-	call _checkItemUsed
+	call checkItemUsed
 	jr @updateParentItems
 .endif
 
@@ -146,10 +146,10 @@ checkUseItems:
 
 @checkAB:
 	ldde BTN_A, <wInventoryA
-	call _checkItemUsed
+	call checkItemUsed
 @checkB:
 	ldde BTN_B, <wInventoryB
-	call _checkItemUsed
+	call checkItemUsed
 
 	; Update all "parent items"
 @updateParentItems:
@@ -158,7 +158,7 @@ checkUseItems:
 	ld e,Object.enabled
 	ld a,(de)
 	or a
-	call nz,_parentItemUpdate
+	call nz,parentItemUpdate
 	inc d
 	ld a,d
 	cp FIRST_ITEM_INDEX
@@ -177,12 +177,12 @@ checkUseItems:
 
 	; If [wcc63] == $ff, force Link to do a sword spin animation?
 
-	call _clearAllParentItems
+	call clearAllParentItems_body
 
 	ld hl,w1ParentItem2
 	ldde $ff, ITEMID_SWORD
 	ld c,$f1
-	call _initializeParentItem
+	call initializeParentItem
 
 	ld a,$80
 	ld (wcc63),a
@@ -193,7 +193,7 @@ checkUseItems:
 ;
 ; @param	d	Bitmask for button to check
 ; @param	e	Low byte of inventory item address to check
-_checkItemUsed:
+checkItemUsed:
 	ld h,>wInventoryB
 	ld l,e
 	ld a,(hl)
@@ -229,7 +229,7 @@ _checkItemUsed:
 	ret nc
 
 	ld e,a
-	ld hl,_itemUsageParameterTable
+	ld hl,itemUsageParameterTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld c,a
@@ -241,7 +241,7 @@ _checkItemUsed:
 	and d
 	ret z
 
-	call _chooseParentItemSlot
+	call chooseParentItemSlot
 	ret nz
 
 ;;
@@ -250,7 +250,7 @@ _checkItemUsed:
 ; @param	c	Upper nibble for Item.enabled
 ; @param	d	Button pressed
 ; @param	e	Item.id
-_initializeParentItem:
+initializeParentItem:
 	ld a,c
 	and $f0
 	inc a
@@ -269,14 +269,14 @@ _initializeParentItem:
 ;;
 ; Figure out which parent item slot an item should use (if at all).
 ;
-; @param	c	Byte read from _itemUsageParameterTable
+; @param	c	Byte read from itemUsageParameterTable
 ; @param	e	Item.id (returned unmodified)
 ;
 ; @param[out]	c	Value for upper nibble of Item.enabled
 ; @param[out]	hl	Parent item slot to write to
 ; @param[out]	zflag	Set if valid values for 'c' and 'hl' are returned.
 ; @addr{498c
-_chooseParentItemSlot:
+chooseParentItemSlot:
 	ld a,c
 	and $0f
 	rst_jumpTable
@@ -335,7 +335,7 @@ _chooseParentItemSlot:
 
 	push de
 	push bc
-	call _clearParentItemH
+	call clearParentItemH
 	pop bc
 	pop de
 	ld hl,w1ParentItem2
@@ -362,7 +362,7 @@ _chooseParentItemSlot:
 ;;
 ; Check whether link is picking up an item in a shop
 ;
-_checkShopInput:
+checkShopInput:
 	ld a,(wLinkGrabState)
 	or a
 	ret nz
@@ -380,14 +380,14 @@ _checkShopInput:
 
 ;;
 ; @param	de	Object to update (e should be $00)
-_parentItemUpdate:
+parentItemUpdate:
 	ld a,e
 	ldh (<hActiveObjectType),a
 	ld a,d
 	ldh (<hActiveObject),a
 
 	; Unset a bit corresponding to the item's index?
-	call _itemIndexToBit
+	call itemIndexToBit
 	ld hl,wcc95
 	cpl
 	and (hl)
@@ -398,51 +398,51 @@ _parentItemUpdate:
 	ld a,(de)
 	rst_jumpTable
 
-	.dw _parentItemCode_punch		; ITEMID_NONE
-	.dw _parentItemCode_shield		; ITEMID_SHIELD
-	.dw _parentItemCode_punch		; ITEMID_PUNCH
-	.dw _parentItemCode_bomb		; ITEMID_BOMB
-	.dw _parentItemCode_caneOfSomaria	; ITEMID_CANE_OF_SOMARIA
-	.dw _parentItemCode_sword		; ITEMID_SWORD
-	.dw _parentItemCode_boomerang		; ITEMID_BOOMERANG
-	.dw _parentItemCode_rodOfSeasons	; ITEMID_ROD_OF_SEASONS
-	.dw _parentItemCode_magnetGloves	; ITEMID_MAGNET_GLOVES
-	.dw _clearParentItem			; ITEMID_SWITCH_HOOK_HELPER
-	.dw _parentItemCode_switchHook		; ITEMID_SWITCH_HOOK
-	.dw _clearParentItem			; ITEMID_SWITCH_HOOK_CHAIN
-	.dw _parentItemCode_biggoronSword	; ITEMID_BIGGORON_SWORD
-	.dw _parentItemCode_bombchu		; ITEMID_BOMBCHUS
-	.dw _parentItemCode_flute		; ITEMID_FLUTE
-	.dw _parentItemCode_shooter		; ITEMID_SHOOTER
-	.dw _clearParentItem			; ITEMID_10
-	.dw _parentItemCode_harp		; ITEMID_HARP
-	.dw _clearParentItem			; ITEMID_12
-	.dw _parentItemCode_slingshot		; ITEMID_SLINGSHOT
-	.dw _clearParentItem			; ITEMID_14
-	.dw _parentItemCode_shovel		; ITEMID_SHOVEL
-	.dw _parentItemCode_bracelet		; ITEMID_BRACELET
-	.dw _parentItemCode_feather		; ITEMID_FEATHER
-	.dw _clearParentItem			; ITEMID_18
-	.dw _parentItemCode_satchel		; ITEMID_SEED_SATCHEL
-	.dw _clearParentItem			; ITEMID_DUST
-	.dw _clearParentItem			; ITEMID_1b
-	.dw _clearParentItem			; ITEMID_1c
-	.dw _clearParentItem			; ITEMID_MINECART_COLLISION
-	.dw _parentItemCode_foolsOre		; ITEMID_FOOLS_ORE
-	.dw _clearParentItem			; ITEMID_1f
+	.dw parentItemCode_punch		; ITEMID_NONE
+	.dw parentItemCode_shield		; ITEMID_SHIELD
+	.dw parentItemCode_punch		; ITEMID_PUNCH
+	.dw parentItemCode_bomb			; ITEMID_BOMB
+	.dw parentItemCode_caneOfSomaria	; ITEMID_CANE_OF_SOMARIA
+	.dw parentItemCode_sword		; ITEMID_SWORD
+	.dw parentItemCode_boomerang		; ITEMID_BOOMERANG
+	.dw parentItemCode_rodOfSeasons		; ITEMID_ROD_OF_SEASONS
+	.dw parentItemCode_magnetGloves		; ITEMID_MAGNET_GLOVES
+	.dw clearParentItem			; ITEMID_SWITCH_HOOK_HELPER
+	.dw parentItemCode_switchHook		; ITEMID_SWITCH_HOOK
+	.dw clearParentItem			; ITEMID_SWITCH_HOOK_CHAIN
+	.dw parentItemCode_biggoronSword	; ITEMID_BIGGORON_SWORD
+	.dw parentItemCode_bombchu		; ITEMID_BOMBCHUS
+	.dw parentItemCode_flute		; ITEMID_FLUTE
+	.dw parentItemCode_shooter		; ITEMID_SHOOTER
+	.dw clearParentItem			; ITEMID_10
+	.dw parentItemCode_harp			; ITEMID_HARP
+	.dw clearParentItem			; ITEMID_12
+	.dw parentItemCode_slingshot		; ITEMID_SLINGSHOT
+	.dw clearParentItem			; ITEMID_14
+	.dw parentItemCode_shovel		; ITEMID_SHOVEL
+	.dw parentItemCode_bracelet		; ITEMID_BRACELET
+	.dw parentItemCode_feather		; ITEMID_FEATHER
+	.dw clearParentItem			; ITEMID_18
+	.dw parentItemCode_satchel		; ITEMID_SEED_SATCHEL
+	.dw clearParentItem			; ITEMID_DUST
+	.dw clearParentItem			; ITEMID_1b
+	.dw clearParentItem			; ITEMID_1c
+	.dw clearParentItem			; ITEMID_MINECART_COLLISION
+	.dw parentItemCode_foolsOre		; ITEMID_FOOLS_ORE
+	.dw clearParentItem			; ITEMID_1f
 
 ;;
-_clearParentItem:
-	call _clearLinkUsingItem1
-	call _itemEnableLinkTurning
-	call _itemEnableLinkMovement
+clearParentItem:
+	call clearLinkUsingItem1
+	call itemEnableLinkTurning
+	call itemEnableLinkMovement
 	ld e,Item.start
 	jp objectDelete_de
 
 ;;
-_clearParentItemH:
+clearParentItemH:
 	push de
 	ld d,h
-	call _clearParentItem
+	call clearParentItem
 	pop de
 	ret

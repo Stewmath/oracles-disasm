@@ -1,6 +1,6 @@
 ; Variables:
 ;  var37: ?
-_parentItemCode_magnetGloves:
+parentItemCode_magnetGloves:
 	ld a,(wLinkClimbingVine)
 	inc a
 	jr z,@deleteSelf
@@ -33,7 +33,7 @@ _parentItemCode_magnetGloves:
 	ld a,(wLinkInAir)
 	rlca
 	jr c,@invertPolarityAndStop
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jr z,@invertPolarityAndStop
 
 	ld a,SND_MAGNET_GLOVES
@@ -42,7 +42,7 @@ _parentItemCode_magnetGloves:
 	scf
 	adc a
 	ld (wMagnetGloveState),a
-	call _itemDisableLinkTurning
+	call itemDisableLinkTurning
 	call @checkLatchedOntoTile
 	ret z
 
@@ -73,7 +73,7 @@ _parentItemCode_magnetGloves:
 @deleteSelf:
 	xor a
 	ld (wMagnetGloveState),a
-	jp _clearParentItem
+	jp clearParentItem
 
 ;;
 ; @param[out]	bc	Position of object locked on to

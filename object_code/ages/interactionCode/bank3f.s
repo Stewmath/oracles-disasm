@@ -10,7 +10,7 @@ interactionCode39_body:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _monkeyState1
+	.dw monkeyState1
 
 @state0:
 	ld a,$01
@@ -74,7 +74,7 @@ interactionCode39_body:
 	ld e,Interaction.subid
 	ld a,(de)
 	sub $02
-	ld hl,_introMonkeyScriptTable
+	ld hl,introMonkeyScriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -159,7 +159,7 @@ interactionCode39_body:
 	inc bc
 	ld a,(bc)
 	ld (hl),a
-	jp _monkeySetJumpSpeed
+	jp monkeySetJumpSpeed
 
 
 @jumpSpeeds:
@@ -333,21 +333,21 @@ interactionCode39_body:
 	ld (de),a
 	jp interactionSetAnimation
 
-_monkeyState1:
+monkeyState1:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _monkeySubid0State1
-	.dw _monkeySubid1State1
-	.dw _monkeySubid2State1
-	.dw _monkeySubid3State1
-	.dw _monkeySubid4State1
-	.dw _monkeySubid5State1
+	.dw monkeySubid0State1
+	.dw monkeySubid1State1
+	.dw monkeySubid2State1
+	.dw monkeySubid3State1
+	.dw monkeySubid4State1
+	.dw monkeySubid5State1
 	.dw interactionAnimate
-	.dw _monkeyAnimateAndRunScript
+	.dw monkeyAnimateAndRunScript
 
 ;;
-_monkeySubid0State1:
+monkeySubid0State1:
 	call interactionAnimate
 	call objectSetPriorityRelativeToLink_withTerrainEffects
 	ld e,Interaction.substate
@@ -361,7 +361,7 @@ _monkeySubid0State1:
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
-	.dw _monkeySubid0State1Substate3
+	.dw monkeySubid0State1Substate3
 
 @substate0:
 	ld a,($cfd0)
@@ -380,11 +380,11 @@ _monkeySubid0State1:
 	ld (hl),$32
 	ld a,$03
 	call interactionSetAnimation
-	jr _monkeyJumpSpeed120
+	jr monkeyJumpSpeed120
 
 @substate2:
 	call interactionDecCounter1
-	jr nz,_monkeyUpdateGravityAndHop
+	jr nz,monkeyUpdateGravityAndHop
 
 	call interactionIncSubstate
 	ld l,Interaction.angle
@@ -394,14 +394,14 @@ _monkeySubid0State1:
 	ld l,Interaction.speed
 	ld (hl),SPEED_180
 
-_monkeySetAnimationAndJump:
+monkeySetAnimationAndJump:
 	call interactionSetAnimation
 
-_monkeyJumpSpeed100:
+monkeyJumpSpeed100:
 	ld bc,-$100
 	jp objectSetSpeedZ
 
-_monkeySubid0State1Substate3:
+monkeySubid0State1Substate3:
 	call objectCheckWithinScreenBoundary
 	jr c,++
 	ld a,$01
@@ -412,27 +412,27 @@ _monkeySubid0State1Substate3:
 	call objectUpdateSpeedZ_paramC
 	jp nz,objectApplySpeed
 	ld a,$04
-	jr _monkeySetAnimationAndJump
+	jr monkeySetAnimationAndJump
 
-_monkeyUpdateGravityAndHop:
+monkeyUpdateGravityAndHop:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-_monkeyJumpSpeed120:
+monkeyJumpSpeed120:
 	ld bc,-$120
 	jp objectSetSpeedZ
 
 ;;
 ; Updates gravity, and if the monkey landed, resets speedZ to values of var38/var39.
-_monkeyUpdateGravityAndJumpIfLanded:
+monkeyUpdateGravityAndJumpIfLanded:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
 ;;
 ; Sets speedZ to values of var38/var39.
-_monkeySetJumpSpeed:
+monkeySetJumpSpeed:
 	ld l,Interaction.var38
 	ldi a,(hl)
 	ld e,Interaction.speedZ
@@ -444,33 +444,33 @@ _monkeySetJumpSpeed:
 
 ;;
 ; Monkey disappearance cutscene
-_monkeySubid1State1:
+monkeySubid1State1:
 	ld e,Interaction.var03
 	ld a,(de)
 	rst_jumpTable
-	.dw _monkey0Disappearance
-	.dw _monkey1Disappearance
-	.dw _monkey2Disappearance
-	.dw _monkey3Disappearance
-	.dw _monkey4Disappearance
-	.dw _monkey5Disappearance
-	.dw _monkey6Disappearance
-	.dw _monkey7Disappearance
-	.dw _monkey8Disappearance
-	.dw _monkey9Disappearance
+	.dw monkey0Disappearance
+	.dw monkey1Disappearance
+	.dw monkey2Disappearance
+	.dw monkey3Disappearance
+	.dw monkey4Disappearance
+	.dw monkey5Disappearance
+	.dw monkey6Disappearance
+	.dw monkey7Disappearance
+	.dw monkey8Disappearance
+	.dw monkey9Disappearance
 
 
-_monkey0Disappearance:
-_monkey1Disappearance:
-_monkey2Disappearance:
-_monkey4Disappearance:
+monkey0Disappearance:
+monkey1Disappearance:
+monkey2Disappearance:
+monkey4Disappearance:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _monkeyWaitBeforeFlickering
-	.dw _monkeyFlickerUntilDeletion
+	.dw monkeyWaitBeforeFlickering
+	.dw monkeyFlickerUntilDeletion
 
 @substate0:
 	call interactionAnimate
@@ -481,12 +481,12 @@ _monkey4Disappearance:
 @substate1:
 	call interactionDecCounter1
 	jr nz,+
-	jr _monkeyBeginDisappearing
+	jr monkeyBeginDisappearing
 +
-	call _monkeyUpdateGravityAndJumpIfLanded
+	call monkeyUpdateGravityAndJumpIfLanded
 	jp interactionAnimate
 
-_monkeyBeginDisappearing:
+monkeyBeginDisappearing:
 	ld (hl),$3c
 	ld l,Interaction.oamFlags
 	ld (hl),$06
@@ -497,13 +497,13 @@ _monkeyBeginDisappearing:
 	call playSound
 	jp interactionIncSubstate
 
-_monkeyWaitBeforeFlickering:
+monkeyWaitBeforeFlickering:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),$3c
 	jp interactionIncSubstate
 
-_monkeyFlickerUntilDeletion:
+monkeyFlickerUntilDeletion:
 	call interactionDecCounter1
 	jr nz,+
 	jp interactionDelete
@@ -512,31 +512,31 @@ _monkeyFlickerUntilDeletion:
 	jp objectFlickerVisibility
 
 
-_monkey3Disappearance:
-_monkey6Disappearance:
-_monkey7Disappearance:
+monkey3Disappearance:
+monkey6Disappearance:
+monkey7Disappearance:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
-	.dw _monkeyWaitBeforeFlickering
-	.dw _monkeyFlickerUntilDeletion
+	.dw monkeyWaitBeforeFlickering
+	.dw monkeyFlickerUntilDeletion
 
 @substate0:
 	call interactionDecCounter1
 	jp nz,interactionAnimate
-	jr _monkeyBeginDisappearing
+	jr monkeyBeginDisappearing
 
 
-_monkey5Disappearance:
+monkey5Disappearance:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
-	.dw _monkeyWaitBeforeFlickering
-	.dw _monkeyFlickerUntilDeletion
+	.dw monkeyWaitBeforeFlickering
+	.dw monkeyFlickerUntilDeletion
 
 @substate0:
 	call interactionIncSubstate
@@ -555,7 +555,7 @@ _monkey5Disappearance:
 @substate2:
 	call interactionDecCounter1
 	ret nz
-	jp _monkeyBeginDisappearing
+	jp monkeyBeginDisappearing
 
 
 	; Unused code?
@@ -563,17 +563,17 @@ _monkey5Disappearance:
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
-	.dw _monkeyWaitBeforeFlickering
-	.dw _monkeyFlickerUntilDeletion
+	.dw monkeyWaitBeforeFlickering
+	.dw monkeyFlickerUntilDeletion
 
 @@substate0:
 	call interactionDecCounter1
 	ret nz
-	jr _monkeyBeginDisappearing
+	jr monkeyBeginDisappearing
 
 
-_monkey9Disappearance:
-	call _monkeyCheckChangeAnimation
+monkey9Disappearance:
+	call monkeyCheckChangeAnimation
 
 	ld e,Interaction.substate
 	ld a,(de)
@@ -581,7 +581,7 @@ _monkey9Disappearance:
 	jr nc,++
 	call interactionDecCounter1
 	jr nz,++
-	call _monkeyBeginDisappearing
+	call monkeyBeginDisappearing
 	ld l,Interaction.substate
 	ld (hl),$04
 ++
@@ -592,8 +592,8 @@ _monkey9Disappearance:
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
-	.dw _monkeyWaitBeforeFlickering
-	.dw _monkeyFlickerUntilDeletion
+	.dw monkeyWaitBeforeFlickering
+	.dw monkeyFlickerUntilDeletion
 
 @substate0:
 	ld h,d
@@ -605,14 +605,14 @@ _monkey9Disappearance:
 	ld l,Interaction.speed
 	ld (hl),SPEED_100
 	call interactionIncSubstate
-	jp _monkeyJumpSpeed100
+	jp monkeyJumpSpeed100
 
 @substate1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jp nz,objectApplySpeed
 
-	call _monkeyJumpSpeed100
+	call monkeyJumpSpeed100
 
 	ld l,Interaction.var3c
 	inc (hl)
@@ -647,7 +647,7 @@ _monkey9Disappearance:
 	jr nz,+
 	ld a,$08
 +
-	jp _monkeySetAnimationAndJump
+	jp monkeySetAnimationAndJump
 
 @substate3:
 	ld h,d
@@ -664,7 +664,7 @@ _monkey9Disappearance:
 
 ;;
 ; Checks if the monkey is in the air, updates var3a and animation accordingly?
-_monkeyCheckChangeAnimation:
+monkeyCheckChangeAnimation:
 	ld h,d
 	ld l,Interaction.zh
 	ld a,(hl)
@@ -683,14 +683,14 @@ _monkeyCheckChangeAnimation:
 	jp interactionAnimate
 
 
-_monkey8Disappearance:
+monkey8Disappearance:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
 	.dw @substate2
-	.dw _monkeyWaitBeforeFlickering
+	.dw monkeyWaitBeforeFlickering
 	.dw @substate3
 	.dw @substate4
 
@@ -717,7 +717,7 @@ _monkey8Disappearance:
 @substate2:
 	call interactionDecCounter1
 	jr nz,+
-	jp _monkeyBeginDisappearing
+	jp monkeyBeginDisappearing
 +
 	ld a,(wFrameCounter)
 	and $0f
@@ -747,14 +747,14 @@ _monkey8Disappearance:
 
 ;;
 ; Monkey that only exists before intro
-_monkeySubid2State1:
-_monkeySubid3State1:
+monkeySubid2State1:
+monkeySubid3State1:
 	call interactionRunScript
 	jp interactionAnimateAsNpc
 
 
 ;;
-_monkeySubid4State1:
+monkeySubid4State1:
 	ld e,Interaction.var03
 	ld a,(de)
 	rst_jumpTable
@@ -837,7 +837,7 @@ _monkeySubid4State1:
 	jp interactionIncSubstate
 
 @substate4_0:
-	call _monkeyUpdateGravityAndJumpIfLanded
+	call monkeyUpdateGravityAndJumpIfLanded
 
 @substate4_1:
 	call interactionAnimate
@@ -865,7 +865,7 @@ _monkeySubid4State1:
 	ld e,Interaction.substate
 	ld a,(de)
 	cp $04
-	call nc,_monkeyCheckChangeAnimation
+	call nc,monkeyCheckChangeAnimation
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -873,38 +873,38 @@ _monkeySubid4State1:
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
-	.dw _monkey9Disappearance@substate0
-	.dw _monkey9Disappearance@substate1
-	.dw _monkey9Disappearance@substate2
-	.dw _monkey9Disappearance@substate3
+	.dw monkey9Disappearance@substate0
+	.dw monkey9Disappearance@substate1
+	.dw monkey9Disappearance@substate2
+	.dw monkey9Disappearance@substate3
 
 
 ;;
-_monkeySubid5State1:
+monkeySubid5State1:
 	ld e,Interaction.var03
 	ld a,(de)
 	rst_jumpTable
 	.dw @monkey0
 	.dw @monkey0
 	.dw @monkey0
-	.dw _monkeyAnimateAndRunScript
+	.dw monkeyAnimateAndRunScript
 	.dw @monkey0
-	.dw _monkeyAnimateAndRunScript
-	.dw _monkeyAnimateAndRunScript
-	.dw _monkeyAnimateAndRunScript
-	.dw _monkeyAnimateAndRunScript
-	.dw _monkeySubid5State1_monkey9
+	.dw monkeyAnimateAndRunScript
+	.dw monkeyAnimateAndRunScript
+	.dw monkeyAnimateAndRunScript
+	.dw monkeyAnimateAndRunScript
+	.dw monkeySubid5State1_monkey9
 
 @monkey0:
-	call _monkeyUpdateGravityAndJumpIfLanded
+	call monkeyUpdateGravityAndJumpIfLanded
 
-_monkeyAnimateAndRunScript:
+monkeyAnimateAndRunScript:
 	call interactionRunScript
 	jp interactionAnimateAsNpc
 
-_monkeySubid5State1_monkey9:
+monkeySubid5State1_monkey9:
 	call interactionRunScript
-	call _monkeyCheckChangeAnimation
+	call monkeyCheckChangeAnimation
 .ifdef REGION_JP
 	call objectPreventLinkFromPassing
 .else
@@ -914,12 +914,12 @@ _monkeySubid5State1_monkey9:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _monkey9Disappearance@substate0
-	.dw _monkey9Disappearance@substate1
-	.dw _monkey9Disappearance@substate2
-	.dw _monkey9Disappearance@substate3
+	.dw monkey9Disappearance@substate0
+	.dw monkey9Disappearance@substate1
+	.dw monkey9Disappearance@substate2
+	.dw monkey9Disappearance@substate3
 
-_introMonkeyScriptTable:
+introMonkeyScriptTable:
 	.dw mainScripts.monkeySubid2Script
 	.dw mainScripts.monkeySubid3Script
 
@@ -983,7 +983,7 @@ interactionCode4b_body:
 	ld a,180
 	ld (de),a
 	callab agesInteractionsBank08.loadStoneNpcPalette
-	jp _rabbitSubid2SetRandomSpawnDelay
+	jp rabbitSubid2SetRandomSpawnDelay
 
 @initSubid6:
 	; Delete if veran defeated
@@ -1022,7 +1022,7 @@ interactionCode4b_body:
 
 @initSubid4:
 	call interactionLoadExtraGraphics
-	jp _rabbitJump
+	jp rabbitJump
 
 @initSubid7:
 	ld a,GLOBALFLAG_FINISHEDGAME
@@ -1045,18 +1045,18 @@ interactionCode4b_body:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _rabbitSubid0
-	.dw _rabbitSubid1
-	.dw _rabbitSubid2
-	.dw _rabbitSubid3
-	.dw _rabbitSubid4
-	.dw _rabbitSubid5
+	.dw rabbitSubid0
+	.dw rabbitSubid1
+	.dw rabbitSubid2
+	.dw rabbitSubid3
+	.dw rabbitSubid4
+	.dw rabbitSubid5
 	.dw interactionPushLinkAwayAndUpdateDrawPriority
-	.dw _rabbitSubid7
+	.dw rabbitSubid7
 
 
 ; Listening to Nayru at the start of the game
-_rabbitSubid0:
+rabbitSubid0:
 	call interactionAnimateAsNpc
 	ld e,Interaction.substate
 	ld a,(de)
@@ -1110,7 +1110,7 @@ _rabbitSubid0:
 	jr @jump
 
 
-_rabbitSubid1:
+rabbitSubid1:
 	ld h,d
 	ld l,Interaction.counter1
 	ld a,(hl)
@@ -1219,14 +1219,14 @@ _rabbitSubid1:
 
 
 ; "Controller" for the cutscene where rabbits turn to stone? (spawns subid $01)
-_rabbitSubid2:
+rabbitSubid2:
 	ld h,d
 	ld l,Interaction.counter1
 	ld a,(hl)
 	or a
 	jr z,+
 	dec (hl)
-	call z,_spawnNextRabbitThatTurnsToStone
+	call z,spawnNextRabbitThatTurnsToStone
 +
 	; After a random delay, spawn a rabbit that just runs across the screen (doesn't
 	; turn to stone)
@@ -1237,7 +1237,7 @@ _rabbitSubid2:
 
 	call getRandomNumber_noPreserveVars
 	and $07
-	ld hl,_rabbitSubid2YPositions
+	ld hl,rabbitSubid2YPositions
 	rst_addAToHl
 	ld b,(hl)
 	call getRandomNumber
@@ -1246,19 +1246,19 @@ _rabbitSubid2:
 	inc a
 	add $b0
 	ld c,a
-	call _spawnRabbitWithSubid1
-	jp _rabbitSubid2SetRandomSpawnDelay
+	call spawnRabbitWithSubid1
+	jp rabbitSubid2SetRandomSpawnDelay
 
 
 ; Rabbit being restored from stone cutscene (gets restored and jumps away)
-_rabbitSubid3:
+rabbitSubid3:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _rabbitSubid1@substate0
-	.dw _rabbitSubid1@substate1
+	.dw rabbitSubid1@substate0
+	.dw rabbitSubid1@substate1
 
 @substate0:
 	call interactionDecCounter1
@@ -1285,15 +1285,15 @@ _rabbitSubid3:
 
 
 ; Rabbit being restored from stone cutscene (the one that wasn't stone)
-_rabbitSubid4:
+rabbitSubid4:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _rabbitSubid4Substate2
-	.dw _rabbitSubid5@substate3
-	.dw _rabbitSubid5@ret
+	.dw rabbitSubid4Substate2
+	.dw rabbitSubid5@substate3
+	.dw rabbitSubid5@ret
 
 @substate0:
 	ld a,($cfd1)
@@ -1323,14 +1323,14 @@ _rabbitSubid4:
 	dec (hl)
 
 ;;
-_rabbitJump:
+rabbitJump:
 	ld a,$07
 	call interactionSetAnimation
 	ld bc,-$e0
 	jp objectSetSpeedZ
 
 
-_rabbitSubid4Substate2:
+rabbitSubid4Substate2:
 	ld a,($cfd1)
 	cp $02
 	jp nz,interactionRunScript
@@ -1347,7 +1347,7 @@ _rabbitSubid4Substate2:
 	ld a,$09
 	jp interactionSetAnimation
 
-_rabbitSubid5:
+rabbitSubid5:
 	ld h,d
 	ld l,Interaction.var38
 	ld a,(hl)
@@ -1386,9 +1386,9 @@ _rabbitSubid5:
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
-	.dw _rabbitSubid3@substate1
-	.dw _rabbitSubid1@substate0
-	.dw _rabbitSubid1@substate1
+	.dw rabbitSubid3@substate1
+	.dw rabbitSubid1@substate0
+	.dw rabbitSubid1@substate1
 	.dw @substate3
 	.dw @substate4
 
@@ -1427,17 +1427,17 @@ _rabbitSubid5:
 
 
 ; Generic NPC waiting around in the spot Nayru used to sing
-_rabbitSubid7:
+rabbitSubid7:
 	call interactionRunScript
 	jp c,interactionDelete
 	jp npcFaceLinkAndAnimate
 
 ;;
 ; This might be setting one of 4 possible speed values to var38?
-_rabbitSubid2SetRandomSpawnDelay:
+rabbitSubid2SetRandomSpawnDelay:
 	call getRandomNumber_noPreserveVars
 	and $03
-	ld bc,_rabbitSubid2SpawnDelays
+	ld bc,rabbitSubid2SpawnDelays
 	call addAToBc
 	ld a,(bc)
 	ld e,Interaction.var38
@@ -1446,7 +1446,7 @@ _rabbitSubid2SetRandomSpawnDelay:
 
 ;;
 ; hl should point to "counter1".
-_spawnNextRabbitThatTurnsToStone:
+spawnNextRabbitThatTurnsToStone:
 	; Increment counter2, the index of the rabbit to spawn (0-2)
 	inc l
 	ld a,(hl)
@@ -1465,7 +1465,7 @@ _spawnNextRabbitThatTurnsToStone:
 	ld c,(hl)
 
 	; Spawn a rabbit that will turn to stone after 95 frames
-	call _spawnRabbitWithSubid1
+	call spawnRabbitWithSubid1
 	ld l,Interaction.counter1
 	ld (hl),95
 	ret
@@ -1483,7 +1483,7 @@ _spawnNextRabbitThatTurnsToStone:
 ; Spawns a rabbit for the cutscene where a bunch of rabbits turn to stone
 ;
 ; @param	bc	Position
-_spawnRabbitWithSubid1;
+spawnRabbitWithSubid1;
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_RABBIT
@@ -1493,11 +1493,11 @@ _spawnRabbitWithSubid1;
 
 
 ; A byte from here is chosen randomly to spawn a rabbit at.
-_rabbitSubid2YPositions:
+rabbitSubid2YPositions:
 	.db $66 $5e $58 $46 $3a $30 $20 $18
 
 ; A byte from here is chosen randomly as a delay before spawning another rabbit.
-_rabbitSubid2SpawnDelays:
+rabbitSubid2SpawnDelays:
 	.db $1e $3c $50 $78
 
 
@@ -1508,18 +1508,18 @@ interactionCodeb1_body:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _tuniNut_state0
-	.dw _tuniNut_state1
-	.dw _tuniNut_state2
-	.dw _tuniNut_state3
+	.dw tuniNut_state0
+	.dw tuniNut_state1
+	.dw tuniNut_state2
+	.dw tuniNut_state3
 	.dw objectPreventLinkFromPassing
 
 
-_tuniNut_state0:
+tuniNut_state0:
 	call interactionInitGraphics
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED
 	call checkGlobalFlag
-	jr nz,_tuniNut_gotoState4
+	jr nz,tuniNut_gotoState4
 
 	ld a,TREASURE_TUNI_NUT
 	call checkTreasureObtained
@@ -1535,7 +1535,7 @@ _tuniNut_state0:
 	jp interactionDelete
 
 
-_tuniNut_gotoState4:
+tuniNut_gotoState4:
 	ld bc,$1878
 	call interactionSetPosition
 	ld l,Interaction.state
@@ -1546,7 +1546,7 @@ _tuniNut_gotoState4:
 
 
 ; Waiting for Link to walk up to the object (currently invisible, acting as a cutscene trigger)
-_tuniNut_state1:
+tuniNut_state1:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing
 	ret nc
 	call checkLinkCollisionsEnabled
@@ -1589,14 +1589,14 @@ _tuniNut_state1:
 
 @perfectlyCentered:
 	call interactionIncState
-	jr _tuniNut_beginMovingIntoPlace
+	jr tuniNut_beginMovingIntoPlace
 
 
-_tuniNut_state2:
+tuniNut_state2:
 	call interactionDecCounter1
 	ret nz
 
-_tuniNut_beginMovingIntoPlace:
+tuniNut_beginMovingIntoPlace:
 	xor a
 	ld (w1Link.direction),a
 
@@ -1619,7 +1619,7 @@ _tuniNut_beginMovingIntoPlace:
 	jp interactionIncState
 
 
-_tuniNut_state3:
+tuniNut_state3:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -1701,7 +1701,7 @@ _tuniNut_state3:
 
 	ld a,(wActiveMusic)
 	call playSound
-	jp _tuniNut_gotoState4
+	jp tuniNut_gotoState4
 
 ;;
 ; Sets the room flags so present symmetry village is nice and cheerful now

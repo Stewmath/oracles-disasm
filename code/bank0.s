@@ -2661,12 +2661,12 @@ setMusicVolume:
 
 ;;
 restartSound:
-	ld bc,b39_stopSound
+	ld bc,audio.b39_stopSound
 	jr _startSound
 
 ;;
 initSound:
-	ld bc,b39_initSound
+	ld bc,audio.b39_initSound
 
 ;;
 ; @param bc Function to call for initialization
@@ -2675,7 +2675,7 @@ _startSound:
 	ldh a,(<hRomBank)
 	push af
 	call disableTimer
-	ld a,:b39_initSound
+	ld a,:audio.b39_initSound
 	ldh (<hSoundDataBaseBank),a
 	ldh (<hSoundDataBaseBank2),a
 	setrombank
@@ -2743,7 +2743,7 @@ timerInterrupt:
 	dec a
 	ld ($ff00+R_TIMA),a
 +
-	ld a,:b39_updateMusicVolume
+	ld a,:audio.b39_updateMusicVolume
 	ld ($2222),a
 	ldh a,(<hMusicVolume)
 	bit 7,a
@@ -2751,7 +2751,7 @@ timerInterrupt:
 
 	and $03
 	ldh (<hMusicVolume),a
-	call b39_updateMusicVolume
+	call audio.b39_updateMusicVolume
 +
 	ldh a,(<hMusicQueueTail)
 	ld b,a
@@ -2765,7 +2765,7 @@ timerInterrupt:
 	ldi a,(hl)
 	push bc
 	push hl
-	call b39_playSound
+	call audio.b39_playSound
 	pop hl
 	pop bc
 	ld a,l
@@ -2775,7 +2775,7 @@ timerInterrupt:
 
 	ldh (<hMusicQueueHead),a
 ++
-	call b39_updateSound
+	call audio.b39_updateSound
 	ld hl,hFFB7
 	res 0,(hl)
 	ldh a,(<hRomBank)
@@ -10905,7 +10905,7 @@ clearFadingPalettes:
 
 ;;
 ; This function causes the screen to flash white. Based on parameter 'b', which acts as
-; the "index" if the data to use, this will read through the predefined data to see on
+; the "index" of the data to use, this will read through the predefined data to see on
 ; what frames it should turn the screen white, and on what frames it should restore the
 ; screen to normal.
 ;
@@ -11809,7 +11809,6 @@ func_32fc:
 	jr _setDarkeningVariables
 
 ;;
-
 ; @param	a	Speed of darkening
 darkenRoomWithSpeed:
 	ld b,$f0
@@ -12168,7 +12167,7 @@ dismountCompanionAndSetRememberedPositionToScreenCenter:
 seasonsFunc_331b:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 seasonsFunc_0f_6f75
+	callfrombank0 bank0f.seasonsFunc_0f_6f75
 	pop af
 	setrombank
 	ret
@@ -12178,8 +12177,8 @@ seasonsFunc_332f:
 	push af
 	ld a,$0f
 	setrombank
-	call seasonsFunc_0f_704d
-	call seasonsFunc_0f_7182
+	call bank0f.seasonsFunc_0f_704d
+	call bank0f.seasonsFunc_0f_7182
 	pop af
 	setrombank
 	ret
@@ -12310,9 +12309,9 @@ seasonsFunc_34a0:
 	callfrombank0 updateEnemies
 	callfrombank0 partCode.updateParts
 	callfrombank0 updateInteractions
-	callfrombank0 seasonsFunc_0f_7159
+	callfrombank0 bank0f.seasonsFunc_0f_7159
 
-	ld a,$06
+	ld a,:bank6.updateGrabbedObjectPosition
 	setrombank
 	ld a,(wLinkGrabState)
 	rlca
@@ -12320,7 +12319,7 @@ seasonsFunc_34a0:
 
 	call loadLinkAndCompanionAnimationFrame
 	callfrombank0 itemCode.updateItemsPost
-	callfrombank0 seasonsFunc_0f_7182
+	callfrombank0 bank0f.seasonsFunc_0f_7182
 	callfrombank0 tilesets.updateChangedTileQueue
 
 	xor a
@@ -12382,7 +12381,7 @@ clearDynamicInteractions:
 	ldde FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Interaction.start
@@ -12400,7 +12399,7 @@ clearItems:
 	ldde FIRST_ITEM_INDEX, Item.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Item.start
@@ -12418,7 +12417,7 @@ clearEnemies:
 	ldde FIRST_ENEMY_INDEX, Enemy.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Enemy.start
@@ -12436,7 +12435,7 @@ clearParts:
 	ldde FIRST_PART_INDEX, Part.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Part.start
@@ -12699,7 +12698,6 @@ func_36f6:
 ;
 ; End result: w3TileMappingData is loaded with the tile indices and attributes for all
 ; tiles in the tileset.
-;
 loadTilesetLayout:
 	ld a,(wTilesetLayout)
 	call loadTileset

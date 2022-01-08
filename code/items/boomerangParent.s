@@ -1,6 +1,6 @@
 ;;
 ; ITEMID_BOOMERANG ($06)
-_parentItemCode_boomerang:
+parentItemCode_boomerang:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -11,18 +11,18 @@ _parentItemCode_boomerang:
 
 @state0:
 .ifdef ROM_AGES
-	call _isLinkUnderwater
-	jp nz,_clearParentItem
+	call isLinkUnderwater
+	jp nz,clearParentItem
 .endif
 	ld a,(w1ParentItem2.id)
 	cp ITEMID_SWITCH_HOOK
-	jp z,_clearParentItem
+	jp z,clearParentItem
 
 	ld a,(wLinkSwimmingState)
 	or a
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
 
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 
 	ld a,(wBoomerangLevel)
 	cp $02
@@ -41,7 +41,7 @@ _parentItemCode_boomerang:
 	ld b,a
 	ld e,$01
 	call itemCreateChildWithID
-	jp c,_clearParentItem
+	jp c,clearParentItem
 
 	; Calculate angle for newly created boomerang
 	ld a,(wLinkAngle)
@@ -58,7 +58,7 @@ _parentItemCode_boomerang:
 	ret
 
 @state2:
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jr z,@cancelControl
 
 	ld a,Object.relatedObj1+1
@@ -99,5 +99,5 @@ _parentItemCode_boomerang:
 	ld e,Item.animParameter
 	ld a,(de)
 	rlca
-	jp nc,_specialObjectAnimate
-	jp _clearParentItem
+	jp nc,specialObjectAnimate_optimized
+	jp clearParentItem

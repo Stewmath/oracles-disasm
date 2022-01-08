@@ -1,7 +1,7 @@
 ;;
 ; ITEMID_SWORD ($05)
-_parentItemCode_sword:
-	call _clearParentItemIfCantUseSword
+parentItemCode_sword:
+	call clearParentItemIfCantUseSword
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -44,7 +44,7 @@ _parentItemCode_sword:
 	ld h,d
 	ld l,Item.enabled
 	set 7,(hl)
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 	jp itemCreateChild
 
 
@@ -54,7 +54,7 @@ _parentItemCode_sword:
 	rlca
 	jp c,@label_4c8b
 
-	call _specialObjectAnimate
+	call specialObjectAnimate_optimized
 	ld h,d
 	ld e,Item.animParameter
 	ld a,(de)
@@ -90,7 +90,7 @@ _parentItemCode_sword:
 	ld a,(wLinkObjectIndex)
 	rrca
 	jp c,@deleteSelf
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jp z,@deleteSelf
 
 	ld a,$01
@@ -119,7 +119,7 @@ _parentItemCode_sword:
 	ld l,Item.counter1
 	ld (hl),$28
 
-	jp _itemEnableLinkMovement
+	jp itemEnableLinkMovement
 
 ; @param	a	Value of Item.var2a
 @enemyContact:
@@ -145,7 +145,7 @@ _parentItemCode_sword:
 	ld a,(wLinkObjectIndex)
 	rrca
 	jp c,@deleteSelf
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jp z,@deleteSelf
 	call @checkAndRetForSwordPoke
 	ld a,CHARGE_RING
@@ -180,7 +180,7 @@ _parentItemCode_sword:
 ; Sword being held, fully charged
 @state3:
 	call @checkAndRetForSwordPoke
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	ret nz
 
 @label_4c8b:
@@ -201,7 +201,7 @@ _parentItemCode_sword:
 	ld (hl),$0f
 
 .ifdef ROM_AGES
-	call _isLinkUnderwater
+	call isLinkUnderwater
 	ld c,LINK_ANIM_MODE_28
 	jr z,+
 	ld c,LINK_ANIM_MODE_30
@@ -224,7 +224,7 @@ _parentItemCode_sword:
 	ld l,Item.var3a
 	sla (hl)
 
-	call _itemDisableLinkMovement
+	call itemDisableLinkMovement
 
 	ld a,SND_SWORDSPIN
 	jp playSound
@@ -232,7 +232,7 @@ _parentItemCode_sword:
 
 ; Performing a swordspin
 @state4:
-	call _specialObjectAnimate
+	call specialObjectAnimate_optimized
 	ld h,d
 	ld l,Item.animParameter
 	bit 7,(hl)
@@ -249,7 +249,7 @@ _parentItemCode_sword:
 
 ; Swordspin ending
 @state5:
-	call _specialObjectAnimate
+	call specialObjectAnimate_optimized
 	ld h,d
 	ld l,Item.animParameter
 	bit 7,(hl)
@@ -274,7 +274,7 @@ _parentItemCode_sword:
 @deleteSelf:
 	xor a
 	ld (wcc63),a
-	jp _clearParentItem
+	jp clearParentItem
 
 
 ; Checks if Link's doing sword poke; sets animations, etc, and returns from the caller if
@@ -310,10 +310,10 @@ _parentItemCode_sword:
 	ld l,Item.state
 	ld (hl),$05
 
-	call _itemDisableLinkMovement
+	call itemDisableLinkMovement
 
 .ifdef ROM_AGES
-	call _isLinkUnderwater
+	call isLinkUnderwater
 	ld a,LINK_ANIM_MODE_1f
 	jr z,+
 	ld a,LINK_ANIM_MODE_2c
@@ -343,7 +343,7 @@ _parentItemCode_sword:
 @createSwordBeam:
 	ldbc ITEMID_SWORD_BEAM,$00
 	ld e,$01
-	call _getFreeItemSlotWithObjectCap
+	call getFreeItemSlotWithObjectCap
 	ret c
 
 	inc (hl)

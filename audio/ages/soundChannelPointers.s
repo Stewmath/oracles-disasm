@@ -1554,37 +1554,3 @@ sndTimewarpCompleted:
 	.db $a2
 	.dw sndTimewarpCompletedChannel2
 	.db $ff
-
-
-.ifdef BUILD_VANILLA
-.ORGA $59e5
-.endif
-
-
-sndde:
-	.db $00
-	.dw snddeChannel0
-	.db $01
-	.dw snddeChannel1
-	.db $04
-	.dw snddeChannel4
-	.db $06
-	.dw snddeChannel6
-	.db $ff
-
-.ifdef BUILD_VANILLA
-	; Unused data?
-	.db $02
-	.dw $59ff
-	.db $03
-	.dw $59ff
-	.db $05
-	.dw $59ff
-	.db $07
-	.dw $59ff
-	.db $ff
-.endif
-
-.ifdef BUILD_VANILLA
-.ORGA $5748
-.endif
