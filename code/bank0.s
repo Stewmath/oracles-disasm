@@ -2661,12 +2661,12 @@ setMusicVolume:
 
 ;;
 restartSound:
-	ld bc,b39_stopSound
+	ld bc,audio.b39_stopSound
 	jr _startSound
 
 ;;
 initSound:
-	ld bc,b39_initSound
+	ld bc,audio.b39_initSound
 
 ;;
 ; @param bc Function to call for initialization
@@ -2675,7 +2675,7 @@ _startSound:
 	ldh a,(<hRomBank)
 	push af
 	call disableTimer
-	ld a,:b39_initSound
+	ld a,:audio.b39_initSound
 	ldh (<hSoundDataBaseBank),a
 	ldh (<hSoundDataBaseBank2),a
 	setrombank
@@ -2743,7 +2743,7 @@ timerInterrupt:
 	dec a
 	ld ($ff00+R_TIMA),a
 +
-	ld a,:b39_updateMusicVolume
+	ld a,:audio.b39_updateMusicVolume
 	ld ($2222),a
 	ldh a,(<hMusicVolume)
 	bit 7,a
@@ -2751,7 +2751,7 @@ timerInterrupt:
 
 	and $03
 	ldh (<hMusicVolume),a
-	call b39_updateMusicVolume
+	call audio.b39_updateMusicVolume
 +
 	ldh a,(<hMusicQueueTail)
 	ld b,a
@@ -2765,7 +2765,7 @@ timerInterrupt:
 	ldi a,(hl)
 	push bc
 	push hl
-	call b39_playSound
+	call audio.b39_playSound
 	pop hl
 	pop bc
 	ld a,l
@@ -2775,7 +2775,7 @@ timerInterrupt:
 
 	ldh (<hMusicQueueHead),a
 ++
-	call b39_updateSound
+	call audio.b39_updateSound
 	ld hl,hFFB7
 	res 0,(hl)
 	ldh a,(<hRomBank)

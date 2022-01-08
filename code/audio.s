@@ -6,7 +6,7 @@
 .BANK $39 SLOT 1
 .ORG 0
 
-m_section_superfree AudioCode
+m_section_superfree AudioCode NAMESPACE audio
 
 ;;
 b39_initSound:
