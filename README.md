@@ -4,6 +4,8 @@ This is a complete, documented disassembly of Oracle of Ages and Seasons for the
 Color. When combined with [LynnaLab](https://github.com/drenn1/lynnalab), it is a level
 editing suite.
 
+This repository builds US version ROMS. JP and EU versions are not supported.
+
 [See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_ages-disasm) for detailed
 setup instructions.
 
@@ -11,9 +13,12 @@ setup instructions.
 # Required tools to build
 
 * Python 3
+* python3-yaml (python module)
 * [WLA-DX](https://github.com/vhelin/wla-dx) v9.11
-** For Seasons to build properly, use [this branch](https://github.com/Drenn1/wla-dx/tree/emptyfill-banknumber). Otherwise, empty space won't be filled with the correct values (but the game will still work).
-* [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
+* Windows only: Must use either Windows Subsystem for Linux or
+  [Cygwin](http://cygwin.com/install.html).
+
+Note: WLA v9.11 will not produce an exact matching Seasons ROM due to quirks with how empty space is handled. Use [this branch](https://github.com/Drenn1/wla-dx/tree/emptyfill-banknumber) if you want an exact copy of the Seasons ROM. The game will still work either way, though.
 
 
 # Build instructions
@@ -31,7 +36,7 @@ instead of "precompressed".
 There are 4 build directories (for ages and seasons, vanilla or editable) which are
 symlinked to the "build" directory depending on which game is built for which mode.
 
-[See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_ages-disasm) for detailed
+[See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_oracles-disasm) for detailed
 setup instructions.
 
 
@@ -103,10 +108,10 @@ decode and encode the image properly.
 # Disclaimer
 
 The reverse-engineered code and assets in this repository belong largely to
-Capcom and Nintendo. While I don't claim to have any legal standing to dictate
-how it may be used, I strongly disavow its use for any commercial purposes. The
-purpose of this project is to research the inner workings of the Zelda Oracle
-games and facilitate the creation of non-commercial ROM hacks.
+Capcom and Nintendo. While I can't really stop you from doing what you want with
+it, I strongly disavow its use for any commercial purposes. The purpose of this
+project is to research the inner workings of the Zelda Oracle games and
+facilitate the creation of non-commercial ROM hacks.
 
 Scripts which do not contain any Nintendo/Capcom code (ie. python scripts in the
 "tools/" folder) may be considered "public domain" unless stated otherwise.
