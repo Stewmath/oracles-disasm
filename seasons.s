@@ -227,19 +227,21 @@
 .BANK $0c SLOT 1
 .ORG 0
 
-.section Enemy_Code_Bank0c
+m_section_free Enemy_Code_Bank0c NAMESPACE bank0c
 
 	.include "code/enemyCommon.s"
 	.include "object_code/common/enemyCode/group1.s"
 	.include "object_code/seasons/enemyCode/bank0c.s"
-	.include "build/data/enemyAnimations.s"
+.ends
 
+m_section_superfree Enemy_Animations
+	.include "build/data/enemyAnimations.s"
 .ends
 
 .BANK $0d SLOT 1
 .ORG 0
 
-.section Enemy_Code_Bank0d
+m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
 	.include "code/enemyCommon.s"
 	.include "object_code/common/enemyCode/group2.s"
@@ -253,10 +255,11 @@
 
 .ends
 
+
 .BANK $0e SLOT 1
 .ORG 0
 
-.section Enemy_Code_Bank0e
+m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
@@ -267,7 +270,7 @@
 .BANK $0f SLOT 1
 .ORG 0
 
-.section Enemy_Code_Bank0f
+m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"

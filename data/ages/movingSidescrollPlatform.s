@@ -3,24 +3,24 @@
 ; ==============================================================================
 
 movingSidescrollPlatformScriptTable:
-	.dw _movingSidescrollPlatformScript_subid00
-	.dw _movingSidescrollPlatformScript_subid01
-	.dw _movingSidescrollPlatformScript_subid02
-	.dw _movingSidescrollPlatformScript_subid03
-	.dw _movingSidescrollPlatformScript_subid04
-	.dw _movingSidescrollPlatformScript_subid05
-	.dw _movingSidescrollPlatformScript_subid06
-	.dw _movingSidescrollPlatformScript_subid07
-	.dw _movingSidescrollPlatformScript_subid08
-	.dw _movingSidescrollPlatformScript_subid09
-	.dw _movingSidescrollPlatformScript_subid0a
-	.dw _movingSidescrollPlatformScript_subid0b
-	.dw _movingSidescrollPlatformScript_subid0c
-	.dw _movingSidescrollPlatformScript_subid0d
-	.dw _movingSidescrollPlatformScript_subid0e
+	.dw movingSidescrollPlatformScript_subid00
+	.dw movingSidescrollPlatformScript_subid01
+	.dw movingSidescrollPlatformScript_subid02
+	.dw movingSidescrollPlatformScript_subid03
+	.dw movingSidescrollPlatformScript_subid04
+	.dw movingSidescrollPlatformScript_subid05
+	.dw movingSidescrollPlatformScript_subid06
+	.dw movingSidescrollPlatformScript_subid07
+	.dw movingSidescrollPlatformScript_subid08
+	.dw movingSidescrollPlatformScript_subid09
+	.dw movingSidescrollPlatformScript_subid0a
+	.dw movingSidescrollPlatformScript_subid0b
+	.dw movingSidescrollPlatformScript_subid0c
+	.dw movingSidescrollPlatformScript_subid0d
+	.dw movingSidescrollPlatformScript_subid0e
 
 
-_movingSidescrollPlatformScript_subid00:
+movingSidescrollPlatformScript_subid00:
 	.db SPEED_80
 	.db $04
 @@loop:
@@ -29,7 +29,7 @@ _movingSidescrollPlatformScript_subid00:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid01:
+movingSidescrollPlatformScript_subid01:
 	.db SPEED_80
 	.db $04
 @@loop:
@@ -38,7 +38,7 @@ _movingSidescrollPlatformScript_subid01:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid02:
+movingSidescrollPlatformScript_subid02:
 	.db SPEED_80
 	.db $00
 @@loop:
@@ -48,7 +48,7 @@ _movingSidescrollPlatformScript_subid02:
 	ms_left  $30
 	ms_loop  @@loop
 
-_movingSidescrollPlatformScript_subid03:
+movingSidescrollPlatformScript_subid03:
 
 	.db SPEED_80
 	.db $00
@@ -60,7 +60,7 @@ _movingSidescrollPlatformScript_subid03:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid04:
+movingSidescrollPlatformScript_subid04:
 	.db SPEED_80
 	.db $02
 @@loop:
@@ -69,7 +69,7 @@ _movingSidescrollPlatformScript_subid04:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid05:
+movingSidescrollPlatformScript_subid05:
 	.db SPEED_80
 	.db $02
 @@loop:
@@ -94,7 +94,7 @@ movingSidescrollConveyorScriptTable: ; INTERACID_MOVING_SIDESCROLL_CONVEYOR
 
 
 
-_movingSidescrollPlatformScript_subid06:
+movingSidescrollPlatformScript_subid06:
 	.db SPEED_80
 	.db $04
 @@loop:
@@ -103,7 +103,7 @@ _movingSidescrollPlatformScript_subid06:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid07:
+movingSidescrollPlatformScript_subid07:
 	.db SPEED_80
 	.db $04
 @@loop:
@@ -112,7 +112,7 @@ _movingSidescrollPlatformScript_subid07:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid08:
+movingSidescrollPlatformScript_subid08:
 	.db SPEED_80
 	.db $04
 @@loop:
@@ -121,7 +121,7 @@ _movingSidescrollPlatformScript_subid08:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid09:
+movingSidescrollPlatformScript_subid09:
 	.db SPEED_80
 	.db $04
 @@loop:
@@ -130,7 +130,7 @@ _movingSidescrollPlatformScript_subid09:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid0a:
+movingSidescrollPlatformScript_subid0a:
 	.db SPEED_80
 	.db $01
 @@loop:
@@ -139,7 +139,7 @@ _movingSidescrollPlatformScript_subid0a:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid0b:
+movingSidescrollPlatformScript_subid0b:
 	.db SPEED_80
 	.db $03
 @@loop:
@@ -150,7 +150,7 @@ _movingSidescrollPlatformScript_subid0b:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid0c:
+movingSidescrollPlatformScript_subid0c:
 	.db SPEED_80
 	.db $00
 @@loop:
@@ -160,7 +160,7 @@ _movingSidescrollPlatformScript_subid0c:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid0d:
+movingSidescrollPlatformScript_subid0d:
 	.db SPEED_80
 	.db $00
 @@loop:
@@ -170,7 +170,7 @@ _movingSidescrollPlatformScript_subid0d:
 	ms_loop  @@loop
 
 
-_movingSidescrollPlatformScript_subid0e:
+movingSidescrollPlatformScript_subid0e:
 	.db SPEED_80
 	.db $00
 @@loop:

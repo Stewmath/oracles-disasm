@@ -957,9 +957,9 @@
 ; @subid_07{A seed satchel that slowly falls toward Link. Unused?}
 ; @subid_08{Part of the cutscene where tokays steal your stuff?}
 ; @subid_09{Shovel that Rosa gives to you in linked game}
-; @subid_0a{Flippers treasure (in cheval's grave)}
+; @subid_0a{Bomb treasure (in tokay hut)}
 ; @subid_0b{Cheval rope treasure}
-; @subid_0c{Bomb treasure (in tokay hut)}
+; @subid_0c{Flippers treasure (in cheval's grave)}
 ; @subid_0d{Blocks that move over when pulling lever to get flippers}
 ; @subid_0e{Stone statue of Link that appears unconditionally}
 ; @subid_0f{Switch that opens path to Nuun Highlands}
@@ -2888,7 +2888,7 @@
 .define INTERACID_S_VIRE		$e3
 
 ;;
-.define INTERACID_LINKED_HEROS_CAVE_OLD_MAN	$e3
+.define INTERACID_LINKED_HEROS_CAVE_OLD_MAN	$e3 ; TODO: same as above, is this a typo?
 
 ;;
 ; Interaction to start cutscene of getting Rod of Seasons

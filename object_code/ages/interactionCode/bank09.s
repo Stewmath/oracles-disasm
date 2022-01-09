@@ -51,13 +51,13 @@ interactionCode3e:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _runVeranGhostSubid0
-	.dw _runVeranGhostSubid1
-	.dw _runVeranGhostSubid2
+	.dw runVeranGhostSubid0
+	.dw runVeranGhostSubid1
+	.dw runVeranGhostSubid2
 
 
 ; Cutscene at start of game (unpossessing Impa)
-_runVeranGhostSubid0:
+runVeranGhostSubid0:
 	ld e,Interaction.var39
 	ld a,(de)
 	or a
@@ -215,7 +215,7 @@ _runVeranGhostSubid0:
 
 
 ; Cutscene just before fighting possessed Ambi
-_runVeranGhostSubid1:
+runVeranGhostSubid1:
 	ld a,(wTextIsActive)
 	or a
 	jr nz,+
@@ -226,7 +226,7 @@ _runVeranGhostSubid1:
 
 
 ; Cutscene just after fighting possessed Ambi
-_runVeranGhostSubid2:
+runVeranGhostSubid2:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -454,23 +454,23 @@ interactionCode40:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _soldierSubid00
-	.dw _soldierSubid01
-	.dw _soldierSubid02
-	.dw _soldierSubid03
-	.dw _soldierSubid04
-	.dw _soldierSubid05
-	.dw _soldierSubid06
-	.dw _soldierSubid07
-	.dw _soldierSubid08
-	.dw _soldierSubid09
-	.dw _soldierSubid0a
-	.dw _soldierSubid0b
-	.dw _soldierSubid0c
-	.dw _soldierSubid0d
+	.dw soldierSubid00
+	.dw soldierSubid01
+	.dw soldierSubid02
+	.dw soldierSubid03
+	.dw soldierSubid04
+	.dw soldierSubid05
+	.dw soldierSubid06
+	.dw soldierSubid07
+	.dw soldierSubid08
+	.dw soldierSubid09
+	.dw soldierSubid0a
+	.dw soldierSubid0b
+	.dw soldierSubid0c
+	.dw soldierSubid0d
 
-_soldierSubid00:
-_soldierSubid01:
+soldierSubid00:
+soldierSubid01:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	jp nz,interactionDelete
@@ -479,75 +479,75 @@ _soldierSubid01:
 	call checkGlobalFlag
 	ld e,Interaction.var03
 	ld a,(de)
-	jr nz,_label_09_090
+	jr nz,label_09_090
 	or a
 	jp nz,interactionDelete
-	jr _soldierSubid0c
+	jr soldierSubid0c
 
-_label_09_090:
+label_09_090:
 	or a
 	jp z,interactionDelete
 
 
-_soldierSubid0c:
+soldierSubid0c:
 	call checkInteractionState
-	jr nz,_label_09_092
-	call _soldierInitGraphicsAndLoadScript
-_label_09_092:
+	jr nz,label_09_092
+	call soldierInitGraphicsAndLoadScript
+label_09_092:
 	call interactionRunScript
 	jp c,interactionDelete
 	jp npcFaceLinkAndAnimate
 
 
 ; Palace guards
-_soldierSubid02:
-_soldierSubid09:
+soldierSubid02:
+soldierSubid09:
 	call checkInteractionState
-	jr nz,_label_09_093
-	call _soldierCheckBeatD6
+	jr nz,label_09_093
+	call soldierCheckBeatD6
 	jp nc,interactionDelete
-	call _soldierInitGraphicsAndLoadScript
+	call soldierInitGraphicsAndLoadScript
 	call objectSetVisible82
-_label_09_093:
+label_09_093:
 	call objectCheckWithinScreenBoundary
 	jp nc,interactionDelete
-	call _soldierUpdateAnimationAndRunScript
+	call soldierUpdateAnimationAndRunScript
 	call objectSetPriorityRelativeToLink_withTerrainEffects
 	ld a,GLOBALFLAG_10
 	call checkGlobalFlag
-	jr z,_label_09_094
+	jr z,label_09_094
 	ld a,GLOBALFLAG_0b
 	call checkGlobalFlag
 	ret z
-_label_09_094:
+label_09_094:
 	jp objectPreventLinkFromPassing
 
 
-_soldierSubid03:
+soldierSubid03:
 	call checkInteractionState
-	jr nz,_label_09_095
-	call _soldierCheckBeatD6
+	jr nz,label_09_095
+	call soldierCheckBeatD6
 	jp nc,interactionDelete
-	call _soldierInitGraphicsAndLoadScript
+	call soldierInitGraphicsAndLoadScript
 	jp objectSetVisible82
-_label_09_095:
+label_09_095:
 	call interactionRunScript
 	jp interactionAnimate
 
 
 ; Guard who gives bombs to Link
-_soldierSubid04:
+soldierSubid04:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _soldierCheckBeatD6
+	call soldierCheckBeatD6
 	jp nc,interactionDelete
 	ld a,GLOBALFLAG_0b
 	call checkGlobalFlag
 	jp nz,interactionDelete
 
-	call _soldierInitGraphicsAndLoadScript
+	call soldierInitGraphicsAndLoadScript
 	ld e,Interaction.oamFlags
 	ld a,$03
 	ld (de),a
@@ -557,16 +557,16 @@ _soldierSubid04:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _soldierSubid04Substate0
-	.dw _soldierSubid04Substate1
-	.dw _soldierSubid04Substate2
-	.dw _soldierSubid04Substate3
-	.dw _soldierSubid04Substate4
+	.dw soldierSubid04Substate0
+	.dw soldierSubid04Substate1
+	.dw soldierSubid04Substate2
+	.dw soldierSubid04Substate3
+	.dw soldierSubid04Substate4
 
-_soldierSubid04Substate0:
+soldierSubid04Substate0:
 	ld a,($cfd1)
 	cp $06
-	jr nz,_soldierUpdateAnimationAndRunScript
+	jr nz,soldierUpdateAnimationAndRunScript
 
 	call interactionIncSubstate
 	ld l,Interaction.counter1
@@ -574,11 +574,11 @@ _soldierSubid04Substate0:
 	xor a
 	jp interactionSetAnimation
 
-_soldierUpdateAnimationAndRunScript:
+soldierUpdateAnimationAndRunScript:
 	call interactionAnimateBasedOnSpeed
 	jp interactionRunScript
 
-_soldierSubid04Substate1:
+soldierSubid04Substate1:
 	call interactionAnimate
 	call interactionDecCounter1
 	ret nz
@@ -588,7 +588,7 @@ _soldierSubid04Substate1:
 	ld a,SND_JUMP
 	jp playSound
 
-_soldierSubid04Substate2:
+soldierSubid04Substate2:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -598,7 +598,7 @@ _soldierSubid04Substate2:
 	ld a,$02
 	jp interactionSetAnimation
 
-_soldierSubid04Substate3:
+soldierSubid04Substate3:
 	call interactionDecCounter1
 	ret nz
 	ld l,Interaction.angle
@@ -607,7 +607,7 @@ _soldierSubid04Substate3:
 	ld (hl),SPEED_200
 	jp interactionIncSubstate
 
-_soldierSubid04Substate4:
+soldierSubid04Substate4:
 	call objectApplySpeed
 	call objectCheckWithinScreenBoundary
 	jp nc,interactionDelete
@@ -615,19 +615,19 @@ _soldierSubid04Substate4:
 
 
 ; Guard escorting Link in intermediate screens (just moves straight up)
-_soldierSubid05:
+soldierSubid05:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _soldierCheckBeatD6
+	call soldierCheckBeatD6
 	jp nc,interactionDelete
 
 	ld a,GLOBALFLAG_0b
 	call checkGlobalFlag
 	jp nz,interactionDelete
 
-	call _soldierInitGraphicsAndLoadScript
+	call soldierInitGraphicsAndLoadScript
 	xor a
 	call interactionSetAnimation
 	ld hl,w1Link.xh
@@ -650,17 +650,17 @@ _soldierSubid05:
 
 
 ; Guard in cutscene who takes mystery seeds from Link
-_soldierSubid06:
+soldierSubid06:
 	call checkInteractionState
 	jr nz,@state1
 
-	call _soldierCheckBeatD6
+	call soldierCheckBeatD6
 	jp nc,interactionDelete
 	ld a,GLOBALFLAG_0b
 	call checkGlobalFlag
 	jp nz,interactionDelete
 
-	call _soldierInitGraphicsAndLoadScript
+	call soldierInitGraphicsAndLoadScript
 	xor a
 	call interactionSetAnimation
 	jp objectSetVisible82
@@ -681,18 +681,18 @@ _soldierSubid06:
 	call interactionIncSubstate
 
 @substate1:
-	jp _soldierUpdateAnimationAndRunScript
+	jp soldierUpdateAnimationAndRunScript
 
 
 ; Guard just after Link is escorted out of the palace
-_soldierSubid07:
+soldierSubid07:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _soldierCheckBeatD6
+	call soldierCheckBeatD6
 	jp nc,interactionDelete
-	call _soldierInitGraphicsAndLoadScript
+	call soldierInitGraphicsAndLoadScript
 	jp objectSetVisible82
 
 @state1:
@@ -701,12 +701,12 @@ _soldierSubid07:
 
 
 ; Used in a cutscene? (doesn't do anything)
-_soldierSubid08:
+soldierSubid08:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _soldierInitGraphics
+	call soldierInitGraphics
 	ld l,Interaction.oamFlags
 	ld (hl),$03
 	jp objectSetVisible82
@@ -717,19 +717,19 @@ _soldierSubid08:
 
 
 ; Red soldier that brings you to Ambi (escorts you from deku forest)
-_soldierSubid0a:
+soldierSubid0a:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _soldierInitGraphicsAndLoadScript
+	call soldierInitGraphicsAndLoadScript
 	ld l,Interaction.oamFlags
 	ld (hl),$02
 	ld bc,$68f0
 	jp interactionSetPosition
 
 @state1:
-	call _soldierUpdateAnimationAndRunScript
+	call soldierUpdateAnimationAndRunScript
 	ret nc
 	ld hl,wcc05
 	set 1,(hl)
@@ -741,7 +741,7 @@ _soldierSubid0a:
 
 
 ; Red soldier that brings you to Ambi (just standing there after taking you)
-_soldierSubid0b:
+soldierSubid0b:
 	call checkInteractionState
 	jp nz,interactionAnimate
 
@@ -754,7 +754,7 @@ _soldierSubid0b:
 	call checkTreasureObtained
 	jp nc,interactionDelete
 
-	call _soldierInitGraphics
+	call soldierInitGraphics
 	ld l,Interaction.oamFlags
 	ld (hl),$02
 	ld a,$01
@@ -763,7 +763,7 @@ _soldierSubid0b:
 
 
 ; Friendly soldier after finishing game. var03 is soldier index.
-_soldierSubid0d:
+soldierSubid0d:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -772,7 +772,7 @@ _soldierSubid0d:
 	call checkGlobalFlag
 	jp z,interactionDelete
 
-	call _soldierInitGraphicsAndLoadScript
+	call soldierInitGraphicsAndLoadScript
 	ld e,Interaction.var03
 	ld a,(de)
 	ld l,Interaction.oamFlags
@@ -814,18 +814,18 @@ _soldierSubid0d:
 	jp interactionPushLinkAwayAndUpdateDrawPriority
 
 
-_soldierInitGraphics:
+soldierInitGraphics:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
 	jp interactionIncState
 
 
-_soldierInitGraphicsAndLoadScript:
+soldierInitGraphicsAndLoadScript:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_soldierScriptTable
+	ld hl,soldierScriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -846,7 +846,7 @@ linkExitPalaceSimulatedInput
 
 ;;
 ; @param[out]	cflag	nc if dungeon 6 is beaten (can enter the palace)
-_soldierCheckBeatD6:
+soldierCheckBeatD6:
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
 	jr nc,++
@@ -857,7 +857,7 @@ _soldierCheckBeatD6:
 	scf
 	ret
 
-_soldierScriptTable:
+soldierScriptTable:
 	.dw mainScripts.soldierSubid00Script
 	.dw mainScripts.soldierSubid01Script
 	.dw mainScripts.soldierSubid02Script
@@ -1472,7 +1472,7 @@ getGameProgress_2:
 
 
 ;;
-_unusedFunc5598:
+unusedFunc5598:
 	ld a,b
 	ld hl,lynnaMan2ScriptTable
 	rst_addDoubleIndex
@@ -1706,7 +1706,7 @@ interactionCode48:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _tokayState1
+	.dw tokayState1
 
 @state0:
 	ld a,$01
@@ -1782,7 +1782,7 @@ interactionCode48:
 
 	xor a
 	call interactionSetAnimation
-	call _tokayLoadScript
+	call tokayLoadScript
 
 	; Set the Link object to run the cutscene where he gets mugged
 	ld a,SPECIALOBJECTID_LINK_CUTSCENE
@@ -1802,12 +1802,12 @@ interactionCode48:
 	call getThisRoomFlags
 	bit 6,a
 	jp nz,@deleteSelf
-	jp _tokayLoadScript
+	jp tokayLoadScript
 
 
 ; NPC holding shield upgrade
 @initSubid1d:
-	call _tokayLoadScript
+	call tokayLoadScript
 	call getThisRoomFlags
 	bit 6,a
 	ld a,$02
@@ -1829,7 +1829,7 @@ interactionCode48:
 	inc l
 	ld (hl),b ; [subid] = b (graphic for the accessory)
 	dec l
-	call _tokayInitAccessory
+	call tokayInitAccessory
 
 	ld a,$06
 	jp interactionSetAnimation
@@ -1845,7 +1845,7 @@ interactionCode48:
 @initSubid08:
 @initSubid09:
 @initSubid0a:
-	call _tokayLoadScript
+	call tokayLoadScript
 
 	; Set var03 to the item being held
 	ld h,d
@@ -1914,7 +1914,7 @@ interactionCode48:
 	ld (hl),b
 	sub $06
 	ld b,a
-	jp _tokayInitHeldItem
+	jp tokayInitHeldItem
 
 @@retrievedItem:
 	ld a,$02
@@ -1978,8 +1978,8 @@ interactionCode48:
 ; NPC who trades meat for stink bag
 @initSubid05:
 	call interactionSetAlwaysUpdateBit
-	call _tokayLoadScript
-	jp _tokayState1
+	call tokayLoadScript
+	jp tokayState1
 
 
 @deleteSelf:
@@ -2001,7 +2001,7 @@ interactionCode48:
 
 	ld a,$01
 	ld (wDiggingUpEnemiesForbidden),a
-	jp _tokayLoadScript
+	jp tokayLoadScript
 
 
 ; Participant in Wild Tokay game
@@ -2066,7 +2066,7 @@ interactionCode48:
 	ld h,d
 	ld l,Interaction.oamFlags
 	ld (hl),$03
-	jp _tokayLoadScript
+	jp tokayLoadScript
 
 
 ; Generic NPCs
@@ -2085,7 +2085,7 @@ interactionCode48:
 	ld e,Interaction.textID
 	ld a,(hl)
 	ld (de),a
-	jp _tokayLoadScript
+	jp tokayLoadScript
 
 @textIndices:
 	.db <TX_0a64 ; Subid $12
@@ -2100,7 +2100,7 @@ interactionCode48:
 ; Present NPC in charge of the wild tokay museum
 @initSubid19:
 	call @initSubid0d
-	jp _tokayLoadScript
+	jp tokayLoadScript
 
 
 ; Subid $1a-$ac: Tokay "statues" in the wild tokay museum
@@ -2117,7 +2117,7 @@ interactionCode48:
 @initSubid1c:
 	ld a,$09
 	call interactionSetAnimation
-	call _tokayInitMeatAccessory
+	call tokayInitMeatAccessory
 
 @initSubid1b:
 	ret
@@ -2128,73 +2128,73 @@ interactionCode48:
 	ld e,Interaction.textID
 	ld a,<TX_0a6c
 	ld (de),a
-	jp _tokayLoadScript
+	jp tokayLoadScript
 
 
 
 
-_tokayState1:
+tokayState1:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _tokayRunSubid00
-	.dw _tokayRunSubid01
-	.dw _tokayRunSubid02
-	.dw _tokayRunSubid03
-	.dw _tokayRunSubid04
-	.dw _tokayRunSubid05
-	.dw _tokayRunSubid06
-	.dw _tokayRunSubid07
-	.dw _tokayRunSubid08
-	.dw _tokayRunSubid09
-	.dw _tokayRunSubid0a
-	.dw _tokayRunSubid0b
-	.dw _tokayRunSubid0c
-	.dw _tokayRunSubid0d
-	.dw _tokayRunSubid0e
-	.dw _tokayRunSubid0f
-	.dw _tokayRunSubid10
-	.dw _tokayRunSubid11
-	.dw _tokayRunSubid12
-	.dw _tokayRunSubid13
-	.dw _tokayRunSubid14
-	.dw _tokayRunSubid15
-	.dw _tokayRunSubid16
-	.dw _tokayRunSubid17
-	.dw _tokayRunSubid18
-	.dw _tokayRunSubid19
-	.dw _tokayRunSubid1a
-	.dw _tokayRunSubid1b
-	.dw _tokayRunSubid1c
-	.dw _tokayRunSubid1d
-	.dw _tokayRunSubid1e
-	.dw _tokayRunSubid1f
+	.dw tokayRunSubid00
+	.dw tokayRunSubid01
+	.dw tokayRunSubid02
+	.dw tokayRunSubid03
+	.dw tokayRunSubid04
+	.dw tokayRunSubid05
+	.dw tokayRunSubid06
+	.dw tokayRunSubid07
+	.dw tokayRunSubid08
+	.dw tokayRunSubid09
+	.dw tokayRunSubid0a
+	.dw tokayRunSubid0b
+	.dw tokayRunSubid0c
+	.dw tokayRunSubid0d
+	.dw tokayRunSubid0e
+	.dw tokayRunSubid0f
+	.dw tokayRunSubid10
+	.dw tokayRunSubid11
+	.dw tokayRunSubid12
+	.dw tokayRunSubid13
+	.dw tokayRunSubid14
+	.dw tokayRunSubid15
+	.dw tokayRunSubid16
+	.dw tokayRunSubid17
+	.dw tokayRunSubid18
+	.dw tokayRunSubid19
+	.dw tokayRunSubid1a
+	.dw tokayRunSubid1b
+	.dw tokayRunSubid1c
+	.dw tokayRunSubid1d
+	.dw tokayRunSubid1e
+	.dw tokayRunSubid1f
 
 
 ; Tokays in cutscene who steal your stuff
-_tokayRunSubid00:
-_tokayRunSubid01:
-_tokayRunSubid02:
-_tokayRunSubid03:
-_tokayRunSubid04:
+tokayRunSubid00:
+tokayRunSubid01:
+tokayRunSubid02:
+tokayRunSubid03:
+tokayRunSubid04:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _tokayThiefSubstate0
-	.dw _tokayThiefSubstate1
-	.dw _tokayThiefSubstate2
-	.dw _tokayThiefSubstate3
-	.dw _tokayThiefSubstate4
-	.dw _tokayThiefSubstate5
-	.dw _tokayThiefSubstate6
+	.dw tokayThiefSubstate0
+	.dw tokayThiefSubstate1
+	.dw tokayThiefSubstate2
+	.dw tokayThiefSubstate3
+	.dw tokayThiefSubstate4
+	.dw tokayThiefSubstate5
+	.dw tokayThiefSubstate6
 
 
 ; Substate 0: In the process of removing items from Link's inventory
-_tokayThiefSubstate0:
+tokayThiefSubstate0:
 	ld e,Interaction.subid
 	ld a,(de)
 	cp $02
-	call z,_tokayThief_countdownToStealNextItem
+	call z,tokayThief_countdownToStealNextItem
 
 	ld e,Interaction.var39
 	ld a,(de)
@@ -2226,12 +2226,12 @@ _tokayThiefSubstate0:
 ; Sets up the graphics for the item that the tokay is holding (ie. shovel, sword)
 ;
 ; @param	b	Held item index (0-4)
-_tokayInitHeldItem:
+tokayInitHeldItem:
 	call getFreeInteractionSlot
 	ret nz
 	inc l
 	ld a,b
-	ld bc,_tokayItemGraphics
+	ld bc,tokayItemGraphics
 	call addAToBc
 	ld a,(bc)
 	ldd (hl),a
@@ -2239,7 +2239,7 @@ _tokayInitHeldItem:
 ;;
 ; @param	hl	Pointer to an object which will be set to type
 ;			INTERACID_ACCESSORY.
-_tokayInitAccessory:
+tokayInitAccessory:
 	ld (hl),INTERACID_ACCESSORY
 	ld l,Interaction.relatedObj1
 	ld (hl),Interaction.enabled
@@ -2247,14 +2247,14 @@ _tokayInitAccessory:
 	ld (hl),d
 	ret
 
-_tokayItemGraphics:
+tokayItemGraphics:
 	.db $10 $1b $68 $31 $20
 
 
 ;;
 ; This function counts down a timer in var38, and removes the next item from Link's
 ; inventory once it hits zero. The next item index to steal is var3a.
-_tokayThief_countdownToStealNextItem:
+tokayThief_countdownToStealNextItem:
 	ld h,d
 	ld l,Interaction.var38
 	dec (hl)
@@ -2283,7 +2283,7 @@ _tokayThief_countdownToStealNextItem:
 	jp playSound
 
 
-_tokayThiefSubstate1:
+tokayThiefSubstate1:
 	call interactionDecCounter1
 	ret nz
 
@@ -2298,7 +2298,7 @@ _tokayThiefSubstate1:
 	jp interactionIncSubstate
 
 
-_tokayThiefSubstate2:
+tokayThiefSubstate2:
 	call interactionAnimate3Times
 	call interactionDecCounter1
 	ret nz
@@ -2309,7 +2309,7 @@ _tokayThiefSubstate2:
 	ld l,Interaction.speed
 	ld (hl),SPEED_280
 
-_tokayThief_jump:
+tokayThief_jump:
 	call interactionIncSubstate
 
 	ld bc,-$1c0
@@ -2326,7 +2326,7 @@ _tokayThief_jump:
 	jp playSound
 
 
-_tokayThiefSubstate3:
+tokayThiefSubstate3:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jp nz,objectApplySpeed
@@ -2338,14 +2338,14 @@ _tokayThiefSubstate3:
 	jp interactionSetAnimation
 
 
-_tokayThiefSubstate4:
+tokayThiefSubstate4:
 	call interactionDecCounter1
 	ret nz
-	jr _tokayThief_jump
+	jr tokayThief_jump
 
 
 ; Wait for tokay to exit screen
-_tokayThiefSubstate5:
+tokayThiefSubstate5:
 	call objectApplySpeed
 	call objectCheckWithinScreenBoundary
 	jr c,@updateSpeedZ
@@ -2370,7 +2370,7 @@ _tokayThiefSubstate5:
 
 
 ; Wait for a bit before restoring control to Link
-_tokayThiefSubstate6:
+tokayThiefSubstate6:
 	call interactionDecCounter1
 	ret nz
 
@@ -2391,7 +2391,7 @@ _tokayThiefSubstate6:
 
 
 ; NPC who trades meat for stink bag
-_tokayRunSubid05:
+tokayRunSubid05:
 	call interactionRunScript
 	jp c,interactionDelete
 
@@ -2400,18 +2400,18 @@ _tokayRunSubid05:
 	or a
 	jp z,npcFaceLinkAndAnimate
 
-	call _tokayRunStinkBagCutscene
+	call tokayRunStinkBagCutscene
 	call interactionAnimate
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
 
 
 ; NPC holding something (ie. shovel, harp, shield upgrade).
-_tokayRunSubid06:
-_tokayRunSubid07:
-_tokayRunSubid08:
-_tokayRunSubid09:
-_tokayRunSubid0a:
-_tokayRunSubid1d:
+tokayRunSubid06:
+tokayRunSubid07:
+tokayRunSubid08:
+tokayRunSubid09:
+tokayRunSubid0a:
+tokayRunSubid1d:
 	call interactionRunScript
 	ld e,Interaction.var3b
 	ld a,(de)
@@ -2421,26 +2421,26 @@ _tokayRunSubid1d:
 
 
 ; Linked game cutscene where tokay runs away from Rosa
-_tokayRunSubid0b:
+tokayRunSubid0b:
 	call interactionRunScript
 	jp c,interactionDelete
 	jp interactionAnimateBasedOnSpeed
 
 
 ; Participant in Wild Tokay game
-_tokayRunSubid0c:
+tokayRunSubid0c:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _wildTokayParticipantSubstate0
-	.dw _wildTokayParticipantSubstate1
-	.dw _wildTokayParticipantSubstate2
+	.dw wildTokayParticipantSubstate0
+	.dw wildTokayParticipantSubstate1
+	.dw wildTokayParticipantSubstate2
 
 
-_wildTokayParticipantSubstate0:
-	call _wildTokayParticipant_checkGrabMeat
+wildTokayParticipantSubstate0:
+	call wildTokayParticipant_checkGrabMeat
 
-_wildTokayParticipantSubstate2:
+wildTokayParticipantSubstate2:
 	call objectApplySpeed
 	ld e,Interaction.yh
 	ld a,(de)
@@ -2481,7 +2481,7 @@ _wildTokayParticipantSubstate2:
 	jp interactionDelete
 
 ;;
-_wildTokayParticipant_checkGrabMeat:
+wildTokayParticipant_checkGrabMeat:
 	; Check that Link's throwing an item
 	ld a,(w1ReservedItemC.enabled)
 	or a
@@ -2531,7 +2531,7 @@ _wildTokayParticipant_checkGrabMeat:
 
 ;;
 ; Creates a graphic of "held meat" for a tokay.
-_tokayInitMeatAccessory:
+tokayInitMeatAccessory:
 	call getFreeInteractionSlot
 	ret nz
 
@@ -2552,7 +2552,7 @@ _tokayInitMeatAccessory:
 	ret
 
 
-_wildTokayParticipantSubstate1:
+wildTokayParticipantSubstate1:
 	call interactionDecCounter1
 	ret nz
 	jp interactionIncSubstate
@@ -2560,8 +2560,8 @@ _wildTokayParticipantSubstate1:
 
 
 ; Past and present NPCs in charge of wild tokay game
-_tokayRunSubid0d:
-_tokayRunSubid19:
+tokayRunSubid0d:
+tokayRunSubid19:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -2610,12 +2610,12 @@ _tokayRunSubid19:
 
 
 ; Subids $0f-$10: Tokays who try to eat Dimitri
-_tokayRunSubid0f:
+tokayRunSubid0f:
 	ld a,(wScrollMode)
 	and $0e
 	ret nz
 
-_tokayRunSubid10:
+tokayRunSubid10:
 	ld a,(w1Companion.var3e)
 	and $04
 	jr nz,++
@@ -2623,8 +2623,8 @@ _tokayRunSubid10:
 
 
 ; Shopkeeper, and past NPC looking after scent seedling
-_tokayRunSubid0e:
-_tokayRunSubid11:
+tokayRunSubid0e:
+tokayRunSubid11:
 	call interactionAnimateAsNpc
 ++
 	call interactionRunScript
@@ -2633,7 +2633,7 @@ _tokayRunSubid11:
 
 
 ; Present NPC who talks to you after climbing down vine
-_tokayRunSubid1e:
+tokayRunSubid1e:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	call interactionAnimateAsNpc
@@ -2651,22 +2651,22 @@ _tokayRunSubid1e:
 
 
 ; Subids $12-$18 and $1f: Generic NPCs
-_tokayRunSubid12:
-_tokayRunSubid13:
-_tokayRunSubid14:
-_tokayRunSubid15:
-_tokayRunSubid16:
-_tokayRunSubid17:
-_tokayRunSubid18:
-_tokayRunSubid1f:
+tokayRunSubid12:
+tokayRunSubid13:
+tokayRunSubid14:
+tokayRunSubid15:
+tokayRunSubid16:
+tokayRunSubid17:
+tokayRunSubid18:
+tokayRunSubid1f:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
 
 
 ; Subids $1a-$1c: Tokay "statues" in the wild tokay museum
-_tokayRunSubid1a:
-_tokayRunSubid1b:
-_tokayRunSubid1c:
+tokayRunSubid1a:
+tokayRunSubid1b:
+tokayRunSubid1c:
 	ld a,(wTmpcfc0.wildTokay.inPresent)
 	or a
 	ret z
@@ -2678,7 +2678,7 @@ _tokayRunSubid1c:
 ;
 ; On return, var3e will be 0 if he's currently at his starting position, otherwise it will
 ; be 1.
-_tokayRunStinkBagCutscene:
+tokayRunStinkBagCutscene:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -2793,7 +2793,7 @@ _tokayRunStinkBagCutscene:
 	jp @beginNextJump
 
 ;;
-_tokayLoadScript:
+tokayLoadScript:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld hl,tokayScriptTable
@@ -2847,45 +2847,45 @@ interactionCode49:
 	ld a,(de)
 	ld e,Interaction.state
 	rst_jumpTable
-	.dw _forestFairy_subid00
-	.dw _forestFairy_subid01
-	.dw _forestFairy_subid02
-	.dw _forestFairy_subid03
-	.dw _forestFairy_subid04
-	.dw _forestFairy_subid05
-	.dw _forestFairy_subid06
-	.dw _forestFairy_subid07
-	.dw _forestFairy_subid08
-	.dw _forestFairy_subid09
-	.dw _forestFairy_subid0a
-	.dw _forestFairy_subid0b
-	.dw _forestFairy_subid0c
-	.dw _forestFairy_subid0d
-	.dw _forestFairy_subid0e
-	.dw _forestFairy_subid0f
-	.dw _forestFairy_subid10
+	.dw forestFairy_subid00
+	.dw forestFairy_subid01
+	.dw forestFairy_subid02
+	.dw forestFairy_subid03
+	.dw forestFairy_subid04
+	.dw forestFairy_subid05
+	.dw forestFairy_subid06
+	.dw forestFairy_subid07
+	.dw forestFairy_subid08
+	.dw forestFairy_subid09
+	.dw forestFairy_subid0a
+	.dw forestFairy_subid0b
+	.dw forestFairy_subid0c
+	.dw forestFairy_subid0d
+	.dw forestFairy_subid0e
+	.dw forestFairy_subid0f
+	.dw forestFairy_subid10
 
-_forestFairy_subid00:
+forestFairy_subid00:
 	ld a,(de)
 	rst_jumpTable
-	.dw _forestFairy_subid00State0
-	.dw _forestFairy_subid00State1
-	.dw _forestFairy_subid00State2
-	.dw _forestFairy_subid00State3
-	.dw _forestFairy_deleteSelf
+	.dw forestFairy_subid00State0
+	.dw forestFairy_subid00State1
+	.dw forestFairy_subid00State2
+	.dw forestFairy_subid00State3
+	.dw forestFairy_deleteSelf
 
 
-_forestFairy_subid00State0:
-_forestFairy_subid03State0:
-_forestFairy_subid04State0:
+forestFairy_subid00State0:
+forestFairy_subid03State0:
+forestFairy_subid04State0:
 	call interactionInitGraphics
-	call _forestFairy_initCollisionRadiusAndSetZAndIncState
+	call forestFairy_initCollisionRadiusAndSetZAndIncState
 	ld l,Interaction.speed
 	ld (hl),SPEED_200
 	ld l,Interaction.var3a
 	ld (hl),$5a
 
-_forestFairy_loadMovementPreset:
+forestFairy_loadMovementPreset:
 	ld e,Interaction.var03
 	ld a,(de)
 	add a
@@ -2971,7 +2971,7 @@ _forestFairy_loadMovementPreset:
 	.db $86 $53 $91 $39
 
 
-_forestFairy_subid00State1:
+forestFairy_subid00State1:
 	ld h,d
 	ld l,Interaction.var38
 	ld b,(hl)
@@ -3034,7 +3034,7 @@ _forestFairy_subid00State1:
 
 @label_09_164:
 	call interactionDecCounter1
-	jr nz,_forestFairy_updateMovement
+	jr nz,forestFairy_updateMovement
 
 	inc l
 	ldd a,(hl)
@@ -3042,23 +3042,23 @@ _forestFairy_subid00State1:
 	call objectGetRelativeAngleWithTempVars
 	call objectNudgeAngleTowards
 
-_forestFairy_updateMovement:
+forestFairy_updateMovement:
 	call objectApplySpeed
 	ld a,(wFrameCounter)
 	and $1f
 	ld a,SND_MAGIC_POWDER
 	call z,playSound
 
-_forestFairy_animate:
+forestFairy_animate:
 	call interactionAnimate
 	or d
 	ret
 
 
-_forestFairy_subid00State2:
+forestFairy_subid00State2:
 	ld a,(wTmpcfc0.fairyHideAndSeek.cfd2)
 	or a
-	jr nz,_forestFairy_animate
+	jr nz,forestFairy_animate
 
 	ld e,Interaction.var03
 	ld a,(de)
@@ -3068,15 +3068,15 @@ _forestFairy_subid00State2:
 	add $06
 	ld (de),a
 	call interactionIncState
-	jp _forestFairy_loadMovementPreset
+	jp forestFairy_loadMovementPreset
 
 @createPuffAndDelete:
 	call objectCreatePuff
-	jr _forestFairy_deleteSelf
+	jr forestFairy_deleteSelf
 
-_forestFairy_subid00State3:
-	call _forestFairy_subid00State1
-	jr c,_forestFairy_deleteSelf
+forestFairy_subid00State3:
+	call forestFairy_subid00State1
+	jr c,forestFairy_deleteSelf
 	ld e,Interaction.yh
 	ld a,(de)
 	cp $80
@@ -3090,11 +3090,11 @@ _forestFairy_subid00State3:
 	ld hl,wTmpcfc0.fairyHideAndSeek.cfd2
 	inc (hl)
 
-_forestFairy_deleteSelf:
+forestFairy_deleteSelf:
 	jp interactionDelete
 
 
-_forestFairy_subid01:
+forestFairy_subid01:
 	ld a,(de)
 	or a
 	jr z,@stateZero
@@ -3118,7 +3118,7 @@ _forestFairy_subid01:
 	ld a,($cfd1)
 	call getNumSetBits
 	dec a
-	ld hl,_forestFairyDiscoveredScriptTable
+	ld hl,forestFairyDiscoveredScriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -3138,7 +3138,7 @@ _forestFairy_subid01:
 	ld (de),a
 
 	ld a,b
-	ld hl,_forestFairy_discoveredPositions
+	ld hl,forestFairy_discoveredPositions
 	rst_addDoubleIndex
 	ld e,Interaction.yh
 	ldi a,(hl)
@@ -3153,7 +3153,7 @@ _forestFairy_subid01:
 +
 	call interactionSetAnimation
 
-_forestFairy_initCollisionRadiusAndSetZAndIncState:
+forestFairy_initCollisionRadiusAndSetZAndIncState:
 	call interactionIncState
 	ld l,Interaction.collisionRadiusY
 	ld a,$04
@@ -3165,38 +3165,38 @@ _forestFairy_initCollisionRadiusAndSetZAndIncState:
 
 
 ; Scripts used for fairy NPCs after being discovered
-_forestFairyDiscoveredScriptTable:
+forestFairyDiscoveredScriptTable:
 	.dw mainScripts.forestFairyScript_firstDiscovered
 	.dw mainScripts.forestFairyScript_secondDiscovered
 	.dw mainScripts.stubScript
 
-_forestFairy_discoveredPositions:
+forestFairy_discoveredPositions:
 	.db $48 $38
 	.db $48 $68
 	.db $28 $50
 
 
-_forestFairy_subid02:
+forestFairy_subid02:
 	jp interactionDelete
 
-_forestFairy_subid03:
+forestFairy_subid03:
 	ld a,(de)
 	rst_jumpTable
-	.dw _forestFairy_subid03State0
-	.dw _forestFairy_subid03State1
-	.dw _forestFairy_subid03State2
-	.dw _forestFairy_subid03State3
-	.dw _forestFairy_subid00State3
+	.dw forestFairy_subid03State0
+	.dw forestFairy_subid03State1
+	.dw forestFairy_subid03State2
+	.dw forestFairy_subid03State3
+	.dw forestFairy_subid00State3
 
-_forestFairy_subid04:
+forestFairy_subid04:
 	ld a,(de)
 	rst_jumpTable
-	.dw _forestFairy_subid04State0
-	.dw _forestFairy_subid04State1
-	.dw _forestFairy_subid00State3
+	.dw forestFairy_subid04State0
+	.dw forestFairy_subid04State1
+	.dw forestFairy_subid00State3
 
-_forestFairy_subid03State1:
-	call _forestFairy_subid00State1
+forestFairy_subid03State1:
+	call forestFairy_subid00State1
 	ret nc
 	call interactionIncState
 	ld a,$02
@@ -3207,7 +3207,7 @@ _forestFairy_subid03State1:
 	ld (hl),$20
 	ret
 
-_forestFairy_subid03State2:
+forestFairy_subid03State2:
 	ld h,d
 	ld l,Interaction.var3a
 	dec (hl)
@@ -3245,12 +3245,12 @@ _forestFairy_subid03State2:
 	ret
 
 @updateMovement:
-	jp _forestFairy_updateMovement
+	jp forestFairy_updateMovement
 
-_forestFairy_subid03State3:
+forestFairy_subid03State3:
 	ld a,(wTmpcfc0.fairyHideAndSeek.cfd2)
 	or a
-	jp nz,_forestFairy_animate
+	jp nz,forestFairy_animate
 
 	call interactionIncState
 	ld l,Interaction.var03
@@ -3261,7 +3261,7 @@ _forestFairy_subid03State3:
 	ld c,(hl)
 	ld b,a
 	push bc
-	call _forestFairy_loadMovementPreset
+	call forestFairy_loadMovementPreset
 	pop bc
 	ld h,d
 	ld l,Interaction.yh
@@ -3270,20 +3270,20 @@ _forestFairy_subid03State3:
 	ld (hl),c
 	ret
 
-_forestFairy_subid04State1:
+forestFairy_subid04State1:
 	ld a,(wTmpcfc0.fairyHideAndSeek.cfd2)
 	or a
-	jp nz,_forestFairy_animate
+	jp nz,forestFairy_animate
 	call interactionIncState
-	jp _forestFairy_loadMovementPreset
+	jp forestFairy_loadMovementPreset
 
 
 ; Generic NPC (between completing the maze and entering jabu)
-_forestFairy_subid05:
-_forestFairy_subid06:
-_forestFairy_subid07:
+forestFairy_subid05:
+forestFairy_subid06:
+forestFairy_subid07:
 	call checkInteractionState
-	jr nz,_forestFairy_standardUpdate
+	jr nz,forestFairy_standardUpdate
 
 	ld a,GLOBALFLAG_WON_FAIRY_HIDING_GAME
 	call checkGlobalFlag
@@ -3301,12 +3301,12 @@ _forestFairy_subid07:
 	ld e,Interaction.subid
 	ld a,(de)
 	sub $05
-	ld hl,_forestFairy_subid5To7NpcData
+	ld hl,forestFairy_subid5To7NpcData
 	rst_addDoubleIndex
 
 ;;
 ; @param	hl	Pointer to 2 bytes (see example data below)
-_forestFairy_initNpcFromData:
+forestFairy_initNpcFromData:
 	push hl
 	call interactionInitGraphics
 	pop hl
@@ -3342,23 +3342,23 @@ _forestFairy_initNpcFromData:
 ; Index is [subid]-5 (for subids $05-$07).
 ;  b0: Low byte of textID
 ;  b1: oamFlags (bits 0-3), animation index (bits 4-7)
-_forestFairy_subid5To7NpcData:
+forestFairy_subid5To7NpcData:
 	.db <TX_110d, $01
 	.db <TX_1110, $12
 	.db <TX_1113, $13
 
-_forestFairy_standardUpdate:
+forestFairy_standardUpdate:
 	call interactionRunScript
 	call interactionAnimate
 	jp objectPreventLinkFromPassing
 
 
 ; Generic NPC (between jabu and finishing the game)
-_forestFairy_subid08:
-_forestFairy_subid09:
-_forestFairy_subid0a:
+forestFairy_subid08:
+forestFairy_subid09:
+forestFairy_subid0a:
 	call checkInteractionState
-	jr nz,_forestFairy_standardUpdate
+	jr nz,forestFairy_standardUpdate
 
 	ld a,GLOBALFLAG_WON_FAIRY_HIDING_GAME
 	call checkGlobalFlag
@@ -3381,7 +3381,7 @@ _forestFairy_subid0a:
 	sub $08
 	ld hl,@npcData
 	rst_addDoubleIndex
-	jp _forestFairy_initNpcFromData
+	jp forestFairy_initNpcFromData
 
 ; Index is [subid]-8 (for subids $08-$0a).
 ;  b0: Low byte of textID
@@ -3393,9 +3393,9 @@ _forestFairy_subid0a:
 
 
 ; NPC in unlinked game who takes a secret
-_forestFairy_subid0b:
+forestFairy_subid0b:
 	call checkInteractionState
-	jr nz,_forestFairy_standardUpdate
+	jr nz,forestFairy_standardUpdate
 
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
@@ -3417,11 +3417,11 @@ _forestFairy_subid0b:
 
 
 ; Generic NPC (after beating game)
-_forestFairy_subid0c:
-_forestFairy_subid0d:
+forestFairy_subid0c:
+forestFairy_subid0d:
 	call checkInteractionState
-_forestFairy_standardUpdate_2:
-	jr nz,_forestFairy_standardUpdate
+forestFairy_standardUpdate_2:
+	jr nz,forestFairy_standardUpdate
 
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
@@ -3432,7 +3432,7 @@ _forestFairy_standardUpdate_2:
 	sub $0c
 	ld hl,@npcData
 	rst_addDoubleIndex
-	jp _forestFairy_initNpcFromData
+	jp forestFairy_initNpcFromData
 
 ; Index is [subid]-$0c (for subids $0c-$0d).
 ;  b0: Low byte of textID
@@ -3443,11 +3443,11 @@ _forestFairy_standardUpdate_2:
 
 
 ; Generic NPC (while looking for companion trapped in woods)
-_forestFairy_subid0e:
-_forestFairy_subid0f:
-_forestFairy_subid10:
+forestFairy_subid0e:
+forestFairy_subid0f:
+forestFairy_subid10:
 	call checkInteractionState
-	jr nz,_forestFairy_standardUpdate_2
+	jr nz,forestFairy_standardUpdate_2
 
 	ld a,GLOBALFLAG_GOT_FLUTE
 	call checkGlobalFlag
@@ -3466,7 +3466,7 @@ _forestFairy_subid10:
 	sub $0e
 	ld hl,@npcData
 	rst_addDoubleIndex
-	jp _forestFairy_initNpcFromData
+	jp forestFairy_initNpcFromData
 
 ; Index is [subid]-$0e (for subids $0e-$10).
 ;  b0: Low byte of textID
@@ -3519,7 +3519,7 @@ interactionCode4c:
 
 ; Listening to Nayru at the start of the game
 @initSubid00:
-	call _bird_hop
+	call bird_hop
 	ld hl,mainScripts.birdScript_listeningToNayruGameStart
 	jp interactionSetScript
 
@@ -3574,22 +3574,22 @@ interactionCode4c:
 @setAnimation0AndJump:
 	xor a
 	call interactionSetAnimation
-	jp _bird_hop
+	jp bird_hop
 
 
 @state1:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _bird_runSubid0
+	.dw bird_runSubid0
 	.dw interactionAnimate
 	.dw interactionAnimate
 	.dw interactionAnimate
-	.dw _bird_runSubid4
+	.dw bird_runSubid4
 
 
 ; Listening to Nayru at the start of the game
-_bird_runSubid0:
+bird_runSubid0:
 	call interactionAnimateAsNpc
 	ld e,Interaction.substate
 	ld a,(de)
@@ -3611,7 +3611,7 @@ _bird_runSubid0:
 	ld e,Interaction.var37
 	ld a,(de)
 	or a
-	call nz,_bird_updateGravityAndHopWhenHitGround
+	call nz,bird_updateGravityAndHopWhenHitGround
 	jp interactionRunScript
 
 @substate1:
@@ -3622,13 +3622,13 @@ _bird_runSubid0:
 	call interactionIncSubstate
 	ld l,Interaction.counter1
 	ld (hl),$1e
-	call _bird_hop
+	call bird_hop
 	ld a,$02
 	jp interactionSetAnimation
 
 @substate2:
 	call interactionDecCounter1
-	jr nz,_bird_updateGravityAndHopWhenHitGround
+	jr nz,bird_updateGravityAndHopWhenHitGround
 
 	; Begin running away
 	call interactionIncSubstate
@@ -3654,9 +3654,9 @@ _bird_runSubid0:
 
 
 ; Bird with Impa when Zelda gets kidnapped
-_bird_runSubid4:
+bird_runSubid4:
 	call interactionAnimateAsNpc
-	call _bird_updateGravityAndHopWhenHitGround
+	call bird_updateGravityAndHopWhenHitGround
 	call interactionRunScript
 	jp c,interactionDelete
 
@@ -3679,13 +3679,13 @@ _bird_runSubid4:
 	ld (de),a
 	ret
 
-_bird_updateGravityAndHopWhenHitGround:
+bird_updateGravityAndHopWhenHitGround:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
 	ld h,d
 
-_bird_hop:
+bird_hop:
 	ld bc,-$c0
 	jp objectSetSpeedZ
 
@@ -3698,7 +3698,7 @@ interactionCode4d:
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _ambi_state1
+	.dw ambi_state1
 
 @state0:
 	ld a,$01
@@ -3724,8 +3724,8 @@ interactionCode4d:
 	.dw @initSubid05
 	.dw @initSubid06
 	.dw @initSubid07
-	.dw _ambi_loadScript
-	.dw _ambi_ret
+	.dw ambi_loadScript
+	.dw ambi_ret
 	.dw @initSubid0a
 
 
@@ -3733,7 +3733,7 @@ interactionCode4d:
 @initSubid01:
 	ld a,($cfd0)
 	cp $0b
-	jp nz,_ambi_loadScript
+	jp nz,ambi_loadScript
 	call checkIsLinkedGame
 	ret nz
 	ld hl,mainScripts.ambiSubid01Script_part2
@@ -3750,18 +3750,18 @@ interactionCode4d:
 ; Same cutscene as subid $03, but second part
 @initSubid04:
 	callab agesInteractionsBank08.nayruState0@init0e
-	jp _ambi_loadScript
+	jp ambi_loadScript
 
 
 ; Cutscene where you give mystery seeds to Ambi
 @initSubid00:
-	call _soldierCheckBeatD6
+	call soldierCheckBeatD6
 	jp nc,interactionDelete
 
 
 ; Credits cutscene where Ambi observes construction of Link statue
 @initSubid02:
-	jp _ambi_loadScript
+	jp ambi_loadScript
 
 
 ; Cutscene where Ralph confronts Ambi
@@ -3770,7 +3770,7 @@ interactionCode4d:
 	callab agesInteractionsBank08.nayruState0@init0e
 
 	call objectSetVisiblec3
-	jp _ambi_loadScript
+	jp ambi_loadScript
 
 
 ; Cutscene just before fighting possessed Ambi
@@ -3831,7 +3831,7 @@ interactionCode4d:
 
 ; Cutscene where Ambi regains control of herself
 @initSubid07:
-	jp _ambi_loadScript
+	jp ambi_loadScript
 
 @initSubid0a:
 	call checkIsLinkedGame
@@ -3839,31 +3839,31 @@ interactionCode4d:
 	ld hl,wGroup4Flags+$fc
 	bit 7,(hl)
 	jp z,interactionDelete
-	jp _ambi_loadScript
+	jp ambi_loadScript
 
-_ambi_state1:
+ambi_state1:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _ambi_updateAnimationAndRunScript
-	.dw _ambi_runSubid01
-	.dw _ambi_runSubid02
-	.dw _ambi_runSubid03
-	.dw _ambi_runSubid04
-	.dw _ambi_runSubid05
-	.dw _ambi_runSubid06
-	.dw _ambi_runSubid07
-	.dw _ambi_runSubid08
+	.dw ambi_updateAnimationAndRunScript
+	.dw ambi_runSubid01
+	.dw ambi_runSubid02
+	.dw ambi_runSubid03
+	.dw ambi_runSubid04
+	.dw ambi_runSubid05
+	.dw ambi_runSubid06
+	.dw ambi_runSubid07
+	.dw ambi_runSubid08
 	.dw interactionAnimate
-	.dw _ambi_runSubid0a
+	.dw ambi_runSubid0a
 
-_ambi_updateAnimationAndRunScript:
+ambi_updateAnimationAndRunScript:
 	call interactionAnimate
 	jp interactionRunScript
 
 
 ; Cutscene after escaping black tower
-_ambi_runSubid01:
+ambi_runSubid01:
 	call checkIsLinkedGame
 	jr z,@updateSubstate
 	ld a,($cfd0)
@@ -3879,12 +3879,12 @@ _ambi_runSubid01:
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _ambi_updateAnimationAndRunScript
+	.dw ambi_updateAnimationAndRunScript
 
 @substate0:
 	ld a,($cfd0)
 	cp $0e
-	jr nz,_ambi_updateAnimationAndRunScript
+	jr nz,ambi_updateAnimationAndRunScript
 
 	callab agesInteractionsBank08.startJump
 	jp interactionIncSubstate
@@ -3898,12 +3898,12 @@ _ambi_runSubid01:
 	ld l,Interaction.var3e
 	inc (hl)
 
-_ambi_ret:
+ambi_ret:
 	ret
 
 
 ; Credits cutscene where Ambi observes construction of Link statue
-_ambi_runSubid02:
+ambi_runSubid02:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3912,7 +3912,7 @@ _ambi_runSubid02:
 	.dw interactionAnimateBasedOnSpeed
 
 @substate0:
-	call _ambi_updateAnimationAndRunScript
+	call ambi_updateAnimationAndRunScript
 	ret nc
 	jp interactionIncSubstate
 
@@ -3928,7 +3928,7 @@ _ambi_runSubid02:
 
 
 ; Cutscene where Ambi does evil stuff atop black tower (after d7)
-_ambi_runSubid03:
+ambi_runSubid03:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3991,7 +3991,7 @@ _ambi_runSubid03:
 
 
 ; Same cutscene as subid $03 (black tower after d7), but second part
-_ambi_runSubid04:
+ambi_runSubid04:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -4000,7 +4000,7 @@ _ambi_runSubid04:
 	.dw interactionAnimate
 
 @substate0:
-	call _ambi_updateAnimationAndRunScript
+	call ambi_updateAnimationAndRunScript
 	ret nc
 	xor a
 	ld (wTmpcbb3),a
@@ -4017,7 +4017,7 @@ _ambi_runSubid04:
 	ld ($cfc0),a
 	jp interactionIncSubstate
 
-_ambi_runSubid05:
+ambi_runSubid05:
 	call interactionRunScript
 	jp c,interactionDelete
 	ld a,($cfc0)
@@ -4032,8 +4032,8 @@ _ambi_runSubid05:
 
 ; $06: Cutscene just before fighting possessed Ambi
 ; $07: Cutscene where Ambi regains control of herself
-_ambi_runSubid06:
-_ambi_runSubid07:
+ambi_runSubid06:
+ambi_runSubid07:
 	call interactionRunScript
 	jp nc,interactionAnimate
 	ld a,$01
@@ -4042,8 +4042,8 @@ _ambi_runSubid07:
 
 
 ; Cutscene after d3 where you're told Ambi's tower will soon be complete
-_ambi_runSubid08:
-	call _ambi_updateAnimationAndRunScript
+ambi_runSubid08:
+	call ambi_updateAnimationAndRunScript
 	ret nc
 
 	ld a,$01
@@ -4054,12 +4054,12 @@ _ambi_runSubid08:
 
 
 ; NPC after Zelda is kidnapped
-_ambi_runSubid0a:
+ambi_runSubid0a:
 	call npcFaceLinkAndAnimate
 	jp interactionRunScript
 
 
-_ambi_loadScript:
+ambi_loadScript:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld hl,@scriptTable
@@ -4090,15 +4090,15 @@ interactionCode4e:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _subrosian_subid00
-	.dw _subrosian_subid01
-	.dw _subrosian_subid02
-	.dw _subrosian_subid03
-	.dw _subrosian_subid04
+	.dw subrosian_subid00
+	.dw subrosian_subid01
+	.dw subrosian_subid02
+	.dw subrosian_subid03
+	.dw subrosian_subid04
 
 
 ; Subrosian in lynna village (linked only)
-_subrosian_subid00:
+subrosian_subid00:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -4129,18 +4129,18 @@ _subrosian_subid00:
 	call interactionRunScript
 	jp npcFaceLinkAndAnimate
 
-_subrosian_subid01:
+subrosian_subid01:
 	; Borrow goron code?
-	jpab _goronSubid01
+	jpab goronSubid01
 
 
 ; Subrosian in goron dancing game (var03 is 0 or 1 for green or red npcs)
-_subrosian_subid02:
+subrosian_subid02:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _subrosian_initSubid02
+	call subrosian_initSubid02
 	call interactionRunScript
 @state1:
 	call interactionRunScript
@@ -4149,23 +4149,23 @@ _subrosian_subid02:
 
 
 ; Linked game NPC telling you the subrosian secret (for bombchus)
-_subrosian_subid03:
+subrosian_subid03:
 	call checkInteractionState
-	jr nz,_subrosian_subid04@state1
+	jr nz,subrosian_subid04@state1
 
 @state0:
-	call _subrosian_initGraphicsAndIncState
+	call subrosian_initGraphicsAndIncState
 	ld a,$02
-	jr _subrosian_subid04@initSecretTellingNpc
+	jr subrosian_subid04@initSecretTellingNpc
 
 
 ; Linked game NPC telling you the smith secret (for shield upgrade)
-_subrosian_subid04:
+subrosian_subid04:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _subrosian_initGraphicsAndIncState
+	call subrosian_initGraphicsAndIncState
 	ld a,$04
 
 @initSecretTellingNpc:
@@ -4180,35 +4180,35 @@ _subrosian_subid04:
 	jp npcFaceLinkAndAnimate
 
 ;;
-_subrosian_initGraphicsAndIncState:
+subrosian_initGraphicsAndIncState:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
 	jp interactionIncState
 
 ;;
-_subrosian_unused_63ec:
+subrosian_unused_63ec:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
-	jr _subrosian_loadScript
+	jr subrosian_loadScript
 
 
 ;;
-_subrosian_initSubid02:
+subrosian_initSubid02:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
-	jr _subrosian_loadScriptIndex
+	jr subrosian_loadScriptIndex
 
 ;;
 ; Load a script based just on the subid.
-_subrosian_loadScript:
-	call _subrosian_getScriptPtr
+subrosian_loadScript:
+	call subrosian_getScriptPtr
 	call interactionSetScript
 	jp interactionIncState
 
 ;;
 ; Load a script based on the subid and var03.
-_subrosian_loadScriptIndex:
-	call _subrosian_getScriptPtr
+subrosian_loadScriptIndex:
+	call subrosian_getScriptPtr
 	inc e
 	ld a,(de)
 	rst_addDoubleIndex
@@ -4221,7 +4221,7 @@ _subrosian_loadScriptIndex:
 ;;
 ; @param[out]	hl	Pointer read from scriptTable (either points to a script or to
 ;			a table of scripts)
-_subrosian_getScriptPtr:
+subrosian_getScriptPtr:
 	ld a,>TX_1c00
 	call interactionSetHighTextIndex
 	ld e,Interaction.subid
@@ -4250,12 +4250,12 @@ interactionCode4f:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _impaNpc_subid00
-	.dw _impaNpc_subid01
-	.dw _impaNpc_subid02
-	.dw _impaNpc_subid03
+	.dw impaNpc_subid00
+	.dw impaNpc_subid01
+	.dw impaNpc_subid02
+	.dw impaNpc_subid03
 
-_impaNpc_subid00:
+impaNpc_subid00:
 	call checkInteractionState
 	jr z,@state0
 
@@ -4267,7 +4267,7 @@ _impaNpc_subid00:
 	jr z,@animate
 
 	cp $09
-	call nz,_impaNpc_faceLinkIfClose
+	call nz,impaNpc_faceLinkIfClose
 @animate:
 	jp interactionAnimateAsNpc
 
@@ -4276,7 +4276,7 @@ _impaNpc_subid00:
 	ld hl,wRoomLayout+$22
 	ld (hl),TILEINDEX_INDOOR_DOWNSTAIRCASE
 
-	call _getImpaNpcState
+	call getImpaNpcState
 	bit 7,b
 	jp nz,interactionDelete
 
@@ -4285,11 +4285,11 @@ _impaNpc_subid00:
 	ld a,$09
 +
 	add b
-	call _impaNpc_determineTextAndPositionInHouse
+	call impaNpc_determineTextAndPositionInHouse
 
 ;;
 ; @param	hl	Script address
-_impaNpc_setScriptAndInitialize:
+impaNpc_setScriptAndInitialize:
 	call interactionSetScript
 	call interactionInitGraphics
 	call interactionIncState
@@ -4311,7 +4311,7 @@ _impaNpc_setScriptAndInitialize:
 ;
 ; @param	a	Index of "behaviour" ($00-$08 for unlinked, $09-$11 for linked)
 ; @param[out]	hl	Script address
-_impaNpc_determineTextAndPositionInHouse:
+impaNpc_determineTextAndPositionInHouse:
 	ld e,Interaction.var03
 	ld (de),a
 	rst_jumpTable
@@ -4392,23 +4392,23 @@ _impaNpc_determineTextAndPositionInHouse:
 
 
 ; Impa in past (after telling you about Ralph's heritage)
-_impaNpc_subid01:
+impaNpc_subid01:
 	call checkInteractionState
-	jr nz,_impaNpc_runScriptAndFaceLink
-	call _getImpaNpcState
+	jr nz,impaNpc_runScriptAndFaceLink
+	call getImpaNpcState
 	ld a,b
 	cp $07
 	jp nz,interactionDelete
 
 	call checkIsLinkedGame
 	ld a,<TX_012b
-	jr z,_impaNpc_setTextIndexAndLoadGenericNpcScript
+	jr z,impaNpc_setTextIndexAndLoadGenericNpcScript
 	ld a,<TX_012e
 
 
 ;;
 ; @param	a	Low byte of text index (high byte is $01)
-_impaNpc_setTextIndexAndLoadGenericNpcScript:
+impaNpc_setTextIndexAndLoadGenericNpcScript:
 	ld e,Interaction.textID
 	ld (de),a
 
@@ -4418,44 +4418,44 @@ _impaNpc_setTextIndexAndLoadGenericNpcScript:
 	ld (de),a
 
 	ld hl,mainScripts.genericNpcScript
-	jp _impaNpc_setScriptAndInitialize
+	jp impaNpc_setScriptAndInitialize
 
 
 ; Impa after Zelda's been kidnapped
-_impaNpc_subid02:
+impaNpc_subid02:
 	call checkInteractionState
-	jr nz,_impaNpc_runScriptAndFaceLink
+	jr nz,impaNpc_runScriptAndFaceLink
 
 @state0:
-	call _getImpaNpcState
+	call getImpaNpcState
 	ld a,b
 	cp $08
 	jp nz,interactionDelete
 	ld a,<TX_012f
-	jr _impaNpc_setTextIndexAndLoadGenericNpcScript
+	jr impaNpc_setTextIndexAndLoadGenericNpcScript
 
 
-_impaNpc_runScriptAndFaceLink:
+impaNpc_runScriptAndFaceLink:
 	call interactionRunScript
-	call _impaNpc_faceLinkIfClose
+	call impaNpc_faceLinkIfClose
 	jp interactionAnimateAsNpc
 
 
 ; Impa after getting the maku seed
-_impaNpc_subid03:
+impaNpc_subid03:
 	call checkInteractionState
-	jr nz,_impaNpc_runScriptAndFaceLink
+	jr nz,impaNpc_runScriptAndFaceLink
 
-	call _getImpaNpcState
+	call getImpaNpcState
 	ld a,b
 	cp $06
 	jp nz,interactionDelete
 
 	ld a,<TX_0123
-	jr _impaNpc_setTextIndexAndLoadGenericNpcScript
+	jr impaNpc_setTextIndexAndLoadGenericNpcScript
 
 ;;
-_impaNpc_faceLinkIfClose:
+impaNpc_faceLinkIfClose:
 	ld c,$28
 	call objectCheckLinkWithinDistance
 	jr nc,@noChange
@@ -4492,7 +4492,7 @@ _impaNpc_faceLinkIfClose:
 ; * $ff after finishing game
 ;
 ; @param[out]	b	Return value
-_getImpaNpcState:
+getImpaNpcState:
 	ld a,GLOBALFLAG_FINISHEDGAME
 	call checkGlobalFlag
 	ld b,$ff
@@ -4798,11 +4798,11 @@ interactionCode54:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _dog_subid00
-	.dw _dog_subid01
+	.dw dog_subid00
+	.dw dog_subid01
 
 ; Dog in mamamu's house
-_dog_subid00:
+dog_subid00:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -4820,7 +4820,7 @@ _dog_subid00:
 	jp nz,interactionDelete
 
 @dontDelete:
-	call _dog_initGraphicsLoadScriptAndIncState
+	call dog_initGraphicsLoadScriptAndIncState
 	ld h,d
 	ld l,Interaction.angle
 	ld (hl),$18
@@ -4839,7 +4839,7 @@ _dog_subid00:
 
 
 ; Dog outside that Link needs to find for a "sidequest"
-_dog_subid01:
+dog_subid01:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -4862,7 +4862,7 @@ _dog_subid01:
 	cp (hl)
 	jp nz,interactionDelete
 
-	call _dog_initGraphicsLoadScriptAndIncState
+	call dog_initGraphicsLoadScriptAndIncState
 	ld l,Interaction.speed
 	ld (hl),SPEED_80
 	ld l,Interaction.direction
@@ -4871,7 +4871,7 @@ _dog_subid01:
 	; a==0 here, which is important. It was set to 0 by the call to
 	; "interactionSetScript", and wasn't changed after that...
 	; It's probably supposed to equal "var03" here. Bug?
-	call _dog_setTargetPositionIndex
+	call dog_setTargetPositionIndex
 
 	ld hl,wMamamuDogLocation
 @tryAgain:
@@ -4882,15 +4882,15 @@ _dog_subid01:
 	ld (hl),a
 
 @state1:
-	call _dog_moveTowardTargetPosition
-	call _dog_checkCloseToTargetPosition
-	call c,_dog_incTargetPositionIndex
+	call dog_moveTowardTargetPosition
+	call dog_checkCloseToTargetPosition
+	call c,dog_incTargetPositionIndex
 	jr c,@delete
 
-	call _dog_moveTowardTargetPosition
-	call _dog_updateDirection
-	call _dog_checkCloseToTargetPosition
-	call c,_dog_incTargetPositionIndex
+	call dog_moveTowardTargetPosition
+	call dog_updateDirection
+	call dog_checkCloseToTargetPosition
+	call c,dog_incTargetPositionIndex
 	jr c,@delete
 
 	callab scriptHelp.mamamuDog_updateSpeedZ
@@ -4984,12 +4984,12 @@ _dog_subid01:
 	jp interactionIncState
 
 
-_dog_initGraphicsLoadScriptAndIncState:
+dog_initGraphicsLoadScriptAndIncState:
 	call interactionInitGraphics
 	call objectMarkSolidPosition
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_dog_scriptTable
+	ld hl,dog_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -4998,7 +4998,7 @@ _dog_initGraphicsLoadScriptAndIncState:
 	jp interactionIncState
 
 ;;
-_dog_moveTowardTargetPosition:
+dog_moveTowardTargetPosition:
 	ld h,d
 	ld l,Interaction.var3a
 	ld a,(hl)
@@ -5023,8 +5023,8 @@ _dog_moveTowardTargetPosition:
 
 ;;
 ; @param[out]	cflag	Set if close to target position
-_dog_checkCloseToTargetPosition:
-	call _dog_getTargetPositionAddress
+dog_checkCloseToTargetPosition:
+	call dog_getTargetPositionAddress
 	ld l,Interaction.yh
 	ld a,(bc)
 	sub (hl)
@@ -5041,7 +5041,7 @@ _dog_checkCloseToTargetPosition:
 
 ;;
 ; Update direction based on angle.
-_dog_updateDirection:
+dog_updateDirection:
 	ld h,d
 	ld l,Interaction.angle
 	ld a,(hl)
@@ -5057,8 +5057,8 @@ _dog_updateDirection:
 
 ;;
 ; @param[out]	cflag	Set if the position index "looped" (dog went off-screen)
-_dog_incTargetPositionIndex:
-	call _dog_snapToTargetPosition
+dog_incTargetPositionIndex:
+	call dog_snapToTargetPosition
 	ld h,d
 	ld l,Interaction.var3b
 	ld a,(hl)
@@ -5073,8 +5073,8 @@ _dog_incTargetPositionIndex:
 	ret
 
 ;;
-_dog_snapToTargetPosition:
-	call _dog_getTargetPositionAddress
+dog_snapToTargetPosition:
+	call dog_getTargetPositionAddress
 	ld l,Interaction.y
 	xor a
 	ldi (hl),a
@@ -5090,7 +5090,7 @@ _dog_snapToTargetPosition:
 
 ;;
 ; @param[out]	bc	Address of target position (2 bytes, Y and X)
-_dog_getTargetPositionAddress:
+dog_getTargetPositionAddress:
 	ld e,Interaction.var3d
 	ld a,(de)
 	ld c,a
@@ -5108,7 +5108,7 @@ _dog_getTargetPositionAddress:
 ; due to an apparent issue with the caller, the data for the first map is always used.
 ;
 ; @param	a	Index of data to read (0-3 for corresponding maps)
-_dog_setTargetPositionIndex:
+dog_setTargetPositionIndex:
 	ld hl,@dogPositionLists
 	rst_addDoubleIndex
 	ld e,Interaction.var3d
@@ -5163,7 +5163,7 @@ _dog_setTargetPositionIndex:
 	.db $58 $00
 
 
-_dog_scriptTable:
+dog_scriptTable:
 	.dw mainScripts.dogInMamamusHouseScript
 
 
@@ -5962,11 +5962,11 @@ interactionCode5d:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _bear_state0
-	.dw _bear_state1
+	.dw bear_state0
+	.dw bear_state1
 
 
-_bear_state0:
+bear_state0:
 	ld a,$01
 	ld (de),a
 	call interactionInitGraphics
@@ -6062,7 +6062,7 @@ _bear_state0:
 	.db <TX_5714
 
 
-_bear_state1:
+bear_state1:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
@@ -6887,12 +6887,12 @@ interactionCode62:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _makuConfetti_subid0
-	.dw _makuConfetti_subid1
+	.dw makuConfetti_subid0
+	.dw makuConfetti_subid1
 
 
 ; Subid 0: Flowers (in the present)
-_makuConfetti_subid0:
+makuConfetti_subid0:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -7040,8 +7040,8 @@ _makuConfetti_subid0:
 	ld hl,@yOffset
 	ld e,Interaction.y
 	call add16BitRefs
-	call _makuConfetti_updateSpeedY
-	call _makuConfetti_updateSpeedX
+	call makuConfetti_updateSpeedY
+	call makuConfetti_updateSpeedX
 	call objectApplyComponentSpeed
 
 	; Delete when off-screen
@@ -7151,7 +7151,7 @@ _makuConfetti_subid0:
 
 
 ; Subid 1: In the past.
-_makuConfetti_subid1:
+makuConfetti_subid1:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -7283,34 +7283,34 @@ _makuConfetti_subid1:
 
 ; State 2: This is an individual piece of confetti, falling down the screen.
 @state2:
-	call _makuConfetti_updateSpeedXUsingSpeedZ
+	call makuConfetti_updateSpeedXUsingSpeedZ
 	ld e,Interaction.speedX+1
 	ld a,(de)
 	bit 7,a
 	jp nz,interactionDelete
 	jp objectApplyComponentSpeed
 
-_makuConfetti_updateSpeedY:
+makuConfetti_updateSpeedY:
 	ld e,Interaction.speedY
 	ld l,Interaction.var3c
-	jr _makuConfetti_add16BitRefs
+	jr makuConfetti_add16BitRefs
 
-_makuConfetti_updateSpeedX:
+makuConfetti_updateSpeedX:
 	ld e,Interaction.speedX
 	ld l,Interaction.var3e
-	jr _makuConfetti_add16BitRefs
+	jr makuConfetti_add16BitRefs
 
-_makuConfetti_updateSpeedYUsingSpeedZ: ; Unused
+makuConfetti_updateSpeedYUsingSpeedZ: ; Unused
 	ld e,Interaction.speedY
 	ld l,Interaction.speedZ
-	jr _makuConfetti_add16BitRefs
+	jr makuConfetti_add16BitRefs
 
 ; Use speedZ as acceleration for speedX (since speedZ isn't used for anything else)
-_makuConfetti_updateSpeedXUsingSpeedZ:
+makuConfetti_updateSpeedXUsingSpeedZ:
 	ld e,Interaction.speedX
 	ld l,Interaction.speedZ
 
-_makuConfetti_add16BitRefs
+makuConfetti_add16BitRefs
 	ld h,d
 	call add16BitRefs
 	ret
@@ -7686,29 +7686,29 @@ interactionCode66:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _goronSubid00
-	.dw _goronSubid01
-	.dw _goronSubid02
-	.dw _goronSubid03
-	.dw _goronSubid04
-	.dw _goronSubid05
-	.dw _goronSubid06
-	.dw _goronSubid07
-	.dw _goronSubid08
-	.dw _goronSubid09
-	.dw _goronSubid0a
-	.dw _goronSubid0b
-	.dw _goronSubid0c
-	.dw _goronSubid0d
-	.dw _goronSubid0e
-	.dw _goronSubid0f
+	.dw goronSubid00
+	.dw goronSubid01
+	.dw goronSubid02
+	.dw goronSubid03
+	.dw goronSubid04
+	.dw goronSubid05
+	.dw goronSubid06
+	.dw goronSubid07
+	.dw goronSubid08
+	.dw goronSubid09
+	.dw goronSubid0a
+	.dw goronSubid0b
+	.dw goronSubid0c
+	.dw goronSubid0d
+	.dw goronSubid0e
+	.dw goronSubid0f
 .ifndef REGION_JP
-	.dw _goronSubid10
+	.dw goronSubid10
 .endif
 
 
 ; Graceful goron
-_goronSubid00:
+goronSubid00:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -7721,7 +7721,7 @@ _goronSubid00:
 
 ; State 0: Initialization
 @state0:
-	call _goron_initGraphicsAndIncState
+	call goron_initGraphicsAndIncState
 
 	; Set palette (red/blue for past/present)
 	ld a,(wTilesetFlags)
@@ -7799,7 +7799,7 @@ _goronSubid00:
 	ld (hl),90
 	ld a,SND_WHISTLE
 	call playSound
-	call _goronDance_initNextRound
+	call goronDance_initNextRound
 
 @state2Substate1:
 	call interactionDecCounter1
@@ -7813,16 +7813,16 @@ _goronSubid00:
 	call interactionDecCounter1
 	jr nz,@pushLinkAway
 
-	call _goronDance_incBeat
+	call goronDance_incBeat
 @nextMove:
-	call _goronDance_getNextMove
+	call goronDance_getNextMove
 	jr nz,@finishedDemonstration
 
-	call _goronDance_updateConsecutiveBPressCounter
-	call _goronDance_updateGracefulGoronAnimation
+	call goronDance_updateConsecutiveBPressCounter
+	call goronDance_updateGracefulGoronAnimation
 	jr z,@jump
 
-	call _goronDance_playMoveSound
+	call goronDance_playMoveSound
 	ld h,d
 	ld l,Interaction.counter1
 	ld (hl),20
@@ -7909,23 +7909,23 @@ _goronSubid00:
 
 @state3Substate0:
 	call interactionIncSubstate
-	call _goronDance_clearDanceVariables
+	call goronDance_clearDanceVariables
 	ld a,SND_WHISTLE
 	call playSound
 
 	ld a,DIR_DOWN
 	ld (wTmpcfc0.goronDance.danceAnimation),a
 
-	call _goronDance_turnLinkToDirection
+	call goronDance_turnLinkToDirection
 	jp @pushLinkAway
 
 @state3Substate1:
-	call _goronDance_updateFrameCounter
-	call _goronDance_checkLinkInput
+	call goronDance_updateFrameCounter
+	call goronDance_checkLinkInput
 	jp @pushLinkAway
 
 @state3Substate2:
-	call _goronDance_updateFrameCounter
+	call goronDance_updateFrameCounter
 	ld a,(wTmpcfc0.goronDance.linkJumping)
 	or a
 	jp nz,@pushLinkAway
@@ -8018,7 +8018,7 @@ _goronSubid00:
 	ld (wTmpcfc0.goronDance.linkStartedDance),a
 	ld a,DIR_DOWN
 	ld (wTmpcfc0.goronDance.danceAnimation),a
-	jp _goronDance_turnLinkToDirection
+	jp goronDance_turnLinkToDirection
 
 
 ; State 4: dance ended successfully
@@ -8051,7 +8051,7 @@ _goronSubid00:
 
 
 ; Goron support dancer. Code also used by subrosian subid $01?
-_goronSubid01:
+goronSubid01:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -8061,7 +8061,7 @@ _goronSubid01:
 
 @state0:
 	call interactionInitGraphics
-	call _goron_loadScript
+	call goron_loadScript
 
 @faceDown:
 	ld a,DIR_DOWN
@@ -8101,7 +8101,7 @@ _goronSubid01:
 	; Set animation based on whatever Link or the graceful goron is doing
 	ld a,(wTmpcfc0.goronDance.danceAnimation)
 	call interactionSetAnimation
-	jp _goronSubid00@pushLinkAway
+	jp goronSubid00@pushLinkAway
 
 @gotoState1:
 	ld h,d
@@ -8111,7 +8111,7 @@ _goronSubid01:
 
 
 ; A "fake" goron object that manages jumping in the dancing minigame?
-_goronSubid02:
+goronSubid02:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -8133,7 +8133,7 @@ _goronSubid02:
 
 	ld a,DIR_UP
 	ld (wTmpcfc0.goronDance.danceAnimation),a
-	call _goronDance_turnLinkToDirection
+	call goronDance_turnLinkToDirection
 
 	ld a,SND_GORON_DANCE_B
 	call playSound
@@ -8152,7 +8152,7 @@ _goronSubid02:
 	ret nz
 
 	ld a,DIR_DOWN
-	jp _goronDance_turnLinkToDirection
+	jp goronDance_turnLinkToDirection
 
 @landed:
 	ld hl,w1Link.yh
@@ -8164,13 +8164,13 @@ _goronSubid02:
 
 ; Subid $03: Cutscene where goron appears after beating d5; the guy who digs a new tunnel.
 ; Subid $04: Goron pacing back and forth, worried about elder.
-_goronSubid03:
-_goronSubid04:
+goronSubid03:
+goronSubid04:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _goron_loadScriptAndInitGraphics
+	call goron_loadScriptAndInitGraphics
 	call interactionRunScript
 @state1:
 	call interactionRunScript
@@ -8179,24 +8179,24 @@ _goronSubid04:
 
 
 ; An NPC in the past cave near the elder? var03 ranges from 0-5.
-_goronSubid05:
+goronSubid05:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _goron_loadScriptFromTableAndInitGraphics
+	call goron_loadScriptFromTableAndInitGraphics
 	call interactionRunScript
 @state1:
-	jr _goron_runScriptAndDeleteWhenFinished
+	jr goron_runScriptAndDeleteWhenFinished
 
 
 ; NPC trying to break the elder out of the rock.
-_goronSubid06:
+goronSubid06:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _goron_loadScriptFromTableAndInitGraphics
+	call goron_loadScriptFromTableAndInitGraphics
 	ld l,Interaction.var3e
 	ld (hl),$0a
 	ld e,Interaction.var03
@@ -8219,29 +8219,29 @@ _goronSubid06:
 ++
 	call interactionRunScript
 @state1:
-	jr _goron_runScriptAndDeleteWhenFinished
+	jr goron_runScriptAndDeleteWhenFinished
 
 
 ; Various NPCs...
-_goronSubid07:
-_goronSubid08:
-_goronSubid0a:
-_goronSubid0c:
-_goronSubid0d:
-_goronSubid0e:
-_goronSubid10:
+goronSubid07:
+goronSubid08:
+goronSubid0a:
+goronSubid0c:
+goronSubid0d:
+goronSubid0e:
+goronSubid10:
 	call checkInteractionState
-	jr nz,_goron_runScriptAndDeleteWhenFinished
+	jr nz,goron_runScriptAndDeleteWhenFinished
 
 	; State 0 (Initialize)
-	call _goron_loadScriptAndInitGraphics
+	call goron_loadScriptAndInitGraphics
 	call interactionRunScript
 
-_goron_runScriptAndDeleteWhenFinished:
+goron_runScriptAndDeleteWhenFinished:
 	call interactionRunScript
 	jp c,interactionDelete
 
-_goron_faceLinkAndAnimateIfNotNapping:
+goron_faceLinkAndAnimateIfNotNapping:
 	ld e,Interaction.var3f
 	ld a,(de)
 	or a
@@ -8250,7 +8250,7 @@ _goron_faceLinkAndAnimateIfNotNapping:
 
 
 ; Target carts gorons; var03 = 0 or 1 for gorons on left and right.
-_goronSubid09:
+goronSubid09:
 	call checkInteractionState
 	jr nz,@state1
 
@@ -8261,7 +8261,7 @@ _goronSubid09:
 	jr nz,@rightGuy
 
 @leftGuy:
-	call _goron_loadScriptFromTableAndInitGraphics
+	call goron_loadScriptFromTableAndInitGraphics
 	xor a
 	ld (wTmpcfc0.targetCarts.cfdf),a
 	ld (wTmpcfc0.targetCarts.beginGameTrigger),a
@@ -8276,21 +8276,21 @@ _goronSubid09:
 	jr @state1
 
 @rightGuy:
-	call _goron_loadScriptFromTableAndInitGraphics
+	call goron_loadScriptFromTableAndInitGraphics
 	call interactionRunScript
 	jr @state1
 
 @state1:
-	jr _goron_runScriptAndDeleteWhenFinished
+	jr goron_runScriptAndDeleteWhenFinished
 
 
 ; Goron running the big bang game
-_goronSubid0b:
+goronSubid0b:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _goron_loadScriptFromTableAndInitGraphics
+	call goron_loadScriptFromTableAndInitGraphics
 	call interactionRunScript
 @state1:
 	call interactionRunScript
@@ -8299,16 +8299,16 @@ _goronSubid0b:
 	ld a,(de)
 	or a
 	ret nz
-	jr _goron_faceLinkAndAnimateIfNotNapping
+	jr goron_faceLinkAndAnimateIfNotNapping
 
 
 ; Linked NPC telling you the biggoron secret.
-_goronSubid0f:
+goronSubid0f:
 	call checkInteractionState
 	jr nz,@state1
 
 @state0:
-	call _goron_initGraphicsAndIncState
+	call goron_initGraphicsAndIncState
 	ld l,Interaction.var3f
 	ld (hl),$08
 	ld hl,mainScripts.linkedGameNpcScript
@@ -8320,7 +8320,7 @@ _goronSubid0f:
 	jp npcFaceLinkAndAnimate
 
 ;;
-_goronDance_updateFrameCounter:
+goronDance_updateFrameCounter:
 	ld a,(wTmpcfc0.goronDance.linkStartedDance)
 	or a
 	ret z
@@ -8328,14 +8328,14 @@ _goronDance_updateFrameCounter:
 	jp incHlRef16WithCap
 
 ;;
-_goronDance_initNextRound:
+goronDance_initNextRound:
 	ld a,(wTmpcfc0.goronDance.remainingRounds)
 	or a
-	jr z,_goronDance_clearDanceVariables
+	jr z,goronDance_clearDanceVariables
 	callab agesInteractionsBank08.shootingGallery_getNextTargetLayout
 
 ;;
-_goronDance_clearDanceVariables:
+goronDance_clearDanceVariables:
 	xor a
 	ld (wTmpcfc0.goronDance.linkJumping),a
 	ld (wTmpcfc0.goronDance.linkStartedDance),a
@@ -8350,12 +8350,12 @@ _goronDance_clearDanceVariables:
 ;;
 ; Waits for input from Link, checks for round failure conditions, updates link and goron
 ; animations when input is good, etc.
-_goronDance_checkLinkInput:
-	call _goronDance_getNextMove
+goronDance_checkLinkInput:
+	call goronDance_getNextMove
 	cp $00
 	jr z,@rest
 
-	call _goronDance_checkTooLateToInput
+	call goronDance_checkTooLateToInput
 	jr z,@tooLate
 
 	ld a,(wGameKeysJustPressed)
@@ -8369,12 +8369,12 @@ _goronDance_checkLinkInput:
 	jr nz,@wrongMove
 
 	; Check if too early
-	call _goronDance_checkInputNotTooEarlyOrLate
+	call goronDance_checkInputNotTooEarlyOrLate
 	jr z,@madeMistake
 	jp @doDanceMove
 
 @rest:
-	call _goronDance_checkExactInputTimePassed
+	call goronDance_checkExactInputTimePassed
 	jr z,@doDanceMove
 	ld a,(wGameKeysJustPressed)
 	and $03
@@ -8421,19 +8421,19 @@ _goronDance_checkLinkInput:
 	ret
 
 @doDanceMove:
-	call _goronDance_updateConsecutiveBPressCounter
-	call _goronDance_updateLinkAndBackupDancerAnimation
+	call goronDance_updateConsecutiveBPressCounter
+	call goronDance_updateLinkAndBackupDancerAnimation
 	jr z,@jump
 
-	call _goronDance_playMoveSound
-	call _goronDance_incBeat
-	call _goronDance_getNextMove
+	call goronDance_playMoveSound
+	call goronDance_incBeat
+	call goronDance_getNextMove
 	jr nz,@roundFinished
 	ret
 
 @jump:
-	call _goronDance_incBeat
-	call _goronDance_getNextMove
+	call goronDance_incBeat
+	call goronDance_getNextMove
 	call getFreeInteractionSlot
 	ret nz
 
@@ -8460,8 +8460,8 @@ _goronDance_checkLinkInput:
 
 ;;
 ; @param[out]	zflag	z if too early or too late
-_goronDance_checkInputNotTooEarlyOrLate:
-	call _goronDance_getCurrentAndNeededFrameCounts
+goronDance_checkInputNotTooEarlyOrLate:
+	call goronDance_getCurrentAndNeededFrameCounts
 
 	; Add 8 to hl, 8 to bc (the "expected" moment to press the button?)
 	ld a,$08
@@ -8500,16 +8500,16 @@ _goronDance_checkInputNotTooEarlyOrLate:
 
 ;;
 ; @param[out]	zflag	z the window for input this beat has passed.
-_goronDance_checkTooLateToInput:
-	call _goronDance_getCurrentAndNeededFrameCounts
+goronDance_checkTooLateToInput:
+	call goronDance_getCurrentAndNeededFrameCounts
 	ld a,$08
 	rst_addAToHl
 	jr ++
 
 ;;
 ; @param[out]	zflag	z if the exact expected time for the input has passed.
-_goronDance_checkExactInputTimePassed:
-	call _goronDance_getCurrentAndNeededFrameCounts
+goronDance_checkExactInputTimePassed:
+	call goronDance_getCurrentAndNeededFrameCounts
 ++
 	call compareHlToBc
 	cp $ff
@@ -8518,7 +8518,7 @@ _goronDance_checkExactInputTimePassed:
 ;;
 ; @param[out]	bc	Current frame count
 ; @param[out]	hl	Needed frame count? (First OK frame to press button?)
-_goronDance_getCurrentAndNeededFrameCounts:
+goronDance_getCurrentAndNeededFrameCounts:
 	; hl = [wTmpcfc0.goronDance.beat] * 20
 	ld a,(wTmpcfc0.goronDance.beat)
 	push af
@@ -8536,7 +8536,7 @@ _goronDance_getCurrentAndNeededFrameCounts:
 	ret
 
 ;;
-_goronDance_playMoveSound:
+goronDance_playMoveSound:
 	ld a,(wTmpcfc0.goronDance.currentMove)
 	bit 7,a
 	ret nz
@@ -8552,7 +8552,7 @@ _goronDance_playMoveSound:
 	jp playSound
 
 ;;
-_goronDance_incBeat:
+goronDance_incBeat:
 	ld hl,wTmpcfc0.goronDance.beat
 	inc (hl)
 	ret
@@ -8561,9 +8561,9 @@ _goronDance_incBeat:
 ; Get the next dance move, based on "danceLevel", "dancePattern", and "beat".
 ;
 ; @param[out]	zflag	nz if the data ran out.
-_goronDance_getNextMove:
+goronDance_getNextMove:
 	ld a,(wTmpcfc0.goronDance.danceLevel)
-	ld hl,_goronDance_sequenceData
+	ld hl,goronDance_sequenceData
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -8580,7 +8580,7 @@ _goronDance_getNextMove:
 	ret
 
 ;;
-_goronDance_updateConsecutiveBPressCounter:
+goronDance_updateConsecutiveBPressCounter:
 	ld hl,wTmpcfc0.goronDance.consecutiveBPressCounter
 	ld a,(wTmpcfc0.goronDance.currentMove)
 	cp $02
@@ -8593,8 +8593,8 @@ _goronDance_updateConsecutiveBPressCounter:
 
 ;;
 ; @param[out]	zflag	z if Link and dancers should jump
-_goronDance_updateLinkAndBackupDancerAnimation:
-	call _goronDance_updateBackupDancerAnimation
+goronDance_updateLinkAndBackupDancerAnimation:
+	call goronDance_updateBackupDancerAnimation
 	ld a,(wTmpcfc0.goronDance.currentMove)
 	cp $01
 	jr nz,@bButton
@@ -8607,7 +8607,7 @@ _goronDance_updateLinkAndBackupDancerAnimation:
 
 @bButton:
 	ld a,(wTmpcfc0.goronDance.consecutiveBPressCounter)
-	ld hl,_goronDance_linkBButtonAnimations
+	ld hl,goronDance_linkBButtonAnimations
 	rst_addAToHl
 
 	; Should they jump?
@@ -8616,7 +8616,7 @@ _goronDance_updateLinkAndBackupDancerAnimation:
 	ret z
 
 	cp $04
-	jr nz,_goronDance_turnLinkToDirection
+	jr nz,goronDance_turnLinkToDirection
 
 	ld a,LINK_ANIM_MODE_GETITEM1HAND
 	ld (wcc50),a
@@ -8625,7 +8625,7 @@ _goronDance_updateLinkAndBackupDancerAnimation:
 
 ;;
 ; @param	a	Direction
-_goronDance_turnLinkToDirection:
+goronDance_turnLinkToDirection:
 	ld hl,w1Link.direction
 	ld (hl),a
 	ld a,LINK_ANIM_MODE_WALK
@@ -8636,13 +8636,13 @@ _goronDance_turnLinkToDirection:
 
 ; Link's direction values for consecutive B presses.
 ; $04 marks a particular animation, and $50 marks that he should jump.
-_goronDance_linkBButtonAnimations:
+goronDance_linkBButtonAnimations:
 	.db $02 $03 $01 $04 $03 $50
 
 
 ;;
 ; @param[out]	zflag	z if they should jump
-_goronDance_updateBackupDancerAnimation:
+goronDance_updateBackupDancerAnimation:
 	call checkIsLinkedGame
 	jr z,@gorons
 	ld a,(wTilesetFlags)
@@ -8660,7 +8660,7 @@ _goronDance_updateBackupDancerAnimation:
 
 @subrosianBButton:
 	ld a,(wTmpcfc0.goronDance.consecutiveBPressCounter)
-	ld hl,_goronDance_subrosianBAnimations
+	ld hl,goronDance_subrosianBAnimations
 	rst_addAToHl
 	ld a,(hl)
 	cp $50
@@ -8679,7 +8679,7 @@ _goronDance_updateBackupDancerAnimation:
 
 @goronBButton:
 	ld a,(wTmpcfc0.goronDance.consecutiveBPressCounter)
-	ld hl,_goronDance_goronBAnimations
+	ld hl,goronDance_goronBAnimations
 	rst_addAToHl
 	ld a,(hl)
 	cp $50
@@ -8689,16 +8689,16 @@ _goronDance_updateBackupDancerAnimation:
 	ld (wTmpcfc0.goronDance.danceAnimation),a
 	ret
 
-_goronDance_goronBAnimations:
+goronDance_goronBAnimations:
 	.db $02 $03 $04 $01 $00 $50
 
-_goronDance_subrosianBAnimations:
+goronDance_subrosianBAnimations:
 	.db $02 $03 $01 $03 $00 $50
 
 
 ;;
 ; @param[out]	zflag	z if the graceful goron should jump (5 consecutive B presses)
-_goronDance_updateGracefulGoronAnimation:
+goronDance_updateGracefulGoronAnimation:
 	ld a,(wTmpcfc0.goronDance.currentMove)
 	cp $01
 	jr nz,@bButton
@@ -8709,7 +8709,7 @@ _goronDance_updateGracefulGoronAnimation:
 
 @bButton:
 	ld a,(wTmpcfc0.goronDance.consecutiveBPressCounter)
-	ld hl,_goronDance_goronBAnimations
+	ld hl,goronDance_goronBAnimations
 	rst_addAToHl
 	ld a,(hl)
 	cp $50
@@ -8722,7 +8722,7 @@ _goronDance_updateGracefulGoronAnimation:
 
 
 ; This holds the patterns for the various levels of the goron dance.
-_goronDance_sequenceData:
+goronDance_sequenceData:
 	.dw @platinum
 	.dw @gold
 	.dw @silver
@@ -8783,30 +8783,30 @@ _goronDance_sequenceData:
 	.db $02 $02 $01 $02 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
 
 ;;
-_goron_initGraphicsAndIncState:
-	call _goron_initGraphics
+goron_initGraphicsAndIncState:
+	call goron_initGraphics
 	jp interactionIncState
 
 ;;
-_goron_loadScriptAndInitGraphics:
-	call _goron_initGraphics
-	jr _goron_loadScript
+goron_loadScriptAndInitGraphics:
+	call goron_initGraphics
+	jr goron_loadScript
 
 ;;
-_goron_loadScriptFromTableAndInitGraphics:
-	call _goron_initGraphics
-	jr _goron_loadScriptFromTable
+goron_loadScriptFromTableAndInitGraphics:
+	call goron_initGraphics
+	jr goron_loadScriptFromTable
 
 ;;
-_goron_initGraphics:
+goron_initGraphics:
 	call interactionLoadExtraGraphics
 	jp interactionInitGraphics
 
 ;;
-_goron_loadScript:
+goron_loadScript:
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_goron_scriptTable
+	ld hl,goron_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -8816,10 +8816,10 @@ _goron_loadScript:
 
 ;;
 ; Load a script based on both subid and var03.
-_goron_loadScriptFromTable:
+goron_loadScriptFromTable:
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_goron_scriptTable
+	ld hl,goron_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -8833,7 +8833,7 @@ _goron_loadScriptFromTable:
 	call interactionSetScript
 	jp interactionIncState
 
-_goron_scriptTable:
+goron_scriptTable:
 	.dw mainScripts.stubScript
 	.dw mainScripts.goron_subid01Script
 	.dw mainScripts.stubScript

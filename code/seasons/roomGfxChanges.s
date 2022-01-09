@@ -48,22 +48,22 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 	call findRoomSpecificData
 	ret nc
 	rst_jumpTable
-	.dw _roomTileChangesAfterLoad00
-	.dw _roomTileChangesAfterLoad01
+	.dw roomTileChangesAfterLoad00
+	.dw roomTileChangesAfterLoad01
 	.dw  roomTileChangesAfterLoad02 ; Located in bank 0 / bank 9 for some reason
-	.dw _roomTileChangesAfterLoad03
-	.dw _roomTileChangesAfterLoad04
-	.dw _roomTileChangesAfterLoad05
-	.dw _roomTileChangesAfterLoad06
-	.dw _roomTileChangesAfterLoad07
-	.dw _roomTileChangesAfterLoad08
-	.dw _roomTileChangesAfterLoad09
-	.dw _roomTileChangesAfterLoad0a
-	.dw _roomTileChangesAfterLoad0b
-	.dw _roomTileChangesAfterLoad0c
-	.dw _roomTileChangesAfterLoad0d
-	.dw _roomTileChangesAfterLoad0e
-	.dw _roomTileChangesAfterLoad0f
+	.dw roomTileChangesAfterLoad03
+	.dw roomTileChangesAfterLoad04
+	.dw roomTileChangesAfterLoad05
+	.dw roomTileChangesAfterLoad06
+	.dw roomTileChangesAfterLoad07
+	.dw roomTileChangesAfterLoad08
+	.dw roomTileChangesAfterLoad09
+	.dw roomTileChangesAfterLoad0a
+	.dw roomTileChangesAfterLoad0b
+	.dw roomTileChangesAfterLoad0c
+	.dw roomTileChangesAfterLoad0d
+	.dw roomTileChangesAfterLoad0e
+	.dw roomTileChangesAfterLoad0f
 
 @tileChangesGroupTable:
 	.dw @group0
@@ -145,9 +145,9 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 
 ;;
 ; $09: Load scent tree graphics (north horon)
-_roomTileChangesAfterLoad09:
+roomTileChangesAfterLoad09:
 	ld a,TREE_GFXH_07
-_label_04_291:
+label_04_291:
 	call loadTreeGfx
 	ld hl,@rect
 	jp drawRectangleToVramTiles
@@ -162,15 +162,15 @@ _label_04_291:
 
 ;;
 ; $0a: Load pegasus tree graphics (spool swamp)
-_roomTileChangesAfterLoad0a:
+roomTileChangesAfterLoad0a:
 	ld a,TREE_GFXH_08
-	jr _label_04_291
+	jr label_04_291
 
 ;;
 ; $0b: Load gale tree graphics (tarm ruins)
-_roomTileChangesAfterLoad0b:
-	ld hl,_loadGaleTreeGfx@rect
-_loadGaleTreeGfx:
+roomTileChangesAfterLoad0b:
+	ld hl,loadGaleTreeGfx@rect
+loadGaleTreeGfx:
 	call drawRectangleToVramTiles
 	ld a,TREE_GFXH_09
 	jp loadTreeGfx
@@ -185,9 +185,9 @@ _loadGaleTreeGfx:
 
 ;;
 ; $0c: Load gale tree graphics (sunken city)
-_roomTileChangesAfterLoad0c:
+roomTileChangesAfterLoad0c:
 	ld hl,@rect
-	jr _loadGaleTreeGfx
+	jr loadGaleTreeGfx
 
 @rect:
 	.dw w3VramTiles+$86
@@ -199,7 +199,7 @@ _roomTileChangesAfterLoad0c:
 
 ;;
 ; $0d: Load mystery tree graphics (woods of winter)
-_roomTileChangesAfterLoad0d:
+roomTileChangesAfterLoad0d:
 	ld a,TREE_GFXH_0a
 	call loadTreeGfx
 	ld hl,@rect
@@ -215,7 +215,7 @@ _roomTileChangesAfterLoad0d:
 
 ;;
 ; $00: Pirate ship bow (at beach)
-_roomTileChangesAfterLoad00:
+roomTileChangesAfterLoad00:
 	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
 	call checkGlobalFlag
 	ret z
@@ -256,7 +256,7 @@ _roomTileChangesAfterLoad00:
 
 ;;
 ; $01: Pirate ship middle (at beach)
-_roomTileChangesAfterLoad01:
+roomTileChangesAfterLoad01:
 	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
 	call checkGlobalFlag
 	ret z
@@ -297,7 +297,7 @@ _roomTileChangesAfterLoad01:
 
 ;;
 ; $03: Din's troupe screen: Draw tents and stuff if they should be there.
-_roomTileChangesAfterLoad03:
+roomTileChangesAfterLoad03:
 	call getThisRoomFlags
 	and $40
 	ret nz
@@ -312,9 +312,9 @@ _roomTileChangesAfterLoad03:
 	ld b,a
 	push bc
 
-	ld de,_dinsTroupeVramAndCollisions
+	ld de,dinsTroupeVramAndCollisions
 
-_loadDinsTroupeTileChanges:
+loadDinsTroupeTileChanges:
 	ld a,:w3VramTiles
 	ld ($ff00+R_SVBK),a
 
@@ -381,7 +381,7 @@ _loadDinsTroupeTileChanges:
 
 ; Values are written in pairs, vertically. Example: at "w3VramTiles+$0e" the row below it,
 ; values $36 and $37 are written, both with attribute $24.
-_dinsTroupeVramAndCollisions:
+dinsTroupeVramAndCollisions:
 	.dw w3VramTiles+$0e
 	.db $36 $24
 	.db $34 $24
@@ -425,7 +425,7 @@ _dinsTroupeVramAndCollisions:
 
 ;;
 ; $0e: West of din's troupe: create wagon
-_roomTileChangesAfterLoad0e:
+roomTileChangesAfterLoad0e:
 	ld a,GLOBALFLAG_INTRO_DONE
 	call checkGlobalFlag
 	ret nz
@@ -436,7 +436,7 @@ _roomTileChangesAfterLoad0e:
 	ld b,a
 	push bc
 	ld de,@vramTilesAndCollisions
-	jp _loadDinsTroupeTileChanges
+	jp loadDinsTroupeTileChanges
 
 ; Same format as data above
 @vramTilesAndCollisions:
@@ -459,7 +459,7 @@ _roomTileChangesAfterLoad0e:
 
 ;;
 ; $05: King Moblin's house (not moblin's keep)
-_roomTileChangesAfterLoad05:
+roomTileChangesAfterLoad05:
 	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED
 	call checkGlobalFlag
 	ret z
@@ -480,7 +480,7 @@ _roomTileChangesAfterLoad05:
 
 ;;
 ; $06: Blaino's gym (draws gloves on roof)
-_roomTileChangesAfterLoad06:
+roomTileChangesAfterLoad06:
 	ld a,TREE_GFXH_01
 	call loadTreeGfx
 	ld hl,@rect
@@ -496,23 +496,23 @@ _roomTileChangesAfterLoad06:
 
 ;;
 ; $07: Vasu's shop (draws ring sign)
-_roomTileChangesAfterLoad07:
+roomTileChangesAfterLoad07:
 	ld a,$01
 	call loadTreeGfx
-	ld hl,_vasuSignRect
+	ld hl,vasuSignRect
 	call drawRectangleToVramTiles
 
 	; Fall through (forbid digging up enemies on vasu screen)
 
 ;;
 ; $0f: Maku tree entrance & one screen south: forbid digging up enemies
-_roomTileChangesAfterLoad0f:
+roomTileChangesAfterLoad0f:
 	ld a,$01
 	ld (wDiggingUpEnemiesForbidden),a
 	ret
 
 
-_vasuSignRect:
+vasuSignRect:
 	.dw w3VramTiles+$ca
 	.db $02 $02
 	.db $2c $00 $2d $00
@@ -521,7 +521,7 @@ _vasuSignRect:
 
 ;;
 ; $08: Gasha spot (draws the tree or the plant if something has been planted)
-_roomTileChangesAfterLoad08:
+roomTileChangesAfterLoad08:
 	; Return if a gasha seed is not planted in this room.
 	ld a,(wActiveRoom)
 	call getIndexOfGashaSpotInRoom_body
@@ -726,7 +726,7 @@ copyRectangleToRoomLayoutAndCollisions_paramDe:
 
 ;;
 ; This is called in shops to load "price" graphics and set bit 1 of "wInShop".
-_roomTileChangesAfterLoad04:
+roomTileChangesAfterLoad04:
 	ld hl,wInShop
 	set 1,(hl)
 	ld a,TREE_GFXH_03

@@ -1,6 +1,6 @@
 ;;
 ; ITEMID_CANE_OF_SOMARIA ($04)
-_parentItemCode_caneOfSomaria:
+parentItemCode_caneOfSomaria:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -9,7 +9,7 @@ _parentItemCode_caneOfSomaria:
 
 @state0:
 	call updateLinkDirectionFromAngle
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 	jp itemCreateChild
 
 @state1:
@@ -17,5 +17,5 @@ _parentItemCode_caneOfSomaria:
 	ld e,Item.animParameter
 	ld a,(de)
 	rlca
-	jp nc,_specialObjectAnimate
-	jp _clearParentItem
+	jp nc,specialObjectAnimate
+	jp clearParentItem

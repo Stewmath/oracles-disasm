@@ -1,4 +1,4 @@
-treeGfxHeaderTable: ; $fdd50
+treeGfxHeaderTable:
 	/* $00 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
 	/* $01 */ m_ObjectGfxHeader gfx_tileset_0e3baf $00
 	/* $02 */ m_ObjectGfxHeader spr_caravan $00

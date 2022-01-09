@@ -1,15 +1,15 @@
-_breakableTileCollisionTable:
-	.dw _breakableTileCollision0
-	.dw _breakableTileCollision1
-	.dw _breakableTileCollision2
-	.dw _breakableTileCollision3
-	.dw _breakableTileCollision4
-	.dw _breakableTileCollision5
+breakableTileCollisionTable:
+	.dw breakableTileCollision0
+	.dw breakableTileCollision1
+	.dw breakableTileCollision2
+	.dw breakableTileCollision3
+	.dw breakableTileCollision4
+	.dw breakableTileCollision5
 
-; 1st byte is the tile index, 2nd is an index for "_breakableTileModes".
+; 1st byte is the tile index, 2nd is an index for "breakableTileModes".
 
-_breakableTileCollision0:
-_breakableTileCollision2:
+breakableTileCollision0:
+breakableTileCollision2:
 	.db $f8 $00
 	.db $f2 $0d
 	.db $c4 $01
@@ -70,7 +70,7 @@ _breakableTileCollision2:
 	.db $af $14
 	.db $bf $14
 	.db $00
-_breakableTileCollision1:
+breakableTileCollision1:
 	.db $f8 $00
 	.db $f9 $00
 	.db $f2 $0d
@@ -127,8 +127,8 @@ _breakableTileCollision1:
 	.db $bf $17
 	.db $2f $16
 	.db $00
-_breakableTileCollision3:
-_breakableTileCollision4:
+breakableTileCollision3:
+breakableTileCollision4:
 	.db $f8 $2d
 	.db $20 $19
 	.db $21 $1a
@@ -153,7 +153,7 @@ _breakableTileCollision4:
 	.db $2b $2c
 	.db $2a $2c
 	.db $00
-_breakableTileCollision5:
+breakableTileCollision5:
 	.db $12 $2f
 	.db $00
 
@@ -189,7 +189,7 @@ _breakableTileCollision5:
 	.db \5, \6
 .endm
 
-_breakableTileModes:
+breakableTileModes:
 	m_BreakableTileData %01101001 %00001100 %0100 $1 $10 $04 ; $00
 	m_BreakableTileData %11101101 %10001101 %0110 $1 $00 $04 ; $01
 	m_BreakableTileData %11101101 %10001101 %0110 $0 $c0 $e6 ; $02

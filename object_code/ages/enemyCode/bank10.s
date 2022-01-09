@@ -25,7 +25,7 @@ enemyCode02:
 	; ENEMYSTATUS_KNOCKBACK
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
-	jp _ecom_updateKnockback
+	jp ecom_updateKnockback
 
 @justHit:
 	ld h,d
@@ -60,41 +60,41 @@ enemyCode02:
 
 	ld a,(w1Link.state)
 	cp LINK_STATE_GRABBED
-	call z,_veranFinal_grabbingLink
+	call z,veranFinal_grabbingLink
 
 	ld a,$06
 	jp enemySetAnimation
 
 @dead:
-	call _veranFinal_dead
+	call veranFinal_dead
 
 @normalStatus:
 	ld e,Enemy.subid
 	ld a,(de)
 	ld e,Enemy.state
 	rst_jumpTable
-	.dw _veranFinal_turtleForm
-	.dw _veranFinal_spiderForm
-	.dw _veranFinal_beeForm
+	.dw veranFinal_turtleForm
+	.dw veranFinal_spiderForm
+	.dw veranFinal_beeForm
 
 
-_veranFinal_turtleForm:
+veranFinal_turtleForm:
 	ld a,(de)
 	rst_jumpTable
-	.dw _veranFinal_turtleForm_state0
-	.dw _veranFinal_turtleForm_state1
-	.dw _veranFinal_turtleForm_state2
-	.dw _veranFinal_turtleForm_state3
-	.dw _veranFinal_turtleForm_state4
-	.dw _veranFinal_turtleForm_state5
-	.dw _veranFinal_turtleForm_state6
-	.dw _veranFinal_turtleForm_state7
-	.dw _veranFinal_turtleForm_state8
-	.dw _veranFinal_turtleForm_state9
-	.dw _veranFinal_turtleForm_stateA
+	.dw veranFinal_turtleForm_state0
+	.dw veranFinal_turtleForm_state1
+	.dw veranFinal_turtleForm_state2
+	.dw veranFinal_turtleForm_state3
+	.dw veranFinal_turtleForm_state4
+	.dw veranFinal_turtleForm_state5
+	.dw veranFinal_turtleForm_state6
+	.dw veranFinal_turtleForm_state7
+	.dw veranFinal_turtleForm_state8
+	.dw veranFinal_turtleForm_state9
+	.dw veranFinal_turtleForm_stateA
 
 
-_veranFinal_turtleForm_state0:
+veranFinal_turtleForm_state0:
 	ld a,$02
 	ld (wEnemyIDToLoadExtraGfx),a
 	ld a,PALH_87
@@ -106,9 +106,9 @@ _veranFinal_turtleForm_state0:
 	ld (wMenuDisabled),a
 
 	ld bc,$0208
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
-	call _ecom_incState
+	call ecom_incState
 
 .ifdef REGION_JP
 	ld l,Enemy.health
@@ -140,7 +140,7 @@ _veranFinal_turtleForm_state0:
 
 
 ; Showing text before fight starts
-_veranFinal_turtleForm_state1:
+veranFinal_turtleForm_state1:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -156,7 +156,7 @@ _veranFinal_turtleForm_state1:
 	call playSound
 	ld bc,TX_5614
 	call showText
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @substate1:
 	ld h,d
@@ -177,7 +177,7 @@ _veranFinal_turtleForm_state1:
 	ld a,(de)
 	inc a
 	ret nz
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),30
 	ld l,Enemy.speed
@@ -187,13 +187,13 @@ _veranFinal_turtleForm_state1:
 
 
 ; About to jump
-_veranFinal_turtleForm_state2:
+veranFinal_turtleForm_state2:
 	ld e,Enemy.animParameter
 	ld a,(de)
 	or a
 	jp nz,enemyAnimate
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,Enemy.state
 	inc (hl)
@@ -201,7 +201,7 @@ _veranFinal_turtleForm_state2:
 	ld (hl),<(-$400)
 	inc l
 	ld (hl),>(-$400)
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call objectSetVisible81
 	ld a,SND_UNKNOWN4
 	call playSound
@@ -210,12 +210,12 @@ _veranFinal_turtleForm_state2:
 
 
 ; Jumping (until starts moving down)
-_veranFinal_turtleForm_state3:
+veranFinal_turtleForm_state3:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ldd a,(hl)
 	or (hl)
-	jp nz,_ecom_applyVelocityForTopDownEnemyNoHoles
+	jp nz,ecom_applyVelocityForTopDownEnemyNoHoles
 
 	inc l
 	inc (hl) ; [speedZ] = $0100
@@ -238,11 +238,11 @@ _veranFinal_turtleForm_state3:
 
 
 ; Falling and homing in on a position
-_veranFinal_turtleForm_state4:
+veranFinal_turtleForm_state4:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	jr z,@nextState
-	call _veranFinal_moveTowardTargetPosition
+	call veranFinal_moveTowardTargetPosition
 	ret nc
 	ld l,Enemy.yh
 	ld (hl),b
@@ -253,19 +253,19 @@ _veranFinal_turtleForm_state4:
 @nextState:
 	ld a,$10
 	call setScreenShakeCounter
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),$0c
 	call objectSetVisible83
 	ld a,SND_POOF
 	call playSound
 	ld b,PARTID_VERAN_ACID_POOL
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 
 
 ; Landed
-_veranFinal_turtleForm_state5:
-	call _ecom_decCounter1
+veranFinal_turtleForm_state5:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,Enemy.speed
@@ -287,7 +287,7 @@ _veranFinal_turtleForm_state5:
 
 	call getRandomNumber
 	and b
-	jp z,_veranFinal_transformToBeeOrSpider
+	jp z,veranFinal_transformToBeeOrSpider
 
 	ld e,Enemy.var33
 	ld a,(de)
@@ -318,7 +318,7 @@ _veranFinal_turtleForm_state5:
 
 
 ; Face is opening
-_veranFinal_turtleForm_state6:
+veranFinal_turtleForm_state6:
 	call enemyAnimate
 	ld h,d
 	ld l,Enemy.animParameter
@@ -339,8 +339,8 @@ _veranFinal_turtleForm_state6:
 	jp enemySetAnimation
 
 
-_veranFinal_turtleForm_state7:
-	call _ecom_decCounter1
+veranFinal_turtleForm_state7:
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 	ld l,e
 	inc (hl) ; [state]
@@ -348,7 +348,7 @@ _veranFinal_turtleForm_state7:
 	jp enemySetAnimation
 
 
-_veranFinal_turtleForm_state8:
+veranFinal_turtleForm_state8:
 	call enemyAnimate
 	ld h,d
 	ld l,Enemy.animParameter
@@ -370,7 +370,7 @@ _veranFinal_turtleForm_state8:
 
 
 ; Just transformed back from being a spider or bee
-_veranFinal_turtleForm_state9:
+veranFinal_turtleForm_state9:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -398,7 +398,7 @@ _veranFinal_turtleForm_state9:
 
 
 ; Dead
-_veranFinal_turtleForm_stateA:
+veranFinal_turtleForm_stateA:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -421,7 +421,7 @@ _veranFinal_turtleForm_stateA:
 
 	call dropLinkHeldItem
 	call clearAllParentItems
-	call _ecom_incSubstate
+	call ecom_incSubstate
 
 	call checkIsLinkedGame
 	ld bc,TX_5615
@@ -434,7 +434,7 @@ _veranFinal_turtleForm_stateA:
 	ld a,(wTextIsActive)
 	or a
 	ret nz
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.counter2
 	ld (hl),40
 	ld l,Enemy.yh
@@ -445,12 +445,12 @@ _veranFinal_turtleForm_stateA:
 	jp createEnergySwirlGoingOut
 
 @substate2:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 	ldbc INTERACID_MISC_PUZZLES, $21
 	call objectCreateInteraction
 	ret nz
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @substate3:
 	ld a,(wPaletteThread_mode)
@@ -464,21 +464,21 @@ _veranFinal_turtleForm_stateA:
 	jp enemyDelete
 
 
-_veranFinal_spiderForm:
+veranFinal_spiderForm:
 	ld a,(de)
 	rst_jumpTable
-	.dw _veranFinal_spiderOrBeeForm_state0
-	.dw _veranFinal_spiderForm_state1
-	.dw _veranFinal_spiderForm_state2
-	.dw _veranFinal_spiderForm_state3
-	.dw _veranFinal_spiderForm_state4
+	.dw veranFinal_spiderOrBeeForm_state0
+	.dw veranFinal_spiderForm_state1
+	.dw veranFinal_spiderForm_state2
+	.dw veranFinal_spiderForm_state3
+	.dw veranFinal_spiderForm_state4
 
 
-_veranFinal_spiderOrBeeForm_state0:
+veranFinal_spiderOrBeeForm_state0:
 	ret
 
 
-_veranFinal_spiderForm_state1:
+veranFinal_spiderForm_state1:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -488,16 +488,16 @@ _veranFinal_spiderForm_state1:
 	ld bc,$1010
 	ld e,ENEMYCOLLISION_VERAN_SPIDER_FORM
 	ld l,Enemy.var31
-	call _veranFinal_initializeForm
+	call veranFinal_initializeForm
 	ld a,$05
 	call enemySetAnimation
 
-_veranFinal_spiderForm_setCounter2AndInitState2:
+veranFinal_spiderForm_setCounter2AndInitState2:
 	ld e,Enemy.counter2
 	ld a,120
 	ld (de),a
 
-_veranFinal_spiderForm_initState2:
+veranFinal_spiderForm_initState2:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$02
@@ -511,39 +511,39 @@ _veranFinal_spiderForm_initState2:
 	ld e,Enemy.counter1
 	ld a,(hl)
 	ld (de),a
-	call _veranFinal_spiderForm_decideAngle
-	jr _veranFinal_spiderForm_animate
+	call veranFinal_spiderForm_decideAngle
+	jr veranFinal_spiderForm_animate
 
 @counter1Vals:
 	.db 60,80,100,120
 
 
-_veranFinal_spiderForm_state2:
-	call _ecom_decCounter2
+veranFinal_spiderForm_state2:
+	call ecom_decCounter2
 	jr nz,++
 	ld (hl),120
-	call _veranFinal_spiderForm_decideWhetherToAttack
+	call veranFinal_spiderForm_decideWhetherToAttack
 	ret c
 ++
-	call _ecom_decCounter1
-	jr z,_veranFinal_spiderForm_initState2
+	call ecom_decCounter1
+	jr z,veranFinal_spiderForm_initState2
 
-_veranFinal_spiderForm_updateMovement:
-	call _ecom_bounceOffWallsAndHoles
+veranFinal_spiderForm_updateMovement:
+	call ecom_bounceOffWallsAndHoles
 	call objectApplySpeed
 
-_veranFinal_spiderForm_animate:
+veranFinal_spiderForm_animate:
 	jp enemyAnimate
 
 
-_veranFinal_spiderForm_state3:
+veranFinal_spiderForm_state3:
 	ld e,Enemy.zh
 	ld a,(de)
 	rlca
 	ld c,$20
 	jp c,objectUpdateSpeedZ_paramC
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@gotoState2
 
 	ld a,(hl)
@@ -559,49 +559,49 @@ _veranFinal_spiderForm_state3:
 	ld l,Enemy.zh
 	ld (hl),$00
 	call objectSetVisible83
-	call _veranFinal_spiderForm_resetCollisionData
-	jr _veranFinal_spiderForm_initState2
+	call veranFinal_spiderForm_resetCollisionData
+	jr veranFinal_spiderForm_initState2
 
 
 ; Doing an attack
-_veranFinal_spiderForm_state4:
+veranFinal_spiderForm_state4:
 	ld e,Enemy.var03
 	ld a,(de)
 	ld e,Enemy.substate
 	rst_jumpTable
-	.dw _veranFinal_spiderForm_rushAttack
-	.dw _veranFinal_spiderForm_jumpAttack
-	.dw _veranFinal_spiderForm_webAttack
+	.dw veranFinal_spiderForm_rushAttack
+	.dw veranFinal_spiderForm_jumpAttack
+	.dw veranFinal_spiderForm_webAttack
 
 
 ; Rush toward Link for 1 second
-_veranFinal_spiderForm_rushAttack:
+veranFinal_spiderForm_rushAttack:
 	ld a,(de)
 	or a
 	jr z,@substate0
 
 @substate1:
-	call _ecom_decCounter1
-	jr z,_veranFinal_spiderForm_setCounter2AndInitState2
-	call _veranFinal_spiderForm_updateMovement
+	call ecom_decCounter1
+	jr z,veranFinal_spiderForm_setCounter2AndInitState2
+	call veranFinal_spiderForm_updateMovement
 	jp enemyAnimate
 
 @substate0:
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	inc l
 	ld (hl),60 ; [counter1]
 	ld l,Enemy.speed
 	ld (hl),SPEED_180
 
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	and $18
 	add $04
 	ld (de),a
-	jr _veranFinal_spiderForm_animate
+	jr veranFinal_spiderForm_animate
 
 
 ; Jumps up and crashes back down onto the ground
-_veranFinal_spiderForm_jumpAttack:
+veranFinal_spiderForm_jumpAttack:
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
@@ -612,12 +612,12 @@ _veranFinal_spiderForm_jumpAttack:
 
 @substate0:
 	ld b,PARTID_VERAN_SPIDERWEB
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.var38
 	ld (hl),$00
-	call _veranFinal_spiderForm_setVulnerableCollisionData
+	call veranFinal_spiderForm_setVulnerableCollisionData
 	jp objectSetVisible81
 
 @substate1:
@@ -658,7 +658,7 @@ _veranFinal_spiderForm_jumpAttack:
 	jp objectSetInvisible
 
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [substate]
@@ -676,8 +676,8 @@ _veranFinal_spiderForm_jumpAttack:
 	ldh a,(<hEnemyTargetX)
 	ld (hl),a
 	ld c,$08
-	call _ecom_setZAboveScreen
-	call _veranFinal_spiderForm_resetCollisionData
+	call ecom_setZAboveScreen
+	call veranFinal_spiderForm_resetCollisionData
 	jp objectSetVisible81
 
 @substate3:
@@ -697,26 +697,26 @@ _veranFinal_spiderForm_jumpAttack:
 	jp objectSetVisible83
 
 @substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
-	jp _veranFinal_spiderForm_setCounter2AndInitState2
+	jp veranFinal_spiderForm_setCounter2AndInitState2
 
 
 ; Shoots out web to try and catch Link
-_veranFinal_spiderForm_webAttack:
+veranFinal_spiderForm_webAttack:
 	ld a,(de)
 	rst_jumpTable
-	.dw _veranFinal_spiderForm_webAttack_substate0
-	.dw _veranFinal_spiderForm_webAttack_substate1
-	.dw _veranFinal_spiderForm_webAttack_substate2
-	.dw _veranFinal_spiderForm_webAttack_substate3
-	.dw _veranFinal_spiderForm_webAttack_substate4
-	.dw _veranFinal_spiderForm_webAttack_substate5
-	.dw _veranFinal_spiderForm_webAttack_substate6
-	.dw _veranFinal_spiderForm_webAttack_substate7
+	.dw veranFinal_spiderForm_webAttack_substate0
+	.dw veranFinal_spiderForm_webAttack_substate1
+	.dw veranFinal_spiderForm_webAttack_substate2
+	.dw veranFinal_spiderForm_webAttack_substate3
+	.dw veranFinal_spiderForm_webAttack_substate4
+	.dw veranFinal_spiderForm_webAttack_substate5
+	.dw veranFinal_spiderForm_webAttack_substate6
+	.dw veranFinal_spiderForm_webAttack_substate7
 
 
-_veranFinal_spiderForm_webAttack_substate0:
+veranFinal_spiderForm_webAttack_substate0:
 	ld h,d
 	ld l,e
 	inc (hl) ; [substate]
@@ -725,7 +725,7 @@ _veranFinal_spiderForm_webAttack_substate0:
 	ld l,Enemy.var38
 	ld (hl),$00
 
-_veranFinal_spiderForm_resetCollisionData:
+veranFinal_spiderForm_resetCollisionData:
 	ld h,d
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM
@@ -735,15 +735,15 @@ _veranFinal_spiderForm_resetCollisionData:
 	jp enemySetAnimation
 
 
-_veranFinal_spiderForm_webAttack_substate1:
-	call _ecom_decCounter1
+veranFinal_spiderForm_webAttack_substate1:
+	call ecom_decCounter1
 	ret nz
 	inc l
 	ld (hl),$08 ; [counter2]
 	ld l,e
 	inc (hl) ; [substate]
 
-_veranFinal_spiderForm_setVulnerableCollisionData:
+veranFinal_spiderForm_setVulnerableCollisionData:
 	ld h,d
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_VERAN_SPIDER_FORM_VULNERABLE
@@ -753,51 +753,51 @@ _veranFinal_spiderForm_setVulnerableCollisionData:
 	jp enemySetAnimation
 
 
-_veranFinal_spiderForm_webAttack_substate2:
-	call _ecom_decCounter2
+veranFinal_spiderForm_webAttack_substate2:
+	call ecom_decCounter2
 	ret nz
 
 	ld b,PARTID_VERAN_SPIDERWEB
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	ld l,Part.subid
 	inc (hl) ; [subid] = 1
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	inc l
 	ld (hl),90 ; [counter1]
-	jr _veranFinal_spiderForm_resetCollisionData
+	jr veranFinal_spiderForm_resetCollisionData
 
 
 ; Web coming back?
-_veranFinal_spiderForm_webAttack_substate3:
+veranFinal_spiderForm_webAttack_substate3:
 	ld e,Enemy.var38
 	ld a,(de)
 	or a
 	ret z
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld a,(w1Link.state)
 	cp LINK_STATE_GRABBED
-	jp nz,_veranFinal_spiderForm_setCounter2AndInitState2
+	jp nz,veranFinal_spiderForm_setCounter2AndInitState2
 
 	; Grabbed
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	inc l
 	ld (hl),$10
 	ld a,$06
 	call enemySetAnimation
 	ld b,$f8
 
-_veranFinal_spiderForm_webAttack_updateLinkPosition:
+veranFinal_spiderForm_webAttack_updateLinkPosition:
 	ld hl,w1Link
 	ld c,$00
 	jp objectCopyPositionWithOffset
 
 
-_veranFinal_spiderForm_webAttack_substate4:
-	call _ecom_decCounter1
+veranFinal_spiderForm_webAttack_substate4:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),$04 ; [counter1]
@@ -808,10 +808,10 @@ _veranFinal_spiderForm_webAttack_substate4:
 	ld a,$04
 	call setScreenShakeCounter
 	ld b,$14
-	call _veranFinal_spiderForm_webAttack_updateLinkPosition
+	call veranFinal_spiderForm_webAttack_updateLinkPosition
 	ldbc -6,$08
 
-_veranFinal_spiderForm_webAttack_applyDamageToLink:
+veranFinal_spiderForm_webAttack_applyDamageToLink:
 	ld l,<w1Link.damageToApply
 	ld (hl),b
 	ld l,<w1Link.invincibilityCounter
@@ -820,8 +820,8 @@ _veranFinal_spiderForm_webAttack_applyDamageToLink:
 	jp playSound
 
 
-_veranFinal_spiderForm_webAttack_substate5:
-	call _ecom_decCounter1
+veranFinal_spiderForm_webAttack_substate5:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$08
 	ld l,e
@@ -829,11 +829,11 @@ _veranFinal_spiderForm_webAttack_substate5:
 	ld a,$06
 	call enemySetAnimation
 	ld b,$f6
-	jr _veranFinal_spiderForm_webAttack_updateLinkPosition
+	jr veranFinal_spiderForm_webAttack_updateLinkPosition
 
 
-_veranFinal_spiderForm_webAttack_substate6:
-	call _ecom_decCounter1
+veranFinal_spiderForm_webAttack_substate6:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$0f
 	ld l,e
@@ -843,20 +843,20 @@ _veranFinal_spiderForm_webAttack_substate6:
 	ld a,$14
 	call setScreenShakeCounter
 	ld b,$14
-	call _veranFinal_spiderForm_webAttack_updateLinkPosition
+	call veranFinal_spiderForm_webAttack_updateLinkPosition
 	ldbc -10,$18
-	jr _veranFinal_spiderForm_webAttack_applyDamageToLink
+	jr veranFinal_spiderForm_webAttack_applyDamageToLink
 
 
-_veranFinal_spiderForm_webAttack_substate7:
-	call _ecom_decCounter1
+veranFinal_spiderForm_webAttack_substate7:
+	call ecom_decCounter1
 	ret nz
 	ld l,Enemy.collisionType
 	set 7,(hl)
-	call _veranFinal_spiderForm_setCounter2AndInitState2
+	call veranFinal_spiderForm_setCounter2AndInitState2
 
 
-_veranFinal_grabbingLink:
+veranFinal_grabbingLink:
 	ld hl,w1Link.substate
 	ld (hl),$02
 	ld l,<w1Link.collisionType
@@ -864,24 +864,24 @@ _veranFinal_grabbingLink:
 	ret
 
 
-_veranFinal_beeForm:
+veranFinal_beeForm:
 	ld a,(de)
 	rst_jumpTable
-	.dw _veranFinal_spiderOrBeeForm_state0
-	.dw _veranFinal_beeForm_state1
-	.dw _veranFinal_beeForm_state2
-	.dw _veranFinal_beeForm_state3
-	.dw _veranFinal_beeForm_state4
-	.dw _veranFinal_beeForm_state5
-	.dw _veranFinal_beeForm_state6
-	.dw _veranFinal_beeForm_state7
-	.dw _veranFinal_beeForm_state8
-	.dw _veranFinal_beeForm_state9
-	.dw _veranFinal_beeForm_stateA
-	.dw _veranFinal_beeForm_stateB
+	.dw veranFinal_spiderOrBeeForm_state0
+	.dw veranFinal_beeForm_state1
+	.dw veranFinal_beeForm_state2
+	.dw veranFinal_beeForm_state3
+	.dw veranFinal_beeForm_state4
+	.dw veranFinal_beeForm_state5
+	.dw veranFinal_beeForm_state6
+	.dw veranFinal_beeForm_state7
+	.dw veranFinal_beeForm_state8
+	.dw veranFinal_beeForm_state9
+	.dw veranFinal_beeForm_stateA
+	.dw veranFinal_beeForm_stateB
 
 
-_veranFinal_beeForm_state1:
+veranFinal_beeForm_state1:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -889,7 +889,7 @@ _veranFinal_beeForm_state1:
 	ret nz
 	ld a,$07
 	call enemySetAnimation
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
 	ld bc,$100c
@@ -901,7 +901,7 @@ _veranFinal_beeForm_state1:
 ; @param	bc	collisionRadiusY/X
 ; @param	e	enemyCollisionMode
 ; @param	l	Pointer to health value
-_veranFinal_initializeForm:
+veranFinal_initializeForm:
 	ld h,d
 	ld a,(hl)
 	ld l,Enemy.health
@@ -924,7 +924,7 @@ _veranFinal_initializeForm:
 	ret
 
 
-_veranFinal_beeForm_state2:
+veranFinal_beeForm_state2:
 	ld e,Enemy.yh
 	ld a,(de)
 	ldh (<hFF8F),a
@@ -943,27 +943,27 @@ _veranFinal_beeForm_state2:
 	jr nc,@updateMovement
 
 	; In middle of room
-	call _ecom_incState
-	jp _veranFinal_beeForm_chooseRandomTargetPosition
+	call ecom_incState
+	jp veranFinal_beeForm_chooseRandomTargetPosition
 
 @updateMovement:
-	call _ecom_moveTowardPosition
+	call ecom_moveTowardPosition
 
-_veranFinal_beeForm_animate:
+veranFinal_beeForm_animate:
 	jp enemyAnimate
 
 
-_veranFinal_beeForm_state3:
-	call _veranFinal_moveTowardTargetPosition
-	jr nc,_veranFinal_beeForm_animate
+veranFinal_beeForm_state3:
+	call veranFinal_moveTowardTargetPosition
+	jr nc,veranFinal_beeForm_animate
 
 	ld l,Enemy.yh
 	ld (hl),b
 	ld l,Enemy.xh
 	ld (hl),c
-	call _veranFinal_beeForm_nextTargetPosition
-	call _ecom_decCounter2
-	jr nz,_veranFinal_beeForm_animate
+	call veranFinal_beeForm_nextTargetPosition
+	call ecom_decCounter2
+	jr nz,veranFinal_beeForm_animate
 
 	; Time to move off screen
 	ld l,Enemy.state
@@ -979,17 +979,17 @@ _veranFinal_beeForm_state3:
 	ld l,Enemy.var37
 	ldd (hl),a
 	ld (hl),$e0
-	jr _veranFinal_beeForm_animate
+	jr veranFinal_beeForm_animate
 
 
 ; Moving off screen
-_veranFinal_beeForm_state4:
-	call _ecom_decCounter1
+veranFinal_beeForm_state4:
+	call ecom_decCounter1
 	jr nz,++
 
 	ld (hl),$06 ; [counter1]
 	ld l,Enemy.var36
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	call objectGetRelativeAngleWithTempVars
 	call objectNudgeAngleTowards
 ++
@@ -997,18 +997,18 @@ _veranFinal_beeForm_state4:
 	ld e,Enemy.yh
 	ld a,(de)
 	cp (LARGE_ROOM_HEIGHT+1)<<4
-	jr c,_veranFinal_beeForm_animate
+	jr c,veranFinal_beeForm_animate
 
 	; Off screen
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),30
 	jp objectSetInvisible
 
 
 ; About to re-emerge on screen
-_veranFinal_beeForm_state5:
-	call _ecom_decCounter1
+veranFinal_beeForm_state5:
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),$0f ; [counter1]
@@ -1035,12 +1035,12 @@ _veranFinal_beeForm_state5:
 
 
 ; Moving horizontally across screen while attacking
-_veranFinal_beeForm_state6:
-	call _ecom_decCounter1
+veranFinal_beeForm_state6:
+	call ecom_decCounter1
 	jr nz,++
 	ld (hl),$0f ; [counter1]
 	ld b,PARTID_VERAN_BEE_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 ++
 	call objectApplySpeed
 	ld e,Enemy.xh
@@ -1053,7 +1053,7 @@ _veranFinal_beeForm_state6:
 	jp nc,enemyAnimate
 
 	; Reached other side
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),60
 	ld l,Enemy.collisionType
@@ -1062,12 +1062,12 @@ _veranFinal_beeForm_state6:
 
 
 ; About to re-emerge from some corner of the screen
-_veranFinal_beeForm_state7:
-	call _ecom_decCounter1
+veranFinal_beeForm_state7:
+	call ecom_decCounter1
 	ret nz
 
 	; Choose which corner to emerge from (not the current one)
-	call _veranFinal_getQuadrant
+	call veranFinal_getQuadrant
 --
 	call getRandomNumber
 	ld c,a
@@ -1078,7 +1078,7 @@ _veranFinal_beeForm_state7:
 	ld e,Enemy.var39
 	ld (de),a
 	add a
-	ld hl,_veranFinal_beeForm_screenCornerEntrances
+	ld hl,veranFinal_beeForm_screenCornerEntrances
 	rst_addDoubleIndex
 	ld e,Enemy.var36
 	ldi a,(hl)
@@ -1101,15 +1101,15 @@ _veranFinal_beeForm_state7:
 	ld e,Enemy.counter2
 	ld (de),a
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	jp objectSetVisible83
 
 
-_veranFinal_beeForm_state8:
-	call _veranFinal_moveTowardTargetPosition
-	jr nc,_veranFinal_beeForm_animate2
+veranFinal_beeForm_state8:
+	call veranFinal_moveTowardTargetPosition
+	jr nc,veranFinal_beeForm_animate2
 	ld l,Enemy.yh
 	ld (hl),b
 	ld l,Enemy.xh
@@ -1118,28 +1118,28 @@ _veranFinal_beeForm_state8:
 	inc (hl)
 	ld l,Enemy.counter1
 	ld (hl),30
-	jr _veranFinal_beeForm_animate2
+	jr veranFinal_beeForm_animate2
 
 
-_veranFinal_beeForm_state9:
-	call _ecom_decCounter1
-	jr nz,_veranFinal_beeForm_animate2
+veranFinal_beeForm_state9:
+	call ecom_decCounter1
+	jr nz,veranFinal_beeForm_animate2
 	ld (hl),25 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
 
-_veranFinal_beeForm_animate2:
+veranFinal_beeForm_animate2:
 	jp enemyAnimate
 
 
 ; Shooting out bees
-_veranFinal_beeForm_stateA:
-	call _ecom_decCounter1
-	jr z,_label_10_173
+veranFinal_beeForm_stateA:
+	call ecom_decCounter1
+	jr z,label_10_173
 
 	ld a,(hl) ; [counter1]
 	and $07
-	jr nz,_veranFinal_beeForm_animate2
+	jr nz,veranFinal_beeForm_animate2
 
 	; Spawn child bee
 	ld a,(hl)
@@ -1149,7 +1149,7 @@ _veranFinal_beeForm_stateA:
 	dec a
 	ld b,a
 	call getFreeEnemySlot
-	jr nz,_veranFinal_beeForm_animate2
+	jr nz,veranFinal_beeForm_animate2
 
 	ld (hl),ENEMYID_VERAN_CHILD_BEE
 	inc l
@@ -1157,29 +1157,29 @@ _veranFinal_beeForm_stateA:
 	call objectCopyPosition
 	ld a,SND_BEAM1
 	call playSound
-	jr _veranFinal_beeForm_animate2
+	jr veranFinal_beeForm_animate2
 
-_label_10_173:
+label_10_173:
 	ld (hl),20 ; [counter1]
 	inc l
 	dec (hl) ; [counter2]
 	ld l,e
 	jr z,+
 	inc (hl) ; [state] = $0b
-	jr _veranFinal_beeForm_animate2
+	jr veranFinal_beeForm_animate2
 +
 	ld (hl),$02 ; [state] = $02
-	jr _veranFinal_beeForm_animate2
+	jr veranFinal_beeForm_animate2
 
 
-_veranFinal_beeForm_stateB:
-	call _ecom_decCounter1
-	jr nz,_veranFinal_beeForm_animate2
+veranFinal_beeForm_stateB:
+	call ecom_decCounter1
+	jr nz,veranFinal_beeForm_animate2
 
 	ld l,e
 	ld (hl),$08 ; [state]
 
-	call _veranFinal_getQuadrant
+	call veranFinal_getQuadrant
 @chooseQuadrant:
 	call getRandomNumber
 	and $03
@@ -1192,7 +1192,7 @@ _veranFinal_beeForm_stateB:
 
 	ld (hl),a ; [var39]
 	add a
-	ld hl,_veranFinal_beeForm_screenCornerEntrances
+	ld hl,veranFinal_beeForm_screenCornerEntrances
 	rst_addDoubleIndex
 	ld e,Enemy.var36
 	ldi a,(hl)
@@ -1200,10 +1200,10 @@ _veranFinal_beeForm_stateB:
 	inc e
 	ld a,(hl)
 	ld (de),a
-	jr _veranFinal_beeForm_animate2
+	jr veranFinal_beeForm_animate2
 
 
-_veranFinal_beeForm_screenCornerEntrances:
+veranFinal_beeForm_screenCornerEntrances:
 	.db $2c $3c $00 $00
 	.db $2c $b4 $00 $f0
 	.db $84 $3c $b0 $00
@@ -1212,7 +1212,7 @@ _veranFinal_beeForm_screenCornerEntrances:
 
 ;;
 ; @param	hl	Enemy.state
-_veranFinal_transformToBeeOrSpider:
+veranFinal_transformToBeeOrSpider:
 	ld (hl),$01
 	ld l,Enemy.collisionType
 	ld (hl),$80|ENEMYID_BEAMOS
@@ -1264,7 +1264,7 @@ _veranFinal_transformToBeeOrSpider:
 ;;
 ; @param	b	Distance
 ; @param[out]	cflag	c if Link is within 'b' pixels of self
-_veranFinal_spiderForm_checkLinkWithinDistance:
+veranFinal_spiderForm_checkLinkWithinDistance:
 	ld a,b
 	add a
 	inc a
@@ -1286,13 +1286,13 @@ _veranFinal_spiderForm_checkLinkWithinDistance:
 
 ;;
 ; @param[out]	cflag	c if will do an attack (state changed to 4)
-_veranFinal_spiderForm_decideWhetherToAttack:
+veranFinal_spiderForm_decideWhetherToAttack:
 	call objectGetAngleTowardLink
 	ld e,a
 
 @considerRushAttack:
 	ld b,$60
-	call _veranFinal_spiderForm_checkLinkWithinDistance
+	call veranFinal_spiderForm_checkLinkWithinDistance
 	jr nc,@considerJumpAttack
 
 	; BUG: is this supposed to 'ld a,e' first? This would check that Link is at a relatively
@@ -1305,7 +1305,7 @@ _veranFinal_spiderForm_decideWhetherToAttack:
 
 @considerJumpAttack:
 	ld b,$50
-	call _veranFinal_spiderForm_checkLinkWithinDistance
+	call veranFinal_spiderForm_checkLinkWithinDistance
 	jr c,@considerGrabAttack
 
 	; Check that Link is diagonal relative to the spider.
@@ -1341,7 +1341,7 @@ _veranFinal_spiderForm_decideWhetherToAttack:
 
 
 ;;
-_veranFinal_dead:
+veranFinal_dead:
 	ld e,Enemy.subid
 	ld a,(de)
 	or a
@@ -1392,7 +1392,7 @@ _veranFinal_dead:
 	jp playSound
 
 
-_veranFinal_spiderForm_decideAngle:
+veranFinal_spiderForm_decideAngle:
 	ld b,$00
 	ld e,Enemy.yh
 	ld a,(de)
@@ -1423,22 +1423,22 @@ _veranFinal_spiderForm_decideAngle:
 	.db $04 $04 $0c $14 $14 $1c $1c $1c
 
 ;;
-_veranFinal_beeForm_chooseRandomTargetPosition:
+veranFinal_beeForm_chooseRandomTargetPosition:
 	ld bc,$0801
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld e,Enemy.counter1
 	ld a,b
 	ld (de),a
 
 	ld a,c
-	ld hl,_veranFinal_beeForm_counter2Vals
+	ld hl,veranFinal_beeForm_counter2Vals
 	rst_addAToHl
 	ld e,Enemy.counter2
 	ld a,(hl)
 	ld (de),a
 
 ;;
-_veranFinal_beeForm_nextTargetPosition:
+veranFinal_beeForm_nextTargetPosition:
 	ld e,Enemy.counter1
 	ld a,(de)
 	ld b,a
@@ -1446,7 +1446,7 @@ _veranFinal_beeForm_nextTargetPosition:
 	and $0f
 	ld (de),a
 	ld a,b
-	ld hl,_veranFinal_beeForm_targetPositions
+	ld hl,veranFinal_beeForm_targetPositions
 	rst_addDoubleIndex
 	ld e,Enemy.var36
 	ldi a,(hl)
@@ -1456,10 +1456,10 @@ _veranFinal_beeForm_nextTargetPosition:
 	ld (de),a ; [var37]
 	ret
 
-_veranFinal_beeForm_counter2Vals:
+veranFinal_beeForm_counter2Vals:
 	.db $14 $24
 
-_veranFinal_beeForm_targetPositions:
+veranFinal_beeForm_targetPositions:
 	.db $38 $80
 	.db $20 $90
 	.db $20 $b8
@@ -1479,10 +1479,10 @@ _veranFinal_beeForm_targetPositions:
 
 
 ;;
-_veranFinal_moveTowardTargetPosition:
+veranFinal_moveTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var36
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $02
 	cp $05
@@ -1493,13 +1493,13 @@ _veranFinal_moveTowardTargetPosition:
 	cp $05
 	ret c
 ++
-	call _ecom_moveTowardPosition
+	call ecom_moveTowardPosition
 	or d
 	ret
 
 ;;
 ; @param[out]	b	Value from 0-3 corresponding to screen quadrant
-_veranFinal_getQuadrant:
+veranFinal_getQuadrant:
 	ld b,$00
 	ldh a,(<hEnemyTargetY)
 	cp LARGE_ROOM_HEIGHT*16/2
@@ -1530,17 +1530,17 @@ enemyCode05:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrockArm_state0
-	.dw _ramrockArm_state_stub
-	.dw _ramrockArm_state_stub
-	.dw _ramrockArm_state_stub
-	.dw _ramrockArm_state_stub
-	.dw _ramrockArm_state_stub
-	.dw _ramrockArm_state_stub
-	.dw _ramrockArm_state_stub
-	.dw _ramrockArm_state8
+	.dw ramrockArm_state0
+	.dw ramrockArm_state_stub
+	.dw ramrockArm_state_stub
+	.dw ramrockArm_state_stub
+	.dw ramrockArm_state_stub
+	.dw ramrockArm_state_stub
+	.dw ramrockArm_state_stub
+	.dw ramrockArm_state_stub
+	.dw ramrockArm_state8
 
-_ramrockArm_state0:
+ramrockArm_state0:
 	ld e,Enemy.subid
 	ld a,(de)
 	and $7f
@@ -1556,7 +1556,7 @@ _ramrockArm_state0:
 	ld a,(de)
 	ld b,a
 
-	ld hl,_ramrockArm_subid0And1XPositions
+	ld hl,ramrockArm_subid0And1XPositions
 	rst_addAToHl
 	ld a,(hl)
 	ld h,d
@@ -1577,14 +1577,14 @@ _ramrockArm_state0:
 	ld a,SPEED_180
 
 @commonInit:
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	jp objectSetVisiblec0
 
 @initSubid2:
 	ld a,(de)
 	add $02 ; [subid]
 	call enemySetAnimation
-	call _ramrockArm_setRelativePosition
+	call ramrockArm_setRelativePosition
 	ld l,Enemy.zh
 	ld (hl),$81
 	jr @commonInit
@@ -1593,12 +1593,12 @@ _ramrockArm_state0:
 	ld a,(de)
 	sub $04
 	ld b,a
-	ld hl,_ramrockArm_subid4And5Angles
+	ld hl,ramrockArm_subid4And5Angles
 	rst_addAToHl
 	ld c,(hl)
 
 	ld a,b
-	ld hl,_ramrockArm_subid4And5XPositions
+	ld hl,ramrockArm_subid4And5XPositions
 	rst_addAToHl
 	ld a,(hl)
 	ld h,d
@@ -1621,25 +1621,25 @@ _ramrockArm_state0:
 	jr @commonInit
 
 
-_ramrockArm_state_stub:
+ramrockArm_state_stub:
 	ret
 
 
-_ramrockArm_state8:
+ramrockArm_state8:
 	ld e,Enemy.subid
 	ld a,(de)
 	and $7f
 	rst_jumpTable
-	.dw _ramrockArm_subid0
-	.dw _ramrockArm_subid0
-	.dw _ramrockArm_subid2
-	.dw _ramrockArm_subid2
-	.dw _ramrockArm_subid4
-	.dw _ramrockArm_subid4
+	.dw ramrockArm_subid0
+	.dw ramrockArm_subid0
+	.dw ramrockArm_subid2
+	.dw ramrockArm_subid2
+	.dw ramrockArm_subid4
+	.dw ramrockArm_subid4
 
 
 ; "Shields" in first phase
-_ramrockArm_subid0:
+ramrockArm_subid0:
 	ld a,Object.subid
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -1664,19 +1664,19 @@ _ramrockArm_subid0:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrockArm_subid0_substate0
-	.dw _ramrockArm_subid0_substate1
-	.dw _ramrockArm_subid0_substate2
-	.dw _ramrockArm_subid0_substate3
-	.dw _ramrockArm_subid0_substate4
-	.dw _ramrockArm_subid0_substate5
-	.dw _ramrockArm_subid0_substate6
+	.dw ramrockArm_subid0_substate0
+	.dw ramrockArm_subid0_substate1
+	.dw ramrockArm_subid0_substate2
+	.dw ramrockArm_subid0_substate3
+	.dw ramrockArm_subid0_substate4
+	.dw ramrockArm_subid0_substate5
+	.dw ramrockArm_subid0_substate6
 
 
-_ramrockArm_subid0_substate0:
+ramrockArm_subid0_substate0:
 	call enemyAnimate
 	call objectApplySpeed
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),$08 ; [counter1]
@@ -1708,22 +1708,22 @@ _ramrockArm_subid0_substate0:
 	jp enemySetAnimation
 
 
-_ramrockArm_subid0_substate1:
+ramrockArm_subid0_substate1:
 	call enemyAnimate
-	call _ramrockArm_setRelativePosition
+	call ramrockArm_setRelativePosition
 	ld l,Enemy.relatedObj1+1
 	ld h,(hl)
 	ld l,Enemy.subid
 	ld a,$03
 	cp (hl)
 	ret nz
-	jr _ramrockArm_subid0_moveBackToRamrock
+	jr ramrockArm_subid0_moveBackToRamrock
 
 
-_ramrockArm_subid0_substate2:
+ramrockArm_subid0_substate2:
 	call enemyAnimate
-	call _ramrockArm_setRelativePosition
-	call _ecom_decCounter2
+	call ramrockArm_setRelativePosition
+	call ecom_decCounter2
 	ret nz
 
 	ld b,$04
@@ -1733,7 +1733,7 @@ _ramrockArm_subid0_substate2:
 	cp $10
 	ret nz
 
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.angle
 	ld (hl),a
 	ld l,Enemy.counter1
@@ -1750,12 +1750,12 @@ _ramrockArm_subid0_substate2:
 	jp playSound
 
 
-_ramrockArm_subid0_substate3:
+ramrockArm_subid0_substate3:
 	call objectApplySpeed
 	ld e,Enemy.var2a
 	ld a,(de)
 	cp $80|ITEMCOLLISION_LINK
-	jr z,_ramrockArm_subid0_moveBackToRamrock
+	jr z,ramrockArm_subid0_moveBackToRamrock
 	cp $80|ITEMCOLLISION_L1_SWORD
 	jr z,@sword
 	cp $80|ITEMCOLLISION_L2_SWORD
@@ -1778,16 +1778,16 @@ _ramrockArm_subid0_substate3:
 	ret
 
 @moveTowardLink:
-	call _ecom_getSideviewAdjacentWallsBitset
-	jr nz,_ramrockArm_subid0_moveBackToRamrock
-	call _ecom_decCounter1
+	call ecom_getSideviewAdjacentWallsBitset
+	jr nz,ramrockArm_subid0_moveBackToRamrock
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$06
 	call objectGetAngleTowardLink
 	jp objectNudgeAngleTowards
 
 
-_ramrockArm_subid0_moveBackToRamrock:
+ramrockArm_subid0_moveBackToRamrock:
 	ld e,Enemy.substate
 	ld a,$04
 	ld (de),a
@@ -1795,8 +1795,8 @@ _ramrockArm_subid0_moveBackToRamrock:
 	ld a,SPEED_180
 	ld (de),a
 
-_ramrockArm_subid0_setAngleTowardRamrock:
-	call _ramrockArm_getRelativePosition
+ramrockArm_subid0_setAngleTowardRamrock:
+	call ramrockArm_getRelativePosition
 	call objectGetRelativeAngle
 	ld e,Enemy.angle
 	ld (de),a
@@ -1804,10 +1804,10 @@ _ramrockArm_subid0_setAngleTowardRamrock:
 
 
 ; Moving back towards Ramrock
-_ramrockArm_subid0_substate4:
+ramrockArm_subid0_substate4:
 	call objectApplySpeed
-	call _ramrockArm_subid0_setAngleTowardRamrock
-	call _ramrockArm_subid0_checkReachedRamrock
+	call ramrockArm_subid0_setAngleTowardRamrock
+	call ramrockArm_subid0_checkReachedRamrock
 	ret nz
 	ld a,SND_BOMB_LAND
 	call playSound
@@ -1824,7 +1824,7 @@ _ramrockArm_subid0_substate4:
 
 
 ; Being knocked back after hit by sword
-_ramrockArm_subid0_substate5:
+ramrockArm_subid0_substate5:
 	call enemyAnimate
 	ld e,Enemy.var30
 	ld a,(de)
@@ -1852,17 +1852,17 @@ _ramrockArm_subid0_substate5:
 
 @noDamage:
 	xor a
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	jp z,objectApplySpeed
 
 	ld e,Enemy.animParameter
 	ld a,(de)
 	or a
 	ret z
-	jr _ramrockArm_subid0_moveBackToRamrock
+	jr ramrockArm_subid0_moveBackToRamrock
 
 
-_ramrockArm_subid0_substate6:
+ramrockArm_subid0_substate6:
 	ld e,Enemy.subid
 	ld a,(de)
 	add $04
@@ -1872,26 +1872,26 @@ _ramrockArm_subid0_substate6:
 	ld a,(hl)
 	cp b
 	ret nz
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	call objectCreatePuff
 	ld a,Object.subid
 	call objectGetRelatedObject1Var
 	inc (hl)
-	jp _ramrockArm_deleteSelf
+	jp ramrockArm_deleteSelf
 
 
 ; Bomb grabber hands
-_ramrockArm_subid2:
+ramrockArm_subid2:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrockArm_subid2_substate0
-	.dw _ramrockArm_subid2_substate1
-	.dw _ramrockArm_subid2_substate2
+	.dw ramrockArm_subid2_substate0
+	.dw ramrockArm_subid2_substate1
+	.dw ramrockArm_subid2_substate2
 
-_ramrockArm_subid2_substate0:
+ramrockArm_subid2_substate0:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -1902,9 +1902,9 @@ _ramrockArm_subid2_substate0:
 
 	ld a,SND_SCENT_SEED
 	call playSound
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
-_ramrockArm_subid2_substate1:
+ramrockArm_subid2_substate1:
 	ld a,Object.subid
 	call objectGetRelatedObject1Var
 	ld a,(hl)
@@ -1914,14 +1914,14 @@ _ramrockArm_subid2_substate1:
 	ld h,d
 	ld a,(hl)
 	rrca
-	jr c,_ramrockArm_deleteSelf
+	jr c,ramrockArm_deleteSelf
 
 	ld l,Enemy.visible
 	res 7,(hl)
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
-_ramrockArm_subid2_substate2:
-	call _ramrockArm_subid2_copyRamrockPosition
+ramrockArm_subid2_substate2:
+	call ramrockArm_subid2_copyRamrockPosition
 	ld l,Enemy.collisionType
 	res 7,(hl)
 
@@ -1948,7 +1948,7 @@ _ramrockArm_subid2_substate2:
 	ld c,(hl)
 	push hl
 	ld e,$06
-	call _ramrockArm_checkPositionAtRamrock
+	call ramrockArm_checkPositionAtRamrock
 	pop hl
 	ret nz
 
@@ -1982,7 +1982,7 @@ _ramrockArm_subid2_substate2:
 	call getFreeInteractionSlot
 	ld (hl),INTERACID_PUFF
 	push hl
-	call _ramrockArm_setRelativePosition
+	call ramrockArm_setRelativePosition
 	pop hl
 	call objectCopyPosition
 	ld e,Enemy.subid
@@ -1994,23 +1994,23 @@ _ramrockArm_subid2_substate2:
 	ld a,$02
 	ld (de),a ; [this.subid]
 
-_ramrockArm_deleteSelf:
+ramrockArm_deleteSelf:
 	call decNumEnemies
 	jp enemyDelete
 
 
 ; Shield hands
-_ramrockArm_subid4:
+ramrockArm_subid4:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrockArm_subid4_substate0
-	.dw _ramrockArm_subid4_substate1
-	.dw _ramrockArm_subid4_substate2
-	.dw _ramrockArm_subid4_substate3
+	.dw ramrockArm_subid4_substate0
+	.dw ramrockArm_subid4_substate1
+	.dw ramrockArm_subid4_substate2
+	.dw ramrockArm_subid4_substate3
 
 
-_ramrockArm_subid4_substate0:
+ramrockArm_subid4_substate0:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -2022,19 +2022,19 @@ _ramrockArm_subid4_substate0:
 	ld (hl),SPEED_100
 	ld l,Enemy.counter2
 	ld (hl),62
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 
-_ramrockArm_subid4_substate1:
+ramrockArm_subid4_substate1:
 	ld e,Enemy.zh
 	ld a,(de)
 	cp $f9
 	ld c,$00
 	jp nz,objectUpdateSpeedZ_paramC
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jp nz,objectApplySpeed
 
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld e,Enemy.subid
 	ld a,(de)
 	rrca
@@ -2048,7 +2048,7 @@ _ramrockArm_subid4_substate1:
 	jp loadPaletteHeader
 
 
-_ramrockArm_subid4_substate2:
+ramrockArm_subid4_substate2:
 .ifndef REGION_JP
 	ld a,Object.substate
 	call objectGetRelatedObject1Var
@@ -2060,32 +2060,32 @@ _ramrockArm_subid4_substate2:
 	ld e,Enemy.var2a
 	ld a,(de)
 	rlca
-	jr c,_ramrockArm_subid4_collisionOccurred
+	jr c,ramrockArm_subid4_collisionOccurred
 
 	ld a,Object.subid
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	cp $0d
-	jr z,_ramrockArm_subid4_collisionOccurred
+	jr z,ramrockArm_subid4_collisionOccurred
 
 	cp $10
 	jr nz,@updateXPosition
 
 	call objectCreatePuff
-	jr _ramrockArm_deleteSelf
+	jr ramrockArm_deleteSelf
 
 @updateXPosition:
 	ld e,Enemy.var32
 	ld a,(de)
 	ld b,a
 	cp $0c
-	jr z,_ramrockArm_subid4_updateXPosition
+	jr z,ramrockArm_subid4_updateXPosition
 	inc a
 	ld (de),a
 	ld b,a
 
 ; @param	b	X-offset
-_ramrockArm_subid4_updateXPosition:
+ramrockArm_subid4_updateXPosition:
 	ld e,Enemy.subid
 	ld a,(de)
 	rrca
@@ -2103,16 +2103,16 @@ _ramrockArm_subid4_updateXPosition:
 	ld (de),a
 	ret
 
-_ramrockArm_subid4_collisionOccurred:
+ramrockArm_subid4_collisionOccurred:
 	ld a,Object.subid
 	call objectGetRelatedObject1Var
 	ld (hl),Object.xh
 	ld l,Enemy.var36
 	ld (hl),$10
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 
-_ramrockArm_subid4_substate3:
+ramrockArm_subid4_substate3:
 	ld e,Enemy.var2a
 	ld a,(de)
 	rlca
@@ -2132,23 +2132,23 @@ _ramrockArm_subid4_substate3:
 +
 	ld (de),a
 	ld b,a
-	jr _ramrockArm_subid4_updateXPosition
+	jr ramrockArm_subid4_updateXPosition
 ++
 	ld a,Object.subid
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	cp $0d
-	jr z,_ramrockArm_subid4_updateXPosition
+	jr z,ramrockArm_subid4_updateXPosition
 
 	ld e,Enemy.substate
 	ld a,$02
 	ld (de),a
-	jr _ramrockArm_subid4_updateXPosition
+	jr ramrockArm_subid4_updateXPosition
 
 
 ;;
-_ramrockArm_setRelativePosition:
-	call _ramrockArm_getRelativePosition
+ramrockArm_setRelativePosition:
+	call ramrockArm_getRelativePosition
 	ld h,d
 	ld l,Enemy.yh
 	ld (hl),b
@@ -2158,43 +2158,43 @@ _ramrockArm_setRelativePosition:
 
 ;;
 ; @param[out]	zflag
-_ramrockArm_subid0_checkReachedRamrock:
-	call _ramrockArm_getRelativePosition
+ramrockArm_subid0_checkReachedRamrock:
+	call ramrockArm_getRelativePosition
 	ld e,$02
 
 ;;
 ; @param	bc	Position
 ; @param	e
-_ramrockArm_checkPositionAtRamrock:
+ramrockArm_checkPositionAtRamrock:
 	ld h,d
 	ld l,Enemy.yh
 	ld a,e
 	add b
 	cp (hl)
-	jr c,_label_10_212
+	jr c,label_10_212
 	sub e
-_label_10_211:
+label_10_211:
 	sub e
 	cp (hl)
-	jr nc,_label_10_212
+	jr nc,label_10_212
 	ld l,Enemy.xh
 	ld a,e
 	add c
 	cp (hl)
-	jr c,_label_10_212
+	jr c,label_10_212
 	sub e
 	sub e
 	cp (hl)
-	jr nc,_label_10_212
+	jr nc,label_10_212
 	xor a
 	ret
-_label_10_212:
+label_10_212:
 	or d
 	ret
 
 ;;
 ; @param[out]	bc	Relative position
-_ramrockArm_getRelativePosition:
+ramrockArm_getRelativePosition:
 	ld e,Enemy.subid
 	ld a,(de)
 	ld c,$0e
@@ -2214,7 +2214,7 @@ _ramrockArm_getRelativePosition:
 	ret
 
 ;;
-_ramrockArm_subid2_copyRamrockPosition:
+ramrockArm_subid2_copyRamrockPosition:
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
 	ldi a,(hl)
@@ -2229,13 +2229,13 @@ _ramrockArm_subid2_copyRamrockPosition:
 	ld (hl),b
 	ret
 
-_ramrockArm_subid0And1XPositions:
+ramrockArm_subid0And1XPositions:
 	.db $30 $c0
 
-_ramrockArm_subid4And5XPositions:
+ramrockArm_subid4And5XPositions:
 	.db $37 $b9
 
-_ramrockArm_subid4And5Angles:
+ramrockArm_subid4And5Angles:
 	.db $08 $18
 
 
@@ -2279,8 +2279,8 @@ enemyCode06:
 	jr @normalStatus
 
 @justHit:
-	call _veranFairy_updateVar35BasedOnHealth
-	ld hl,_veranFairy_speedTable
+	call veranFairy_updateVar35BasedOnHealth
+	ld hl,veranFairy_speedTable
 	rst_addAToHl
 	ld e,Enemy.speed
 	ld a,(hl)
@@ -2290,17 +2290,17 @@ enemyCode06:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _veranFairy_state0
-	.dw _veranFairy_state1
-	.dw _veranFairy_state2
-	.dw _veranFairy_state3
-	.dw _veranFairy_state4
-	.dw _veranFairy_state5
+	.dw veranFairy_state0
+	.dw veranFairy_state1
+	.dw veranFairy_state2
+	.dw veranFairy_state3
+	.dw veranFairy_state4
+	.dw veranFairy_state5
 
-_veranFairy_state0:
+veranFairy_state0:
 	ld a,ENEMYID_VERAN_FAIRY
 	ld (wEnemyIDToLoadExtraGfx),a
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),60
 	ld l,Enemy.speed
@@ -2312,7 +2312,7 @@ _veranFairy_state0:
 	jp objectSetVisible82
 
 ; Cutscene just prior to fairy form
-_veranFairy_state1:
+veranFairy_state1:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -2331,15 +2331,15 @@ _veranFairy_state1:
 	.dw @substateC
 
 @substate0:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld (hl),$08
 	ld l,e
 	inc (hl) ; [substate]
 	jp objectSetVisible83
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [substate]
@@ -2347,7 +2347,7 @@ _veranFairy_state1:
 	jp showText
 
 @substate2:
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),30
 	ld a,$04
@@ -2357,7 +2357,7 @@ _veranFairy_state1:
 	ld c,$33
 
 @strikeLightningAfterCountdown:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),10 ; [counter1]
 	ld l,e
@@ -2387,7 +2387,7 @@ _veranFairy_state1:
 	jr @strikeLightningAfterCountdown
 
 @substate8:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [substate]
@@ -2410,7 +2410,7 @@ _veranFairy_state1:
 	pop bc
 	dec b
 	jr nz,@loop
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @pillarPositions:
 	.db $23 $33 $63 $73 $45 $55 $49 $59
@@ -2435,7 +2435,7 @@ _veranFairy_state1:
 	dec b
 	jr nz,@nextMimic
 
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),30
 
@@ -2459,7 +2459,7 @@ _veranFairy_state1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -2472,11 +2472,11 @@ _veranFairy_state1:
 	inc (hl)
 	ld l,Enemy.counter2
 	ld (hl),120
-	jp _enemyBoss_beginBoss
+	jp enemyBoss_beginBoss
 
 
 ; Choosing a movement pattern and attack
-_veranFairy_state2:
+veranFairy_state2:
 	call getRandomNumber_noPreserveVars
 	and $07
 	ld b,a
@@ -2485,13 +2485,13 @@ _veranFairy_state2:
 	swap a
 	rrca
 	add b
-	ld hl,_veranFairy_attackTable
+	ld hl,veranFairy_attackTable
 	rst_addAToHl
 	ld e,Enemy.var03
 	ld a,(hl)
 	ld (de),a
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.var38
 	ld (hl),60
 	ld l,Enemy.var36
@@ -2504,7 +2504,7 @@ _veranFairy_state2:
 	jr z,--
 	ld (hl),a
 
-	ld hl,_veranFairy_movementPatternTable
+	ld hl,veranFairy_movementPatternTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2516,7 +2516,7 @@ _veranFairy_state2:
 	ldi a,(hl) ; [var34]
 	ld (de),a
 
-_veranFairy_saveMovementPatternPointer:
+veranFairy_saveMovementPatternPointer:
 	ld e,Enemy.var31
 	ld a,l
 	ld (de),a
@@ -2527,12 +2527,12 @@ _veranFairy_saveMovementPatternPointer:
 
 
 ; Moving and attacking
-_veranFairy_state3:
-	call _veranFairy_66ed
+veranFairy_state3:
+	call veranFairy_66ed
 
 	ld h,d
 	ld l,Enemy.var33
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $02
 	cp $05
@@ -2548,7 +2548,7 @@ _veranFairy_state3:
 	ld (hl),b
 	ld l,Enemy.xh
 	ld (hl),c
-	call _veranFairy_checkLoopAroundScreen
+	call veranFairy_checkLoopAroundScreen
 
 	; Get next target position
 	ld h,d
@@ -2561,7 +2561,7 @@ _veranFairy_state3:
 	jr nz,++
 	ld a,$05
 	call enemySetAnimation
-	jp _ecom_incState
+	jp ecom_incState
 ++
 	ld e,Enemy.var33
 	ld (de),a
@@ -2570,25 +2570,25 @@ _veranFairy_state3:
 	ldi a,(hl)
 	ld (de),a ; [var34]
 	ld c,a
-	call _veranFairy_saveMovementPatternPointer
+	call veranFairy_saveMovementPatternPointer
 @updateMovement:
-	call _ecom_moveTowardPosition
-_veranFairy_animate:
+	call ecom_moveTowardPosition
+veranFairy_animate:
 	jp enemyAnimate
 
 
-_veranFairy_state4:
+veranFairy_state4:
 	ld h,d
 	ld l,Enemy.var38
 	dec (hl)
-	jr nz,_veranFairy_animate
+	jr nz,veranFairy_animate
 	ld l,e
 	ld (hl),$02 ; [state]
-	jr _veranFairy_animate
+	jr veranFairy_animate
 
 
 ; Dead
-_veranFairy_state5:
+veranFairy_state5:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -2597,21 +2597,21 @@ _veranFairy_state5:
 	.dw @substate2
 
 @substate0:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld l,e
 	inc (hl)
 	jp objectSetVisible82
 
 @substate1:
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.counter2
 	ld (hl),65
 	ld bc,TX_5612
 	jp showText
 
 @substate2:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr z,@triggerCutscene
 
 	ld a,(hl) ; [counter2]
@@ -2656,7 +2656,7 @@ _veranFairy_state5:
 
 ; BUG(?): $00 acts as a terminator, but it's also used as a position value, meaning one movement
 ; pattern stops early? (Doesn't apply if $00 is in the first row.)
-_veranFairy_movementPatternTable:
+veranFairy_movementPatternTable:
 	.dw @pattern0
 	.dw @pattern1
 	.dw @pattern2
@@ -2691,17 +2691,17 @@ _veranFairy_movementPatternTable:
 	.db $00
 
 
-_veranFairy_attackTable:
+veranFairy_attackTable:
 	.db $00 $00 $00 $00 $00 $00 $01 $01 ; High health
 	.db $00 $00 $00 $00 $00 $01 $01 $02 ; Mid health
 	.db $00 $00 $01 $01 $01 $02 $02 $02 ; Low health
 
 
-_veranFairy_speedTable:
+veranFairy_speedTable:
 	.db SPEED_140, SPEED_1c0, SPEED_200
 
 ;;
-_veranFairy_checkLoopAroundScreen:
+veranFairy_checkLoopAroundScreen:
 	call objectGetShortPosition
 	ld e,a
 	ld hl,@data1
@@ -2745,7 +2745,7 @@ _veranFairy_checkLoopAroundScreen:
 
 ;;
 ; @param[out]	a	Value written to var35
-_veranFairy_updateVar35BasedOnHealth:
+veranFairy_updateVar35BasedOnHealth:
 	ld b,$00
 	ld e,Enemy.health
 	ld a,(de)
@@ -2762,8 +2762,8 @@ _veranFairy_updateVar35BasedOnHealth:
 	ret
 
 ;;
-_veranFairy_66ed:
-	call _ecom_decCounter2
+veranFairy_66ed:
+	call ecom_decCounter2
 	ret nz
 	ld e,Enemy.var03
 	ld a,(de)
@@ -2802,7 +2802,7 @@ attack0:
 	ld (hl),$04
 
 @label_10_227:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@label_10_228
 	ld a,(hl)
 	cp $0e
@@ -2811,7 +2811,7 @@ attack0:
 	jp enemySetAnimation
 
 @label_10_228:
-	call _veranFairy_checkWithinBoundary
+	call veranFairy_checkWithinBoundary
 	ret nc
 	ld l,Enemy.var37
 	dec (hl)
@@ -2821,7 +2821,7 @@ attack0:
 	ld (hl),30
 
 	ld b,PARTID_VERAN_FAIRY_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld a,$06
 	jp enemySetAnimation
 
@@ -2839,7 +2839,7 @@ attack1:
 	or a
 	jr nz,@label_10_230
 
-	call _veranFairy_checkWithinBoundary
+	call veranFairy_checkWithinBoundary
 	ret nc
 
 	call getRandomNumber_noPreserveVars
@@ -2862,13 +2862,13 @@ attack1:
 	ld (hl),$01
 
 	ld b,PARTID_VERAN_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld a,$06
 	call enemySetAnimation
 
 @label_10_230:
 	pop hl
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	inc l
@@ -2885,20 +2885,20 @@ attack2:
 	bit 0,(hl)
 	jr nz,@label_10_231
 
-	call _veranFairy_checkWithinBoundary
+	call veranFairy_checkWithinBoundary
 	ret nc
 
 	ld (hl),$01
 	ld l,Enemy.counter1
 	ld (hl),30
 	ld b,PARTID_BABY_BALL
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld a,$06
 	call enemySetAnimation
 
 @label_10_231:
 	pop hl
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	inc l
@@ -2910,7 +2910,7 @@ attack2:
 
 ;;
 ; @param[out]	cflag	nc if veran is outside the room boundary
-_veranFairy_checkWithinBoundary:
+veranFairy_checkWithinBoundary:
 	ld e,Enemy.yh
 	ld a,(de)
 	sub $10
@@ -2935,52 +2935,52 @@ enemyCode07:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrock_state0
-	.dw _ramrock_state_stub
-	.dw _ramrock_state_stub
-	.dw _ramrock_state_stub
-	.dw _ramrock_state_stub
-	.dw _ramrock_state_stub
-	.dw _ramrock_state_stub
-	.dw _ramrock_state_stub
-	.dw _ramrock_state8
-	.dw _ramrock_swordPhase
-	.dw _ramrock_bombPhase
-	.dw _ramrock_seedPhase
-	.dw _ramrock_glovePhase
+	.dw ramrock_state0
+	.dw ramrock_state_stub
+	.dw ramrock_state_stub
+	.dw ramrock_state_stub
+	.dw ramrock_state_stub
+	.dw ramrock_state_stub
+	.dw ramrock_state_stub
+	.dw ramrock_state_stub
+	.dw ramrock_state8
+	.dw ramrock_swordPhase
+	.dw ramrock_bombPhase
+	.dw ramrock_seedPhase
+	.dw ramrock_glovePhase
 
 
-_ramrock_state0:
+ramrock_state0:
 	ld a,ENEMYID_RAMROCK
 	ld b,PALH_83
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	ld a,SPEED_100
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld a,$04
 	call enemySetAnimation
 	ld b,$00
 	ld c,$0c
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	jp objectSetVisible81
 
 
-_ramrock_state_stub:
+ramrock_state_stub:
 	ret
 
 
 ; Cutscene before fight
-_ramrock_state8:
+ramrock_state8:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrock_state8_substate0
-	.dw _ramrock_state8_substate1
-	.dw _ramrock_state8_substate2
-	.dw _ramrock_state8_substate3
-	.dw _ramrock_state8_substate4
-	.dw _ramrock_state8_substate5
+	.dw ramrock_state8_substate0
+	.dw ramrock_state8_substate1
+	.dw ramrock_state8_substate2
+	.dw ramrock_state8_substate3
+	.dw ramrock_state8_substate4
+	.dw ramrock_state8_substate5
 
-_ramrock_state8_substate0:
+ramrock_state8_substate0:
 	ld a,DISABLE_LINK
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
@@ -2991,9 +2991,9 @@ _ramrock_state8_substate0:
 	ld e,Enemy.stunCounter
 	ld a,60
 	ld (de),a
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
-_ramrock_state8_substate1:
+ramrock_state8_substate1:
 	ld e,Enemy.stunCounter
 	ld a,(de)
 	or a
@@ -3011,7 +3011,7 @@ _ramrock_state8_substate1:
 	ld c,$01
 @spawnArm:
 	ld b,ENEMYID_RAMROCK_ARMS
-	call _ecom_spawnEnemyWithSubid01
+	call ecom_spawnEnemyWithSubid01
 	ld l,Enemy.subid
 	ld (hl),c
 	ld l,Enemy.relatedObj1
@@ -3021,9 +3021,9 @@ _ramrock_state8_substate1:
 	dec c
 	jr z,@spawnArm
 
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
-_ramrock_state8_substate2:
+ramrock_state8_substate2:
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $02
@@ -3031,14 +3031,14 @@ _ramrock_state8_substate2:
 	ld e,Enemy.counter1
 	ld a,$02
 	ld (de),a
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld a,PALH_84
 	jp loadPaletteHeader
 
-_ramrock_state8_substate3:
-	call _ecom_decCounter1
+ramrock_state8_substate3:
+	call ecom_decCounter1
 	ret nz
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld a,SND_SWORD_OBTAINED
 	call playSound
 	ld l,Enemy.subid
@@ -3046,19 +3046,19 @@ _ramrock_state8_substate3:
 	ld a,PALH_83
 	jp loadPaletteHeader
 
-_ramrock_state8_substate4:
+ramrock_state8_substate4:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
 	or a
 	ret z
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.angle
 	ld (hl),$00
 	ld a,$00
 	call enemySetAnimation
 
-_ramrock_state8_substate5:
+ramrock_state8_substate5:
 	call enemyAnimate
 	call objectApplySpeed
 	ld e,Enemy.yh
@@ -3070,7 +3070,7 @@ _ramrock_state8_substate5:
 	xor a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.angle
 	ld (hl),$08
 	ld l,Enemy.subid
@@ -3080,19 +3080,19 @@ _ramrock_state8_substate5:
 
 
 ; "Fist" phase
-_ramrock_swordPhase:
+ramrock_swordPhase:
 	call enemyAnimate
 	ld e,Enemy.var35
 	ld a,(de)
 	cp $03
 	jr nc,+
-	jp _ramrock_updateHorizontalMovement
+	jp ramrock_updateHorizontalMovement
 +
 	xor a
 	ld (de),a
 	ld bc,$0000
 	call objectSetSpeedZ
-	call _ecom_incState
+	call ecom_incState
 	inc l
 	ld (hl),$00
 	ld l,Enemy.subid
@@ -3104,7 +3104,7 @@ _ramrock_swordPhase:
 
 
 ; "Bomb" phase
-_ramrock_bombPhase:
+ramrock_bombPhase:
 	call @func_68fe
 
 	; Stop movement of any bombs that touch ramrock
@@ -3129,25 +3129,25 @@ _ramrock_bombPhase:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrock_bombPhase_substate0
-	.dw _ramrock_bombPhase_substate1
-	.dw _ramrock_bombPhase_substate2
-	.dw _ramrock_bombPhase_substate3
-	.dw _ramrock_bombPhase_substate4
+	.dw ramrock_bombPhase_substate0
+	.dw ramrock_bombPhase_substate1
+	.dw ramrock_bombPhase_substate2
+	.dw ramrock_bombPhase_substate3
+	.dw ramrock_bombPhase_substate4
 
-_ramrock_bombPhase_substate0:
+ramrock_bombPhase_substate0:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $06
 	ret nz
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	; Spawn arms
 	ld b,ENEMYID_RAMROCK_ARMS
-	call _ecom_spawnEnemyWithSubid01
+	call ecom_spawnEnemyWithSubid01
 	ld l,Enemy.subid
 	ld (hl),$02
 	ld l,Enemy.relatedObj1
@@ -3156,7 +3156,7 @@ _ramrock_bombPhase_substate0:
 	ld (hl),d
 
 	ld b,ENEMYID_RAMROCK_ARMS
-	call _ecom_spawnEnemyWithSubid01
+	call ecom_spawnEnemyWithSubid01
 	ld l,Enemy.subid
 	ld (hl),$03
 	ld l,Enemy.relatedObj1
@@ -3164,9 +3164,9 @@ _ramrock_bombPhase_substate0:
 	inc l
 	ld (hl),d
 
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
-_ramrock_bombPhase_substate1:
+ramrock_bombPhase_substate1:
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $07
@@ -3183,9 +3183,9 @@ _ramrock_bombPhase_substate1:
 	ld (hl),$08
 	ld a,$01
 	call enemySetAnimation
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
-_ramrock_bombPhase_substate2:
+ramrock_bombPhase_substate2:
 	ld c,$00
 	call objectUpdateSpeedZ_paramC
 	ld e,Enemy.zh
@@ -3196,7 +3196,7 @@ _ramrock_bombPhase_substate2:
 	ld a,SND_SWORD_OBTAINED
 	call playSound
 
-_ramrock_bombPhase_gotoSubstate3:
+ramrock_bombPhase_gotoSubstate3:
 	ld h,d
 	ld l,Enemy.counter1
 	ld a,$04
@@ -3206,7 +3206,7 @@ _ramrock_bombPhase_gotoSubstate3:
 	ld (hl),$03
 	ret
 
-_ramrock_bombPhase_substate3:
+ramrock_bombPhase_substate3:
 	ld e,Enemy.var38
 	ld a,(de)
 	sub $01
@@ -3220,27 +3220,27 @@ _ramrock_bombPhase_substate3:
 	ld e,Enemy.var35
 	ld a,(de)
 	cp $03
-	jr nc,_label_10_237
+	jr nc,label_10_237
 
 	call enemyAnimate
-	call _ecom_applyVelocityForSideviewEnemy
-	call _ecom_decCounter2
-	jr z,_label_10_236
+	call ecom_applyVelocityForSideviewEnemy
+	call ecom_decCounter2
+	jr z,label_10_236
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	ld (hl),$04
 	call objectGetAngleTowardLink
 	jp objectNudgeAngleTowards
 
-_label_10_236:
-	call _ecom_incSubstate
+label_10_236:
+	call ecom_incSubstate
 	ld a,$02
 	jp enemySetAnimation
 
-_label_10_237:
-	call _ecom_incState
+label_10_237:
+	call ecom_incState
 	inc l
 	xor a
 	ld (hl),a
@@ -3251,7 +3251,7 @@ _label_10_237:
 	ld a,$04
 	jp enemySetAnimation
 
-_ramrock_bombPhase_substate4:
+ramrock_bombPhase_substate4:
 	call enemyAnimate
 	ld h,d
 	ld l,Enemy.subid
@@ -3269,11 +3269,11 @@ _ramrock_bombPhase_substate4:
 	ret nc
 	ld a,$01
 	call enemySetAnimation
-	jp _ramrock_bombPhase_gotoSubstate3
+	jp ramrock_bombPhase_gotoSubstate3
 
 
 ; "Seed" phase
-_ramrock_seedPhase:
+ramrock_seedPhase:
 	ld h,d
 .ifndef REGION_JP
 	ld l,Enemy.substate
@@ -3334,18 +3334,18 @@ _ramrock_seedPhase:
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrock_seedPhase_substate0
-	.dw _ramrock_seedPhase_substate1
-	.dw _ramrock_seedPhase_substate2
-	.dw _ramrock_seedPhase_substate3
-	.dw _ramrock_seedPhase_substate4
-	.dw _ramrock_seedPhase_substate5
-	.dw _ramrock_seedPhase_substate6
+	.dw ramrock_seedPhase_substate0
+	.dw ramrock_seedPhase_substate1
+	.dw ramrock_seedPhase_substate2
+	.dw ramrock_seedPhase_substate3
+	.dw ramrock_seedPhase_substate4
+	.dw ramrock_seedPhase_substate5
+	.dw ramrock_seedPhase_substate6
 
 @seedPhaseEnd:
 	ld l,Enemy.subid
 	ld (hl),$10
-	call _ecom_incState
+	call ecom_incState
 	inc l
 	xor a
 	ld (hl),a
@@ -3353,7 +3353,7 @@ _ramrock_seedPhase:
 	ld (hl),a
 	ret
 
-_ramrock_seedPhase_substate0:
+ramrock_seedPhase_substate0:
 	ld h,d
 	ld bc,$4878
 	ld l,Enemy.yh
@@ -3374,7 +3374,7 @@ _ramrock_seedPhase_substate0:
 	ld c,$04
 @spawnArm:
 	ld b,ENEMYID_RAMROCK_ARMS
-	call _ecom_spawnEnemyWithSubid01
+	call ecom_spawnEnemyWithSubid01
 	ld l,Enemy.subid
 	ld (hl),c
 	ld l,Enemy.relatedObj1
@@ -3386,7 +3386,7 @@ _ramrock_seedPhase_substate0:
 	cp $05
 	jr z,@spawnArm
 
-	jp _ecom_incSubstate
+	jp ecom_incSubstate
 
 @updateMovement:
 	call objectGetRelativeAngle
@@ -3394,7 +3394,7 @@ _ramrock_seedPhase_substate0:
 	ld (de),a
 	jp objectApplySpeed
 
-_ramrock_seedPhase_substate1:
+ramrock_seedPhase_substate1:
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $0c
@@ -3403,7 +3403,7 @@ _ramrock_seedPhase_substate1:
 	ld e,Enemy.counter2
 	ld a,(de)
 	or a
-	jr nz,_label_10_248
+	jr nz,label_10_248
 
 	call enemyAnimate
 	ld e,Enemy.animParameter
@@ -3411,12 +3411,12 @@ _ramrock_seedPhase_substate1:
 	or a
 	ret z
 
-_ramrock_seedPhase_6a94:
+ramrock_seedPhase_6a94:
 	ld e,Enemy.subid
 	ld a,$0c
 	ld (de),a
 
-_ramrock_seedPhase_resumeNormalMovement:
+ramrock_seedPhase_resumeNormalMovement:
 	ld h,d
 	ld l,Enemy.substate
 	ld (hl),$02
@@ -3425,8 +3425,8 @@ _ramrock_seedPhase_resumeNormalMovement:
 	ld a,$00
 	jp enemySetAnimation
 
-_label_10_248:
-	call _ecom_decCounter2
+label_10_248:
+	call ecom_decCounter2
 	ret nz
 	ld l,Enemy.angle
 	ld (hl),$08
@@ -3436,14 +3436,14 @@ _label_10_248:
 	jp playSound
 
 ; Moving normally
-_ramrock_seedPhase_substate2:
+ramrock_seedPhase_substate2:
 	call enemyAnimate
-	call _ramrock_updateHorizontalMovement
+	call ramrock_updateHorizontalMovement
 
 	call getRandomNumber
 	rrca
 	ret nc
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	ld e,Enemy.subid
@@ -3463,7 +3463,7 @@ _ramrock_seedPhase_substate2:
 	ld (hl),60
 
 	ld b,PARTID_RAMROCK_SEED_FORM_ORB
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld bc,$1000
 	call objectCopyPositionWithOffset
 	jr @setAnimation0
@@ -3472,86 +3472,86 @@ _ramrock_seedPhase_substate2:
 	ld (hl),$0e
 	ld l,Enemy.angle
 	ld (hl),$18
-	call _ecom_incSubstate
+	call ecom_incSubstate
 
 @setAnimation0:
 	ld a,$00
 	jp enemySetAnimation
 
-_ramrock_seedPhase_substate3:
+ramrock_seedPhase_substate3:
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $0e
-	jr nz,_ramrock_seedPhase_resumeNormalMovement
-	call _ramrock_updateHorizontalMovement
+	jr nz,ramrock_seedPhase_resumeNormalMovement
+	call ramrock_updateHorizontalMovement
 	ret nz
 
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),180
 	inc l
 	ld (hl),30 ; [counter2]
 
 	ld b,PARTID_RAMROCK_SEED_FORM_LASER
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld l,Part.subid
 	ld (hl),$0e
 	ld bc,$0400
 	jp objectCopyPositionWithOffset
 
 ; Firing energy beam
-_ramrock_seedPhase_substate4:
+ramrock_seedPhase_substate4:
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $0e
-	jp nz,_ramrock_seedPhase_resumeNormalMovement
+	jp nz,ramrock_seedPhase_resumeNormalMovement
 
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@gotoNextSubstate
 
 	ld a,(hl)
 	and $07
 	ld a,SND_SWORDBEAM
 	call z,playSound
-	jp _ramrock_updateHorizontalMovement
+	jp ramrock_updateHorizontalMovement
 
 @gotoNextSubstate:
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.counter1
 	ld (hl),90
 	ld l,Enemy.subid
 	ld (hl),$0c
 
-_ramrock_seedPhase_substate5:
-	call _ecom_decCounter1
+ramrock_seedPhase_substate5:
+	call ecom_decCounter1
 	ret nz
-	jp _ramrock_seedPhase_resumeNormalMovement
+	jp ramrock_seedPhase_resumeNormalMovement
 
-_ramrock_seedPhase_substate6:
+ramrock_seedPhase_substate6:
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $0f
 	jr nz,++
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 ++
-	jp _ramrock_seedPhase_6a94
+	jp ramrock_seedPhase_6a94
 
 
 ; "Bomb" phase
-_ramrock_glovePhase:
+ramrock_glovePhase:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ramrock_glovePhase_substate0
-	.dw _ramrock_glovePhase_substate1
-	.dw _ramrock_glovePhase_substate2
-	.dw _ramrock_glovePhase_substate3
-	.dw _ramrock_glovePhase_substate4
+	.dw ramrock_glovePhase_substate0
+	.dw ramrock_glovePhase_substate1
+	.dw ramrock_glovePhase_substate2
+	.dw ramrock_glovePhase_substate3
+	.dw ramrock_glovePhase_substate4
 
-_ramrock_glovePhase_substate0:
+ramrock_glovePhase_substate0:
 	ld h,d
 	ld bc,$4878
 	ld l,Enemy.yh
@@ -3563,13 +3563,13 @@ _ramrock_glovePhase_substate0:
 	ld a,(hl)
 	cp c
 	jr nz,@updateMovement
-	call _ecom_incSubstate
+	call ecom_incSubstate
 
 	ld bc,$e001
 @spawnArm:
 	push bc
 	ld b,PARTID_RAMROCK_GLOVE_FORM_ARM
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld l,Part.subid
 	ld (hl),c
 	pop bc
@@ -3593,21 +3593,21 @@ _ramrock_glovePhase_substate0:
 	ld (de),a
 	jp objectApplySpeed
 
-_ramrock_glovePhase_substate1:
+ramrock_glovePhase_substate1:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	ld e,Enemy.var37
 	ld a,(de)
 	cp $03
 	ret nz
-	call _ecom_incSubstate
+	call ecom_incSubstate
 	ld l,Enemy.counter2
 	ld (hl),$02
 	ld a,PALH_84
 	jp loadPaletteHeader
 
-_ramrock_glovePhase_substate2:
-	call _ecom_decCounter2
+ramrock_glovePhase_substate2:
+	call ecom_decCounter2
 	jr z,++
 	ld a,SND_SWORD_OBTAINED
 	call playSound
@@ -3622,7 +3622,7 @@ _ramrock_glovePhase_substate2:
 	ld a,$03
 	call enemySetAnimation
 
-_ramrock_glovePhase_gotoSubstate3:
+ramrock_glovePhase_gotoSubstate3:
 	ld bc,-$80
 	call objectSetSpeedZ
 	ld l,Enemy.subid
@@ -3635,7 +3635,7 @@ _ramrock_glovePhase_gotoSubstate3:
 	ld (hl),120
 	ret
 
-_ramrock_glovePhase_substate3:
+ramrock_glovePhase_substate3:
 	call enemyAnimate
 	ld e,Enemy.zh
 	ld a,(de)
@@ -3643,13 +3643,13 @@ _ramrock_glovePhase_substate3:
 	ld c,$00
 	call nz,objectUpdateSpeedZ_paramC
 
-	call _ramrock_glovePhase_updateMovement
-	call _ecom_decCounter2
-	jr nz,_ramrock_glovePhase_reverseDirection
+	call ramrock_glovePhase_updateMovement
+	call ecom_decCounter2
+	jr nz,ramrock_glovePhase_reverseDirection
 
 	ld c,$50
 	call objectCheckLinkWithinDistance
-	jr nc,_ramrock_glovePhase_reverseDirection
+	jr nc,ramrock_glovePhase_reverseDirection
 
 	ld h,d
 	ld l,Enemy.subid
@@ -3668,7 +3668,7 @@ _ramrock_glovePhase_substate3:
 	ld (hl),$04
 	ret
 
-_ramrock_glovePhase_substate4:
+ramrock_glovePhase_substate4:
 	ld e,Enemy.var35
 	ld a,(de)
 	cp $03
@@ -3679,18 +3679,18 @@ _ramrock_glovePhase_substate4:
 	ld a,(de)
 	cp $03
 	ret nz
-	jr _ramrock_glovePhase_gotoSubstate3
+	jr ramrock_glovePhase_gotoSubstate3
 
 @dead:
 	ld e,Enemy.health
 	xor a
 	ld (de),a
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 ;;
 ; Moves from side to side of the screen
-_ramrock_updateHorizontalMovement:
-	call _ecom_applyVelocityForSideviewEnemy
+ramrock_updateHorizontalMovement:
+	call ecom_applyVelocityForSideviewEnemy
 	ret nz
 	ld e,Enemy.angle
 	ld a,(de)
@@ -3699,7 +3699,7 @@ _ramrock_updateHorizontalMovement:
 	xor a
 	ret
 
-_ramrock_glovePhase_reverseDirection:
+ramrock_glovePhase_reverseDirection:
 	ld h,d
 	ld l,Enemy.xh
 	ld a,$c0
@@ -3720,7 +3720,7 @@ _ramrock_glovePhase_reverseDirection:
 	jp objectApplySpeed
 
 ;;
-_ramrock_glovePhase_updateMovement:
+ramrock_glovePhase_updateMovement:
 	ld hl,w1Link.yh
 	ld e,Enemy.yh
 	ld a,(de)
@@ -3765,20 +3765,20 @@ enemyCode56_body:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _kingMoblinMinion_state0
+	.dw kingMoblinMinion_state0
 	.dw enemyAnimate
-	.dw _kingMoblinMinion_state2
-	.dw _kingMoblinMinion_state3
-	.dw _kingMoblinMinion_state4
-	.dw _kingMoblinMinion_state5
-	.dw _kingMoblinMinion_state6
-	.dw _kingMoblinMinion_state7
-	.dw _kingMoblinMinion_state8
-	.dw _kingMoblinMinion_state9
-	.dw _kingMoblinMinion_stateA
+	.dw kingMoblinMinion_state2
+	.dw kingMoblinMinion_state3
+	.dw kingMoblinMinion_state4
+	.dw kingMoblinMinion_state5
+	.dw kingMoblinMinion_state6
+	.dw kingMoblinMinion_state7
+	.dw kingMoblinMinion_state8
+	.dw kingMoblinMinion_state9
+	.dw kingMoblinMinion_stateA
 
 
-_kingMoblinMinion_state0:
+kingMoblinMinion_state0:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = 1
@@ -3817,7 +3817,7 @@ _kingMoblinMinion_state0:
 
 
 ; Fight just started
-_kingMoblinMinion_state2:
+kingMoblinMinion_state2:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = 3
@@ -3830,32 +3830,32 @@ _kingMoblinMinion_state2:
 
 
 ; Delay before spawning bomb
-_kingMoblinMinion_state3:
-	call _ecom_decCounter2
-	jr nz,_kingMoblinMinion_animate
+kingMoblinMinion_state3:
+	call ecom_decCounter2
+	jr nz,kingMoblinMinion_animate
 
 	ld b,PARTID_BOMB
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 
-	call _ecom_incState
+	call ecom_incState
 
 	ld a,$02
 	jp enemySetAnimation
 
 
 ; Holding bomb for a bit
-_kingMoblinMinion_state4:
-	call _ecom_decCounter1
+kingMoblinMinion_state4:
+	call ecom_decCounter1
 	ld l,e
 	jr z,@jump
 
 	ld a,(wScreenShakeCounterY)
 	or a
-	jr z,_kingMoblinMinion_animate
+	jr z,kingMoblinMinion_animate
 
 	ld (hl),$07 ; [counter1]
-	jr _kingMoblinMinion_animate
+	jr kingMoblinMinion_animate
 
 @jump:
 	inc (hl) ; [state] = 5
@@ -3864,12 +3864,12 @@ _kingMoblinMinion_state4:
 	ldi (hl),a
 	ld (hl),>(-$180)
 
-_kingMoblinMinion_animate:
+kingMoblinMinion_animate:
 	jp enemyAnimate
 
 
 ; Jumping in air
-_kingMoblinMinion_state5:
+kingMoblinMinion_state5:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jr z,@landed
@@ -3898,23 +3898,23 @@ _kingMoblinMinion_state5:
 
 	ld l,Enemy.counter1
 	ld (hl),$10
-	jr _kingMoblinMinion_animate
+	jr kingMoblinMinion_animate
 
 
 ; Delay before pulling out next bomb
-_kingMoblinMinion_state6:
-	call _ecom_decCounter1
-	jr nz,_kingMoblinMinion_animate
+kingMoblinMinion_state6:
+	call ecom_decCounter1
+	jr nz,kingMoblinMinion_animate
 
 	ld (hl),200 ; [counter1]
 	ld l,e
 	ld (hl),$02 ; [state]
 
-	jr _kingMoblinMinion_animate
+	jr kingMoblinMinion_animate
 
 
 ; ENEMYID_KING_MOBLIN sets this object's state to 7 when defeated.
-_kingMoblinMinion_state7:
+kingMoblinMinion_state7:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = 8
@@ -3961,8 +3961,8 @@ _kingMoblinMinion_state7:
 
 
 ; Delay before hopping
-_kingMoblinMinion_state8:
-	call _ecom_decCounter1
+kingMoblinMinion_state8:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -3985,7 +3985,7 @@ _kingMoblinMinion_state8:
 
 
 ; Waiting to land on ground
-_kingMoblinMinion_state9:
+kingMoblinMinion_state9:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -4003,11 +4003,11 @@ _kingMoblinMinion_state9:
 
 
 ; Running away
-_kingMoblinMinion_stateA:
-	call _ecom_decCounter2
+kingMoblinMinion_stateA:
+	call ecom_decCounter2
 	jr nz,@animate
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@delete
 
 	call objectApplySpeed

@@ -18,7 +18,7 @@
 ;                6-7: invalid
 ;  b1: Byte to check input against when the item is first used
 ;
-_itemUsageParameterTable:
+itemUsageParameterTable:
 	.db $00 <wGameKeysPressed	; ITEMID_NONE
 	.db $05 <wGameKeysPressed	; ITEMID_SHIELD
 	.db $03 <wGameKeysJustPressed	; ITEMID_PUNCH
@@ -61,7 +61,7 @@ _itemUsageParameterTable:
 ;                A value of $6 refers to w1WeaponItem.
 ;  b1: Animation to set Link to? (see constants/linkAnimations.s)
 ;
-_linkItemAnimationTable:
+linkItemAnimationTable:
 	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_NONE
 	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_SHIELD
 	.db $d6  LINK_ANIM_MODE_21	; ITEMID_PUNCH

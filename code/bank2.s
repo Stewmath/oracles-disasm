@@ -3,7 +3,6 @@
 ;;
 ; This function checks if the game is run on a dmg (instead of a gbc) and, if so, displays
 ; the "only for gbc" screen.
-;
 checkDisplayDmgModeScreen:
 	ldh a,(<hGameboyType)
 	or a
@@ -17,7 +16,7 @@ checkDisplayDmgModeScreen:
 .ifdef REGION_JP
 	ld de,$8800
 	xor a
-	call _copyTextCharactersFromSecretTextTable
+	call copyTextCharactersFromSecretTextTable
 .endif
 
 	xor a
@@ -59,7 +58,6 @@ checkDisplayDmgModeScreen:
 ; subrosia.
 ;
 ; Updates wTilesetFlags accordingly with TILESETFLAG_PAST (bit 7).
-;
 updateTilesetFlagsForIndoorRoomInAltWorld:
 	ld a,(wActiveGroup)
 	or a
@@ -90,15 +88,15 @@ updateTilesetFlagsForIndoorRoomInAltWorld:
 ; @param	a	Index for table
 ; @param	b	Number of characters to copy
 ; @param	de	Destination
-_copyTextCharactersFromSecretTextTable:
-	ld hl,_secretTextTable
+copyTextCharactersFromSecretTextTable:
+	ld hl,secretTextTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 
 ;;
-_copyTextCharactersFromHlUntilNull:
+copyTextCharactersFromHlUntilNull:
 	set 7,b
 
 ;;
@@ -107,7 +105,7 @@ _copyTextCharactersFromHlUntilNull:
 ; @param	de			Destination
 ; @param	hl			Pointer to characters indices to load
 ; @param	wFileSelect.fontXor	Value to xor every other byte with
-_copyTextCharactersFromHl:
+copyTextCharactersFromHl:
 	ldi a,(hl)
 	bit 7,b
 	jr z,+
@@ -116,7 +114,7 @@ _copyTextCharactersFromHl:
 	ret z
 
 	cp $01
-	jr z,_copyTextCharactersFromHl
+	jr z,copyTextCharactersFromHl
 +
 	ld c,$00
 	cp $06
@@ -127,9 +125,9 @@ _copyTextCharactersFromHl:
 +
 	call copyTextCharacterGfx
 	bit 7,b
-	jr nz,_copyTextCharactersFromHl
+	jr nz,copyTextCharactersFromHl
 	dec b
-	jr nz,_copyTextCharactersFromHl
+	jr nz,copyTextCharactersFromHl
 	ret
 
 ;;
@@ -139,17 +137,17 @@ b2_fileSelectScreen:
 	call fileSelect_redrawDecorationsAndSetWramBank4
 	ld a,(wFileSelect.mode)
 	rst_jumpTable
-	.dw _fileSelectMode0 ; Initialization
-	.dw _fileSelectMode1 ; Main file select
-	.dw _fileSelectMode2 ; Entering name
-	.dw _fileSelectMode3 ; Copy
-	.dw _fileSelectMode4 ; Erase
-	.dw _fileSelectMode5 ; Selecting between new game, secret, link
-	.dw _fileSelectMode6 ; Entering a secret
-	.dw _fileSelectMode7 ; Game link
+	.dw fileSelectMode0 ; Initialization
+	.dw fileSelectMode1 ; Main file select
+	.dw fileSelectMode2 ; Entering name
+	.dw fileSelectMode3 ; Copy
+	.dw fileSelectMode4 ; Erase
+	.dw fileSelectMode5 ; Selecting between new game, secret, link
+	.dw fileSelectMode6 ; Entering a secret
+	.dw fileSelectMode7 ; Game link
 
 ;;
-_func_02_4149:
+func_02_4149:
 	ld hl,wFileSelect.cursorPos
 	ldi (hl),a
 
@@ -161,16 +159,16 @@ _func_02_4149:
 	ret
 
 ;;
-_setFileSelectCursorOffsetToFileSelectMode:
+setFileSelectCursorOffsetToFileSelectMode:
 	ld a,(wFileSelect.mode)
 	ld (wFileSelect.cursorOffset),a
 	ret
 
 ;;
-_setFileSelectModeTo1:
+setFileSelectModeTo1:
 	ld a,$01
 ;;
-_setFileSelectMode:
+setFileSelectMode:
 	ld hl,wFileSelect.mode
 	ldi (hl),a
 	xor a
@@ -179,22 +177,22 @@ _setFileSelectMode:
 	ret
 
 ;;
-_loadGfxRegisterState5AndIncFileSelectMode2:
+loadGfxRegisterState5AndIncFileSelectMode2:
 	ld a,$05
 	call loadGfxRegisterStateIndex
 ;;
-_incFileSelectMode2:
+incFileSelectMode2:
 	ld hl,wFileSelect.mode2
 	inc (hl)
 	ret
 
 ;;
-_decFileSelectMode2IfBPressed:
+decFileSelectMode2IfBPressed:
 	ld a,(wKeysJustPressed)
 	and BTN_B
 	ret z
 ;;
-_decFileSelectMode2:
+decFileSelectMode2:
 	ld hl,wFileSelect.mode2
 	dec (hl)
 	ret
@@ -204,9 +202,9 @@ _decFileSelectMode2:
 ;
 ; @param	a	File index
 ; @param	d	Value to add to address
-_getFileDisplayVariableAddress:
+getFileDisplayVariableAddress:
 	ld e,a
-_getFileDisplayVariableAddress_paramE:
+getFileDisplayVariableAddress_paramE:
 	ld a,e
 	swap a
 	rrca
@@ -217,7 +215,7 @@ _getFileDisplayVariableAddress_paramE:
 
 ;;
 ; Initialization of file select screen
-_fileSelectMode0:
+fileSelectMode0:
 	ld hl,wFileSelect.mode
 	ld b,$10
 	call clearMemory
@@ -228,13 +226,13 @@ _fileSelectMode0:
 	call playSound
 	xor a
 	ld (wLastSecretInputLength),a
-	call _setFileSelectModeTo1
+	call setFileSelectModeTo1
 ;;
 ; Main mode, selecting a file
-_fileSelectMode1:
+fileSelectMode1:
 	call @mode1SubModes
-	call _fileSelectDrawAcornCursor
-	jp _fileSelectDrawLink
+	call fileSelectDrawAcornCursor
+	jp fileSelectDrawLink
 
 ;;
 @mode1SubModes:
@@ -248,23 +246,23 @@ _fileSelectMode1:
 ;;
 ; Initialization
 @state0:
-	call _setFileSelectCursorOffsetToFileSelectMode
+	call setFileSelectCursorOffsetToFileSelectMode
 	xor a
-	call _func_02_4149
+	call func_02_4149
 	call disableLcd
 	ld a,GFXH_ba
 	call loadGfxHeader
 	ld a,PALH_05
 	call loadPaletteHeader
-	call _loadFileDisplayVariables
-	call _textInput_updateEntryCursor
-	call _fileSelectDrawHeartsAndDeathCounter
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	call loadFileDisplayVariables
+	call textInput_updateEntryCursor
+	call fileSelectDrawHeartsAndDeathCounter
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 ; Normal mode
 @state1:
-	call _fileSelectUpdateInput
+	call fileSelectUpdateInput
 	jr nz,++
 
 	ld hl,wFileSelect.cursorPos
@@ -278,18 +276,18 @@ _fileSelectMode1:
 	ld a,SND_SELECTITEM
 	call playSound
 	call @getNextFileSelectMode
-	jp nz,_setFileSelectMode
+	jp nz,setFileSelectMode
 
 	; Selected a non-empty file
-	call _incFileSelectMode2
+	call incFileSelectMode2
 	call loadFile
 	ld a,UNCMP_GFXH_16
 	jp loadUncompressedGfxHeader
 
 ;;
 ; Called after selecting something.
-; Returns zero-flag unset with a value in A as the next file selection mode, or
-; zero-flag set for no mode change.
+;
+; Returns nz with a value in A as the next file selection mode, or z for no mode change.
 @getNextFileSelectMode:
 	ld a,(wFileSelect.cursorPos)
 	cp $03
@@ -297,7 +295,7 @@ _fileSelectMode1:
 
 	ldh (<hActiveFileSlot),a
 	ld d,$00
-	call _getFileDisplayVariableAddress
+	call getFileDisplayVariableAddress
 	bit 7,(hl)
 	ld a,$05
 	ret nz
@@ -335,7 +333,7 @@ _fileSelectMode1:
 
 	ld a,SND_SELECTITEM
 	call playSound
-	call _incFileSelectMode2
+	call incFileSelectMode2
 	call saveFile
 	jp fadeoutToWhite
 
@@ -343,7 +341,7 @@ _fileSelectMode1:
 	ld a,UNCMP_GFXH_08
 	call loadUncompressedGfxHeader
 	call drawRandoFileSelectString ; RANDO: Draw info string
-	jp _decFileSelectMode2
+	jp decFileSelectMode2
 
 @leftOrRight:
 	ld hl,wTextSpeed
@@ -384,9 +382,9 @@ _fileSelectMode1:
 
 ;;
 ; Choose between new game, secret, game link
-_fileSelectMode5:
+fileSelectMode5:
 	call @mode5States
-	jp _fileSelectDrawAcornCursor
+	jp fileSelectDrawAcornCursor
 
 ;;
 @mode5States:
@@ -404,10 +402,10 @@ _fileSelectMode5:
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_08
 	call loadUncompressedGfxHeader
-	call _setFileSelectCursorOffsetToFileSelectMode
+	call setFileSelectCursorOffsetToFileSelectMode
 	xor a
-	call _func_02_4149
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	call func_02_4149
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 @state1:
@@ -422,7 +420,7 @@ _fileSelectMode5:
 
 	ld c,a
 	and BTN_B | BTN_SELECT
-	jp nz,_setFileSelectModeTo1
+	jp nz,setFileSelectModeTo1
 
 	ld a,c
 	and BTN_A | BTN_START
@@ -439,7 +437,7 @@ _fileSelectMode5:
 	ld hl,@selectionModes
 	rst_addAToHl
 	ld a,(hl)
-	call _setFileSelectMode
+	call setFileSelectMode
 	ld a,SND_SELECTITEM
 	jp playSound
 
@@ -463,9 +461,9 @@ _fileSelectMode5:
 
 ;;
 ; Copying file
-_fileSelectMode3:
+fileSelectMode3:
 	call @mode3Update
-	jp _fileSelectDrawAcornCursor
+	jp fileSelectDrawAcornCursor
 
 ;;
 @mode3Update:
@@ -478,31 +476,31 @@ _fileSelectMode3:
 
 ;;
 @mode0:
-	call _setFileSelectCursorOffsetToFileSelectMode
+	call setFileSelectCursorOffsetToFileSelectMode
 	ld a,$03
-	call _func_02_4149
+	call func_02_4149
 	call disableLcd
 	ld a,GFXH_a3
 	call loadGfxHeader
-	call _loadFileDisplayVariables
-	call _textInput_updateEntryCursor
+	call loadFileDisplayVariables
+	call textInput_updateEntryCursor
 	ld a,UNCMP_GFXH_08
 	call loadUncompressedGfxHeader
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 @mode1:
-	call _fileSelectUpdateInput
+	call fileSelectUpdateInput
 	ret z
 	ld a,SND_SELECTITEM
 	call playSound
 	ld a,(wFileSelect.cursorPos)
 	cp $03
-	jp z,_setFileSelectModeTo1
+	jp z,setFileSelectModeTo1
 
 	ldh (<hActiveFileSlot),a
 	ld d,$00
-	call _getFileDisplayVariableAddress
+	call getFileDisplayVariableAddress
 	bit 7,(hl)
 	jr z,+
 
@@ -511,8 +509,8 @@ _fileSelectMode3:
 +
 	xor a
 	ld (wFileSelect.cursorOffset),a
-	call _func_02_4149
-	call _incFileSelectMode2
+	call func_02_4149
+	call incFileSelectMode2
 	ld b,$01
 ---
 	ld a,b
@@ -532,24 +530,24 @@ _fileSelectMode3:
 ;;
 @mode2:
 	call @func_02_4397
-	call _decFileSelectMode2IfBPressed
+	call decFileSelectMode2IfBPressed
 	jr nz,@label_02_015
 
-	call _fileSelectUpdateInput
+	call fileSelectUpdateInput
 	jr z,---
 
 	ld a,SND_SELECTITEM
 	call playSound
 	ld a,(wFileSelect.cursorPos)
 	cp $03
-	jp nz,_incFileSelectMode2
-	call _decFileSelectMode2
+	jp nz,incFileSelectMode2
+	call decFileSelectMode2
 	jr @label_02_015
 
 ;;
 @mode3:
 	call @func_02_4397
-	call _decFileSelectMode2IfBPressed
+	call decFileSelectMode2IfBPressed
 	jr nz,@label_02_015
 	call func_02_448d
 	ret z
@@ -558,13 +556,13 @@ _fileSelectMode3:
 	call playSound
 	ld a,(wFileSelect.cursorPos2)
 	or a
-	jp z,_setFileSelectModeTo1
+	jp z,setFileSelectModeTo1
 
 	call loadFile
 	ld a,(wFileSelect.cursorPos)
 	ldh (<hActiveFileSlot),a
 	call saveFile
-	jp _setFileSelectModeTo1
+	jp setFileSelectModeTo1
 
 ;;
 @func_02_4397:
@@ -596,17 +594,17 @@ _fileSelectMode3:
 	ld a,(wFileSelect.cursorPos)
 	jr nz,+
 
-	call _setFileSelectCursorOffsetToFileSelectMode
+	call setFileSelectCursorOffsetToFileSelectMode
 	ldh a,(<hActiveFileSlot)
 +
-	jp _func_02_4149
+	jp func_02_4149
 
 ;;
 ; Erasing a file
-_fileSelectMode4:
+fileSelectMode4:
 	call @mode4Update
-	call _fileSelectDrawAcornCursor
-	jp _fileSelectDrawLink
+	call fileSelectDrawAcornCursor
+	jp fileSelectDrawLink
 
 @mode4Update:
 	ld a,(wFileSelect.mode2)
@@ -617,34 +615,34 @@ _fileSelectMode4:
 	.dw @mode3
 
 @mode0:
-	call _setFileSelectCursorOffsetToFileSelectMode
+	call setFileSelectCursorOffsetToFileSelectMode
 	ld a,$03
-	call _func_02_4149
+	call func_02_4149
 	call disableLcd
 	ld a,GFXH_a4
 	call loadGfxHeader
 	ld a,PALH_06
 	call loadPaletteHeader
-	call _loadFileDisplayVariables
-	call _textInput_updateEntryCursor
-	call _fileSelectDrawHeartsAndDeathCounter
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	call loadFileDisplayVariables
+	call textInput_updateEntryCursor
+	call fileSelectDrawHeartsAndDeathCounter
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 @mode1:
-	call _fileSelectUpdateInput
+	call fileSelectUpdateInput
 	ret z
 
 	ld a,SND_SELECTITEM
 	call playSound
 	ld a,(wFileSelect.cursorPos)
 	cp $03
-	jp z,_setFileSelectModeTo1
+	jp z,setFileSelectModeTo1
 
 	ldh (<hActiveFileSlot),a
-	jp _incFileSelectMode2
+	jp incFileSelectMode2
 
 @mode2:
-	call _decFileSelectMode2IfBPressed
+	call decFileSelectMode2IfBPressed
 	jr nz,++
 
 	call func_02_448d
@@ -652,13 +650,13 @@ _fileSelectMode4:
 
 	ld a,(wFileSelect.cursorPos2)
 	or a
-	jp z,_setFileSelectModeTo1
-	jp _incFileSelectMode2
+	jp z,setFileSelectModeTo1
+	jp incFileSelectMode2
 ++
 	ld a,SND_CLINK
 	call playSound
 	ld a,(wFileSelect.cursorPos)
-	jp _func_02_4149
+	jp func_02_4149
 
 @mode3:
 	ld hl,wFileSelect.linkTimer
@@ -668,7 +666,7 @@ _fileSelectMode4:
 
 	ldh a,(<hActiveFileSlot)
 	ld d,$02
-	call _getFileDisplayVariableAddress
+	call getFileDisplayVariableAddress
 	ld a,(hl)
 	or a
 	jr z,++
@@ -678,14 +676,14 @@ _fileSelectMode4:
 	and $03
 	ld a,SND_GAINHEART
 	call z,playSound
-	jp _fileSelectDrawHeartsAndDeathCounter
+	jp fileSelectDrawHeartsAndDeathCounter
 ++
 	call eraseFile
-	jp _setFileSelectModeTo1
+	jp setFileSelectModeTo1
 
 ;;
 ; Returns z-flag unset if something was selected.
-_fileSelectUpdateInput:
+fileSelectUpdateInput:
 	call checkChangeRandoVars
 
 	ld a,(wKeysJustPressed)
@@ -709,8 +707,8 @@ _fileSelectUpdateInput:
 	push bc
 	add (hl)
 	and $03
-	call _fileSelectSetCursor
-	call _fileSelectDrawHeartsAndDeathCounter
+	call fileSelectSetCursor
+	call fileSelectDrawHeartsAndDeathCounter
 	pop bc
 	xor a
 	ret
@@ -734,37 +732,37 @@ func_02_448d:
 	ret
 +
 	cp (hl)
-	call nz,_fileSelectSetCursor
+	call nz,fileSelectSetCursor
 	xor a
 	ret
 
 ;;
-_fileSelectSetCursor:
+fileSelectSetCursor:
 	ld (hl),a
 	ld a,SND_MENU_MOVE
 	jp playSound
 
 ;;
 ; Entering name
-_fileSelectMode2:
+fileSelectMode2:
 	call @func
-	jp _drawNameInputCursors
+	jp drawNameInputCursors
 
 @func:
 	ld a,(wFileSelect.mode2)
 	rst_jumpTable
 	.dw @mode0
-	.dw _runTextInput
+	.dw runTextInput
 	.dw @mode2
 
 @mode0:
 	call eraseFile
 	call loadFile
 	xor a
-	jp _copyNameToW4NameBuffer
+	jp copyNameToW4NameBuffer
 
 @mode2:
-	call _getNameBufferLength
+	call getNameBufferLength
 	jr z,+
 
 	ld hl,w4NameBuffer
@@ -773,13 +771,13 @@ _fileSelectMode2:
 	call copyMemory
 	call initializeFile
 +
-	jp _setFileSelectModeTo1
+	jp setFileSelectModeTo1
 
 ;;
-_runKidNameEntryMenu:
+runKidNameEntryMenu:
 	call fileSelect_redrawDecorationsAndSetWramBank4
 	call @func
-	jp _drawNameInputCursors
+	jp drawNameInputCursors
 
 @func:
 	ld a,(wFileSelect.mode2)
@@ -792,17 +790,17 @@ _runKidNameEntryMenu:
 	ld a,GFXH_a0
 	call loadGfxHeader
 	ld a,$01
-	call _copyNameToW4NameBuffer
+	call copyNameToW4NameBuffer
 	jp fadeinFromWhite
 
 @mode1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	jp _runTextInput
+	jp runTextInput
 
 @mode2:
-	call _getNameBufferLength
+	call getNameBufferLength
 	ld a,$01
 	jr z,+
 
@@ -815,27 +813,27 @@ _runKidNameEntryMenu:
 	xor a
 +
 	ld (wTextInputResult),a
-	jp _closeMenu
+	jp closeMenu
 
 ;;
 ; Entering a secret
-_fileSelectMode6:
+fileSelectMode6:
 	call @updateMode6
-	jp _drawSecretInputCursors
+	jp drawSecretInputCursors
 
 @updateMode6:
 	ld a,(wFileSelect.mode2)
 	rst_jumpTable
 	.dw @mode0
-	.dw _runTextInput
+	.dw runTextInput
 	.dw @mode2
-	.dw _setFileSelectModeTo1
-	.dw _textInput_waitForInput
+	.dw setFileSelectModeTo1
+	.dw textInput_waitForInput
 
 @mode0:
 	xor a
 	ld (wSecretInputType),a
-	jp _func_02_465c
+	jp func_02_465c
 
 @mode2:
 	ld hl,w4SecretBuffer
@@ -844,7 +842,7 @@ _fileSelectMode6:
 	call copyMemory
 	ld bc,$0100
 	call secretFunctionCaller
-	jp nz,_fileSelect_printError
+	jp nz,fileSelect_printError
 
 	ld a,($ced2)
 	or a
@@ -856,21 +854,21 @@ _fileSelectMode6:
 .else; ROM_SEASONS
 	or a
 .endif
-	jp z,_fileSelect_printError
+	jp z,fileSelect_printError
 +
 	call loadFile
 	ld bc,$0400
 	call secretFunctionCaller
 	call initializeFile
-	jp _setFileSelectModeTo1
+	jp setFileSelectModeTo1
 
 
 ;;
 ; A secret entry menu called from in-game (not called from file select)
-_runSecretEntryMenu:
+runSecretEntryMenu:
 	call fileSelect_redrawDecorationsAndSetWramBank4
 	call @func
-	jp _drawSecretInputCursors
+	jp drawSecretInputCursors
 
 @func:
 	ld a,(wFileSelect.mode2)
@@ -878,13 +876,13 @@ _runSecretEntryMenu:
 	.dw @mode0
 	.dw @mode1
 	.dw @mode2
-	.dw _closeMenu
-	.dw _textInput_waitForInput
+	.dw closeMenu
+	.dw textInput_waitForInput
 
 @mode0:
 	ld a,GFXH_a0
 	call loadGfxHeader
-	call _func_02_465c
+	call func_02_465c
 	jp fadeinFromWhite
 
 ; Run text input
@@ -892,7 +890,7 @@ _runSecretEntryMenu:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	jp _runTextInput
+	jp runTextInput
 
 ; Check whether secret is good
 @mode2:
@@ -946,11 +944,11 @@ _runSecretEntryMenu:
 
 @setTextInputResult:
 	ld (wTextInputResult),a
-	jr nz,_fileSelect_printError
+	jr nz,fileSelect_printError
 
 	ld a,SND_SOLVEPUZZLE
 	call playSound
-	jp _closeMenu
+	jp closeMenu
 
 @loadRingSecretData:
 	; Load the data from the ring secret (updates obtained rings)
@@ -960,7 +958,7 @@ _runSecretEntryMenu:
 	jr @setTextInputResult
 
 ;;
-_fileSelect_printError:
+fileSelect_printError:
 	ld a,SND_ERROR
 	call playSound
 	ld a,$10
@@ -974,7 +972,7 @@ _fileSelect_printError:
 
 ;;
 ; Wait for input while showing "That's Wrong" text.
-_textInput_waitForInput:
+textInput_waitForInput:
 	ld hl,wFileSelect.linkTimer
 	ld a,(hl)
 	or a
@@ -998,7 +996,7 @@ func_02_461c:
 
 ;;
 ; Returns in b the length of the buffer used. Ignores trailing spaces.
-_getNameBufferLength:
+getNameBufferLength:
 	ld hl,w4NameBuffer
 	ld b,$05
 	xor a
@@ -1026,7 +1024,7 @@ _getNameBufferLength:
 ;;
 ; Dunno exactly what this does after the jump
 ; @param a 1 for kid name, 0 for link name
-_copyNameToW4NameBuffer:
+copyNameToW4NameBuffer:
 	ld (wFileSelect.textInputMode),a
 	ld de,wLinkName
 	cp $01
@@ -1038,10 +1036,10 @@ _copyNameToW4NameBuffer:
 	call copyMemoryReverse
 	ld a,$04
 	ld (wFileSelect.textInputMaxCursorPos),a
-	jr _label_02_038
+	jr label_02_038
 
 ;;
-_func_02_465c:
+func_02_465c:
 	ld a,(wSecretInputType)
 	bit 7,a
 	jr nz,+
@@ -1061,11 +1059,11 @@ _func_02_465c:
 	ld (wFileSelect.textInputMaxCursorPos),a
 	ld a,c
 	ld (wFileSelect.textInputMode),a
-_label_02_038:
+label_02_038:
 	ld hl,wTmpcbb9
 	ld b,$0a
 	call clearMemory
-	call _textInput_loadCharacterGfx
+	call textInput_loadCharacterGfx
 	call disableLcd
 	ld a,UNCMP_GFXH_0b
 	call loadUncompressedGfxHeader
@@ -1107,12 +1105,12 @@ _label_02_038:
 	call loadGfxHeader
 	call func_02_461c
 @end:
-	call _textInput_updateEntryCursor
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	call textInput_updateEntryCursor
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 ; Name / secret selection
-_runTextInput:
+runTextInput:
 	ld a,$01
 	ld (wTextInputResult),a
 	call getInputWithAutofire
@@ -1152,7 +1150,7 @@ _runTextInput:
 	cp $50
 	jr nc,@lowerOptions
 
-	call _textInput_getCursorPosition
+	call textInput_getCursorPosition
 	and $0f
 	ld hl,w4TileMap+$a3
 	rst_addAToHl
@@ -1192,16 +1190,16 @@ _runTextInput:
 	jr z,@gotCharacter
 	dec a
 	ld e,a
-	call _textInput_getOutputAddress
+	call textInput_getOutputAddress
 	ld a,(hl)
-	call _func_02_494a
+	call func_02_494a
 	jr c,@gotCharacter
 	ld a,(wFileSelect.textInputCursorPos)
 	or a
 	jr z,++
 	dec hl
 	ld a,(hl)
-	call _func_02_494a
+	call func_02_494a
 	jr nc,++
 	ld hl,wFileSelect.textInputCursorPos
 	dec (hl)
@@ -1243,7 +1241,7 @@ _runTextInput:
 .endif
 
 @gotCharacter:
-	call _textInput_getOutputAddress
+	call textInput_getOutputAddress
 	ld (hl),c
 @selectionRight:
 	ld hl,wFileSelect.textInputCursorPos
@@ -1253,7 +1251,7 @@ _runTextInput:
 	jr nc,@updateEntryCursor
 	ld (hl),a
 @updateEntryCursor:
-	jp _textInput_updateEntryCursor
+	jp textInput_updateEntryCursor
 
 @lowerOptions:
 	ld a,(wFileSelect.textInputMode)
@@ -1279,7 +1277,7 @@ _runTextInput:
 	.dw @startButton
 
 @bButton:
-	call _textInput_getOutputAddress
+	call textInput_getOutputAddress
 	ld (hl),$20
 @selectionLeft:
 	ld hl,wFileSelect.textInputCursorPos
@@ -1310,7 +1308,7 @@ _runTextInput:
 	ld a,(wFileSelect.textInputMode)
 	rlca
 	jr c,++
-	call _textInput_loadCharacterGfx
+	call textInput_loadCharacterGfx
 	ld a,UNCMP_GFXH_0b
 	jp loadUncompressedGfxHeader
 ++
@@ -1392,7 +1390,7 @@ _runTextInput:
 	cp b
 	jr nc,@label_02_057
 	ld (hl),a
-	jp _textInput_lowerOption_updateFileSelectCursorPos
+	jp textInput_lowerOption_updateFileSelectCursorPos
 
 .else ; REGION_US, REGION_EU
 
@@ -1431,7 +1429,7 @@ _runTextInput:
 	jr nc,-
 
 	ld (hl),a
-	jp _textInput_lowerOption_updateFileSelectCursorPos
+	jp textInput_lowerOption_updateFileSelectCursorPos
 .endif
 
 @upButton:
@@ -1457,7 +1455,7 @@ _runTextInput:
 	ld (hl),$80
 	cp $50
 	ret c
-	jp _textInput_lowerOption_updateFileSelectCursorPos2
+	jp textInput_lowerOption_updateFileSelectCursorPos2
 
 @startButton:
 	ld hl,wFileSelect.cursorPos
@@ -1477,12 +1475,12 @@ _runTextInput:
 	cp (hl)
 	ldd (hl),a
 	ret nz
-	jp _incFileSelectMode2
+	jp incFileSelectMode2
 
 ;;
 ; Returns the position of the character within w4TileMap in A, relative to the
 ; first character at position $a3.
-_textInput_getCursorPosition:
+textInput_getCursorPosition:
 	ld a,(wFileSelect.cursorPos)
 	ld c,a
 	and $f0
@@ -1528,8 +1526,8 @@ _textInput_getCursorPosition:
 ;;
 ; Draws cursors for the currently selected character, and the position in the
 ; input string.
-_drawNameInputCursors:
-	call _textInput_getCursorPosition
+drawNameInputCursors:
+	call textInput_getCursorPosition
 	cp $50
 	jr nc,@lowerOptions
 
@@ -1607,8 +1605,8 @@ _drawNameInputCursors:
 
 ;;
 ; Same as drawNameInputCursors, but for secrets.
-_drawSecretInputCursors:
-	call _textInput_getCursorPosition
+drawSecretInputCursors:
+	call textInput_getCursorPosition
 	cp $50
 	jr nc,@lowerOptions
 
@@ -1677,28 +1675,28 @@ _drawSecretInputCursors:
 ;;
 ; Updates wFileSelect.cursorPos (the index for the upper options) based on
 ; wFileSelect.cursorPos2 (the index for the lower options)
-_textInput_lowerOption_updateFileSelectCursorPos:
+textInput_lowerOption_updateFileSelectCursorPos:
 	ld a,(wFileSelect.cursorPos2)
 	ld e,a
 	ld d,$ff
-	call _textInput_mapUpperXToLowerX
+	call textInput_mapUpperXToLowerX
 	ld a,b
 	ld (wFileSelect.cursorPos),a
 	ret
 
 ;;
 ; Reverse of above
-_textInput_lowerOption_updateFileSelectCursorPos2:
+textInput_lowerOption_updateFileSelectCursorPos2:
 	ld a,(wFileSelect.cursorPos)
 	ld d,a
 	ld e,$ff
-	call _textInput_mapUpperXToLowerX
+	call textInput_mapUpperXToLowerX
 	ld a,c
 	ld (wFileSelect.cursorPos2),a
 	ret
 
 ;;
-_textInput_mapUpperXToLowerX:
+textInput_mapUpperXToLowerX:
 	ld a,(wFileSelect.textInputMode)
 	rlca
 	ld hl,@nameTable
@@ -1785,7 +1783,7 @@ _textInput_mapUpperXToLowerX:
 
 ;;
 ; Used only in japanese version
-_func_02_494a:
+func_02_494a:
 	push hl
 	ld hl,@table2
 	bit 0,e
@@ -1854,7 +1852,7 @@ _func_02_494a:
 ;;
 ; Load the appropriate characters based on whether it's doing name input or
 ; secret input.
-_textInput_loadCharacterGfx:
+textInput_loadCharacterGfx:
 	ld a,($ff00+R_SVBK)
 	push af
 	ld a,:w5NameEntryCharacterGfx
@@ -1870,7 +1868,7 @@ _textInput_loadCharacterGfx:
 	jr z,+
 	ld c,$b0
 +
-	call _copyTextCharacters
+	call copyTextCharacters
 	ld hl,data_02_4a28
 	ld b,$09
 	ld a,(wFileSelect.textInputMode)
@@ -1880,8 +1878,8 @@ _textInput_loadCharacterGfx:
 	inc b
 	ld c,$30
 ++
-	call _copyTextCharacters
-	call _copyTextCharactersFromHlUntilNull
+	call copyTextCharacters
+	call copyTextCharactersFromHlUntilNull
 
 .else
 
@@ -1890,12 +1888,12 @@ _textInput_loadCharacterGfx:
 	jr c,+
 
 	ldbc $3b, $40
-	call _copyTextCharacters
+	call copyTextCharacters
 	jr ++
 +
 	ld hl,secretSymbols
 	ld b,$40
-	call _copyTextCharactersFromHlUntilNull
+	call copyTextCharactersFromHlUntilNull
 ++
 .endif
 
@@ -1908,7 +1906,7 @@ _textInput_loadCharacterGfx:
 ; @param	c			First character to copy
 ; @param	de			Destination
 ; @param	wFileSelect.fontXor	Value to xor every other byte with
-_copyTextCharacters:
+copyTextCharacters:
 	push bc
 	ld a,c
 	ld c,$00
@@ -1916,7 +1914,7 @@ _copyTextCharacters:
 	pop bc
 	inc c
 	dec b
-	jr nz,_copyTextCharacters
+	jr nz,copyTextCharacters
 	ret
 
 
@@ -1929,14 +1927,14 @@ data_02_4a28:
 
 ;;
 ; Loads variables related to each of the 3 files (heart display, etc)
-_loadFileDisplayVariables:
+loadFileDisplayVariables:
 	ld a,$02
 	ldh (<hActiveFileSlot),a
 @nextFile:
 	call loadFile
 	ldh a,(<hActiveFileSlot)
 	ld d,$00
-	call _getFileDisplayVariableAddress
+	call getFileDisplayVariableAddress
 	ld a,c
 	ldi (hl),a
 	ldi (hl),a
@@ -1974,21 +1972,21 @@ _loadFileDisplayVariables:
 
 ;;
 ; Updates the displayed text and the cursor?
-_textInput_updateEntryCursor:
+textInput_updateEntryCursor:
 	xor a
-	call _textInput_getOutputAddressOffset
+	call textInput_getOutputAddressOffset
 	ld de,w4GfxBuf1
 	ld b,$18
-	call _copyTextCharactersFromHl
+	call copyTextCharactersFromHl
 	xor a
 	ld (wFileSelect.fontXor),a
 	ld a,UNCMP_GFXH_07
 	jp loadUncompressedGfxHeader
 
 ;;
-_textInput_getOutputAddress:
+textInput_getOutputAddress:
 	ld a,(wFileSelect.textInputCursorPos)
-_textInput_getOutputAddressOffset:
+textInput_getOutputAddressOffset:
 	ld l,a
 	ld a,(wFileSelect.textInputMode)
 	rlca
@@ -2001,7 +1999,7 @@ _textInput_getOutputAddressOffset:
 	ret
 
 ;;
-_fileSelectDrawHeartsAndDeathCounter:
+fileSelectDrawHeartsAndDeathCounter:
 	ld a,(wFileSelect.mode)
 	cp $03
 	ret z
@@ -2016,13 +2014,13 @@ _fileSelectDrawHeartsAndDeathCounter:
 
 	; Jump if the cursor is on an empty file
 	ld d,$00
-	call _getFileDisplayVariableAddress
+	call getFileDisplayVariableAddress
 	bit 7,(hl)
 	jr nz,+++
 
 	; Draw death count
 	ld d,$04
-	call _getFileDisplayVariableAddress_paramE
+	call getFileDisplayVariableAddress_paramE
 	ld e,l
 	ld d,h
 	ld hl,w4TileMap+$130
@@ -2044,12 +2042,12 @@ _fileSelectDrawHeartsAndDeathCounter:
 	; Draw hearts
 	ld a,(wFileSelect.cursorPos)
 	ld d,$02
-	call _getFileDisplayVariableAddress
+	call getFileDisplayVariableAddress
 	ldi a,(hl)
 	ld b,(hl)
 	ld c,a
 	ld hl,w4TileMap+$14a
-	call _fileSelectDrawHeartDisplay
+	call fileSelectDrawHeartDisplay
 +++
 	; Load the tile map that was just drawn on
 	ld a,UNCMP_GFXH_08
@@ -2059,7 +2057,7 @@ _fileSelectDrawHeartsAndDeathCounter:
 
 ;;
 ; Draws the cursor on the main file select and "new game/secret/link" screen
-_fileSelectDrawAcornCursor:
+fileSelectDrawAcornCursor:
 	ld a,(wFileSelect.cursorOffset)
 	ld hl,@table
 	rst_addDoubleIndex
@@ -2168,14 +2166,14 @@ _fileSelectDrawAcornCursor:
 
 ;;
 ; This is probably for linking to transfer ring secrets
-_runGameLinkMenu:
+runGameLinkMenu:
 	ld hl,$cbb6
 	inc (hl)
 	call fileSelect_redrawDecorationsAndSetWramBank4
 
 ;;
 ; Game link
-_fileSelectMode7:
+fileSelectMode7:
 	call @mode7States
 	ld a,(wFileSelect.mode2)
 	cp $06
@@ -2184,8 +2182,8 @@ _fileSelectMode7:
 	cp $03
 	ret c
 
-	call _fileSelectDrawAcornCursor
-	jp _fileSelectDrawLinkInOtherGame
+	call fileSelectDrawAcornCursor
+	jp fileSelectDrawLinkInOtherGame
 
 @mode7States:
 	ld a,(wFileSelect.mode2)
@@ -2215,7 +2213,7 @@ _fileSelectMode7:
 	ld b,$20
 	call clearMemory
 
-	call _textInput_updateEntryCursor
+	call textInput_updateEntryCursor
 	call serialFunc_0c85
 
 	ld a,$04
@@ -2230,7 +2228,7 @@ _fileSelectMode7:
 	ld a,$1e
 	ld (hl),a
 
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 ; State 1: waiting for response
@@ -2277,7 +2275,7 @@ _fileSelectMode7:
 -
 	dec e
 	ld d,$00
-	call _getFileDisplayVariableAddress_paramE
+	call getFileDisplayVariableAddress_paramE
 	bit 7,(hl)
 	jr z,+
 
@@ -2291,7 +2289,7 @@ _fileSelectMode7:
 	ld (wFileSelect.cursorPos),a
 	jp @func_02_4c4b
 +
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 ; State 2: Reloading graphics to show other files
@@ -2300,21 +2298,21 @@ _fileSelectMode7:
 	ld a,$06
 	ld (wFileSelect.cursorOffset),a
 	xor a
-	call _func_02_4149
+	call func_02_4149
 	call disableLcd
 	ld a,GFXH_a1
 	call loadGfxHeader
 	ld a,GFXH_af
 	call loadGfxHeader
-	call _textInput_updateEntryCursor
-	call _fileSelectDrawHeartsAndDeathCounter
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	call textInput_updateEntryCursor
+	call fileSelectDrawHeartsAndDeathCounter
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 ; State 3: Selecting file from other game
 @state3:
 	call serialFunc_0c8d
-	call _fileSelectUpdateInput
+	call fileSelectUpdateInput
 	jr nz,@selectedSomething
 
 	ld a,(wKeysJustPressed)
@@ -2351,7 +2349,7 @@ _fileSelectMode7:
 .endif
 
 	ld d,FileDisplayStruct.b0
-	call _getFileDisplayVariableAddress
+	call getFileDisplayVariableAddress
 	bit 7,(hl) ; Check if file is blank
 	jr z,+
 
@@ -2372,7 +2370,7 @@ _fileSelectMode7:
 	; Linking from file select screen
 	ld a,$08
 	ldh (<hSerialLinkState),a
-	jp _loadGfxRegisterState5AndIncFileSelectMode2
+	jp loadGfxRegisterState5AndIncFileSelectMode2
 
 ;;
 @func_02_4c4b:
@@ -2387,7 +2385,7 @@ _fileSelectMode7:
 	call disableLcd
 	ld a,GFXH_07
 	call loadGfxHeader
-	call _loadGfxRegisterState5AndIncFileSelectMode2
+	call loadGfxRegisterState5AndIncFileSelectMode2
 	ld a,$08
 	ldh (<hSerialLinkState),a
 	ld a,$06
@@ -2432,7 +2430,7 @@ _fileSelectMode7:
 	call initializeFile
 	ld a,SND_SELECTITEM
 	call playSound
-	jp _setFileSelectModeTo1
+	jp setFileSelectModeTo1
 
 ;;
 ; State 5: Connected successfully, waiting for data?
@@ -2445,10 +2443,10 @@ _fileSelectMode7:
 @cancelLink:
 	ld a,(wOpenedMenuType)
 	cp MENU_RING_LINK
-	jp z,_closeMenu
+	jp z,closeMenu
 
 	ld a,$00
-	jp _setFileSelectMode
+	jp setFileSelectMode
 
 ;;
 ; State 6: error
@@ -2498,7 +2496,7 @@ fileSelect_redrawDecorationsAndSetWramBank4:
 	.db $39 $9a $22 $05
 
 ;;
-_fileSelectDrawLinkInOtherGame:
+fileSelectDrawLinkInOtherGame:
 .ifdef ROM_AGES
 	ld b,$00
 .else
@@ -2508,7 +2506,7 @@ _fileSelectDrawLinkInOtherGame:
 
 ;;
 ; Draws link and nayru/din on the file select
-_fileSelectDrawLink:
+fileSelectDrawLink:
 .ifdef ROM_AGES
 	ld b,$04
 .else
@@ -2520,7 +2518,7 @@ _fileSelectDrawLink:
 	ret nc
 
 	ld d,$00
-	call _getFileDisplayVariableAddress
+	call getFileDisplayVariableAddress
 	ld c,$00
 	; Jump if it's a blank file
 	bit 7,(hl)
@@ -2531,7 +2529,7 @@ _fileSelectDrawLink:
 
 	; Draw triforce symbol for hero's files
 	ld d,$07
-	call _getFileDisplayVariableAddress_paramE
+	call getFileDisplayVariableAddress_paramE
 	xor a
 	ld b,$10
 	bit 1,(hl)
@@ -2541,7 +2539,7 @@ _fileSelectDrawLink:
 	pop de
 	pop bc
 	ld d,$06
-	call _getFileDisplayVariableAddress_paramE
+	call getFileDisplayVariableAddress_paramE
 	inc c
 	ldi a,(hl)
 	rrca
@@ -2672,7 +2670,7 @@ _fileSelectDrawLink:
 	.db $4a $8c $30 $06
 	.db $4a $94 $32 $06
 
-_secretTextTable:
+secretTextTable:
 	.dw @text0
 	.dw @text1
 	.dw @text2
@@ -2877,18 +2875,18 @@ runBank2Function:
 	ld c,l
 	ld a,h
 	rst_jumpTable
-	.dw _loadCommonGraphics
-	.dw _updateStatusBar
-	.dw _hideStatusBar
-	.dw _showStatusBar
-	.dw _saveGraphicsOnEnterMenu
-	.dw _reloadGraphicsOnExitMenu
-	.dw _openMenu
-	.dw _copyW2TilesetBgPalettesToW4PaletteData
-	.dw _copyW4PaletteDataToW2TilesetBgPalettes
+	.dw loadCommonGraphics_body
+	.dw updateStatusBar_body
+	.dw hideStatusBar_body
+	.dw showStatusBar_body
+	.dw saveGraphicsOnEnterMenu_body
+	.dw reloadGraphicsOnExitMenu_body
+	.dw openMenu_body
+	.dw copyW2TilesetBgPalettesToW4PaletteData_body
+	.dw copyW4PaletteDataToW2TilesetBgPalettes_body
 
 ;;
-_hideStatusBar:
+hideStatusBar_body:
 	ld a,$04
 	ld ($ff00+R_SVBK),a
 	ld hl,wDontUpdateStatusBar
@@ -2926,7 +2924,7 @@ _hideStatusBar:
 	jp fillMemory
 
 ;;
-_showStatusBar:
+showStatusBar_body:
 	xor a
 	ld (wDontUpdateStatusBar),a
 	dec a
@@ -2935,7 +2933,7 @@ _showStatusBar:
 
 ;;
 ; @param	c	Value for wOpenedMenuType
-_openMenu:
+openMenu_body:
 	ld a,c
 	ld hl,wOpenedMenuType
 	ldi (hl),a
@@ -2947,7 +2945,7 @@ _openMenu:
 	jp fastFadeoutToWhite
 
 ;;
-_copyW2TilesetBgPalettesToW4PaletteData:
+copyW2TilesetBgPalettesToW4PaletteData_body:
 	ld hl,w2TilesetBgPalettes
 	ld de,w4PaletteData
 	ld b,$80
@@ -2970,7 +2968,7 @@ _copyW2TilesetBgPalettesToW4PaletteData:
 	ret
 
 ;;
-_copyW4PaletteDataToW2TilesetBgPalettes:
+copyW4PaletteDataToW2TilesetBgPalettes_body:
 	ld hl,w4PaletteData
 	ld de,w2TilesetBgPalettes
 	ld b,$80
@@ -2993,7 +2991,7 @@ _copyW4PaletteDataToW2TilesetBgPalettes:
 	ret
 
 ;;
-_closeMenu:
+closeMenu:
 	ld hl,wMenuLoadState
 	inc (hl)
 	ld a,(wOpenedMenuType)
@@ -3042,7 +3040,7 @@ b2_updateMenus:
 	or b
 	ret nz
 
-	call _playHeartBeepAtInterval
+	call playHeartBeepAtInterval
 	ld a,(wKeysJustPressed)
 	and BTN_START | BTN_SELECT
 	ret z
@@ -3056,37 +3054,37 @@ b2_updateMenus:
 	jr nz,+
 	dec c
 +
-	jp _openMenu
+	jp openMenu_body
 
 @updateMenu:
 	ld a,$ff
 	ld (wc4b6),a
 	ld a,(wMenuLoadState)
 	rst_jumpTable
-	.dw _menuStateFadeIntoMenu
-	.dw _menuSpecificCode
-	.dw _menuStateFadeOutOfMenu
-	.dw _menuStateFadeIntoGame
+	.dw menuStateFadeIntoMenu
+	.dw menuSpecificCode
+	.dw menuStateFadeOutOfMenu
+	.dw menuStateFadeIntoGame
 
 ;;
-_menuSpecificCode:
+menuSpecificCode:
 	ld a,(wOpenedMenuType)
 	rst_jumpTable
 	.dw runSaveAndQuitMenu
-	.dw _runInventoryMenu
-	.dw _runMapMenu
+	.dw runInventoryMenu
+	.dw runMapMenu
 	.dw runSaveAndQuitMenu
-	.dw _runRingMenu
-	.dw _runGaleSeedMenu
-	.dw _runSecretEntryMenu
-	.dw _runKidNameEntryMenu
-	.dw _runGameLinkMenu
-	.dw _runFakeReset
-	.dw _runSecretListMenu
+	.dw runRingMenu
+	.dw runGaleSeedMenu
+	.dw runSecretEntryMenu
+	.dw runKidNameEntryMenu
+	.dw runGameLinkMenu
+	.dw runFakeReset
+	.dw runSecretListMenu
 
 ;;
 ; Game is fading out just after initial start/select press
-_menuStateFadeIntoMenu:
+menuStateFadeIntoMenu:
 	ld a,(wOpenedMenuType)
 	cp $03
 	jr nc,+
@@ -3106,7 +3104,7 @@ _menuStateFadeIntoMenu:
 	call @openMenu
 	ld hl,wMenuLoadState
 	inc (hl)
-	jp _menuSpecificCode
+	jp menuSpecificCode
 
 ;;
 ; Loads menu graphics and stuff
@@ -3130,12 +3128,12 @@ _menuStateFadeIntoMenu:
 	ld hl,wScreenOffsetY
 	ldi (hl),a
 	ldi (hl),a
-	call _clearMenu
+	call clearMenu
 	; Does not return
 ++
 
 ;;
-_saveGraphicsOnEnterMenu:
+saveGraphicsOnEnterMenu_body:
 	ldh a,(<hCameraY)
 	ld hl,$cbe1
 	ldi (hl),a
@@ -3147,7 +3145,7 @@ _saveGraphicsOnEnterMenu:
 	ld b,GfxRegsStruct.size*2
 	call copyMemory
 	call disableLcd
-	call _copyW2TilesetBgPalettesToW4PaletteData
+	call copyW2TilesetBgPalettesToW4PaletteData_body
 	ld a,:w4SavedOam
 	ld ($ff00+R_SVBK),a
 	ld hl,wOam
@@ -3161,7 +3159,7 @@ _saveGraphicsOnEnterMenu:
 	ld de,w4SavedVramTiles
 	call copyMemoryBc
 
-_clearMenu:
+clearMenu:
 	ld hl,wMenuUnionStart
 	ld b,wMenuUnionEnd - wMenuUnionStart
 	call clearMemory
@@ -3172,19 +3170,19 @@ _clearMenu:
 	jp clearOam
 
 ;;
-_menuStateFadeOutOfMenu:
+menuStateFadeOutOfMenu:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 
-	call _reloadGraphicsOnExitMenu
+	call reloadGraphicsOnExitMenu_body
 	ld hl,wMenuLoadState
 	inc (hl)
 	jp updateParentItemButtonAssignment
 
 ;;
 ; Called when exiting menus
-_reloadGraphicsOnExitMenu:
+reloadGraphicsOnExitMenu_body:
 	ld hl,$cbe1
 	ldi a,(hl)
 	ldh (<hCameraY),a
@@ -3202,12 +3200,12 @@ _reloadGraphicsOnExitMenu:
 	ld de,wOam
 	ld b,$a0
 	call copyMemory
-	call _copyW4PaletteDataToW2TilesetBgPalettes
+	call copyW4PaletteDataToW2TilesetBgPalettes_body
 	ld hl,wGfxRegs4
 	ld de,wGfxRegs1
 	ld b,GfxRegsStruct.size*2
 	call copyMemory
-	call _loadCommonGraphics
+	call loadCommonGraphics_body
 	call reloadObjectGfx
 	call loadTilesetData
 	call loadTilesetGraphics
@@ -3242,7 +3240,7 @@ _reloadGraphicsOnExitMenu:
 .endif
 
 ;;
-_menuStateFadeIntoGame:
+menuStateFadeIntoGame:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -3254,7 +3252,7 @@ _menuStateFadeIntoGame:
 	jp setMusicVolume
 
 ;;
-_playHeartBeepAtInterval:
+playHeartBeepAtInterval:
 	ld a,(w1Link.id)
 	dec a
 	ret z
@@ -3277,7 +3275,7 @@ _playHeartBeepAtInterval:
 
 ;;
 ; Load graphics for the status bar and various sprites that appear everywhere
-_loadCommonGraphics:
+loadCommonGraphics_body:
 	call disableLcd
 	ld a,GFXH_HUD
 	call loadGfxHeader
@@ -3300,7 +3298,7 @@ _loadCommonGraphics:
 
 	xor a
 	ld (wcbe8),a
-	call _updateStatusBar
+	call updateStatusBar_body
 
 	; Check if in an underwater group
 	ld a,(wActiveGroup)
@@ -3365,14 +3363,14 @@ _loadCommonGraphics:
 ++
 	xor a
 	ld (wcbe8),a
-	call _updateStatusBar
+	call updateStatusBar_body
 	jp checkReloadStatusBarGraphics
 
 
 .endif
 
 ;;
-_updateStatusBar:
+updateStatusBar_body:
 	ld a,(wDontUpdateStatusBar)
 	or a
 	ret nz
@@ -3386,13 +3384,13 @@ _updateStatusBar:
 	bit 0,a
 	jr z,+
 
-	call _loadEquippedItemGfx
-	call _drawItemTilesOnStatusBar
+	call loadEquippedItemGfx
+	call drawItemTilesOnStatusBar
 	jr ++
 +
 	; Check whether item levels / counts need refresh
 	bit 1,a
-	call nz,_drawItemTilesOnStatusBar
+	call nz,drawItemTilesOnStatusBar
 ++
 	; Update displayed rupee count
 
@@ -3434,7 +3432,7 @@ _updateStatusBar:
 	jr z,+
 
 	ld hl,w4StatusBarTileMap+$2c
-	call _correctAddressForExtraHeart
+	call correctAddressForExtraHeart
 	ld c,$10
 	ld a,(wDisplayedRupees)
 	ld b,a
@@ -3477,9 +3475,9 @@ _updateStatusBar:
 @updateHeartDisplay:
 	ld a,(wStatusBarNeedsRefresh)
 	bit 2,a
-	call nz,_inGameDrawHeartDisplay
+	call nz,inGameDrawHeartDisplay
 	ld hl,w4StatusBarTileMap+$0a
-	call _correctAddressForExtraHeart
+	call correctAddressForExtraHeart
 	ld (hl),$04
 
 	ld a,(wTilesetFlags)
@@ -3594,7 +3592,7 @@ _updateStatusBar:
 ;;
 ; Subtracts hl by 1 if you have 15+ hearts - status bar needs to be compressed
 ; slightly
-_correctAddressForExtraHeart:
+correctAddressForExtraHeart:
 	ld a,(wcbe8)
 	rrca
 	ret nc
@@ -3607,9 +3605,9 @@ _correctAddressForExtraHeart:
 ; The OAM data for the sprites is probably always loaded, so this function doesn't need to
 ; handle that?
 ;
-; When combined with _drawItemTilesOnStatusBar, the A/B items get fully drawn.
+; When combined with drawItemTilesOnStatusBar, the A/B items get fully drawn.
 ;
-_loadEquippedItemGfx:
+loadEquippedItemGfx:
 	call loadStatusBarMap
 
 	; Return if biggoron sword is equipped
@@ -3619,18 +3617,18 @@ _loadEquippedItemGfx:
 
 	ld a,(wInventoryB)
 	ld de,wBItemTreasure
-	call _loadEquippedItemSpriteData
+	call loadEquippedItemSpriteData
 	ld e,<w4ItemIconGfx+$00
-	call c,_loadItemIconGfx
+	call c,loadItemIconGfx
 
 	ld a,(wInventoryA)
 	ld de,wAItemTreasure
-	call _loadEquippedItemSpriteData
+	call loadEquippedItemSpriteData
 	ld e,<w4ItemIconGfx+$40
-	call c,_loadItemIconGfx
+	call c,loadItemIconGfx
 
 ;;
-_func_02_52f6:
+func_02_52f6:
 	ld bc,$0020
 	ld hl,w4StatusBarAttributeMap+$02
 	ld a,(wBItemSpriteXOffset)
@@ -3668,7 +3666,7 @@ _func_02_52f6:
 ; @param	de	Where to write the item graphics data (ie. wAItemTreasure)
 ; @param[out]	bc	Left/right sprite indices
 ; @param[out]	cflag	Set if the data was loaded correctly (there is something to draw)
-_loadEquippedItemSpriteData:
+loadEquippedItemSpriteData:
 	call loadTreasureDisplayData
 
 	; [wItemTreasure] = the treasure ID to use for level/quantity data
@@ -3754,7 +3752,7 @@ _loadEquippedItemSpriteData:
 ;
 ; Note: returns with wram bank 4 loaded.
 ;
-_drawItemTilesOnStatusBar:
+drawItemTilesOnStatusBar:
 	; Return if biggoron's sword equipped
 	ld a,(wcbe8)
 	bit 7,a
@@ -3764,11 +3762,11 @@ _drawItemTilesOnStatusBar:
 	ld ($ff00+R_SVBK),a
 	ld a,(wInventoryB)
 	ld de,wBItemTreasure
-	call _loadEquippedItemSpriteData
+	call loadEquippedItemSpriteData
 	ld a,(wInventoryA)
 	ld de,wAItemTreasure
-	call _loadEquippedItemSpriteData
-	call _func_02_52f6
+	call loadEquippedItemSpriteData
+	call func_02_52f6
 
 	; Draw A button item
 	; Need to check if the status bar is squished to the left
@@ -3813,7 +3811,7 @@ _drawItemTilesOnStatusBar:
 ; @param	b	The number to draw (if applicable)
 ; @param	c	$80 if drawing on A/B buttons, $07 if on inventory
 ; @param	de	Address to draw to (should be a tilemap of some kind)
-_drawTreasureExtraTiles:
+drawTreasureExtraTiles:
 	bit 7,a
 	ret nz
 
@@ -4037,14 +4035,14 @@ _drawTreasureExtraTiles:
 ; @param b Number of heart containers
 ; @param c Number of hearts
 ; @param hl Address of tile buffer to write to
-_fileSelectDrawHeartDisplay:
+fileSelectDrawHeartDisplay:
 	ld a,$01
 	ldh (<hFF8B),a
 	ld a,b
-	jr _drawHeartDisplay
+	jr drawHeartDisplay
 
 ;;
-_inGameDrawHeartDisplay:
+inGameDrawHeartDisplay:
 	ld hl,w4StatusBarTileMap+$0d
 	xor a
 	ldh (<hFF8B),a
@@ -4056,7 +4054,7 @@ _inGameDrawHeartDisplay:
 ; @param c Number of hearts (in quarters)
 ; @param hl Tile buffer to write to
 ; @param hFF8B
-_drawHeartDisplay:
+drawHeartDisplay:
 	; e = hearts per row (7 normally, 8 if you have 15+ hearts)
 	ld e,$07
 	cp 14*4+1
@@ -4203,7 +4201,7 @@ _drawHeartDisplay:
 ; @param	b	Left sprite index (tile index for spr_item_icons)
 ; @param	c	Right sprite index (tile index for spr_item_icons)
 ; @param	e	Low byte of where to load graphics (should be w4ItemIconGfx+XX)
-_loadItemIconGfx:
+loadItemIconGfx:
 	ld d,>w4ItemIconGfx
 	push bc
 	ld a,b
@@ -4331,14 +4329,14 @@ loadStatusBarMap:
 	jp loadGfxHeader
 
 ;;
-_runInventoryMenu:
+runInventoryMenu:
 	call clearOam
 	ld a,$10
 	ldh (<hOamTail),a
 	ld a,$04
 	ld ($ff00+R_SVBK),a
 	call @inventoryMenuStates
-	call _inventoryMenuDrawSprites
+	call inventoryMenuDrawSprites
 	xor a
 	ld ($ff00+R_SVBK),a
 	jp updateStatusBar
@@ -4347,14 +4345,14 @@ _runInventoryMenu:
 @inventoryMenuStates:
 	ld a,(wMenuActiveState)
 	rst_jumpTable
-	.dw _inventoryMenuState0
-	.dw _inventoryMenuState1
-	.dw _inventoryMenuState2
-	.dw _inventoryMenuState3
+	.dw inventoryMenuState0
+	.dw inventoryMenuState1
+	.dw inventoryMenuState2
+	.dw inventoryMenuState3
 
 ;;
 ; @param a
-_showItemText1:
+showItemText1:
 	ld hl,w4SubscreenTextIndices
 	rst_addAToHl
 	ld a,(hl)
@@ -4363,7 +4361,7 @@ _showItemText1:
 ;			If bit 7 is set, it's a ring; use TX_03XX.
 ;			In this case, use TX_30c1 to combine the name (TX_3040+X) with the
 ;			description (TX_3080+X).
-_showItemText2:
+showItemText2:
 	ld hl,wInventory.activeText
 	cp (hl)
 	ret z
@@ -4393,7 +4391,7 @@ _showItemText2:
 
 ;;
 ; Initialization
-_inventoryMenuState0:
+inventoryMenuState0:
 	ld hl,wInventorySubmenu2CursorPos
 	ld a,(hl)
 	cp $08
@@ -4407,7 +4405,7 @@ _inventoryMenuState0:
 	ld (wInventory.cbba),a
 	dec a
 	ld (wInventory.activeText),a
-	call _checkWhetherToDisplaySeasonInSubscreen
+	call checkWhetherToDisplaySeasonInSubscreen
 	jr z,+
 	ld a,$01
 +
@@ -4447,7 +4445,7 @@ _inventoryMenuState0:
 	ld a,PALH_0a
 	call loadPaletteHeader
 	callab bank3f.getNumUnappraisedRings
-	call _func_02_55b2
+	call func_02_55b2
 	ld a,$01
 	ld (wMenuActiveState),a
 	call fastFadeinFromWhite
@@ -4455,7 +4453,7 @@ _inventoryMenuState0:
 	jp loadGfxRegisterStateIndex
 
 ;;
-_func_02_55a8:
+func_02_55a8:
 	ld a,(wInventory.cbba)
 	and $01
 	add UNCMP_GFXH_04
@@ -4463,13 +4461,13 @@ _func_02_55a8:
 
 ;;
 ; Load graphics for subscreens?
-_func_02_55b2:
+func_02_55b2:
 	ld hl,w4SubscreenTextIndices
 	ld b,$20
 	call clearMemory
 	xor a
-	call _showItemText2
-	ld hl,_func_02_55a8
+	call showItemText2
+	ld hl,func_02_55a8
 	push hl
 	ld a,(wInventorySubmenu)
 	rst_jumpTable
@@ -4483,29 +4481,29 @@ _func_02_55b2:
 	ld (wStatusBarNeedsRefresh),a
 	ld a,GFXH_09
 	call loadGfxHeader
-	jp _inventorySubscreen0_drawStoredItems
+	jp inventorySubscreen0_drawStoredItems
 
 ;;
 @subScreen1:
 	ld a,GFXH_0a
 	call loadGfxHeader
-	jp _inventorySubscreen1_drawTreasures
+	jp inventorySubscreen1_drawTreasures
 ;;
 @subScreen2:
 	ld a,GFXH_0b
 	call loadGfxHeader
-	jp _inventorySubscreen2_drawTreasures
+	jp inventorySubscreen2_drawTreasures
 
 ;;
 ; Main state, waits for inputs
-_inventoryMenuState1:
+inventoryMenuState1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 
 	ld a,(wKeysJustPressed)
 	bit BTN_BIT_START,a
-	jp nz,_closeMenu
+	jp nz,closeMenu
 
 	bit BTN_BIT_SELECT,a
 	ld a,$03
@@ -4537,7 +4535,7 @@ _inventoryMenuState1:
 	bit BTN_BIT_A,c
 	jr nz,@aOrB
 
-	call _inventorySubscreen0CheckDirectionButtons
+	call inventorySubscreen0CheckDirectionButtons
 	ld a,(wInventorySubmenu0CursorPos)
 	ld hl,wInventoryStorage
 	rst_addAToHl
@@ -4546,8 +4544,8 @@ _inventoryMenuState1:
 	ld a,$06
 	rst_addAToHl
 	ld a,(hl)
-	call _showItemText2
-	jp _inventorySubscreen0_drawCursor
+	call showItemText2
+	jp inventorySubscreen0_drawCursor
 
 @aOrB:
 	ld (wTmpcbb6),a
@@ -4582,13 +4580,13 @@ _inventoryMenuState1:
 
 @finalizeEquip:
 	call @equipItem
-	call _inventorySubscreen0_drawStoredItems
-	call _inventorySubscreen0_drawCursor
+	call inventorySubscreen0_drawStoredItems
+	call inventorySubscreen0_drawCursor
 	ld a,SND_SELECTITEM
 	call playSound
 	ld a,$01
 	call @func_02_5606
-	jp _func_02_55b2
+	jp func_02_55b2
 
 ;;
 ; Swaps the item at the cursor with the item on a button.
@@ -4665,7 +4663,7 @@ _inventoryMenuState1:
 	bit BTN_BIT_A,a
 	jr nz,+
 
-	call _inventorySubmenu1CheckDirectionButtons
+	call inventorySubmenu1CheckDirectionButtons
 	jr ++
 +
 	call @checkEquipRing
@@ -4680,10 +4678,10 @@ _inventoryMenuState1:
 	call openMenu
 
 ++
-	call _inventorySubmenu1_drawCursor
+	call inventorySubmenu1_drawCursor
 	ld a,(wInventorySubmenu1CursorPos)
-	call _showItemText1
-	jp _drawEquippedSpriteForActiveRing
+	call showItemText1
+	jp drawEquippedSpriteForActiveRing
 
 ;;
 ; Pressed A on subscreen 1; check whether to equip a ring
@@ -4745,7 +4743,7 @@ _inventoryMenuState1:
 	jp clearMemory
 
 +
-	call _inventorySubmenu2CheckDirectionButtons
+	call inventorySubmenu2CheckDirectionButtons
 	ld a,(wInventorySubmenu2CursorPos)
 	bit 7,a
 	jr z,+
@@ -4753,12 +4751,12 @@ _inventoryMenuState1:
 	ld a,(wInventory.submenu2CursorPos2)
 	add $08
 +
-	call _showItemText1
-	jp _inventorySubmenu2_drawCursor
+	call showItemText1
+	jp inventorySubmenu2_drawCursor
 
 ;;
 ; Opening a submenu (seeds, harp songs)
-_inventoryMenuState2:
+inventoryMenuState2:
 	call @subStates
 
 	; CROSSITEMS: We're now drawing the "blank sprites" to hide the harp in Seasons. The check
@@ -4769,7 +4767,7 @@ _inventoryMenuState2:
 	cp $02
 	ret nz
 
-	jp _createBlankSpritesForItemSubmenu
+	jp createBlankSpritesForItemSubmenu
 
 ; ROM_SEASONS just starts directly at @subStates.
 
@@ -4786,7 +4784,7 @@ _inventoryMenuState2:
 	ld d,(hl)
 	dec d
 	ld l,<wSatchelSelectedSeeds
-	call _cpInventorySelectedItemToHarp
+	call cpInventorySelectedItemToHarp
 	jr z,++
 
 	cp ITEMID_SEED_SATCHEL
@@ -4800,7 +4798,7 @@ _inventoryMenuState2:
 	ld d,$00
 -
 	ld a,d
-	call _getSeedTypeInventoryIndex
+	call getSeedTypeInventoryIndex
 	cp e
 	jr z,++
 
@@ -4844,11 +4842,11 @@ _inventoryMenuState2:
 	call @func_02_57f3
 	jr c,+
 
-	call _func_02_5a35
+	call func_02_5a35
 	ld hl,wSubmenuState
 	inc (hl)
 +
-	jp _func_02_55a8
+	jp func_02_55a8
 
 ;;
 ; Waiting for input (direction button or final selection).
@@ -4858,15 +4856,15 @@ _inventoryMenuState2:
 	and BTN_START | BTN_B | BTN_A
 	jr nz,@buttonPressed
 
-	call _func_02_5938
+	call func_02_5938
 
-	call _cpInventorySelectedItemToHarp
+	call cpInventorySelectedItemToHarp
 	ld a,(wInventory.itemSubmenuIndex)
 	jr nz,+
 	add $25
 	jr ++
 +
-	call _getSeedTypeInventoryIndex
+	call getSeedTypeInventoryIndex
 	add $20
 ++
 	call loadTreasureDisplayData
@@ -4884,11 +4882,11 @@ _inventoryMenuState2:
 	ld a,$05
 ++
 	add (hl)
-	call _showItemText2
-	jp _func_02_5a35
+	call showItemText2
+	jp func_02_5a35
 
 @buttonPressed:
-	call _cpInventorySelectedItemToHarp
+	call cpInventorySelectedItemToHarp
 	jr nz,+
 
 	ld e,<wSelectedHarpSong
@@ -4908,11 +4906,11 @@ _inventoryMenuState2:
 +
 
 	ld a,(wInventory.itemSubmenuIndex)
-	call _getSeedTypeInventoryIndex
+	call getSeedTypeInventoryIndex
 ++
 	ld d,>wc600Block
 	ld (de),a
-	jp _inventoryMenuState1@finalizeEquip
+	jp inventoryMenuState1@finalizeEquip
 
 ;;
 @func_02_57f3:
@@ -4962,7 +4960,7 @@ _inventoryMenuState2:
 	; use different tiles for the submenus because they have different palettes
 	; loaded.
 
-	call _fillRectangleInTilemap
+	call fillRectangleInTilemap
 	scf
 	ret
 
@@ -4974,7 +4972,7 @@ _inventoryMenuState2:
 
 ;;
 ; Going to the next screen (when select is pressed)
-_inventoryMenuState3:
+inventoryMenuState3:
 	ld a,(wSubmenuState)
 	rst_jumpTable
 	.dw @subState0
@@ -4993,7 +4991,7 @@ _inventoryMenuState3:
 	ld a,(wInventory.cbba)
 	xor $01
 	ld (wInventory.cbba),a
-	call _func_02_55b2
+	call func_02_55b2
 	ld a,$9f
 	ld (wGfxRegs2.WINX),a
 	ld hl,wSubmenuState
@@ -5025,7 +5023,7 @@ _inventoryMenuState3:
 	xor $48
 	ld (wGfxRegs2.LCDC),a
 	ld a,$01
-	jp _inventoryMenuState1@func_02_5606
+	jp inventoryMenuState1@func_02_5606
 
 ;;
 ; Gets a value from 0-3 corresponding to the direction button pressed
@@ -5037,7 +5035,7 @@ _inventoryMenuState3:
 ; @param	hl	Value to read depending on the direction button pressed
 ; @param[out]	a	Value read from hl
 ; @param[out]	cflag	Set if a direction button is pressed.
-_getDirectionButtonOffsetFromHl:
+getDirectionButtonOffsetFromHl:
 	call getInputWithAutofire
 	and $f0
 	swap a
@@ -5051,9 +5049,9 @@ _getDirectionButtonOffsetFromHl:
 
 ;;
 ; Check direction buttons and update cursor appropriately on the item menu.
-_inventorySubscreen0CheckDirectionButtons:
+inventorySubscreen0CheckDirectionButtons:
 	ld hl,@offsets
-	call _getDirectionButtonOffsetFromHl
+	call getDirectionButtonOffsetFromHl
 	ret nc
 
 	ld hl,wInventorySubmenu0CursorPos
@@ -5068,9 +5066,9 @@ _inventorySubscreen0CheckDirectionButtons:
 
 ;;
 ; Same as above, but for the second submenu.
-_inventorySubmenu1CheckDirectionButtons:
+inventorySubmenu1CheckDirectionButtons:
 	ld hl,@offsets
-	call _getDirectionButtonOffsetFromHl
+	call getDirectionButtonOffsetFromHl
 	ret nc
 
 	ld c,a
@@ -5079,7 +5077,7 @@ _inventorySubmenu1CheckDirectionButtons:
 
 	; Calculate number of selectable positions in total (depends on the level of the
 	; ring box). Store the number of selectable positions in 'd'.
-	call _getRingBoxCapacity
+	call getRingBoxCapacity
 	ld e,$0f
 	jr z,+
 	inc a
@@ -5157,18 +5155,18 @@ _inventorySubmenu1CheckDirectionButtons:
 	.db $01 $ff $fb $05
 
 ;;
-_inventorySubmenu2CheckDirectionButtons:
+inventorySubmenu2CheckDirectionButtons:
 
 .ifdef ROM_SEASONS
 	ld e,$80
-	call _checkWhetherToDisplaySeasonInSubscreen
+	call checkWhetherToDisplaySeasonInSubscreen
 	jr z,+
 	ld e,$00
 +
 .endif
 
 	ld hl,@offsets
-	call _getDirectionButtonOffsetFromHl
+	call getDirectionButtonOffsetFromHl
 	ret nc
 
 	ld hl,wInventorySubmenu2CursorPos
@@ -5217,18 +5215,18 @@ _inventorySubmenu2CheckDirectionButtons:
 ;;
 ; @param[out]	zflag	Set if the season should be displayed. (Unset in dungeons,
 ;			subrosia, etc.)
-_checkWhetherToDisplaySeasonInSubscreen:
+checkWhetherToDisplaySeasonInSubscreen:
 	ld a,(wTilesetFlags)
 	and $fc
 	ret
 
 .endif
 ;;
-_func_02_5938:
+func_02_5938:
 	ld a,(wInventory.cbb8)
 	ld b,a
 	ld hl,@offsets
-	call _getDirectionButtonOffsetFromHl
+	call getDirectionButtonOffsetFromHl
 	ret nc
 	ret z
 
@@ -5252,7 +5250,7 @@ _func_02_5938:
 	.db $01 $ff $00 $00
 
 ;;
-_inventorySubscreen0_drawCursor:
+inventorySubscreen0_drawCursor:
 	ld a,(wInventorySubmenu0CursorPos)
 	ld c,a
 	and $0c
@@ -5277,7 +5275,7 @@ _inventorySubscreen0_drawCursor:
 	.db $28 $38 $0c $02 ; right
 
 ;;
-_inventorySubmenu1_drawCursor:
+inventorySubmenu1_drawCursor:
 	ld a,(wInventorySubmenu1CursorPos)
 	ld e,a
 	ld hl,@data
@@ -5345,7 +5343,7 @@ _inventorySubmenu1_drawCursor:
 	.db $00 $08 $0c $22
 	.db $00 $28 $0c $02
 
-_inventorySubmenu2_drawCursor:
+inventorySubmenu2_drawCursor:
 	ld a,(wInventorySubmenu2CursorPos)
 	bit 7,a
 	jr z,+
@@ -5398,10 +5396,10 @@ _inventorySubmenu2_drawCursor:
 .endif
 
 ;;
-_func_02_5a35:
+func_02_5a35:
 	ldde $05, $00
 
-	call _cpInventorySelectedItemToHarp
+	call cpInventorySelectedItemToHarp
 	jr nz,+
 	ldde $03, $05
 +
@@ -5420,9 +5418,9 @@ _func_02_5a35:
 
 	push de
 	ld a,d
-	call _func_02_5afc
+	call func_02_5afc
 	ld a,e
-	ld hl,_seedAndHarpSpriteTable
+	ld hl,seedAndHarpSpriteTable
 	rst_addAToHl
 	ld a,(hl)
 	rst_addAToHl
@@ -5440,7 +5438,7 @@ _func_02_5a35:
 	rst_addAToHl
 	ld b,(hl)
 	ld a,(wInventory.cbb8)
-	ld hl,_table_5ae5-4
+	ld hl,table_5ae5-4
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -5476,7 +5474,7 @@ _func_02_5a35:
 	jr nz,@next
 
 	ld a,(wTmpcbb5)
-	call _func_02_5afc
+	call func_02_5afc
 	ld hl,@cursorSprite
 	jp addSpritesToOam_withOffset
 
@@ -5487,7 +5485,7 @@ _func_02_5a35:
 	.db $01
 	.db $28 $0c $0e $03
 
-_seedAndHarpSpriteTable:
+seedAndHarpSpriteTable:
 	.db @sprite0-CADDR
 	.db @sprite1-CADDR
 	.db @sprite2-CADDR
@@ -5533,7 +5531,7 @@ _seedAndHarpSpriteTable:
 	.db $14 $10 $58 $09
 
 
-_table_5ae5:
+table_5ae5:
 	.dw @data2
 	.dw @data3
 	.dw @data4
@@ -5551,17 +5549,17 @@ _table_5ae5:
 
 ;;
 ; Set z flag if selected inventory item is the harp.
-_cpInventorySelectedItemToHarp:
+cpInventorySelectedItemToHarp:
 	ld a,(wInventory.selectedItem)
 	cp ITEMID_HARP
 	ret
 
 
 ;;
-_func_02_5afc:
+func_02_5afc:
 	ld c,a
 	ld a,(wInventory.cbb8)
-	ld hl,_table_5ae5-4
+	ld hl,table_5ae5-4
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -5583,7 +5581,7 @@ _func_02_5afc:
 ; Convert the index of a seed type to the index in the inventory, based on how
 ; many types of seeds have been obtained.
 ; @param a Seed type
-_getSeedTypeInventoryIndex:
+getSeedTypeInventoryIndex:
 	ld c,a
 	inc c
 	ld hl,wSeedsAndHarpSongsObtained
@@ -5604,8 +5602,8 @@ _getSeedTypeInventoryIndex:
 
 ;;
 ; Draws the "E" on the ring you have equipped.
-_drawEquippedSpriteForActiveRing:
-	call _getRingBoxCapacity
+drawEquippedSpriteForActiveRing:
+	call getRingBoxCapacity
 	ret z
 
 	ld b,a
@@ -5638,7 +5636,7 @@ _drawEquippedSpriteForActiveRing:
 
 ;;
 ; Draw all items in wInventoryStorage to their appropriate positions.
-_inventorySubscreen0_drawStoredItems:
+inventorySubscreen0_drawStoredItems:
 	ld a,$10
 --
 	ldh (<hFF8D),a
@@ -5657,7 +5655,7 @@ _inventorySubscreen0_drawStoredItems:
 	inc bc
 	ld a,(bc)
 	ld d,a
-	call _drawTreasureDisplayDataToBg
+	call drawTreasureDisplayDataToBg
 	ldh a,(<hFF8D)
 	dec a
 	jr nz,--
@@ -5688,8 +5686,8 @@ _inventorySubscreen0_drawStoredItems:
 ;;
 ; Modifies the tilemap and displayed text for subscreen 1 based on obtained treasures.
 ;
-_inventorySubscreen1_drawTreasures:
-	ld hl,_subscreen1TreasureData
+inventorySubscreen1_drawTreasures:
+	ld hl,subscreen1TreasureData
 @drawTreasure:
 	ldi a,(hl) ; Read treasure index
 	or a
@@ -5707,7 +5705,7 @@ _inventorySubscreen1_drawTreasures:
 	ldh a,(<hFF8C)
 	call loadTreasureDisplayData
 	inc hl
-	call _drawTreasureDisplayDataToBg
+	call drawTreasureDisplayDataToBg
 
 	; Set text index
 	ld c,(hl)
@@ -5736,10 +5734,10 @@ _inventorySubscreen1_drawTreasures:
 	ld b,$03
 	ld l,a
 	ld h,>w4TileMap+1
-	call _fillRectangleInTileMapWithMenuBlock
+	call fillRectangleInTileMapWithMenuBlock
 
 @drawRings:
-	call _getRingBoxCapacity
+	call getRingBoxCapacity
 	ret z
 
 	ld b,a
@@ -5771,7 +5769,7 @@ _inventorySubscreen1_drawTreasures:
 
 	; Draw ring
 	ld a,c
-	call _getRingTiles
+	call getRingTiles
 
 	pop bc
 @nextRing:
@@ -5784,7 +5782,7 @@ _inventorySubscreen1_drawTreasures:
 	ld (w4SubscreenTextIndices+$f),a
 	ld de,w4TileMap+$182
 	ld a,$fe
-	jp _getRingTiles
+	jp getRingTiles
 
 ;;
 ; @param	a	"Position" byte to convert
@@ -5819,8 +5817,8 @@ _inventorySubscreen1_drawTreasures:
 ;;
 ; Loading graphics for submenu 2?
 ;
-_inventorySubscreen2_drawTreasures:
-	ld hl,_itemSubmenu2TextIndices
+inventorySubscreen2_drawTreasures:
+	ld hl,itemSubmenu2TextIndices
 	ld de,w4SubscreenTextIndices
 	ld b,$0b
 	call copyMemory
@@ -5838,14 +5836,14 @@ _inventorySubscreen2_drawTreasures:
 	; Clear this essence
 	push bc
 	ld a,b
-	ld hl,_itemSubmenu2EssencePositions-2
+	ld hl,itemSubmenu2EssencePositions-2
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 	ld bc,$0202
 	ld de,$0007
-	call _fillRectangleInTilemap
+	call fillRectangleInTilemap
 	pop bc
 	ld a,b
 	ld hl,$d3df
@@ -5869,13 +5867,13 @@ _inventorySubscreen2_drawTreasures:
 	; Fill in up to 3 sections based on how many heart pieces the player has
 	add $10
 	ld (w4TileMap+$14f),a
-	ld hl,_itemSubmenu2HeartPieceDisplayData
+	ld hl,itemSubmenu2HeartPieceDisplayData
 @nextQuarterHeart:
 	push bc
 	ldi a,(hl)
 	ld de,w4TileMap+$ce
 	call addAToDe
-	call _drawTreasureDisplayDataToBg
+	call drawTreasureDisplayDataToBg
 	pop bc
 	dec c
 	jr nz,@nextQuarterHeart
@@ -5892,10 +5890,10 @@ _inventorySubscreen2_drawTreasures:
 
 .else; ROM_SEASONS
 
-	call _checkWhetherToDisplaySeasonInSubscreen
+	call checkWhetherToDisplaySeasonInSubscreen
 	ld hl,w4TileMap+$4d
 	ldbc $04,$06
-	jp nz,_fillRectangleInTileMapWithMenuBlock
+	jp nz,fillRectangleInTileMapWithMenuBlock
 
 	ld a,(wMinimapGroup)
 	sub $02
@@ -5919,14 +5917,14 @@ _inventorySubscreen2_drawTreasures:
 	add a
 	add a
 	add c
-	ld hl,_itemSubmenu2BlurbDisplayData
+	ld hl,itemSubmenu2BlurbDisplayData
 	rst_addDoubleIndex
 	ld de,w4TileMap+$6e
-	call _drawTreasureDisplayDataToBg
+	call drawTreasureDisplayDataToBg
 	ld e,$70
-	jp _drawTreasureDisplayDataToBg
+	jp drawTreasureDisplayDataToBg
 
-_itemSubmenu2EssencePositions:
+itemSubmenu2EssencePositions:
 	.dw w4TileMap+$084 w4TileMap+$087 w4TileMap+$0c9 w4TileMap+$129
 	.dw w4TileMap+$167 w4TileMap+$164 w4TileMap+$122 w4TileMap+$0c2
 
@@ -5936,7 +5934,7 @@ _itemSubmenu2EssencePositions:
 ;  b2/b3: right tile index, attribute.
 ;  b4:    $ff to indicate no extra level/item count/etc drawn (since this uses
 ;         "drawTreasureDisplayData").
-_itemSubmenu2BlurbDisplayData:
+itemSubmenu2BlurbDisplayData:
 
 	.ifdef ROM_AGES
 		.db $18 $01 $19 $01 $ff ; Present
@@ -5965,27 +5963,27 @@ _itemSubmenu2BlurbDisplayData:
 ;  b3/b4: right tile index, attribute.
 ;  b5:    $ff to indicate no extra level/item count/etc drawn (since this uses
 ;         "drawTreasureDisplayData").
-_itemSubmenu2HeartPieceDisplayData:
+itemSubmenu2HeartPieceDisplayData:
 	.db $00 $78 $05 $79 $05 $ff
 	.db $40 $7a $05 $7b $05 $ff
 	.db $42 $7b $25 $7a $25 $ff
 
 .ifdef ROM_AGES
 ; Text for essences and the options on the right side in item submenu 2.
-_itemSubmenu2TextIndices:
+itemSubmenu2TextIndices:
 	.db <TX_0901 <TX_0902 <TX_0903 <TX_0904 <TX_0905 <TX_0906 <TX_0907 <TX_0908
 	.db <TX_0965 <TX_0961 <TX_0960
 
 .else; ROM_SEASONS
 
-_itemSubmenu2TextIndices:
+itemSubmenu2TextIndices:
 	.db <TX_0901 <TX_0902 <TX_0903 <TX_0904 <TX_0905 <TX_0906 <TX_0907 <TX_0908
 	.db <TX_0956 <TX_0952 <TX_0951
 .endif
 
 ;;
 ; @param[out] a Capacity of ring box.
-_getRingBoxCapacity:
+getRingBoxCapacity:
 	push hl
 	ld a,(wRingBoxLevel)
 	ld hl,@ringBoxCapacities
@@ -6003,7 +6001,7 @@ _getRingBoxCapacity:
 ;
 ; @param	bc	Height, width
 ; @param	hl	Tilemap (Top-left position to start at)
-_fillRectangleInTileMapWithMenuBlock:
+fillRectangleInTileMapWithMenuBlock:
 	ld de,$e701
 
 ;;
@@ -6013,7 +6011,7 @@ _fillRectangleInTileMapWithMenuBlock:
 ; @param	c	Width
 ; @param	de	Tile index (d) and flag (e) to fill in every position
 ; @param	hl	Tilemap (top-left position to start at)
-_fillRectangleInTilemap:
+fillRectangleInTilemap:
 	push hl
 	ld a,c
 --
@@ -6029,7 +6027,7 @@ _fillRectangleInTilemap:
 	ld a,$20
 	rst_addAToHl
 	dec b
-	jr nz,_fillRectangleInTilemap
+	jr nz,fillRectangleInTilemap
 	ret
 
 ;;
@@ -6042,7 +6040,7 @@ _fillRectangleInTilemap:
 ; @param	hl	Pointer to second byte of treasure display data (ie. wTmpcec0+1)
 ;			(See the "treasureDisplayData" structures for details on format)
 ; @param	hFF8B	The number to draw with the treasure (if applicable)
-_drawTreasureDisplayDataToBg:
+drawTreasureDisplayDataToBg:
 	; Draw the left tile
 	ldi a,(hl)
 	ld c,a
@@ -6065,7 +6063,7 @@ _drawTreasureDisplayDataToBg:
 	ld b,a
 	ld c,$07
 	ldi a,(hl)
-	jp _drawTreasureExtraTiles
+	jp drawTreasureExtraTiles
 
 ;;
 ; @param bc
@@ -6105,8 +6103,9 @@ _drawTreasureDisplayDataToBg:
 ;;
 ; Writes tile index to (de) and (de+$20).
 ; Writes tile attribute to (de+$400), (de+$420).
-; @param b Tile attribute
-; @param c Tile index
+;
+; @param	b	Tile attribute
+; @param	c	Tile index
 @writeTileHlpr:
 	ld a,c
 	ld (de),a
@@ -6127,8 +6126,8 @@ _drawTreasureDisplayDataToBg:
 ; Handles drawing of the maku seed and harp sprites on the inventory subscreens. These are
 ; at least partly sprites, unlike everything else.
 ;
-_inventoryMenuDrawSprites:
-	call _inventoryMenuDrawHarpSprites
+inventoryMenuDrawSprites:
+	call inventoryMenuDrawHarpSprites
 
 ; Remainder of function: draw maku seed sprite
 
@@ -6191,7 +6190,7 @@ _inventoryMenuDrawSprites:
 
 ;;
 ; Draw harp sprites if it's in the inventory.
-_inventoryMenuDrawHarpSprites:
+inventoryMenuDrawHarpSprites:
 	ld hl,wInventoryStorage
 	ld bc,$1000
 --
@@ -6254,7 +6253,7 @@ _inventoryMenuDrawHarpSprites:
 	ld c,a
 @drawSprite:
 	ld a,(wSelectedHarpSong)
-	ld hl,_seedAndHarpSpriteTable+4
+	ld hl,seedAndHarpSpriteTable+4
 	rst_addAToHl
 	ld a,(hl)
 	rst_addAToHl
@@ -6267,8 +6266,7 @@ _inventoryMenuDrawHarpSprites:
 ;
 ; Doesn't exist in seasons since there are no items drawn with sprites on the inventory
 ; screen (only the harp of ages).
-;
-_createBlankSpritesForItemSubmenu:
+createBlankSpritesForItemSubmenu:
 	ld hl,wInventory.cbc1
 	ldi a,(hl)
 	cp $04
@@ -6348,8 +6346,7 @@ _createBlankSpritesForItemSubmenu:
 ;   b0: treasure index
 ;   b1: "position" to draw the treasure at
 ;   b2: the slot index this treasure occupies
-;
-_subscreen1TreasureData:
+subscreen1TreasureData:
 
 	.ifdef ROM_AGES
 		; Row 1
@@ -6381,11 +6378,11 @@ _subscreen1TreasureData:
 		; Row 3
 		.db TREASURE_LAVA_JUICE			$61 $0a
 		.db TREASURE_GORON_LETTER		$61 $0a
-		.db TREASURE_OLD_MERMAID_KEY		$61 $0a
+		.db TREASURE_MERMAID_KEY		$61 $0a
 		.db TREASURE_ROCK_BRISKET		$64 $0b
 		.db TREASURE_GORON_VASE			$64 $0b
 		.db TREASURE_GORONADE			$64 $0b
-		.db TREASURE_MERMAID_KEY		$64 $0b
+		.db TREASURE_OLD_MERMAID_KEY		$64 $0b
 		.db TREASURE_LIBRARY_KEY		$67 $0c
 		.db TREASURE_BOOK_OF_SEALS		$6a $0d
 		.db TREASURE_RING			$6d $0e
@@ -6436,8 +6433,8 @@ _subscreen1TreasureData:
 ; Performs replacements on minimap tiles, ie. for animal companion regions?
 ;
 ; @param	a	Index of replacement data to use
-_mapMenu_performTileSubstitutions:
-	ld hl,_mapMenu_tileSubstitutionTable
+mapMenu_performTileSubstitutions:
+	ld hl,mapMenu_tileSubstitutionTable
 	rst_addAToHl
 	ld a,(hl)
 	rst_addAToHl
@@ -6502,22 +6499,22 @@ _mapMenu_performTileSubstitutions:
 	jr @nextSubstitution
 
 ;;
-_runGaleSeedMenu:
+runGaleSeedMenu:
 	call clearOam
 	call @runState
-	jp _mapMenu_drawSprites
+	jp mapMenu_drawSprites
 
 @runState:
 	ld a,(wMenuActiveState)
 	rst_jumpTable
-	.dw _galeSeedMenu_state0
-	.dw _galeSeedMenu_state1
-	.dw _galeSeedMenu_state2
-	.dw _galeSeedMenu_state3
+	.dw galeSeedMenu_state0
+	.dw galeSeedMenu_state1
+	.dw galeSeedMenu_state2
+	.dw galeSeedMenu_state3
 
 ;;
-_galeSeedMenu_state0:
-	call _mapMenu_state0
+galeSeedMenu_state0:
+	call mapMenu_state0
 
 	; This will be incremented, so set to 0, in the next function call
 	ld a,$ff
@@ -6526,12 +6523,11 @@ _galeSeedMenu_state0:
 	ld a,$01
 	ld (wMapMenu.drawWarpDestinations),a
 
-	jp _galeSeedMenu_addOffsetToWarpIndex
+	jp galeSeedMenu_addOffsetToWarpIndex
 
 ;;
 ; State 1: waiting for input (direction buttons, A or B)
-;
-_galeSeedMenu_state1:
+galeSeedMenu_state1:
 	ld a,(wPaletteThread_mode)
 	or a
 	jr nz,@end
@@ -6544,24 +6540,24 @@ _galeSeedMenu_state1:
 	jr nz,@aPressed
 
 	ld hl,@directionButtonOffsets
-	call _getDirectionButtonOffsetFromHl
+	call getDirectionButtonOffsetFromHl
 	jr nc,@end
 
 	; Direction button pressed
-	call _galeSeedMenu_addOffsetToWarpIndex
+	call galeSeedMenu_addOffsetToWarpIndex
 	ld a,SND_MENU_MOVE
 	call nz,playSound
 @end:
-	jp _mapMenu_loadPopupData
+	jp mapMenu_loadPopupData
 
 @bPressed:
-	call _mapGetRoomTextOrReturn
+	call mapGetRoomTextOrReturn
 	ld a,$03
 	ld c,<TX_0301 ; Reselect prompt
 	jr @setState
 
 @aPressed:
-	call _mapGetRoomTextOrReturn
+	call mapGetRoomTextOrReturn
 	ld a,c
 	ld (wTextSubstitutions+2),a
 	ld c,<TX_0300 ; Warp prompt
@@ -6580,21 +6576,20 @@ _galeSeedMenu_state1:
 
 ;;
 ; State 2: selected a warp destination; waiting for confirmation
-;
-_galeSeedMenu_state2:
+galeSeedMenu_state2:
 	call retIfTextIsActive
 
 	ld a,(wSelectedTextOption)
 	or a
-	jr nz,_galeSeedMenu_gotoState1
+	jr nz,galeSeedMenu_gotoState1
 	ld (wOpenedMenuType),a ; $00
 	ld a,(wActiveGroup)
 
-_galeSeedMenu_activateWarp:
+galeSeedMenu_activateWarp:
 	or $80
 	ld (wWarpDestGroup),a
 	ld a,(wMapMenu.warpIndex)
-	call _getTreeWarpDataIndex
+	call getTreeWarpDataIndex
 	ldi a,(hl)
 	ld (wWarpDestRoom),a
 	ldi a,(hl)
@@ -6608,31 +6603,30 @@ _galeSeedMenu_activateWarp:
 	jp fadeoutToWhite
 
 ;;
-_galeSeedMenu_gotoState1:
+galeSeedMenu_gotoState1:
 	ld a,$01
 	ld (wMenuActiveState),a
 	ret
 
 ;;
 ; State 3: pressed B button; waiting for confirmation to exit
-;
-_galeSeedMenu_state3:
+galeSeedMenu_state3:
 	call retIfTextIsActive
 
 	; If chose "reselect", go to state 1
 	ld a,(wSelectedTextOption)
 	or a
-	jr z,_galeSeedMenu_gotoState1
+	jr z,galeSeedMenu_gotoState1
 
 	; Otherwise exit the menu
 	ld a,$ff
 	ld (wWarpTransition2),a
-	jp _closeMenu
+	jp closeMenu
 
 ;;
 ; @param	a	Value to add to wMapMenu.warpIndex
 ; @param[out]	zflag	nz if the warp index changed.
-_galeSeedMenu_addOffsetToWarpIndex:
+galeSeedMenu_addOffsetToWarpIndex:
 	ld e,a
 	ld a,(wMapMenu.warpIndex)
 	ld d,a
@@ -6642,7 +6636,7 @@ _galeSeedMenu_addOffsetToWarpIndex:
 	add e
 	and $07
 	ld d,a
-	call _getTreeWarpDataIndex
+	call getTreeWarpDataIndex
 	ld a,(hl)
 	or a
 	jr z,--
@@ -6652,7 +6646,7 @@ _galeSeedMenu_addOffsetToWarpIndex:
 	jr z,++
 
 	; We can only use entry if we've visited the room.
-	call _mapMenu_checkRoomVisited
+	call mapMenu_checkRoomVisited
 	jr z,--
 ++
 	ldi a,(hl)
@@ -6666,19 +6660,19 @@ _galeSeedMenu_addOffsetToWarpIndex:
 
 ;;
 ; Shows the map (either overworld or dungeon).
-_runMapMenu:
+runMapMenu:
 	call clearOam
 	ld a,(wMenuActiveState)
 	rst_jumpTable
-	.dw _mapMenu_state0
-	.dw _mapMenu_state1
+	.dw mapMenu_state0
+	.dw mapMenu_state1
 
 ;;
-_mapMenu_state0:
+mapMenu_state0:
 	ld a,:w4TileMap
 	ld ($ff00+R_SVBK),a
 
-	call _loadMinimapDisplayRoom
+	call loadMinimapDisplayRoom
 	ld a,(wMapMenu.mode)
 	add GFXH_0d
 	call loadGfxHeader
@@ -6700,25 +6694,25 @@ _mapMenu_state0:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalCompanion)
 	sub SPECIALOBJECTID_DIMITRI
-	call nc,_mapMenu_performTileSubstitutions
+	call nc,mapMenu_performTileSubstitutions
 
 	; Perform tile substitutions if symmetry city has been saved
 	ld a,(wPresentRoomFlags+$13)
 	rrca
 	ld a,$05
-	call c,_mapMenu_performTileSubstitutions
+	call c,mapMenu_performTileSubstitutions
 
 @past:
 	; Check the position of the stone in talus peaks which changes water flow
 	ld a,(wPastRoomFlags+$41)
 	rrca
 	ld a,$06
-	call c,_mapMenu_performTileSubstitutions
+	call c,mapMenu_performTileSubstitutions
 
-	call _mapMenu_clearUnvisitedTiles
+	call mapMenu_clearUnvisitedTiles
 	ld a,(wMapMenu.currentRoom)
 	ld (wMapMenu.cursorIndex),a
-	call _mapMenu_loadPopupData
+	call mapMenu_loadPopupData
 	jr @commonCode
 
 .else; ROM_SEASONS
@@ -6730,28 +6724,28 @@ _mapMenu_state0:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalCompanion)
 	sub SPECIALOBJECTID_DIMITRI
-	call nc,_mapMenu_performTileSubstitutions
+	call nc,mapMenu_performTileSubstitutions
 
 	; Check whether floodgates have been opened
 	ld a,(wPresentRoomFlags+$81)
 	rlca
 	ld a,$05
-	call c,_mapMenu_performTileSubstitutions
+	call c,mapMenu_performTileSubstitutions
 
-	call _checkPirateShipMoved
+	call checkPirateShipMoved
 	ld a,$06
-	call nz,_mapMenu_performTileSubstitutions
+	call nz,mapMenu_performTileSubstitutions
 	jr ++
 
 @subrosia:
-	call _checkPirateShipMoved
+	call checkPirateShipMoved
 	ld a,$07
-	call nz,_mapMenu_performTileSubstitutions
+	call nz,mapMenu_performTileSubstitutions
 ++
-	call _mapMenu_clearUnvisitedTiles
+	call mapMenu_clearUnvisitedTiles
 	ld a,(wMapMenu.currentRoom)
 	ld (wMapMenu.cursorIndex),a
-	call _mapMenu_loadPopupData
+	call mapMenu_loadPopupData
 	jr @commonCode
 
 .endif; ROM_SEASONS
@@ -6778,21 +6772,21 @@ _mapMenu_state0:
 	add c
 	ld (wMapMenu.dungeonScrollY),a
 
-	call _dungeonMap_calculateVisitedFloorsAndLinkPosition
+	call dungeonMap_calculateVisitedFloorsAndLinkPosition
 
 	ld a,(wDungeonIndex)
 	add GFXH_10
 	call loadGfxHeader
-	call _dungeonMap_drawSmallKeyCount
-	call _dungeonMap_generateScrollableTilemap
-	call _dungeonMap_drawFloorList
-	call _dungeonMap_updateScroll
+	call dungeonMap_drawSmallKeyCount
+	call dungeonMap_generateScrollableTilemap
+	call dungeonMap_drawFloorList
+	call dungeonMap_updateScroll
 
 ; Code for both overworld & dungeon maps
 @commonCode:
 	xor a
 	ld ($ff00+R_SVBK),a
-	call _mapMenu_drawSprites
+	call mapMenu_drawSprites
 
 	xor a
 	ldh (<hCameraX),a
@@ -6803,7 +6797,7 @@ _mapMenu_state0:
 	ld hl,wMenuActiveState
 	inc (hl)
 
-	call _mapMenu_copyTilemapToVram
+	call mapMenu_copyTilemapToVram
 	call fastFadeinFromWhite
 	ld a,$07
 	jp loadGfxRegisterStateIndex
@@ -6812,8 +6806,7 @@ _mapMenu_state0:
 ; Calculates values for wMapMenu.currentRoom and wMapMenu.mode.
 ;
 ; Determines where the cursor is and in what way the minimap is shown (overworld/dungeon)
-;
-_loadMinimapDisplayRoom:
+loadMinimapDisplayRoom:
 
 .ifdef ROM_AGES
 	ld hl,wMinimapGroup
@@ -6906,8 +6899,8 @@ _loadMinimapDisplayRoom:
 ;;
 ; Draws the number of small keys to the tilemap. (The key itself is a sprite.)
 ;
-_dungeonMap_drawSmallKeyCount:
-	call _getNumSmallKeys
+dungeonMap_drawSmallKeyCount:
+	call getNumSmallKeys
 	ret z
 	ld hl,w4TileMap+$226
 	add $90
@@ -6921,13 +6914,12 @@ _dungeonMap_drawSmallKeyCount:
 ; * wMapMenu.visitedFloors
 ; * wMapMenu.dungeonCursorIndex
 ; * wMapMenu.linkFloor
-;
-_dungeonMap_calculateVisitedFloorsAndLinkPosition:
+dungeonMap_calculateVisitedFloorsAndLinkPosition:
 	ld a,(wDungeonIndex)
 	ld hl,wDungeonVisitedFloors
 	rst_addAToHl
 	ld b,(hl)
-	call _checkLinkHasCompass
+	call checkLinkHasCompass
 	ld a,b
 	jr z,+
 
@@ -6955,11 +6947,11 @@ _dungeonMap_calculateVisitedFloorsAndLinkPosition:
 	ret
 
 ;;
-_mapMenu_state1:
+mapMenu_state1:
 	ld a,(wPaletteThread_mode)
 	or a
 	call z,@checkInput
-	jp _mapMenu_drawSprites
+	jp mapMenu_drawSprites
 
 ;;
 @checkInput:
@@ -6970,9 +6962,9 @@ _mapMenu_state1:
 @dungeon:
 	ld a,(wKeysJustPressed)
 	and (BTN_B | BTN_SELECT)
-	jp nz,_closeMenu
-	call _dungeonMap_updateCursorFlickerCounter
-	jp _dungeonMap_checkDirectionButtons
+	jp nz,closeMenu
+	call dungeonMap_updateCursorFlickerCounter
+	jp dungeonMap_checkDirectionButtons
 
 @overworld:
 	ld a,(wMapMenu.varcbb4)
@@ -6984,7 +6976,7 @@ _mapMenu_state1:
 	call retIfTextIsActive
 
 	ld hl,@directionOffsets
-	call _getDirectionButtonOffsetFromHl
+	call getDirectionButtonOffsetFromHl
 	jr nc,@noDirectionButtonPressed
 
 .ifdef ROM_AGES
@@ -7055,7 +7047,7 @@ _mapMenu_state1:
 	ld (wMapMenu.cursorIndex),a
 	ld a,SND_MENU_MOVE
 	call playSound
-	jp _mapMenu_loadPopupData
+	jp mapMenu_loadPopupData
 
 @noDirectionButtonPressed:
 	ld a,(wKeysJustPressed)
@@ -7083,14 +7075,14 @@ _mapMenu_state1:
 	ld hl,wMapMenu.warpIndex
 	ld (hl),$05
 	xor a
-	call _galeSeedMenu_activateWarp
+	call galeSeedMenu_activateWarp
 ++
 .endif
 
-	jp _closeMenu
+	jp closeMenu
 
 @showRoomText:
-	call _mapGetRoomTextOrReturn
+	call mapGetRoomTextOrReturn
 	ld hl,wSubmenuState
 	inc (hl)
 	jp showText
@@ -7108,14 +7100,14 @@ _mapMenu_state1:
 ; This function returns from the caller if the selected room hasn't been visited.
 ;
 ; @param[out]	bc	Text to show for the selected room on the map.
-_mapGetRoomTextOrReturn:
+mapGetRoomTextOrReturn:
 	; RANDO: Always allow selection of starting tree screen. (This is really just for gale seed
 	; warping but has the side-effect of letting you select it on the map. Oh well.)
 	ld a,(wMapMenu.cursorIndex)
 	cp STARTING_TREE_MAP_INDEX
 	jr z,@visited
 
-	call _mapMenu_checkCursorRoomVisited
+	call mapMenu_checkCursorRoomVisited
 	jr nz,@visited
 
 	; Return from caller
@@ -7150,8 +7142,8 @@ _mapGetRoomTextOrReturn:
 ; Like function above, but doesn't set textbox variables, and always returns properly.
 ;
 ; @param[out]	bc	Text to show for selected room on the map
-_mapGetRoomText:
-	call _mapGetRoomIndexWithoutUnusedColumns
+mapGetRoomText:
+	call mapGetRoomIndexWithoutUnusedColumns
 	ld hl,presentMapTextIndices
 	jr nc,+
 	ld hl,pastMapTextIndices
@@ -7239,7 +7231,7 @@ _mapGetRoomText:
 
 ; Moblin's keep
 @specialCode2:
-	call _checkMoblinsKeepDestroyed
+	call checkMoblinsKeepDestroyed
 .ifdef ROM_AGES
 	ld c,<TX_0317
 .else
@@ -7263,7 +7255,7 @@ _mapGetRoomText:
 
 ; Advance shop: only show the text it's been visited.
 @specialCode4:
-	call _checkAdvanceShopVisited
+	call checkAdvanceShopVisited
 
 .ifdef ROM_AGES
 	ld c,<TX_0326
@@ -7283,7 +7275,7 @@ _mapGetRoomText:
 ; @param[out]	zflag	nz if the dungeon has been entered
 @checkDungeonEntered:
 	push de
-	ld hl,_mapMenu_dungeonEntranceText
+	ld hl,mapMenu_dungeonEntranceText
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld e,a
@@ -7299,9 +7291,8 @@ _mapGetRoomText:
 
 ;;
 ; Checks for popups that should appear? (ie. house, gasha spot)
-;
-_mapMenu_loadPopupData:
-	call _mapMenu_checkCursorRoomVisited
+mapMenu_loadPopupData:
+	call mapMenu_checkCursorRoomVisited
 	jr z,@noIcon
 
 	ld hl,presentMinimapPopups
@@ -7327,10 +7318,10 @@ _mapMenu_loadPopupData:
 @gotIcon:
 	ld d,a
 	swap a
-	call _getMinimapPopupType
+	call getMinimapPopupType
 	ld (wMapMenu.popup2),a
 	ld a,d
-	call _getMinimapPopupType
+	call getMinimapPopupType
 	ld hl,wMapMenu.popup1
 	ldi (hl),a
 	or a
@@ -7408,82 +7399,82 @@ _mapMenu_loadPopupData:
 ;
 ; @param	a	Popup "type"
 ; @param[out]	a	Popup index to show (an entry in "mapIconOamTable")
-_getMinimapPopupType:
+getMinimapPopupType:
 	and $0f
 	ld e,a
 	rst_jumpTable
 
 .ifdef ROM_AGES
-	.dw _minimapPopupType_normal
-	.dw _minimapPopupType_normal	; present house
-	.dw _minimapPopupType_normal	; tokay hut
-	.dw _minimapPopupType_normal	; past house
-	.dw _minimapPopupType_makuTree
-	.dw _minimapPopupType_normal	; eyeglass library
-	.dw _minimapPopupType_normal	; shooting gallery
-	.dw _minimapPopupType_vasuOrSyrup
-	.dw _minimapPopupType_cave
-	.dw _minimapPopupType_gashaSpot
-	.dw _minimapPopupType_portalSpot
-	.dw _minimapPopupType_advanceShop
-	.dw _minimapPopupType_shop
-	.dw _minimapPopupType_moblinsKeep
-	.dw _minimapPopupType_blackTower
-	.dw _minimapPopupType_seedTree
+	.dw minimapPopupType_normal
+	.dw minimapPopupType_normal	; present house
+	.dw minimapPopupType_normal	; tokay hut
+	.dw minimapPopupType_normal	; past house
+	.dw minimapPopupType_makuTree
+	.dw minimapPopupType_normal	; eyeglass library
+	.dw minimapPopupType_normal	; shooting gallery
+	.dw minimapPopupType_vasuOrSyrup
+	.dw minimapPopupType_cave
+	.dw minimapPopupType_gashaSpot
+	.dw minimapPopupType_portalSpot
+	.dw minimapPopupType_advanceShop
+	.dw minimapPopupType_shop
+	.dw minimapPopupType_moblinsKeep
+	.dw minimapPopupType_blackTower
+	.dw minimapPopupType_seedTree
 
 .else; ROM_SEASONS
 
-	.dw _minimapPopupType_normal
-	.dw _minimapPopupType_normal
-	.dw _minimapPopupType_advanceShop
-	.dw _minimapPopupType_normal
-	.dw _minimapPopupType_normal
-	.dw _minimapPopupType_normal
-	.dw _minimapPopupType_normal
-	.dw _minimapPopupType_normal
-	.dw _minimapPopupType_cave
-	.dw _minimapPopupType_gashaSpot
-	.dw _minimapPopupType_portalSpot
-	.dw _minimapPopupType_pirateShip
-	.dw _minimapPopupType_shop
-	.dw _minimapPopupType_moblinsKeep
-	.dw _minimapPopupType_templeOfSeasons
-	.dw _minimapPopupType_seedTree
+	.dw minimapPopupType_normal
+	.dw minimapPopupType_normal
+	.dw minimapPopupType_advanceShop
+	.dw minimapPopupType_normal
+	.dw minimapPopupType_normal
+	.dw minimapPopupType_normal
+	.dw minimapPopupType_normal
+	.dw minimapPopupType_normal
+	.dw minimapPopupType_cave
+	.dw minimapPopupType_gashaSpot
+	.dw minimapPopupType_portalSpot
+	.dw minimapPopupType_pirateShip
+	.dw minimapPopupType_shop
+	.dw minimapPopupType_moblinsKeep
+	.dw minimapPopupType_templeOfSeasons
+	.dw minimapPopupType_seedTree
 .endif
 
-_minimapPopupType_normal:
+minimapPopupType_normal:
 	ld a,e
 	ret
 
-_minimapPopupType_advanceShop:
-	call _checkAdvanceShopVisited
+minimapPopupType_advanceShop:
+	call checkAdvanceShopVisited
 	ret z
 	ld a,$0e
 	ret
 
 
 ; Check if a cave was unlocked (based on text index being displayed), show popup if so
-_minimapPopupType_cave:
+minimapPopupType_cave:
 	ld a,(wMapMenu.cursorIndex)
-	call _mapGetRoomText
+	call mapGetRoomText
 	ld a,$02
 	cp b
-	jr nz,_minimapNoPopup
+	jr nz,minimapNoPopup
 	ld a,e
 	ret
 
 
-_minimapPopupType_gashaSpot:
+minimapPopupType_gashaSpot:
 	ld a,(wMapMenu.cursorIndex)
 	call getIndexOfGashaSpotInRoom
 	bit 7,c
-	jr nz,_minimapNoPopup
+	jr nz,minimapNoPopup
 	ld a,e
 	ret
 
 
 ; Area on map with dormant time portal (or subrosia portal for seasons?)
-_minimapPopupType_portalSpot:
+minimapPopupType_portalSpot:
 	ld hl,wPresentRoomFlags
 	ld a,(wMapMenu.mode)
 	rrca
@@ -7493,30 +7484,30 @@ _minimapPopupType_portalSpot:
 	ld a,(wMapMenu.cursorIndex)
 	rst_addAToHl
 	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)
-	jr z,_minimapNoPopup
+	jr z,minimapNoPopup
 	ld a,e
 	ret
 
-_minimapPopupType_seedTree:
+minimapPopupType_seedTree:
 	ld a,(wMapMenu.cursorIndex)
-	call _getTreeWarpDataForRoom
+	call getTreeWarpDataForRoom
 	ret c
 	inc hl
 	ld a,(hl)
 	ret
 
-_minimapPopupType_moblinsKeep:
-	call _checkMoblinsKeepDestroyed
+minimapPopupType_moblinsKeep:
+	call checkMoblinsKeepDestroyed
 	ld a,$0f
 	ret z
 	inc a
 	ret
 
-_minimapNoPopup:
+minimapNoPopup:
 	xor a
 	ret
 
-_minimapPopupType_shop:
+minimapPopupType_shop:
 
 .ifdef ROM_AGES
 	ld a,$0e
@@ -7541,7 +7532,7 @@ _minimapPopupType_shop:
 
 .ifdef ROM_AGES
 
-_minimapPopupType_vasuOrSyrup:
+minimapPopupType_vasuOrSyrup:
 	ld a,(wMapMenu.cursorIndex)
 	cp $5d
 	ld a,$0c
@@ -7549,12 +7540,12 @@ _minimapPopupType_vasuOrSyrup:
 	inc a
 	ret
 
-_minimapPopupType_blackTower:
+minimapPopupType_blackTower:
 	call getBlackTowerProgress
 	add $11
 	ret
 
-_minimapPopupType_makuTree:
+minimapPopupType_makuTree:
 	ld a,(wTilesetFlags)
 	rlca
 	ld a,$0b
@@ -7570,7 +7561,7 @@ _minimapPopupType_makuTree:
 
 
 ; Separate popups for each season
-_minimapPopupType_templeOfSeasons:
+minimapPopupType_templeOfSeasons:
 	ld e,$11 ; Spring temple
 	ld a,(wMapMenu.cursorIndex)
 	cp $28
@@ -7591,8 +7582,8 @@ _minimapPopupType_templeOfSeasons:
 
 
 ; Suppress the pirate ship popup depending on whether it's moved.
-_minimapPopupType_pirateShip:
-	call _checkPirateShipMoved
+minimapPopupType_pirateShip:
+	call checkPirateShipMoved
 	ld a,e
 	ld hl,@shipBefore
 	jr z,+
@@ -7603,7 +7594,7 @@ _minimapPopupType_pirateShip:
 --
 	ldi a,(hl)
 	or a
-	jr z,_minimapNoPopup
+	jr z,minimapNoPopup
 	cp c
 	jr nz,--
 	ld a,e
@@ -7621,7 +7612,7 @@ _minimapPopupType_pirateShip:
 .endif ; ROM_SEASONS
 
 ;;
-_maupMenu_drawPopup:
+maupMenu_drawPopup:
 	call @updatePopupVariables
 	ld hl,wMapMenu.popupY
 	ldi a,(hl)
@@ -7760,28 +7751,26 @@ _maupMenu_drawPopup:
 
 ;;
 ; Checks if pressed up or down on dungeon map, updates accordingly.
-;
-_dungeonMap_checkDirectionButtons:
+dungeonMap_checkDirectionButtons:
 	ld a,(wSubmenuState)
 	rst_jumpTable
-	.dw _dungeonMap_scrollingState0
-	.dw _dungeonMap_scrollingState1
+	.dw dungeonMap_scrollingState0
+	.dw dungeonMap_scrollingState1
 
 ;;
 ; Dungeon map: waiting for input to scroll up/down
-;
-_dungeonMap_scrollingState0:
+dungeonMap_scrollingState0:
 	call getInputWithAutofire
 	bit BTN_BIT_DOWN,a
 	jr z,+
 
-	call _dungeonMap_checkCanScrollDown
+	call dungeonMap_checkCanScrollDown
 	jr nz,@moveUpOrDown
 	ret
 +
 	bit BTN_BIT_UP,a
 	ret z
-	call _dungeonMap_checkCanScrollUp
+	call dungeonMap_checkCanScrollUp
 	ret z
 
 @moveUpOrDown:
@@ -7819,7 +7808,7 @@ _dungeonMap_scrollingState0:
 ; @param[out]	a	Value to add or remove from floor number
 ; @param[out]	b	$01 to indicate downward direction
 ; @param[out]	zflag	Set if we're on the bottom floor already.
-_dungeonMap_checkCanScrollDown:
+dungeonMap_checkCanScrollDown:
 	; Check if we're on the bottom floor.
 	push de
 	ld a,(wDungeonNumFloors)
@@ -7830,7 +7819,7 @@ _dungeonMap_checkCanScrollDown:
 	jr z,@failure
 
 	; If Link has the map, it's ok to move down.
-	call _checkLinkHasMap
+	call checkLinkHasMap
 	ld a,$01
 	jr nz,@ret
 
@@ -7870,7 +7859,7 @@ _dungeonMap_checkCanScrollDown:
 ; @param[out]	a	Value to add or remove from floor number
 ; @param[out]	b	$00 to indicate downward direction
 ; @param[out]	zflag	Set if we're on the top floor already.
-_dungeonMap_checkCanScrollUp:
+dungeonMap_checkCanScrollUp:
 	; Check if we're on the top floor.
 	push de
 	ld a,(wMapMenu.floorIndex)
@@ -7878,7 +7867,7 @@ _dungeonMap_checkCanScrollUp:
 	jr z,@failure
 
 	; If Link has the map, it's ok to move up.
-	call _checkLinkHasMap
+	call checkLinkHasMap
 	ld a,$01
 	jr nz,@ret
 
@@ -7918,7 +7907,7 @@ _dungeonMap_checkCanScrollUp:
 ;;
 ; Dungeon map: currently scrolling up or down a floor
 ;
-_dungeonMap_scrollingState1:
+dungeonMap_scrollingState1:
 	ld hl,wMapMenu.varcbb4
 	dec (hl)
 	jr nz,++
@@ -7938,12 +7927,12 @@ _dungeonMap_scrollingState1:
 	ld hl,wMapMenu.dungeonScrollY
 	add (hl)
 	ld (hl),a
-	call _dungeonMap_updateScroll
+	call dungeonMap_updateScroll
 
 	; Fall through
 
 ;;
-_mapMenu_copyTilemapToVram:
+mapMenu_copyTilemapToVram:
 	xor a
 	ld (wStatusBarNeedsRefresh),a
 	ld a,UNCMP_GFXH_0a
@@ -7952,52 +7941,51 @@ _mapMenu_copyTilemapToVram:
 ;;
 ; A lot of maps call this as regular updating code.
 ;
-_mapMenu_drawSprites:
+mapMenu_drawSprites:
 	ld a,(wMapMenu.mode)
 	cp $02
 	jr nz,@overworld
 
 @dungeon:
-	call _dungeonMap_drawItemSprites
-	call _dungeonMap_drawLinkIcons
-	call _dungeonMap_drawCursor
-	call _dungeonMap_drawArrows
-	call _dungeonMap_drawBossSymbolForFloor
-	jp _dungeonMap_drawFloorCursor
+	call dungeonMap_drawItemSprites
+	call dungeonMap_drawLinkIcons
+	call dungeonMap_drawCursor
+	call dungeonMap_drawArrows
+	call dungeonMap_drawBossSymbolForFloor
+	jp dungeonMap_drawFloorCursor
 
 @overworld:
-	call _maupMenu_drawPopup
-	call _mapMenu_drawArrow
-	call _mapMenu_drawCursor
+	call maupMenu_drawPopup
+	call mapMenu_drawArrow
+	call mapMenu_drawCursor
 	ld a,(wMapMenu.drawWarpDestinations)
 	or a
-	jp nz,_mapMenu_drawWarpSites
+	jp nz,mapMenu_drawWarpSites
 
 .ifdef ROM_AGES
-	jp _mapMenu_drawTimePortal
+	jp mapMenu_drawTimePortal
 
 .else; ROM_SEASONS
 
-	jp _mapMenu_drawJewelLocations
+	jp mapMenu_drawJewelLocations
 .endif
 
 ;;
 ; Draws small key, boss key, compass, and map on the map screen if Link has them.
-;
-_dungeonMap_drawItemSprites:
-	call _getNumSmallKeys
+dungeonMap_drawItemSprites:
+	call getNumSmallKeys
 	ld hl,@smallKeySprite
 	call nz,addSpritesToOam
 
-	call _checkLinkHasBossKey
+	call checkLinkHasBossKey
 	ld hl,@bossKeySprite
 	call nz,addSpritesToOam
 
-	call _checkLinkHasCompass
+	call checkLinkHasCompass
 	ld hl,@compassSprite
 	call nz,addSpritesToOam
 
-	call _checkLinkHasMap
+	call checkLinkHasMap
 	ld hl,@mapSprite
 	call nz,addSpritesToOam
 	ret
@@ -8024,7 +8012,7 @@ _dungeonMap_drawItemSprites:
 ;;
 ; @param[out]	a	Number of small keys Link has for the current dungeon
 ; @param[out]	zflag	z if Link has no small keys
-_getNumSmallKeys:
+getNumSmallKeys:
 	ld a,(wDungeonIndex)
 	ld hl,wDungeonSmallKeys
 	rst_addAToHl
@@ -8034,14 +8022,14 @@ _getNumSmallKeys:
 
 ;;
 ; @param[out]	zflag	nz if Link has the boss key for the current dungeon.
-_checkLinkHasBossKey:
+checkLinkHasBossKey:
 	ld hl,wDungeonBossKeys
 	ld a,(wDungeonIndex)
 	jp checkFlag
 
 ;;
 ; Unsets Z flag if link has the compass.
-_checkLinkHasCompass:
+checkLinkHasCompass:
 	push hl
 	ld hl,wDungeonCompasses
 	ld a,(wDungeonIndex)
@@ -8051,7 +8039,7 @@ _checkLinkHasCompass:
 
 ;;
 ; Unsets Z flag if link has the map.
-_checkLinkHasMap:
+checkLinkHasMap:
 	push hl
 	ld hl,wDungeonMaps
 	ld a,(wDungeonIndex)
@@ -8060,9 +8048,9 @@ _checkLinkHasMap:
 	ret
 
 ;;
-_dungeonMap_drawFloorCursor:
+dungeonMap_drawFloorCursor:
 	ld a,(wDungeonIndex)
-	ld hl,_dungeonMapSymbolPositions
+	ld hl,dungeonMapSymbolPositions
 	rst_addDoubleIndex
 
 	ld a,(wMapMenu.floorIndex)
@@ -8081,12 +8069,12 @@ _dungeonMap_drawFloorCursor:
 
 ;;
 ; On the dungeon map, this draws the boss symbol next to its floor.
-_dungeonMap_drawBossSymbolForFloor:
-	call _checkLinkHasCompass
+dungeonMap_drawBossSymbolForFloor:
+	call checkLinkHasCompass
 	ret z
 
 	ld a,(wDungeonIndex)
-	ld hl,_dungeonMapSymbolPositions+1
+	ld hl,dungeonMapSymbolPositions+1
 	rst_addDoubleIndex
 
 	ld b,(hl)
@@ -8099,14 +8087,14 @@ _dungeonMap_drawBossSymbolForFloor:
 	.db $00 $38 $82 $05
 
 ;;
-_dungeonMap_drawLinkIcons:
+dungeonMap_drawLinkIcons:
 	; Check whether to draw the Link icon on the map.
 	ld a,(wMapMenu.dungeonCursorFlicker)
 	or a
 	jr z,++
 
 	; Get the position of Link's icon on the map, not accounting for scrolling.
-	call _dungeonMap_getLinkIconPosition
+	call dungeonMap_getLinkIconPosition
 	ld hl,wMapMenu.dungeonScrollY
 	ld a,b
 	sub (hl)
@@ -8129,7 +8117,7 @@ _dungeonMap_drawLinkIcons:
 	; Draw the Link icon on the floor list
 
 	ld a,(wDungeonIndex)
-	ld hl,_dungeonMapSymbolPositions
+	ld hl,dungeonMapSymbolPositions
 	rst_addDoubleIndex
 
 	; Calculate Y position
@@ -8156,7 +8144,7 @@ _dungeonMap_drawLinkIcons:
 	.db $00 $2c $80 $00
 
 ;;
-_dungeonMap_updateCursorFlickerCounter:
+dungeonMap_updateCursorFlickerCounter:
 	ld a,(wFrameCounter)
 	and $1f
 	ret nz
@@ -8167,7 +8155,7 @@ _dungeonMap_updateCursorFlickerCounter:
 	ret
 
 ;;
-_dungeonMap_drawCursor:
+dungeonMap_drawCursor:
 	; Return if scrolling
 	ld a,(wSubmenuState)
 	or a
@@ -8199,21 +8187,20 @@ _dungeonMap_drawCursor:
 ;;
 ; Draws the up/down arrows on the dungeon map, assuming it's possible to scroll in those
 ; directions.
-;
-_dungeonMap_drawArrows:
+dungeonMap_drawArrows:
 	; Return if map is scrolling
 	ld a,(wSubmenuState)
 	or a
 	ret nz
 
 	; Check if we can scroll up
-	call _dungeonMap_checkCanScrollUp
+	call dungeonMap_checkCanScrollUp
 	jr z,+
 	ld hl,@upArrow
 	call addSpritesToOam
 +
 	; Check if we can scroll down
-	call _dungeonMap_checkCanScrollDown
+	call dungeonMap_checkCanScrollDown
 	ret z
 	ld hl,@downArrow
 	jp addSpritesToOam
@@ -8232,7 +8219,7 @@ _dungeonMap_drawArrows:
 ;
 ; @param[out]	a	Index of room (assuming one row = 14 columns instead of 16)
 ; @param[out]	cflag	Set if TILESETFLAG_PAST/TILESETFLAG_SUBROSIA is set
-_mapGetRoomIndexWithoutUnusedColumns:
+mapGetRoomIndexWithoutUnusedColumns:
 
 .ifdef ROM_AGES
 	push bc
@@ -8284,13 +8271,13 @@ _mapGetRoomIndexWithoutUnusedColumns:
 
 ;;
 ; @param[out]	zflag	Unset if the room has been visited
-_mapMenu_checkCursorRoomVisited:
+mapMenu_checkCursorRoomVisited:
 	ld a,(wMapMenu.cursorIndex)
 
 ;;
 ; @param	a	Room to check
 ; @param[out]	zflag	nz if room has been visited
-_mapMenu_checkRoomVisited:
+mapMenu_checkRoomVisited:
 	push hl
 	ld h,a
 	ld a,(wMapMenu.mode)
@@ -8317,23 +8304,23 @@ _mapMenu_checkRoomVisited:
 	ret
 
 ;;
-_mapMenu_drawArrow:
+mapMenu_drawArrow:
 	ld a,(wFrameCounter)
 	and $20
 	ret nz
 	ld hl,@sprite
 	ld a,(wMapMenu.currentRoom)
-	jr _mapMenu_drawSpriteAtRoomIndex
+	jr mapMenu_drawSpriteAtRoomIndex
 
 @sprite:
 	.db $01
 	.db $06 $08 $0e $47
 
 ;;
-_mapMenu_drawCursor:
+mapMenu_drawCursor:
 	ld hl,@sprite
 	ld a,(wMapMenu.cursorIndex)
-	jr _mapMenu_drawSpriteAtRoomIndex
+	jr mapMenu_drawSpriteAtRoomIndex
 
 @sprite:
 	.db $02
@@ -8345,7 +8332,7 @@ _mapMenu_drawCursor:
 ;
 ; @param	a	Room index
 ; @param	hl	Pointer to sprite data
-_mapMenu_drawSpriteAtRoomIndex:
+mapMenu_drawSpriteAtRoomIndex:
 	ld c,a
 	ldde OVERWORLD_MAP_START_Y*8, OVERWORLD_MAP_START_X*8
 
@@ -8376,7 +8363,7 @@ _mapMenu_drawSpriteAtRoomIndex:
 ;;
 ; Draw all positions that Link can warp to on the map screen, using a circle marker.
 ;
-_mapMenu_drawWarpSites:
+mapMenu_drawWarpSites:
 	; Use wTmpcec0 as a place to store and modify the OAM data to be drawn
 	ld de,@spriteData
 	ld hl,wTmpcec0
@@ -8396,7 +8383,7 @@ _mapMenu_drawWarpSites:
 	ld c,$00
 @drawWarpDest:
 	ld a,c
-	call _getTreeWarpDataIndex
+	call getTreeWarpDataIndex
 	ldi a,(hl)
 	or a
 	ret z
@@ -8408,13 +8395,13 @@ _mapMenu_drawWarpSites:
 	; RANDO: Always allow warping to the starting tree.
 	cp STARTING_TREE_MAP_INDEX
 	jr z,++
-	call _mapMenu_checkRoomVisited
+	call mapMenu_checkRoomVisited
 	jr z,@nextTree
 ++
 	; If so, draw the sprite
 	ld a,c
 	ld hl,wTmpcec0
-	call _mapMenu_drawSpriteAtRoomIndex
+	call mapMenu_drawSpriteAtRoomIndex
 @nextTree:
 	pop bc
 	inc c
@@ -8429,9 +8416,9 @@ _mapMenu_drawWarpSites:
 ; Returns an entry in the "Tree Warp Data" for the current age.
 ;
 ; @param	a	Entry index
-_getTreeWarpDataIndex:
+getTreeWarpDataIndex:
 	ld c,a
-	call _getWarpTreeData
+	call getWarpTreeData
 	add a
 	add c
 	rst_addAToHl
@@ -8444,9 +8431,9 @@ _getTreeWarpDataIndex:
 ; @param	a	Room index
 ; @param[out]	hl	Pointer to last 2 bytes of tree warp data
 ; @param[out]	cflag	Set on failure (no tree exists for this room)
-_getTreeWarpDataForRoom:
+getTreeWarpDataForRoom:
 	ld c,a
-	call _getWarpTreeData
+	call getWarpTreeData
 --
 	ldi a,(hl)
 	or a
@@ -8462,7 +8449,7 @@ _getTreeWarpDataForRoom:
 ; See data/[game]/treeWarps.s.
 ;
 ; @param[out]	hl	Address of "warp tree" data structure for appropriate age.
-_getWarpTreeData:
+getWarpTreeData:
 	push af
 
 .ifdef ROM_SEASONS
@@ -8493,8 +8480,7 @@ _getWarpTreeData:
 
 ;;
 ; Draws the time portal sprite on the map. (Ages only)
-;
-_mapMenu_drawTimePortal:
+mapMenu_drawTimePortal:
 	; Use wTmpcec0 as a place to store and modify the OAM data to be drawn
 	ld de,@portalSprite
 	ld hl,wTmpcec0
@@ -8522,7 +8508,7 @@ _mapMenu_drawTimePortal:
 	inc l
 	ld a,(hl) ; hl = wPortalRoom
 	ld hl,wTmpcec0
-	jp _mapMenu_drawSpriteAtRoomIndex
+	jp mapMenu_drawSpriteAtRoomIndex
 
 @portalSprite:
 	.db $01
@@ -8534,7 +8520,7 @@ _mapMenu_drawTimePortal:
 
 ;;
 ; Seasons only: draw the locations of the jewels if Link has the treasure map.
-_mapMenu_drawJewelLocations:
+mapMenu_drawJewelLocations:
 	; Use wTmpcec0 as a place to store and modify the OAM data to be drawn
 	ld de,@sprite
 	ld hl,wTmpcec0
@@ -8601,7 +8587,7 @@ _mapMenu_drawJewelLocations:
 	inc hl
 	ld a,(hl)
 	ld hl,wTmpcec0
-	call _mapMenu_drawSpriteAtRoomIndex
+	call mapMenu_drawSpriteAtRoomIndex
 
 @doneDrawing:
 	pop bc
@@ -8624,8 +8610,7 @@ _mapMenu_drawJewelLocations:
 
 ;;
 ; This blanks out all unvisited tiles when opening the map screen.
-;
-_mapMenu_clearUnvisitedTiles:
+mapMenu_clearUnvisitedTiles:
 	ld a,:w4TileMap
 	ld ($ff00+R_SVBK),a
 
@@ -8652,7 +8637,7 @@ _mapMenu_clearUnvisitedTiles:
 	ld a,b
 	swap a
 	add c
-	call _mapMenu_checkRoomVisited
+	call mapMenu_checkRoomVisited
 	jr nz,@nextTile
 
 	; Blank this tile
@@ -8680,7 +8665,7 @@ _mapMenu_clearUnvisitedTiles:
 
 ;;
 ; @param[out]	zflag	nz if the pirate ship has moved
-_checkPirateShipMoved:
+checkPirateShipMoved:
 	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
 	jp checkGlobalFlag
 
@@ -8688,13 +8673,13 @@ _checkPirateShipMoved:
 
 ;;
 ; @param[out]	zflag	nz if moblin's keep is destroyed
-_checkMoblinsKeepDestroyed:
+checkMoblinsKeepDestroyed:
 	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED
 	jp checkGlobalFlag
 
 ;;
 ; @param[out]	zflag	nz if the shop has been visited
-_checkAdvanceShopVisited:
+checkAdvanceShopVisited:
 
 .ifdef ROM_AGES
 	ld a,(wPastRoomFlags+$fe)
@@ -8710,7 +8695,7 @@ _checkAdvanceShopVisited:
 ; scrolling).
 ;
 ; @param[out]	bc	Position to draw Link tile at (in tiles)
-_dungeonMap_getLinkIconPosition:
+dungeonMap_getLinkIconPosition:
 	ld a,(wMapMenu.linkFloor)
 	ld b,a
 	ld a,(wDungeonNumFloors)
@@ -8744,13 +8729,12 @@ _dungeonMap_getLinkIconPosition:
 ;;
 ; Draws the floor list on the left side of the dungeon map menu.
 ; Called once when opening the dungeon map.
-;
-_dungeonMap_drawFloorList:
+dungeonMap_drawFloorList:
 	ld a,:w4TileMap
 	ld ($ff00+R_SVBK),a
 
 	ld a,(wDungeonIndex)
-	ld hl,_dungeonMapFloorListStartPositions
+	ld hl,dungeonMapFloorListStartPositions
 	rst_addAToHl
 	ldi a,(hl)
 	ld de,w4TileMap+$a0
@@ -8760,7 +8744,7 @@ _dungeonMap_drawFloorList:
 	dec a
 	ld c,a
 @loop:
-	call _checkLinkHasMap
+	call checkLinkHasMap
 	jr nz,++
 
 	; If Link doesn't have the map, we need to check if we've visited this floor
@@ -8776,24 +8760,24 @@ _dungeonMap_drawFloorList:
 	; Draw the floor name
 	ld a,(wDungeonMapBaseFloor)
 	add c
-	ld hl,_dungeonMapFloorNameTiles
+	ld hl,dungeonMapFloorNameTiles
 	rst_addDoubleIndex
 	ld b,$02
 	ldi a,(hl)
-	call _drawTileABtoDE
+	call drawTileABtoDE
 	ldi a,(hl)
-	call _drawTileABtoDE
+	call drawTileABtoDE
 
 	ld a,$9c ; 'F' for "floor"
-	call _drawTileABtoDE
+	call drawTileABtoDE
 
 	; Draw 2-tile rectangular box representing the floor
 	inc e
 	ld b,$04
 	ld a,$aa
-	call _drawTileABtoDE
+	call drawTileABtoDE
 	ld a,$ab
-	call _drawTileABtoDE
+	call drawTileABtoDE
 
 	ld a,$1a
 @nextFloor:
@@ -8807,7 +8791,7 @@ _dungeonMap_drawFloorList:
 ;;
 ; @param	a,b	Tile index/map to draw
 ; @param	de	Position in w4TileMap to draw to
-_drawTileABtoDE:
+drawTileABtoDE:
 	ld (de),a
 	set 2,d
 	ld a,b
@@ -8819,8 +8803,7 @@ _drawTileABtoDE:
 ;;
 ; Generates the tilemap for the scrollable portion of the dungeon map and stores it in
 ; w4GfxBuf1. Called once when opening a dungeon map.
-;
-_dungeonMap_generateScrollableTilemap:
+dungeonMap_generateScrollableTilemap:
 	ld de,w4GfxBuf1
 	ld a,$28
 	call @fillTileMapWithBlank
@@ -8830,8 +8813,8 @@ _dungeonMap_generateScrollableTilemap:
 @nextFloor:
 	ldh a,(<hFF8D)
 	dec a
-	call _dungeonMap_getFloorAddress
-	call _dungeonMap_checkCanViewFloor
+	call dungeonMap_getFloorAddress
+	call dungeonMap_checkCanViewFloor
 	ld a,$50
 	jr z,@doneThisFloor
 
@@ -8845,7 +8828,7 @@ _dungeonMap_generateScrollableTilemap:
 	ld a,:w4GfxBuf1
 	ld ($ff00+R_SVBK),a
 	ld a,c
-	call _dungeonMap_getTileForRoom
+	call dungeonMap_getTileForRoom
 	ld (de),a
 	inc de
 	ldh a,(<hFF8C)
@@ -8886,8 +8869,7 @@ _dungeonMap_generateScrollableTilemap:
 ; Redraws the tilemap for the dungeon map screen.
 ;
 ; Prior to calling this, w4GfxBuf stores the tilemap to be scrolled through.
-;
-_dungeonMap_updateScroll:
+dungeonMap_updateScroll:
 	ld a,($ff00+R_SVBK)
 	push af
 	ld a,(wMapMenu.dungeonScrollY)
@@ -8927,7 +8909,7 @@ _dungeonMap_updateScroll:
 	; Everything else: palette 5
 	ld b,$05
 ++
-	call _drawTileABtoDE
+	call drawTileABtoDE
 	inc hl
 	dec c
 	jr nz,@nextColumn
@@ -8951,7 +8933,7 @@ _dungeonMap_updateScroll:
 ;;
 ; @param	a	Room index
 ; @param[out]	a	Tile index to draw on the map for this room
-_dungeonMap_getTileForRoom:
+dungeonMap_getTileForRoom:
 	push bc
 	push de
 	ld b,a
@@ -8982,10 +8964,10 @@ _dungeonMap_getTileForRoom:
 
 ; Room not visited; only show it if the compass reveals something or link has the map.
 
-	call _dungeonMap_checkCompassTile
+	call dungeonMap_checkCompassTile
 	jr nz,@ret
 
-	call _checkLinkHasMap
+	call checkLinkHasMap
 	ld a,$af ; Unvisited tile
 	jr nz,@ret
 
@@ -8994,13 +8976,13 @@ _dungeonMap_getTileForRoom:
 	jr @ret
 
 	; Unreachable code?
-	call _dungeonMap_checkCompassTile
+	call dungeonMap_checkCompassTile
 	jr nz,@ret
 	ld a,$af ; Unvisited tile
 	jr @ret
 
 @visited:
-	call _dungeonMap_checkCompassTile
+	call dungeonMap_checkCompassTile
 	jr nz,@ret
 
 	; Calculate which tile to use based on the directions the room leads to.
@@ -9016,8 +8998,8 @@ _dungeonMap_getTileForRoom:
 ;;
 ; @param	hFF8D	A floor index?
 ; @param[out]	zflag	Set if link can't view that floor on the map.
-_dungeonMap_checkCanViewFloor:
-	call _checkLinkHasMap
+dungeonMap_checkCanViewFloor:
+	call checkLinkHasMap
 	ret nz
 	push hl
 	ldh a,(<hFF8D)
@@ -9039,8 +9021,8 @@ _dungeonMap_checkCanViewFloor:
 ; @param[out]	a	Tile to draw (if $00, no special tile is drawn)
 ; @param[out]	zflag	Set if no special tile should be drawn (instead, the caller will
 ;			decide which of the "normal" directional tiles to use).
-_dungeonMap_checkCompassTile:
-	call _checkLinkHasCompass
+dungeonMap_checkCompassTile:
+	call checkLinkHasCompass
 	ret z
 
 	ld a,e
@@ -9069,7 +9051,7 @@ _dungeonMap_checkCompassTile:
 ;;
 ; @param	a	Floor?
 ; @param[out]	hl	Start of floor in w2DungeonLayout
-_dungeonMap_getFloorAddress:
+dungeonMap_getFloorAddress:
 	call multiplyABy16
 	ld hl,w2DungeonLayout
 	add hl,bc
@@ -9080,7 +9062,7 @@ _dungeonMap_getFloorAddress:
 
 
 ; Each 2 bytes are two tile indices for a floor name on the dungeon map.
-_dungeonMapFloorNameTiles:
+dungeonMapFloorNameTiles:
 	.db $9b $93 ; B3
 	.db $9b $92 ; B2
 	.db $9b $91 ; B1
@@ -9095,7 +9077,7 @@ _dungeonMapFloorNameTiles:
 
 ; Each byte is an offset in w4TileMap at which to start listing the floors on the left
 ; side of the screen.
-_dungeonMapFloorListStartPositions:
+dungeonMapFloorListStartPositions:
 	.ifdef ROM_AGES
 		.db $80 $80 $80 $80
 		.db $80 $80 $80 $60
@@ -9111,7 +9093,7 @@ _dungeonMapFloorListStartPositions:
 
 ; b0: Y position at which to draw the cursor and Link (for the bottom floor)
 ; b1: Y position at which to draw the Boss symbol in a dungeon (next to the floor indicator)
-_dungeonMapSymbolPositions:
+dungeonMapSymbolPositions:
 	.ifdef ROM_AGES
 		.db $50 $00
 		.db $50 $50
@@ -9187,7 +9169,7 @@ mapIconBorderOamTable:
 
 
 ; This is a table of OAM data for map icons, ie. showing screens with houses, shops, etc.
-; The output of the "_getMinimapPopupType" function corresponds to an entry in this table.
+; The output of the "getMinimapPopupType" function corresponds to an entry in this table.
 mapIconOamTable:
 	.db @mapIcon00 - CADDR
 	.db @mapIcon01 - CADDR
@@ -9433,7 +9415,7 @@ mapIconOamTable:
 
 	; This is a table of tile substitutions to perform on the overworld map in various
 	; situations.
-	_mapMenu_tileSubstitutionTable:
+	mapMenu_tileSubstitutionTable:
 		.db @subst0 - CADDR
 		.db @subst1 - CADDR
 		.db @subst2 - CADDR
@@ -9476,7 +9458,7 @@ mapIconOamTable:
 
 	; This is a table of tile substitutions to perform on the overworld map in various
 	; situations.
-	_mapMenu_tileSubstitutionTable:
+	mapMenu_tileSubstitutionTable:
 		.db @subst0 - CADDR
 		.db @subst1 - CADDR
 		.db @subst2 - CADDR
@@ -9534,7 +9516,7 @@ mapIconOamTable:
 ;               If it HAS been entered, the index will be $02XX, where XX is the index
 ;               used for this table's lookup (a dungeon index).
 ;     Bit 7: 0=group 4, 1=group 5
-_mapMenu_dungeonEntranceText:
+mapMenu_dungeonEntranceText:
 
 	.ifdef ROM_AGES
 		.db $04  $80|(<TX_0307)
@@ -9575,7 +9557,7 @@ _mapMenu_dungeonEntranceText:
 ;;
 ; This is either the "ring appraisal" or "ring list" menu.
 ; If "wRingMenu_mode" is 0, it's the appraisal menu; otherwise it's the ring list.
-_runRingMenu:
+runRingMenu:
 	; Clear OAM, but always leave the first 4 slots reserved for status bar items.
 	call clearOam
 	ld a,$10
@@ -9598,14 +9580,13 @@ _runRingMenu:
 @runStateCode:
 	ld a,(wMenuActiveState)
 	rst_jumpTable
-	.dw _ringMenu_state0
-	.dw _ringMenu_state1
-	.dw _ringMenu_state2
+	.dw ringMenu_state0
+	.dw ringMenu_state1
+	.dw ringMenu_state2
 
 ;;
 ; State 0: initalization
-;
-_ringMenu_state0:
+ringMenu_state0:
 	call loadCommonGraphics
 	xor a
 	ld (wRingMenu.tileMapIndex),a
@@ -9621,8 +9602,8 @@ _ringMenu_state0:
 	call loadPaletteHeader
 
 	callab bank3f.realignUnappraisedRings
-	call _ringMenu_calculateNumPagesForUnappraisedRings
-	call _ringMenu_redrawRingListOrUnappraisedRings
+	call ringMenu_calculateNumPagesForUnappraisedRings
+	call ringMenu_redrawRingListOrUnappraisedRings
 
 	; Go to state 1
 	ld hl,wMenuActiveState
@@ -9640,8 +9621,7 @@ _ringMenu_state0:
 ;;
 ; Uses an uncompressed gfx header (one of $12-$15, depending on variables) to copy the
 ; tilemap to vram.
-;
-_ringMenu_copyTilemapToVram:
+ringMenu_copyTilemapToVram:
 	ld hl,wRingMenu_mode
 	ld a,(wRingMenu.tileMapIndex)
 	and $01
@@ -9652,21 +9632,20 @@ _ringMenu_copyTilemapToVram:
 
 ;;
 ; Clears the textbox, and decides whether to draw ring list or unappraised rings.
-;
-_ringMenu_redrawRingListOrUnappraisedRings:
+ringMenu_redrawRingListOrUnappraisedRings:
 	xor a
-	call _showItemText2
-	ld hl,_ringMenu_copyTilemapToVram
+	call showItemText2
+	ld hl,ringMenu_copyTilemapToVram
 	push hl
 
 	ld a,(wRingMenu_mode)
 	rst_jumpTable
-	.dw _ringMenu_drawUnappraisedRings
-	.dw _ringMenu_drawRingBox
+	.dw ringMenu_drawUnappraisedRings
+	.dw ringMenu_drawRingBox
 
 ;;
 ; Draws the ring box along with the rings in it in the ring list menu.
-_ringMenu_drawRingBox:
+ringMenu_drawRingBox:
 	ld a,(wMenuActiveState)
 	or a
 	jr nz,++
@@ -9674,54 +9653,52 @@ _ringMenu_drawRingBox:
 	; Draw appropriate slots for rings
 	ld a,(wRingBoxLevel)
 	inc a
-	call _mapMenu_performTileSubstitutions
+	call mapMenu_performTileSubstitutions
 
 	; Draw ring box icon at appropriate level
 	ld de,w4TileMap+$201
 	ld a,$fe
-	call _getRingTiles
+	call getRingTiles
 ++
-	call _ringMenu_drawRingBoxContents
+	call ringMenu_drawRingBoxContents
 	ld a,$04
 	ld (wRingMenu.numPages),a
 	ld a,$fe
 	ld (wRingMenu.displayedRingNumberComparator),a
-	jp _ringMenu_drawRingList
+	jp ringMenu_drawRingList
 
 ;;
 ; State 1: "normal" state; processes input, etc.
-;
-_ringMenu_state1:
+ringMenu_state1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 
 	ld a,(wRingMenu_mode)
 	rst_jumpTable
-	.dw _ringMenu_state1_unappraisedRings
-	.dw _ringMenu_state1_ringList
+	.dw ringMenu_state1_unappraisedRings
+	.dw ringMenu_state1_ringList
 
 ;;
-_ringMenu_state1_unappraisedRings:
-	call _ringMenu_drawSprites
+ringMenu_state1_unappraisedRings:
+	call ringMenu_drawSprites
 
 	ld a,(wSubmenuState)
 	rst_jumpTable
-	.dw _ringMenu_unappraisedRings_state0
-	.dw _ringMenu_unappraisedRings_state1
-	.dw _ringMenu_unappraisedRings_state2
-	.dw _ringMenu_unappraisedRings_state3
-	.dw _ringMenu_unappraisedRings_state4
-	.dw _ringMenu_unappraisedRings_state5
+	.dw ringMenu_unappraisedRings_state0
+	.dw ringMenu_unappraisedRings_state1
+	.dw ringMenu_unappraisedRings_state2
+	.dw ringMenu_unappraisedRings_state3
+	.dw ringMenu_unappraisedRings_state4
+	.dw ringMenu_unappraisedRings_state5
 
 ;;
 ; State 0: waiting for player to choose an unappraised ring
-;
-_ringMenu_unappraisedRings_state0:
+ringMenu_unappraisedRings_state0:
 	ld a,(wTextIsActive)
 	or a
 	ld a,<TX_3004 ; "Which one shall I appraise?"
-	call z,_ringMenu_setDisplayedText
+	call z,ringMenu_setDisplayedText
 
 	ld a,(wKeysJustPressed)
 	bit BTN_BIT_B,a
@@ -9729,53 +9706,52 @@ _ringMenu_unappraisedRings_state0:
 	bit BTN_BIT_A,a
 	jr nz,@aPressed
 	bit BTN_BIT_SELECT,a
-	jp nz,_ringMenu_initiateScrollRight
-	jp _ringMenu_checkRingListCursorMoved
+	jp nz,ringMenu_initiateScrollRight
+	jp ringMenu_checkRingListCursorMoved
 
 @bPressed:
 	; Don't allow exiting if this is the first time (they don't have a ring box yet)
-	call _ringMenu_checkObtainedRingBox
+	call ringMenu_checkObtainedRingBox
 	ld a,<TX_3012
-	jp z,_ringMenu_setDisplayedText
+	jp z,ringMenu_setDisplayedText
 
-	jp _closeMenu
+	jp closeMenu
 
 @aPressed:
-	call _ringMenu_updateSelectedRingFromList
-	call _ringMenu_getUnappraisedRingIndex
+	call ringMenu_updateSelectedRingFromList
+	call ringMenu_getUnappraisedRingIndex
 	rlca
 	ret c
 
 	; Selected a valid ring
 	ld a,$01
 	ld (wSubmenuState),a
-	call _ringMenu_checkObtainedRingBox
+	call ringMenu_checkObtainedRingBox
 	ld a,<TX_3011 ; Doesn't mention rupees (first time appraising)
 	jr z,+
 	ld a,<TX_3005
 +
-	jp _ringMenu_setDisplayedText
+	jp ringMenu_setDisplayedText
 
 ;;
 ; State 1: selected a ring; waiting for confirmation
-;
-_ringMenu_unappraisedRings_state1:
-	call _ringMenu_retIfTextIsPrinting
+ringMenu_unappraisedRings_state1:
+	call ringMenu_retIfTextIsPrinting
 
 	; If player chose "no", go back
 	ld a,(wSelectedTextOption)
 	or a
-	jr nz,_ringMenu_state1_restart
+	jr nz,ringMenu_state1_restart
 
 	; First time appraising, it's free
-	call _ringMenu_checkObtainedRingBox
+	call ringMenu_checkObtainedRingBox
 	jr z,++
 
 	; Check if Link has 20 rupees; subtract that amount if so
 	ld a,RUPEEVAL_020
 	call cpRupeeValue
 	ld b,<TX_3006 ; "You don't have enough rupees"
-	jp nz,_ringMenu_unappraisedRings_gotoState5
+	jp nz,ringMenu_unappraisedRings_gotoState5
 	ld a,RUPEEVAL_020
 	call removeRupeeValue
 ++
@@ -9783,25 +9759,25 @@ _ringMenu_unappraisedRings_state1:
 	call incHlRefWithCap
 
 	; Get the text to display for this ring's name
-	call _ringMenu_getUnappraisedRingIndex
+	call ringMenu_getUnappraisedRingIndex
 	res 6,(hl)
 	ld a,(hl)
 	ld (wRingMenu.textDelayCounter2),a
 	add <TX_3040
 	ld (wTextSubstitutions+2),a
 	ld bc,TX_301c ; "I call this the..."
-	call _ringMenu_showExitableText
+	call ringMenu_showExitableText
 
 	ld a,$02
 	ld (wSubmenuState),a
 
-	call _ringMenu_drawUnappraisedRings
-	jp _ringMenu_copyTilemapToVram
+	call ringMenu_drawUnappraisedRings
+	jp ringMenu_copyTilemapToVram
 
 ;;
 ; Restart state 1 (begin prompt for ring appraisal again).
 ;
-_ringMenu_state1_restart:
+ringMenu_state1_restart:
 	xor a
 	ld (wSubmenuState),a
 	ld (wTextIsActive),a
@@ -9810,28 +9786,26 @@ _ringMenu_state1_restart:
 ;;
 ; State 2: just appraised a ring; after the "ring name" textbox closes, this will print
 ; the ring's description and go to state 3.
-;
-_ringMenu_unappraisedRings_state2:
-	call _ringMenu_retIfTextIsPrinting
+ringMenu_unappraisedRings_state2:
+	call ringMenu_retIfTextIsPrinting
 
 	ld a,$03
 	ld (wSubmenuState),a
 
-	call _ringMenu_getUnappraisedRingIndex
+	call ringMenu_getUnappraisedRingIndex
 	add <TX_3080
 	ld c,a
 	ld b,>TX_3000
-	jr _ringMenu_showExitableText
+	jr ringMenu_showExitableText
 
 ;;
 ; State 3: after printing the ring's description, check if Link has the ring, print the
 ; appropriate text, then go to state 4.
-;
-_ringMenu_unappraisedRings_state3:
-	call _ringMenu_retIfTextIsPrinting
+ringMenu_unappraisedRings_state3:
+	call ringMenu_retIfTextIsPrinting
 
 	; Remove ring from unappraised list
-	call _ringMenu_getUnappraisedRingIndex
+	call ringMenu_getUnappraisedRingIndex
 	ld c,a
 	ld (hl),$ff
 
@@ -9850,8 +9824,8 @@ _ringMenu_unappraisedRings_state3:
 	ld b,<TX_3007 ; "You already have this"
 ++
 	ld (wRingMenu.rupeeRefundValue),a
-	call _ringMenu_checkObtainedRingBox
-	jp z,_closeMenu
+	call ringMenu_checkObtainedRingBox
+	jp z,closeMenu
 
 	ld a,40 ; Wait 40 frames after the next textbox closes
 	ld (wRingMenu.textDelayCounter2),a
@@ -9860,15 +9834,14 @@ _ringMenu_unappraisedRings_state3:
 	ld (wSubmenuState),a
 
 	ld a,b
-	jp _ringMenu_setDisplayedText
+	jp ringMenu_setDisplayedText
 
 ;;
 ; State 4: redraw ring list without the just-appraised ring, check whether to exit the
 ; ring menu or whether to keep going.
-;
-_ringMenu_unappraisedRings_state4:
-	call _ringMenu_retIfTextIsPrinting
-	call _ringMenu_retIfCounterNotFinished
+ringMenu_unappraisedRings_state4:
+	call ringMenu_retIfTextIsPrinting
+	call ringMenu_retIfCounterNotFinished
 
 	; Refund if applicable
 	ld a,(wRingMenu.rupeeRefundValue)
@@ -9878,8 +9851,8 @@ _ringMenu_unappraisedRings_state4:
 	call nz,giveTreasure
 
 	callab bank3f.getNumUnappraisedRings
-	call _ringMenu_drawUnappraisedRings
-	call _ringMenu_copyTilemapToVram
+	call ringMenu_drawUnappraisedRings
+	call ringMenu_copyTilemapToVram
 
 	ld a,(wNumRingsAppraised)
 	cp 100
@@ -9889,13 +9862,13 @@ _ringMenu_unappraisedRings_state4:
 	ld a,GLOBALFLAG_APPRAISED_HUNDREDTH_RING
 	call setGlobalFlag
 	ld b,<TX_303c
-	jr _ringMenu_unappraisedRings_gotoState5
+	jr ringMenu_unappraisedRings_gotoState5
 
 @not100th:
 	; If we still have some rings left, go back to state 0
 	ld a,(wNumUnappraisedRingsBcd)
 	or a
-	jp nz,_ringMenu_state1_restart
+	jp nz,ringMenu_state1_restart
 
 	; Otherwise, proceed to exit the ring menu.
 	ld b,<TX_3002 ; "I've appraised all your rings"
@@ -9904,20 +9877,20 @@ _ringMenu_unappraisedRings_state4:
 
 ;;
 ; @param	b	Low byte of text index to show
-_ringMenu_unappraisedRings_gotoState5:
+ringMenu_unappraisedRings_gotoState5:
 	ld a,$05
 	ld (wSubmenuState),a
 	ld a,$3c
 	ld (wRingMenu.textDelayCounter2),a
 	ld a,b
-	jp _ringMenu_setDisplayedText
+	jp ringMenu_setDisplayedText
 
 ;;
 ; Shows an "exitable" textbox (used when vasu's speaking) unlike the "passive" textboxes
 ; used for ring descriptions most of the time.
 ;
 ; @param	bc	Text index
-_ringMenu_showExitableText:
+ringMenu_showExitableText:
 	ld a,$02
 	ld (wTextboxPosition),a
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION
@@ -9926,21 +9899,20 @@ _ringMenu_showExitableText:
 
 ;;
 ; State 5: exit ring menu after a delay.
-;
-_ringMenu_unappraisedRings_state5:
-	call _ringMenu_retIfTextIsPrinting
-	call _ringMenu_retIfCounterNotFinished
-	jp _closeMenu
+ringMenu_unappraisedRings_state5:
+	call ringMenu_retIfTextIsPrinting
+	call ringMenu_retIfCounterNotFinished
+	jp closeMenu
 
 ;;
-_ringMenu_checkObtainedRingBox:
+ringMenu_checkObtainedRingBox:
 	ld a,GLOBALFLAG_OBTAINED_RING_BOX
 	jp checkGlobalFlag
 
 ;;
 ; @param[out]	a	The value of the unappraised ring that the cursor is over
 ; @param[out]	hl	The address of the ring in wUnappraisedRings
-_ringMenu_getUnappraisedRingIndex:
+ringMenu_getUnappraisedRingIndex:
 	ld a,(wRingMenu.selectedRing)
 	ld hl,wUnappraisedRings
 	rst_addAToHl
@@ -9949,7 +9921,7 @@ _ringMenu_getUnappraisedRingIndex:
 
 ;;
 ; Returns from caller unless wRingMEnu_textDelayCounter2 has counted down to zero.
-_ringMenu_retIfCounterNotFinished:
+ringMenu_retIfCounterNotFinished:
 	ld hl,wRingMenu.textDelayCounter2
 	ld a,(hl)
 	or a
@@ -9959,20 +9931,19 @@ _ringMenu_retIfCounterNotFinished:
 	ret
 
 ;;
-_ringMenu_state1_ringList:
-	call _ringMenu_drawRingBoxCursor
-	call _ringMenu_drawEquippedRingSprite
-	call _ringMenu_drawSpritesForRingsInBox
+ringMenu_state1_ringList:
+	call ringMenu_drawRingBoxCursor
+	call ringMenu_drawEquippedRingSprite
+	call ringMenu_drawSpritesForRingsInBox
 
 	ld a,(wSubmenuState)
 	rst_jumpTable
-	.dw _ringMenu_ringList_substate0
-	.dw _ringMenu_ringList_substate1
+	.dw ringMenu_ringList_substate0
+	.dw ringMenu_ringList_substate1
 
 ;;
 ; Substate 0: cursor is on the ring box (selecting a slot in the ring box)
-;
-_ringMenu_ringList_substate0:
+ringMenu_ringList_substate0:
 	ld a,(wRingMenu.boxCursorFlickerCounter)
 	or a
 	jr z,@aPressed
@@ -9990,15 +9961,15 @@ _ringMenu_ringList_substate0:
 	rst_addAToHl
 	ld a,(hl)
 	ld (wRingMenu.selectedRing),a
-	call _ringMenu_updateDisplayedRingNumberWithGivenComparator
-	call _ringMenu_updateRingText
+	call ringMenu_updateDisplayedRingNumberWithGivenComparator
+	call ringMenu_updateRingText
 
 @checkInput:
 	ld a,(wKeysJustPressed)
 	bit BTN_BIT_B,a
 	jr nz,@bPressed
 	bit BTN_BIT_A,a
-	jp z,_ringMenu_checkRingBoxCursorMoved
+	jp z,ringMenu_checkRingBoxCursorMoved
 
 ; Selected a ring box slot; move the cursor to the ring list (substate 1).
 @aPressed:
@@ -10024,7 +9995,7 @@ _ringMenu_ringList_substate0:
 @bPressed:
 	; Deactivate active ring if it was put away
 	ld a,(wActiveRing)
-	call _ringMenu_checkRingIsInBox
+	call ringMenu_checkRingIsInBox
 	jr nc,+
 	ld a,$ff
 	ld (wActiveRing),a
@@ -10033,32 +10004,30 @@ _ringMenu_ringList_substate0:
 	xor a
 	ld (wTextIsActive),a
 	ld (wTextboxFlags),a
-	jp _closeMenu
+	jp closeMenu
 
 ;;
 ; Substate 1: cursor is on the ring list (selecting something to insert into the box)
-;
-_ringMenu_ringList_substate1:
+ringMenu_ringList_substate1:
 	ld a,(wKeysJustPressed)
 	bit BTN_BIT_A,a
-	jr nz,_ringMenu_selectedRingFromList
+	jr nz,ringMenu_selectedRingFromList
 	bit BTN_BIT_B,a
-	jp nz,_ringMenu_moveCursorToRingBox
+	jp nz,ringMenu_moveCursorToRingBox
 	bit BTN_BIT_SELECT,a
-	jp nz,_ringMenu_initiateScrollRight
+	jp nz,ringMenu_initiateScrollRight
 
-	call _ringMenu_checkRingListCursorMoved
-	call _ringMenu_updateSelectedRingFromList
-	call _ringMenu_updateDisplayedRingNumber
-	call _ringMenu_drawSprites
-	call _ringMenu_retIfCounterNotFinished
+	call ringMenu_checkRingListCursorMoved
+	call ringMenu_updateSelectedRingFromList
+	call ringMenu_updateDisplayedRingNumber
+	call ringMenu_drawSprites
+	call ringMenu_retIfCounterNotFinished
 
 	; Fall through
 
 ;;
 ; The ring list (not appraisal screen) runs this to update the textbox at the bottom.
-;
-_ringMenu_updateRingText:
+ringMenu_updateRingText:
 	; Determine what text to show for the ring name
 	ld a,(wRingMenu.selectedRing)
 	ld c,a
@@ -10072,7 +10041,7 @@ _ringMenu_updateRingText:
 	ld hl,wRingMenu.ringNameTextIndex
 	cp (hl)
 	jr z,+
-	call _showItemText2
+	call showItemText2
 	ld a,$01
 	ld (wRingMenu.textDelayCounter),a
 	ret
@@ -10111,13 +10080,12 @@ _ringMenu_updateRingText:
 ;;
 ; Selected something from the ring list; put it into the ring box and move the cursor back
 ; there.
-;
-_ringMenu_selectedRingFromList:
+ringMenu_selectedRingFromList:
 	ld a,SND_SELECTITEM
 	call playSound
 
 	; Put the ring (if it exists) in the box
-	call _ringMenu_updateSelectedRingFromList
+	call ringMenu_updateSelectedRingFromList
 
 	; RANDO: Auto-equip the selected ring
 	ld (wActiveRing),a
@@ -10131,11 +10099,11 @@ _ringMenu_selectedRingFromList:
 	ld a,(wRingMenu.ringBoxCursorIndex)
 	ld b,a
 	ld a,c
-	call _ringMenu_checkRingIsInBox
+	call ringMenu_checkRingIsInBox
 	jr c,+
 	ld (hl),$ff
 	cp b
-	jr z,_ringMenu_moveCursorToRingBox
+	jr z,ringMenu_moveCursorToRingBox
 +
 	ld a,b
 	ld hl,wRingBoxContents
@@ -10146,8 +10114,7 @@ _ringMenu_selectedRingFromList:
 
 ;;
 ; Sets the cursor to be at the ring box instead of ring list.
-;
-_ringMenu_moveCursorToRingBox:
+ringMenu_moveCursorToRingBox:
 	xor a
 	ld (wSubmenuState),a
 	ld a,$80
@@ -10156,14 +10123,14 @@ _ringMenu_moveCursorToRingBox:
 	ld (wTextIsActive),a
 	ld (wRingMenu.ringNameTextIndex),a
 	ld (wRingMenu.descriptionTextIndex),a
-	call _ringMenu_drawRingBoxContents
-	jp _ringMenu_copyTilemapToVram
+	call ringMenu_drawRingBoxContents
+	jp ringMenu_copyTilemapToVram
 
 ;;
 ; @param	a	Ring to check if it's in the ring box
 ; @param[out]	a	The ring's index in the ring box
 ; @param[out]	cflag	nc if the ring's in the box
-_ringMenu_checkRingIsInBox:
+ringMenu_checkRingIsInBox:
 	push bc
 	ld hl,wRingBoxContents+4
 	ld b,$05
@@ -10185,7 +10152,7 @@ _ringMenu_checkRingIsInBox:
 	ret
 
 ;;
-_ringMenu_initiateScrollRight:
+ringMenu_initiateScrollRight:
 	ld a,$01
 	ld (wRingMenu.scrollDirection),a
 	ld (wRingMenu.displayedRingNumberComparator),a
@@ -10196,7 +10163,7 @@ _ringMenu_initiateScrollRight:
 
 ;;
 ; @param	a	Page to scroll to
-_ringMenu_initiateScroll:
+ringMenu_initiateScroll:
 	ld hl,wRingMenu.numPages
 	cp (hl)
 	jr c,++
@@ -10212,7 +10179,7 @@ _ringMenu_initiateScroll:
 
 ;;
 ; @param	a	State to go to
-_ringMenu_setState:
+ringMenu_setState:
 	ld hl,wMenuActiveState
 	ldi (hl),a
 	xor a
@@ -10225,13 +10192,12 @@ _ringMenu_setState:
 
 ;;
 ; State 2: scrolling between pages
-;
-_ringMenu_state2:
+ringMenu_state2:
 	ld a,(wRingMenu_mode)
 	or a
 	jr z,+
-	call _ringMenu_drawRingBoxCursor
-	call _ringMenu_drawEquippedRingSprite
+	call ringMenu_drawRingBoxCursor
+	call ringMenu_drawEquippedRingSprite
 +
 	ld a,(wSubmenuState)
 	rst_jumpTable
@@ -10245,7 +10211,7 @@ _ringMenu_state2:
 	xor $01
 	ld (hl),a
 
-	call _ringMenu_redrawRingListOrUnappraisedRings
+	call ringMenu_redrawRingListOrUnappraisedRings
 
 	ld a,(wRingMenu.scrollDirection)
 	bit 7,a
@@ -10312,12 +10278,12 @@ _ringMenu_state2:
 	xor a
 	ld (wGfxRegs2.SCX),a
 	ld a,$01
-	jp _ringMenu_setState
+	jp ringMenu_setState
 
 ;;
-_ringMenu_checkRingListCursorMoved:
+ringMenu_checkRingListCursorMoved:
 	ld hl,@directionOffsets
-	call _getDirectionButtonOffsetFromHl
+	call getDirectionButtonOffsetFromHl
 	ret nc
 
 	ld c,a
@@ -10349,7 +10315,7 @@ _ringMenu_checkRingListCursorMoved:
 	jr z,@playSound
 	dec a
 ++
-	call _ringMenu_initiateScroll
+	call ringMenu_initiateScroll
 
 @playSound:
 	ld a,SND_MENU_MOVE
@@ -10365,12 +10331,11 @@ _ringMenu_checkRingListCursorMoved:
 
 ;;
 ; Update the cursor position in the ring box by checking if a direction button is pressed
-;
-_ringMenu_checkRingBoxCursorMoved:
-	call _getRingBoxCapacity
+ringMenu_checkRingBoxCursorMoved:
+	call getRingBoxCapacity
 	ld e,a
 	ld hl,@directionOffsets
-	call _getDirectionButtonOffsetFromHl
+	call getDirectionButtonOffsetFromHl
 	ret nc
 	ret z
 	ld hl,wRingMenu.ringBoxCursorIndex
@@ -10390,8 +10355,7 @@ _ringMenu_checkRingBoxCursorMoved:
 ;;
 ; Draw sprites for the cursor, and arrows indicating you can scroll between pages (if
 ; there's more than one page).
-;
-_ringMenu_drawSprites:
+ringMenu_drawSprites:
 	ld a,(wRingMenu.numPages)
 	dec a
 	ld hl,@arrowSprites
@@ -10425,15 +10389,14 @@ _ringMenu_drawSprites:
 
 ;;
 ; Draws the "E" for equipped next to the equipped ring in the ring box.
-;
-_ringMenu_drawEquippedRingSprite:
+ringMenu_drawEquippedRingSprite:
 	ld a,(wActiveRing)
 	cp $ff
 	ret z
-	call _ringMenu_checkRingIsInBox
+	call ringMenu_checkRingIsInBox
 	ret c
 
-	call _ringMenu_getSpriteOffsetForRingBoxPosition
+	call ringMenu_getSpriteOffsetForRingBoxPosition
 	ld hl,@equippedSprite
 	jp addSpritesToOam_withOffset
 
@@ -10443,7 +10406,7 @@ _ringMenu_drawEquippedRingSprite:
 
 ;;
 ; @param[out]	bc	An offset to use for sprites to be drawn on a ring in the ring box
-_ringMenu_getSpriteOffsetForRingBoxPosition:
+ringMenu_getSpriteOffsetForRingBoxPosition:
 	ld hl,@offsets
 	rst_addAToHl
 	ld c,(hl)
@@ -10454,7 +10417,7 @@ _ringMenu_getSpriteOffsetForRingBoxPosition:
 	.db $38 $50 $68 $80 $98
 
 ;;
-_ringMenu_drawRingBoxCursor:
+ringMenu_drawRingBoxCursor:
 	ld hl,wRingMenu.boxCursorFlickerCounter
 	bit 7,(hl)
 	jr z,++
@@ -10466,7 +10429,7 @@ _ringMenu_drawRingBoxCursor:
 	ret nz
 ++
 	ld a,(wRingMenu.ringBoxCursorIndex)
-	call _ringMenu_getSpriteOffsetForRingBoxPosition
+	call ringMenu_getSpriteOffsetForRingBoxPosition
 	ld hl,@ringBoxCursor
 	jp addSpritesToOam_withOffset
 
@@ -10477,8 +10440,7 @@ _ringMenu_drawRingBoxCursor:
 ;;
 ; For each ring in the ring box, this draws a sprite (the letter "C") on the corresponding
 ; ring in the ring list.
-;
-_ringMenu_drawSpritesForRingsInBox:
+ringMenu_drawSpritesForRingsInBox:
 	ld a,$05
 @loop:
 	push af
@@ -10520,7 +10482,7 @@ _ringMenu_drawSpritesForRingsInBox:
 	.db $00 $20 $ef $05
 
 ;;
-_ringMenu_calculateNumPagesForUnappraisedRings:
+ringMenu_calculateNumPagesForUnappraisedRings:
 	callab bank3f.getNumUnappraisedRings
 	ld a,(wNumUnappraisedRingsBcd)
 	or a
@@ -10535,7 +10497,7 @@ _ringMenu_calculateNumPagesForUnappraisedRings:
 	ret
 
 ;;
-_ringMenu_updateSelectedRingFromList:
+ringMenu_updateSelectedRingFromList:
 	ld a,(wRingMenu.page)
 	swap a
 	ld c,a
@@ -10546,16 +10508,15 @@ _ringMenu_updateSelectedRingFromList:
 
 ;;
 ; Clear all ring icons in the selection area.
-;
-_ringMenu_clearRingSelectionArea:
+ringMenu_clearRingSelectionArea:
 	ld hl,w4TileMap+$040
 	ldbc $05,$14
 	ldde $00,$07
-	jp _fillRectangleInTilemap
+	jp fillRectangleInTilemap
 
 ;;
-_ringMenu_drawUnappraisedRings:
-	call _ringMenu_clearRingSelectionArea
+ringMenu_drawUnappraisedRings:
+	call ringMenu_clearRingSelectionArea
 
 	ld b,$10
 	ld a,(wRingMenu.page)
@@ -10565,15 +10526,15 @@ _ringMenu_drawUnappraisedRings:
 @nextRing:
 	ldi a,(hl)
 	ld c,a
-	call _ringMenu_drawRing
+	call ringMenu_drawRing
 	dec b
 	jr nz,@nextRing
 
-	jr _ringMenu_drawPageCounter
+	jr ringMenu_drawPageCounter
 
 ;;
-_ringMenu_drawRingList:
-	call _ringMenu_clearRingSelectionArea
+ringMenu_drawRingList:
+	call ringMenu_clearRingSelectionArea
 
 	ld b,$10
 	ld a,(wRingMenu.page)
@@ -10583,13 +10544,13 @@ _ringMenu_drawRingList:
 	ld a,c
 	ld hl,wRingsObtained
 	call checkFlag
-	call nz,_ringMenu_drawRing
+	call nz,ringMenu_drawRing
 	inc c
 	dec b
 	jr nz,@nextRing
 
 ;;
-_ringMenu_drawPageCounter:
+ringMenu_drawPageCounter:
 	; Draw page number
 	ld hl,w4TileMap+$10f
 	ld a,(wRingMenu.page)
@@ -10605,10 +10566,9 @@ _ringMenu_drawPageCounter:
 
 ;;
 ; Draws the contents of the ring box for the ring list menu
-;
-_ringMenu_drawRingBoxContents:
+ringMenu_drawRingBoxContents:
 	ld hl,wRingBoxContents
-	ld b,$11 ; b = index for _ringMenu_drawRing function (cycles from $11-$15)
+	ld b,$11 ; b = index for ringMenu_drawRing function (cycles from $11-$15)
 
 @nextRing:
 	ldi a,(hl)
@@ -10619,20 +10579,20 @@ _ringMenu_drawRingBoxContents:
 	push hl
 	push bc
 	ld a,b
-	ld hl,_ringMenu_ringPositionList-2
+	ld hl,ringMenu_ringPositionList-2
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 	ldbc $02,$02
 	ldde $00,$07
-	call _fillRectangleInTilemap
+	call fillRectangleInTilemap
 	pop bc
 	pop hl
 	jr ++
 @drawRing:
 	ld c,a
-	call _ringMenu_drawRing
+	call ringMenu_drawRing
 ++
 	inc b
 	ld a,l
@@ -10645,22 +10605,22 @@ _ringMenu_drawRingBoxContents:
 ;
 ; @param	b	Position index
 ; @param	c	Ring index
-_ringMenu_drawRing:
+ringMenu_drawRing:
 	push bc
 	push hl
 	ld a,b
-	ld hl,_ringMenu_ringPositionList-2
+	ld hl,ringMenu_ringPositionList-2
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld d,(hl)
 	ld e,a
 	ld a,c
-	call _getRingTiles
+	call getRingTiles
 	pop hl
 	pop bc
 	ret
 
-_ringMenu_ringPositionList:
+ringMenu_ringPositionList:
 	; Lower row
 	.dw w4TileMap+$0b0
 	.dw w4TileMap+$0ae
@@ -10693,7 +10653,7 @@ _ringMenu_ringPositionList:
 ;
 ; @param	a	Ring index ($ff=none, $fe=ring box)
 ; @param	de	Where to load ring tiles into
-_getRingTiles:
+getRingTiles:
 	cp $ff
 	ret z
 
@@ -10736,7 +10696,7 @@ _getRingTiles:
 
 ;;
 ; Updates the "ring number" displayed below the ring list.
-_ringMenu_updateDisplayedRingNumber:
+ringMenu_updateDisplayedRingNumber:
 	ld a,(wRingMenu.ringListCursorIndex)
 
 	; Fall through
@@ -10744,7 +10704,7 @@ _ringMenu_updateDisplayedRingNumber:
 ;;
 ; @param	a	Value to compare against "wRingMenu.displayedRingNumberComparator"
 ;			for changes
-_ringMenu_updateDisplayedRingNumberWithGivenComparator:
+ringMenu_updateDisplayedRingNumberWithGivenComparator:
 	ld hl,wRingMenu.displayedRingNumberComparator
 	cp (hl)
 	ret z
@@ -10770,11 +10730,11 @@ _ringMenu_updateDisplayedRingNumberWithGivenComparator:
 	ld hl,w4TileMap+$105
 	ldd (hl),a
 	ld (hl),c
-	jp _ringMenu_copyTilemapToVram
+	jp ringMenu_copyTilemapToVram
 
 ;;
 ; @param	a	Text index to show ($30XX)
-_ringMenu_setDisplayedText:
+ringMenu_setDisplayedText:
 	ld hl,wRingMenu.descriptionTextIndex
 	cp (hl)
 	ret z
@@ -10790,8 +10750,7 @@ _ringMenu_setDisplayedText:
 
 ;;
 ; Returns from caller if text is still in the process of printing.
-;
-_ringMenu_retIfTextIsPrinting:
+ringMenu_retIfTextIsPrinting:
 	ld a,(wTextIsActive)
 	and $7f
 	ret z
@@ -10800,8 +10759,8 @@ _ringMenu_retIfTextIsPrinting:
 
 
 ;;
-; @param[out]	zflag	Set if we got here from a game over.
-_saveQuitMenu_checkIsGameOver:
+; @param[out]	zflag	nz if we got here from a game over.
+saveQuitMenu_checkIsGameOver:
 	ld a,(wSaveQuitMenu.gameOver)
 	or a
 	ret
@@ -10811,18 +10770,18 @@ runSaveAndQuitMenu:
 	ld a,$00
 	ld ($ff00+R_SVBK),a
 	call @runState
-	jp _saveQuitMenu_drawSprites
+	jp saveQuitMenu_drawSprites
 
 @runState:
 	ld a,(wSaveQuitMenu.state)
 	rst_jumpTable
-	.dw _saveQuitMenu_state0
-	.dw _saveQuitMenu_state1
-	.dw _saveQuitMenu_state2
+	.dw saveQuitMenu_state0
+	.dw saveQuitMenu_state1
+	.dw saveQuitMenu_state2
 
 ;;
 ; State 0: initialization (loading graphics, setting music, etc)
-_saveQuitMenu_state0:
+saveQuitMenu_state0:
 	call disableLcd
 	call stopTextThread
 
@@ -10833,7 +10792,7 @@ _saveQuitMenu_state0:
 	ld a,GFXH_a8
 	call loadGfxHeader
 
-	call _saveQuitMenu_checkIsGameOver
+	call saveQuitMenu_checkIsGameOver
 	jr z,@notGameOver
 
 @gameOver:
@@ -10878,8 +10837,7 @@ _saveQuitMenu_state0:
 
 ;;
 ; State 1: processing input
-;
-_saveQuitMenu_state1:
+saveQuitMenu_state1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -10922,14 +10880,13 @@ _saveQuitMenu_state1:
 	jp playSound
 
 @bPressed:
-	call _saveQuitMenu_checkIsGameOver
+	call saveQuitMenu_checkIsGameOver
 	ret nz
-	jp _closeMenu
+	jp closeMenu
 
 ;;
 ; State 2: selected an option; after a delay, decide whether to reset, etc.
-;
-_saveQuitMenu_state2:
+saveQuitMenu_state2:
 	ld hl,wSaveQuitMenu.delayCounter
 	dec (hl)
 	ret nz
@@ -10938,8 +10895,8 @@ _saveQuitMenu_state2:
 	cp $02
 	jp z,resetGame
 
-	call _saveQuitMenu_checkIsGameOver
-	jp z,_closeMenu
+	call saveQuitMenu_checkIsGameOver
+	jp z,closeMenu
 
 	; Reset game
 	ld a,THREAD_1
@@ -10948,7 +10905,7 @@ _saveQuitMenu_state2:
 	jp stubThreadStart
 
 ;;
-_saveQuitMenu_drawSprites:
+saveQuitMenu_drawSprites:
 	call fileSelect_redrawDecorationsAndSetWramBank4
 
 	; Flicker acorn if applicable
@@ -10974,24 +10931,23 @@ _saveQuitMenu_drawSprites:
 
 ;;
 ; Run the secret list menu from farore's book.
-;
-_runSecretListMenu:
+runSecretListMenu:
 	call clearOam
 	ld a,TEXT_BANK
 	ld ($ff00+R_SVBK),a
 	call @runState
-	jp _secretListMenu_drawCursorSprite
+	jp secretListMenu_drawCursorSprite
 
 @runState:
 	ld a,(wSecretListMenu.state)
 	rst_jumpTable
-	.dw _secretListMenu_state0
-	.dw _secretListMenu_state1
-	.dw _secretListMenu_state2
+	.dw secretListMenu_state0
+	.dw secretListMenu_state1
+	.dw secretListMenu_state2
 
 ;;
 ; State 0: initialization
-_secretListMenu_state0:
+secretListMenu_state0:
 	call disableLcd
 	call stopTextThread
 
@@ -11005,9 +10961,9 @@ _secretListMenu_state0:
 	call loadGfxHeader
 	ld a,PALH_SECRET_LIST_MENU
 	call loadPaletteHeader
-	call _secretListMenu_loadAllSecretNames
+	call secretListMenu_loadAllSecretNames
 	ld a,$ff
-	call _secretListMenu_printSecret
+	call secretListMenu_printSecret
 	call fastFadeinFromWhite
 	ld a,$16
 	jp loadGfxRegisterStateIndex
@@ -11023,14 +10979,14 @@ _secretListMenu_state0:
 
 ;;
 ; State 1: processing input
-_secretListMenu_state1:
+secretListMenu_state1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 
 	ld a,(wKeysJustPressed)
 	and (BTN_START|BTN_SELECT|BTN_B)
-	jp nz,_closeMenu
+	jp nz,closeMenu
 
 	call getInputWithAutofire
 	ld c,a
@@ -11081,11 +11037,11 @@ _secretListMenu_state1:
 
 @end:
 	ld a,(wSaveQuitMenu.delayCounter)
-	jr _secretListMenu_printSecret
+	jr secretListMenu_printSecret
 
 ;;
 ; State 2: scrolling
-_secretListMenu_state2:
+secretListMenu_state2:
 	ld hl,wSecretListMenu.scrollSpeed
 	ld a,(wGfxRegs2.SCY)
 	add (hl)
@@ -11104,7 +11060,7 @@ _secretListMenu_state2:
 	ret
 
 ;;
-_secretListMenu_drawCursorSprite:
+secretListMenu_drawCursorSprite:
 	ld a,(wGfxRegs2.SCY)
 	ld b,a
 	ld a,(wSecretListMenu.cursorIndex)
@@ -11121,7 +11077,7 @@ _secretListMenu_drawCursorSprite:
 
 ;;
 ; @param	a	Index of secret to print (or $ff for nothing)
-_secretListMenu_printSecret:
+secretListMenu_printSecret:
 	ld hl,wTmpcbb9
 	cp (hl)
 	ret z
@@ -11141,7 +11097,7 @@ _secretListMenu_printSecret:
 	cp $ff
 	jr z,@end
 
-	call _secretListMenu_getSecretData
+	call secretListMenu_getSecretData
 	ldi a,(hl)
 	rlca
 	rlca
@@ -11152,13 +11108,13 @@ _secretListMenu_printSecret:
 	call checkGlobalFlag
 	ld a,$ff
 	ld (wFileSelect.fontXor),a
-	jr z,_secretListMenu_printSecret
+	jr z,secretListMenu_printSecret
 
 	call @getSecretText
 	ld hl,w7SecretText1
 	ld de,w7d800
 	ld b,$c*2
-	call _copyTextCharactersFromHl
+	call copyTextCharactersFromHl
 @end:
 	ld a,UNCMP_GFXH_35
 	jp loadUncompressedGfxHeader
@@ -11188,8 +11144,7 @@ _secretListMenu_printSecret:
 
 ;;
 ; Loads gfx for all secret names directly to vram starting at $8a00.
-;
-_secretListMenu_loadAllSecretNames:
+secretListMenu_loadAllSecretNames:
 	xor a
 	ld ($ff00+R_VBK),a
 
@@ -11197,7 +11152,7 @@ _secretListMenu_loadAllSecretNames:
 	ld b,$00
 @nextSecret:
 	ld a,b
-	call _secretListMenu_getSecretData
+	call secretListMenu_getSecretData
 	ldi a,(hl)
 	or a
 	jr z,@end
@@ -11211,10 +11166,10 @@ _secretListMenu_loadAllSecretNames:
 
 	ld a,c
 	and $3f
-	call _copyTextCharactersFromSecretTextTable
+	call copyTextCharactersFromSecretTextTable
 	ld a,$02 ; Put " Secret" after every string
 ++
-	call _copyTextCharactersFromSecretTextTable
+	call copyTextCharactersFromSecretTextTable
 	pop bc
 
 	; Adjust de to point to next row
@@ -11242,7 +11197,7 @@ _secretListMenu_loadAllSecretNames:
 
 ;;
 ; @param	a	Index
-_secretListMenu_getSecretData:
+secretListMenu_getSecretData:
 	ld hl,wFileIsLinkedGame
 	bit 0,(hl)
 	ld hl,@unlinked
@@ -11261,7 +11216,7 @@ _secretListMenu_getSecretData:
 
 
 ; The following data is the list of secrets to be displayed on farore's secret list.
-;   b0: bits 0-5: Index for name from _secretTextTable
+;   b0: bits 0-5: Index for name from secretTextTable
 ;       bits 6-7: secret "mode" (0/1=game-transfer, 2=ring secret, 3=other)
 ;   b1: global flag which, if set, means the secret is unlocked
 ;   b2: Index of secret data?
@@ -11329,8 +11284,7 @@ _secretListMenu_getSecretData:
 
 ;;
 ; Runs the fake reset that happens when getting the sign ring in Seasons.
-;
-_runFakeReset:
+runFakeReset:
 	ld a,(wFakeResetMenu.state)
 	rst_jumpTable
 	.dw @state0

@@ -211,19 +211,19 @@ functionCaller:
 	ld c,l
 	ld a,h
 	rst_jumpTable
-	.dw _clearEnemiesKilledList
-	.dw _addRoomToEnemiesKilledList
-	.dw _markEnemyAsKilledInRoom
-	.dw _stub_02_77f4
+	.dw clearEnemiesKilledList
+	.dw addRoomToEnemiesKilledList
+	.dw markEnemyAsKilledInRoom
+	.dw stub_02_77f4
 	.dw generateRandomBuffer
-	.dw _getRandomPositionForEnemy
+	.dw getRandomPositionForEnemy
 .ifdef ROM_AGES
-	.dw _checkSpawnTimeportalInteraction
+	.dw checkSpawnTimeportalInteraction
 .endif
 
 ;;
 ; Marks an enemy as killed so it doesn't respawn for a bit.
-_addRoomToEnemiesKilledList:
+addRoomToEnemiesKilledList:
 	ld hl,wEnemiesKilledList
 	ld a,(wActiveRoom)
 	ld b,$08
@@ -260,12 +260,12 @@ _addRoomToEnemiesKilledList:
 	ld (wEnemyPlacement.killedEnemiesBitset),a
 	ret
 
-_stub_02_77f4:
+stub_02_77f4:
 	ret
 
 ;;
 ; @param	d	Enemy index
-_markEnemyAsKilledInRoom:
+markEnemyAsKilledInRoom:
 	ld hl,wEnemiesKilledList
 	ld b,$08
 	ld a,(wActiveRoom)
@@ -293,7 +293,7 @@ _markEnemyAsKilledInRoom:
 	ret
 
 ;;
-_clearEnemiesKilledList:
+clearEnemiesKilledList:
 	xor a
 	ld (wEnemiesKilledListTail),a
 	ld hl,wEnemiesKilledList
@@ -351,7 +351,7 @@ generateRandomBuffer:
 ;;
 ; @param	hFF8B	Flags from object data. (if bit 2 is set, ignore tile solidity.)
 ; @param[out]	cflag	Set on failure
-_getRandomPositionForEnemy:
+getRandomPositionForEnemy:
 	ld a,$40
 	ld (wEnemyPlacement.randomPlacementAttemptCounter),a
 
@@ -360,10 +360,10 @@ _getRandomPositionForEnemy:
 	dec (hl)
 	jr z,@giveUp
 
-	call _getCandidatePositionForEnemy
+	call getCandidatePositionForEnemy
 	ld (wEnemyPlacement.enemyPos),a
 	ld c,a
-	call _checkPositionValidForEnemySpawn
+	call checkPositionValidForEnemySpawn
 	jr c,@tryAgain
 
 	; If the appropriate flag is set, the tile it's placed on doesn't matter.
@@ -371,7 +371,7 @@ _getRandomPositionForEnemy:
 	and $04
 	jr nz,+
 
-	call _checkTileValidForEnemySpawn
+	call checkTileValidForEnemySpawn
 	jr c,@tryAgain
 +
 	xor a
@@ -387,7 +387,7 @@ _getRandomPositionForEnemy:
 ;
 ; @param	c	Candidate position to place enemy
 ; @param[out]	cflag	nc if enemy can be placed here
-_checkTileValidForEnemySpawn:
+checkTileValidForEnemySpawn:
 	ld b,>wRoomCollisions
 	ld a,(bc)
 	or a
@@ -416,7 +416,7 @@ _checkTileValidForEnemySpawn:
 ;
 ; @param	c	Candidate position to place enemy
 ; @param[out]	cflag	nc if enemy can be placed here
-_checkPositionValidForEnemySpawn:
+checkPositionValidForEnemySpawn:
 	; Check if this is a standard transition, or a walk-in-from-outside-screen
 	; transition
 	ld a,(wScrollMode)
@@ -629,7 +629,7 @@ enemyUnspawnableTilesTable:
 
 ;;
 ; @param[out]	a	Next value from w4RandomBuffer
-_getNextValueFromRandomBuffer:
+getNextValueFromRandomBuffer:
 	ld hl,wEnemyPlacement.randomBufferIndex
 	inc (hl)
 
@@ -649,13 +649,13 @@ _getNextValueFromRandomBuffer:
 ; placed on it.
 ;
 ; @param[out]	a	Candidate position for an enemy
-_getCandidatePositionForEnemy:
+getCandidatePositionForEnemy:
 	ld a,(wActiveGroup)
 	and $04
 	jr nz,@dungeon
 
 @overworld:
-	call _getNextValueFromRandomBuffer
+	call getNextValueFromRandomBuffer
 	cp SMALL_ROOM_HEIGHT<<4
 	jr nc,@overworld
 
@@ -664,14 +664,14 @@ _getCandidatePositionForEnemy:
 	cp SMALL_ROOM_WIDTH
 	jr nc,@overworld
 
-	call _checkEnemyPlacedAtPosition
+	call checkEnemyPlacedAtPosition
 	jr c,@overworld
 
 	ld a,b
 	ret
 
 @dungeon:
-	call _getNextValueFromRandomBuffer
+	call getNextValueFromRandomBuffer
 	cp LARGE_ROOM_HEIGHT<<4
 	jr nc,@dungeon
 
@@ -690,7 +690,7 @@ _getCandidatePositionForEnemy:
 	jr nc,@dungeon ; Last column (and higher) not allowed
 
 	; Can't place multiple enemies in the same position
-	call _checkEnemyPlacedAtPosition
+	call checkEnemyPlacedAtPosition
 	jr c,@dungeon
 
 	ld a,b
@@ -698,8 +698,8 @@ _getCandidatePositionForEnemy:
 
 ;;
 ; @param	b	Position to check
-; @param[out]	cflag	Set if an enemy has been placed at position 'b'.
-_checkEnemyPlacedAtPosition:
+; @param[out]	cflag	c if an enemy has been placed at position 'b'.
+checkEnemyPlacedAtPosition:
 	ld a,(wEnemyPlacement.numEnemies)
 	or a
 	ret z
@@ -728,7 +728,7 @@ _checkEnemyPlacedAtPosition:
 
 ;;
 ; Checks if the timeportal exists in the current room, and loads the interaction if so.
-_checkSpawnTimeportalInteraction:
+checkSpawnTimeportalInteraction:
 	xor a
 	ld (wcddd),a
 
@@ -757,7 +757,6 @@ _checkSpawnTimeportalInteraction:
 ; Determines the value for wRoomStateModifier. (For seasons, it's just the season; for
 ; ages, this indicates whether the room is underwater, or whether the room layout has been
 ; swapped.
-;
 calculateRoomStateModifier:
 	ld a,(wActiveGroup)
 	or a
@@ -796,7 +795,6 @@ calculateRoomStateModifier:
 ;;
 ; If there are whirlpools or pollution tiles on the screen, this creates a part of type
 ; PARTID_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
-;
 createSeaEffectsPartIfApplicable:
 	ld a,(wActiveCollisions)
 	ld hl,@table

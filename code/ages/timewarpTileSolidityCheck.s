@@ -39,7 +39,7 @@ checkLinkCanStandOnTile:
 
 	call objectGetTileAtPosition
 	ld e,(hl)
-	ld hl,_invalidTimewarpTileList
+	ld hl,invalidTimewarpTileList
 	call lookupKey
 	jr c,++
 
@@ -58,7 +58,7 @@ checkLinkCanStandOnTile:
 
 ; The tiles listed here are invalid, unless their corresponding value is $01, in which
 ; case it will be permitted to warp onto them if Link has the mermaid suit.
-_invalidTimewarpTileList:
+invalidTimewarpTileList:
 	.db $f3 $00 ; Hole
 	.db $fe $00 ; Waterfall
 	.db $ff $00 ; Waterfall

@@ -1,12 +1,12 @@
 ;;
 ; ITEMID_SHIELD ($01)
-_parentItemCode_shield:
+parentItemCode_shield:
 	; Verify that the shield can be used
 	call @checkShieldIsUsable
 	jr nc,@deleteSelf
 
 	; Return if any other item is in use
-	call _checkNoOtherParentItemsInUse
+	call checkNoOtherParentItemsInUse
 	ret nz
 
 	ld e,Item.state
@@ -34,7 +34,7 @@ _parentItemCode_shield:
 @deleteSelf:
 	xor a
 	ld (wUsingShield),a
-	jp _clearParentItem
+	jp clearParentItem
 
 ;;
 ; @param[out]	cflag	Set if the shield is ok to use (and the button is held)
@@ -51,7 +51,7 @@ _parentItemCode_shield:
 
 .ifdef ROM_AGES
 	; Can't use underwater
-	call _isLinkUnderwater
+	call isLinkUnderwater
 	jr nz,@@disallowShield
 
 	; Can use on the raft, but not on any other rides
@@ -65,7 +65,7 @@ _parentItemCode_shield:
 	jr c,@@disallowShield
 +
 	; Shield is allowed; now check that the button is still held
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jr z,@@disallowShield
 	scf
 	ret

@@ -14,7 +14,7 @@
 
 	TREASURE_NONE			db ; $00
 	TREASURE_SHIELD			db ; $01
-	TREASURE_PUNCH			db ; $02 ; Set by default on the file
+	TREASURE_PUNCH			db ; $02 ; Set by default on the file, used as dummy value
 	TREASURE_BOMBS			db ; $03
 	TREASURE_CANE_OF_SOMARIA	db ; $04
 	TREASURE_SWORD			db ; $05
@@ -86,8 +86,8 @@
 
 	TREASURE_GRAVEYARD_KEY		db ; $42
 	TREASURE_CROWN_KEY		db ; $43
-	TREASURE_OLD_MERMAID_KEY	db ; $44
-	TREASURE_MERMAID_KEY		db ; $45
+	TREASURE_MERMAID_KEY		db ; $44
+	TREASURE_OLD_MERMAID_KEY	db ; $45
 	TREASURE_LIBRARY_KEY		db ; $46
 	TREASURE_47			db ; $47
 	TREASURE_RICKY_GLOVES		db ; $48

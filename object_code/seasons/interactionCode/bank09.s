@@ -17,9 +17,9 @@ interactionCode5e:
 @state1:
 	ld a,$21
 	call objectSetCollideRadius
-	call _func_5cbd
-	call _func_4cb1
-	call _func_4ce8
+	call func_5cbd
+	call func_4cb1
+	call func_4ce8
 	ld a,($d004)
 	cp $01
 	ret nz
@@ -38,7 +38,7 @@ interactionCode5e:
 	ld b,$14
 	call updateLinkPositionGivenVelocity
 +
-	call _func_4ca3
+	call func_4ca3
 	ld bc,$0300
 	call @checkLinkWithinAPartOfQuicksand
 	ret nc
@@ -116,7 +116,7 @@ interactionCode5e:
 	ld a,($d00d)
 	ld c,a
 	jp interactionCheckContainsPoint
-_func_4ca3:
+func_4ca3:
 	ld hl,$ccc1
 	ld a,(hl)
 	or a
@@ -127,29 +127,29 @@ _func_4ca3:
 	ret nz
 	set 7,(hl)
 	ret
-_func_4cb1:
+func_4cb1:
 	ld c,$4d
 	call objectFindSameTypeObjectWithID
 	ret nz
 	ld l,$4f
 	ld e,$7a
-	jr _func_4cd2
-_func_5cbd:
+	jr func_4cd2
+func_5cbd:
 	ld h,$d0
 -
 	ld l,$c1
 	ld a,(hl)
 	cp $01
-	call z,_func_4cce
+	call z,func_4cce
 	inc h
 	ld a,h
 	cp $e0
 	jr c,-
 	ret
-_func_4cce:
+func_4cce:
 	ld l,$cf
 	ld e,$f1
-_func_4cd2:
+func_4cd2:
 	ldd a,(hl)
 	rlca
 	ret c
@@ -168,20 +168,20 @@ _func_4cd2:
 	inc l
 	ld (hl),c
 	ret
-_func_4ce8:
+func_4ce8:
 	ld c,$03
 	call findItemWithID
-	call z,_func_4cfe
+	call z,func_4cfe
 	ld c,$03
 	call findItemWithID_startingAfterH
-	call z,_func_4cfe
+	call z,func_4cfe
 	ld c,$21
 	call findItemWithID
 	ret nz
-_func_4cfe:
+func_4cfe:
 	ld l,$0f
 	ld e,$31
-	jr _func_4cd2
+	jr func_4cd2
 
 
 .include "object_code/common/interactionCode/companionSpawner.s"
@@ -283,7 +283,7 @@ interactionCode62:
 @@state2:
 	ld a,($cfd9)
 	or a
-	jp nz,_func_5076
+	jp nz,func_5076
 	call objectPreventLinkFromPassing
 	ld a,(wcca2)
 	or a
@@ -351,7 +351,7 @@ interactionCode62:
 @@state3:
 	ld a,($cfd9)
 	or a
-	jr nz,_func_5076
+	jr nz,func_5076
 	ret
 @@state4:
 	call interactionDecCounter1
@@ -367,7 +367,7 @@ interactionCode62:
 	ld a,TILEINDEX_STANDARD_FLOOR
 	call setTile
 	jp interactionDelete
-_func_5076:
+func_5076:
 	ld e,Interaction.state
 	ld a,$04
 	ld (de),a
@@ -526,7 +526,7 @@ interactionCode64:
 ; ==============================================================================
 interactionCode65:
 	call returnIfScrollMode01Unset
-	call _func_5258
+	call func_5258
 	jp nz,interactionDelete
 	ld e,Interaction.state
 	ld a,(de)
@@ -601,10 +601,10 @@ interactionCode65:
 	ld ($ccab),a
 	ld hl,$cfd0
 	inc (hl)
-	call _func_5261
-	call _func_545a
-	call _func_52d9
-	call _func_537e
+	call func_5261
+	call func_545a
+	call func_52d9
+	call func_537e
 	xor a
 	ld ($ff00+R_SVBK),a
 	ldh a,(<hActiveObject)
@@ -616,7 +616,7 @@ interactionCode65:
 	ld a,($cfd0)
 	cp $09
 	ret c
-	call _func_5258
+	call func_5258
 	jp nz,interactionDelete
 	ld a,$11
 	ld ($cc6a),a
@@ -624,11 +624,11 @@ interactionCode65:
 	ld ($cc6b),a
 	jp interactionDelete
 @state2:
-	call _func_5258
+	call func_5258
 	jp nz,interactionDelete
 	ld a,($cfd0)
 	cp $09
-	jr z,_func_524d
+	jr z,func_524d
 	ld a,($cfd0)
 	ld c,$08
 	call multiplyAByC
@@ -656,19 +656,19 @@ interactionCode65:
 	ret c
 	ld (hl),b
 	ret
-_func_524d:
+func_524d:
 	ld a,$08
 	call setScreenShakeCounter
 	ld a,$58
 	ld ($d00b),a
 	ret
-_func_5258:
+func_5258:
 	ld a,(wActiveRoom)
 	cp $c5
 	ret z
 	cp $c6
 	ret
-_func_5261:
+func_5261:
 	ld a,$02
 	ld ($ff00+R_SVBK),a
 	ld a,($cd09)
@@ -678,22 +678,22 @@ _func_5261:
 	rlca
 	ldh (<hFF8B),a
 	xor a
-	call _func_5293
+	call func_5293
 	ld a,$04
-	call _func_5293
+	call func_5293
 	ld a,$08
-	call _func_5293
+	call func_5293
 	ld a,$0c
-	call _func_5293
+	call func_5293
 	ld a,$10
-	call _func_5293
+	call func_5293
 	ld a,$14
-	call _func_5293
+	call func_5293
 	ld a,$18
-	call _func_5293
+	call func_5293
 	ld a,$1c
-_func_5293:
-	ld hl,_table_52a6
+func_5293:
+	ld hl,table_52a6
 	rst_addAToHl
 	ldi a,(hl)
 	ld d,(hl)
@@ -706,8 +706,8 @@ _func_5293:
 	ld c,a
 	ld b,$00
 	add hl,bc
-	jr _func_52c6
-_table_52a6:
+	jr func_52c6
+table_52a6:
 	.dw $d020 $d0c0
 	.dw $d040 $d0e0
 	.dw $d060 $d100
@@ -716,7 +716,7 @@ _table_52a6:
 	.dw $d440 $d4e0
 	.dw $d460 $d500
 	.dw $d480 $d520
-_func_52c6:
+func_52c6:
 	ld b,$20
 --
 	ld a,(hl)
@@ -733,11 +733,11 @@ _func_52c6:
 	dec b
 	jr nz,--
 	ret
-_func_52d9:
+func_52d9:
 	push de
 	ld a,($cfd0)
 	add a
-	ld hl,_table_5326
+	ld hl,table_5326
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld d,(hl)
@@ -758,7 +758,7 @@ _func_52d9:
 	call queueDmaTransfer
 	ld a,($cfd0)
 	add a
-	ld hl,_table_5352
+	ld hl,table_5352
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld d,(hl)
@@ -779,7 +779,7 @@ _func_52d9:
 	call queueDmaTransfer
 	pop de
 	ret
-_table_5326:
+table_5326:
 	.db $01 $98 $00 $98
 	.db $01 $98 $00 $98
 	.db $21 $98 $20 $98
@@ -791,7 +791,7 @@ _table_5326:
 	.db $e1 $98 $e0 $98
 	.db $01 $99 $00 $99
 	.db $21 $99 $20 $99
-_table_5352:
+table_5352:
 	.db $61 $9a $60 $9a
 	.db $61 $9a $60 $9a
 	.db $41 $9a $40 $9a
@@ -803,17 +803,17 @@ _table_5352:
 	.db $81 $99 $80 $99
 	.db $61 $99 $60 $99
 	.db $41 $99 $40 $99
-_func_537e:
+func_537e:
 	ld a,($cfd0)
 	or a
 	ret z
 	bit 0,a
-	jr nz,_func_53a1
+	jr nz,func_53a1
 	srl a
 	swap a
 	ld l,a
 	ld a,$0f
-	call _func_53bb
+	call func_53bb
 	ld a,($cfd0)
 	srl a
 	ld b,a
@@ -822,14 +822,14 @@ _func_537e:
 	swap a
 	ld l,a
 	ld a,$0f
-	jr _func_53bb
-_func_53a1:
+	jr func_53bb
+func_53a1:
 	inc a
 	srl a
 	swap a
 	ld l,a
 	ld a,$0c
-	call _func_53bb
+	call func_53bb
 	ld a,($cfd0)
 	inc a
 	srl a
@@ -839,7 +839,7 @@ _func_53a1:
 	swap a
 	ld l,a
 	ld a,$03
-_func_53bb:
+func_53bb:
 	ld e,a
 	ld b,$10
 	ld h,$ce
@@ -850,7 +850,7 @@ _func_53bb:
 	dec b
 	jr nz,-
 	ret
-_func_53c7:
+func_53c7:
 	ld a,($cfd0)
 	or a
 	ret z
@@ -860,7 +860,7 @@ _func_53c7:
 	swap a
 	ld l,a
 	ld a,$b0
-	call _func_53e7
+	call func_53e7
 	ld a,($cfd0)
 	srl a
 	ld b,a
@@ -869,7 +869,7 @@ _func_53c7:
 	swap a
 	ld l,a
 	ld a,$b2
-_func_53e7:
+func_53e7:
 	ld b,$10
 	ld h,$cf
 -
@@ -881,34 +881,34 @@ _func_53e7:
 ;;
 ; $02: D6 wall-closing room
 roomTileChangesAfterLoad02_body:
-	call _func_537e
-	call _func_53c7
+	call func_537e
+	call func_53c7
 	ld hl,$d800
 	ld de,$d0c0
-	call _func_5440
+	call func_5440
 	ld hl,$d820
 	ld de,$d0e0
-	call _func_5440
+	call func_5440
 	ld hl,$dc00
 	ld de,$d4c0
-	call _func_5440
+	call func_5440
 	ld hl,$dc20
 	ld de,$d4e0
-	call _func_5440
+	call func_5440
 	ld hl,$da80
 	ld de,$d100
-	call _func_5440
+	call func_5440
 	ld hl,$daa0
 	ld de,$d120
-	call _func_5440
+	call func_5440
 	ld hl,$de80
 	ld de,$d500
-	call _func_5440
+	call func_5440
 	ld hl,$dea0
 	ld de,$d520
-	call _func_5440
-	jr _func_545a
-_func_5440:
+	call func_5440
+	jr func_545a
+func_5440:
 	ld a,$03
 	ld ($ff00+R_SVBK),a
 	push de
@@ -922,7 +922,7 @@ _func_5440:
 	ld b,$20
 	jp copyMemory
 
-_func_545a:
+func_545a:
 	ld a,($cfd0)
 	or a
 	ret z
@@ -932,9 +932,9 @@ _func_545a:
 	ld de,$cd40
 	ld b,$40
 	ld c,$02
-	call _func_553a
+	call func_553a
 	ld a,($cfd0)
-	ld hl,_table_5544
+	ld hl,table_5544
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld d,(hl)
@@ -942,14 +942,14 @@ _func_545a:
 	ld hl,$cd40
 	ld b,$40
 	ld c,$03
-	call _func_553a
+	call func_553a
 	ld hl,$d100
 	ld de,$cd40
 	ld b,$40
 	ld c,$02
-	call _func_553a
+	call func_553a
 	ld a,($cfd0)
-	ld hl,_table_5558
+	ld hl,table_5558
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld d,(hl)
@@ -957,14 +957,14 @@ _func_545a:
 	ld hl,$cd40
 	ld b,$40
 	ld c,$03
-	call _func_553a
+	call func_553a
 	ld hl,$d4c0
 	ld de,$cd40
 	ld b,$40
 	ld c,$02
-	call _func_553a
+	call func_553a
 	ld a,($cfd0)
-	ld hl,_table_5544
+	ld hl,table_5544
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld e,a
@@ -974,14 +974,14 @@ _func_545a:
 	ld hl,$cd40
 	ld b,$40
 	ld c,$03
-	call _func_553a
+	call func_553a
 	ld hl,$d500
 	ld de,$cd40
 	ld b,$40
 	ld c,$02
-	call _func_553a
+	call func_553a
 	ld a,($cfd0)
-	ld hl,_table_5558
+	ld hl,table_5558
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld e,a
@@ -991,15 +991,15 @@ _func_545a:
 	ld hl,$cd40
 	ld b,$40
 	ld c,$03
-	call _func_553a
+	call func_553a
 	ld a,$03
 	ld ($ff00+R_SVBK),a
 	ld hl,$d800
 	ld a,$80
-	call _func_552a
+	call func_552a
 	ld hl,$dc00
 	ld a,$0b
-	call _func_552a
+	call func_552a
 	ld a,($cfd0)
 	ld c,a
 	ld b,$00
@@ -1014,18 +1014,18 @@ _func_545a:
 	add hl,bc
 	ld a,$80
 	push hl
-	call _func_552a
+	call func_552a
 	pop hl
 	ld bc,$0400
 	add hl,bc
 	ld a,$0b
-	call _func_552a
+	call func_552a
 	xor a
 	ld ($ff00+R_SVBK),a
 	pop hl
 	pop de
 	ret
-_func_552a:
+func_552a:
 	ld e,a
 	ld a,($cfd0)
 	ld c,a
@@ -1039,14 +1039,14 @@ _func_552a:
 	dec c
 	jr nz,--
 	ret
-_func_553a:
+func_553a:
 	ld a,c
 	ld ($ff00+R_SVBK),a
 	call copyMemory
 	xor a
 	ld ($ff00+R_SVBK),a
 	ret
-_table_5544:
+table_5544:
 	.db $00 $d8
 	.db $20 $d8
 	.db $40 $d8
@@ -1057,7 +1057,7 @@ _table_5544:
 	.db $e0 $d8
 	.db $00 $d9
 	.db $20 $d9
-_table_5558:
+table_5558:
 	.db $80 $da
 	.db $60 $da
 	.db $40 $da
@@ -1182,7 +1182,7 @@ interactionCode66:
 	jr z,+
 	set 4,(hl)
 	ld c,$32
-	call nz,_func_5694
+	call nz,func_5694
 +
 	ld hl,wActiveTriggers
 	bit 5,(hl)
@@ -1191,7 +1191,7 @@ interactionCode66:
 	jr z,+
 	set 5,(hl)
 	ld c,$52
-	call nz,_func_5694
+	call nz,func_5694
 +
 	ld hl,wActiveTriggers
 	bit 6,(hl)
@@ -1200,7 +1200,7 @@ interactionCode66:
 	jr z,+
 	set 6,(hl)
 	ld c,$95
-	call nz,_func_56a5
+	call nz,func_56a5
 +
 	ld hl,wActiveTriggers
 	bit 7,(hl)
@@ -1209,7 +1209,7 @@ interactionCode66:
 	jr z,+
 	set 7,(hl)
 	ld c,$97
-	call nz,_func_56a5
+	call nz,func_56a5
 +
 	ld a,(wActiveTriggers)
 	inc a
@@ -1239,32 +1239,32 @@ interactionCode66:
 
 	call objectCopyPosition
 	jp interactionDelete
-_func_5694:
+func_5694:
 	ld b,$cf
 -
 	ld a,(bc)
 	cp $27
 	ld e,$18
-	call z,_func_56b8
+	call z,func_56b8
 	inc c
 	ld a,c
 	and $0f
 	ret z
 	jr -
-_func_56a5:
+func_56a5:
 	ld b,$cf
 -
 	ld a,(bc)
 	cp $27
 	ld e,$10
-	call z,_func_56b8
+	call z,func_56b8
 	ld a,c
 	sub $10
 	ld c,a
 	and $f0
 	ret z
 	jr -
-_func_56b8:
+func_56b8:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_D7_4_ARMOS_BUTTON_PUZZLE
@@ -1321,7 +1321,7 @@ interactionCode67:
 	ld ($cca4),a
 	call objectSetVisible82
 	call setCameraFocusedObject
-	call _func_57f3
+	call func_57f3
 	ld e,$79
 	ld (de),a
 	jp objectCreatePuff
@@ -1351,7 +1351,7 @@ interactionCode67:
 	ld e,$5a
 	xor a
 	ld (de),a
-	call _func_57f3
+	call func_57f3
 	ld b,a
 	ld e,$79
 	ld a,(de)
@@ -1430,7 +1430,7 @@ interactionCode67:
 	call interactionRunScript
 	jp c,interactionDelete
 	ret
-_func_57f3:
+func_57f3:
 	ld hl,$d00b
 	ldi a,(hl)
 	add $04
@@ -1536,13 +1536,13 @@ interactionCode68:
 	ret nz
 	ld a,($d004)
 	cp $01
-	jr nz,_delete
+	jr nz,delete
 	ld a,($cc34)
 	or a
-	jr nz,_delete
+	jr nz,delete
 	ld a,($cc48)
 	cp $d0
-	jr nz,_delete
+	jr nz,delete
 	call resetLinkInvincibility
 	ld a,$80
 	ld ($cc02),a
@@ -1550,7 +1550,7 @@ interactionCode68:
 	ld ($ccab),a
 	call getThisRoomFlags
 	set 6,(hl)
-	call _func_58e4
+	call func_58e4
 	ldh a,(<hActiveObject)
 	ld d,a
 	ld a,(wDungeonFloor)
@@ -1564,35 +1564,35 @@ interactionCode68:
 	ld (wWarpTransition),a
 	ld a,$03
 	ld (wWarpTransition2),a
-_delete:
+delete:
 	jp interactionDelete
-_func_58e4:
+func_58e4:
 	call objectGetTileAtPosition
 	dec h
 	ld b,l
 	ld a,(wActiveTileIndex)
 	cp $d0
 	ld a,(wActiveTilePos)
-	jr nz,_func_590c
+	jr nz,func_590c
 	ld a,b
 	sub $10
-	call _func_5907
-	jr z,_func_590b
+	call func_5907
+	jr z,func_590b
 	ld a,b
 	inc a
-	call _func_5907
-	jr z,_func_590b
+	call func_5907
+	jr z,func_590b
 	ld a,b
 	add $10
-	jr _func_590c
-_func_5907:
+	jr func_590c
+func_5907:
 	ld l,a
 	ld a,(hl)
 	or a
 	ret
-_func_590b:
+func_590b:
 	ld a,l
-_func_590c:
+func_590c:
 	ld ($cfd0),a
 	ld a,(wActiveRoom)
 	cp $7f
@@ -1660,7 +1660,7 @@ interactionCode69:
 @@@table_5976:
 	.db $7e $7f $88 $89
 @@@substate1:
-	call _func_5ae0
+	call func_5ae0
 	ld a,($c4ab)
 	or a
 	ret nz
@@ -1688,7 +1688,7 @@ interactionCode69:
 	ld (de),a
 	ld e,$43
 	ld a,(de)
-	ld hl,_table_5b0d
+	ld hl,table_5b0d
 	rst_addDoubleIndex
 	ld e,$58
 	ldi a,(hl)
@@ -1740,7 +1740,7 @@ interactionCode69:
 	ld a,$7a
 	call playSound
 	ld b,$d6
-	call _func_5af7
+	call func_5af7
 	ret nz
 	jp interactionDelete
 @func_5a0a:
@@ -1851,28 +1851,28 @@ interactionCode69:
 	ret nz
 	ld (hl),$08
 	ld b,$d7
-	call _func_5af7
+	call func_5af7
 	ret nz
 	jp @func_5a0a
-_func_5ae0:
+func_5ae0:
 	ld hl,$d080
 -
 	ld a,(hl)
 	or a
-	call nz,_func_5aef
+	call nz,func_5aef
 	inc h
 	ld a,h
 	cp $e0
 	jr c,-
 	ret
-_func_5aef:
+func_5aef:
 	xor a
 	ld l,$9a
 	ld (hl),a
 	ld l,$80
 	ld (hl),a
 	ret
-_func_5af7:
+func_5af7:
 	ld h,d
 	ld l,$58
 	ld e,l
@@ -1892,19 +1892,19 @@ _func_5af7:
 	call setTile
 	or d
 	ret
-_table_5b0d:
-	.dw _table_5b15
-	.dw _table_5b3f
-	.dw _table_5b73
-	.dw _table_5bbb
-_table_5b15:
+table_5b0d:
+	.dw table_5b15
+	.dw table_5b3f
+	.dw table_5b73
+	.dw table_5bbb
+table_5b15:
 	.db $34 $44 $43 $45 $42 $46 $41 $47
 	.db $53 $55 $52 $31 $37 $21 $27 $28
 	.db $11 $17 $18 $51 $62 $61 $64 $66
 	.db $67 $68 $74 $73 $75 $72 $76 $71
 	.db $77 $81 $82 $83 $84 $85 $86 $87
 	.db $88 $00
-_table_5b3f:
+table_5b3f:
 	.db $27 $37 $36 $47 $38 $46 $48 $35
 	.db $39 $3a $4a $49 $59 $58 $57 $56
 	.db $45 $44 $55 $54 $2a $1a $1b $53
@@ -1912,7 +1912,7 @@ _table_5b3f:
 	.db $6a $69 $68 $67 $66 $62 $76 $77
 	.db $6b $5c $6c $7c $7b $7a $79 $78
 	.db $72 $73 $74 $00
-_table_5b73:
+table_5b73:
 	.db $37 $47 $57 $46 $56 $66 $67 $48
 	.db $58 $68 $45 $55 $65 $49 $59 $69
 	.db $64 $54 $44 $34 $5a $6a $6b $5b
@@ -1922,7 +1922,7 @@ _table_5b73:
 	.db $72 $24 $14 $13 $03 $02 $12 $04
 	.db $05 $3b $2b $1b $0b $2c $3c $4c
 	.db $0a $09 $08 $0c $1c $06 $07 $00
-_table_5bbb:
+table_5bbb:
 	.db $79 $89 $88 $99 $8a $87 $97 $98
 	.db $9a $9b $8b $76 $86 $9c $9d $8d
 	.db $7d $6d $5d $2d $2c $2a $29 $4d
@@ -2678,47 +2678,47 @@ interactionCode6b:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	/* $00 */ .dw _floodgateKeeper
-	/* $01 */ .dw _floodgateKeeperSwitchScript
-	/* $02 */ .dw _floodgateKeyhole
-	/* $03 */ .dw _d4KeyHole
-	/* $04 */ .dw _floodgateKey
-	/* $05 */ .dw _dragonKey
-	/* $06 */ .dw _tarmArmosUnlockingStairs
-	/* $07 */ .dw _tarmArmosWallByStump
-	/* $08 */ .dw _tarmEscapedLostWoods
-	/* $09 */ .dw _oreChunkDigSpot
-	/* $0a */ .dw _staticHeartPiece
-	/* $0b */ .dw _permanentlyRemovableObjects
-	/* $0c */ .dw _piratesBellRoomWhenFallingIn
-	/* $0d */ .dw _greenJoyRing
-	/* $0e */ .dw _masterDiverPuzzle
-	/* $0f */ .dw _piratesBell
-	/* $10 */ .dw _armosBlockingFlowerPathToD6
-	/* $11 */ .dw _natzuSwitch
-	/* $12 */ .dw _onoxCastleCutscene
-	/* $13 */ .dw _savingZeldaNoEnemiesHandler
-	/* $14 */ .dw _unblockingD3Dam
-	/* $15 */ .dw _replacePirateShipWithQuicksand
-	/* $16 */ .dw _stolenFeatherGottenHandler
-	/* $17 */ .dw _horonVillagePortalBridgeSpawner
-	/* $18 */ .dw _randomRingDigSpot
-	/* $19 */ .dw _staticGashaSeed
-	/* $1a */ .dw _underwaterGashaSeed
-	/* $1b */ .dw _tickTockSecretEntrance
-	/* $1c */ .dw _graveSecretEntrance
-	/* $1d */ .dw _d4MinibossRoom
-	/* $1e */ .dw _sentBackFromOnoxCastleBarrier
-	/* $1f */ .dw _sidescrollingStaticGashaSeed
-	/* $20 */ .dw _sidescrollingStaticSeedSatchel
-	/* $21 */ .dw _mtCuccoBananaTree
-	/* $22 */ .dw _hardOre
+	/* $00 */ .dw floodgateKeeper
+	/* $01 */ .dw floodgateKeeperSwitchScript
+	/* $02 */ .dw floodgateKeyhole
+	/* $03 */ .dw d4KeyHole
+	/* $04 */ .dw floodgateKey
+	/* $05 */ .dw dragonKey
+	/* $06 */ .dw tarmArmosUnlockingStairs
+	/* $07 */ .dw tarmArmosWallByStump
+	/* $08 */ .dw tarmEscapedLostWoods
+	/* $09 */ .dw oreChunkDigSpot
+	/* $0a */ .dw staticHeartPiece
+	/* $0b */ .dw permanentlyRemovableObjects
+	/* $0c */ .dw piratesBellRoomWhenFallingIn
+	/* $0d */ .dw greenJoyRing
+	/* $0e */ .dw masterDiverPuzzle
+	/* $0f */ .dw piratesBell
+	/* $10 */ .dw armosBlockingFlowerPathToD6
+	/* $11 */ .dw natzuSwitch
+	/* $12 */ .dw onoxCastleCutscene
+	/* $13 */ .dw savingZeldaNoEnemiesHandler
+	/* $14 */ .dw unblockingD3Dam
+	/* $15 */ .dw replacePirateShipWithQuicksand
+	/* $16 */ .dw stolenFeatherGottenHandler
+	/* $17 */ .dw horonVillagePortalBridgeSpawner
+	/* $18 */ .dw randomRingDigSpot
+	/* $19 */ .dw staticGashaSeed
+	/* $1a */ .dw underwaterGashaSeed
+	/* $1b */ .dw tickTockSecretEntrance
+	/* $1c */ .dw graveSecretEntrance
+	/* $1d */ .dw d4MinibossRoom
+	/* $1e */ .dw sentBackFromOnoxCastleBarrier
+	/* $1f */ .dw sidescrollingStaticGashaSeed
+	/* $20 */ .dw sidescrollingStaticSeedSatchel
+	/* $21 */ .dw mtCuccoBananaTree
+	/* $22 */ .dw hardOre
 	.dw interactionCode6bSubid23
 	.dw interactionCode6bSubid24
 	.dw interactionCode6bSubid25
 	.dw interactionCode6bSubid26
 
-_floodgateKeeper:
+floodgateKeeper:
 	call checkInteractionState
 	jr nz,@state1
 	ld a,$01
@@ -2734,7 +2734,7 @@ _floodgateKeeper:
 	call objectPreventLinkFromPassing
 	jp interactionRunScript
 
-_floodgateKeeperSwitchScript:
+floodgateKeeperSwitchScript:
 	call checkInteractionState
 	jr nz,@state1
 	ld a,$01
@@ -2756,12 +2756,12 @@ _floodgateKeeperSwitchScript:
 	jp interactionSetScript
 @state1:
 	call interactionAnimate
-_runScriptDeleteWhenDone:
+runScriptDeleteWhenDone:
 	call interactionRunScript
 	ret nc
 	jp interactionDelete
 
-_floodgateKeyhole:
+floodgateKeyhole:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -2787,7 +2787,7 @@ _floodgateKeyhole:
 	call playSound
 	jr ++
 
-_resetMusicThenSolvePuzzleSound:
+resetMusicThenSolvePuzzleSound:
 	ld a,$ff
 	ld (wActiveMusic),a
 ++
@@ -2801,7 +2801,7 @@ _resetMusicThenSolvePuzzleSound:
 	jp interactionDelete
 
 
-_d4KeyHole:
+d4KeyHole:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -2867,11 +2867,11 @@ _d4KeyHole:
 	ret nc
 	ld hl,@warpDestVariables
 	call setWarpDestVariables
-	jp _resetMusicThenSolvePuzzleSound
+	jp resetMusicThenSolvePuzzleSound
 @warpDestVariables:
 	.db $c0 $0d $01 $23 $03
 
-_floodgateKey:
+floodgateKey:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -2884,7 +2884,7 @@ _floodgateKey:
 	cp $40
 	ret nz
 	ld bc,rando.seasonsSlot_floodgateKeepersHouse
-	call _misc1_spawnRandomizedTreasureBC
+	call misc1_spawnRandomizedTreasureBC
 	jp interactionIncState
 @state1:
 	ld a,TREASURE_FLOODGATE_KEY ; RANDO-TODO: Do something with this?
@@ -2898,18 +2898,18 @@ _floodgateKey:
 	ld hl,mainScripts.floodgateKeyScript_keeperNoticesKey
 	jp interactionSetScript
 
-_dragonKey:
+dragonKey:
 	; RANDO: Spawn whatever's in the item slot
 	ld bc,rando.seasonsSlot_goronMountainAcrossPits
-	jp _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
+	jp misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
 	
-_tarmArmosUnlockingStairs:
+tarmArmosUnlockingStairs:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
 	.dw @state1
-	.dw _runScriptDeleteWhenDone
+	.dw runScriptDeleteWhenDone
 @state0:
 	call getThisRoomFlags
 	and $40
@@ -2922,9 +2922,9 @@ _tarmArmosUnlockingStairs:
 	cp $04
 	ret nz
 	call interactionIncState
-	jp _runScriptDeleteWhenDone
+	jp runScriptDeleteWhenDone
 
-_tarmArmosWallByStump:
+tarmArmosWallByStump:
 	ld a,($cc4c)
 	cp $42
 	jp nz,interactionDelete
@@ -2981,7 +2981,7 @@ _tarmArmosWallByStump:
 	call setTile
 	jr ++
 
-_tarmEscapedLostWoods:
+tarmEscapedLostWoods:
 	call returnIfScrollMode01Unset
 	ld a,($cd02)
 	or a
@@ -2991,7 +2991,7 @@ _tarmEscapedLostWoods:
 	call playSound
 	jp interactionDelete
 
-_oreChunkDigSpot:
+oreChunkDigSpot:
 	call checkInteractionState
 	jr nz,@state1
 	ld a,$01
@@ -3025,27 +3025,27 @@ _oreChunkDigSpot:
 	call objectCopyPosition
 	jp interactionDelete
 	
-_staticHeartPiece:
+staticHeartPiece:
 	ldbc TREASURE_HEART_PIECE $00
-_misc1_spawnTreasureBCifRoomFlagBit5NotSet:
+misc1_spawnTreasureBCifRoomFlagBit5NotSet:
 	call getThisRoomFlags
 	and $20
 	jr nz,+
-	call _misc1_spawnTreasureBC
+	call misc1_spawnTreasureBC
 +
 	jp interactionDelete
 
 ; RANDO: Randomized version of above function
-_misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet:
+misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet:
 	call getThisRoomFlags
 	and $20
 	jr nz,+
-	call _misc1_spawnRandomizedTreasureBC
+	call misc1_spawnRandomizedTreasureBC
 +
 	jp interactionDelete
 
 
-_misc1_spawnTreasureBC:
+misc1_spawnTreasureBC:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_TREASURE
@@ -3057,14 +3057,14 @@ _misc1_spawnTreasureBC:
 
 
 ; RANDO: Randomized version of above function
-_misc1_spawnRandomizedTreasureBC:
+misc1_spawnRandomizedTreasureBC:
 	call spawnRandomizedTreasure
 	ret nz
 	jp objectCopyPosition
 
 
 ; eg rocks, ember trees that should stay removed
-_permanentlyRemovableObjects:
+permanentlyRemovableObjects:
 	call checkInteractionState
 	jr nz,@state1
 	call returnIfScrollMode01Unset
@@ -3104,13 +3104,13 @@ _permanentlyRemovableObjects:
 	ld (hl),a
 	jp interactionDelete
 
-_piratesBellRoomWhenFallingIn:
+piratesBellRoomWhenFallingIn:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
 	.dw @state1
-	.dw _runScriptDeleteWhenDone
+	.dw runScriptDeleteWhenDone
 @state0:
 	call getThisRoomFlags
 	and $20
@@ -3128,7 +3128,7 @@ _piratesBellRoomWhenFallingIn:
 	ld hl,mainScripts.piratesBellRoomDroppingInScript
 	jp interactionSetScript
 
-_greenJoyRing:
+greenJoyRing:
 	call getThisRoomFlags
 	and $20
 	jp nz,interactionDelete
@@ -3144,13 +3144,13 @@ _greenJoyRing:
 	call objectCopyPosition
 	jp interactionDelete
 
-_createRingTreasureAtPosition:
+createRingTreasureAtPosition:
 	call createRingTreasure
 	ret nz
 	call objectCopyPosition
 	jp interactionDelete
 
-_masterDiverPuzzle:
+masterDiverPuzzle:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -3213,12 +3213,12 @@ _masterDiverPuzzle:
 	cp $02
 	ret
 
-_piratesBell:
+piratesBell:
 	; RANDO: Spawn whatever's in the item slot
 	ld bc,rando.seasonsSlot_samasaDesertPit
-	jp _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
+	jp misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
 
-_armosBlockingFlowerPathToD6:
+armosBlockingFlowerPathToD6:
 	call returnIfScrollMode01Unset
 	call getThisRoomFlags
 	bit 7,(hl)
@@ -3240,7 +3240,7 @@ _armosBlockingFlowerPathToD6:
 	ld (hl),a
 	jp interactionDelete
 
-_natzuSwitch:
+natzuSwitch:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -3276,7 +3276,7 @@ _natzuSwitch:
 	ld hl,scripts2.simpleScript_creatingBridgeToNatzu
 	jp interactionSetSimpleScript
 @state2:
-	call _d4KeyHole@func_621c
+	call d4KeyHole@func_621c
 	ret nz
 	call interactionRunSimpleScript
 	ret nc
@@ -3286,7 +3286,7 @@ _natzuSwitch:
 	ld ($ccab),a
 	jp interactionDelete
 
-_onoxCastleCutscene:
+onoxCastleCutscene:
 	ld a,GLOBALFLAG_WITCHES_2_SEEN
 	call checkGlobalFlag
 	jp nz,interactionDelete
@@ -3305,7 +3305,7 @@ _onoxCastleCutscene:
 	call clearAllParentItems
 	jp interactionDelete
 
-_savingZeldaNoEnemiesHandler:
+savingZeldaNoEnemiesHandler:
 	ld a,GLOBALFLAG_IMPA_ASKED_TO_SAVE_ZELDA
 	call checkGlobalFlag
 	ret z
@@ -3316,7 +3316,7 @@ _savingZeldaNoEnemiesHandler:
 	ld (wcc85),a
 	jp interactionDelete
 
-_unblockingD3Dam:
+unblockingD3Dam:
 	ld h,d
 	ld l,$46
 	ld a,(hl)
@@ -3337,7 +3337,7 @@ _unblockingD3Dam:
 	set 7,(hl)
 	jp interactionDelete
 	
-_replacePirateShipWithQuicksand:
+replacePirateShipWithQuicksand:
 	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
 	call checkGlobalFlag
 	jp z,interactionDelete
@@ -3345,7 +3345,7 @@ _replacePirateShipWithQuicksand:
 	call objectCreateInteractionWithSubid00
 	jp interactionDelete
 	
-_stolenFeatherGottenHandler:
+stolenFeatherGottenHandler:
 	call checkInteractionState
 	jr nz,@state1
 	call objectGetTileAtPosition
@@ -3374,7 +3374,7 @@ _stolenFeatherGottenHandler:
 	ld ($ccab),a
 	jp interactionDelete
 	
-_horonVillagePortalBridgeSpawner:
+horonVillagePortalBridgeSpawner:
 	call checkInteractionState
 	jr nz,@state1
 	xor a
@@ -3411,7 +3411,7 @@ _horonVillagePortalBridgeSpawner:
 	ret
 
 ; Under Vasu's sign, and by wilds ore
-_randomRingDigSpot:
+randomRingDigSpot:
 	call getThisRoomFlags
 	and $20
 	jp nz,interactionDelete
@@ -3419,17 +3419,17 @@ _randomRingDigSpot:
 	call getRandomRingOfGivenTier
 	ld b,c
 	ld c,$03
-	jp _createRingTreasureAtPosition
+	jp createRingTreasureAtPosition
 
-_staticGashaSeed:
+staticGashaSeed:
 	ldbc TREASURE_GASHA_SEED $04
-	jp _misc1_spawnTreasureBCifRoomFlagBit5NotSet
+	jp misc1_spawnTreasureBCifRoomFlagBit5NotSet
 
-_underwaterGashaSeed:
+underwaterGashaSeed:
 	ldbc TREASURE_GASHA_SEED $05
-	jp _misc1_spawnTreasureBCifRoomFlagBit5NotSet
+	jp misc1_spawnTreasureBCifRoomFlagBit5NotSet
 
-_tickTockSecretEntrance:
+tickTockSecretEntrance:
 	call checkInteractionState
 	jr nz,@state1
 	call objectGetTileAtPosition
@@ -3446,7 +3446,7 @@ _tickTockSecretEntrance:
 	call objectGetTileAtPosition
 	cp $04
 	ret z
-_setEnteredWarpSetStairsPlaySolvedSound:
+setEnteredWarpSetStairsPlaySolvedSound:
 	ld c,l
 	ld a,c
 	ld (wEnteredWarpPosition),a
@@ -3456,16 +3456,16 @@ _setEnteredWarpSetStairsPlaySolvedSound:
 	call playSound
 	jp interactionDelete
 
-_graveSecretEntrance:
+graveSecretEntrance:
 	call returnIfScrollMode01Unset
 	call objectGetTileAtPosition
 	cp $01
 	ret z
 	ld a,l
 	ld ($ccc5),a
-	jr _setEnteredWarpSetStairsPlaySolvedSound
+	jr setEnteredWarpSetStairsPlaySolvedSound
 
-_d4MinibossRoom:
+d4MinibossRoom:
 	call checkInteractionState
 	jr nz,+
 	ld a,$01
@@ -3483,7 +3483,7 @@ _d4MinibossRoom:
 	set 7,(hl)
 	jp interactionDelete
 	
-_sentBackFromOnoxCastleBarrier:
+sentBackFromOnoxCastleBarrier:
 	call checkInteractionState
 	jr nz,@state1
 	ld a,GLOBALFLAG_ONOX_CASTLE_BARRIER_GONE
@@ -3508,15 +3508,15 @@ _sentBackFromOnoxCastleBarrier:
 	call showText
 	jp interactionDelete
 	
-_sidescrollingStaticGashaSeed:
+sidescrollingStaticGashaSeed:
 	ldbc TREASURE_GASHA_SEED $04
-	jp _misc1_spawnTreasureBCifRoomFlagBit5NotSet
+	jp misc1_spawnTreasureBCifRoomFlagBit5NotSet
 
-_sidescrollingStaticSeedSatchel:
+sidescrollingStaticSeedSatchel:
 	ld bc,rando.seasonsSlot_d1_basement
-	jp _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
+	jp misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
 
-_mtCuccoBananaTree:
+mtCuccoBananaTree:
 	ld a,($cc4e)
 	or a
 	jp nz,interactionDelete
@@ -3526,7 +3526,7 @@ _mtCuccoBananaTree:
 
 	; RANDO: Spawn whatever's in the item slot
 	ld bc,rando.seasonsSlot_springBananaTree
-	call _misc1_spawnRandomizedTreasureBC
+	call misc1_spawnRandomizedTreasureBC
 
 	ld b,h
 	ld a,$06
@@ -3541,14 +3541,14 @@ _mtCuccoBananaTree:
 	ld (hl),b
 	jp interactionDelete
 
-_hardOre:
+hardOre:
 	call getThisRoomFlags
 	and $40
 	jp z,interactionDelete
 
 	; RANDO: Spawn whatever's in the item slot
 	ld bc,rando.seasonsSlot_greatFurnace
-	jp _misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
+	jp misc1_spawnRandomizedTreasureBCifRoomFlagBit5NotSet
 
 ; TODO: has 3 buttons, 2 keese (linked hero's cave?)
 interactionCode6bSubid23:
@@ -3643,8 +3643,8 @@ interactionCode6c:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _rosaSubId0
-	.dw _rosaSubId1
+	.dw rosaSubId0
+	.dw rosaSubId1
 
 
 ; ==============================================================================
@@ -3654,11 +3654,11 @@ interactionCode6d:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _strangeBrothersSubId0
-	.dw _strangeBrothersSubId1
-	.dw _strangeBrothersSubId2
+	.dw strangeBrothersSubId0
+	.dw strangeBrothersSubId1
+	.dw strangeBrothersSubId2
 
-_rosaSubId0:
+rosaSubId0:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3692,11 +3692,11 @@ _rosaSubId0:
 	ld a,$01
 	ld ($ccab),a
 	ldbc $01 INTERACID_ROSA_HIDING
-	call _spawnHider
+	call spawnHider
 	ld e,a
 	ld bc,@table_67f1
 	call addDoubleIndexToBc
-	call _func_69ac
+	call func_69ac
 	ld a,e
 	cp $04
 	jr z,@func_680c
@@ -3777,7 +3777,7 @@ _rosaSubId0:
 @table_686c:
 	.db $cb $bb $ab $9b $9a
 
-_rosaSubId1:
+rosaSubId1:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -3793,7 +3793,7 @@ _rosaSubId1:
 	call interactionInitGraphics
 	ld e,$43
 	ld a,(de)
-	ld hl,_table_6931
+	ld hl,table_6931
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -3849,7 +3849,7 @@ _rosaSubId1:
 	jr nz,++
 +
 	ld a,$10
-	jr _func_6919
+	jr func_6919
 ++
 	ld e,$6d
 	ld a,(de)
@@ -3864,18 +3864,18 @@ _rosaSubId1:
 	ld a,(bc)
 	or a
 	ldh a,(<hFF8B)
-	jr z,_func_6919
+	jr z,func_6919
 	ld e,$6d
 	ld a,(de)
 	cp $08
 	jr z,+
 	ld a,$08
 	ld (de),a
-	jr _func_6919
+	jr func_6919
 +
 	ld a,$18
 	ld (de),a
-_func_6919:
+func_6919:
 	ld e,$49
 	ld (de),a
 	call objectApplySpeed
@@ -3889,7 +3889,7 @@ _func_6919:
 	ld ($cca4),a
 	ld ($ccab),a
 	jp interactionDelete
-_table_6931:
+table_6931:
 	.dw mainScripts.rosaHidingScript_1stScreen
 	.dw mainScripts.rosaHidingScript_2ndScreen
 	.dw mainScripts.rosaHidingScript_3rdScreen
@@ -3897,14 +3897,14 @@ _table_6931:
 	.dw mainScripts.rosaHidingScript_portalScreen
 	.dw mainScripts.rosaHidingScript_caught
 
-_strangeBrothersSubId0:
+strangeBrothersSubId0:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _strangeBrothersSubId0State1
-	.dw _strangeBrothersSubId0State2
-	.dw _strangeBrothersSubId0State3
+	.dw strangeBrothersSubId0State1
+	.dw strangeBrothersSubId0State2
+	.dw strangeBrothersSubId0State3
 @state0:
 	ld a,$01
 	ld (de),a
@@ -3918,13 +3918,13 @@ _strangeBrothersSubId0:
 	ld ($cfd1),a
 	ld a,GLOBALFLAG_STRANGE_BROTHERS_HIDING_IN_PROGRESS
 	call setGlobalFlag
-_func_6964:
+func_6964:
 	ld a,$01
 	ld ($ccab),a
 	ldbc $01 INTERACID_STRANGE_BROTHERS_HIDING
-	call _spawnHider
+	call spawnHider
 	ldbc $02 INTERACID_STRANGE_BROTHERS_HIDING
-	call _spawnHider
+	call spawnHider
 	ld a,TREASURE_FEATHER
 	call checkTreasureObtained
 	ld a,$01
@@ -3936,12 +3936,12 @@ _func_6964:
 	ld e,$46
 	ld a,(de)
 	cp $06
-	jp z,_func_6995
+	jp z,func_6995
 	ret
-_func_698f:
+func_698f:
 	ld a,(wActiveMusic)
 	call playSound
-_func_6995:
+func_6995:
 	xor a
 	ld ($cc9e),a
 	jp interactionDelete
@@ -3949,7 +3949,7 @@ _func_6995:
 ;;
 ; @param[out]	b	subid
 ; @param[out]	c	id
-_spawnHider:
+spawnHider:
 	call getFreeInteractionSlot
 	dec l
 	set 7,(hl)
@@ -3963,7 +3963,7 @@ _spawnHider:
 	ld (hl),a
 	ret
 
-_func_69ac:
+func_69ac:
 	ld l,$4b
 	ld a,(bc)
 	ldi (hl),a
@@ -3973,7 +3973,7 @@ _func_69ac:
 	ld (hl),a
 	ret
 
-_strangeBrothersSubId0State1:
+strangeBrothersSubId0State1:
 	ld a,($cd00)
 	and $01
 	ret z
@@ -3990,10 +3990,10 @@ _strangeBrothersSubId0State1:
 	ld a,$0b
 	jp playSound
 	
-_strangeBrothersSubId0State2:
+strangeBrothersSubId0State2:
 	ld a,($cfc0)
 	cp $ff
-	jr z,_func_6a23
+	jr z,func_6a23
 	and $03
 	cp $03
 	jr nz,+
@@ -4011,11 +4011,11 @@ _strangeBrothersSubId0State2:
 	ld a,b
 	ld ($cfd1),a
 	cp $51
-	jr z,_func_698f
+	jr z,func_698f
 	ld e,$7a
 	ld a,(de)
 	cp $03
-	jr nz,_func_698f
+	jr nz,func_698f
 	xor a
 	ld (de),a
 	ld h,d
@@ -4028,12 +4028,12 @@ _strangeBrothersSubId0State2:
 	ld b,a
 	ld a,($cc4c)
 	cp b
-	jp nz,_func_698f
-	jp _func_6964
+	jp nz,func_698f
+	jp func_6964
 @table_6a1c:
 	.db $51 $61 $71 $70
 	.db $60 $50 $60
-_func_6a23:
+func_6a23:
 	ld e,Interaction.state
 	ld a,$03
 	ld (de),a
@@ -4042,7 +4042,7 @@ _func_6a23:
 	ld bc,TX_2804
 	jp showText
 
-_strangeBrothersSubId0State3:
+strangeBrothersSubId0State3:
 	ld a,($cfc0)
 	or a
 	ret nz
@@ -4058,8 +4058,8 @@ _strangeBrothersSubId0State3:
 @warpDestVariables:
 	m_HardcodedWarpA ROOM_SEASONS_151 $00 $28 $03
 
-_strangeBrothersSubId1:
-_strangeBrothersSubId2:
+strangeBrothersSubId1:
+strangeBrothersSubId2:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -4394,33 +4394,33 @@ interactionCode71:
 	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
-	.dw _companionScript_subid00
-	.dw _companionScript_subid01
-	.dw _companionScript_subid02
-	.dw _companionScript_subid03
-	.dw _companionScript_subid04
-	.dw _companionScript_subid05
-	.dw _companionScript_subid06
-	.dw _companionScript_subid07
-	.dw _companionScript_subid08
-	.dw _companionScript_subid09
+	.dw companionScript_subid00
+	.dw companionScript_subid01
+	.dw companionScript_subid02
+	.dw companionScript_subid03
+	.dw companionScript_subid04
+	.dw companionScript_subid05
+	.dw companionScript_subid06
+	.dw companionScript_subid07
+	.dw companionScript_subid08
+	.dw companionScript_subid09
 
 ; Ricky running off after jumping up cliff in North Horon
-_companionScript_subid00:
+companionScript_subid00:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScriptDeleteWhenDone
+	.dw companionScript_runScriptDeleteWhenDone
 @state0:
 	ld a,$01
 	ld (de),a
 	ld a,($cc48)
 	and $01
-	jr z,_companionScript_delete
+	jr z,companionScript_delete
 	ld a,($d101)
 	cp $0b
-	jr nz,_companionScript_delete
+	jr nz,companionScript_delete
 	ld a,(wAnimalCompanion)
 	cp $0b
 	jp z,interactionDelete
@@ -4438,27 +4438,27 @@ _companionScript_subid00:
 	jp interactionSetScript
 
 ; Moosh being bullied in Spool
-_companionScript_subid01:
+companionScript_subid01:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScriptDeleteWhenDone
-	.dw _companionScript_giveFlute
-	.dw _companionScriptFunc_6eaf
+	.dw companionScript_runScriptDeleteWhenDone
+	.dw companionScript_giveFlute
+	.dw companionScriptFunc_6eaf
 @state0:
 	ld a,($d101)
 	cp $0d
-	jr nz,_companionScript_delete
+	jr nz,companionScript_delete
 	ld a,(wAnimalCompanion)
 	cp $0d
-	jr nz,_companionScript_delete
+	jr nz,companionScript_delete
 	ld a,$01
 	ld (de),a
 	ld e,$79
 	ld a,$0d
 	ld (de),a
-	call _companionScript_setSubId0AndInitGraphics
+	call companionScript_setSubId0AndInitGraphics
 	ld e,$42
 	ld a,$01
 	ld (de),a
@@ -4472,22 +4472,22 @@ _companionScript_subid01:
 	call interactionSetScript
 	ld a,(wMooshState)
 	bit 5,a
-	jr nz,_companionScript_delete
+	jr nz,companionScript_delete
 	or a
 	ld a,$01
 	ld ($ccf4),a
 	ret nz
 	jp interactionAnimateAsNpc
 
-_companionScript_runScriptDeleteWhenDone:
+companionScript_runScriptDeleteWhenDone:
 	call interactionRunScript
 	ret nc
 	call setStatusBarNeedsRefreshBit1
-_companionScript_delete:
+companionScript_delete:
 	jp interactionDelete
 
 ; Sunken city entrance
-_companionScript_subid02:
+companionScript_subid02:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -4498,12 +4498,12 @@ _companionScript_subid02:
 	ld (de),a
 	ld a,(wLinkObjectIndex)
 	and $01
-	jr z,_companionScript_delete
+	jr z,companionScript_delete
 	ld a,($d101)
 	cp SPECIALOBJECTID_RICKY
 	jr z,@func_6d72
 	cp SPECIALOBJECTID_MOOSH
-	jr nz,_companionScript_delete
+	jr nz,companionScript_delete
 	ld a,$0a
 	ld hl,$d104
 	ldi (hl),a
@@ -4521,14 +4521,14 @@ _companionScript_subid02:
 	ld l,$03
 	ld a,$09
 	ld (hl),a
-	jr _companionScript_delete
+	jr companionScript_delete
 @state1:
 	call interactionRunScript
-	jr c,_companionScript_delete
+	jr c,companionScript_delete
 	ret
 
 ; Moosh in Mt Cucco
-_companionScript_subid06:
+companionScript_subid06:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -4538,7 +4538,7 @@ _companionScript_subid06:
 @state0:
 	ld a,(wMooshState)
 	and $80
-	jr nz,_companionScript_delete
+	jr nz,companionScript_delete
 	ld a,$01
 	ld (de),a
 	ld a,$1c
@@ -4584,7 +4584,7 @@ _companionScript_subid06:
 	add $01
 	ld ($d13f),a
 @goToRunScriptThenDelete:
-	jp _companionScript_runScriptDeleteWhenDone
+	jp companionScript_runScriptDeleteWhenDone
 @state2:
 	ld h,d
 	ld l,$5a
@@ -4595,7 +4595,7 @@ _companionScript_subid06:
 	ld bc,$fec0
 	call objectSetSpeedZ
 	call objectSetVisible80
-	call _companionScript_setSubId0AndInitGraphics
+	call companionScript_setSubId0AndInitGraphics
 	ld a,$06
 	ld e,Interaction.subid
 	ld (de),a
@@ -4616,18 +4616,18 @@ _companionScript_subid06:
 	jp objectSetInvisible
 
 ; Ricky in North Horon
-_companionScript_subid03:
+companionScript_subid03:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScriptDeleteWhenDone
+	.dw companionScript_runScriptDeleteWhenDone
 	.dw @state2
-	.dw _companionScriptFunc_6eaf
+	.dw companionScriptFunc_6eaf
 @state0:
 	ld a,(wRickyState)
 	and $80
-	jp nz,_companionScript_delete2
+	jp nz,companionScript_delete2
 	ld a,$01
 	ld (de),a
 	ld e,$79
@@ -4639,7 +4639,7 @@ _companionScript_subid03:
 @state2:
 	ld a,TREASURE_RICKY_GLOVES
 	call loseTreasure
-_companionScript_giveFlute:
+companionScript_giveFlute:
 	ld a,$01
 	ld ($cc02),a
 	call interactionIncState
@@ -4691,7 +4691,7 @@ _companionScript_giveFlute:
 	call objectSetVisible80
 	jp interactionRunScript
 
-_companionScriptFunc_6eaf:
+companionScriptFunc_6eaf:
 	call retIfTextIsActive
 	ld ($cca4),a
 	call objectSetInvisible
@@ -4705,24 +4705,24 @@ _companionScriptFunc_6eaf:
 	xor a
 	ld ($cca4),a
 	ld ($cc02),a
-	jr _companionScript_delete2
+	jr companionScript_delete2
 
 ; Dimitri in Spool Swamp
-_companionScript_subid04:
+companionScript_subid04:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScriptDeleteWhenDone
-	.dw _companionScript_giveFlute
-	.dw _companionScriptFunc_6eaf
+	.dw companionScript_runScriptDeleteWhenDone
+	.dw companionScript_giveFlute
+	.dw companionScriptFunc_6eaf
 @state0:
 	ld a,(wDimitriState)
 	and $80
-	jr nz,_companionScript_delete2
+	jr nz,companionScript_delete2
 	ld a,(wAnimalCompanion)
 	cp $0c
-	jr nz,_companionScript_delete2
+	jr nz,companionScript_delete2
 	ld a,$01
 	ld (de),a
 	ld e,$79
@@ -4732,16 +4732,16 @@ _companionScript_subid04:
 	jp interactionSetScript
 
 ; Dimitri being bullied
-_companionScript_subid05:
+companionScript_subid05:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _companionScript_runScriptDeleteWhenDone
+	.dw companionScript_runScriptDeleteWhenDone
 @state0:
 	ld a,(wDimitriState)
 	and $80
-	jr nz,_companionScript_delete2
+	jr nz,companionScript_delete2
 
 	; RANDO: Check wFluteIcon instead of wAnimalCompanion (dimitri event in sunken city will
 	; trigger before getting his flute)
@@ -4750,22 +4750,22 @@ _companionScript_subid05:
 	ld a,(wFluteIcon)
 	cp $02
 
-	jr z,_companionScript_delete2
+	jr z,companionScript_delete2
 	ld a,$01
 	ld (de),a
 	ld hl,mainScripts.companionScript_dimitriBeingBullied
 	jp interactionSetScript
 
 ; Moblin rest house
-_companionScript_subid07:
+companionScript_subid07:
 	ld a,(wDimitriState)
 	or $20
 	ld (wDimitriState),a
-_companionScript_delete2:
+companionScript_delete2:
 	jp interactionDelete
 
 ; Sunken city entrance
-_companionScript_subid08:
+companionScript_subid08:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -4776,7 +4776,7 @@ _companionScript_subid08:
 	ld (de),a
 	ld a,($d101)
 	cp SPECIALOBJECTID_DIMITRI
-	jr nz,_companionScript_delete2
+	jr nz,companionScript_delete2
 
 	; RANDO: Check wFluteIcon instead of wAnimalCompanion (dimitri event in sunken city will
 	; trigger before getting his flute)
@@ -4785,7 +4785,7 @@ _companionScript_subid08:
 	ld a,(wFluteIcon)
 	cp $02
 
-	jr z,_companionScript_delete2
+	jr z,companionScript_delete2
 @state1:
 	ld a,($cd00)
 	and $0e
@@ -4817,7 +4817,7 @@ _companionScript_subid08:
 	jp showText
 
 ; 1st screen of North Horon from Eyeglass lake area
-_companionScript_subid09:
+companionScript_subid09:
 	ld h,>wc600Block
 	call checkIsLinkedGame
 	jr nz,+
@@ -4831,9 +4831,9 @@ _companionScript_subid09:
 +
 	ld l,<wRickyState
 	set 5,(hl)
-	jr _companionScript_delete2
+	jr companionScript_delete2
 
-_companionScript_setSubId0AndInitGraphics:
+companionScript_setSubId0AndInitGraphics:
 	ld e,Interaction.subid
 	xor a
 	ld (de),a
@@ -4853,7 +4853,7 @@ interactionCode72:
 	ld e,Interaction.subid
 	ld a,(de)
 	or a
-	jr nz,_blainoSubid01
+	jr nz,blainoSubid01
 	; subid00
 	ld e,Interaction.state
 	ld a,(de)
@@ -4878,7 +4878,7 @@ interactionCode72:
 	ld (hl),$02
 	ld a,$06
 	call objectSetCollideRadius
-	call _seasonsFunc_09_7055
+	call seasonsFunc_09_7055
 	call interactionInitGraphics
 	jr @animate
 ++
@@ -4894,15 +4894,15 @@ interactionCode72:
 	ld a,(de)
 	or a
 	jr z,+
-	call _seasonsFunc_09_7036
-	call _seasonsFunc_09_704f
+	call seasonsFunc_09_7036
+	call seasonsFunc_09_704f
 @animate:
 	call interactionAnimate
 +
 	call objectPreventLinkFromPassing
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
 
-_blainoSubid01:
+blainoSubid01:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
@@ -4960,7 +4960,7 @@ _blainoSubid01:
 	ld bc,$ff40
 	jp objectSetSpeedZ
 
-_seasonsFunc_09_7036:
+seasonsFunc_09_7036:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
@@ -4976,12 +4976,12 @@ _seasonsFunc_09_7036:
 	ld (hl),a
 	jp interactionSetAnimation
 
-_seasonsFunc_09_704f:
+seasonsFunc_09_704f:
 	ld c,$0e
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-_seasonsFunc_09_7055:
+seasonsFunc_09_7055:
 	ld e,Interaction.speedZ
 	ld a,$80
 	ld (de),a
@@ -5446,7 +5446,7 @@ interactionCode76:
 	jr z,@func_7375
 	ld a,$03
 	ld (de),a
-	call _func_745b
+	call func_745b
 	ld e,Interaction.subid
 	ld a,(de)
 	and $1f
@@ -5454,7 +5454,7 @@ interactionCode76:
 	ld a,(de)
 	and $1f
 	ld c,a
-	ld hl,_table_748f
+	ld hl,table_748f
 	rst_addDoubleIndex
 	ld e,$4b
 	ldi a,(hl)
@@ -5463,14 +5463,14 @@ interactionCode76:
 	ldi a,(hl)
 	ld (de),a
 	ld a,c
-	ld hl,_table_7483
+	ld hl,table_7483
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 	call interactionSetScript
 	ld a,c
-	ld hl,_table_7495
+	ld hl,table_7495
 	rst_addAToHl
 	ld a,(hl)
 	jp interactionSetAnimation
@@ -5493,12 +5493,12 @@ interactionCode76:
 	jr z,@delete
 	bit 4,a
 	jr nz,@delete
-	call _func_745b
+	call func_745b
 	ld e,Interaction.subid
 	ld a,(de)
 	and $1f
 	ld c,a
-	ld hl,_table_7489
+	ld hl,table_7489
 	rst_addDoubleIndex
 	ld e,$4b
 	ldi a,(hl)
@@ -5507,7 +5507,7 @@ interactionCode76:
 	ldi a,(hl)
 	ld (de),a
 	ld a,c
-	ld hl,_table_7477
+	ld hl,table_7477
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -5516,7 +5516,7 @@ interactionCode76:
 	ld e,Interaction.subid
 	ld a,(de)
 	and $1f
-	call z,_func_743e
+	call z,func_743e
 	ld a,$78
 	ld ($cc85),a
 	ret
@@ -5560,10 +5560,10 @@ interactionCode76:
 	ld e,Interaction.subid
 	ld a,(de)
 	and $1f
-	call z,_func_743e
+	call z,func_743e
 	ld a,(wDimitriState)
 	and $08
-	jr nz,_func_742a
+	jr nz,func_742a
 ++
 	ld a,($c4ab)
 	or a
@@ -5579,20 +5579,20 @@ interactionCode76:
 	ld e,$77
 	ld (de),a
 	jp interactionRunScript
-_func_742a:
+func_742a:
 	ld e,Interaction.state
 	ld a,$02
 	ld (de),a
 	ld e,Interaction.subid
 	ld a,(de)
 	and $1f
-	ld hl,_table_747d
+	ld hl,table_747d
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
 	jp interactionSetScript
-_func_743e:
+func_743e:
 	xor a
 	ld e,$78
 	ld (de),a
@@ -5614,7 +5614,7 @@ _func_743e:
 	ld (hl),a
 	call setStatusBarNeedsRefreshBit1
 	ret
-_func_745b:
+func_745b:
 	call interactionInitGraphics
 	call interactionSetAlwaysUpdateBit
 	call interactionAnimateAsNpc
@@ -5629,27 +5629,27 @@ _func_745b:
 	ld (hl),a
 	ld a,>TX_2100
 	jp interactionSetHighTextIndex
-_table_7477:
+table_7477:
 	.dw mainScripts.sunkenCityBulliesScript1_bully1
 	.dw mainScripts.sunkenCityBulliesScript1_bully2
 	.dw mainScripts.sunkenCityBulliesScript1_bully3
-_table_747d:
+table_747d:
 	.dw mainScripts.sunkenCityBulliesScript2_bully1
 	.dw mainScripts.sunkenCityBulliesScript2_bully2
 	.dw mainScripts.sunkenCityBulliesScript2_bully3
-_table_7483:
+table_7483:
 	.dw mainScripts.sunkenCityBulliesScript3_bully1
 	.dw mainScripts.sunkenCityBulliesScript3_bully2
 	.dw mainScripts.sunkenCityBulliesScript3_bully3
-_table_7489:
+table_7489:
 	.db $38 $58
 	.db $38 $68
 	.db $28 $48
-_table_748f:
+table_748f:
 	.db $38 $48
 	.db $38 $58
 	.db $58 $48
-_table_7495:
+table_7495:
 	; animation
 	.db $02 $02 $00
 
@@ -5742,7 +5742,7 @@ interactionCode7b:
 @state1:
 	call objectGetTileAtPosition
 	ld (hl),$3f
-	call _func_75e7
+	call func_75e7
 	call nc,interactionAnimate
 	call objectPreventLinkFromPassing
 	ret nc
@@ -5763,10 +5763,10 @@ interactionCode7b:
 	xor $02
 	cp b
 	ret nz
-	call _func_75e7
+	call func_75e7
 	ret c
 	call interactionIncState
-	jp _func_75e1
+	jp func_75e1
 @func_754e:
 	ld a,($ccb0)
 	or a
@@ -5787,7 +5787,7 @@ interactionCode7b:
 	ld ($cc6c),a
 	ret
 @state2:
-	call _func_75e1
+	call func_75e1
 	call interactionAnimate
 	ld a,($cc79)
 	or a
@@ -5840,12 +5840,12 @@ interactionCode7b:
 	.db $00 $10 $04 $0c $08 $08 $0c $04
 	.db $10 $00 $0c $fc $08 $f8 $04 $f4
 	.db $00 $f0 $fc $f4 $f8 $f8 $f4 $fc
-_func_75e1:
+func_75e1:
 	ld e,$46
 	ld a,$14
 	ld (de),a
 	ret
-_func_75e7:
+func_75e7:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld b,a
@@ -5888,7 +5888,7 @@ interactionCode7c:
 	ld e,Interaction.state
 	ld a,$02
 	ld (de),a
-	jp _func_76d4
+	jp func_76d4
 @state2:
 	ld a,($d00f)
 	or a
@@ -5924,7 +5924,7 @@ interactionCode7c:
 	ld (hl),$20
 	ld l,$44
 	inc (hl)
-	call _func_76e0
+	call func_76e0
 	ld a,$71
 	jp playSound
 @func_7671:
@@ -5973,7 +5973,7 @@ interactionCode7c:
 	dec (hl)
 	ld l,$46
 	ld (hl),$1e
-	jr _func_76d4
+	jr func_76d4
 @state4:
 	call interactionAnimate
 	ld e,$61
@@ -5984,7 +5984,7 @@ interactionCode7c:
 	ld a,$02
 	ld (de),a
 	ret
-_func_76d4:
+func_76d4:
 	call objectGetTileAtPosition
 	ld e,$71
 	ld (de),a
@@ -5992,7 +5992,7 @@ _func_76d4:
 	dec h
 	ld (hl),$14
 	ret
-_func_76e0:
+func_76e0:
 	call objectGetTileAtPosition
 	ld e,$71
 	ld a,(de)
@@ -6176,13 +6176,13 @@ interactionCode81:
 	ld (de),a
 	ld e,$7d
 	ld (de),a
-	call _func_7931
+	call func_7931
 	ld e,Interaction.state
 	ld a,$02
 	ld (de),a
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_table_7994
+	ld hl,table_7994
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6221,7 +6221,7 @@ interactionCode81:
 	ld a,($ccea)
 	dec a
 	ld ($ccea),a
-	call _func_7973
+	call func_7973
 	ld a,$04
 	ld ($cc6a),a
 	ld a,$01
@@ -6369,14 +6369,14 @@ interactionCode81:
 	call showText
 	jp interactionDelete
 	
-_func_7931:
+func_7931:
 	ld e,$7b
 	xor a
 	ld (de),a
 	ld e,Interaction.subid
 	ld a,(de)
 	or a
-	jr z,_buyingRibbon
+	jr z,buyingRibbon
 	ld e,$77
 	ld a,(de)
 	or a
@@ -6411,7 +6411,7 @@ _func_7931:
 	ld (de),a
 	ret
 
-_buyingRibbon:
+buyingRibbon:
 	ld a,TREASURE_STAR_ORE
 	call checkTreasureObtained
 	ret nc
@@ -6420,7 +6420,7 @@ _buyingRibbon:
 	ld (de),a
 	ret
 
-_func_7973:
+func_7973:
 	ld e,Interaction.subid
 	ld a,(de)
 	or a
@@ -6446,7 +6446,7 @@ _func_7973:
 	ld c,a
 	jp removeOreChunkValue
 	
-_table_7994:
+table_7994:
 	.dw mainScripts.subrosianShopScript_ribbon
 	.dw mainScripts.subrosianShopScript_bombUpgrade
 	.dw mainScripts.subrosianShopScript_gashaSeed
@@ -6477,7 +6477,7 @@ interactionCode82:
 	xor a
 	ldi (hl),a
 	ld (hl),a
-	call _func_7a99
+	call func_7a99
 	ld l,$46
 	ld (hl),$5a
 	call interactionInitGraphics
@@ -6513,10 +6513,10 @@ interactionCode82:
 	ld e,$46
 	ld a,(de)
 	or a
-	jp z,_func_7a93
+	jp z,func_7a93
 	jp interactionDecCounter1
 @func_7a06:
-	call _func_7a93
+	call func_7a93
 @func_7a09:
 	call interactionAnimate
 	jp objectSetPriorityRelativeToLink_withTerrainEffects
@@ -6535,7 +6535,7 @@ interactionCode82:
 	ld l,$4d
 	ld a,(hl)
 	add $04
-	call _func_7a9f
+	call func_7a9f
 	jp nz,objectApplySpeed
 	call interactionIncSubstate
 	ld l,$46
@@ -6544,7 +6544,7 @@ interactionCode82:
 	xor a
 	ldi (hl),a
 	ld (hl),a
-	jp _func_7aa5
+	jp func_7aa5
 @substate3:
 	call @func_7a09
 	call interactionDecCounter1
@@ -6560,20 +6560,20 @@ interactionCode82:
 	ld a,$05
 	call interactionSetAnimation
 ++
-	jp _func_7aa5
+	jp func_7aa5
 @substate4:
 	call @func_7a09
-	call _func_7aa5
+	call func_7aa5
 	call interactionDecCounter1
 	ret nz
 	jp interactionIncSubstate
 @substate5:
 	call @func_7a06
-	call _func_7aa5
+	call func_7aa5
 	call objectApplySpeed
 	ld e,$76
 	ld a,(de)
-	call _func_7a9f
+	call func_7a9f
 	ret nz
 	ld hl,$cceb
 	ld (hl),$02
@@ -6587,20 +6587,20 @@ interactionCode82:
 	ld l,$46
 	ld (hl),$3c
 	ret
-_func_7a93:
+func_7a93:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-_func_7a99:
+func_7a99:
 	ld bc,$ff40
 	jp objectSetSpeedZ
-_func_7a9f:
+func_7a9f:
 	ld b,a
 	ld e,$4d
 	ld a,(de)
 	cp b
 	ret
-_func_7aa5:
+func_7aa5:
 	ld a,$40
 	call objectGetRelatedObject1Var
 	ld e,$49
@@ -6665,7 +6665,7 @@ interactionCode83:
 	ret nz
 	call getRandomNumber_noPreserveVars
 	and $03
-	ld hl,_table_7b59
+	ld hl,table_7b59
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld e,$54
@@ -6714,7 +6714,7 @@ interactionCode83:
 	ld a,(hl)
 	ld (de),a
 	jp @func_7aea
-_table_7b59:
+table_7b59:
 	; speedZ
 	.dw $fee0
 	.dw $fe80
@@ -6921,7 +6921,7 @@ interactionCode86:
 	inc e
 	ld a,h
 	ld (de),a
-	call _func_7cb3
+	call func_7cb3
 	jp objectSetVisible81
 @state1:
 	ld hl,$cfd3
@@ -6937,13 +6937,13 @@ interactionCode86:
 	cp b
 	jr z,+
 	ld (hl),b
-	call _func_7cb3
+	call func_7cb3
 	jr ++
 +
 	ld e,$61
 	ld a,(de)
 	inc a
-	call z,_func_7cb3
+	call z,func_7cb3
 ++
 	call interactionAnimate
 	ld e,Interaction.subid
@@ -6955,11 +6955,11 @@ interactionCode86:
 	xor b
 	jp z,objectSetInvisible
 	jp objectSetVisible
-_func_7cb3:
+func_7cb3:
 	ld hl,$cfd3
 	ld a,(hl)
 	and $7f
-	ld hl,_table_7cd8
+	ld hl,table_7cd8
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -6969,10 +6969,10 @@ _func_7cb3:
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld e,$4b
-	call _func_7ccd
+	call func_7ccd
 	ld a,(hl)
 	ld e,$4d
-_func_7ccd:
+func_7ccd:
 	ld b,a
 	call getRandomNumber
 	and $03
@@ -6980,37 +6980,37 @@ _func_7ccd:
 	add b
 	ld (de),a
 	ret
-_table_7cd8:
-	.dw _table_7ce2
-	.dw _table_7cec
-	.dw _table_7cf6
-	.dw _table_7d00
-	.dw _table_7d0a
-_table_7ce2:
+table_7cd8:
+	.dw table_7ce2
+	.dw table_7cec
+	.dw table_7cf6
+	.dw table_7d00
+	.dw table_7d0a
+table_7ce2:
 	.db $79 $42
 	.db $7b $4e
 	.db $7e $5b
 	.db $80 $70
 	.db $81 $8a
-_table_7cec:
+table_7cec:
 	.db $00 $38
 	.db $6c $20
 	.db $48 $40
 	.db $3c $91
 	.db $34 $64
-_table_7cf6:
+table_7cf6:
 	.db $2c $7e
 	.db $1e $9e
 	.db $50 $6e
 	.db $28 $24
 	.db $60 $20
-_table_7d00:
+table_7d00:
 	.db $1c $18
 	.db $44 $64
 	.db $00 $5c
 	.db $68 $70
 	.db $74 $34
-_table_7d0a:
+table_7d0a:
 	.db $e0 $e0
 	.db $7b $4e
 	.db $7e $58
@@ -7048,7 +7048,7 @@ interactionCode87:
 	call objectSetVisible83
 	call interactionSetAlwaysUpdateBit
 	call makuTree_setAppropriateStage
-	call _makuTree_spawnGnarledKey
+	call makuTree_spawnGnarledKey
 	ld hl,mainScripts.script710b
 	call interactionSetScript
 	ld a,($cc39)
@@ -7087,7 +7087,7 @@ interactionCode87:
 	jp interactionRunScript
 
 @state1:
-	call _makuTree_setRoomFlag40OnGnarledKeyGet
+	call makuTree_setRoomFlag40OnGnarledKeyGet
 
 @state2:
 	call interactionRunScript
@@ -7180,7 +7180,7 @@ makuTree_setAppropriateStage:
 	ld ($cc39),a
 	ret
 
-_makuTree_setRoomFlag40OnGnarledKeyGet:
+makuTree_setRoomFlag40OnGnarledKeyGet:
 	call getThisRoomFlags
 	and $40
 	ret nz
@@ -7190,7 +7190,7 @@ _makuTree_setRoomFlag40OnGnarledKeyGet:
 	set 6,(hl)
 	ret
 
-_makuTree_spawnGnarledKey:
+makuTree_spawnGnarledKey:
 	call getThisRoomFlags
 	bit 6,a
 	ret nz
@@ -7256,8 +7256,8 @@ interactionCode88:
 	or a
 	jr nz,+
 	call interactionIncSubstate
-	ld hl,_seasonsTable_09_7f33
-	jp _seasonsFunc_09_7f01
+	ld hl,seasonsTable_09_7f33
+	jp seasonsFunc_09_7f01
 +
 	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING
 	call checkGlobalFlag
@@ -7286,22 +7286,22 @@ interactionCode88:
 	call interactionIncSubstate
 	call getRandomNumber_noPreserveVars
 	and $03
-	ld hl,_seasonsTable_09_7f2b
+	ld hl,seasonsTable_09_7f2b
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	jp _seasonsFunc_09_7f01
+	jp seasonsFunc_09_7f01
 +
 	ld e,$70
 	ld a,(de)
 	or a
-	jr nz,_seasonsFunc_09_7ee2
+	jr nz,seasonsFunc_09_7ee2
 	ld a,$01
 	ld (de),a
 	ld e,$47
 	ld a,(de)
-	ld hl,_seasonsTable_09_7f28
+	ld hl,seasonsTable_09_7f28
 	rst_addAToHl
 	ld a,(hl)
 	call loadPaletteHeader
@@ -7315,7 +7315,7 @@ interactionCode88:
 	cp $02
 	jr z,+
 	call objectSetInvisible
-	jr _seasonsFunc_09_7ee2
+	jr seasonsFunc_09_7ee2
 +
 	call getRandomNumber
 	and $01
@@ -7330,7 +7330,7 @@ interactionCode88:
 	call interactionSetAnimation
 	call objectSetVisible
 
-_seasonsFunc_09_7ee2:
+seasonsFunc_09_7ee2:
 	ld e,$47
 	ld a,(de)
 	cp $02
@@ -7352,7 +7352,7 @@ _seasonsFunc_09_7ee2:
 	inc hl
 	inc hl
 
-_seasonsFunc_09_7f01:
+seasonsFunc_09_7f01:
 	ld e,Interaction.relatedObj2
 	ld a,h
 	ld (de),a
@@ -7361,7 +7361,7 @@ _seasonsFunc_09_7f01:
 	ld (de),a
 	ldi a,(hl)
 	inc a
-	jr z,_seasonsFunc_09_7f17
+	jr z,seasonsFunc_09_7f17
 	ld e,$46
 	ld (de),a
 	inc e
@@ -7372,7 +7372,7 @@ _seasonsFunc_09_7f01:
 	ld (de),a
 	ret
 
-_seasonsFunc_09_7f17:
+seasonsFunc_09_7f17:
 	ld h,d
 	ld l,$42
 	ld a,(hl)
@@ -7384,18 +7384,18 @@ _seasonsFunc_09_7f17:
 	ld (hl),$3c
 	ret
 
-_seasonsTable_09_7f28:
+seasonsTable_09_7f28:
 	.db SEASONS_PALH_3b
 	.db SEASONS_PALH_99
 	.db SEASONS_PALH_9a
 
-_seasonsTable_09_7f2b:
-	.dw _seasonsTable_09_7f33
-	.dw _seasonsTable_09_7f33
-	.dw _seasonsTable_09_7f33
-	.dw _seasonsTable_09_7f33
+seasonsTable_09_7f2b:
+	.dw seasonsTable_09_7f33
+	.dw seasonsTable_09_7f33
+	.dw seasonsTable_09_7f33
+	.dw seasonsTable_09_7f33
 
-_seasonsTable_09_7f33:
+seasonsTable_09_7f33:
 	.db $3c $00
 	.db $02 $01
 	.db $04 $00

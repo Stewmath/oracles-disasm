@@ -218,9 +218,9 @@ interactionCodeac:
 	call checkGlobalFlag
 	jp nz,interactionDelete
 
-	call _childSetVar38ToNumEssencesObtained
+	call childSetVar38ToNumEssencesObtained
 	call @checkUpdateState
-	call _spawnBipinBlossomFamilyObjects
+	call spawnBipinBlossomFamilyObjects
 	ld hl,wSeedTreeRefilledBitset
 .ifdef ROM_AGES
 	res 1,(hl)
@@ -262,9 +262,9 @@ interactionCodeac:
 	ld a,(wNextChildStage)
 	ld (wChildStage),a
 	cp $04
-	jp z,_decideInitialChildPersonality
+	jp z,decideInitialChildPersonality
 	cp $07
-	jp z,_decideFinalChildPersonality
+	jp z,decideFinalChildPersonality
 	ret
 
 @need2Essences:
@@ -306,12 +306,12 @@ initializeChildOnGameStart:
 	ldi (hl),a
 
 ;;
-_decideInitialChildPersonality:
-	ld hl,_initialChildPersonalityTable
-	jr _label_0b_006
+decideInitialChildPersonality:
+	ld hl,initialChildPersonalityTable
+	jr label_0b_006
 
 ;;
-_decideFinalChildPersonality:
+decideFinalChildPersonality:
 	; a = [wChildPersonality] * 6
 	ld a,(wChildPersonality)
 	add a
@@ -319,9 +319,9 @@ _decideFinalChildPersonality:
 	add a
 	add b
 
-	ld hl,_finalChildPersonalityTable
+	ld hl,finalChildPersonalityTable
 	rst_addAToHl
-_label_0b_006:
+label_0b_006:
 	ld a,(wChildStatus)
 @label_0b_007:
 	cp (hl)
@@ -335,12 +335,12 @@ _label_0b_006:
 	ld (wChildPersonality),a
 	ret
 
-_initialChildPersonalityTable:
+initialChildPersonalityTable:
 	.db $0b $00 ; status >= 11: Hyperactive
 	.db $06 $01 ; status >= 6:  Shy
 	.db $00 $02 ; status >= 0:  Curious
 
-_finalChildPersonalityTable:
+finalChildPersonalityTable:
 	; Hyperactive
 	.db $1a $02 ; status >= 26: Arborist
 	.db $15 $01 ; status >= 21: Warrior
@@ -357,7 +357,7 @@ _finalChildPersonalityTable:
 	.db $00 $03 ; status >= 0:  Singer
 
 ;;
-_childSetVar38ToNumEssencesObtained:
+childSetVar38ToNumEssencesObtained:
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
 	jr c,+
@@ -379,7 +379,7 @@ _childSetVar38ToNumEssencesObtained:
 ; Spawn bipin, blossom, and child objects depending on the stage of the child's
 ; development, which part of the house this is, and the child's personality.
 ;
-_spawnBipinBlossomFamilyObjects:
+spawnBipinBlossomFamilyObjects:
 	ld e,Interaction.subid
 	ld a,(de)
 	or a

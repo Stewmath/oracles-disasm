@@ -1,5 +1,5 @@
 ; See data/ages/itemUsageTables.s for documentation.
-_itemUsageParameterTable:
+itemUsageParameterTable:
 	.db $00 <wGameKeysPressed       ; ITEMID_NONE
 	.db $05 <wGameKeysPressed       ; ITEMID_SHIELD
 	.db $03 <wGameKeysJustPressed   ; ITEMID_PUNCH
@@ -34,7 +34,7 @@ _itemUsageParameterTable:
 	.db $00 <wGameKeysJustPressed   ; ITEMID_1f
 
 
-_linkItemAnimationTable:
+linkItemAnimationTable:
 	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_NONE
 	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_SHIELD
 	.db $d6  LINK_ANIM_MODE_21	; ITEMID_PUNCH

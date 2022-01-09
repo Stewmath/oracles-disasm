@@ -17,11 +17,11 @@ enemyCode0f:
 	ret c
 	jp z,enemyDie
 	dec a
-	jp nz,_ecom_updateKnockback
+	jp nz,ecom_updateKnockback
 	ret
 
 @normalStatus:
-	call _ecom_checkScentSeedActive
+	call ecom_checkScentSeedActive
 	jr z,++
 	ld e,Enemy.speed
 	ld a,SPEED_140
@@ -30,20 +30,20 @@ enemyCode0f:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _veranSpider_state_uninitialized
-	.dw _veranSpider_state_stub
-	.dw _veranSpider_state_stub
-	.dw _veranSpider_state_switchHook
-	.dw _veranSpider_state_scentSeed
-	.dw _ecom_blownByGaleSeedState
-	.dw _veranSpider_state_stub
-	.dw _veranSpider_state_stub
-	.dw _veranSpider_state8
-	.dw _veranSpider_state9
-	.dw _veranSpider_stateA
+	.dw veranSpider_state_uninitialized
+	.dw veranSpider_state_stub
+	.dw veranSpider_state_stub
+	.dw veranSpider_state_switchHook
+	.dw veranSpider_state_scentSeed
+	.dw ecom_blownByGaleSeedState
+	.dw veranSpider_state_stub
+	.dw veranSpider_state_stub
+	.dw veranSpider_state8
+	.dw veranSpider_state9
+	.dw veranSpider_stateA
 
 
-_veranSpider_state_uninitialized:
+veranSpider_state_uninitialized:
 	ld a,PALH_8a
 	call loadPaletteHeader
 
@@ -78,9 +78,9 @@ _veranSpider_state_uninitialized:
 	ret nz
 
 	ld c,$08
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 	ld a,SPEED_60
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 
 	ld l,Enemy.collisionType
 	set 7,(hl)
@@ -90,11 +90,11 @@ _veranSpider_state_uninitialized:
 	jp objectSetVisiblec1
 
 
-_veranSpider_state_switchHook:
+veranSpider_state_switchHook:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _ecom_incSubstate
+	.dw ecom_incSubstate
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
@@ -105,25 +105,25 @@ _veranSpider_state_switchHook:
 
 @substate3:
 	ld b,$09
-	jp _ecom_fallToGroundAndSetState
+	jp ecom_fallToGroundAndSetState
 
 
-_veranSpider_state_scentSeed:
+veranSpider_state_scentSeed:
 	ld a,(wScentSeedActive)
 	or a
-	jr z,_veranSpider_gotoState9
+	jr z,veranSpider_gotoState9
 
-	call _ecom_updateAngleToScentSeed
+	call ecom_updateAngleToScentSeed
 	ld e,Enemy.angle
 	ld a,(de)
 	and $18
 	add $04
 	ld (de),a
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 
 
 ;;
-_veranSpider_updateAnimation:
+veranSpider_updateAnimation:
 	ld h,d
 	ld l,Enemy.animCounter
 	ld a,(hl)
@@ -136,7 +136,7 @@ _veranSpider_updateAnimation:
 	jp enemyAnimate
 
 ;;
-_veranSpider_gotoState9:
+veranSpider_gotoState9:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$09
@@ -145,12 +145,12 @@ _veranSpider_gotoState9:
 	ret
 
 
-_veranSpider_state_stub:
+veranSpider_state_stub:
 	ret
 
 
 ; Falling from sky
-_veranSpider_state8:
+veranSpider_state8:
 	ld c,$0e
 	call objectUpdateSpeedZ_paramC
 	ret nz
@@ -171,12 +171,12 @@ _veranSpider_state8:
 	ld a,SND_BOMB_LAND
 	call playSound
 
-	call _veranSpider_setRandomAngleAndCounter1
-	jr _veranSpider_animate
+	call veranSpider_setRandomAngleAndCounter1
+	jr veranSpider_animate
 
 
 ; Moving in some direction for [counter1] frames
-_veranSpider_state9:
+veranSpider_state9:
 	; Check if Link is along a diagonal relative to self?
 	call objectGetAngleTowardEnemyTarget
 	and $07
@@ -191,12 +191,12 @@ _veranSpider_state9:
 	or a
 	jr nz,@moveNormally
 
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	and $18
 	add $04
 	ld (de),a
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.speed
 	ld (hl),SPEED_140
 	ld l,Enemy.counter1
@@ -204,32 +204,32 @@ _veranSpider_state9:
 	ret
 
 @moveNormally:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	dec l
 	dec (hl) ; [counter1]--
-	call nz,_ecom_applyVelocityForSideviewEnemyNoHoles
-	jp z,_veranSpider_setRandomAngleAndCounter1
+	call nz,ecom_applyVelocityForSideviewEnemyNoHoles
+	jp z,veranSpider_setRandomAngleAndCounter1
 
-_veranSpider_animate:
+veranSpider_animate:
 	jp enemyAnimate
 
 
 ; Charging in some direction for [counter1] frames
-_veranSpider_stateA:
-	call _ecom_decCounter1
+veranSpider_stateA:
+	call ecom_decCounter1
 	jr z,++
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
-	jp nz,_veranSpider_updateAnimation
+	call ecom_applyVelocityForSideviewEnemyNoHoles
+	jp nz,veranSpider_updateAnimation
 ++
-	call _veranSpider_gotoState9
+	call veranSpider_gotoState9
 	ld l,Enemy.counter2
 	ld (hl),$40
 
 
 ;;
-_veranSpider_setRandomAngleAndCounter1:
+veranSpider_setRandomAngleAndCounter1:
 	ld bc,$1870
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld e,Enemy.angle
 	ld a,b
 	add $04
@@ -310,26 +310,26 @@ enemyCode11:
 	; Note: b == parent (ENEMYID_EYESOAR), which is used in some of the states below.
 	ld a,(de)
 	rst_jumpTable
-	.dw _eyesoarChild_state_uninitialized
-	.dw _eyesoarChild_state_stub
-	.dw _eyesoarChild_state_stub
-	.dw _eyesoarChild_state_stub
-	.dw _eyesoarChild_state_stub
-	.dw _eyesoarChild_state_stub
-	.dw _eyesoarChild_state_stub
-	.dw _eyesoarChild_state_stub
-	.dw _eyesoarChild_state8
-	.dw _eyesoarChild_state9
-	.dw _eyesoarChild_stateA
-	.dw _eyesoarChild_stateB
-	.dw _eyesoarChild_stateC
-	.dw _eyesoarChild_stateD
-	.dw _eyesoarChild_stateE
-	.dw _eyesoarChild_stateF
-	.dw _eyesoarChild_state10
+	.dw eyesoarChild_state_uninitialized
+	.dw eyesoarChild_state_stub
+	.dw eyesoarChild_state_stub
+	.dw eyesoarChild_state_stub
+	.dw eyesoarChild_state_stub
+	.dw eyesoarChild_state_stub
+	.dw eyesoarChild_state_stub
+	.dw eyesoarChild_state_stub
+	.dw eyesoarChild_state8
+	.dw eyesoarChild_state9
+	.dw eyesoarChild_stateA
+	.dw eyesoarChild_stateB
+	.dw eyesoarChild_stateC
+	.dw eyesoarChild_stateD
+	.dw eyesoarChild_stateE
+	.dw eyesoarChild_stateF
+	.dw eyesoarChild_state10
 
 
-_eyesoarChild_state_uninitialized:
+eyesoarChild_state_uninitialized:
 	ld a,Object.yh
 	call objectGetRelatedObject1Var
 	ld b,(hl)
@@ -353,20 +353,20 @@ _eyesoarChild_state_uninitialized:
 	ld a,90
 	ld (de),a
 	ld a,SPEED_100
-	jp _ecom_setSpeedAndState8
+	jp ecom_setSpeedAndState8
 
 @initialAnglesForSubids:
 	.db ANGLE_UP, ANGLE_RIGHT, ANGLE_DOWN, ANGLE_LEFT
 
 
 
-_eyesoarChild_state_stub:
+eyesoarChild_state_stub:
 	ret
 
 
 ; Wait for [counter1] frames before becoming visible
-_eyesoarChild_state8:
-	call _ecom_decCounter1
+eyesoarChild_state8:
+	call ecom_decCounter1
 	ret nz
 	ldbc INTERACID_0b,$02
 	call objectCreateInteraction
@@ -378,16 +378,16 @@ _eyesoarChild_state8:
 	ld a,h
 	ld (de),a
 
-	jp _ecom_incState
+	jp ecom_incState
 
 
-_eyesoarChild_state9:
+eyesoarChild_state9:
 	ld a,Object.animParameter
 	call objectGetRelatedObject2Var
 	bit 7,(hl)
 	ret z
 
-	call _ecom_incState
+	call ecom_incState
 	ld l,Enemy.counter1
 	ld (hl),$f0
 	ld l,Enemy.zh
@@ -398,11 +398,11 @@ _eyesoarChild_state9:
 
 
 ; Moving around Eyesoar in a circle
-_eyesoarChild_stateA:
+eyesoarChild_stateA:
 	ld h,b
 	ld l,Enemy.var39
 	bit 2,(hl)
-	jr z,_eyesoarChild_updatePosition
+	jr z,eyesoarChild_updatePosition
 
 	ld l,Enemy.var38
 	ld a,(hl)
@@ -414,7 +414,7 @@ _eyesoarChild_stateA:
 	ld (de),a
 
 ;;
-_eyesoarChild_updatePosition:
+eyesoarChild_updatePosition:
 	ld l,Enemy.yh
 	ld b,(hl)
 	ld l,Enemy.xh
@@ -436,13 +436,13 @@ _eyesoarChild_updatePosition:
 	jp enemyAnimate
 
 
-_eyesoarChild_stateB:
+eyesoarChild_stateB:
 	; Check if we're the correct distance away
 	ld h,d
 	ld l,Enemy.var31
 	ldd a,(hl)
 	cp (hl) ; [var30]
-	jr nz,_eyesoarChild_incOrDecHL
+	jr nz,eyesoarChild_incOrDecHL
 
 	ld l,e
 	dec (hl) ; [state]
@@ -453,10 +453,10 @@ _eyesoarChild_stateB:
 	ld e,Enemy.subid
 	ld a,(de)
 	call setFlag
-	jr _eyesoarChild_updatePosition
+	jr eyesoarChild_updatePosition
 
 
-_eyesoarChild_incOrDecHL:
+eyesoarChild_incOrDecHL:
 	ld a,$01
 	jr nc,+
 	ld a,$ff
@@ -464,16 +464,16 @@ _eyesoarChild_incOrDecHL:
 	add (hl)
 	ld (hl),a
 	ld h,b
-	jr _eyesoarChild_updatePosition
+	jr eyesoarChild_updatePosition
 
 
 ; Was just "killed"; waiting a bit before reappearing
-_eyesoarChild_stateC:
+eyesoarChild_stateC:
 	ld h,b
 	ld l,Enemy.var39
 	bit 0,(hl)
 	jr nz,@stillInvisible
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@stillInvisible
 
 	ld l,e
@@ -483,7 +483,7 @@ _eyesoarChild_stateC:
 	set 7,(hl)
 	call objectSetVisiblec2
 	ld h,b
-	jr _eyesoarChild_updatePosition
+	jr eyesoarChild_updatePosition
 
 @stillInvisible:
 	ld h,b
@@ -502,7 +502,7 @@ _eyesoarChild_stateC:
 
 
 ; Just reappeared
-_eyesoarChild_stateD:
+eyesoarChild_stateD:
 	; Update position relative to eyesoar
 	ld h,b
 	ld l,Enemy.var38
@@ -511,29 +511,29 @@ _eyesoarChild_stateD:
 	ld h,d
 	ld l,Enemy.var30
 	cp (hl)
-	jr nz,_eyesoarChild_incOrDecHL
+	jr nz,eyesoarChild_incOrDecHL
 
 	; Reached desired position, go back to state $0a
 	ld l,Enemy.state
 	ld (hl),$0a
 
 	ld h,b
-	jp _eyesoarChild_updatePosition
+	jp eyesoarChild_updatePosition
 
 
-_eyesoarChild_stateE:
+eyesoarChild_stateE:
 	ld h,b
 	ld l,Enemy.var39
 	bit 4,(hl)
-	jp nz,_eyesoarChild_updatePosition
+	jp nz,eyesoarChild_updatePosition
 
 	ld a,$0b
 	ld (de),a ; [state]
-	jp _eyesoarChild_updatePosition
+	jp eyesoarChild_updatePosition
 
 
 ; Moving around randomly
-_eyesoarChild_stateF:
+eyesoarChild_stateF:
 	ld h,b
 	ld l,Enemy.var39
 	bit 3,(hl)
@@ -548,13 +548,13 @@ _eyesoarChild_stateF:
 	ld e,Enemy.angle
 	ld (de),a
 
-	call _ecom_incState
+	call ecom_incState
 
 	; $18 units away from Eyesoar
 	ld l,Enemy.var30
 	ld (hl),$18
 
-	jr _eyesoarChild_animate
+	jr eyesoarChild_animate
 
 @stillMovingRandomly:
 	ld a,(wFrameCounter)
@@ -564,14 +564,14 @@ _eyesoarChild_stateF:
 	call objectNudgeAngleTowards
 +
 	call objectApplySpeed
-	call _ecom_bounceOffScreenBoundary
+	call ecom_bounceOffScreenBoundary
 
-_eyesoarChild_animate:
+eyesoarChild_animate:
 	jp enemyAnimate
 
 
 ; Moving back toward Eyesoar
-_eyesoarChild_state10:
+eyesoarChild_state10:
 	; Load into wTmpcec0 the position offset relative to Eyesoar where we should be
 	; moving to
 	ld h,b
@@ -612,8 +612,8 @@ _eyesoarChild_state10:
 	cp c
 	jr z,@reachedTargetPosition
 ++
-	call _ecom_moveTowardPosition
-	jr _eyesoarChild_animate
+	call ecom_moveTowardPosition
+	jr eyesoarChild_animate
 
 @reachedTargetPosition:
 	; Wait for signal to change state
@@ -645,7 +645,7 @@ enemyCode1f:
 	ret c
 	jp z,enemyDie
 	dec a
-	jp nz,_ecom_updateKnockbackNoSolidity
+	jp nz,ecom_updateKnockbackNoSolidity
 	ret
 
 @normalStatus:
@@ -657,7 +657,7 @@ enemyCode1f:
 	.dw @state_stub
 	.dw @state_stub
 	.dw @state_stub
-	.dw _ecom_blownByGaleSeedState
+	.dw ecom_blownByGaleSeedState
 	.dw @state_stub
 	.dw @state_stub
 	.dw @state8
@@ -667,7 +667,7 @@ enemyCode1f:
 
 @state_uninitialized:
 	ld a,SPEED_200
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld l,Enemy.counter1
 	ld (hl),$10
 
@@ -689,7 +689,7 @@ enemyCode1f:
 
 
 @state8:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,++
 	call objectApplySpeed
 	jr @animate
@@ -702,11 +702,11 @@ enemyCode1f:
 
 
 @state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 	ld l,e
 	inc (hl) ; [state]
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 
 
 @stateA:
@@ -757,7 +757,7 @@ enemyCode26:
 +
 	ld b,$00
 	call objectTakePositionWithOffset
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	jp objectSetVisible81
 
 
@@ -770,11 +770,11 @@ enemyCode26:
 	jr nz,@popBubble
 
 	call objectApplySpeed
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 	jr z,@animate
 
 	; Each time it bounces off a wall, decrement counter1
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@popBubble
 
 @animate:
@@ -817,7 +817,7 @@ enemyCode26:
 
 ; Bubble in the process of popping
 @state2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 	jp enemyDelete
 
@@ -829,7 +829,7 @@ enemyCode2b:
 	ld e,Enemy.state
 	ld a,(de)
 	or a
-	jp z,_ecom_incState
+	jp z,ecom_incState
 
 	ld hl,w1Link.xh
 	ld a,(hl)

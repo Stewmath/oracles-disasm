@@ -7,9 +7,9 @@ enemyCode70:
 	ret c
 	jp z,@dead
 	dec a
-	jp nz,_ecom_updateKnockback
+	jp nz,ecom_updateKnockback
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 	rst_jumpTable
 	.dw @state0
@@ -32,7 +32,7 @@ enemyCode70:
 	or a
 	jr nz,@func_45f0
 	ld b,ENEMYID_BROTHER_GORIYAS
-	call _ecom_spawnEnemyWithSubid01
+	call ecom_spawnEnemyWithSubid01
 	ret nz
 	ld l,$96
 	ld e,l
@@ -57,7 +57,7 @@ enemyCode70:
 
 @func_45f0:
 	ld a,$32
-	call _ecom_setSpeedAndState8AndVisible
+	call ecom_setSpeedAndState8AndVisible
 	ld e,$82
 	ld a,(de)
 	or a
@@ -75,7 +75,7 @@ enemyCode70:
 	ld (de),a
 	ld b,$00
 	dec a
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 @stateStub:
 	ret
@@ -160,31 +160,31 @@ enemyCode70:
 	ret
 	
 @@func_4682:
-	call _ecom_moveTowardPosition
-	call _ecom_updateAnimationFromAngle
+	call ecom_moveTowardPosition
+	call ecom_updateAnimationFromAngle
 @@animate:
 	jp enemyAnimate
 
 @@state9:
-	call _func_4809
+	call func_4809
 	jr z,@@animate
 	ld e,$90
 	ld a,$23
 	ld (de),a
-	call _func_4797
+	call func_4797
 	jr c,@@func_46af
 @@func_469a:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr nz,+
 	ld (hl),$3c
 	call @@func_46a9
 +
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jr nz,@@animate
 	
 @@func_46a9:
-	call _ecom_setRandomCardinalAngle
-	jp _ecom_updateAnimationFromAngle
+	call ecom_setRandomCardinalAngle
+	jp ecom_updateAnimationFromAngle
 	
 @@func_46af:
 	ld a,$09
@@ -205,7 +205,7 @@ enemyCode70:
 	ld e,$90
 	ld a,c
 	ld (de),a
-	call _func_47c0
+	call func_47c0
 	call objectGetRelativeAngle
 	ld b,a
 	ld e,$b1
@@ -214,9 +214,9 @@ enemyCode70:
 	and $1f
 	ld e,$89
 	ld (de),a
-	call _ecom_updateAnimationFromAngle
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
-	call _func_47d0
+	call ecom_updateAnimationFromAngle
+	call ecom_applyVelocityForSideviewEnemyNoHoles
+	call func_47d0
 	jr @@animate2
 
 @@stateA:
@@ -230,7 +230,7 @@ enemyCode70:
 	jr @@animate2
 +
 	ld b,PARTID_38
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	jr nz,@@animate2
 	ld l,$f0
 	ldh a,(<hEnemyTargetY)
@@ -266,7 +266,7 @@ enemyCode70:
 	or a
 	jr z,+
 	dec a
-	call z,_func_47a5
+	call z,func_47a5
 	jr @@animate2
 +
 	ld a,$19
@@ -309,12 +309,12 @@ enemyCode70:
 	ret
 
 @@state9:
-	call _func_4809
+	call func_4809
 	jp z,enemyAnimate
 	ld e,$90
 	ld a,$28
 	ld (de),a
-	call _func_4797
+	call func_4797
 	jp c,@subid0@func_46af
 	jp @subid0@func_469a
 
@@ -323,7 +323,7 @@ enemyCode70:
 	ld a,(de)
 	or a
 	jr z,+
-	call _ecom_killRelatedObj1
+	call ecom_killRelatedObj1
 	ld e,$97
 	xor a
 	ld (de),a
@@ -338,9 +338,9 @@ enemyCode70:
 	ld (hl),a
 	ld (de),a
 +
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 	
-_func_4797:
+func_4797:
 	ldh a,(<hEnemyTargetY)
 	sub $40
 	cp $30
@@ -350,7 +350,7 @@ _func_4797:
 	cp $70
 	ret
 
-_func_47a5:
+func_47a5:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
@@ -364,9 +364,9 @@ _func_47a5:
 	call objectGetRelativeAngle
 	ld e,$89
 	ld (de),a
-	jp _ecom_updateAnimationFromAngle
+	jp ecom_updateAnimationFromAngle
 	
-_func_47c0:
+func_47c0:
 	ld b,$58
 	ld c,b
 	ldh a,(<hEnemyTargetX)
@@ -378,7 +378,7 @@ _func_47c0:
 	ld c,$98
 	ret
 	
-_func_47d0:
+func_47d0:
 	call objectGetAngleTowardEnemyTarget
 	ld c,a
 	ld h,d
@@ -417,9 +417,9 @@ _func_47d0:
 	ld e,$89
 	ld (de),a
 ++
-	jp _ecom_applyVelocityForSideviewEnemyNoHoles
+	jp ecom_applyVelocityForSideviewEnemyNoHoles
 	
-_func_4809:
+func_4809:
 	ld e,$86
 	ld a,(de)
 	or a
@@ -429,7 +429,7 @@ _func_4809:
 	ret nz
 +
 	ld bc,$0130
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld e,$86
 	ld a,$20
 	add c
@@ -445,8 +445,8 @@ _func_4809:
 	ld h,(hl)
 	ld l,$86
 	ld (hl),c
-	call _ecom_updateAngleTowardTarget
-	call _ecom_updateAnimationFromAngle
+	call ecom_updateAngleTowardTarget
+	call ecom_updateAnimationFromAngle
 	xor a
 	ret
 
@@ -468,7 +468,7 @@ enemyCode71:
 	ld a,(de)
 	or a
 	jp nz,enemyDie
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 @normalStatus:
 	ld e,$84
@@ -489,7 +489,7 @@ enemyCode71:
 	.dw @stateC
 
 @state0:
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld l,$8b
 	ld (hl),$58
 	ld l,$8d
@@ -499,7 +499,7 @@ enemyCode71:
 	or a
 	ld a,$ff
 	ld b,$00
-	jp z,_enemyBoss_initializeRoom
+	jp z,enemyBoss_initializeRoom
 	ld l,$86
 	ld (hl),$3c
 	ld l,$84
@@ -523,7 +523,7 @@ enemyCode71:
 	jp playSound
 
 @state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld a,$78
 	ld (hl),a
@@ -552,7 +552,7 @@ enemyCode71:
 	.db $02
 
 @stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	and $1f
@@ -593,7 +593,7 @@ enemyCode71:
 	ret
 
 @@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$46
 	ld l,e
@@ -601,7 +601,7 @@ enemyCode71:
 	ret
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp z,@func_49e3
 	ld a,(hl)
 	and $0f
@@ -640,7 +640,7 @@ enemyCode71:
 	jp objectSetInvisible
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp z,@func_49e3
 	ld a,(hl)
 	and $1f
@@ -664,7 +664,7 @@ enemyCode71:
 	jp enemySetAnimation
 
 @@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp z,@func_49e3
 	ld a,(hl)
 	and $0f
@@ -692,7 +692,7 @@ enemyCode71:
 
 @func_498c:
 	ld b,ENEMYID_BEETLE
-	call _ecom_spawnEnemyWithSubid01
+	call ecom_spawnEnemyWithSubid01
 	ret nz
 	ld l,$96
 	ld a,$80
@@ -718,11 +718,11 @@ enemyCode71:
 
 @func_49b2:
 	ld b,PARTID_2e
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	push hl
 	ld bc,$1f1f
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	pop hl
 	ldh a,(<hEnemyTargetY)
 	add b
@@ -742,7 +742,7 @@ enemyCode71:
 
 @func_49d9:
 	ld b,PARTID_VOLCANO_ROCK
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	ld l,$c2
 	inc (hl)
@@ -760,7 +760,7 @@ enemyCode71:
 	ld l,$81
 	ld a,(hl)
 	cp $51
-	call z,_ecom_killObjectH
+	call z,ecom_killObjectH
 	inc h
 	ld a,h
 	cp $e0
@@ -794,7 +794,7 @@ enemyCode72:
 	cp $e0
 	jr c,-
 @dead:
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 @justHitOrKnockback:
 	ld e,$aa
@@ -831,8 +831,8 @@ enemyCode72:
 @state0:
 	ld b,$00
 	ld a,$72
-	call _enemyBoss_initializeRoom
-	jp _ecom_setSpeedAndState8
+	call enemyBoss_initializeRoom
+	jp ecom_setSpeedAndState8
 
 @state2:
 	inc e
@@ -853,13 +853,13 @@ enemyCode72:
 	ld (hl),$78
 	ld l,$a4
 	res 7,(hl)
-	call _func_4c7f
+	call func_4c7f
 	ld a,$03
 	call enemySetAnimation
 	jp objectSetVisiblec1
 	
 @@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $2d
@@ -871,7 +871,7 @@ enemyCode72:
 	jp dropLinkHeldItem
 	
 @@substate2:
-	call _func_4c3c
+	call func_4c3c
 	jp enemyAnimate
 	
 @@substate3:
@@ -902,11 +902,11 @@ enemyCode72:
 @state4:
 	ld a,($ccf0)
 	or a
-	jp z,_func_4c65
+	jp z,func_4c65
 	ld e,$a1
 	ld a,(de)
 	or a
-	call nz,_func_4d54
+	call nz,func_4d54
 	ld hl,$d000
 	call preventObjectHFromPassingObjectD
 	call objectAddToGrabbableObjectBuffer
@@ -929,7 +929,7 @@ enemyCode72:
 	jp playSound
 	
 @state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	inc (hl)
 	call getRandomNumber_noPreserveVars
@@ -956,7 +956,7 @@ enemyCode72:
 @stateA:
 	ld hl,$d000
 	call preventObjectHFromPassingObjectD
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 	ld l,$84
 	inc (hl)
@@ -983,19 +983,19 @@ enemyCode72:
 	ld e,$a1
 	ld a,(de)
 	inc a
-	jp z,_func_4c65
+	jp z,func_4c65
 	dec a
-	call nz,_func_4d54
+	call nz,func_4d54
 @animate:
 	jp enemyAnimate
 	
 @stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld c,$12
 	call objectUpdateSpeedZ_paramC
 	call z,@func_4aaf
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jr @animate
 +
 	ld l,e
@@ -1021,7 +1021,7 @@ enemyCode72:
 	ld a,$04
 	jp enemySetAnimation
 +
-	call _func_4cb6
+	call func_4cb6
 	ld l,$84
 	inc (hl)
 	ld l,$90
@@ -1033,7 +1033,7 @@ enemyCode72:
 	call enemyAnimate
 	ld h,d
 	ld l,$b2
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	cp c
 	jr nz,@moveTowardPosition
 	ldh a,(<hFF8F)
@@ -1058,7 +1058,7 @@ enemyCode72:
 	call enemySetAnimation
 	jr @func_4bf9
 @moveTowardPosition:
-	jp _ecom_moveTowardPosition
+	jp ecom_moveTowardPosition
 	
 @stateF:
 	ld e,$a1
@@ -1068,7 +1068,7 @@ enemyCode72:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	jr z,+
-	call _func_4d36
+	call func_4d36
 	jr nc,@moveTowardPosition
 	ret
 +
@@ -1131,9 +1131,9 @@ enemyCode72:
 	ld c,$18
 	call objectUpdateSpeedZ_paramC
 	jp nz,objectApplySpeed
-	jp _func_4c65
+	jp func_4c65
 	
-_func_4c3c:
+func_4c3c:
 	ld e,$8f
 	ld a,(de)
 	or a
@@ -1147,7 +1147,7 @@ _func_4c3c:
 	cp d
 	jr z,+
 	push hl
-	call _func_4c88
+	call func_4c88
 	pop hl
 	jr z,++
 +
@@ -1163,11 +1163,11 @@ _func_4c3c:
 ++
 	pop hl
 	
-_func_4c65:
+func_4c65:
 	ld b,INTERACID_SPLASH
 	call objectCreateInteractionWithSubid00
 	ld h,d
-_func_4c6b:
+func_4c6b:
 	ld l,$84
 	ld (hl),$09
 	ld l,$a4
@@ -1179,7 +1179,7 @@ _func_4c6b:
 	ld l,$9a
 	res 7,(hl)
 	
-_func_4c7f:
+func_4c7f:
 	ld l,$b0
 	ld c,(hl)
 	ld b,$cf
@@ -1187,7 +1187,7 @@ _func_4c7f:
 	ld (bc),a
 	ret
 
-_func_4c88:
+func_4c88:
 	push de
 	ld d,h
 	ld e,$8b
@@ -1202,7 +1202,7 @@ _func_4c88:
 	pop hl
 	cp $fe
 	ret nz
-	call _func_4c6b
+	call func_4c6b
 	ld l,$8b
 	ld b,(hl)
 	ld l,$8d
@@ -1218,7 +1218,7 @@ _func_4c88:
 	xor a
 	ret
 	
-_func_4cb6:
+func_4cb6:
 	call objectGetTileAtPosition
 	ld c,l
 	ld hl,$cf00
@@ -1227,7 +1227,7 @@ _func_4cb6:
 -
 	ld a,(hl)
 	cp $fa
-	call z,_func_4d10
+	call z,func_4d10
 	inc l
 	ld a,l
 	cp $b0
@@ -1237,7 +1237,7 @@ _func_4cb6:
 	ld (hl),$fb
 	ld e,$b0
 	ld (de),a
-	call _func_4cf8
+	call func_4cf8
 	ldh (<hFF8E),a
 	ld a,(hl)
 	ldh (<hFF8F),a
@@ -1252,14 +1252,14 @@ _func_4cb6:
 	rlca
 	ld e,$b4
 	ld (de),a
-	ld hl,_table_4d0c
+	ld hl,table_4d0c
 	rst_addAToHl
 	ld e,$b1
 	ld a,(de)
 	add (hl)
 	ld (de),a
 
-_func_4cf8:
+func_4cf8:
 	ld h,d
 	ld l,$b2
 	ld e,$b1
@@ -1274,13 +1274,13 @@ _func_4cf8:
 	ldd (hl),a
 	ret
 
-_table_4d0c:
+table_4d0c:
 	.db $f0
 	.db $01
 	.db $10
 	.db $ff
 
-_func_4d10:
+func_4d10:
 	push de
 	ld a,c
 	and $f0
@@ -1314,7 +1314,7 @@ _func_4d10:
 	ld (de),a
 	ret
 
-_func_4d36:
+func_4d36:
 	ld h,d
 	ld e,$8b
 	ld a,(de)
@@ -1337,11 +1337,11 @@ _func_4d36:
 	cp $02
 	ret
 	
-_func_4d54:
+func_4d54:
 	xor a
 	ld (de),a
 	ld b,PARTID_GOPONGA_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	ld l,$c2
 	inc (hl)
@@ -1376,7 +1376,7 @@ enemyCode73:
 	ld (de),a
 	call enemySetAnimation
 +
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 @justHit:
 	ld e,Enemy.enemyCollisionMode
 	ld a,(de)
@@ -1434,11 +1434,11 @@ enemyCode73:
 	ret
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr c,+
 	dec b
-	jp z,_agunimaSubId01
-	jp _agunimaSubId00
+	jp z,agunimaSubId01
+	jp agunimaSubId00
 +
 	rst_jumpTable
 	.dw @state0
@@ -1453,24 +1453,24 @@ enemyCode73:
 @state0:
 	ld a,b
 	or a
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 	inc a
 	ld (de),a
 	ld a,$73
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 @state1:
 	ld b,$04
 	call checkBEnemySlotsAvailable
 	ret nz
 	ld b,ENEMYID_AGUNIMA
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,$b1
 	ld c,h
 	ld e,$03
 -
 	push hl
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc (hl)
 	ld l,$96
 	ld a,$80
@@ -1486,7 +1486,7 @@ enemyCode73:
 @stateStub:
 	ret
 
-_agunimaSubId01:
+agunimaSubId01:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -1510,7 +1510,7 @@ _agunimaSubId01:
 	or a
 	ret nz
 	ld bc,$010c
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 	inc a
 	ld (de),a
@@ -1529,7 +1529,7 @@ _agunimaSubId01:
 	jr @@func_4e86
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,$b0
 	ld (hl),$00
@@ -1577,10 +1577,10 @@ _agunimaSubId01:
 	inc (hl)
 	inc l
 	ld (hl),$3c
-	jp _func_502a
+	jp func_502a
 
 @@substate5:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,$84
 	inc (hl)
@@ -1617,16 +1617,16 @@ _agunimaSubId01:
 	ret
 
 @stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	dec (hl)
-	jp _func_5007
+	jp func_5007
 
-_agunimaSubId00:
-	call _func_5104
-	call _func_5122
-	call _func_512b
+agunimaSubId00:
+	call func_5104
+	call func_5122
+	call func_512b
 	ld e,$84
 	ld a,(de)
 	sub $08
@@ -1686,12 +1686,12 @@ _agunimaSubId00:
 	ld e,$b3
 	ld (de),a
 	call enemySetAnimation
-	jp _func_507e
+	jp func_507e
 
 @@func_4f55:
 	ld h,d
 	ld l,$b1
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	cp c
 	ret nz
 	ldh a,(<hFF8F)
@@ -1700,7 +1700,7 @@ _agunimaSubId00:
 
 @@substate1:
 	call @@func_4f55
-	jp nz,_ecom_moveTowardPosition
+	jp nz,ecom_moveTowardPosition
 	ld l,e
 	inc (hl)
 	ld l,$b0
@@ -1711,11 +1711,11 @@ _agunimaSubId00:
 	ld (hl),$01
 
 @@substate2:
-	call _func_5131
+	call func_5131
 	ld h,d
 	ld l,$b0
 	bit 0,(hl)
-	jp z,_func_5071
+	jp z,func_5071
 	ld l,$84
 	ld (hl),$0c
 	ld l,$a4
@@ -1736,10 +1736,10 @@ _agunimaSubId00:
 	inc (hl)
 	ld l,$86
 	ld (hl),$3c
-	jp _func_5071
+	jp func_5071
 
 @stateB:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,seasonsFunc_0e_506b
 	ld l,e
 	inc (hl)
@@ -1752,11 +1752,11 @@ _agunimaSubId00:
 	jp objectSetVisible81
 
 @stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,seasonsFunc_0e_506b
 	inc (hl)
 	ld b,PARTID_39
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	jp nz,seasonsFunc_0e_506b
 	ld h,d
 	ld l,$86
@@ -1766,7 +1766,7 @@ _agunimaSubId00:
 	ret
 
 @stateD:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,seasonsFunc_0e_50cf
 	ld h,d
 	ld l,$84
@@ -1780,7 +1780,7 @@ _agunimaSubId00:
 	ret
 
 @stateE:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	ld (hl),$0a
@@ -1798,13 +1798,13 @@ _agunimaSubId00:
 +
 	jp objectSetInvisible
 
-_func_5007:
+func_5007:
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld b,a
 	add a
 	add b
-	ld hl,_table_5053
+	ld hl,table_5053
 	rst_addDoubleIndex
 	ld e,$b1
 -
@@ -1824,11 +1824,11 @@ _func_5007:
 	cp e
 	jr nz,-
 
-_func_502a:
+func_502a:
 	call getRandomNumber_noPreserveVars
 	and $03
 	cp $03
-	jr z,_func_502a
+	jr z,func_502a
 	add $b1
 	ld e,a
 	ld a,(de)
@@ -1839,7 +1839,7 @@ _func_502a:
 	ld a,(hl)
 	swap a
 	rlca
-	ld bc,_table_50cb
+	ld bc,table_50cb
 	call addAToBc
 	ld l,$8b
 	ld e,l
@@ -1852,7 +1852,7 @@ _func_502a:
 	ld (de),a
 	ret
 
-_table_5053:
+table_5053:
 	.db $38 $78 $78 $48 $78 $a8
 	.db $38 $48 $38 $a8 $78 $78
 	.db $30 $40 $58 $40 $80 $40
@@ -1862,8 +1862,8 @@ seasonsFunc_0e_506b:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-_func_5071:
-	call _ecom_updateCardinalAngleTowardTarget
+func_5071:
+	call ecom_updateCardinalAngleTowardTarget
 	rrca
 	ld h,d
 	ld l,$b3
@@ -1871,7 +1871,7 @@ _func_5071:
 	ret z
 	ld (hl),a
 	call enemySetAnimation
-_func_507e:
+func_507e:
 	ld e,$89
 	ld a,(de)
 	bit 3,a
@@ -1882,7 +1882,7 @@ _func_507e:
 	ld e,$a7
 	ld a,b
 	ld (de),a
-	call _func_50ab
+	call func_50ab
 	ld e,$b0
 	ld a,(de)
 	bit 7,a
@@ -1891,7 +1891,7 @@ _func_507e:
 	ld a,(de)
 	swap a
 	rlca
-	ld hl,_table_50cb
+	ld hl,table_50cb
 	rst_addAToHl
 	ld c,(hl)
 	ld b,$00
@@ -1899,7 +1899,7 @@ _func_507e:
 	call objectGetRelatedObject1Var
 	jp objectCopyPositionWithOffset
 
-_func_50ab:
+func_50ab:
 	ld e,$b3
 	ld a,(de)
 	inc a
@@ -1923,14 +1923,14 @@ _func_50ab:
 	ld (de),a
 	ret
 
-_table_50cb:
+table_50cb:
 	.db $00
 	.db $fd
 	.db $00
 	.db $03
 
 seasonsFunc_0e_50cf:
-	call _func_50f2
+	call func_50f2
 	ld e,$b4
 	ld a,b
 	ld (de),a
@@ -1939,7 +1939,7 @@ seasonsFunc_0e_50cf:
 	dec a
 	ld (de),a
 	and $07
-	call z,_ecom_updateCardinalAngleTowardTarget
+	call z,ecom_updateCardinalAngleTowardTarget
 	ld e,$89
 	ld a,(de)
 	rrca
@@ -1951,9 +1951,9 @@ seasonsFunc_0e_50cf:
 	ret z
 	ld (hl),a
 	call enemySetAnimation
-	jr _func_507e
+	jr func_507e
 
-_func_50f2:
+func_50f2:
 	ld e,$86
 	ld a,(de)
 	ld b,$00
@@ -1968,7 +1968,7 @@ _func_50f2:
 	inc b
 	ret
 
-_func_5104:
+func_5104:
 	ld h,d
 	ld l,$b5
 	dec (hl)
@@ -1978,30 +1978,30 @@ _func_5104:
 	ld a,(hl)
 	and $70
 	swap a
-	ld hl,_table_511a
+	ld hl,table_511a
 	rst_addAToHl
 	ld e,$8f
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_table_511a:
+table_511a:
 	.db $fc $fb $fa $fb
 	.db $fc $fd $fe $fd
 
-_func_5122:
+func_5122:
 	ld e,$b0
 	ld a,(de)
 	bit 1,a
 	ret z
-	jp _ecom_flickerVisibility
+	jp ecom_flickerVisibility
 
-_func_512b:
+func_512b:
 	ld e,$84
 	ld a,(de)
 	cp $0b
 	ret c
-_func_5131:
+func_5131:
 	ld h,d
 	ld l,$b0
 	bit 7,(hl)
@@ -2045,7 +2045,7 @@ enemyCode74:
 	ld a,$d1
 	call playSound
 +
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 @justHit:
 	ld e,$82
 	ld a,(de)
@@ -2072,11 +2072,11 @@ enemyCode74:
 	ld l,$a4
 	res 7,(hl)
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr c,+
 	dec b
-	jp z,_sygerSubId01
-	jp _sygerSubId00
+	jp z,sygerSubId01
+	jp sygerSubId00
 +
 	rst_jumpTable
 	.dw @state0
@@ -2094,18 +2094,18 @@ enemyCode74:
 	ld e,$82
 	ld a,(de)
 	or a
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 	ld a,$74
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 	
 @state1:
 	ld b,$02
 	call checkBEnemySlotsAvailable
 	ret nz
 	ld b,ENEMYID_SYGER
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld c,h
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc (hl)
 	ld l,$96
 	ld a,$80
@@ -2122,13 +2122,13 @@ enemyCode74:
 @stateStub:
 	ret
 	
-_sygerSubId01:
+sygerSubId01:
 	ld e,$84
 	ld a,(de)
 	sub $08
 	cp $03
 	jr c,@state8toA
-	call _func_54b5
+	call func_54b5
 	ld e,Enemy.var35
 	ld a,(de)
 	ld e,$84
@@ -2152,15 +2152,15 @@ _sygerSubId01:
 	
 @@substate0:
 	ld bc,$0108
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 	ld l,$85
 	inc (hl)
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_SYGER_BODY
 	ld a,$02
-	call _func_5512
+	call func_5512
 	jp objectSetVisible81
 	
 @@substate1:
@@ -2174,7 +2174,7 @@ _sygerSubId01:
 	inc l
 	ld (hl),$5a
 	xor a
-	call _func_5512
+	call func_5512
 	ld a,$2d
 	ld (wActiveMusic),a
 	call playSound
@@ -2184,7 +2184,7 @@ _sygerSubId01:
 	jr @animate
 	
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $46
@@ -2196,11 +2196,11 @@ _sygerSubId01:
 	ld (hl),$00
 	dec l
 	ld (hl),$0b
-	call _func_556f
+	call func_556f
 	jr @animate
 	
 @state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	inc l
 	ldd a,(hl)
@@ -2214,20 +2214,20 @@ _sygerSubId01:
 	ld a,$02
 	ld l,$87
 	ld (hl),a
-	jp _func_5512
+	jp func_5512
 +
 	ld l,$86
 	ld a,(hl)
 	cp $96
 	jr nc,@animate
-	call _func_554a
-	call _ecom_bounceOffWallsAndHoles
+	call func_554a
+	call ecom_bounceOffWallsAndHoles
 	call objectApplySpeed
 @animate:
 	jp enemyAnimate
 	
 @stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld c,$12
 	call objectUpdateSpeedZ_paramC
@@ -2248,7 +2248,7 @@ _sygerSubId01:
 +
 	ld l,$84
 	inc (hl)
-	jp _func_556f
+	jp func_556f
 	
 @var35_00:
 	inc e
@@ -2269,10 +2269,10 @@ _sygerSubId01:
 	ldi (hl),a
 	ld (hl),a
 	ld a,$03
-	call _func_5512
+	call func_5512
 
 @@substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,seasonsFunc_0e_557b
 	ld (hl),$78
 	inc l
@@ -2281,17 +2281,17 @@ _sygerSubId01:
 	inc (hl)
 	ld l,$90
 	ld (hl),$46
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	jr @animate
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@func_5365
 	ld (hl),$2d
 	inc l
 	dec (hl)
-	jp z,_func_54c6
-	call _ecom_updateAngleTowardTarget
+	jp z,func_54c6
+	call ecom_updateAngleTowardTarget
 	jr @animate
 	
 @var35_01:
@@ -2315,17 +2315,17 @@ _sygerSubId01:
 	ld l,$90
 	ld (hl),$78
 	ld a,$03
-	call _func_5512
+	call func_5512
 
 @@substate1:
 	call seasonsFunc_0e_557b
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,$85
 	inc (hl)
 	call getRandomNumber_noPreserveVars
 	and $01
-	ld hl,_table_55ab
+	ld hl,table_55ab
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -2349,7 +2349,7 @@ _sygerSubId01:
 	ret
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,@func_5365
 	ld e,$b1
 	ld a,(de)
@@ -2359,7 +2359,7 @@ _sygerSubId01:
 	ld h,a
 	ld a,(hl)
 	inc a
-	jp z,_func_54c6
+	jp z,func_54c6
 	ld e,$b8
 	ld a,(de)
 	ld b,a
@@ -2370,10 +2370,10 @@ _sygerSubId01:
 	ld (de),a
 	call @@func_5339
 @func_5365:
-	call _func_5563
-	call _ecom_bounceOffWallsAndHoles
+	call func_5563
+	call ecom_bounceOffWallsAndHoles
 	call objectApplySpeed
-	call _func_556f
+	call func_556f
 	jp seasonsFunc_0e_557b
 	
 @var35_02:
@@ -2402,7 +2402,7 @@ _sygerSubId01:
 	ret
 	
 @@substate1:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ld l,$94
 	ld a,$80
 	ldi (hl),a
@@ -2418,7 +2418,7 @@ _sygerSubId01:
 	ld l,$87
 	ld a,(hl)
 	dec a
-	ld bc,_table_55a8
+	ld bc,table_55a8
 	call addAToBc
 	ld l,$b6
 	ld a,(bc)
@@ -2437,7 +2437,7 @@ _sygerSubId01:
 	ld a,(de)
 	and $01
 	inc a
-	jp _func_5512
+	jp func_5512
 	
 @@substate2:
 	ld c,$12
@@ -2459,7 +2459,7 @@ _sygerSubId01:
 	jp enemyAnimate
 	
 @@substate3:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,++
 	ld a,(hl)
 	cp $14
@@ -2480,8 +2480,8 @@ _sygerSubId01:
 	
 @@substate4:
 	call enemyAnimate
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
-	call nz,_ecom_applyVelocityForSideviewEnemyNoHoles
+	call ecom_applyVelocityForSideviewEnemyNoHoles
+	call nz,ecom_applyVelocityForSideviewEnemyNoHoles
 	ret nz
 	ld e,$85
 	ld a,$01
@@ -2494,9 +2494,9 @@ _sygerSubId01:
 	jr nz,@@animate
 	ld a,$8f
 	call playSound
-	jp _func_54c9
+	jp func_54c9
 	
-_sygerSubId00:
+sygerSubId00:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -2539,7 +2539,7 @@ _sygerSubId00:
 	and $01
 	inc a
 	xor $01
-	ld bc,_table_559c
+	ld bc,table_559c
 	call addAToBc
 	ld e,$b1
 	ld a,(bc)
@@ -2588,7 +2588,7 @@ _sygerSubId00:
 	ld (de),a
 	ret
 	
-_func_54b5:
+func_54b5:
 	ld e,$b5
 	ld a,(de)
 	cp $02
@@ -2599,11 +2599,11 @@ _func_54b5:
 	ld a,$6d
 	jp playSound
 
-_func_54c6:
-	call _func_5563
-_func_54c9:
+func_54c6:
+	call func_5563
+func_54c9:
 	ld bc,$1f01
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld h,d
 	ld l,$90
 	ld (hl),$14
@@ -2613,14 +2613,14 @@ _func_54c9:
 	ld a,(de)
 	add a
 	add c
-	ld hl,_table_55a2
+	ld hl,table_55a2
 	rst_addAToHl
 	ld e,$b5
 	ld a,(hl)
 	ld (de),a
 	dec a
 	jr z,+
-	call _func_556f
+	call func_556f
 	ld l,$84
 	ld (hl),$09
 	inc l
@@ -2630,7 +2630,7 @@ _func_54c9:
 	inc l
 	ld (hl),$01
 	jr ++
-	call _func_5563
+	call func_5563
 +
 	ld bc,$fe20
 	call objectSetSpeedZ
@@ -2645,7 +2645,7 @@ _func_54c9:
 ++
 	xor a
 	
-_func_5512:
+func_5512:
 	ld e,$b0
 	ld (de),a
 	jp enemySetAnimation
@@ -2654,7 +2654,7 @@ seasonsFunc_0e_5518:
 	call enemyAnimate
 	ld h,d
 	ld l,$b6
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	jr +
 
 seasonsFunc_0e_5523:
@@ -2671,18 +2671,18 @@ seasonsFunc_0e_5523:
 	sub c
 	add $02
 	cp $05
-	jp nc,_ecom_moveTowardPosition
+	jp nc,ecom_moveTowardPosition
 	ldh a,(<hFF8F)
 	sub b
 	add $02
 	cp $05
-	jp nc,_ecom_moveTowardPosition
+	jp nc,ecom_moveTowardPosition
 	ld (hl),c
 	ld l,$8b
 	ld (hl),b
 	ret
 
-_func_554a:
+func_554a:
 	ld a,($ccf0)
 	or a
 	jr nz,+
@@ -2696,9 +2696,9 @@ _func_554a:
 	ret
 +
 	inc (hl)
-	jp _ecom_updateAngleToScentSeed
+	jp ecom_updateAngleToScentSeed
 
-_func_5563:
+func_5563:
 	ld h,d
 	ld l,$b3
 	ld e,$8b
@@ -2709,7 +2709,7 @@ _func_5563:
 	ld (de),a
 	ret
 
-_func_556f:
+func_556f:
 	ld h,d
 	ld l,$b3
 	ld e,$8b
@@ -2722,10 +2722,10 @@ _func_556f:
 
 seasonsFunc_0e_557b:
 	call enemyAnimate
-	call _func_5563
+	call func_5563
 	ld e,$a1
 	ld a,(de)
-	ld hl,_table_5594
+	ld hl,table_5594
 	rst_addAToHl
 	ld e,$8b
 	ld a,(de)
@@ -2738,32 +2738,32 @@ seasonsFunc_0e_557b:
 	ld (de),a
 	ret
 
-_table_5594:
+table_5594:
 	.db $04 $04 $04 $fc
 	.db $fc $fc $fc $04
 
-_table_559c:
+table_559c:
 	.db $f6 $10 $04
 	.db $f6 $f0 $05
 
-_table_55a2:
+table_55a2:
 	.db $01 $02 $00
 	.db $02 $00 $01
 
-_table_55a8:
+table_55a8:
 	.db $1c $94 $1c
 
-_table_55ab:
-	.dw _table_55af
-	.dw _table_55bf
+table_55ab:
+	.dw table_55af
+	.dw table_55bf
 
-_table_55af:
+table_55af:
 	.db $10 $f8 $0a $07
 	.db $05 $0e $0a $1b
 	.db $14 $28 $1e $32
 	.db $21 $3b $25 $ff
 
-_table_55bf:
+table_55bf:
 	.db $0c $02 $40 $07
 	.db $07 $07 $26 $0b
 	.db $0c $0c $2d $05
@@ -2839,7 +2839,7 @@ enemyCode75:
 	ld l,Enemy.state
 	ld a,(hl)
 	cp $0f
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 
 	ld (hl),$0f ; [state]
 	inc l
@@ -2856,31 +2856,31 @@ enemyCode75:
 	call enemySetAnimation
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr c,@commonState
 
 	ld a,b
 	or a
-	jp z,_vire_mainForm
-	jp _vire_batForm
+	jp z,vire_mainForm
+	jp vire_batForm
 
 @commonState:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _vire_state_uninitialized
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
-	.dw _vire_state_stub
+	.dw vire_state_uninitialized
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
+	.dw vire_state_stub
 
 
-_vire_state_uninitialized:
+vire_state_uninitialized:
 	ld a,SPEED_c0
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 
 	ld a,b
 	or a
@@ -2892,14 +2892,14 @@ _vire_state_uninitialized:
 
 	dec a ; a = $ff
 	ld b,$00
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 
-_vire_state_stub:
+vire_state_stub:
 	ret
 
 
-_vire_mainForm:
+vire_mainForm:
 	ld e,Enemy.direction
 	ld a,(de)
 	or a
@@ -2924,18 +2924,18 @@ _vire_mainForm:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _vire_mainForm_state8
-	.dw _vire_mainForm_state9
-	.dw _vire_mainForm_stateA
-	.dw _vire_mainForm_stateB
-	.dw _vire_mainForm_stateC
-	.dw _vire_mainForm_stateD
-	.dw _vire_mainForm_stateE
-	.dw _vire_mainForm_stateF
+	.dw vire_mainForm_state8
+	.dw vire_mainForm_state9
+	.dw vire_mainForm_stateA
+	.dw vire_mainForm_stateB
+	.dw vire_mainForm_stateC
+	.dw vire_mainForm_stateD
+	.dw vire_mainForm_stateE
+	.dw vire_mainForm_stateF
 
 
 ; Mini-cutscene before starting fight
-_vire_mainForm_state8:
+vire_mainForm_state8:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -2995,7 +2995,7 @@ _vire_mainForm_state8:
 
 @substate2:
 	; Show text in 8 frames
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -3017,7 +3017,7 @@ _vire_mainForm_state8:
 	ld (wDisableLinkCollisionsAndMenu),a
 
 .ifdef ROM_AGES
-	call _ecom_incState
+	call ecom_incState
 .else
 	ld h,d
 	ld l,Enemy.state
@@ -3040,8 +3040,8 @@ _vire_mainForm_state8:
 
 
 ; Off-screen for [counter1] frames
-_vire_mainForm_state9:
-	call _ecom_decCounter1
+vire_mainForm_state9:
+	call ecom_decCounter1
 	ret nz
 
 	; Decide what to do next (health affects probability)
@@ -3074,7 +3074,7 @@ _vire_mainForm_state9:
 
 
 ; Charges across screen
-_vire_mainForm_stateA:
+vire_mainForm_stateA:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -3083,7 +3083,7 @@ _vire_mainForm_stateA:
 	.dw @substate2
 
 @substate0:
-	call _vire_spawnOutsideCamera
+	call vire_spawnOutsideCamera
 	inc l
 	ld (hl),20 ; [counter1]
 	ld l,Enemy.speed
@@ -3092,8 +3092,8 @@ _vire_mainForm_stateA:
 
 ; Moving slowly before charging
 @substate1:
-	call _ecom_decCounter1
-	jp nz,_vire_mainForm_applySpeedAndAnimate
+	call ecom_decCounter1
+	jp nz,vire_mainForm_applySpeedAndAnimate
 
 	; Begin charging
 	ld l,e
@@ -3101,7 +3101,7 @@ _vire_mainForm_stateA:
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call getRandomNumber_noPreserveVars
 	and $03
 	sub $02
@@ -3114,17 +3114,17 @@ _vire_mainForm_stateA:
 
 ; Charging across screen
 @substate2:
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	call _ecom_decCounter1
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	call ecom_decCounter1
 	ld a,(hl)
 	and $1f
-	call z,_vire_mainForm_fireProjectile
-	jp _vire_mainForm_applySpeedAndAnimate
+	call z,vire_mainForm_fireProjectile
+	jp vire_mainForm_applySpeedAndAnimate
 
 
 ; Circling Link, runs away if Link gets too close (similar to state D)
-_vire_mainForm_stateB:
+vire_mainForm_stateB:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -3134,7 +3134,7 @@ _vire_mainForm_stateB:
 	.dw @substate3
 
 @substate0: ; Also subid 0 for state D
-	call _vire_spawnOutsideCamera
+	call vire_spawnOutsideCamera
 	inc l
 	ld (hl),120 ; [counter1]
 	call getRandomNumber_noPreserveVars
@@ -3151,16 +3151,16 @@ _vire_mainForm_stateB:
 	and $03
 	jr nz,++
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@beginCharge
 
 	ld a,(hl)
 	and $1f
 	ld b,$01
-	call z,_vire_mainForm_fireProjectileWithSubid
+	call z,vire_mainForm_fireProjectileWithSubid
 ++
-	call _vire_mainForm_checkLinkTooClose
-	jp nc,_vire_mainForm_circleAroundScreen
+	call vire_mainForm_checkLinkTooClose
+	jp nc,vire_mainForm_circleAroundScreen
 
 ; Begin charging; initially toward Link, but will run away if he gets too close or Link
 ; attacks
@@ -3169,42 +3169,42 @@ _vire_mainForm_stateB:
 	inc (hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	jr @animate
 
 ; Charging toward Link
 @substate2:
-	call _vire_mainForm_checkLinkTooClose
+	call vire_mainForm_checkLinkTooClose
 	jr c,@updateAngleAway
 	ld a,(wLinkUsingItem1)
 	or a
 	jr nz,@updateAngleAway
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	jp _vire_mainForm_applySpeedAndAnimate
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	jp vire_mainForm_applySpeedAndAnimate
 
 ; Charging away from Link
 @updateAngleAway:
 	ld l,e
 	inc (hl) ; [substate]
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 @animate:
 	jp enemyAnimate
 
 @substate3:
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ld a,(hl)
 	and $1f
 	ld b,$01
-	call z,_vire_mainForm_fireProjectileWithSubid
-	jp _vire_mainForm_applySpeedAndAnimate
+	call z,vire_mainForm_fireProjectileWithSubid
+	jp vire_mainForm_applySpeedAndAnimate
 
 
 ; Vire creeps in from the screen edge to fire one projectile, then runs away
-_vire_mainForm_stateC:
+vire_mainForm_stateC:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -3214,7 +3214,7 @@ _vire_mainForm_stateC:
 	.dw @substate3
 
 @substate0:
-	call _vire_spawnOutsideCamera
+	call vire_spawnOutsideCamera
 	inc l
 	ld (hl),28 ; [counter1]
 	ld l,Enemy.speed
@@ -3222,19 +3222,19 @@ _vire_mainForm_stateC:
 	ret
 
 @substate1:
-	call _ecom_decCounter1
-	jp nz,_vire_mainForm_applySpeedAndAnimate
+	call ecom_decCounter1
+	jp nz,vire_mainForm_applySpeedAndAnimate
 
 	ld (hl),12 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
 
 	ld b,$03
-	call _vire_mainForm_fireProjectileWithSubid
+	call vire_mainForm_fireProjectileWithSubid
 	jr @animate
 
 @substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 
 	ld l,e
@@ -3251,38 +3251,38 @@ _vire_mainForm_stateC:
 	jp enemyAnimate
 
 @substate3:
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	jp _vire_mainForm_applySpeedAndAnimate
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	jp vire_mainForm_applySpeedAndAnimate
 
 
 ; Circling Link, runs away if Link attempts to attack (similar to state B)
-_vire_mainForm_stateD:
+vire_mainForm_stateD:
 	inc e
 	ld a,(de)
 	rst_jumpTable
-	.dw _vire_mainForm_stateB@substate0
+	.dw vire_mainForm_stateB@substate0
 	.dw @substate1
 	.dw @substate2
 	.dw @substate3
 	.dw @substate4
-	.dw _vire_state_moveOffScreen
+	.dw vire_state_moveOffScreen
 
 @substate1:
 	ld a,(wFrameCounter)
 	and $03
 	jr nz,++
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@beginCharge
 
 	ld a,(hl)
 	and $1f
 	ld b,$01
-	call z,_vire_mainForm_fireProjectileWithSubid
+	call z,vire_mainForm_fireProjectileWithSubid
 ++
-	call _vire_mainForm_checkLinkTooClose
-	jp nc,_vire_mainForm_circleAroundScreen
+	call vire_mainForm_checkLinkTooClose
+	jp nc,vire_mainForm_circleAroundScreen
 
 ; Begin charging; initially toward Link, but will run away if he gets too close or Link
 ; attacks
@@ -3291,7 +3291,7 @@ _vire_mainForm_stateD:
 	inc (hl)
 	ld l,Enemy.speed
 	ld (hl),SPEED_200
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 @animate:
 	jp enemyAnimate
 
@@ -3308,31 +3308,31 @@ _vire_mainForm_stateD:
 	ld (hl),12 ; [counter1]
 	ld l,Enemy.speed
 	ld (hl),SPEED_300
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 	jr @animate
 
 @moveOffScreen:
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	jp _vire_mainForm_applySpeedAndAnimate
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	jp vire_mainForm_applySpeedAndAnimate
 
 @substate3:
-	call _ecom_decCounter1
-	jp nz,_vire_mainForm_applySpeedAndAnimate
+	call ecom_decCounter1
+	jp nz,vire_mainForm_applySpeedAndAnimate
 
 	ld (hl),12 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
 
 	ld b,PARTID_VIRE_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 
 	ld a,SND_SPLASH
 	call playSound
 	jr @animate
 
 @substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 
 	ld l,e
@@ -3341,24 +3341,24 @@ _vire_mainForm_stateD:
 	ld l,Enemy.speed
 	ld (hl),SPEED_1c0
 
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 	jr @animate
 
 
-_vire_state_moveOffScreen: ; Used by states D and E
-	call _vire_checkOffScreen
-	jp nc,_vire_mainForm_leftScreen
-	jp _vire_mainForm_applySpeedAndAnimate
+vire_state_moveOffScreen: ; Used by states D and E
+	call vire_checkOffScreen
+	jp nc,vire_mainForm_leftScreen
+	jp vire_mainForm_applySpeedAndAnimate
 
 
 ; Just took damage
-_vire_mainForm_stateE:
+vire_mainForm_stateE:
 	inc e
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _vire_state_moveOffScreen
+	.dw vire_state_moveOffScreen
 
 @substate0:
 	ld h,d
@@ -3370,7 +3370,7 @@ _vire_mainForm_stateE:
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_300
-	call _ecom_updateCardinalAngleAwayFromTarget
+	call ecom_updateCardinalAngleAwayFromTarget
 
 	ld e,Enemy.direction
 	xor a
@@ -3381,7 +3381,7 @@ _vire_mainForm_stateE:
 	jp enemySetAnimation
 
 @substate1:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -3411,7 +3411,7 @@ _vire_mainForm_stateE:
 
 
 ; "Main form" died, about to split into bats
-_vire_mainForm_stateF:
+vire_mainForm_stateF:
 	inc e
 	ld a,(de)
 	rst_jumpTable
@@ -3423,7 +3423,7 @@ _vire_mainForm_stateF:
 	.dw @substate5
 
 @substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [counter1]
@@ -3447,10 +3447,10 @@ _vire_mainForm_stateF:
 
 	; Spawn bats
 	ld b,ENEMYID_VIRE
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	call @initBat
 
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc a
 
 @initBat:
@@ -3475,7 +3475,7 @@ _vire_mainForm_stateF:
 	ld e,Enemy.var34
 	ld a,(de)
 	or a
-	jp nz,_ecom_decCounter2
+	jp nz,ecom_decCounter2
 
 	; Vire defeated
 	ld h,d
@@ -3487,8 +3487,8 @@ _vire_mainForm_stateF:
 	jp playSound
 
 @substate3:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	ld (hl),$10 ; [counter1]
 	ld l,e
@@ -3496,7 +3496,7 @@ _vire_mainForm_stateF:
 	jp objectSetVisiblec1
 
 @substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 
 	ld l,e
@@ -3533,7 +3533,7 @@ _vire_mainForm_stateF:
 	inc a
 	ld (de),a
 	ld b,PARTID_ITEM_DROP
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 ++
 	call enemyAnimate
 
@@ -3546,7 +3546,7 @@ _vire_mainForm_stateF:
 	sbc >($0080)
 	ld (hl),a
 
-	call _vire_checkOffScreen
+	call vire_checkOffScreen
 	jp c,objectApplySpeed
 
 	; Vire is gone; cleanup
@@ -3558,19 +3558,19 @@ _vire_mainForm_stateF:
 	jp enemyDelete
 
 
-_vire_batForm:
+vire_batForm:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _vire_batForm_state8
-	.dw _vire_batForm_state9
-	.dw _vire_batForm_stateA
-	.dw _vire_batForm_stateB
-	.dw _vire_batForm_stateC
-	.dw _vire_batForm_stateD
+	.dw vire_batForm_state8
+	.dw vire_batForm_state9
+	.dw vire_batForm_stateA
+	.dw vire_batForm_stateB
+	.dw vire_batForm_stateC
+	.dw vire_batForm_stateD
 
 
-_vire_batForm_state8:
+vire_batForm_state8:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -3593,9 +3593,9 @@ _vire_batForm_state8:
 
 
 ; Moving upward after charging (or after spawning)
-_vire_batForm_state9:
-	call _ecom_decCounter1
-	jr z,_vire_batForm_gotoStateA
+vire_batForm_state9:
+	call ecom_decCounter1
+	jr z,vire_batForm_gotoStateA
 
 	; Move up while zh > -$10
 	ld l,Enemy.zh
@@ -3610,9 +3610,9 @@ _vire_batForm_state9:
 	ld (hl),a
 ++
 	call objectApplySpeed
-	jr _vire_batForm_animate
+	jr vire_batForm_animate
 
-_vire_batForm_gotoStateA:
+vire_batForm_gotoStateA:
 	ld l,e
 	ld (hl),$0a ; [state]
 
@@ -3630,11 +3630,11 @@ _vire_batForm_gotoStateA:
 	ld a,Object.counter2
 	call objectGetRelatedObject1Var
 	ld (hl),180
-	jr _vire_batForm_animate
+	jr vire_batForm_animate
 
 
-_vire_batForm_stateA:
-	call _vire_batForm_updateZPos
+vire_batForm_stateA:
+	call vire_batForm_updateZPos
 
 	ld a,Object.counter2
 	call objectGetRelatedObject1Var
@@ -3643,7 +3643,7 @@ _vire_batForm_stateA:
 	jr nz,++
 
 .ifdef ROM_AGES
-	call _ecom_incState
+	call ecom_incState
 .else
 	ld h,d
 	ld l,Enemy.state
@@ -3654,7 +3654,7 @@ _vire_batForm_stateA:
 	ld (hl),$08
 	ret
 ++
-	call _vire_batForm_moveAwayFromLinkIfTooClose
+	call vire_batForm_moveAwayFromLinkIfTooClose
 
 	call objectGetAngleTowardEnemyTarget
 	ld b,a
@@ -3666,16 +3666,16 @@ _vire_batForm_stateA:
 	ld (de),a
 
 	ld a,$02
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	call z,objectApplySpeed
 
-_vire_batForm_animate:
+vire_batForm_animate:
 	jp enemyAnimate
 
 
 ; About to charge toward Link in [counter1] frames
-_vire_batForm_stateB:
-	call _ecom_decCounter1
+vire_batForm_stateB:
+	call ecom_decCounter1
 	ret nz
 
 	ld l,e
@@ -3693,10 +3693,10 @@ _vire_batForm_stateB:
 
 
 ; Charging toward target position in var35/var36
-_vire_batForm_stateC:
+vire_batForm_stateC:
 	ld h,d
 	ld l,Enemy.var35
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $08
 	cp $11
@@ -3719,7 +3719,7 @@ _vire_batForm_stateC:
 	inc (hl) ; [state]
 	ld l,Enemy.counter1
 	ld (hl),20
-	jr _vire_batForm_animate
+	jr vire_batForm_animate
 
 @notReachedPosition:
 	ld l,Enemy.zh
@@ -3728,14 +3728,14 @@ _vire_batForm_stateC:
 	jr nc,+
 	inc (hl)
 +
-	call _ecom_moveTowardPosition
-	jr _vire_batForm_animate
+	call ecom_moveTowardPosition
+	jr vire_batForm_animate
 
 
 ; Moving back up after charging
-_vire_batForm_stateD:
-	call _ecom_decCounter1
-	jp z,_vire_batForm_gotoStateA
+vire_batForm_stateD:
+	call ecom_decCounter1
+	jp z,vire_batForm_gotoStateA
 
 	ld l,Enemy.zh
 	ldd a,(hl)
@@ -3750,9 +3750,9 @@ _vire_batForm_stateD:
 	ld (hl),a
 ++
 	ld a,$02
-	call _ecom_getSideviewAdjacentWallsBitset
+	call ecom_getSideviewAdjacentWallsBitset
 	call z,objectApplySpeed
-	jr _vire_batForm_animate
+	jr vire_batForm_animate
 
 
 ;;
@@ -3760,7 +3760,7 @@ _vire_batForm_stateD:
 ; increments substate.
 ;
 ; @param[out]	hl	Enemy.substate
-_vire_spawnOutsideCamera:
+vire_spawnOutsideCamera:
 	call getRandomNumber_noPreserveVars
 	and $07
 	ld b,a
@@ -3809,7 +3809,7 @@ _vire_spawnOutsideCamera:
 ;;
 ; Vire has left the screen; set state to 9, where he'll wait for 90 frames before
 ; attacking again.
-_vire_mainForm_leftScreen:
+vire_mainForm_leftScreen:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$09
@@ -3824,7 +3824,7 @@ _vire_mainForm_leftScreen:
 
 ;;
 ; @param[out]	cflag	c if left screen
-_vire_checkOffScreen:
+vire_checkOffScreen:
 	ld e,Enemy.yh
 	ld a,(de)
 	cp (LARGE_ROOM_HEIGHT<<4)+8
@@ -3836,7 +3836,7 @@ _vire_checkOffScreen:
 
 
 ;;
-_vire_mainForm_circleAroundScreen:
+vire_mainForm_circleAroundScreen:
 	ldh a,(<hCameraY)
 	add (SCREEN_HEIGHT<<3)+4
 	ld b,a
@@ -3908,13 +3908,13 @@ _vire_mainForm_circleAroundScreen:
 
 
 ;;
-_vire_mainForm_applySpeedAndAnimate:
+vire_mainForm_applySpeedAndAnimate:
 	call objectApplySpeed
 	jp enemyAnimate
 
 ;;
 ; @param[out]	cflag	c if Link is too close (Vire will flee)
-_vire_mainForm_checkLinkTooClose:
+vire_mainForm_checkLinkTooClose:
 	ld h,d
 	ld l,Enemy.yh
 	ldh a,(<hEnemyTargetY)
@@ -3931,7 +3931,7 @@ _vire_mainForm_checkLinkTooClose:
 
 
 ;;
-_vire_mainForm_fireProjectile:
+vire_mainForm_fireProjectile:
 	call getRandomNumber_noPreserveVars
 	and $01
 	inc a
@@ -3939,7 +3939,7 @@ _vire_mainForm_fireProjectile:
 
 ;;
 ; @param	b	Subid
-_vire_mainForm_fireProjectileWithSubid:
+vire_mainForm_fireProjectileWithSubid:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_VIRE_PROJECTILE
@@ -3961,7 +3961,7 @@ _vire_mainForm_fireProjectileWithSubid:
 	jp enemySetAnimation
 
 ;;
-_vire_batForm_moveAwayFromLinkIfTooClose:
+vire_batForm_moveAwayFromLinkIfTooClose:
 	ld h,d
 	ld l,Enemy.yh
 	ldh a,(<hEnemyTargetY)
@@ -3980,12 +3980,12 @@ _vire_batForm_moveAwayFromLinkIfTooClose:
 	xor $10
 	ld c,a
 	ld b,SPEED_200
-	jp _ecom_applyGivenVelocity
+	jp ecom_applyGivenVelocity
 
 
 ;;
-_vire_batForm_updateZPos:
-	call _ecom_decCounter1
+vire_batForm_updateZPos:
+	call ecom_decCounter1
 	ld a,(hl)
 	and $1c
 	rrca
@@ -4010,13 +4010,13 @@ enemyCode76:
 	ret c
 	jr nz,+
 	ld bc,$0a07
-	jp _poeSister5f7e
+	jp poeSister5f7e
 +
-	call _poeSister5fc2
+	call poeSister5fc2
 	ret z
 @normalStatus:
-	call _poeSister604b
-	call _poeSister602e
+	call poeSister604b
+	call poeSister602e
 	ld e,$84
 	ld a,(de)
 	rst_jumpTable
@@ -4097,7 +4097,7 @@ enemyCode76:
 	jp enemySetAnimation
 	
 @state5:
-	call _ecom_galeSeedEffect
+	call ecom_galeSeedEffect
 	jp nc,enemyDelete
 	ld e,$87
 	ld a,(de)
@@ -4123,15 +4123,15 @@ enemyCode76:
 	ret
 	
 @state9:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld (hl),$1f
 	ld l,e
 	inc (hl)
 	jp objectSetVisible82
 	
 @stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	dec a
@@ -4149,8 +4149,8 @@ enemyCode76:
 	jp playSound
 	
 @stateB:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld (hl),$10
 	ld l,e
 	inc (hl)
@@ -4166,17 +4166,17 @@ enemyCode76:
 	jp objectSetInvisible
 	
 @stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$18
 	ld l,e
 	inc (hl)
-	jp _func_5e45
+	jp func_5e45
 	
 @stateD:
 @stateF:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld (hl),$30
 	ld l,e
 	inc (hl)
@@ -4185,8 +4185,8 @@ enemyCode76:
 	jp objectSetVisible82
 	
 @stateE:
-	call _ecom_decCounter1
-	jp z,_poeSister5f3b
+	call ecom_decCounter1
+	jp z,poeSister5f3b
 	ld a,(hl)
 	and $07
 	jr nz,+
@@ -4196,9 +4196,9 @@ enemyCode76:
 	add (hl)
 	and $1f
 	ld (hl),a
-	call _ecom_updateAnimationFromAngle
+	call ecom_updateAnimationFromAngle
 +
-	call _func_5f49
+	call func_5f49
 	call objectApplySpeed
 @animate:
 	jp enemyAnimate
@@ -4206,7 +4206,7 @@ enemyCode76:
 @state10:
 	ld h,d
 	ld l,$b4
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $0c
 	cp $19
@@ -4227,7 +4227,7 @@ enemyCode76:
 	ld (hl),a
 	jp enemySetAnimation
 +
-	call _ecom_moveTowardPosition
+	call ecom_moveTowardPosition
 	jr @animate
 	
 @state11:
@@ -4235,10 +4235,10 @@ enemyCode76:
 	ld e,$a1
 	ld a,(de)
 	inc a
-	jp z,_poeSister5f3b
+	jp z,poeSister5f3b
 	sub $02
 	ret nz
-	call _func_5f54
+	call func_5f54
 	ret nz
 	ld e,$a1
 	ld a,$02
@@ -4254,16 +4254,16 @@ enemyCode7e:
 	ret c
 	jr nz,+
 	ld bc,$0a06
-	jp _poeSister5f7e
+	jp poeSister5f7e
 +
-	call _poeSister5fc2
+	call poeSister5fc2
 	ret z
 @normalStatus:
 	call @func_5d86
-	jp _func_5fec
+	jp func_5fec
 @func_5d86:
-	call _poeSister604b
-	call _poeSister602e
+	call poeSister604b
+	call poeSister602e
 	ld e,$84
 	ld a,(de)
 	rst_jumpTable
@@ -4290,7 +4290,7 @@ enemyCode7e:
 	ld a,$7e
 	ld ($cc1c),a
 	ld b,PARTID_3b
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 	call getRandomNumber_noPreserveVars
 	ld e,$b8
@@ -4316,12 +4316,12 @@ enemyCode7e:
 	ld (hl),a
 	ld a,$76
 	ld b,$00
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	ld a,$03
 	jp enemySetAnimation
 	
 @stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@animate
 	ld (hl),$2d
 	ld l,e
@@ -4329,17 +4329,17 @@ enemyCode7e:
 	ret
 	
 @stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$30
 	ld l,e
 	inc (hl)
-	call _func_5e7b
+	call func_5e7b
 	jp objectSetVisible82
 	
 @stateD:
 @stateF:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	ld (hl),$30
 	ld l,e
@@ -4377,15 +4377,15 @@ enemyCode7e:
 	ret
 	
 @stateE:
-	call _ecom_decCounter1
-	jp z,_poeSister5f3b
+	call ecom_decCounter1
+	jp z,poeSister5f3b
 	call objectApplySpeed
 @animate:
 	jp enemyAnimate
 
-_func_5e45:
-	ld bc,_table_5e6b
-	call _func_5ea3
+func_5e45:
+	ld bc,table_5e6b
+	call func_5ea3
 	jr z,++
 	ldh a,(<hEnemyTargetY)
 	cp $58
@@ -4399,26 +4399,26 @@ _func_5e45:
 	ld (de),a
 	ld a,b
 	add c
-	ld hl,_table_5e73
+	ld hl,table_5e73
 	rst_addAToHl
 	ld b,(hl)
 ++
 	ld e,$89
 	ld a,b
 	ld (de),a
-	jp _ecom_updateAnimationFromAngle
+	jp ecom_updateAnimationFromAngle
 
-_table_5e6b:
+table_5e6b:
 	.db $e0 $20 $20 $20
 	.db $20 $e0 $e0 $e0
 
-_table_5e73:
+table_5e73:
 	.db $18 $10 $00 $18
 	.db $08 $00 $10 $08
 
-_func_5e7b:
-	ld bc,_table_5e9b
-	call _func_5ea3
+func_5e7b:
+	ld bc,table_5e9b
+	call func_5ea3
 	jr z,+
 	ld a,b
 	add a
@@ -4437,38 +4437,38 @@ _func_5e7b:
 	ld e,$8d
 	ld a,(de)
 	ld (hl),a
-	jp _ecom_updateAnimationFromAngle
+	jp ecom_updateAnimationFromAngle
 
-_table_5e9b:
+table_5e9b:
 	.db $d8 $00 $00 $28
 	.db $28 $00 $00 $d8
 
-_func_5ea3:
+func_5ea3:
 	push bc
 	ld e,$82
 	ld a,(de)
 	or a
-	jr z,_func_5f0b
+	jr z,func_5f0b
 	ld e,$b2
 	ld a,(de)
 	inc a
 	and $0f
 	ld (de),a
-	ld hl,_flags_5f35
+	ld hl,flags_5f35
 	call checkFlag
-	jr z,_func_5f0b
+	jr z,func_5f0b
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld b,a
 	ld c,$05
 -
 	dec c
-	jr z,_func_5f0b
+	jr z,func_5f0b
 	ld a,b
 	inc a
 	and $03
 	ld b,a
-	ld hl,_table_5f37
+	ld hl,table_5f37
 	rst_addAToHl
 	ld l,(hl)
 	ld h,$cf
@@ -4506,13 +4506,13 @@ _func_5ea3:
 	ld l,$84
 	ld (hl),$0f
 	ld l,$b4
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	call objectGetRelativeAngleWithTempVars
 	ld b,a
 	xor a
 	ret
 
-_func_5f0b:
+func_5f0b:
 	call getRandomNumber_noPreserveVars
 	and $06
 	ld b,a
@@ -4522,7 +4522,7 @@ _func_5f0b:
 	ldh a,(<hEnemyTargetY)
 	add (hl)
 	cp $b0
-	jr nc,_func_5f0b
+	jr nc,func_5f0b
 	ld e,$8b
 	ld (de),a
 	inc hl
@@ -4530,7 +4530,7 @@ _func_5f0b:
 	ld c,a
 	add (hl)
 	cp $f0
-	jr nc,_func_5f0b
+	jr nc,func_5f0b
 	ld e,$8d
 	ld (de),a
 	sub c
@@ -4539,18 +4539,18 @@ _func_5f0b:
 	inc a
 +
 	rlca
-	jr c,_func_5f0b
+	jr c,func_5f0b
 	pop hl
 	or d
 	ret
 
-_flags_5f35:
+flags_5f35:
 	.db $6a $b5
 
-_table_5f37:
+table_5f37:
 	.db $3a $7a $74 $34
 
-_poeSister5f3b:
+poeSister5f3b:
 	ld h,d
 	ld l,$84
 	ld (hl),$0b
@@ -4560,15 +4560,15 @@ _poeSister5f3b:
 	ld (hl),$18
 	ret
 
-_func_5f49:
+func_5f49:
 	ld e,$86
 	ld a,(de)
 	and $07
 	ret nz
 	ld b,PARTID_POE_SISTER_FLAME
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 
-_func_5f54:
+func_5f54:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_LIGHTABLE_TORCH
@@ -4597,11 +4597,11 @@ _func_5f54:
 	xor a
 	ret
 
-_poeSister5f7e:
+poeSister5f7e:
 	ld e,$82
 	ld a,(de)
 	or a
-	jr z,_poeSister5f82
+	jr z,poeSister5f82
 	ld e,$a4
 	ld a,(de)
 	or a
@@ -4616,10 +4616,10 @@ _poeSister5f7e:
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	or a
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 	jp enemyDie_withoutItemDrop
 
-_poeSister5f82:
+poeSister5f82:
 	ld e,$a4
 	ld a,(de)
 	or a
@@ -4639,7 +4639,7 @@ _poeSister5f82:
 	call decNumEnemies
 	jp enemyDelete
 
-_poeSister5fc2:
+poeSister5fc2:
 	ld h,d
 	ld l,$a9
 	ld a,(hl)
@@ -4663,13 +4663,13 @@ _poeSister5fc2:
 	ld h,$cf
 	ld (hl),$09
 +
-	call _poeSister5f3b
+	call poeSister5f3b
 	ld e,$a9
 	ld a,(de)
 	or a
 	ret
 
-_func_5fec:
+func_5fec:
 	call objectGetAngleTowardEnemyTarget
 	ld b,a
 	ld e,$88
@@ -4682,7 +4682,7 @@ _func_5fec:
 +
 	add a
 	add a
-	ld hl,_table_601e
+	ld hl,table_601e
 	rst_addAToHl
 	ld a,b
 	call checkFlag
@@ -4704,13 +4704,13 @@ _func_5fec:
 	set 2,(hl)
 	ret
 
-_table_601e:
+table_601e:
 	.db $1f $00 $00 $00
 	.db $00 $1f $00 $00
 	.db $00 $00 $1f $00
 	.db $00 $00 $f0 $01
 	
-_poeSister602e:
+poeSister602e:
 	ld h,d
 	ld l,$84
 	ld a,(hl)
@@ -4722,17 +4722,17 @@ _poeSister602e:
 	and $18
 	swap a
 	rlca
-	ld hl,_table_6047
+	ld hl,table_6047
 	rst_addAToHl
 	ld e,$8f
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_table_6047:
+table_6047:
 	.db $ff $fe $fd $fe
 	
-_poeSister604b:
+poeSister604b:
 	ld e,$82
 	ld a,(de)
 	or a
@@ -4775,9 +4775,9 @@ enemyCode77:
 	jr z,@normalStatus
 	sub $03
 	ret c
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 	dec a
-	jp nz,_ecom_updateKnockbackNoSolidity
+	jp nz,ecom_updateKnockbackNoSolidity
 	ld e,$b2
 	ld a,(de)
 	or a
@@ -4809,9 +4809,9 @@ enemyCode77:
 	ld a,$83
 	call playSound
 @normalStatus:
-	call _func_6257
-	call _func_6273
-	call _ecom_getSubidAndCpStateTo08
+	call func_6257
+	call func_6273
+	call ecom_getSubidAndCpStateTo08
 	cp $0a
 	jr nc,+
 	rst_jumpTable
@@ -4826,7 +4826,7 @@ enemyCode77:
 	.dw @state8
 	.dw @state9
 +
-	call _func_62b1
+	call func_62b1
 	ld a,b
 	rst_jumpTable
 	.dw @subid0
@@ -4834,14 +4834,14 @@ enemyCode77:
 
 @state0:
 	ld bc,$010c
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld l,$bf
 	set 5,(hl)
 	ld b,$00
 	ld a,$77
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 @stateStub:
 	ret
@@ -4865,7 +4865,7 @@ enemyCode77:
 	ret
 
 @@substate1:
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 	ld b,$02
 	call checkBPartSlotsAvailable
@@ -4935,7 +4935,7 @@ enemyCode77:
 	.db $5c $84
 
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ldbc INTERACID_PUFF $02
 	call objectCreateInteraction
@@ -4973,7 +4973,7 @@ enemyCode77:
 	jp playSound
 
 @state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 	ld l,e
 	inc (hl)
@@ -5006,23 +5006,23 @@ enemyCode77:
 	and $0f
 	ld a,$ae
 	call z,playSound
-	call _func_62cc
-	call nc,_ecom_moveTowardPosition
+	call func_62cc
+	call nc,ecom_moveTowardPosition
 @@animate:
 	jp enemyAnimate
 
 @@stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
-	call _func_62f3
+	call func_62f3
 	jr @@animate
 +
-	call _func_62a8
-	call _func_6304
+	call func_62a8
+	call func_6304
 	jr @@animate
 
 @@stateD:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@animate
 	ld l,e
 	ld (hl),$0a
@@ -5043,34 +5043,34 @@ enemyCode77:
 	inc (hl)
 	ld l,$90
 	ld (hl),$6e
-	jp _func_6326
+	jp func_6326
 	
 @@stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
-	call _func_62f3
+	call func_62f3
 	jr @@animate
 +
-	call _func_62a8
+	call func_62a8
 	ld b,PARTID_3e
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 @@animate:
 	jp enemyAnimate
 	
 @@stateD:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@animate
 	ld l,e
 	ld (hl),$0b
-	call _func_6326
+	call func_6326
 	jr @@animate
 
-_func_6257:
+func_6257:
 	ld e,$b0
 	ld a,(de)
 	cp $04
 	ret c
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	pop hl
 	jp enemyAnimate
@@ -5082,7 +5082,7 @@ _func_6257:
 	ld a,$83
 	jp playSound
 
-_func_6273:
+func_6273:
 	ld h,d
 	ld l,$b2
 	ld a,(hl)
@@ -5131,7 +5131,7 @@ seasonsFunc_0e_627d:
 	ld (hl),$00
 	ret
 
-_func_62b1:
+func_62b1:
 	ld h,d
 	ld l,$b1
 	dec (hl)
@@ -5141,7 +5141,7 @@ _func_62b1:
 	ld a,(hl)
 	and $30
 	swap a
-	ld hl,_table_62c8
+	ld hl,table_62c8
 	rst_addAToHl
 	ld a,(hl)
 	ld h,d
@@ -5149,16 +5149,16 @@ _func_62b1:
 	ld (hl),a
 	ret
 
-_table_62c8:
+table_62c8:
 	.db $ff
 	.db $fe
 	.db $fd
 	.db $fe
 
-_func_62cc:
+func_62cc:
 	.db $62
 	ld l,$b4
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $02
 	cp $05
@@ -5174,7 +5174,7 @@ _func_62cc:
 	ld (hl),$28
 	ret
 
-_func_62a8:
+func_62a8:
 	ld (hl),$78
 	inc l
 	ld (hl),$96
@@ -5184,10 +5184,10 @@ _func_62a8:
 	inc (hl)
 	ret
 
-_func_62f3:
+func_62f3:
 	ld a,(hl)
 	and $03
-	ld hl,_table_6300
+	ld hl,table_6300
 	rst_addAToHl
 	ld e,$8d
 	ld a,(de)
@@ -5195,43 +5195,43 @@ _func_62f3:
 	ld (de),a
 	ret
 
-_table_6300:
+table_6300:
 	.db $ff
 	.db $01
 	.db $01
 	.db $ff
 
-_func_6304:
+func_6304:
 	call objectGetAngleTowardEnemyTarget
 	ld b,a
 	call getRandomNumber
 	cp $55
 	ld a,b
-	jr c,_func_631a
+	jr c,func_631a
 	sub $02
 	and $1f
-	call _func_631a
+	call func_631a
 	ld a,b
 	add $04
-_func_631a:
+func_631a:
 	push af
 	ld b,PARTID_3d
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	pop bc
 	ret nz
 	ld l,$c9
 	ld (hl),b
 	ret
 	
-_func_6326:
+func_6326:
 	call getRandomNumber_noPreserveVars
 	and $0e
 	ld h,d
 	ld l,$b3
 	cp (hl)
-	jr z,_func_6326
+	jr z,func_6326
 	ld (hl),a
-	ld hl,_table_633e
+	ld hl,table_633e
 	rst_addAToHl
 	ld e,$b4
 	ldi a,(hl)
@@ -5241,7 +5241,7 @@ _func_6326:
 	ld (de),a
 	ret
 
-_table_633e:
+table_633e:
 	.db $20 $78 $40 $38
 	.db $78 $58 $58 $78
 	.db $78 $98 $40 $b8
@@ -5281,11 +5281,11 @@ enemyCode78:
 	ld e,Enemy.subid
 	ld a,(de)
 	sub $02
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 	dec a
 	jp nz,enemyDelete
-	call _ecom_killRelatedObj1
-	call _ecom_killRelatedObj2
+	call ecom_killRelatedObj1
+	call ecom_killRelatedObj2
 	jp enemyDie_uncounted_withoutItemDrop
 
 @justHit:
@@ -5301,45 +5301,45 @@ enemyCode78:
 	ld (hl),a
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,@state8OrHigher
 	rst_jumpTable
-	.dw _aquamentus_state_uninitialized
-	.dw _aquamentus_state_spawner
-	.dw _aquamentus_state_stub
-	.dw _aquamentus_state_stub
-	.dw _aquamentus_state_stub
-	.dw _aquamentus_state_stub
-	.dw _aquamentus_state_stub
-	.dw _aquamentus_state_stub
+	.dw aquamentus_state_uninitialized
+	.dw aquamentus_state_spawner
+	.dw aquamentus_state_stub
+	.dw aquamentus_state_stub
+	.dw aquamentus_state_stub
+	.dw aquamentus_state_stub
+	.dw aquamentus_state_stub
+	.dw aquamentus_state_stub
 
 @state8OrHigher
 	dec b
 	ld a,b
 	rst_jumpTable
-	.dw _aquamentus_subid1
-	.dw _aquamentus_subid2
-	.dw _aquamentus_subid3
+	.dw aquamentus_subid1
+	.dw aquamentus_subid2
+	.dw aquamentus_subid3
 
 
-_aquamentus_state_uninitialized:
+aquamentus_state_uninitialized:
 	ld c,$20
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 
 	; Check subid
 	ld a,b
 	or a
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 
 	; Subid is 0; go to state 1
 	ld l,e
 	inc (hl) ; [state] = 1
 	ld a,ENEMYID_AQUAMENTUS
 	ld b,SEASONS_PALH_80
-	jp _enemyBoss_initializeRoom
+	jp enemyBoss_initializeRoom
 
 
-_aquamentus_state_spawner:
+aquamentus_state_spawner:
 	ld a,(wcc93)
 	or a
 	ret nz
@@ -5349,17 +5349,17 @@ _aquamentus_state_spawner:
 	ret nz
 
 	ld b,ENEMYID_AQUAMENTUS
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld c,h
 
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc (hl) ; [child.subid] = 2
-	call _aquamentus_initializeChildObject
+	call aquamentus_initializeChildObject
 
 	push hl
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),$03 ; [child.subid] = 3
-	call _aquamentus_initializeChildObject
+	call aquamentus_initializeChildObject
 
 	ld e,h
 	pop hl
@@ -5372,28 +5372,28 @@ _aquamentus_state_spawner:
 	jp enemyDelete
 
 
-_aquamentus_state_stub:
+aquamentus_state_stub:
 	ret
 
 
 ; Body hitbox + general logic
-_aquamentus_subid1:
+aquamentus_subid1:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
-	.dw _aquamentus_body_state8
-	.dw _aquamentus_body_state9
-	.dw _aquamentus_body_stateA
-	.dw _aquamentus_body_stateB
-	.dw _aquamentus_body_stateC
-	.dw _aquamentus_body_stateD
-	.dw _aquamentus_body_stateE
-	.dw _aquamentus_body_stateF
+	.dw aquamentus_body_state8
+	.dw aquamentus_body_state9
+	.dw aquamentus_body_stateA
+	.dw aquamentus_body_stateB
+	.dw aquamentus_body_stateC
+	.dw aquamentus_body_stateD
+	.dw aquamentus_body_stateE
+	.dw aquamentus_body_stateF
 
 ; Initialization
-_aquamentus_body_state8:
+aquamentus_body_state8:
 	ld bc,$020c
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
 	ld h,d
@@ -5416,7 +5416,7 @@ _aquamentus_body_state8:
 
 
 ; Lowering down
-_aquamentus_body_state9:
+aquamentus_body_state9:
 	ld e,Enemy.zh
 	ld a,(de)
 	cp $f4
@@ -5425,7 +5425,7 @@ _aquamentus_body_state9:
 	; Lower aquamentus based on his current height
 	and $f0
 	swap a
-	ld hl,_aquamentus_fallingSpeeds
+	ld hl,aquamentus_fallingSpeeds
 	rst_addAToHl
 	dec e
 	ld a,(de)
@@ -5435,7 +5435,7 @@ _aquamentus_body_state9:
 	ld a,(de)
 	adc $00
 	ld (de),a
-	jp _aquamentus_playHoverSoundEvery32Frames
+	jp aquamentus_playHoverSoundEvery32Frames
 
 @doneLowering:
 	ld h,d
@@ -5448,9 +5448,9 @@ _aquamentus_body_state9:
 
 
 ; Hovering in place before landing
-_aquamentus_body_stateA:
-	call _ecom_decCounter1
-	jp nz,_aquamentus_playHoverSoundEvery32Frames
+aquamentus_body_stateA:
+	call ecom_decCounter1
+	jp nz,aquamentus_playHoverSoundEvery32Frames
 
 	; Time to land on the ground
 
@@ -5476,15 +5476,15 @@ _aquamentus_body_stateA:
 	ld a,$20
 
 ;;
-_aquamentus_body_pound:
+aquamentus_body_pound:
 	call setScreenShakeCounter
 	ld a,SND_STRONG_POUND
 	jp playSound
 
 
 ; Standing in place
-_aquamentus_body_stateB:
-	call _ecom_decCounter1
+aquamentus_body_stateB:
+	call ecom_decCounter1
 	ret nz
 	ld (hl),150
 	inc l
@@ -5492,19 +5492,19 @@ _aquamentus_body_stateB:
 
 	ld l,Enemy.var36
 	ld (hl),$18
-	jp _aquamentus_decideNextAttack
+	jp aquamentus_decideNextAttack
 
 
 ; Moving forward
-_aquamentus_body_stateC:
-	call _aquamentus_body_playFootstepSoundEvery24Frames
-	call _aquamentus_body_6694
-	call _ecom_decCounter1
+aquamentus_body_stateC:
+	call aquamentus_body_playFootstepSoundEvery24Frames
+	call aquamentus_body_6694
+	call ecom_decCounter1
 	jr nz,@applySpeed
 
 	inc l
 	ldd a,(hl) ; [counter2]
-	ld bc,_aquamentus_projectileFireDelayCounters
+	ld bc,aquamentus_projectileFireDelayCounters
 	call addAToBc
 	ld a,(bc)
 	ldi (hl),a ; [counter1]
@@ -5521,22 +5521,22 @@ _aquamentus_body_stateC:
 	ret
 
 @fireProjectiles:
-	call _aquamentus_body_chooseRandomLeftwardAngle
-	call _aquamentus_fireProjectiles
+	call aquamentus_body_chooseRandomLeftwardAngle
+	call aquamentus_fireProjectiles
 @applySpeed:
 	jp objectApplySpeed
 
 
 ; Walking back to original position
-_aquamentus_body_stateD:
-	call _aquamentus_body_playFootstepSoundEvery18Frames
-	call _aquamentus_body_6694
-	call _aquamentus_body_checkReachedTargetPosition
+aquamentus_body_stateD:
+	call aquamentus_body_playFootstepSoundEvery18Frames
+	call aquamentus_body_6694
+	call aquamentus_body_checkReachedTargetPosition
 	jr c,@gotoStateB
 
-	call _ecom_decCounter1
-	call z,_aquamentus_fireProjectiles
-	jp _ecom_moveTowardPosition
+	call ecom_decCounter1
+	call z,aquamentus_fireProjectiles
+	jp ecom_moveTowardPosition
 
 @gotoStateB:
 	ld l,Enemy.counter1
@@ -5549,8 +5549,8 @@ _aquamentus_body_stateD:
 
 
 ; Charge attack
-_aquamentus_body_stateE:
-	call _ecom_decCounter2
+aquamentus_body_stateE:
+	call ecom_decCounter2
 	ret nz
 
 	ld e,Enemy.xh
@@ -5582,7 +5582,7 @@ _aquamentus_body_stateE:
 	jp objectApplySpeed
 
 @onLeftSide:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	dec (hl)
 	jr z,@gotoStateF
 
@@ -5591,7 +5591,7 @@ _aquamentus_body_stateE:
 	cp 148
 	ret nz
 	ld a,70
-	jp _aquamentus_body_pound
+	jp aquamentus_body_pound
 
 @gotoStateF:
 	ld (hl),240 ; [counter1]
@@ -5614,9 +5614,9 @@ _aquamentus_body_stateE:
 	ret
 
 
-_aquamentus_body_stateF:
-	call _aquamentus_playHoverSoundEvery32Frames
-	call _ecom_decCounter2
+aquamentus_body_stateF:
+	call aquamentus_playHoverSoundEvery32Frames
+	call ecom_decCounter2
 	jr z,@moveBack
 
 	; Rising up
@@ -5625,20 +5625,20 @@ _aquamentus_body_stateF:
 	cp $e8
 	ret c
 	ld b,$80
-	jp _aquamentus_body_subZ
+	jp aquamentus_body_subZ
 
 @moveBack:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,@lowerDown
 
 	; Moving back to original position (and maybe still rising up)
 	ld a,(hl) ; [counter1]
 	cp 210
 	ld b,$c0
-	call nc,_aquamentus_body_subZ
-	call _aquamentus_body_checkReachedTargetPosition
+	call nc,aquamentus_body_subZ
+	call aquamentus_body_checkReachedTargetPosition
 	ret c
-	jp _ecom_moveTowardPosition
+	jp ecom_moveTowardPosition
 
 @lowerDown:
 	ld l,Enemy.state
@@ -5649,7 +5649,7 @@ _aquamentus_body_stateF:
 
 
 ; All sprites except horn
-_aquamentus_subid2:
+aquamentus_subid2:
 	ld a,(de) ; [state]
 	sub $08
 	jr z,@state8
@@ -5668,14 +5668,14 @@ _aquamentus_subid2:
 
 	ld a,b
 	call getHighestSetBit
-	jr nc,_aquamentus_animate
+	jr nc,aquamentus_animate
 
-	ld hl,_aquamentus_animations
+	ld hl,aquamentus_animations
 	rst_addAToHl
 	ld e,Enemy.var30
 	ld a,(de)
 	cp (hl)
-	jr z,_aquamentus_animate
+	jr z,aquamentus_animate
 
 	ld a,(hl)
 	ld (de),a
@@ -5700,13 +5700,13 @@ _aquamentus_subid2:
 
 
 ; Horn & horn hitbox
-_aquamentus_subid3:
+aquamentus_subid3:
 	ld a,(de)
 	sub $08
-	jr z,_aquamentus_subid3_state8
+	jr z,aquamentus_subid3_state8
 
 
-_aquamentus_subid3_state9:
+aquamentus_subid3_state9:
 	; Only draw the horn if the main sprite is also visible
 	ld a,Object.visible
 	call objectGetRelatedObject2Var
@@ -5719,7 +5719,7 @@ _aquamentus_subid3_state9:
 	or b
 	ld (de),a
 
-	call _aquamentus_horn_updateAnimation
+	call aquamentus_horn_updateAnimation
 
 	; Get parent's position
 	ld a,Object.yh
@@ -5744,7 +5744,7 @@ _aquamentus_subid3_state9:
 	jr c,+
 	ld a,$05
 +
-	ld hl,_aquamentus_hornXYOffsets
+	ld hl,aquamentus_hornXYOffsets
 	rst_addDoubleIndex
 	ld e,Enemy.yh
 	ldi a,(hl)
@@ -5756,11 +5756,11 @@ _aquamentus_subid3_state9:
 	add c
 	ld (de),a
 
-_aquamentus_animate:
+aquamentus_animate:
 	jp enemyAnimate
 
 
-_aquamentus_subid3_state8:
+aquamentus_subid3_state8:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = 9
@@ -5782,7 +5782,7 @@ _aquamentus_subid3_state8:
 
 ;;
 ; @param	h	Child object
-_aquamentus_initializeChildObject:
+aquamentus_initializeChildObject:
 	ld l,Enemy.relatedObj1
 	ld a,Enemy.start
 	ldi (hl),a
@@ -5793,7 +5793,7 @@ _aquamentus_initializeChildObject:
 
 ;;
 ; Chooses whether to charge (state $0e) or move forward (state $0c)
-_aquamentus_decideNextAttack:
+aquamentus_decideNextAttack:
 	ld e,Enemy.xh
 	ld a,(de)
 	ld b,a
@@ -5809,7 +5809,7 @@ _aquamentus_decideNextAttack:
 	rlca
 	rlca
 	and $03
-	ld hl,_aquamentus_chargeProbabilities
+	ld hl,aquamentus_chargeProbabilities
 	rst_addAToHl
 	ld a,c
 	call checkFlag
@@ -5824,7 +5824,7 @@ _aquamentus_decideNextAttack:
 	jr z,@initializeMovement
 
 	; Initialize charge attack
-	call _aquamentus_body_calculateAngleForCharge
+	call aquamentus_body_calculateAngleForCharge
 	ld e,Enemy.counter2
 	ld a,30
 	ld (de),a
@@ -5844,7 +5844,7 @@ _aquamentus_decideNextAttack:
 	call getHighestSetBit
 	ret nc
 
-	ld hl,_aquamentus_collisionBoxSizes
+	ld hl,aquamentus_collisionBoxSizes
 	rst_addDoubleIndex
 	ld e,Enemy.collisionRadiusY
 	ldi a,(hl)
@@ -5855,14 +5855,14 @@ _aquamentus_decideNextAttack:
 	ret
 
 @initializeMovement:
-	call _aquamentus_body_chooseRandomLeftwardAngle
+	call aquamentus_body_chooseRandomLeftwardAngle
 	ld a,$04
 	ld e,SPEED_40
 	jr @setVar31AndSpeed
 
 
 ;;
-_aquamentus_body_chooseRandomLeftwardAngle:
+aquamentus_body_chooseRandomLeftwardAngle:
 	call getRandomNumber_noPreserveVars
 	and $07
 	cp $07
@@ -5876,7 +5876,7 @@ _aquamentus_body_chooseRandomLeftwardAngle:
 
 ;;
 ; Sets angle to move left, slightly up or down, depending on Link's position
-_aquamentus_body_calculateAngleForCharge:
+aquamentus_body_calculateAngleForCharge:
 	ld b,$02
 	ldh a,(<hEnemyTargetY)
 	cp $48
@@ -5895,10 +5895,10 @@ _aquamentus_body_calculateAngleForCharge:
 
 ;;
 ; @param[out]	cflag	c if within 2 pixels of target position
-_aquamentus_body_checkReachedTargetPosition:
+aquamentus_body_checkReachedTargetPosition:
 	ld h,d
 	ld l,Enemy.var32
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $02
 	cp $05
@@ -5911,7 +5911,7 @@ _aquamentus_body_checkReachedTargetPosition:
 
 ;;
 ; @param	b	Amount to subtract z value by (subpixels)
-_aquamentus_body_subZ:
+aquamentus_body_subZ:
 	ld e,Enemy.z
 	ld a,(de)
 	sub b
@@ -5923,17 +5923,17 @@ _aquamentus_body_subZ:
 	ret
 
 ;;
-_aquamentus_fireProjectiles:
+aquamentus_fireProjectiles:
 	ld e,Enemy.var31
 	ld a,$10
 	ld (de),a
 	ld a,SND_DODONGO_OPEN_MOUTH
 	call playSound
 	ld b,PARTID_AQUAMENTUS_PROJECTILE
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 
 ;;
-_aquamentus_body_6694:
+aquamentus_body_6694:
 	ld e,Enemy.var34
 	ld a,(de)
 	ld h,a
@@ -5955,21 +5955,21 @@ _aquamentus_body_6694:
 
 
 ;;
-_aquamentus_playHoverSoundEvery32Frames:
+aquamentus_playHoverSoundEvery32Frames:
 	ld a,(wFrameCounter)
 	and $1f
 	ret nz
 
 	ld a,SND_AQUAMENTUS_HOVER
-	jr _aquamentus_playSound
+	jr aquamentus_playSound
 
 ;;
-_aquamentus_body_playFootstepSoundEvery18Frames:
+aquamentus_body_playFootstepSoundEvery18Frames:
 	ld a,$12
 	jr ++
 
 ;;
-_aquamentus_body_playFootstepSoundEvery24Frames:
+aquamentus_body_playFootstepSoundEvery24Frames:
 	ld a,$18
 ++
 	ld h,d
@@ -5980,11 +5980,11 @@ _aquamentus_body_playFootstepSoundEvery24Frames:
 	ld (hl),a
 	ld a,SND_ROLLER
 
-_aquamentus_playSound:
+aquamentus_playSound:
 	jp playSound
 
 ;;
-_aquamentus_horn_updateAnimation:
+aquamentus_horn_updateAnimation:
 	ld a,Object.var34
 	call objectGetRelatedObject1Var
 	ld h,(hl)
@@ -6008,18 +6008,18 @@ _aquamentus_horn_updateAnimation:
 	.db $06 $05 $05 $05 $05 $06 $06 $06
 	.db $07 $08
 
-_aquamentus_projectileFireDelayCounters:
+aquamentus_projectileFireDelayCounters:
 	.db 0, 100, 60, 180, 180
 
 
 ; Each byte corresponds to one horizontal quarter of the screen. Aquamentus will charge if
 ; a randomly chosen bit from that byte is set. (Doesn't apply if Link is behind
 ; aquamentus.)
-_aquamentus_chargeProbabilities:
+aquamentus_chargeProbabilities:
 	.db $03 $31 $13 $33
 
 
-_aquamentus_collisionBoxSizes:
+aquamentus_collisionBoxSizes:
 	.db $16 $08
 	.db $16 $08
 	.db $0a $0d
@@ -6027,16 +6027,16 @@ _aquamentus_collisionBoxSizes:
 	.db $0a $0d
 	.db $0c $14
 
-_aquamentus_animations:
+aquamentus_animations:
 	.db $00 $00 $01 $02 $03 $04
 
 
 ; Each byte is a z value to add depending on aquamentus's current height.
-_aquamentus_fallingSpeeds:
+aquamentus_fallingSpeeds:
 	.db $00 $f0 $f0 $f0 $f0 $f0 $f0 $e0
 	.db $e0 $e0 $e0 $c0 $c0 $a0 $60 $30
 
-_aquamentus_hornXYOffsets:
+aquamentus_hornXYOffsets:
 	.db $d8 $f4
 	.db $d7 $f4
 	.db $e8 $f2
@@ -6061,46 +6061,46 @@ enemyCode79:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 
 @normalStatus:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _dodongo_state_uninitialized
-	.dw _dodongo_state_stub
-	.dw _dodongo_state_grabbed
-	.dw _dodongo_state_stub
-	.dw _dodongo_state_stub
-	.dw _dodongo_state_stub
-	.dw _dodongo_state_stub
-	.dw _dodongo_state_stub
-	.dw _dodongo_state8
-	.dw _dodongo_state9
-	.dw _dodongo_stateA
-	.dw _dodongo_stateB
-	.dw _dodongo_stateC
-	.dw _dodongo_stateD
+	.dw dodongo_state_uninitialized
+	.dw dodongo_state_stub
+	.dw dodongo_state_grabbed
+	.dw dodongo_state_stub
+	.dw dodongo_state_stub
+	.dw dodongo_state_stub
+	.dw dodongo_state_stub
+	.dw dodongo_state_stub
+	.dw dodongo_state8
+	.dw dodongo_state9
+	.dw dodongo_stateA
+	.dw dodongo_stateB
+	.dw dodongo_stateC
+	.dw dodongo_stateD
 
-_dodongo_state_uninitialized:
+dodongo_state_uninitialized:
 	ld bc,$0208
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
 	ld a,ENEMYID_DODONGO
 	ld b,SEASONS_PALH_81
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 
 	ld e,Enemy.var33
 	ld a,$04
 	ld (de),a
 	call enemySetAnimation
 
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	jp objectSetVisible82
 
 
-_dodongo_state_grabbed:
+dodongo_state_grabbed:
 	inc e
 	ld a,(de) ; [substate]
 	rst_jumpTable
@@ -6135,7 +6135,7 @@ _dodongo_state_grabbed:
 	jp objectSetVisible81
 
 @beingHeld:
-	call _dodongo_updateAnimationWhileHeld
+	call dodongo_updateAnimationWhileHeld
 	jr z,@dropDodongo
 
 	; Slow down Link's movement
@@ -6173,7 +6173,7 @@ _dodongo_state_grabbed:
 	add $02
 	call enemySetAnimation
 ++
-	call _dodongo_setInvincibilityAndPlaySoundIfInSpikes
+	call dodongo_setInvincibilityAndPlaySoundIfInSpikes
 	ret nz
 	jr @inSpikes
 
@@ -6182,14 +6182,14 @@ _dodongo_state_grabbed:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	call _dodongo_setInvincibilityAndPlaySoundIfInSpikes
-	jp nz,_dodongo_resetMovement
+	call dodongo_setInvincibilityAndPlaySoundIfInSpikes
+	jp nz,dodongo_resetMovement
 
 @inSpikes:
 	ld h,d
 	ld l,Enemy.var33
 	dec (hl)
-	call z,_ecom_killObjectH
+	call z,ecom_killObjectH
 
 	ld l,Enemy.state
 	ld (hl),$0c
@@ -6212,12 +6212,12 @@ _dodongo_state_grabbed:
 	jp objectSetVisible82
 
 
-_dodongo_state_stub:
+dodongo_state_stub:
 	ret
 
 
 ; Waiting for Link to enter room
-_dodongo_state8:
+dodongo_state8:
 	ld a,(wcc93)
 	or a
 	ret nz
@@ -6231,8 +6231,8 @@ _dodongo_state8:
 
 
 ; Deciding what direction to walk in
-_dodongo_state9:
-	call _dodongo_turnTowardLinkIfPossible
+dodongo_state9:
+	call dodongo_turnTowardLinkIfPossible
 	ret nc
 
 	ld h,d
@@ -6284,43 +6284,43 @@ _dodongo_state9:
 
 
 ; Walking
-_dodongo_stateA:
-	call _dodongo_playStompSoundAtInterval
-	call _ecom_decCounter1
+dodongo_stateA:
+	call dodongo_playStompSoundAtInterval
+	call ecom_decCounter1
 	jr nz,@walking
 
-	call _dodongo_updateAngleTowardLink
-	jp c,_dodongo_initiateNextAttack
+	call dodongo_updateAngleTowardLink
+	jp c,dodongo_initiateNextAttack
 
 	; Reset movement if Link is no longer lined up well
-	jp _dodongo_resetMovement
+	jp dodongo_resetMovement
 
 @walking:
 	; If counter2 is nonzero, he's charging up, not moving
-	call _ecom_decCounter2
-	jr nz,_dodongo_doubleAnimate
+	call ecom_decCounter2
+	jr nz,dodongo_doubleAnimate
 
-	call _dodongo_checkTileInFront
-	jp nc,_dodongo_resetMovement
+	call dodongo_checkTileInFront
+	jp nc,dodongo_resetMovement
 
 	call objectApplySpeed
 	ld e,Enemy.speed
 	ld a,(de)
 	cp SPEED_40
-	jr z,_dodongo_animate
+	jr z,dodongo_animate
 
-_dodongo_doubleAnimate:
+dodongo_doubleAnimate:
 	call enemyAnimate
-_dodongo_animate:
+dodongo_animate:
 	jp enemyAnimate
 
 
 ; Opening mouth, preparing to fire
-_dodongo_stateB:
+dodongo_stateB:
 	ld e,Enemy.animParameter
 	ld a,(de)
 	dec a
-	jp z,_dodongo_checkEatBomb
+	jp z,dodongo_checkEatBomb
 
 	dec a
 	jr nz,@animate
@@ -6329,21 +6329,21 @@ _dodongo_stateB:
 
 	; Fire projectile
 	ld b,PARTID_DODONGO_FIREBALL
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 
 	ld a,SND_BEAM2
 	call playSound
 
-	jr _dodongo_animate
+	jr dodongo_animate
 
 @animate:
 	add $03
-	jr nz,_dodongo_animate
-	jr _dodongo_resetMovement
+	jr nz,dodongo_animate
+	jr dodongo_resetMovement
 
 
 ; In spikes?
-_dodongo_stateC:
+dodongo_stateC:
 	ld h,d
 	ld l,Enemy.invincibilityCounter
 	ld a,(hl)
@@ -6351,7 +6351,7 @@ _dodongo_stateC:
 	ret nz
 
 	; Delay before moving back
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
 	ld l,Enemy.counter1
@@ -6373,39 +6373,39 @@ _dodongo_stateC:
 	call enemySetAnimation
 
 @moveBack:
-	call _dodongo_playStompSoundAtInterval
-	call _ecom_decCounter1
+	call dodongo_playStompSoundAtInterval
+	call ecom_decCounter1
 	jr nz,++
 
-	call _dodongo_checkInSpikes
-	jr nz,_dodongo_resetMovement
+	call dodongo_checkInSpikes
+	jr nz,dodongo_resetMovement
 
 	ld e,Enemy.counter1
 	ld a,$0a
 	ld (de),a
 ++
 	call objectApplySpeed
-	jr _dodongo_doubleAnimate
+	jr dodongo_doubleAnimate
 
 
 ; Just ate a bomb
-_dodongo_stateD:
+dodongo_stateD:
 	call objectAddToGrabbableObjectBuffer
 	call objectPushLinkAwayOnCollision
 
 	; When counter2 reaches 0, dodongo begins getting up
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	ret nz
 
-	call _dodongo_updateAnimationWhileSlimmingDown
-	jr z,_dodongo_resetMovement
+	call dodongo_updateAnimationWhileSlimmingDown
+	jr z,dodongo_resetMovement
 
 	ld l,Enemy.direction
 
 
 ;;
 ; @param	hl	Pointer to Enemy.direction
-_dodongo_updateAnimation:
+dodongo_updateAnimation:
 	ld e,Enemy.var30
 	ld a,(de)
 	and $01
@@ -6414,7 +6414,7 @@ _dodongo_updateAnimation:
 	jp enemySetAnimation
 
 ;;
-_dodongo_resetMovement:
+dodongo_resetMovement:
 	ld h,d
 	ld l,Enemy.state
 	ld (hl),$09
@@ -6436,17 +6436,17 @@ _dodongo_resetMovement:
 ; Either turns toward Link or, if facing a wall, turns in some other random direction.
 ;
 ; @param[out]	c	c if wasn't able to turn in any valid direction
-_dodongo_turnTowardLinkIfPossible:
-	call _ecom_updateCardinalAngleTowardTarget
-	call _dodongo_checkTileInFront
+dodongo_turnTowardLinkIfPossible:
+	call ecom_updateCardinalAngleTowardTarget
+	call dodongo_checkTileInFront
 	ret c
-	call _ecom_setRandomCardinalAngle
+	call ecom_setRandomCardinalAngle
 
 	; Fall through
 
 ;;
 ; @param[out]	cflag	c if tile in front of dodongo is not a spike
-_dodongo_checkTileInFront:
+dodongo_checkTileInFront:
 	ld h,d
 	ld l,Enemy.yh
 	ld b,(hl)
@@ -6481,7 +6481,7 @@ _dodongo_checkTileInFront:
 	.db   4,-17
 
 ;;
-_dodongo_playStompSoundAtInterval:
+dodongo_playStompSoundAtInterval:
 	ld e,Enemy.speed
 	ld a,(de)
 	cp SPEED_40
@@ -6497,7 +6497,7 @@ _dodongo_playStompSoundAtInterval:
 
 ;;
 ; @param[out]	c	c if Link is at a good angle to charge him
-_dodongo_updateAngleTowardLink:
+dodongo_updateAngleTowardLink:
 	ld c,$0c
 	call objectCheckCenteredWithLink
 	ret nc
@@ -6514,7 +6514,7 @@ _dodongo_updateAngleTowardLink:
 
 ;;
 ; @param[out]	zflag	z if dodongo is ready to continue moving
-_dodongo_updateAnimationWhileSlimmingDown:
+dodongo_updateAnimationWhileSlimmingDown:
 	ld e,Enemy.var30
 	ld a,(de)
 	inc a
@@ -6540,7 +6540,7 @@ _dodongo_updateAnimationWhileSlimmingDown:
 	.db 180, 20, 20, 16, 16, 10, 10
 
 ;;
-_dodongo_checkEatBomb:
+dodongo_checkEatBomb:
 	; Check bomb 1
 	ld c,ITEMID_BOMB
 	call findItemWithID
@@ -6652,7 +6652,7 @@ _dodongo_checkEatBomb:
 
 ;;
 ; Determines next attack.
-_dodongo_initiateNextAttack:
+dodongo_initiateNextAttack:
 	ld e,Enemy.var32
 	ld a,(de)
 	inc a
@@ -6688,8 +6688,8 @@ _dodongo_initiateNextAttack:
 
 ;;
 ; @param[out]	zflag	z if in spikes
-_dodongo_setInvincibilityAndPlaySoundIfInSpikes:
-	call _dodongo_checkInSpikes
+dodongo_setInvincibilityAndPlaySoundIfInSpikes:
+	call dodongo_checkInSpikes
 	ret nz
 
 	ld e,Enemy.invincibilityCounter
@@ -6702,7 +6702,7 @@ _dodongo_setInvincibilityAndPlaySoundIfInSpikes:
 
 ;;
 ; @param[out]	zflag	z if in spikes
-_dodongo_checkInSpikes:
+dodongo_checkInSpikes:
 	ld h,d
 	ld l,Enemy.zh
 	bit 7,(hl)
@@ -6719,12 +6719,12 @@ _dodongo_checkInSpikes:
 
 ;;
 ; @param[out]	zflag	z if king dodongo has regained normal weight and is ready to move
-_dodongo_updateAnimationWhileHeld:
+dodongo_updateAnimationWhileHeld:
 	ld h,d
 	ld l,Enemy.counter2
 	dec (hl)
 	jr nz,++
-	call _dodongo_updateAnimationWhileSlimmingDown
+	call dodongo_updateAnimationWhileSlimmingDown
 	ret z
 ++
 	; Update animation based on Link's direction
@@ -6741,7 +6741,7 @@ _dodongo_updateAnimationWhileHeld:
 	and $0c
 	ld (hl),a
 
-	call _dodongo_updateAnimation
+	call dodongo_updateAnimation
 	or d
 	ret
 
@@ -6768,22 +6768,22 @@ enemyCode7a:
 	ld e,Enemy.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _mothula_state_uninitialized
-	.dw _mothula_state_stub
-	.dw _mothula_state_stub
-	.dw _mothula_state_stub
-	.dw _mothula_state_stub
-	.dw _mothula_state_stub
-	.dw _mothula_state_stub
-	.dw _mothula_state_stub
-	.dw _mothula_state8
-	.dw _mothula_state9
-	.dw _mothula_stateA
-	.dw _mothula_stateB
-	.dw _mothula_stateC
-	.dw _mothula_stateD
-	.dw _mothula_stateE
-	.dw _mothula_stateF
+	.dw mothula_state_uninitialized
+	.dw mothula_state_stub
+	.dw mothula_state_stub
+	.dw mothula_state_stub
+	.dw mothula_state_stub
+	.dw mothula_state_stub
+	.dw mothula_state_stub
+	.dw mothula_state_stub
+	.dw mothula_state8
+	.dw mothula_state9
+	.dw mothula_stateA
+	.dw mothula_stateB
+	.dw mothula_stateC
+	.dw mothula_stateD
+	.dw mothula_stateE
+	.dw mothula_stateF
 
 @dead:
 	call getThisRoomFlags
@@ -6794,28 +6794,28 @@ enemyCode7a:
 	ld h,a
 	ld l,$43
 	set 7,(hl)
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 
-_mothula_state_uninitialized:
+mothula_state_uninitialized:
 	ld a,ENEMYID_MOTHULA
 	ld b,SEASONS_PALH_82
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 
 	ld bc,$0108
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld c,$10
-	jp _ecom_setZAboveScreen
+	jp ecom_setZAboveScreen
 
 
-_mothula_state_stub:
+mothula_state_stub:
 	ret
 
 
-_mothula_state8:
+mothula_state8:
 	call objectSetVisible81
 
 	ld a,(wFrameCounter)
@@ -6829,7 +6829,7 @@ _mothula_state8:
 	ld l,Enemy.zh
 	ld a,(hl)
 	cp $fe
-	jr c,_mothula_animate
+	jr c,mothula_animate
 
 	; Reached ground
 	ld l,Enemy.state
@@ -6837,7 +6837,7 @@ _mothula_state8:
 
 	ld l,Enemy.counter1
 	ld (hl),60
-	call _mothula_setTargetPositionToLeftOrRightSide
+	call mothula_setTargetPositionToLeftOrRightSide
 
 	ld a,MUS_BOSS
 	ld (wActiveMusic),a
@@ -6845,21 +6845,21 @@ _mothula_state8:
 
 
 ; Delay before moving
-_mothula_state9:
-	call _ecom_decCounter1
-	jr nz,_mothula_animate
+mothula_state9:
+	call ecom_decCounter1
+	jr nz,mothula_animate
 
 	inc l
 	ld (hl),10 ; [counter2]
 	ld l,e
 	inc (hl) ; [state] = $0a
-	call _mothula_spawnChild
+	call mothula_spawnChild
 
 
 ; Just beginning to move
-_mothula_stateA:
-	call _mothula_checkReachedTargetPosition
-	jr nc,_mothula_moveTowardTargetPosition
+mothula_stateA:
+	call mothula_checkReachedTargetPosition
+	jr nc,mothula_moveTowardTargetPosition
 
 	ld l,Enemy.state
 	inc (hl) ; [state] = $0b
@@ -6869,13 +6869,13 @@ _mothula_stateA:
 	ld l,Enemy.var37
 	ld (hl),$50
 
-	call _mothula_initializeStateB
-	jr _mothula_stateB
+	call mothula_initializeStateB
+	jr mothula_stateB
 
 
 ; Circling around normally
-_mothula_stateB:
-	call _mothula_decVar34Every4Frames
+mothula_stateB:
+	call mothula_decVar34Every4Frames
 	jr nz,@circlingAround
 
 	; Time to return to center of room (state $0c)
@@ -6884,17 +6884,17 @@ _mothula_stateB:
 	ld l,Enemy.counter1
 	ld (hl),$00
 
-	call _mothula_chooseTargetPositionWithinHoles
-	jr _mothula_animate
+	call mothula_chooseTargetPositionWithinHoles
+	jr mothula_animate
 
 @circlingAround:
 	ld h,d
 	ld l,Enemy.var37
 	dec (hl)
-	call z,_mothula_spawnFireball
+	call z,mothula_spawnFireball
 
 	; Increase speed every 10 frames
-	call _ecom_decCounter2
+	call ecom_decCounter2
 	jr nz,+++
 
 	ld (hl),10 ; [counter2]
@@ -6905,8 +6905,8 @@ _mothula_stateB:
 	jr nc,+++
 	ld (hl),a
 +++
-	call _ecom_decCounter1
-	jr nz,_mothula_applySpeedAndAnimate
+	call ecom_decCounter1
+	jr nz,mothula_applySpeedAndAnimate
 
 	; Turn clockwise or counterclockwise
 	ld l,Enemy.var30
@@ -6915,25 +6915,25 @@ _mothula_stateB:
 	add (hl)
 	and $1f
 	ld (de),a
-	call _mothula_updateAnimation
-	call _mothula_updateCounter1ForCirclingRoom
-	jr nz,_mothula_applySpeedAndAnimate
+	call mothula_updateAnimation
+	call mothula_updateCounter1ForCirclingRoom
+	jr nz,mothula_applySpeedAndAnimate
 
 	ld e,Enemy.var31
 	ld a,$0e
 	ld (de),a
-	call _mothula_updateCounter1ForCirclingRoom
+	call mothula_updateCounter1ForCirclingRoom
 
-_mothula_applySpeedAndAnimate:
+mothula_applySpeedAndAnimate:
 	call objectApplySpeed
-_mothula_animate:
+mothula_animate:
 	jp enemyAnimate
 
 
 ; Returning to one of the two center spots
-_mothula_stateC:
-	call _mothula_checkReachedTargetPosition
-	jr nc,_mothula_moveTowardTargetPosition
+mothula_stateC:
+	call mothula_checkReachedTargetPosition
+	jr nc,mothula_moveTowardTargetPosition
 
 	ld l,Enemy.state
 	inc (hl) ; [state] = $0d
@@ -6941,19 +6941,19 @@ _mothula_stateC:
 	jp enemySetAnimation
 
 
-_mothula_moveTowardTargetPosition:
-	call _mothula_updateAngleTowardTargetPosition
-	jr _mothula_applySpeedAndAnimate
+mothula_moveTowardTargetPosition:
+	call mothula_updateAngleTowardTargetPosition
+	jr mothula_applySpeedAndAnimate
 
 
 ; Deciding how long to stand in place?
-_mothula_stateD:
+mothula_stateD:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state] = $0e
 
 	ld bc,$0840
-	call _ecom_randomBitwiseAndBCE
+	call ecom_randomBitwiseAndBCE
 	ld e,Enemy.var36
 	ld a,b
 	ld (de),a
@@ -6962,15 +6962,15 @@ _mothula_stateD:
 	ld a,120
 	add c
 	ld (de),a
-	jr _mothula_animate
+	jr mothula_animate
 
 
 ; Standing in place
-_mothula_stateE:
-	call _ecom_decCounter1
+mothula_stateE:
+	call ecom_decCounter1
 	jr z,++
-	call _mothula_updateZPosAndOamFlagsForStateE
-	jr _mothula_animate
+	call mothula_updateZPosAndOamFlagsForStateE
+	jr mothula_animate
 ++
 	inc l
 	ld (hl),30 ; [counter1]
@@ -6985,15 +6985,15 @@ _mothula_stateE:
 	ldd (hl),a
 	ld (hl),a
 
-	call _mothula_spawnSomethingAfterStandingStill
+	call mothula_spawnSomethingAfterStandingStill
 	ld a,$08
 	jp enemySetAnimation
 
 
 ; Delay before circling around room again
-_mothula_stateF:
-	call _ecom_decCounter2
-	jr nz,_mothula_animate
+mothula_stateF:
+	call ecom_decCounter2
+	jr nz,mothula_animate
 
 	ld l,e
 	ld (hl),$0a ; [state] = $0a
@@ -7003,26 +7003,26 @@ _mothula_stateF:
 	dec l
 	ld (hl),$00 ; [counter1]
 
-	jp _mothula_setTargetPositionToLeftOrRightSide
+	jp mothula_setTargetPositionToLeftOrRightSide
 
 
 ;;
 ; @param	hl	var37 (counter to spawn projectile)
-_mothula_spawnFireball:
+mothula_spawnFireball:
 	ld (hl),$50
 	ld b,PARTID_MOTHULA_PROJECTILE_1
-	jp _ecom_spawnProjectile
+	jp ecom_spawnProjectile
 
 ;;
 ; Decides what to spawn after state $0e (small moth or ring of fireballs).
-_mothula_spawnSomethingAfterStandingStill:
+mothula_spawnSomethingAfterStandingStill:
 	ld e,Enemy.var36
 	ld a,(de)
 	or a
-	jr nz,_mothula_spawnChild
+	jr nz,mothula_spawnChild
 
 	ld b,PARTID_MOTHULA_PROJECTILE_2
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ret nz
 
 	ld l,Part.subid
@@ -7031,7 +7031,7 @@ _mothula_spawnSomethingAfterStandingStill:
 ; Sets child object's subid to $80 normally, or $81 if mothula's health is $10 or less
 ;
 ; @param	hl	Pointer to child object's subid
-_mothula_initChild:
+mothula_initChild:
 	ld b,$80
 	ld e,Enemy.health
 	ld a,(de)
@@ -7043,18 +7043,18 @@ _mothula_initChild:
 	ret
 
 ;;
-_mothula_spawnChild:
+mothula_spawnChild:
 	ld b,ENEMYID_MOTHULA_CHILD
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
-	call _mothula_initChild
+	call mothula_initChild
 	jp objectCopyPosition
 
 ;;
 ; Update mothula "bouncing" in place for state $0e
 ;
 ; @param	hl	counter1
-_mothula_updateZPosAndOamFlagsForStateE:
+mothula_updateZPosAndOamFlagsForStateE:
 	ld a,(hl)
 	cp 90
 	ret nc
@@ -7094,10 +7094,10 @@ _mothula_updateZPosAndOamFlagsForStateE:
 
 ;;
 ; @param[out]	cflag	c if reached target position
-_mothula_checkReachedTargetPosition:
+mothula_checkReachedTargetPosition:
 	ld h,d
 	ld l,Enemy.var32
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $04
 	cp $09
@@ -7110,7 +7110,7 @@ _mothula_checkReachedTargetPosition:
 
 
 ;;
-_mothula_setTargetPositionToLeftOrRightSide:
+mothula_setTargetPositionToLeftOrRightSide:
 	call getRandomNumber_noPreserveVars
 	and $01
 	jr nz,+
@@ -7139,11 +7139,11 @@ _mothula_setTargetPositionToLeftOrRightSide:
 	ld (hl),$00
 	ld l,Enemy.var35
 	ld (hl),$06
-	jr _mothula_updateAnimation
+	jr mothula_updateAnimation
 
 ;;
 ; Chooses a position in one of the two center areas
-_mothula_chooseTargetPositionWithinHoles:
+mothula_chooseTargetPositionWithinHoles:
 	call getRandomNumber_noPreserveVars
 	rrca
 	ld a,$50
@@ -7160,7 +7160,7 @@ _mothula_chooseTargetPositionWithinHoles:
 	ret
 
 ;;
-_mothula_updateAngleTowardTargetPosition:
+mothula_updateAngleTowardTargetPosition:
 	ld h,d
 	ld l,Enemy.var35
 	dec (hl)
@@ -7173,7 +7173,7 @@ _mothula_updateAngleTowardTargetPosition:
 	call objectNudgeAngleTowards
 
 ;;
-_mothula_updateAnimation:
+mothula_updateAnimation:
 	ld h,d
 	ld l,Enemy.angle
 	ldd a,(hl)
@@ -7191,7 +7191,7 @@ _mothula_updateAnimation:
 ; mothula to move in an oval pattern.
 ;
 ; @param[out]	zflag	z if completed a full circle (var31 should be reset)
-_mothula_updateCounter1ForCirclingRoom:
+mothula_updateCounter1ForCirclingRoom:
 	ld h,d
 	ld l,Enemy.var31
 	ld a,(hl)
@@ -7220,7 +7220,7 @@ _mothula_updateCounter1ForCirclingRoom:
 
 ;;
 ; @param[out]	zflag	z if var34 reached 0
-_mothula_decVar34Every4Frames:
+mothula_decVar34Every4Frames:
 	ld a,(wFrameCounter)
 	and $03
 	ret nz
@@ -7233,7 +7233,7 @@ _mothula_decVar34Every4Frames:
 ;;
 ; Calculates appropriate angle, and decides how long to remain in state $0b (circling
 ; around room).
-_mothula_initializeStateB:
+mothula_initializeStateB:
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld hl,@var34Vals
@@ -7251,7 +7251,7 @@ _mothula_initializeStateB:
 +
 	ld e,Enemy.angle
 	ld (de),a
-	jr _mothula_updateAnimation
+	jr mothula_updateAnimation
 
 ; Potential lengths of time for Mothula to circle around the room
 @var34Vals:
@@ -7284,12 +7284,12 @@ enemyCode7b:
 	ld e,Enemy.subid
 	ld a,(de)
 	dec a
-	jp z,_gohma_subid1_dead
+	jp z,gohma_subid1_dead
 
 	ld e,Enemy.animParameter
 	ld a,(de)
 	cp $80
-	jp nz,_gohma_subid3_dead
+	jp nz,gohma_subid3_dead
 
 	ld a,Object.health
 	call objectGetRelatedObject1Var
@@ -7342,46 +7342,46 @@ enemyCode7b:
 	ld (de),a
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,@state8OrHigher
 	rst_jumpTable
-	.dw _gohma_state_uninitialized
-	.dw _gohma_state_spawner
-	.dw _gohma_state_stub
-	.dw _gohma_state_stub
-	.dw _gohma_state_stub
-	.dw _gohma_state_stub
-	.dw _gohma_state_stub
-	.dw _gohma_state_stub
+	.dw gohma_state_uninitialized
+	.dw gohma_state_spawner
+	.dw gohma_state_stub
+	.dw gohma_state_stub
+	.dw gohma_state_stub
+	.dw gohma_state_stub
+	.dw gohma_state_stub
+	.dw gohma_state_stub
 
 @state8OrHigher:
 	dec b
 	ld a,b
 	rst_jumpTable
-	.dw _gohma_subid1
-	.dw _gohma_subid2
-	.dw _gohma_subid3
+	.dw gohma_subid1
+	.dw gohma_subid2
+	.dw gohma_subid3
 
 
-_gohma_state_uninitialized:
+gohma_state_uninitialized:
 	ld a,b
 	or a
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 
 	; Subid 0
 	inc a
 	ld (de),a ; [state] = 1
 	ld a,ENEMYID_GOHMA
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 
 
-_gohma_state_spawner:
+gohma_state_spawner:
 	ld b,$03
 	call checkBEnemySlotsAvailable
 	ret nz
 
 	ld b,ENEMYID_GOHMA
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	call objectCopyPosition
 
 	ld l,Enemy.enabled
@@ -7404,7 +7404,7 @@ _gohma_state_spawner:
 	jp enemyDelete
 
 @spawnChild:
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),e ; [subid] = e
 	ld l,Enemy.relatedObj1
 	ld a,Enemy.start
@@ -7413,27 +7413,27 @@ _gohma_state_spawner:
 	ret
 
 
-_gohma_state_stub:
+gohma_state_stub:
 	ret
 
 
 ; Main body
-_gohma_subid1:
+gohma_subid1:
 	ld a,(de) ; [state]
 	sub $08
 	rst_jumpTable
-	.dw _gohma_subid1_state8
-	.dw _gohma_subid1_state9
-	.dw _gohma_subid1_stateA
-	.dw _gohma_subid1_stateB
-	.dw _gohma_subid1_stateC
-	.dw _gohma_subid1_stateD
+	.dw gohma_subid1_state8
+	.dw gohma_subid1_state9
+	.dw gohma_subid1_stateA
+	.dw gohma_subid1_stateB
+	.dw gohma_subid1_stateC
+	.dw gohma_subid1_stateD
 
 
 ; Initialization
-_gohma_subid1_state8:
+gohma_subid1_state8:
 	ld bc,$0208
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 
 	ld h,d
@@ -7449,12 +7449,12 @@ _gohma_subid1_state8:
 	ld (hl),$02
 
 	ld c,$08
-	jp _ecom_setZAboveScreen
+	jp ecom_setZAboveScreen
 
 
 ; Following Link from the ceiling
-_gohma_subid1_state9:
-	call _ecom_decCounter1
+gohma_subid1_state9:
+	call ecom_decCounter1
 	jr nz,@updatePosition
 
 	ld (hl),30 ; [counter1]
@@ -7472,11 +7472,11 @@ _gohma_subid1_state9:
 
 	call objectSetVisible81
 	ld c,$08
-	call _ecom_setZAboveScreen
+	call ecom_setZAboveScreen
 
 @updatePosition:
-	call _ecom_updateCardinalAngleTowardTarget
-	call _gohma_updateSpeedWhileFalling
+	call ecom_updateCardinalAngleTowardTarget
+	call gohma_updateSpeedWhileFalling
 	call objectApplySpeed
 
 	; Check that x-position is contained in the room
@@ -7496,7 +7496,7 @@ _gohma_subid1_state9:
 
 
 ; Falling down
-_gohma_subid1_stateA:
+gohma_subid1_stateA:
 	ld c,$10
 	call objectUpdateSpeedZ_paramC
 	jr z,@hitGround
@@ -7505,7 +7505,7 @@ _gohma_subid1_stateA:
 	cp $f9
 	ret c
 	ld a,$02
-	jp _gohma_setAnimation
+	jp gohma_setAnimation
 
 @hitGround:
 	ld l,Enemy.state
@@ -7525,8 +7525,8 @@ _gohma_subid1_stateA:
 
 
 ; Standing in place
-_gohma_subid1_stateB:
-	call _ecom_decCounter1
+gohma_subid1_stateB:
+	call ecom_decCounter1
 	ret nz
 
 	inc (hl) ; [counter1] = 1
@@ -7539,32 +7539,32 @@ _gohma_subid1_stateB:
 
 
 ; Phase 1 of fight: claw still intact
-_gohma_subid1_stateC:
-	call _gohma_subid1_updateAnimationsAndCollisions
+gohma_subid1_stateC:
+	call gohma_subid1_updateAnimationsAndCollisions
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @substate0
 	.dw @substate1
-	.dw _gohma_stateC_substate2
-	.dw _gohma_stateC_substate3
-	.dw _gohma_stateC_substate4
+	.dw gohma_stateC_substate2
+	.dw gohma_stateC_substate3
+	.dw gohma_stateC_substate4
 
 ; Standing in place before deciding which way to move
 @substate0:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl) ; [substate] = 1
-	call _gohma_phase1_decideAngle
-	call _gohma_decideMovementDuration
-	call _gohma_decideAnimation
-	jp _gohma_updateSpeedWhileFalling
+	call gohma_phase1_decideAngle
+	call gohma_decideMovementDuration
+	call gohma_decideAnimation
+	jp gohma_updateSpeedWhileFalling
 
 ; Walking in some direction
 @substate1:
 	call enemyAnimate
-	call _ecom_decCounter2
+	call ecom_decCounter2
 
 	; Jump if Link is in front of gohma within $28 pixels?
 	ld h,d
@@ -7572,7 +7572,7 @@ _gohma_subid1_stateC:
 	ld a,(w1Link.yh)
 	sub (hl)
 	cp $28
-	jr nc,_gohma_movingNormally
+	jr nc,gohma_movingNormally
 
 	; Jump if Link isn't close to gohma horizontally
 	ld l,Enemy.xh
@@ -7580,17 +7580,17 @@ _gohma_subid1_stateC:
 	sub (hl)
 	add $18
 	cp $25
-	jr nc,_gohma_movingNormally
+	jr nc,gohma_movingNormally
 
 	; Charge at Link if counter2 is zero?
 	ld l,Enemy.counter2
 	ld a,(hl)
 	or a
-	jr z,_gohma_beginLungeTowardLink
+	jr z,gohma_beginLungeTowardLink
 
-_gohma_movingNormally:
-	call _gohma_checkWallsAndPlayWalkingSound
-	call _ecom_decCounter1
+gohma_movingNormally:
+	call gohma_checkWallsAndPlayWalkingSound
+	call ecom_decCounter1
 	ret nz
 
 	; [substate] = 0 (stop moving for a moment)
@@ -7598,14 +7598,14 @@ _gohma_movingNormally:
 	dec (hl)
 	call getRandomNumber_noPreserveVars
 	and $07
-	ld hl,_gohma_counter1Vals
+	ld hl,gohma_counter1Vals
 	rst_addAToHl
 	ld e,Enemy.counter1
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_gohma_beginLungeTowardLink:
+gohma_beginLungeTowardLink:
 	ld l,Enemy.substate
 	inc (hl) ; [substate] = 2
 	inc l
@@ -7628,14 +7628,14 @@ _gohma_beginLungeTowardLink:
 ++
 	ld a,$09
 
-_gohma_setAnimation:
+gohma_setAnimation:
 	ld e,Enemy.direction
 	ld (de),a
 	jp enemySetAnimation
 
 
 ; Lunging toward Link (or moving back) with claw
-_gohma_stateC_substate2:
+gohma_stateC_substate2:
 	call enemyAnimate
 	ld e,Enemy.animParameter
 	ld a,(de)
@@ -7645,13 +7645,13 @@ _gohma_stateC_substate2:
 	res 7,a
 	dec a
 	ret z
-	jp _gohma_updateLunge
+	jp gohma_updateLunge
 
 @doneLunge:
 	; Check if grabbed Link
 	ld a,(w1Link.state)
 	cp LINK_STATE_GRABBED
-	jr z,_gohma_stateC_setSubstate4
+	jr z,gohma_stateC_setSubstate4
 
 	ld h,d
 	ld l,Enemy.substate
@@ -7661,21 +7661,21 @@ _gohma_stateC_substate2:
 	ret
 
 ; Grabbed Link
-_gohma_stateC_setSubstate4:
+gohma_stateC_setSubstate4:
 	ld e,Enemy.substate
 	ld a,$04
 	ld (de),a
 	ld a,$0a
-	jr _gohma_setAnimation
+	jr gohma_setAnimation
 
 
 ; Standing in place after lunge
-_gohma_stateC_substate3:
+gohma_stateC_substate3:
 	ld a,(w1Link.state)
 	cp LINK_STATE_GRABBED
-	jr z,_gohma_stateC_setSubstate4
+	jr z,gohma_stateC_setSubstate4
 
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 
 	inc (hl) ; [counter1] = 1
@@ -7691,7 +7691,7 @@ _gohma_stateC_substate3:
 
 
 ; Holding Link
-_gohma_stateC_substate4:
+gohma_stateC_substate4:
 	call enemyAnimate
 	ld h,d
 	ld l,Enemy.animParameter
@@ -7709,8 +7709,8 @@ _gohma_stateC_substate4:
 
 
 ; Phase 2 of fight: claw destroyed
-_gohma_subid1_stateD:
-	call _gohma_subid1_updateAnimationsAndCollisions
+gohma_subid1_stateD:
+	call gohma_subid1_updateAnimationsAndCollisions
 	ld e,Enemy.substate
 	ld a,(de)
 	rst_jumpTable
@@ -7735,21 +7735,21 @@ _gohma_subid1_stateD:
 	ld (hl),$01 ; [counter1]
 
 	ld a,$0b
-	jp _gohma_setAnimation
+	jp gohma_setAnimation
 
 @chooseNextMovement:
-	call _ecom_setRandomCardinalAngle
+	call ecom_setRandomCardinalAngle
 	ld e,Enemy.substate
 	ld a,$01
 	ld (de),a
-	call _gohma_decideMovementDuration
-	call _gohma_decideAnimation
-	jp _gohma_updateSpeedWhileFalling
+	call gohma_decideMovementDuration
+	call gohma_decideAnimation
+	jp gohma_updateSpeedWhileFalling
 
 
 @substate1:
 	call enemyAnimate
-	jp _gohma_movingNormally
+	jp gohma_movingNormally
 
 @substate2:
 	ld e,Enemy.animParameter
@@ -7760,14 +7760,14 @@ _gohma_subid1_stateD:
 	res 7,a
 	dec a
 	jr z,@animate
-	call _ecom_decCounter1
-	call z,_gohma_phase2_spawnGelChild
+	call ecom_decCounter1
+	call z,gohma_phase2_spawnGelChild
 @animate:
 	jp enemyAnimate
 
 
 ; Collision box for legs
-_gohma_subid2:
+gohma_subid2:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -7804,7 +7804,7 @@ _gohma_subid2:
 
 
 ; Claw
-_gohma_subid3:
+gohma_subid3:
 	ld a,(de)
 	sub $08
 	rst_jumpTable
@@ -7865,16 +7865,16 @@ _gohma_subid3:
 
 ; Standing in place
 @stateA:
-	call _gohma_checkShouldBlock
-	call _gohma_updateCollisionsEnabled
+	call gohma_checkShouldBlock
+	call gohma_updateCollisionsEnabled
 	call @updateNormalPosition
 	jp enemyAnimate
 
 
 ; Blocking eye with claw
 @stateB:
-	call _ecom_decCounter1
-	jp nz,_gohma_claw_updateBlockingPosition
+	call ecom_decCounter1
+	jp nz,gohma_claw_updateBlockingPosition
 
 @gotoStateA:
 	ld h,d
@@ -7907,7 +7907,7 @@ _gohma_subid3:
 	ld a,SND_SWORDSLASH
 	call playSound
 
-	jp _gohma_claw_updatePositionInLunge
+	jp gohma_claw_updatePositionInLunge
 
 
 ; Claw in the process of attacking
@@ -7926,7 +7926,7 @@ _gohma_subid3:
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_GOHMA_CLAW_LUNGING
 ++
-	call _gohma_claw_updatePositionInLunge
+	call gohma_claw_updatePositionInLunge
 	ld e,Enemy.var30
 	ld a,(de)
 	or a
@@ -7940,7 +7940,7 @@ _gohma_subid3:
 	jp z,@gotoStateA
 
 	xor a
-	call _gohma_claw_setPositionInLunge
+	call gohma_claw_setPositionInLunge
 
 @linkCaught:
 	ld a,$10
@@ -7973,7 +7973,7 @@ _gohma_subid3:
 	cp $04
 	jr z,@donePullingBack
 
-	call _gohma_claw_updatePositionInLunge
+	call gohma_claw_updatePositionInLunge
 	jr @updateLinkPosition
 
 @donePullingBack:
@@ -7999,14 +7999,14 @@ _gohma_subid3:
 	jr z,@label_0e_311
 
 	bit 4,(hl)
-	jp z,_gohma_updateClawPositionDuringSlamAttack
+	jp z,gohma_updateClawPositionDuringSlamAttack
 
 	res 4,(hl)
 	ld hl,w1Link.substate
 	ld (hl),$02
 	ld l,<w1Link.collisionType
 	set 7,(hl)
-	jp _gohma_updateClawPositionDuringSlamAttack
+	jp gohma_updateClawPositionDuringSlamAttack
 
 @label_0e_311:
 	bit 4,(hl)
@@ -8025,7 +8025,7 @@ _gohma_subid3:
 	ld h,d
 	ld l,Enemy.animParameter
 ++
-	call _gohma_updateLinkAnimAndClawPositionDuringSlamAttack
+	call gohma_updateLinkAnimAndClawPositionDuringSlamAttack
 
 @updateLinkPosition:
 	ld bc,$0002
@@ -8035,7 +8035,7 @@ _gohma_subid3:
 
 ;;
 ; Updates speed while falling to be fast vertically, slow horizontally.
-_gohma_updateSpeedWhileFalling:
+gohma_updateSpeedWhileFalling:
 	ld h,d
 	ld l,Enemy.angle
 	bit 3,(hl)
@@ -8047,7 +8047,7 @@ _gohma_updateSpeedWhileFalling:
 
 ;;
 ; Reverses direction if gohma hits a wall, and plays walking sound.
-_gohma_checkWallsAndPlayWalkingSound:
+gohma_checkWallsAndPlayWalkingSound:
 	ld h,d
 	ld l,Enemy.yh
 	ld b,(hl)
@@ -8059,7 +8059,7 @@ _gohma_checkWallsAndPlayWalkingSound:
 	ld a,(de)
 	rrca
 	rrca
-	ld hl,_gohma_positionOffsets
+	ld hl,gohma_positionOffsets
 	rst_addAToHl
 	ldi a,(hl)
 	add b
@@ -8070,7 +8070,7 @@ _gohma_checkWallsAndPlayWalkingSound:
 
 	; Check for wall in front of gohma
 	call getTileCollisionsAtPosition
-	jr z,_gohma_updateMovement
+	jr z,gohma_updateMovement
 
 	; Reverse direction
 	ld e,Enemy.angle
@@ -8079,7 +8079,7 @@ _gohma_checkWallsAndPlayWalkingSound:
 	ld (de),a
 
 ;;
-_gohma_updateMovement:
+gohma_updateMovement:
 	; If moving down, don't allow gohma to pass a certain point?
 	ld e,Enemy.angle
 	ld a,(de)
@@ -8108,7 +8108,7 @@ _gohma_updateMovement:
 	ld a,SND_LAND
 	jp playSound
 
-_gohma_positionOffsets:
+gohma_positionOffsets:
 	.db $f7 $00
 	.db $00 $18
 	.db $08 $00
@@ -8117,7 +8117,7 @@ _gohma_positionOffsets:
 
 ;;
 ; Used by subid 1 (body) and 3 (claw)?
-_gohma_updateCollisionsEnabled:
+gohma_updateCollisionsEnabled:
 	ld e,Enemy.health
 	ld a,(de)
 	or a
@@ -8138,7 +8138,7 @@ _gohma_updateCollisionsEnabled:
 
 ;;
 ; Main body has died (health is 0).
-_gohma_subid1_dead:
+gohma_subid1_dead:
 	ld e,Enemy.collisionType
 	ld a,(de)
 	or a
@@ -8150,7 +8150,7 @@ _gohma_subid1_dead:
 	ld l,Enemy.id
 	ld a,(hl)
 	cp ENEMYID_GOHMA_GEL
-	call z,_ecom_killObjectH
+	call z,ecom_killObjectH
 	inc h
 	ld a,h
 	cp LAST_ENEMY_INDEX+1
@@ -8163,16 +8163,16 @@ _gohma_subid1_dead:
 	cp ENEMYID_GOHMA
 	jr nz,@dead
 
-	call _ecom_killObjectH
+	call ecom_killObjectH
 	ld l,Enemy.animParameter
 	ld (hl),$80
 @dead:
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 
 
 ;;
 ; Claw is dead
-_gohma_subid3_dead:
+gohma_subid3_dead:
 	ld h,d
 	ld l,Enemy.collisionType
 	ld a,(hl)
@@ -8196,7 +8196,7 @@ _gohma_subid3_dead:
 
 
 ;;
-_gohma_subid1_updateAnimationsAndCollisions:
+gohma_subid1_updateAnimationsAndCollisions:
 	ld e,Enemy.substate
 	ld a,(de)
 	dec a
@@ -8250,7 +8250,7 @@ _gohma_subid1_updateAnimationsAndCollisions:
 	ld e,Enemy.animParameter
 	ld a,(de)
 	rlca
-	jp c,_gohma_updateCollisionsEnabled
+	jp c,gohma_updateCollisionsEnabled
 
 	ld e,Enemy.collisionType
 	ld a,(de)
@@ -8260,7 +8260,7 @@ _gohma_subid1_updateAnimationsAndCollisions:
 
 
 ;;
-_gohma_phase1_decideAngle:
+gohma_phase1_decideAngle:
 	ld b,$00
 	ld h,d
 	ld l,Enemy.yh
@@ -8270,7 +8270,7 @@ _gohma_phase1_decideAngle:
 
 	call getRandomNumber
 	and $07
-	jp z,_ecom_setRandomCardinalAngle
+	jp z,ecom_setRandomCardinalAngle
 
 	ld a,(w1Link.yh)
 	sub (hl)
@@ -8300,7 +8300,7 @@ _gohma_phase1_decideAngle:
 
 ;;
 ; Sets counter1 to something.
-_gohma_decideMovementDuration:
+gohma_decideMovementDuration:
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld hl,@counter1Vals
@@ -8323,7 +8323,7 @@ _gohma_decideMovementDuration:
 	.db $60 $70 $80 $50
 
 ;;
-_gohma_decideAnimation:
+gohma_decideAnimation:
 	ld h,d
 	ld l,Enemy.var31
 	ld e,Enemy.angle
@@ -8340,29 +8340,29 @@ _gohma_decideAnimation:
 
 ;;
 ; Updates movement for "lunge" at Link with claw
-_gohma_updateLunge:
-	call _ecom_decCounter1
+gohma_updateLunge:
+	call ecom_decCounter1
 	ret z
 
 	ld a,(hl)
 	cp 30
 	push af
-	call z,_gohma_initAngleForLungeAtLink
+	call z,gohma_initAngleForLungeAtLink
 
 	pop af
 	cp 15
-	jp nz,_gohma_updateMovement
+	jp nz,gohma_updateMovement
 
 	; Begin moving back
 	ld e,Enemy.angle
 	ld a,(de)
 	xor $10
 	ld (de),a
-	jp _gohma_updateMovement
+	jp gohma_updateMovement
 
 ;;
 ; Decides angle to use while charging toward Link, and plays sound effect.
-_gohma_initAngleForLungeAtLink:
+gohma_initAngleForLungeAtLink:
 	ld b,$00
 	ld a,Object.xh
 	call objectGetRelatedObject2Var
@@ -8389,7 +8389,7 @@ _gohma_initAngleForLungeAtLink:
 
 ;;
 ; @param	hl	Pointer to counter1
-_gohma_phase2_spawnGelChild:
+gohma_phase2_spawnGelChild:
 	ld (hl),$07
 	ld l,Enemy.var32
 	ld a,(hl)
@@ -8400,7 +8400,7 @@ _gohma_phase2_spawnGelChild:
 	and $03
 	ld c,a
 	ld b,ENEMYID_GOHMA_GEL
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 
 	ld (hl),c ; [subid] = c (random number from 0 to 3)
@@ -8416,12 +8416,12 @@ _gohma_phase2_spawnGelChild:
 	ld a,SND_GOHMA_SPAWN_GEL
 	jp playSound
 
-_gohma_counter1Vals:
+gohma_counter1Vals:
 	.db $05 $0f $0f $19 $19 $19 $23 $23
 
 ;;
 ; If Link is using something and a certain item type is active, block eye with claw
-_gohma_checkShouldBlock:
+gohma_checkShouldBlock:
 	ld a,(wLinkUsingItem1)
 	and $f0
 	ret z
@@ -8457,20 +8457,20 @@ _gohma_checkShouldBlock:
 	ld a,$0e
 	call enemySetAnimation
 
-_gohma_claw_updateBlockingPosition:
+gohma_claw_updateBlockingPosition:
 	ld bc,$07ff
 	ld a,Object.enabled
 	call objectGetRelatedObject1Var
 	jp objectTakePositionWithOffset
 
 ;;
-_gohma_claw_updatePositionInLunge:
+gohma_claw_updatePositionInLunge:
 	ld e,Enemy.animParameter
 	ld a,(de)
 
 ;;
 ; @param	a	Position index
-_gohma_claw_setPositionInLunge:
+gohma_claw_setPositionInLunge:
 	ld hl,@positions
 	rst_addAToHl
 	ldi a,(hl)
@@ -8489,19 +8489,19 @@ _gohma_claw_setPositionInLunge:
 
 ;;
 ; @param	hl	Pointer to w1Link.animParameter?
-_gohma_updateLinkAnimAndClawPositionDuringSlamAttack:
+gohma_updateLinkAnimAndClawPositionDuringSlamAttack:
 	; Update Link's animation?
 	ld a,(hl)
-	ld hl,_gohma_linkVar31Stuff
+	ld hl,gohma_linkVar31Stuff
 	rst_addAToHl
 	ld a,(hl)
 	ld (w1Link.var31),a
 
-_gohma_updateClawPositionDuringSlamAttack:
+gohma_updateClawPositionDuringSlamAttack:
 	ld e,Enemy.animParameter
 	ld a,(de)
 	and $03
-	ld hl,_gohma_clawSlamPositionOffsets
+	ld hl,gohma_clawSlamPositionOffsets
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld b,a
@@ -8511,10 +8511,10 @@ _gohma_updateClawPositionDuringSlamAttack:
 	jp objectTakePositionWithOffset
 
 
-_gohma_linkVar31Stuff:
+gohma_linkVar31Stuff:
 	.db $0d $0e $0f $0e
 
-_gohma_clawSlamPositionOffsets:
+gohma_clawSlamPositionOffsets:
 	.db $08 $fa
 	.db $fd $f3
 	.db $ef $f8
@@ -8532,7 +8532,7 @@ enemyCode7c:
 	dec a
 	jr z,@normalStatus
 	call enemyAnimate
-	jp _ecom_updateKnockback
+	jp ecom_updateKnockback
 @dead:
 	ld e,$82
 	ld a,(de)
@@ -8544,9 +8544,9 @@ enemyCode7c:
 	ld a,$09
 	jr z,+
 	call enemySetAnimation
-	call _ecom_killRelatedObj1
+	call ecom_killRelatedObj1
 +
-	jp _enemyBoss_dead
+	jp enemyBoss_dead
 ++
 	ld e,$84
 	ld a,(de)
@@ -8556,7 +8556,7 @@ enemyCode7c:
 	jp enemyDelete
 
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 	rst_jumpTable
 	.dw @state0
@@ -8582,7 +8582,7 @@ enemyCode7c:
 	ld (de),a
 	ld a,$7c
 	ld b,$84
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	jr ++
 +
 	dec a
@@ -8593,7 +8593,7 @@ enemyCode7c:
 	ld a,$08
 	call enemySetAnimation
 +
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 ++
 	jp objectSetVisible82
 	
@@ -8606,7 +8606,7 @@ enemyCode7c:
 	call checkBEnemySlotsAvailable
 	ret nz
 	ld b,ENEMYID_DIGDOGGER
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,$8b
 	ld (hl),$28
 	ld l,$8d
@@ -8615,7 +8615,7 @@ enemyCode7c:
 	ld (hl),$e8
 	ld c,h
 	push hl
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc (hl)
 	ld l,$8b
 	call objectCopyPosition
@@ -8644,7 +8644,7 @@ enemyCode7c:
 	ret
 	
 @subid1:
-	call _func_779b
+	call func_779b
 	ld e,$84
 	ld a,(de)
 	sub $08
@@ -8667,14 +8667,14 @@ enemyCode7c:
 	bit 1,a
 	ret z
 	ld bc,$0008
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 	ld h,d
 	ld l,$84
 	inc (hl)
 	ld l,$90
 	ld (hl),$28
-	jp _ecom_updateAngleTowardTarget
+	jp ecom_updateAngleTowardTarget
 	
 @@state9:
 	ld c,$10
@@ -8687,7 +8687,7 @@ enemyCode7c:
 	ret
 	
 @@stateA:
-	call _func_7757
+	call func_7757
 	ret c
 @@func_742f:
 	ld a,($cc79)
@@ -8697,7 +8697,7 @@ enemyCode7c:
 	ld a,(de)
 	or a
 	ret z
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	ld a,($cc79)
 	bit 1,a
 	jr nz,+
@@ -8717,7 +8717,7 @@ enemyCode7c:
 	ret
 	
 @@stateB:
-	call _func_7757
+	call func_7757
 	jr c,+
 	ld e,$a9
 	ld a,(de)
@@ -8732,9 +8732,9 @@ enemyCode7c:
 	inc (hl)
 	jr @toFunc7763
 ++
-	call _func_7737
-	call _func_770e
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call func_7737
+	call func_770e
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 	jr @toFunc7763
 	
 @@stateC:
@@ -8754,10 +8754,10 @@ enemyCode7c:
 ++
 	call @@func_742f
 	ret c
-	call _func_7740
-	call _ecom_applyVelocityForSideviewEnemyNoHoles
+	call func_7740
+	call ecom_applyVelocityForSideviewEnemyNoHoles
 @toFunc7763:
-	jp _func_7763
+	jp func_7763
 	
 @subid2:
 	ld a,(de)
@@ -8781,7 +8781,7 @@ enemyCode7c:
 	or a
 	ret nz
 	ld bc,$0208
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 	ld h,d
 	ld l,$84
@@ -8795,7 +8795,7 @@ enemyCode7c:
 	jp playSound
 	
 @@state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 	inc (hl)
 	inc l
@@ -8821,7 +8821,7 @@ enemyCode7c:
 	.db $1e
 
 @@stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld l,e
 	inc (hl)
@@ -8829,7 +8829,7 @@ enemyCode7c:
 	ld a,$80
 	ldi (hl),a
 	ld (hl),$fe
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld hl,@@table_7524
@@ -8856,7 +8856,7 @@ enemyCode7c:
 @@stateB:
 	ld c,$0c
 	call objectUpdateSpeedZ_paramC
-	jp nz,_func_76de
+	jp nz,func_76de
 	ld a,$85
 	call playSound
 	call objectSetVisible82
@@ -8879,7 +8879,7 @@ enemyCode7c:
 	jp enemySetAnimation
 	
 @@stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $04
@@ -8895,7 +8895,7 @@ enemyCode7c:
 	call objectSetSpeedZ
 	ld a,$98
 	call playSound
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call objectSetVisible81
 	ld a,$03
 	jp enemySetAnimation
@@ -8911,7 +8911,7 @@ enemyCode7c:
 	add (hl)
 	sub b
 	cp $b0
-	jp c,_func_76bc
+	jp c,func_76bc
 	ld l,$84
 	inc (hl)
 	ld l,$a4
@@ -8946,13 +8946,13 @@ enemyCode7c:
 	.db $01 $26
 
 @@stateE:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	inc l
 	cp (hl)
 	ld c,$10
-	call c,_ecom_setZAboveScreen
+	call c,ecom_setZAboveScreen
 	ret nz
 	ld l,$8b
 	ld a,($d00b)
@@ -9010,12 +9010,12 @@ enemyCode7c:
 	jp enemySetAnimation
 	
 @@state11:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,enemyAnimate
 	ld e,$b0
 	ld a,(de)
 	or a
-	jr nz,_func_76ac
+	jr nz,func_76ac
 	inc (hl)
 	ld l,$b1
 	ld b,(hl)
@@ -9029,7 +9029,7 @@ enemyCode7c:
 	ld c,a
 -
 	ld b,ENEMYID_MINI_DIGDOGGER
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	call objectCopyPosition
 	ld l,$96
 	ld a,$80
@@ -9059,12 +9059,12 @@ enemyCode7c:
 	ld a,(wFrameCounter)
 	and $03
 	ret nz
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$19
 	ld l,e
 	inc (hl)
-	call _func_76e4
+	call func_76e4
 	ld a,$06
 	call enemySetAnimation
 	jp objectSetVisible82
@@ -9090,7 +9090,7 @@ enemyCode7c:
 	ld l,$b0
 	ld (hl),$04
 	
-_func_76ac:
+func_76ac:
 	ld l,$a4
 	set 7,(hl)
 	ld l,$84
@@ -9100,7 +9100,7 @@ _func_76ac:
 	xor a
 	jp enemySetAnimation
 	
-_func_76bc:
+func_76bc:
 	ld l,$94
 	ldi a,(hl)
 	or a
@@ -9116,15 +9116,15 @@ _func_76bc:
 +
 	ld a,(wFrameCounter)
 	and $03
-	jr nz,_func_76de
+	jr nz,func_76de
 	call objectGetAngleTowardEnemyTarget
 	call objectNudgeAngleTowards
 	
-_func_76de:
-	call _ecom_bounceOffWallsAndHoles
+func_76de:
+	call ecom_bounceOffWallsAndHoles
 	jp objectApplySpeed
 	
-_func_76e4:
+func_76e4:
 	ld e,$b2
 -
 	inc e
@@ -9157,7 +9157,7 @@ _func_76e4:
 	ld (hl),$0c
 	jp objectTakePosition
 	
-_func_770e:
+func_770e:
 	ld a,(wFrameCounter)
 	and $03
 	ret nz
@@ -9183,32 +9183,32 @@ _func_770e:
 	ld (de),a
 	ret
 	
-_func_7737:
+func_7737:
 	ld e,$86
 	ld a,(de)
 	cp $28
-	jr nc,_func_7740
+	jr nc,func_7740
 	inc a
 	ld (de),a
 
-_func_7740:
+func_7740:
 	ld e,$86
 	ld a,(de)
 	and $38
 	rlca
 	swap a
-	ld hl,_table_7751
+	ld hl,table_7751
 	rst_addAToHl
 	ld e,$90
 	ld a,(hl)
 	ld (de),a
 	ret
 
-_table_7751:
+table_7751:
 	.db $0a $14 $28
 	.db $3c $46 $50
 	
-_func_7757:
+func_7757:
 	xor a
 	ld a,($cc79)
 	bit 1,a
@@ -9216,7 +9216,7 @@ _func_7757:
 	ld c,$0c
 	jp objectCheckLinkWithinDistance
 	
-_func_7763:
+func_7763:
 	ld e,$90
 	ld a,(de)
 	cp $3c
@@ -9252,7 +9252,7 @@ _func_7763:
 	ld a,$63
 	jp playSound
 	
-_func_779b:
+func_779b:
 	ld a,$0b
 	call objectGetRelatedObject1Var
 	ld e,l
@@ -9276,14 +9276,14 @@ enemyCode7d:
 	ld e,$82
 	ld a,(de)
 	dec a
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 	dec a
-	call z,_ecom_killRelatedObj1
+	call z,ecom_killRelatedObj1
 	jp enemyDie_uncounted
 +
-	call _func_7a44
+	call func_7a44
 @normalStatus:
-	call _ecom_getSubidAndCpStateTo08
+	call ecom_getSubidAndCpStateTo08
 	jr nc,+
 	rst_jumpTable
 	.dw @state0
@@ -9311,7 +9311,7 @@ enemyCode7d:
 	jr nz,+
 	ld a,$7d
 	ld b,$85
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	jr @state1
 +
 	dec a
@@ -9321,7 +9321,7 @@ enemyCode7d:
 	ld a,(hl)
 	ld (de),a
 	call enemySetAnimation
-	call _ecom_setSpeedAndState8
+	call ecom_setSpeedAndState8
 	ld e,$82
 	ld a,(de)
 	cp $03
@@ -9330,7 +9330,7 @@ enemyCode7d:
 	jr z,++
 	jp objectSetInvisible
 +
-	call _func_7a14
+	call func_7a14
 	ld e,$b1
 	ld a,$03
 	ld (de),a
@@ -9351,7 +9351,7 @@ enemyCode7d:
 	call checkBEnemySlotsAvailable
 	ret nz
 	ld b,ENEMYID_MANHANDLA
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,$80
 	ld e,l
 	ld a,(de)
@@ -9359,10 +9359,10 @@ enemyCode7d:
 	call objectCopyPosition
 	push hl
 	ld c,h
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	inc (hl)
 	call objectCopyPosition
-	call _func_7a3d
+	call func_7a3d
 	ld a,h
 	ld hl,$ff8a
 	ldi (hl),a
@@ -9370,8 +9370,8 @@ enemyCode7d:
 -
 	ldh (<hFF8F),a
 	push hl
-	call _ecom_spawnUncountedEnemyWithSubid01
-	call _func_7a1f
+	call ecom_spawnUncountedEnemyWithSubid01
+	call func_7a1f
 	ld a,h
 	pop hl
 	ldi (hl),a
@@ -9394,7 +9394,7 @@ enemyCode7d:
 	ret
 
 @subid1:
-	call _func_7ac8
+	call func_7ac8
 	ld e,$84
 	ld a,(de)
 	sub $08
@@ -9430,7 +9430,7 @@ enemyCode7d:
 	jp playSound
 	
 @@state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@bounceAndApplySpeed
 	ld (hl),$78
 	ld l,e
@@ -9438,13 +9438,13 @@ enemyCode7d:
 	xor a
 	call enemySetAnimation
 @@bounceAndApplySpeed:
-	call _ecom_bounceOffWallsAndHoles
+	call ecom_bounceOffWallsAndHoles
 	call objectApplySpeed
 @@animate:
 	jp enemyAnimate
 	
 @@stateA:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	
 @@func_78ce:
@@ -9476,7 +9476,7 @@ enemyCode7d:
 	.db $d0 $e0 $f0 $00
 	
 @@stateB:
-	call _func_7ab4
+	call func_7ab4
 	jr nc,+
 	ld l,e
 	inc (hl)
@@ -9494,7 +9494,7 @@ enemyCode7d:
 	jr @@bounceAndApplySpeed
 	
 @@stateC:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@bounceAndApplySpeed
 	ld (hl),$04
 	ld l,$b9
@@ -9512,7 +9512,7 @@ enemyCode7d:
 	jr @@bounceAndApplySpeed
 	
 @@stateD:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@animateAndUpdateMovingPlatform
 	ld (hl),$3c
 	ld l,$b0
@@ -9526,7 +9526,7 @@ enemyCode7d:
 	jp enemySetAnimation
 	
 @@stateE:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,+
 	inc (hl)
 	ld l,$84
@@ -9548,10 +9548,10 @@ enemyCode7d:
 	jp enemySetAnimation
 @@animateAndUpdateMovingPlatform:
 	call enemyAnimate
-	jp _ecom_updateMovingPlatform
+	jp ecom_updateMovingPlatform
 
 @subid2:
-	call _func_7ad6
+	call func_7ad6
 	ld e,$84
 	ld a,(de)
 	sub $08
@@ -9634,9 +9634,9 @@ enemyCode7d:
 	.dw @@state9
 	
 @@state8:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@toFunc7ad6
-	call _func_7b1c
+	call func_7b1c
 	jr c,@@toFunc7ad6
 --
 	call getRandomNumber_noPreserveVars
@@ -9645,16 +9645,16 @@ enemyCode7d:
 	ld e,$86
 	ld (de),a
 @@toFunc7ad6:
-	jp _func_7ad6
+	jp func_7ad6
 	
 @@state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	cp $5a
 	jr nz,@@toFunc7ad6
 	ld b,PARTID_GOPONGA_PROJECTILE
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	jr @@toFunc7ad6
 +
 	ld l,$b0
@@ -9662,7 +9662,7 @@ enemyCode7d:
 	ld a,(hl)
 	call enemySetAnimation
 
-_func_7a14:
+func_7a14:
 	ld h,d
 	ld l,$84
 	ld (hl),$08
@@ -9670,7 +9670,7 @@ _func_7a14:
 	ld (hl),ENEMYCOLLISION_TWINROVA
 	jr --
 
-_func_7a1f:
+func_7a1f:
 	push bc
 	push hl
 	ldh a,(<hFF8F)
@@ -9678,7 +9678,7 @@ _func_7a1f:
 	ld a,$07
 	sub b
 	ld (hl),a
-	call _func_7af2
+	call func_7af2
 	ld e,$8b
 	ld a,(de)
 	add (hl)
@@ -9695,20 +9695,20 @@ _func_7a1f:
 	ld (hl),b
 	pop bc
 
-_func_7a3d:
+func_7a3d:
 	ld l,$96
 	ld a,$80
 	ldi (hl),a
 	ld (hl),c
 	ret
 
-_func_7a44:
+func_7a44:
 	ld h,d
 	ld l,$aa
 	ld e,$82
 	ld a,(de)
 	dec a
-	jr z,_func_7a70
+	jr z,func_7a70
 	dec a
 	ret z
 	ld l,$a9
@@ -9718,14 +9718,14 @@ _func_7a44:
 	ld a,$36
 	call objectGetRelatedObject1Var
 	dec (hl)
-	jr z,_func_7a63
+	jr z,func_7a63
 	ld l,$90
 	ld a,(hl)
 	add $14
 	ld (hl),a
 	ret
 	
-_func_7a63:
+func_7a63:
 	ld l,$84
 	ld (hl),$0b
 	ld l,$90
@@ -9734,7 +9734,7 @@ _func_7a63:
 	ld (hl),ENEMYCOLLISION_MANHANDLA_BODY_VULNERABLE
 	ret
 	
-_func_7a70:
+func_7a70:
 	ld l,$aa
 	ld a,(hl)
 	cp $a0
@@ -9757,7 +9757,7 @@ _func_7a70:
 	inc a
 	cp $03
 	ld (hl),a
-	jr nc,_func_7aa1
+	jr nc,func_7aa1
 	ld l,$86
 	ld (hl),$3c
 	ld l,$84
@@ -9765,7 +9765,7 @@ _func_7a70:
 	call enemySetAnimation
 	jp objectSetVisible81
 	
-_func_7aa1:
+func_7aa1:
 	ld (hl),$03
 	ld l,$84
 	ld (hl),$0e
@@ -9776,10 +9776,10 @@ _func_7aa1:
 	ld a,$03
 	jp enemySetAnimation
 	
-_func_7ab4:
+func_7ab4:
 	ld h,d
 	ld l,$b7
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $04
 	cp $09
@@ -9790,7 +9790,7 @@ _func_7ab4:
 	cp $09
 	ret
 
-_func_7ac8:
+func_7ac8:
 	ld h,d
 	ld l,$ba
 	ld a,(hl)
@@ -9803,7 +9803,7 @@ _func_7ac8:
 	set 7,(hl)
 	ret
 
-_func_7ad6:
+func_7ad6:
 	ld a,$0b
 	call objectGetRelatedObject1Var
 	ld b,(hl)
@@ -9812,7 +9812,7 @@ _func_7ad6:
 	ld l,$a1
 	ld e,$82
 	ld a,(de)
-	call _func_7af2
+	call func_7af2
 	ld e,$8b
 	ldi a,(hl)
 	add b
@@ -9823,25 +9823,25 @@ _func_7ad6:
 	ld (de),a
 	ret
 	
-_func_7af2:
+func_7af2:
 	sub $02
 	ld e,a
 	add a
 	add e
 	add a
 	add (hl)
-	ld hl,_table_7afe
+	ld hl,table_7afe
 	rst_addAToHl
 	ret
 
-_table_7afe:
+table_7afe:
 	.db $0a $00 $0a $00 $0a $00 ; subid2
 	.db $f0 $0a $f2 $0a $f1 $0a ; subid3
 	.db $00 $0b $02 $0b $01 $0b ; subid4
 	.db $00 $f5 $01 $f5 $02 $f5 ; subid5
 	.db $f0 $f6 $f1 $f6 $f2 $f6 ; subid6
 
-_func_7b1c:
+func_7b1c:
 	call objectGetAngleTowardEnemyTarget ; $7b1c
 	ld b,a
 	ld e,$82
@@ -9873,7 +9873,7 @@ enemyCode7f:
 	jr z,@normalStatus
 	sub $03
 	jr c,+
-	jp z,_enemyBoss_dead
+	jp z,enemyBoss_dead
 	dec a
 	jr z,@justHit
 +
@@ -9890,7 +9890,7 @@ enemyCode7f:
 	ld (hl),$01
 	call enemyAnimate
 +
-	jp _ecom_updateKnockback
+	jp ecom_updateKnockback
 @justHit:
 	ld h,d
 	ld l,$aa
@@ -9947,10 +9947,10 @@ enemyCode7f:
 	ld a,(de)
 	or a
 	ld a,$3c
-	jp nz,_ecom_setSpeedAndState8
+	jp nz,ecom_setSpeedAndState8
 	ld a,$7f
 	ld b,$88
-	call _enemyBoss_initializeRoom
+	call enemyBoss_initializeRoom
 	ld e,$84
 	ld a,$01
 	ld (de),a
@@ -9965,7 +9965,7 @@ enemyCode7f:
 	ret nz
 	ldbc ENEMYID_MEDUSA_HEAD $04
 -
-	call _ecom_spawnUncountedEnemyWithSubid01
+	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),c
 	ld a,c
 	dec a
@@ -10022,11 +10022,11 @@ enemyCode7f:
 	ld a,$8d
 	call z,playSound
 +
-	call _ecom_flickerVisibility
+	call ecom_flickerVisibility
 	ld a,(wFrameCounter)
 	rrca
 	ret c
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	ld e,$89
@@ -10054,11 +10054,11 @@ enemyCode7f:
 	jp playSound
 
 @state9:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	inc (hl)
 	ld bc,$020b
-	call _enemyBoss_spawnShadow
+	call enemyBoss_spawnShadow
 	ret nz
 	ld h,d
 	ld l,e
@@ -10098,7 +10098,7 @@ enemyCode7f:
 	or a
 	jr z,@@animate
 	ld b,PARTID_S_46
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld a,$01
 	jp enemySetAnimation
 	
@@ -10106,7 +10106,7 @@ enemyCode7f:
 	ld c,$40
 	call objectCheckLinkWithinDistance
 	jr c,+
-	call _ecom_updateAngleTowardTarget
+	call ecom_updateAngleTowardTarget
 	call objectApplySpeed
 	jr @@animate
 +
@@ -10117,16 +10117,16 @@ enemyCode7f:
 	jp enemyAnimate
 	
 @@substate2:
-	call _func_7e84
+	call func_7e84
 	jr nz,+
 	ld l,e
 	inc (hl)
 	jr @@animate
 +
-	call _func_7ece
+	call func_7ece
 	jr nz,@@animate
-	call _ecom_decCounter1
-	call z,_func_7eb5
+	call ecom_decCounter1
+	call z,func_7eb5
 	call objectGetAngleTowardEnemyTarget
 	ld c,a
 	ld e,$b4
@@ -10135,8 +10135,8 @@ enemyCode7f:
 	and $1f
 	ld e,$89
 	ld (de),a
-	call _func_7e8d
-	call _ecom_applyVelocityForTopDownEnemyNoHoles
+	call func_7e8d
+	call ecom_applyVelocityForTopDownEnemyNoHoles
 	jr nz,@@animate
 	ld e,$b4
 	ld a,(de)
@@ -10182,8 +10182,8 @@ enemyCode7f:
 	res 7,(hl)
 	
 @@substate1:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld (hl),$14
 	ld l,e
 	inc (hl)
@@ -10207,7 +10207,7 @@ enemyCode7f:
 	jp objectSetInvisible
 	
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$1e
 	ld l,e
@@ -10217,8 +10217,8 @@ enemyCode7f:
 	ret
 	
 @@substate3:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld (hl),$0f
 	ld l,e
 	inc (hl)
@@ -10227,24 +10227,24 @@ enemyCode7f:
 	jp objectSetVisible83
 	
 @@substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@animate
 	ld (hl),$05
 	ld l,e
 	inc (hl)
 	ld b,PARTID_S_45
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld a,$02
 	jp enemySetAnimation
 	
 @@substate5:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@playSoundAndAnimate
 	ld l,e
 	inc (hl)
 	call getRandomNumber_noPreserveVars
 	and $03
-	ld hl,_table_7edf
+	ld hl,table_7edf
 	rst_addAToHl
 	ld e,$90
 	ld a,(hl)
@@ -10253,7 +10253,7 @@ enemyCode7f:
 @@substate6:
 	ld h,d
 	ld l,$b1
-	call _ecom_readPositionVars
+	call ecom_readPositionVars
 	sub c
 	add $02
 	cp $05
@@ -10270,7 +10270,7 @@ enemyCode7f:
 	xor a
 	jp enemySetAnimation
 +
-	call _ecom_moveTowardPosition
+	call ecom_moveTowardPosition
 @@playSoundAndAnimate:
 	ld a,(wFrameCounter)
 	and $07
@@ -10280,13 +10280,13 @@ enemyCode7f:
 	jp enemyAnimate
 	
 @@substate7:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@playSoundAndAnimate
 	ld l,e
 	xor a
 	ldd (hl),a
 	inc (hl)
-	call _ecom_killRelatedObj2
+	call ecom_killRelatedObj2
 	jr @@animate
 
 @stateC:
@@ -10314,8 +10314,8 @@ enemyCode7f:
 	jr @@animate
 	
 @@substate1:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld (hl),$14
 	ld l,e
 	inc (hl)
@@ -10324,7 +10324,7 @@ enemyCode7f:
 	jp objectSetInvisible
 	
 @@substate2:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	ret nz
 	ld (hl),$1e
 	ld l,e
@@ -10337,8 +10337,8 @@ enemyCode7f:
 	ld (hl),$fe
 	
 @@substate3:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 	ld (hl),$14
 	ld l,e
 	inc (hl)
@@ -10349,7 +10349,7 @@ enemyCode7f:
 	jp enemyAnimate
 	
 @@substate4:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@animate
 	ld (hl),$14
 	ld l,e
@@ -10358,7 +10358,7 @@ enemyCode7f:
 	jp enemySetAnimation
 	
 @@substate5:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@animate
 	ld (hl),$20
 	ld l,e
@@ -10368,13 +10368,13 @@ enemyCode7f:
 	jr @@animate
 	
 @@substate6:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr z,+
 	ld a,(hl)
 	rrca
 	jr nc,@@animate
 	ld b,PARTID_44
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	jr nz,@@animate
 	ld e,$86
 	ld a,(de)
@@ -10390,7 +10390,7 @@ enemyCode7f:
 	jr @@animate
 	
 @@substate7:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jr nz,@@animate
 	ld (hl),$0f
 	ld l,e
@@ -10399,7 +10399,7 @@ enemyCode7f:
 	jp enemySetAnimation
 	
 @@substate8:
-	call _ecom_decCounter1
+	call ecom_decCounter1
 	jp nz,@@animate
 	ld l,e
 	xor a
@@ -10407,13 +10407,13 @@ enemyCode7f:
 	ld (hl),$0a
 	jp enemySetAnimation
 	
-_func_7e84:
+func_7e84:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-	jp _ecom_decCounter2
+	jp ecom_decCounter2
 	
-_func_7e8d:
+func_7e8d:
 	ld h,d
 	ld l,$8b
 	ldh a,(<hEnemyTargetY)
@@ -10442,9 +10442,9 @@ _func_7e8d:
 	ld c,a
 +
 	ld b,$1e
-	jp _ecom_applyGivenVelocity
+	jp ecom_applyGivenVelocity
 	
-_func_7eb5:
+func_7eb5:
 	ld (hl),$3c
 	inc l
 	ldd a,(hl)
@@ -10455,11 +10455,11 @@ _func_7eb5:
 	ret nc
 	ld (hl),$5a
 	ld b,PARTID_S_46
-	call _ecom_spawnProjectile
+	call ecom_spawnProjectile
 	ld a,$01
 	jp enemySetAnimation
 	
-_func_7ece:
+func_7ece:
 	ld h,d
 	ld l,$a1
 	ld a,(hl)
@@ -10473,7 +10473,7 @@ _func_7ece:
 	inc (hl)
 	ret
 
-_table_7edf:
+table_7edf:
 	.db $5a
 	.db $64
 	.db $6e

@@ -1,34 +1,34 @@
 ;;
 ; ITEMID_BOMBCHUS ($0d)
-_parentItemCode_bombchu:
+parentItemCode_bombchu:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _parentItemGenericState1
+	.dw parentItemGenericState1
 
 @state0:
 .ifdef ROM_AGES
 	; Must be above water
-	call _isLinkUnderwater
-	jp nz,_clearParentItem
+	call isLinkUnderwater
+	jp nz,clearParentItem
 	; Can't be on raft
 	ld a,(w1Companion.id)
 	cp SPECIALOBJECTID_RAFT
-	jp z,_clearParentItem
+	jp z,clearParentItem
 .endif
 
 	; Can't be swimming
 	ld a,(wLinkSwimmingState)
 	or a
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
 
 	; Must have bombchus
 	ld a,(wNumBombchus)
 	or a
-	jp z,_clearParentItem
+	jp z,clearParentItem
 
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 
 	; Create a bombchu if there isn't one on the screen already
 	ld e,$01
@@ -36,21 +36,21 @@ _parentItemCode_bombchu:
 
 ;;
 ; ITEMID_BOMB ($03)
-_parentItemCode_bomb:
+parentItemCode_bomb:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
 
 	.dw @state0
-	.dw _parentItemGenericState1
-	.dw _parentItemCode_bracelet@state2
-	.dw _parentItemCode_bracelet@state3
-	.dw _parentItemCode_bracelet@state4
+	.dw parentItemGenericState1
+	.dw parentItemCode_bracelet@state2
+	.dw parentItemCode_bracelet@state3
+	.dw parentItemCode_bracelet@state4
 
 @state0:
 .ifdef ROM_AGES
-	call _isLinkUnderwater
-	jp nz,_clearParentItem
+	call isLinkUnderwater
+	jp nz,clearParentItem
 	; If Link is riding something other than a raft, don't allow usage of bombs
 	ld a,(w1Companion.id)
 	cp SPECIALOBJECTID_RAFT
@@ -58,24 +58,24 @@ _parentItemCode_bomb:
 .endif
 	ld a,(wLinkObjectIndex)
 	rrca
-	jp c,_clearParentItem
+	jp c,clearParentItem
 +
 	ld a,(wLinkSwimmingState)
 	ld b,a
 	ld a,(wLinkInAir)
 	or b
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
 
 	; Try to pick up a bomb
-	call _tryPickupBombs
-	jp nz,_parentItemCode_bracelet@beginPickupAndSetAnimation
+	call tryPickupBombs
+	jp nz,parentItemCode_bracelet@beginPickupAndSetAnimation
 
 	; Try to create a bomb
 	ld a,(wNumBombs)
 	or a
-	jp z,_clearParentItem
+	jp z,clearParentItem
 
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 	ld e,$01
 	ld a,BOMBERS_RING
 	call cpActiveRing
@@ -83,16 +83,16 @@ _parentItemCode_bomb:
 	inc e
 +
 	call itemCreateChild
-	jp c,_clearParentItem
+	jp c,clearParentItem
 
-	call _makeLinkPickupObjectH
-	jp _parentItemCode_bracelet@beginPickup
+	call makeLinkPickupObjectH
+	jp parentItemCode_bracelet@beginPickup
 
 ;;
 ; Makes Link pick up a bomb object if such an object exists and Link's touching it.
 ;
 ; @param[out]	zflag	Unset if a bomb was picked up
-_tryPickupBombs:
+tryPickupBombs:
 	; Return if Link's using something?
 	ld a,(wLinkUsingItem1)
 	or a
@@ -120,7 +120,7 @@ _tryPickupBombs:
 	and $b0
 	jr nz,@setZFlag
 	call objectHCheckCollisionWithLink
-	jr c,_makeLinkPickupObjectH
+	jr c,makeLinkPickupObjectH
 
 @setZFlag:
 	xor a
@@ -128,7 +128,7 @@ _tryPickupBombs:
 
 ;;
 ; @param	h	Object to make Link pick up
-_makeLinkPickupObjectH:
+makeLinkPickupObjectH:
 	ld l,Item.enabled
 	set 1,(hl)
 
@@ -148,7 +148,7 @@ _makeLinkPickupObjectH:
 ; Bracelet's code is also heavily used by bombs.
 ;
 ; ITEMID_BRACELET ($16)
-_parentItemCode_bracelet:
+parentItemCode_bracelet:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -162,20 +162,20 @@ _parentItemCode_bracelet:
 
 ; State 0: not grabbing anything
 @state0:
-	call _checkLinkOnGround
-	jp nz,_clearParentItem
+	call checkLinkOnGround
+	jp nz,clearParentItem
 
 .ifdef ROM_SEASONS
 	ld a,(wActiveTileType)
 	cp TILETYPE_STUMP
-	jp z,_clearParentItem
+	jp z,clearParentItem
 .endif
 
 	ld a,(w1ReservedItemC.enabled)
 	or a
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
 
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jp z,@dropAndDeleteSelf
 
 	ld a,(wLinkUsingItem1)
@@ -185,7 +185,7 @@ _parentItemCode_bracelet:
 	; Check if there's anything to pick up
 	call checkGrabbableObjects
 	jr c,@beginPickupAndSetAnimation
-	call _tryPickupBombs
+	call tryPickupBombs
 	jr nz,@beginPickupAndSetAnimation
 
 	; Try to grab a solid tile
@@ -193,7 +193,7 @@ _parentItemCode_bracelet:
 	jr nz,++
 	ld a,$41
 	ld (wLinkGrabState),a
-	jp _parentItemLoadAnimationAndIncState
+	jp parentItemLoadAnimationAndIncState
 ++
 	ld a,(w1Link.direction)
 	or $80
@@ -208,7 +208,7 @@ _parentItemCode_bracelet:
 	or a
 	jp nz,@dropAndDeleteSelf
 
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jp z,@dropAndDeleteSelf
 
 	ld a,(wLinkInAir)
@@ -222,12 +222,12 @@ _parentItemCode_bracelet:
 	ld a,(w1Link.direction)
 	ld hl,@counterDirections
 	rst_addAToHl
-	call _andHlWithGameKeysPressed
+	call andHlWithGameKeysPressed
 	ld a,LINK_ANIM_MODE_LIFT_3
 	jp z,specialObjectSetAnimationWithLinkData
 
 	; Update animation, wait for animParameter to set bit 7
-	call _specialObjectAnimate
+	call specialObjectAnimate_optimized
 	ld e,Item.animParameter
 	ld a,(de)
 	rlca
@@ -267,8 +267,8 @@ _parentItemCode_bracelet:
 	call specialObjectSetAnimationWithLinkData
 
 @beginPickup:
-	call _itemDisableLinkMovement
-	call _itemDisableLinkTurning
+	call itemDisableLinkMovement
+	call itemDisableLinkTurning
 	ld a,$c2
 	ld (wLinkGrabState),a
 	xor a
@@ -299,7 +299,7 @@ _parentItemCode_bracelet:
 ; This is also state 2 for bombs.
 @state2:
 	call @deleteAndRetIfSwimmingOrGrabState0
-	call _specialObjectAnimate
+	call specialObjectAnimate_optimized
 
 	; Check if link's pulling a lever?
 	ld a,(wLinkGrabState2)
@@ -338,8 +338,8 @@ _parentItemCode_bracelet:
 	; Re-enable link collisions & movement
 	ld hl,w1Link.collisionType
 	set 7,(hl)
-	call _itemEnableLinkTurning
-	jp _itemEnableLinkMovement
+	call itemEnableLinkTurning
+	jp itemEnableLinkMovement
 
 
 ; State 3: holding the object
@@ -450,8 +450,8 @@ _parentItemCode_bracelet:
 +
 	ld a,c
 	call specialObjectSetAnimationWithLinkData
-	call _itemDisableLinkMovement
-	call _itemDisableLinkTurning
+	call itemDisableLinkMovement
+	call itemDisableLinkTurning
 	ld a,SND_THROW
 	jp playSound
 
@@ -462,7 +462,7 @@ _parentItemCode_bracelet:
 	ld e,Item.animParameter
 	ld a,(de)
 	rlca
-	jp nc,_specialObjectAnimate
+	jp nc,specialObjectAnimate_optimized
 	jr @dropAndDeleteSelf
 
 ;;
@@ -478,7 +478,7 @@ _parentItemCode_bracelet:
 
 @dropAndDeleteSelf:
 	call dropLinkHeldItem
-	jp _clearParentItem
+	jp clearParentItem
 
 ;;
 ; @param[out]	bc	Y/X of tile Link is grabbing
@@ -517,7 +517,7 @@ _parentItemCode_bracelet:
 
 ; State 5: pulling a lever?
 @state5:
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jp z,@dropAndDeleteSelf
 	call @deleteAndRetIfSwimmingOrGrabState0
 	ld a,(w1Link.knockbackCounter)
@@ -531,4 +531,4 @@ _parentItemCode_bracelet:
 	and (hl)
 	ld a,LINK_ANIM_MODE_LIFT_2
 	jp z,specialObjectSetAnimationWithLinkData
-	jp _specialObjectAnimate
+	jp specialObjectAnimate_optimized

@@ -3,14 +3,14 @@
 cutsceneHandler_0c:
 	ld a,(wCutsceneState)
 	rst_jumpTable
-	.dw _cutsceneHandler_0c_stage0 ; initial
-	.dw _cutsceneHandler_0c_stage1 ; digging through subrosia
-	.dw _cutsceneHandler_0c_stage2 ; inside ship
-	.dw _cutsceneHandler_0c_stage3 ; out in samasa desert
-	.dw _cutsceneHandler_0c_stage4 ; back inside ship
-	.dw _cutsceneHandler_0c_stage5 ; approaching west coast
+	.dw cutsceneHandler_0c_stage0 ; initial
+	.dw cutsceneHandler_0c_stage1 ; digging through subrosia
+	.dw cutsceneHandler_0c_stage2 ; inside ship
+	.dw cutsceneHandler_0c_stage3 ; out in samasa desert
+	.dw cutsceneHandler_0c_stage4 ; back inside ship
+	.dw cutsceneHandler_0c_stage5 ; approaching west coast
 
-_cutsceneHandler_0c_stage0:
+cutsceneHandler_0c_stage0:
 	ld b,$10
 	ld hl,$cbb3
 	call clearMemory
@@ -26,7 +26,7 @@ _cutsceneHandler_0c_stage0:
 	ld (wCutsceneState),a
 	ret
 
-_cutsceneHandler_0c_stage1:
+cutsceneHandler_0c_stage1:
 	call seasonsFunc_03_6b6c
 	ld a,(wFrameCounter)
 	and $07
@@ -41,7 +41,7 @@ _cutsceneHandler_0c_stage1:
 	.dw @state5
 
 @state0:
-	call _incCbb3
+	call incCbb3
 	ld a,$08
 	ld ($cbb8),a
 	ld a,$04
@@ -79,7 +79,7 @@ _cutsceneHandler_0c_stage1:
 	ld bc,TX_4e00
 	call showText
 	call @state0Func0
-	jp _incCbb3
+	jp incCbb3
 
 @state2:
 	call retIfTextIsActive
@@ -87,30 +87,30 @@ _cutsceneHandler_0c_stage1:
 	call parseGivenObjectData
 	ld a,MUS_TRIUMPHANT
 	call playSound
-	jp _incCbb3
+	jp incCbb3
 
 @state3:
-	call _incCbbfAndCbb8
+	call incCbbfAndCbb8
 	ld a,(hl)
 	cp $10
 	jr c,+
 	call seasonsFunc_03_681a
 	jr nz,+
-	call _incCbb3
+	call incCbb3
 +
 	jp seasonsFunc_03_67f8
 
 @state4:
-	call _incCbbfAndCbb8
+	call incCbbfAndCbb8
 	ld a,(hl)
 	cp $30
 	jr c,seasonsFunc_03_67f8
 	call fadeoutToWhite
-	call _incCbb3
+	call incCbb3
 	jr seasonsFunc_03_67f8
 
 @state5:
-	call _incCbbfAndCbb8
+	call incCbbfAndCbb8
 	ld a,(wPaletteThread_mode)
 	or a
 	jr nz,seasonsFunc_03_67f8
@@ -141,7 +141,7 @@ seasonsFunc_03_67f8:
 	ld ($cbbc),a
 	jr seasonsFunc_03_684c
 
-_incCbb3:
+incCbb3:
 	ld hl,$cbb3
 	inc (hl)
 	ret
@@ -197,7 +197,7 @@ seasonsFunc_03_684c:
 	ld bc,$0102
 	jp queueDmaTransfer
 
-_cutsceneHandler_0c_stage2:
+cutsceneHandler_0c_stage2:
 	ld a,($cbb3)
 	rst_jumpTable
 	.dw @state0
@@ -207,9 +207,9 @@ _cutsceneHandler_0c_stage2:
 @seasonsFunc_03_688c:
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
-	call _incCbb3
+	call incCbb3
 	ld bc,ROOM_SEASONS_5d4
-	call _cutsceneHandler_0c_stage3@loadNewRoom
+	call cutsceneHandler_0c_stage3@loadNewRoom
 	ld hl,w1Link.enabled
 	ld (hl),$03
 	ld l,<w1Link.yh
@@ -224,7 +224,7 @@ _cutsceneHandler_0c_stage2:
 	ld (wScreenShakeMagnitude),a
 	call resetCamera
 	ld a,$02
-	jp _cutsceneHandler_0c_stage3@state0Func1
+	jp cutsceneHandler_0c_stage3@state0Func1
 
 @state0:
 	ld a,(wPaletteThread_mode)
@@ -242,7 +242,7 @@ _cutsceneHandler_0c_stage2:
 	call seasonsFunc_03_67e9
 	jp fadeoutToWhite
 
-_cutsceneHandler_0c_stage3:
+cutsceneHandler_0c_stage3:
 	ld a,($cbb3)
 	rst_jumpTable
 	.dw @state0
@@ -257,7 +257,7 @@ _cutsceneHandler_0c_stage3:
 	ret nz
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
-	call _incCbb3
+	call incCbb3
 	ld a,$40
 	ld ($cbb8),a
 	ld ($cbbf),a
@@ -321,7 +321,7 @@ _cutsceneHandler_0c_stage3:
 	ld hl,$cbb4
 	dec (hl)
 	ret nz
-	call _incCbb3
+	call incCbb3
 	xor a
 	ldh (<hCameraY),a
 	ldh (<hCameraX),a
@@ -332,27 +332,27 @@ _cutsceneHandler_0c_stage3:
 	call retIfTextIsActive
 	ld a,$ff
 	ld ($cfc0),a
-	jp _incCbb3
+	jp incCbb3
 
 @state3:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-	call _incCbbfAndCbb8
+	call incCbbfAndCbb8
 	ld a,(hl)
 	cp $70
 	jr c,seasonsFunc_03_69d1
 	call fadeoutToWhite
 	ld a,$fb
 	call playSound
-	call _incCbb3
+	call incCbb3
 	jr seasonsFunc_03_69d1
 
 @state4:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-	call _incCbbfAndCbb8
+	call incCbbfAndCbb8
 	ld a,(wPaletteThread_mode)
 	or a
 	jr nz,seasonsFunc_03_69d1
@@ -374,7 +374,7 @@ seasonsFunc_03_69d1:
 	ld ($cbbc),a
 	ret
 
-_cutsceneHandler_0c_stage4:
+cutsceneHandler_0c_stage4:
 	ld a,($cbb3)
 	rst_jumpTable
 	.dw @state0
@@ -385,7 +385,7 @@ _cutsceneHandler_0c_stage4:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutsceneHandler_0c_stage2@seasonsFunc_03_688c
+	call cutsceneHandler_0c_stage2@seasonsFunc_03_688c
 	xor a
 	ld ($cfc0),a
 	ld hl,objectData.objectData_sickPiratiansInShip
@@ -399,7 +399,7 @@ _cutsceneHandler_0c_stage4:
 	call seasonsFunc_03_67e9
 	jp fadeoutToWhite
 
-_cutsceneHandler_0c_stage5:
+cutsceneHandler_0c_stage5:
 	call seasonsFunc_03_6b6c
 	ld a,($cbb3)
 	rst_jumpTable
@@ -413,7 +413,7 @@ _cutsceneHandler_0c_stage5:
 	ret nz
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
-	call _incCbb3
+	call incCbb3
 	ld a,$90
 	ld ($cbb8),a
 	ld ($cbbf),a
@@ -422,7 +422,7 @@ _cutsceneHandler_0c_stage5:
 	ld a,$03
 	ld (wRoomStateModifier),a
 	ld bc,ROOM_SEASONS_0f2
-	call _cutsceneHandler_0c_stage3@loadNewRoom
+	call cutsceneHandler_0c_stage3@loadNewRoom
 	ld a,$ff
 	ld ($cd25),a
 	ld e,$00
@@ -434,18 +434,18 @@ _cutsceneHandler_0c_stage5:
 	ld hl,objectData.objectData_pirateShipEnteringWestCoast
 	call parseGivenObjectData
 	ld a,$12
-	jp _cutsceneHandler_0c_stage3@state0Func1
+	jp cutsceneHandler_0c_stage3@state0Func1
 
 @state1:
 	ld a,(wFrameCounter)
 	and $03
 	jr nz,@state1Func0
-	call _decCbbfAndCbb8
+	call decCbbfAndCbb8
 	ld a,(hl)
 	cp $09
 	jp nc,@state1Func0
 	call seasonsFunc_03_6b30
-	call _incCbb3
+	call incCbb3
 @state1Func0:
 	call seasonsFunc_03_69d1
 	jr seasonsFunc_03_6aca
@@ -454,7 +454,7 @@ _cutsceneHandler_0c_stage5:
 	ld a,(wFrameCounter)
 	and $07
 	jr nz,@state1Func0
-	call _decCbbfAndCbb8
+	call decCbbfAndCbb8
 	ld a,(hl)
 	cp $09
 	jr nc,@state1Func0
@@ -552,7 +552,7 @@ seasonsFunc_03_6b30:
 	cp $ff
 	ret z
 	ld h,(hl)
-_label_03_196:
+label_03_196:
 	ld l,a
 	push hl
 	ld de,$9c00
@@ -581,21 +581,21 @@ seasonsTable_03_6b59:
 	.db $ff
 
 seasonsFunc_03_6b6c:
-	ld hl,_oamData_03_6b72
+	ld hl,oamData_03_6b72
 	jp addSpritesToOam
 
-_oamData_03_6b72:
+oamData_03_6b72:
 	.db $01
 	.db $10 $a6 $4c $09
 
-_incCbbfAndCbb8:
+incCbbfAndCbb8:
 	ld hl,$cbbf
 	inc (hl)
 	ld hl,$cbb8
 	inc (hl)
 	ret
 
-_decCbbfAndCbb8:
+decCbbfAndCbb8:
 	ld hl,$cbbf
 	dec (hl)
 	ld hl,$cbb8

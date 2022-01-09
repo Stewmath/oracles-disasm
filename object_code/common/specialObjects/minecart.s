@@ -1,8 +1,8 @@
 ;;
 ; Update a minecart object.
-; (Called from bank5._specialObjectCode_minecart)
+; (Called from bank5.specialObjectCode_minecart)
 specialObjectCode_minecart:
-	call _minecartCreateCollisionItem
+	call minecartCreateCollisionItem
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -84,7 +84,7 @@ specialObjectCode_minecart:
 
 	; Minecart is centered on the tile
 
-	call _minecartCheckCollisions
+	call minecartCheckCollisions
 	jr c,@minecartStopped
 
 	; Compare direction to angle, ensure they're synchronized
@@ -167,7 +167,7 @@ specialObjectCode_minecart:
 ;;
 ; Check for collisions, check the track for changing direction.
 ; @param[out] cflag Set if the minecart should stop (reached a platform)
-_minecartCheckCollisions:
+minecartCheckCollisions:
 	; Get minecart position in c, tile it's on in e
 	call getTileAtPosition
 	ld e,a
@@ -353,7 +353,7 @@ _minecartCheckCollisions:
 
 ;;
 ; Creates an invisible item object which stays with the minecart to give it collision with enemies
-_minecartCreateCollisionItem:
+minecartCreateCollisionItem:
 	; Check if the "item" has been created already
 	ld e,SpecialObject.var36
 	ld a,(de)

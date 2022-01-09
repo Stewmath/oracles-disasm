@@ -55,33 +55,33 @@ parseGivenObjectData:
 	inc de
 	and $0f
 	rst_jumpTable
-	.dw _objectDataOp0
-	.dw _objectDataOp1
-	.dw _objectDataOp2
-	.dw _objectDataOp3
-	.dw _objectDataOp4
-	.dw _objectDataOp5
-	.dw _objectDataOp6
-	.dw _objectDataOp7
-	.dw _objectDataOp8
-	.dw _objectDataOp9
+	.dw objectDataOp0
+	.dw objectDataOp1
+	.dw objectDataOp2
+	.dw objectDataOp3
+	.dw objectDataOp4
+	.dw objectDataOp5
+	.dw objectDataOp6
+	.dw objectDataOp7
+	.dw objectDataOp8
+	.dw objectDataOp9
 .ifdef ROM_AGES
-	.dw _objectDataOpA
+	.dw objectDataOpA
 .endif
 
 ; Appears to be unused
-_func_55f8:
+func_55f8:
 	jr parseGivenObjectData
 
 ;;
-_parseGivenObjectData_hl:
+parseGivenObjectData_hl:
 	ld e,l
 	ld d,h
 	jr parseGivenObjectData
 
 ; 1st byte is the base size of the opcode, 2nd byte is size of each subsequent
 ; use of the opcode (as multiple uses of the same opcode saves space)
-_objectDataOpcodeSizes:
+objectDataOpcodeSizes:
 	.db $02 $00
 	.db $01 $02
 	.db $01 $04
@@ -106,7 +106,7 @@ _objectDataOpcodeSizes:
 ;;
 ; Only use objects when certain room properties are set
 ; Used a lot in jabu-jabu
-_objectDataOp0:
+objectDataOp0:
 	ld a,(wRoomStateModifier)
 	ld hl,bitTable
 	add l
@@ -127,11 +127,11 @@ _objectDataOp0:
 
 	; Parse new conditionals
 	cp $f0
-	jr z,_parseGivenObjectData_hl
+	jr z,parseGivenObjectData_hl
 
 	; Parse return opcode
 	cp $fe
-	jr z,_parseGivenObjectData_hl
+	jr z,parseGivenObjectData_hl
 
 	; Check return opcode
 	cp $ff
@@ -139,7 +139,7 @@ _objectDataOp0:
 
 	; Otherwise, skip the next opcode
 	and $0f
-	ld de,_objectDataOpcodeSizes
+	ld de,objectDataOpcodeSizes
 	call addDoubleIndexToDe
 	ld a,(de)
 	ld c,a
@@ -155,50 +155,50 @@ _objectDataOp0:
 
 ;;
 ; No-value interaction
-_objectDataOp1:
-	call _continueObjectLoopIfOpDone
+objectDataOp1:
+	call continueObjectLoopIfOpDone
 	call getFreeInteractionSlot
-	jr nz,_skipToOpEnd_2byte
+	jr nz,skipToOpEnd_2byte
 
-	call _read2Bytes
-	jr _objectDataOp1
+	call read2Bytes
+	jr objectDataOp1
 
 ;;
-_skipToOpEnd_2byte:
+skipToOpEnd_2byte:
 	inc de
 	inc de
 	ld a,(de)
 	cp $f0
-	jp c,_skipToOpEnd_2byte
+	jp c,skipToOpEnd_2byte
 	jp parseGivenObjectData
 
 ;;
 ; Double-value interaction
-_objectDataOp2:
-	call _continueObjectLoopIfOpDone
+objectDataOp2:
+	call continueObjectLoopIfOpDone
 	call getFreeInteractionSlot
-	jr nz,_skipToOpEnd_4byte
+	jr nz,skipToOpEnd_4byte
 
-	call _read2Bytes
+	call read2Bytes
 	ld l,Interaction.yh
-	call _readCoordinates
-	jr _objectDataOp2
+	call readCoordinates
+	jr objectDataOp2
 
-_skipToOpEnd_4byte:
+skipToOpEnd_4byte:
 	inc de
 	inc de
 	inc de
 	inc de
 	ld a,(de)
 	cp $f0
-	jp c,_skipToOpEnd_4byte
+	jp c,skipToOpEnd_4byte
 	jp parseGivenObjectData
 
 ;;
 ; In addition to checking wcc05, this appears to have a mechanism to prevent
 ; the pointer from being read if link enters from a certain direction.
 ; @param[out] @zflag Set if the pointer should be skipped.
-_checkSkipPointer:
+checkSkipPointer:
 .ifdef ROM_AGES
 	ld a,(wcc05)
 	bit 1,a
@@ -227,13 +227,13 @@ _checkSkipPointer:
 	ret
 
 ;;
-_skipPointer:
+skipPointer:
 	inc de
 	inc de
 	jp parseGivenObjectData
 
 ;;
-_parsePointer:
+parsePointer:
 	ld l,e
 	ld h,d
 	inc de
@@ -246,36 +246,36 @@ _parsePointer:
 
 ;;
 ; Object pointer
-_objectDataOp3:
-	call _checkSkipPointer
-	jr z,_skipPointer
-	jr _parsePointer
+objectDataOp3:
+	call checkSkipPointer
+	jr z,skipPointer
+	jr parsePointer
 
 ;;
 ; "Before Event" pointer: use the pointer if bit 7 of room flags is not set.
-_objectDataOp4:
-	call _checkSkipPointer
-	jr z,_skipPointer
+objectDataOp4:
+	call checkSkipPointer
+	jr z,skipPointer
 
 	call getThisRoomFlags
 	bit 7,a
-	jr nz,_skipPointer
-	jr _parsePointer
+	jr nz,skipPointer
+	jr parsePointer
 
 ;;
 ; "After Event" pointer: use the pointer if bit 7 of room flags is set.
-_objectDataOp5:
-	call _checkSkipPointer
-	jr z,_skipPointer
+objectDataOp5:
+	call checkSkipPointer
+	jr z,skipPointer
 
 	call getThisRoomFlags
 	bit 7,a
-	jr z,_skipPointer
-	jr _parsePointer
+	jr z,skipPointer
+	jr parsePointer
 
 ;;
 ; Random enemy
-_objectDataOp6:
+objectDataOp6:
 	; Flags
 	ld a,(de)
 	inc de
@@ -307,13 +307,13 @@ _objectDataOp6:
 	and $01
 	jr nz,+
 
-	call _checkEnemyKilled
+	call checkEnemyKilled
 	jr nc,+++
 +
 	call getFreeEnemySlot
 	jp nz,parseGivenObjectData
 
-	call _decEnemyCounterIfApplicable
+	call decEnemyCounterIfApplicable
 
 	; Write ID
 	ldh a,(<hFF8F)
@@ -324,7 +324,7 @@ _objectDataOp6:
 	ld a,h
 	ldh (<hFF91),a
 	push de
-	call _assignRandomPositionToEnemy
+	call assignRandomPositionToEnemy
 	pop de
 
 .ifdef REGION_JP
@@ -370,7 +370,7 @@ _objectDataOp6:
 
 ;;
 ; Specific position enemy
-_objectDataOp7:
+objectDataOp7:
 	; Flags
 	ld a,(de)
 	inc de
@@ -389,7 +389,7 @@ _objectDataOp7:
 	and $01
 	jr nz,+
 
-	call _checkEnemyKilled
+	call checkEnemyKilled
 	jr c,+
 
 	inc de
@@ -399,16 +399,16 @@ _objectDataOp7:
 	jr @nextSpecificEnemy
 +
 	call getFreeEnemySlot
-	jp nz,_skipToOpEnd_4byte
+	jp nz,skipToOpEnd_4byte
 
-	call _decEnemyCounterIfApplicable
+	call decEnemyCounterIfApplicable
 
 	; Get ID
-	call _read2Bytes
+	call read2Bytes
 
 	; Get X/Y
 	ld l,Enemy.yh
-	call _readCoordinates
+	call readCoordinates
 
 	; l = Enemy.xh
 	ldd a,(hl)
@@ -423,7 +423,7 @@ _objectDataOp7:
 	ld c,a
 
 	; c now contains the object's tile / shortened position (YX)
-	call _addPositionToPlacedEnemyPositions
+	call addPositionToPlacedEnemyPositions
 
 	ld l,Enemy.enabled
 	ldh a,(<hFF8D)
@@ -432,7 +432,7 @@ _objectDataOp7:
 
 ;;
 ; "Parts" (owl statues etc)
-_objectDataOp8:
+objectDataOp8:
 	ld a,(de)
 	bit 7,a
 	jp nz,parseGivenObjectData
@@ -440,24 +440,24 @@ _objectDataOp8:
 	call getFreePartSlot
 	jp nz,++
 
-	call _read2Bytes
+	call read2Bytes
 	ld a,(de)
 	ld c,a
 	inc de
 	ld l,Part.yh
 	call setShortPosition
-	call _addPositionToPlacedEnemyPositions
-	jr _objectDataOp8
+	call addPositionToPlacedEnemyPositions
+	jr objectDataOp8
 ++
 	inc de
 	inc de
 	inc de
-	jr _objectDataOp8
+	jr objectDataOp8
 
 ;;
 ; Object with parameter
-_objectDataOp9:
-	call _continueObjectLoopIfOpDone
+objectDataOp9:
+	call continueObjectLoopIfOpDone
 	call @allocateObjectType
 	jr nz,@allocationFailure
 
@@ -490,12 +490,12 @@ _objectDataOp9:
 	inc de
 	ld (hl),a
 
-	jr _objectDataOp9
+	jr objectDataOp9
 
 @allocationFailure:
 	ld a,$06
 	call addAToDe
-	jr _objectDataOp9
+	jr objectDataOp9
 
 @allocateObjectType:
 	ld a,(de)
@@ -508,7 +508,7 @@ _objectDataOp9:
 .ifdef ROM_AGES
 ;;
 ; Item drops
-_objectDataOpA:
+objectDataOpA:
 	ld a,(de)
 	inc de
 	ldh (<hFF8B),a
@@ -525,7 +525,7 @@ _objectDataOpA:
 	and $01
 	jr nz,++
 
-	call _checkEnemyKilled
+	call checkEnemyKilled
 	jr c,++
 
 	inc de
@@ -533,7 +533,7 @@ _objectDataOpA:
 	jr @nextOpA
 ++
 	call getFreeEnemySlot_uncounted
-	jp nz,_skipToOpEnd_2byte
+	jp nz,skipToOpEnd_2byte
 
 	; Set ID
 	ld (hl),ENEMYID_ITEM_DROP_PRODUCER
@@ -548,7 +548,7 @@ _objectDataOpA:
 	inc de
 	call setShortPosition
 
-	call _addPositionToPlacedEnemyPositions
+	call addPositionToPlacedEnemyPositions
 	ld l,Enemy.enabled
 	ldh a,(<hFF8D)
 	ld (hl),a
@@ -556,7 +556,7 @@ _objectDataOpA:
 .endif
 
 ;;
-_continueObjectLoopIfOpDone:
+continueObjectLoopIfOpDone:
 	ld a,(de)
 	cp $f0
 	ret c
@@ -567,7 +567,7 @@ _continueObjectLoopIfOpDone:
 ;;
 ; @param de Source
 ; @param hl Destination
-_read2Bytes:
+read2Bytes:
 	ld a,(de)
 	inc de
 	ldi (hl),a
@@ -579,7 +579,7 @@ _read2Bytes:
 ;;
 ; @param de Source
 ; @param hl Destination (an Object.yh variable)
-_readCoordinates:
+readCoordinates:
 	ld a,(de)
 	inc de
 	ldi (hl),a
@@ -591,7 +591,7 @@ _readCoordinates:
 
 ;;
 ; @param hFF8B Flags that came with the enemy data
-_decEnemyCounterIfApplicable:
+decEnemyCounterIfApplicable:
 	ldh a,(<hFF8B)
 	and $02
 	ret z
@@ -603,7 +603,7 @@ _decEnemyCounterIfApplicable:
 
 ;;
 ; @param	c	Enemy position?
-_addPositionToPlacedEnemyPositions:
+addPositionToPlacedEnemyPositions:
 	push hl
 	ld a,(wEnemyPlacement.numEnemies)
 	ld hl,wEnemyPlacement.placedEnemyPositions
@@ -620,13 +620,13 @@ _addPositionToPlacedEnemyPositions:
 
 ;;
 ; @param[out]	cflag	c if a valid position couldn't be found
-_assignRandomPositionToEnemy:
+assignRandomPositionToEnemy:
 	call getRandomPositionForEnemy
 	ret c
 
 	ld a,(wEnemyPlacement.enemyPos)
 	ld c,a
-	call _addPositionToPlacedEnemyPositions
+	call addPositionToPlacedEnemyPositions
 	ldh a,(<hFF91)
 	ld h,a
 	ld l,Enemy.yh
@@ -639,7 +639,7 @@ _assignRandomPositionToEnemy:
 ; is assigned an index, which allows the game to remember which enemies have been killed.
 ;
 ; @param[out]	cflag	nc if the enemy has been killed already (so it shouldn't spawn)
-_checkEnemyKilled:
+checkEnemyKilled:
 	ld a,(wEnemyPlacement.numKillableEnemies)
 	cp $07
 	jr nc,+

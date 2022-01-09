@@ -1,13 +1,13 @@
 ; This code is included at the start of banks $0f-$10. Similar to "enemyCommon.s", but
 ; only for those two banks since they deal with boss enemies.
 ;
-; Function names are prefixed with "_enemyBoss" to show they come from here.
+; Function names are prefixed with "enemyBoss" to show they come from here.
 
 
 ;;
 ; Enemy bosses call this when they're dead (ENEMYSTATUS_NO_HEALTH). They don't disappear
 ; right away, they flicker for a second, then explode.
-_enemyBoss_dead:
+enemyBoss_dead:
 	ld h,d
 	ld l,Enemy.collisionType
 	ld a,(hl)
@@ -23,8 +23,8 @@ _enemyBoss_dead:
 	call playSound
 
 @alreadyPlayedDeathSound:
-	call _ecom_decCounter1
-	jp nz,_ecom_flickerVisibility
+	call ecom_decCounter1
+	jp nz,ecom_flickerVisibility
 
 	inc (hl)
 
@@ -57,7 +57,7 @@ _enemyBoss_dead:
 ; @param	b	Shadow size (0-2 for small-large)
 ; @param	c	Y-offset of shadow relative to self
 ; @param[out]	zflag	z on success
-_enemyBoss_spawnShadow:
+enemyBoss_spawnShadow:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_SHADOW
@@ -78,7 +78,7 @@ _enemyBoss_spawnShadow:
 ;
 ; @param	a	Enemy ID for graphics to load (or $ff to not load extra graphics)
 ; @param	b	Palette header to load (or 0 for none)
-_enemyBoss_initializeRoom:
+enemyBoss_initializeRoom:
 	bit 7,a
 	jr nz,+
 	ld (wEnemyIDToLoadExtraGfx),a
@@ -91,7 +91,7 @@ _enemyBoss_initializeRoom:
 
 ;;
 ; Stops music, forces Link to walk into the room.
-_enemyBoss_initializeRoomWithoutExtraGfx:
+enemyBoss_initializeRoomWithoutExtraGfx:
 .ifdef ROM_SEASONS
 	ldh a,(<hActiveObject)
 	ld d,a
@@ -134,13 +134,13 @@ _enemyBoss_initializeRoomWithoutExtraGfx:
 
 ;;
 ; Plays miniboss music, enables controls.
-_enemyBoss_beginMiniboss:
+enemyBoss_beginMiniboss:
 	ld b,MUS_MINIBOSS
 	jr ++
 
 ;;
 ; Plays boss music, enables controls.
-_enemyBoss_beginBoss:
+enemyBoss_beginBoss:
 	ld b,MUS_BOSS
 ++
 	xor a
