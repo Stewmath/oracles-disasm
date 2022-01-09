@@ -5161,6 +5161,30 @@ checkTileWarps:
 
 @initiateWarp:
 	callab bank4.findWarpSourceAndDest
+
+.ifdef ROM_AGES
+	; RANDO: Attempting to enter Jabu without mermaid suit will cancel the warp and instead
+	; cause Link to drown. (Could happen with dungeon entrance randomization.)
+	ld a,TREASURE_MERMAID_SUIT
+	call checkTreasureObtained
+	jr c,@passedUnderwaterCheck
+	ld a,(wWarpDestGroup)
+	and $7f
+	cp >ROOM_AGES_556 ; Only checking the group number here
+	jr nz,@passedUnderwaterCheck
+	ld a,(wWarpDestRoom)
+	cp $01 ; Actually checking the "warp dest index" not the room index
+	jr nz,@passedUnderwaterCheck
+
+	; Is leading to jabu. Replace the warp tile with a deep water tile.
+	ld h,>wRoomLayout
+	ldh a,(<hFF8D)
+	ld l,a
+	ld (hl),TILEINDEX_DEEP_WATER
+	jr noWarpInitiated
+.endif
+
+@passedUnderwaterCheck:
 	jp initiateWarp
 
 .ifdef ROM_SEASONS
