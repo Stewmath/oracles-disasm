@@ -561,8 +561,8 @@
 	m_GfxData gfx_quit ; $0e1b12
 	m_GfxData gfx_done ; $0e1b90
 	m_GfxData gfx_error ; $0e1d07
-	m_GfxData unk_0e1e91 ; $0e1e91
-	m_GfxData unk_0e1efe ; $0e1efe
+	m_GfxData map_file_menu_top ; $0e1e91
+	m_GfxData flg_file_menu_top ; $0e1efe
 	m_GfxData unk_0e1f19 ; $0e1f19
 	m_GfxData unk_0e1f98 ; $0e1f98
 	m_GfxData unk_0e1fca ; $0e1fca
@@ -571,10 +571,10 @@
 	m_GfxData unk_0e205d ; $0e205d
 	m_GfxData unk_0e2076 ; $0e2076
 	m_GfxData unk_0e20ee ; $0e20ee
-	m_GfxData unk_0e2113 ; $0e2113
-	m_GfxData unk_0e21b0 ; $0e21b0
-	m_GfxData unk_0e21c8 ; $0e21c8
-	m_GfxData unk_0e21ea ; $0e21ea
+	m_GfxData map_save_menu_middle ; $0e2113
+	m_GfxData flg_save_menu_middle ; $0e21b0
+	m_GfxData map_save_menu_bottom ; $0e21c8
+	m_GfxData flg_save_menu_bottom ; $0e21ea
 	m_GfxData unk_0e21ee ; $0e21ee
 	m_GfxData unk_0e2260 ; $0e2260
 	m_GfxData unk_0e227d ; $0e227d

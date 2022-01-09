@@ -811,12 +811,12 @@ gfxHeader97:
 	m_GfxHeader gfx_hud, $9001, $1f|$80
 	m_GfxHeader gfx_fileselect, $9201, $5f|$80
 	m_GfxHeader gfx_secrettolabrynna, $8801, $1f|$80
-	m_GfxHeader unk_0e1e91, $d803, $09|$80
-	m_GfxHeader unk_0e1efe, $dc03, $09|$80
+	m_GfxHeader map_file_menu_top, $d803, $09|$80
+	m_GfxHeader flg_file_menu_top, $dc03, $09|$80
 	m_GfxHeader unk_0e25a4, $d8a3, $13|$80
 	m_GfxHeader unk_0e262f, $dca3, $13|$80
-	m_GfxHeader unk_0e21c8, $d9e3, $07|$80
-	m_GfxHeader unk_0e21ea, $dde3, $07
+	m_GfxHeader map_save_menu_bottom, $d9e3, $07|$80
+	m_GfxHeader flg_save_menu_bottom, $dde3, $07
 gfxHeader98:
 	m_GfxHeader gfx_credits_theend_1, $8801, $7f|$80
 	m_GfxHeader gfx_credits_theend_2, $9001, $43|$80
@@ -903,8 +903,8 @@ gfxHeadera1:
 	m_GfxHeader gfx_copy, $8a01, $09|$80
 	m_GfxHeader gfx_erase, $8aa1, $09|$80
 gfxHeadera2:
-	m_GfxHeader unk_0e1e91, $d004, $09|$80
-	m_GfxHeader unk_0e1efe, $d404, $09|$80
+	m_GfxHeader map_file_menu_top, $d004, $09|$80
+	m_GfxHeader flg_file_menu_top, $d404, $09|$80
 	m_GfxHeader unk_0e1f19, $d0a4, $13|$80
 	m_GfxHeader unk_0e1f98, $d4a4, $13|$80
 	m_GfxHeader unk_0e1fca, $d1e4, $05|$80
@@ -913,8 +913,8 @@ gfxHeadera3:
 	m_GfxHeader gfx_copywhatwhere, $8801, $1f|$80
 	m_GfxHeader gfx_quit_2, $8a01, $09|$80
 	m_GfxHeader gfx_copy, $8aa1, $09|$80
-	m_GfxHeader unk_0e1e91, $d004, $09|$80
-	m_GfxHeader unk_0e1efe, $d404, $09|$80
+	m_GfxHeader map_file_menu_top, $d004, $09|$80
+	m_GfxHeader flg_file_menu_top, $d404, $09|$80
 	m_GfxHeader unk_0e2076, $d0a4, $13|$80
 	m_GfxHeader unk_0e20ee, $d4a4, $13|$80
 	m_GfxHeader unk_0e1fca, $d1e4, $05|$80
@@ -932,12 +932,12 @@ gfxHeadera5:
 	m_GfxHeader unk_0e248d, $d1e4, $07|$80
 	m_GfxHeader unk_0e24b8, $d5e4, $07
 gfxHeadera6:
-	m_GfxHeader unk_0e1e91, $d004, $09|$80
-	m_GfxHeader unk_0e1efe, $d404, $09|$80
-	m_GfxHeader unk_0e2113, $d0a4, $13|$80
-	m_GfxHeader unk_0e21b0, $d4a4, $13|$80
-	m_GfxHeader unk_0e21c8, $d1e4, $07|$80
-	m_GfxHeader unk_0e21ea, $d5e4, $07
+	m_GfxHeader map_file_menu_top, $d004, $09|$80
+	m_GfxHeader flg_file_menu_top, $d404, $09|$80
+	m_GfxHeader map_save_menu_middle, $d0a4, $13|$80
+	m_GfxHeader flg_save_menu_middle, $d4a4, $13|$80
+	m_GfxHeader map_save_menu_bottom, $d1e4, $07|$80
+	m_GfxHeader flg_save_menu_bottom, $d5e4, $07
 gfxHeadera7:
 	m_GfxHeader gfx_newfilescreen, $8801, $67
 gfxHeadera8:
@@ -968,8 +968,8 @@ gfxHeaderae:
 	m_GfxHeader gfx_pickafile_2, $8801, $1f|$80
 	m_GfxHeader gfx_copy, $8a01, $09|$80
 	m_GfxHeader gfx_erase, $8aa1, $09|$80
-	m_GfxHeader unk_0e1e91, $d004, $09|$80
-	m_GfxHeader unk_0e1efe, $d404, $09|$80
+	m_GfxHeader map_file_menu_top, $d004, $09|$80
+	m_GfxHeader flg_file_menu_top, $d404, $09|$80
 	m_GfxHeader unk_0e1f19, $d0a4, $13|$80
 	m_GfxHeader unk_0e1f98, $d4a4, $13|$80
 	m_GfxHeader unk_0e1fca, $d1e4, $05|$80
