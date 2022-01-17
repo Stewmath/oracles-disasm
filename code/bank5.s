@@ -2558,13 +2558,20 @@ warpTransition5_01:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	; BUG(?): the "objectGetTileAtPosition" function should not have been removed in Ages?
-	; Regardless this transition type appears to be unused in Ages anyway.
+	; BUG(?): the "objectGetTileAtPosition" function call was removed in Ages, but this seems to
+	; have been a mistake, since the value of the "a" register from that call is needed for the
+	; "lookupCollisionTable" function call below.
+	; Despite this, there don't seem to be any particular problems when using this transition
+	; type in Ages, but it may look a bit weird if used on top of a water tile.
 
 .ifdef ROM_SEASONS
 	call objectGetTileAtPosition
 	cp TILEINDEX_TRAMPOLINE
 	jr z,@trampoline
+.else; ROM_AGES
+.ifdef ENABLE_BUGFIXES
+	call objectGetTileAtPosition
+.endif
 .endif
 
 	; If he didn't fall into a hazard, make link "collapse" when he lands.
