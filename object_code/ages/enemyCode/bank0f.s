@@ -317,10 +317,10 @@ giantGhini_getTargetAngle:
 	ld c,a
 	ld a,(w1Link.yh)
 	sub c
-	ld b,(SCREEN_HEIGHT/4)<<4 + 8
-	cp (SCREEN_HEIGHT/2)<<4 + 8
+	ld b,((SCREEN_HEIGHT/4)<<4) + 8
+	cp ((SCREEN_HEIGHT/2)<<4) + 8
 	jr nc,+
-	ld b,(SCREEN_HEIGHT*3/4)<<4 + 8
+	ld b,((SCREEN_HEIGHT*3/4)<<4) + 8
 +
 	ld e,Enemy.var34
 	ld a,(de)
@@ -9005,13 +9005,13 @@ eyesoar_chooseNewAngle:
 	ld b,$00
 	ld e,Enemy.yh
 	ld a,(de)
-	cp (LARGE_ROOM_HEIGHT/2)<<4 + 8
+	cp ((LARGE_ROOM_HEIGHT/2)<<4) + 8
 	jr c,+
 	inc b
 +
 	ld e,Enemy.xh
 	ld a,(de)
-	cp (LARGE_ROOM_WIDTH/2)<<4 + 8
+	cp ((LARGE_ROOM_WIDTH/2)<<4) + 8
 	jr c,+
 	set 1,b
 +

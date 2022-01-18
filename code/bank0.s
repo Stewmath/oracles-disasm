@@ -13540,7 +13540,7 @@ checkRoomPackAfterWarp:
 ; @param[out]	hl	Address of a free interaction slot (on the id byte)
 ; @param[out]	zflag	Set if a free slot was found
 getFreeInteractionSlot:
-	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 | $40
+	ld hl,(FIRST_DYNAMIC_INTERACTION_INDEX<<8) | $40
 --
 	ld a,(hl)
 	or a

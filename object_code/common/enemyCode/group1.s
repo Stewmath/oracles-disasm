@@ -1573,11 +1573,11 @@ bladeTrap_subid02:
 	; Blade trap spans about half the size of a large room (which is different in
 	ld l,Enemy.angle
 	bit 3,(hl)
-	ld b,(LARGE_ROOM_HEIGHT/2)<<4 + 8
+	ld b,((LARGE_ROOM_HEIGHT/2)<<4) + 8
 	ld l,Enemy.yh
 	jr z,++
 
-	ld b,(LARGE_ROOM_WIDTH/2)<<4 + 8
+	ld b,((LARGE_ROOM_WIDTH/2)<<4) + 8
 	ld l,Enemy.xh
 ++
 	ld a,(hl)

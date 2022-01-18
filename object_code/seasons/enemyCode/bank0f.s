@@ -1364,10 +1364,10 @@ dragonOnox_mainBody_state8:
 	ld l,Enemy.var36
 	bit 7,(hl)
 	ld a,$09
-	ld bc,ANGLE_RIGHT<<8|$48
+	ld bc,(ANGLE_RIGHT<<8)|$48
 	jr nz,+
 	ld a,$08
-	ld bc,ANGLE_LEFT<<8|$b8
+	ld bc,(ANGLE_LEFT<<8)|$b8
 +
 	ld (hl),c
 	ld l,Enemy.angle

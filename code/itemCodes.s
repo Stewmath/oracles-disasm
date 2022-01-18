@@ -2238,7 +2238,7 @@ itemCode06:
 	ld l,Item.counter1
 	ld (hl),$28
 .else
-	ld bc,(SPEED_1a0<<8|$28)
+	ld bc,(SPEED_1a0<<8)|$28
 	ld l,Item.subid
 	bit 0,(hl)
 	jr z,+
@@ -2250,7 +2250,7 @@ itemCode06:
 	ld a,$0c
 	ldi (hl),a
 	ldi (hl),a
-	ld bc,(SPEED_260<<8|$78)
+	ld bc,(SPEED_260<<8)|$78
 +
 	ld l,Item.speed
 	ld (hl),b

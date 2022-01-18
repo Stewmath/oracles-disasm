@@ -2034,7 +2034,7 @@ setObjectsEnabledTo2:
 
 ;;
 setItemsEnabledTo2:
-	ld hl,FIRST_ITEM_INDEX<<8 + $00
+	ld hl,(FIRST_ITEM_INDEX<<8) + $00
 	ld c,$e0
 	jr setObjectsEnabledTo2_hlpr
 ;;
@@ -2081,7 +2081,7 @@ clearObjectsWithEnabled2:
 
 ;;
 clearItemsWithEnabled2:
-	ld hl,FIRST_ITEM_INDEX<<8 + $00
+	ld hl,(FIRST_ITEM_INDEX<<8) + $00
 	ld c,$e0
 	jr clearObjectsWithEnabled2_hlpr
 
@@ -2252,7 +2252,7 @@ cutscene17:
 	call reloadTileMap
 	ld a,$01
 	ld (wCutsceneState),a
-	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 + Interaction.enabled
+	ld hl,(FIRST_DYNAMIC_INTERACTION_INDEX<<8) + Interaction.enabled
 --
 	ld l,Interaction.enabled
 	ldi a,(hl)

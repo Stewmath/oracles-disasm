@@ -1088,7 +1088,7 @@ enemyCode2b:
 	ld a,(hl)
 	ld l,<w1Link.speedZ+1
 	add (hl)
-	cp LARGE_ROOM_HEIGHT<<4 - 8
+	cp (LARGE_ROOM_HEIGHT<<4) - 8
 	ret c
 
 	ld a,$80|DIR_DOWN
