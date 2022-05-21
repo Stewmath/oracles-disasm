@@ -2515,7 +2515,7 @@ companionScript_subid06:
 	ld a,$01
 	ld (de),a
 
-.ifndef REGION_JP
+.ifdef ENABLE_US_BUGFIXES
 	; This is supposed to prevent a softlock that occurs by doing a screen transition before
 	; Dimitri talks. But it doesn't work! Something else resets this back to 0.
 	ld (wDisableScreenTransitions),a
@@ -8156,7 +8156,7 @@ patch_subid01:
 
 	; Failed minigame
 
-.ifndef REGION_JP
+.ifdef ENABLE_US_BUGFIXES
 	; This code fixes minor bugs with Patch. In the japanese version, it's possible to open the
 	; menu and then move around after the minecart hits the tuni nut. Also, dying as the tuni
 	; nut gets hit by the minecart causes graphical glitches.

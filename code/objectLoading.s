@@ -327,7 +327,7 @@ objectDataOp6:
 	call assignRandomPositionToEnemy
 	pop de
 
-.ifdef REGION_JP
+.ifndef ENABLE_US_BUGFIXES
 	; JP BUG: 'h' register not restored to point to the enemy object. This is only a problem
 	; when a random-position enemy fails to be placed somewhere.
 	; In this case, "hl" will point to wEnemyPlacement.randomPlacementAttemptCounter. This won't
@@ -340,9 +340,9 @@ objectDataOp6:
 	ld (hl),$00
 	jr +++
 .else
-	; US BUG(?): If the enemy is not successfully placed, this does not clear the ID/SubID
-	; values. This shouldn't matter in most cases because they will usually be overwritten when
-	; an enemy is spawned. But, supposing there is a case where the game expects the subid to be
+	; US BUG: If the enemy is not successfully placed, this does not clear the ID/SubID values.
+	; This shouldn't matter in most cases because they will usually be overwritten when an enemy
+	; is spawned. But, supposing there is a case where the game expects the subid to be
 	; 0 and doesn't write the value explicitly, maybe this could affect something?
 	;
 	; ALSO (and this appies to both regions), this does not decrement "wNumEnemies", which could

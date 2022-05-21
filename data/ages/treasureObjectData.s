@@ -305,7 +305,7 @@ treasureObjectData2c:
 	m_TreasureSubid $02, $02, $34, $34, TREASURE_OBJECT_RING_BOX_01
 	m_TreasureSubid $02, $03, $34, $35, TREASURE_OBJECT_RING_BOX_02
 	m_TreasureSubid $02, $02, $58, $34, TREASURE_OBJECT_RING_BOX_03
-.ifdef REGION_JP
+.ifndef ENABLE_US_BUGFIXES
 	; BUG: Ring box from some source (farore?) gives L-2 ring box instead of L-3
 	m_TreasureSubid $02, $02, $59, $35, TREASURE_OBJECT_RING_BOX_04
 .else

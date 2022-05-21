@@ -13,3 +13,25 @@
 	.define AGES_ENGINE
 .endif
 
+
+; Uncomment this to enable bugfixes (even some that weren't in any release).
+;.define ENABLE_BUGFIXES
+
+
+; US/EU versions had many bugfixes. Enable them with either the "REGION_US"/REGION_EU" defines, or
+; the "ENABLE_BUGFIXES" define. "ENABLE_BUGFIXES" will also enable bugfixes that were not present
+; in any release.
+.ifdef REGION_US
+	.define ENABLE_US_BUGFIXES
+.endif
+.ifdef REGION_EU
+	.define ENABLE_EU_BUGFIXES
+.endif
+.ifdef ENABLE_BUGFIXES
+	.ifndef ENABLE_US_BUGFIXES
+		.define ENABLE_US_BUGFIXES
+	.endif
+	.ifndef ENABLE_EU_BUGFIXES
+		.define ENABLE_EU_BUGFIXES
+	.endif
+.endif

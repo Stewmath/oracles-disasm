@@ -5,18 +5,6 @@
 .endif
 .endif
 
-; EU version had many bugfixes. Enable them with either the "REGION_EU" or "ENABLE_BUGFIXES"
-; defines. "ENABLE_BUGFIXES" will also enable bugfixes that were not present in any release.
-.ifdef REGION_EU
-	.define ENABLE_EU_BUGFIXES
-.endif
-.ifdef ENABLE_BUGFIXES
-.ifndef ENABLE_EU_BUGFIXES
-	.define ENABLE_EU_BUGFIXES
-.endif
-.endif
-
-
 ; Room sizes (in 16x16 tiles)
 ; LARGE_ROOM_WIDTH/LARGE_ROOM_HEIGHT shouldn't be increased because it could overflow into
 ; buffers used immediately after the room layout in RAM.

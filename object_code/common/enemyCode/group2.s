@@ -1895,7 +1895,9 @@ enemyCode36:
 	cp $80|ITEMCOLLISION_MYSTERY_SEED
 	jp z,cucco_hitWithMysterySeed
 
-.ifdef REGION_JP
+	; BUG: In JP version, attacking cuccos with gale seeds will put them into a glitched state
+	; where they cannot take damage. In the US version they get blown away like normal enemies.
+.ifndef ENABLE_US_BUGFIXES
 	jp cucco_attacked
 .else
 	cp $80|ITEMCOLLISION_GALE_SEED

@@ -4201,7 +4201,8 @@ forestFairyScript_heartContainerSecret:
 	scriptjump @enableInput
 
 @alreadyGaveSecret:
-.ifndef REGION_JP
+	; BUG: JP version doesn't show the correct secret when asking the 2nd time onward?
+.ifdef ENABLE_US_BUGFIXES
 	generatesecret FAIRY_RETURN_SECRET
 .endif
 	showtext TX_114d
@@ -7282,7 +7283,7 @@ companionScript_subid06Script:
 	; Dimitri state $0a, with var03 = $03, triggers his "leaving" cutscene
 	writememory w1Companion.var03, $03
 
-.ifndef REGION_JP
+.ifdef ENABLE_US_BUGFIXES
 	; This looks like it's supposed to be part of the bugfix for the softlock caused by screen
 	; transitioning after dismounting Dimitri. But this line of code runs too early, rendering
 	; that fix useless?
@@ -8402,7 +8403,8 @@ kingZoraScript_present_postGame:
 	scriptjump @loop
 
 @alreadyGotUpgrade:
-.ifndef REGION_JP
+	; BUG: JP version doesn't show the correct secret when asking the 2nd time onward?
+.ifdef ENABLE_US_BUGFIXES
 	generatesecret KING_ZORA_RETURN_SECRET
 .endif
 	showtext TX_343a
