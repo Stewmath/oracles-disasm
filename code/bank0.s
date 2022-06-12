@@ -12713,7 +12713,9 @@ loadTilesetAndRoomLayout:
 	; Reload tileset if necessary
 	ld a,(wLoadedTilesetLayout)
 	ld b,a
-	ld a,(wTilesetLayout)
+	; HACK-BASE: "wTilesetLayout" variable is no longer used, so check
+	; "wTilesetIndex" instead.
+	ld a,(wTilesetIndex)
 	cp b
 	ld (wLoadedTilesetLayout),a
 	call nz,loadTilesetLayout
