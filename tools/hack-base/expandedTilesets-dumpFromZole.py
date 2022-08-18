@@ -54,8 +54,7 @@ elif romIsSeasons(rom):
     NUM_TILESETS = 0xcf # TODO: handle seasonal tilesets properly
     tilesetDataAddr = 0x10c84
     game = 'seasons'
-    print('Seasons not supported yet.')
-    sys.exit(1)
+    print('WARNING: Seasons support is preliminary. -r flag works, others might not.')
 else:
     print('Unknown ROM.')
     sys.exit(1)
@@ -144,21 +143,42 @@ if '-r' in args:
     # Dump room layouts. The way these are stored is unchanged in the disassembly, but ZOLE expanded
     # them. Useful for porting ZOLE projects to the disassembly.
     print('Dumping room layouts.')
-    for group in range(0,6):
-        # ZOLE seems to ignore "layout groups"? (which might be for the best...)
-        if group == 1:
-            layoutGroup = 2
-        elif group == 2:
-            layoutGroup = 1
-        else:
+    if romIsAges(rom):
+        numGroups = 6
+    else:
+        numGroups = 7 # Seasons
+
+    for group in range(0,numGroups):
+        if romIsAges(rom):
+            isSmall = group < 4
+            if isSmall:
+                layoutAddr = 0x104000 + group * 2 * 0x4000
+            else:
+                layoutAddr = 0x104000 + group * 3 * 0x4000
+
+            # ZOLE seems to ignore "layout groups"? (which might be for the best...)
+            if group == 1:
+                layoutGroup = 2
+            elif group == 2:
+                layoutGroup = 1
+            else:
+                layoutGroup = group
+        else: # Seasons
+            isSmall = group < 5
+
+            if group < 4:
+                layoutAddr = 0x150000 + group * 2 * 0x4000
+            elif group == 4:
+                layoutAddr = 0x10c000
+            elif group == 5 or group == 6:
+                layoutAddr = 0x134000 + (group - 5) * 3 * 0x4000
+
             layoutGroup = group
 
-        if group < 4: # Small room
-            layoutAddr = 0x104000 + (group * 2) * 0x4000
+        if isSmall:
             roomSize = 80
             outputBasename = 'rooms/' + game + '/small/room' + myhex(layoutGroup, 2)
         else: # Large room
-            layoutAddr = 0x104000 + (group * 3) * 0x4000
             roomSize = 176
             outputBasename = 'rooms/' + game + '/large/room' + myhex(layoutGroup, 2)
 
