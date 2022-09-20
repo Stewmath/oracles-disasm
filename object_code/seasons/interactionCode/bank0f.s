@@ -1,7 +1,7 @@
  m_section_free Seasons_Interactions_Bank0f NAMESPACE seasonsInteractionsBank0f
 
 ; ==============================================================================
-;INTERACID_BOOMERANG_SUBROSIAN
+; INTERACID_BOOMERANG_SUBROSIAN
 ; ==============================================================================
 interactionCodec8:
 	ld e,$44
