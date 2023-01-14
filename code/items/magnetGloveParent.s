@@ -85,12 +85,6 @@ parentItemCode_magnetGloves:
 ; @param[out]	bc	Position of object locked on to
 ; @param[out]	zflag	nz if Link should move toward something
 @checkLatchedOntoTile:
-.ifdef ROM_AGES
-	xor a
-	ret
-
-.else; ROM_SEASONS
-
 	ld a,(wLinkObjectIndex)
 	xor $01
 	and $01
@@ -176,8 +170,16 @@ parentItemCode_magnetGloves:
 	.db $ff  $00 $00  $04 $00 ; DIR_LEFT
 
 
+.ifdef ROM_SEASONS
+
 ; Tile indices for magnet tiles (per group)
 @magnetTilesTable:
 	.db $00 $e3 $00 $3f $3f $3f $3f $3f
 
-.endif ; ROM_SEASONS
+.else; ROM_AGES
+
+; CROSSITEMS: For Ages, we just set TILEINDEX_SWITCH_DIAMOND to be magnetized.
+@magnetTilesTable:
+	.db $db $db $db $db $db $db $db $db
+
+.endif
