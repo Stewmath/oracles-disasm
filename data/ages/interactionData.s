@@ -341,7 +341,7 @@ interaction18SubidData:
 	m_InteractionData $82 $04 $53
 	m_InteractionData $83 $12 $0d
 	m_InteractionData $75 $1c $30
-	m_InteractionData $81 $0c $13
+	m_InteractionData $81 $0c $43 ; RANDO: Changed zora scale palette
 	m_InteractionData $7a $16 $03
 	m_InteractionData $82 $1a $50
 	m_InteractionData $81 $14 $53
