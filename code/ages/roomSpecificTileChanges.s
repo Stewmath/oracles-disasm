@@ -1082,9 +1082,12 @@ tileReplacement_group0Map3a:
 ;;
 ; Present, screen right of d5 where a cave opens up
 tileReplacement_group0Map0b:
+	; RANDO: Skip checking whether you've beaten d4 or not.
+	/*
 	ld hl,wPresentRoomFlags+$0a
 	bit ROOMFLAG_BIT_40,(hl)
 	ret z
+	*/
 
 	ld hl,wRoomLayout+$43
 	ld (hl),$dd
