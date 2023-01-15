@@ -236,17 +236,9 @@ interactionCode5f:
 
 ; Moosh being attacked by ghosts
 @subid00:
+	; RANDO: Skip checks for D2 essence, having cheval rope, talking to cheval
 	ld hl,wMooshState
-	ld a,(wEssencesObtained)
-	bit 1,a
-	jr z,@deleteSelf
-	ld a,(wPastRoomFlags+$79)
-	bit 6,a
-	jr z,@deleteSelf
-	ld a,TREASURE_CHEVAL_ROPE
-	call checkTreasureObtained
-	jr nc,@loadCompanionPresetIfHasntLeft
-	jr @deleteSelf
+	jr @loadCompanionPresetIfHasntLeft
 
 
 ; Moosh saying goodbye after getting cheval rope

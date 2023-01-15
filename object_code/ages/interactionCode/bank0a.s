@@ -2263,6 +2263,9 @@ companionScript_subid00:
 @state0:
 	ld a,$01
 	ld (de),a
+
+	; RANDO: Skip checks for essence & talking to cheval
+	/*
 	ld a,(wEssencesObtained)
 	bit 1,a
 	jp z,companionScript_deleteSelf
@@ -2270,6 +2273,7 @@ companionScript_subid00:
 	ld a,(wPastRoomFlags+$79)
 	bit 6,a
 	jp z,companionScript_deleteSelf
+	*/
 
 	ld a,(wMooshState)
 	and $60
@@ -3130,7 +3134,8 @@ interactionCode73:
 	ld a,$01
 	ld (de),a
 
-	; Delete self if they shouldn't be here right now
+	; RANDO: Skip checks for essence & talking to cheval
+	/*
 	ld a,(wEssencesObtained)
 	bit 1,a
 	jr z,@delete
@@ -3138,6 +3143,7 @@ interactionCode73:
 	ld a,(wPastRoomFlags+$79)
 	bit 6,a
 	jr z,@delete
+	*/
 
 	ld a,(wMooshState)
 	and $60
