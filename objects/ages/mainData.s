@@ -2581,7 +2581,8 @@ group4MapfcObjectData:
 	obj_End
 
 group4MapfeObjectData:
-	obj_Interaction $37 $0c $58 $78
+	; RANDO: Remove Ralph cutscene inside black tower
+	;obj_Interaction $37 $0c $58 $78
 	obj_End
 
 group4Mape3ObjectData:
