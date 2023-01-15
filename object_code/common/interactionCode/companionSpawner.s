@@ -266,9 +266,14 @@ interactionCode5f:
 ; Dimitri being attacked by hungry tokays
 @subid03:
 	ld hl,wDimitriState
+
+	; RANDO: Skip essence check.
+	/*
 	ld a,(wEssencesObtained)
 	bit 2,a
 	jr z,@deleteSelf
+	*/
+
 	jr @loadCompanionPresetIfHasntLeft
 
 
