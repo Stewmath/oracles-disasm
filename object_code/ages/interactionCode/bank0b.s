@@ -7479,8 +7479,17 @@ greatFairy_subid1:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	ld a,CUTSCENE_CLEAN_SEAS
-	ld (wCutsceneTrigger),a
+
+	; RANDO: Instead of starting CUTSCENE_CLEAN_SEAS, skip the cutscene and return control to
+	; the player after setting the global flag.
+	call fadeinFromWhite
+	xor a
+	ld (wMenuDisabled),a
+	ld (wDisabledObjects),a
+	ld a,SND_SOLVEPUZZLE_2
+	call playSound
+	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED
+	call setGlobalFlag
 	jp interactionDelete
 
 ;;
