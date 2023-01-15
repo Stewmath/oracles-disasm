@@ -4856,7 +4856,7 @@ interactionCode87:
 	jp @runScriptAndAnimate
 
 @initSubid00:
-	ld a,(wMakuTreeState)
+	call interactionCode87_rando_getMakuTreeState ; RANDO: Adjust state before continuing
 	rst_jumpTable
 	.dw @state00
 	.dw @state01
@@ -5027,6 +5027,30 @@ interactionCode87:
 	.dw mainScripts.makuTree_subid06Script_part3
 
 
+; RANDO: On-the-fly adjustment of maku tree state ensures progression works correctly (ie.
+; gives maku seed when all essences are obtained). In conjunction with this, bank 0's
+; "incMakuTreeState" function was modified so that it only works when called from the maku tree's
+; screen (so that other triggers don't interfere with the first few maku tree progression states).
+interactionCode87_rando_getMakuTreeState:
+	; Don't adjust the state if we haven't gotten the maku tree's initial item yet
+	ld a,(wPresentRoomFlags + <ROOM_AGES_038)
+	and ROOMFLAG_ITEM
+	jr z,@returnActual
+
+	; Skip to the "give maku seed" state if we have all the essences
+	ld a,(wEssencesObtained)
+	inc a
+	jr nz,@returnActual
+	ld a,TREASURE_MAKU_SEED
+	call checkTreasureObtained
+	jr c,@returnActual
+	ld a,$0e
+	ld (wMakuTreeState),a
+
+@returnActual:
+	ld a,(wMakuTreeState)
+	ret
+
 ; ==============================================================================
 ; INTERACID_MAKU_SPROUT
 ;
@@ -5093,7 +5117,7 @@ interactionCode88:
 
 
 @initSubid0:
-	ld a,(wMakuTreeState)
+	call interactionCode87_rando_getMakuTreeState ; RANDO: Adjust state before continuing
 	rst_jumpTable
 	.dw @state00
 	.dw @state01

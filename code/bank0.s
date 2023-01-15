@@ -14064,6 +14064,19 @@ objectCreateRedBlueOrb:
 
 ;;
 incMakuTreeState:
+	; RANDO: Only allow incrementing the maku tree's state when on the maku tree screen. This
+	; allows the maku tree to update its own state (ie. saving past tree to revive present
+	; tree) without other story progression events interfering.
+	; Obviously, the maku tree's state will be very messed up through the whole game, but all
+	; this means is that her "essence hints" are useless.
+	; Adjusting the maku tree's state to give the maku seed as required is done elsewhere, in
+	; the maku tree's object code.
+	ld a,(wActiveGroup)
+	cp $02
+	ret nc
+	ld a,(wActiveRoom)
+	cp $38 ; Maku tree room
+	ret nz
 	ld a,(wMakuTreeState)
 	inc a
 	cp $11

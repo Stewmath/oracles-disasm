@@ -6745,6 +6745,9 @@ makuTree_subid02Script_body:
 
 @explainAgain:
 	asm15 makuTree_setAnimation, $00
+
+	; RANDO: Skip all of this to shorten the cutscene.
+	/*
 	showtextlowindex <TX_0548
 	wait 30
 	asm15 makuTree_setAnimation, $04
@@ -6770,6 +6773,7 @@ makuTree_subid02Script_body:
 	asm15 makuTree_setAnimation, $00
 	showtextlowindex <TX_054f
 	wait 30
+	*/
 
 	setglobalflag GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PRESENT_MAP
 	writememory wMakuMapTextPresent, <TX_054f
@@ -6778,8 +6782,13 @@ makuTree_subid02Script_body:
 	wait 30
 	asm15 makuTree_dropSeedSatchel
 	wait 140
+
+	; RANDO: Skip text after the satchel drops
+	/*
 	showtextlowindex <TX_0561
 	wait 30
+	*/
+
 	enableinput
 @npcLoop:
 	checkabutton
@@ -6804,12 +6813,20 @@ makuTree_subid06Script_part1_body:
 
 	playsound SND_GETSEED
 	giveitem TREASURE_MAKU_SEED, $00
-	wait 30
 
-	writememory   wCutsceneTrigger, CUTSCENE_TWINROVA_REVEAL
-	checkmemoryeq wTmpcfc0.genericCutscene.state, $02
-	setanimation $02
-	scriptend
+	; RANDO: Return control to Link immediately instead of showing twinrova cutscene. ("part 2"
+	; of the script ends up being skipped.)
+	setglobalflag GLOBALFLAG_SAW_TWINROVA_BEFORE_ENDGAME
+	setglobalflag GLOBALFLAG_GOT_MAKU_SEED
+	enableinput
+
+	; Let you talk to maku tree afterwards
+	asm15 incMakuTreeState
+	asm15 makuTree_chooseTextAfterSeeingTwinrova
+	addobjectbyte Interaction.textID, $01
+	setcollisionradii $08, $08
+	makeabuttonsensitive
+	scriptjump makuTree_subid06Script_part2_body@npcLoop
 
 makuTree_subid06Script_part2_body:
 	disableinput
