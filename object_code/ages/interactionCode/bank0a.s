@@ -1589,6 +1589,32 @@ interaction6e_subid00:
 	ret nz
 	ld a,GLOBALFLAG_BEAT_POSSESSED_NAYRU
 	call setGlobalFlag
+
+	; RANDO: If the maku tree hasn't been saved already, change her state to being "saved",
+	; otherwise things get very weird in this cutscene.
+	ld a,(wMakuTreeState)
+	cp $02
+	jr nc,@alreadySavedMakuTree
+	ld a,$01 ; Will get incremented to $02
+	ld (wMakuTreeState),a
+++
+	ld a,GLOBALFLAG_0c
+	call setGlobalFlag
+	ld a,GLOBALFLAG_MAKU_TREE_SAVED
+	call setGlobalFlag
+	ld a,GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PAST_MAP
+	call setGlobalFlag
+	; Present map flag
+	ld hl,wPresentRoomFlags + <ROOM_AGES_038
+	res 0,(hl)
+	; Past map flag
+	inc h
+	set 7,(hl)
+	; Modify room layout on screen below
+	ld l,$48
+	set 0,(hl)
+
+@alreadySavedMakuTree:
 	ld a,CUTSCENE_NAYRU_WARP_TO_MAKU_TREE
 	ld (wCutsceneTrigger),a
 	jp interactionDelete
