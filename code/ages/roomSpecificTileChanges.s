@@ -1094,11 +1094,13 @@ tileReplacement_group0Map0b:
 ; Present cave with goron elder.
 ; Removes boulders after dungeon 4 is beaten.
 tileReplacement_group5Mapb9:
-	; Must have beaten dungeon 4
+	; RANDO: Skip checking whether you've beaten d4 or not.
+	/*
 	ld a,$03
 	ld hl,wEssencesObtained
 	call checkFlag
 	ret z
+	*/
 
 	ld bc,@replacementTiles
 	ld hl,wRoomLayout+$41
