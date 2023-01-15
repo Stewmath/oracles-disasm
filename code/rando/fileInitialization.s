@@ -135,6 +135,10 @@ randoInitializeFile:
 	ld (wPresentRoomFlags + <ROOM_AGES_038),a ; maku tree (present)
 	ld (wPastRoomFlags    + <ROOM_AGES_176),a ; black tower entrance
 
+	; for the lols
+	ld a,$0f
+	ld (wObtainedSeasons),a
+
 .endif ; ROM_AGES
 
 	ret
