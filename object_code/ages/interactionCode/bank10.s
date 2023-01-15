@@ -777,13 +777,9 @@ interactiondc_subid10:
 
 
 ; Gives D6 Past boss key when you get D6 Present boss key
+; RANDO: Disabled this as it's tied to the chest rather than the key itself.
 interactiondc_subid11:
-	call getThisRoomFlags
-	and ROOMFLAG_ITEM
-	ret z
-	ld hl,wDungeonBossKeys
-	ld a,$0c
-	jp setFlag
+	jp interactionDelete
 
 
 ; Bridge handler for cave leading to Tingle
