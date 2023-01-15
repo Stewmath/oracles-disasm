@@ -158,11 +158,21 @@ interactionCode69:
 	ld a,GLOBALFLAG_RAFTON_CHANGED_ROOMS
 	call checkGlobalFlag
 	jp nz,interactionDelete
+
+	; RANDO: Require both chart and rope to be able to use the raft, not just chart.
+	; Must also check not just whether we have the rope, but also whether the rope has been
+	; given to rafton or not.
 	ld c,$04
 	ld a,TREASURE_ISLAND_CHART
 	call checkTreasureObtained
+	jr nc,++
+	ld a,TREASURE_CHEVAL_ROPE
+	call checkTreasureObtained
 	jr c,@setBehaviour
-
+	ld a,GLOBALFLAG_GAVE_ROPE_TO_RAFTON
+	call checkGlobalFlag
+	jr nz,@setBehaviour
+++
 	dec c
 	ld a,GLOBALFLAG_GAVE_ROPE_TO_RAFTON
 	call checkGlobalFlag
@@ -174,10 +184,14 @@ interactionCode69:
 	jr c,@setBehaviour
 
 	dec c
+
+	; RANDO: Don't check obtained essences here (always behaves like you've beaten d2).
+	/*
 	ld a,(wEssencesObtained)
 	bit 1,a
 	jr nz,@setBehaviour
 	dec c
+	*/
 
 @setBehaviour:
 	ld h,d
