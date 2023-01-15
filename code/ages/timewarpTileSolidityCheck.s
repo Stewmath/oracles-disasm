@@ -40,6 +40,13 @@ checkLinkCanStandOnTile:
 	call objectGetTileAtPosition
 	ld e,(hl)
 	ld hl,invalidTimewarpTileList
+
+	; RANDO: Also disallow regular water tiles, if you don't have flippers.
+	ld a,TREASURE_FLIPPERS
+	call checkTreasureObtained
+	jr c,+
+	ld hl,invalidTimewarpTileListNoFlippers
++
 	call lookupKey
 	jr c,++
 
@@ -69,4 +76,24 @@ invalidTimewarpTileList:
 	.db $e8 $00
 	.db $e9 $00 ; Whirlpool
 	.db $fc $01 ; Deep water
+	.db $00
+
+
+; RANDO: Same as above but also disallows normal water tiles
+invalidTimewarpTileListNoFlippers:
+	.db $f3 $00
+	.db $fe $00
+	.db $ff $00
+	.db $e4 $00
+	.db $e5 $00
+	.db $e6 $00
+	.db $e7 $00
+	.db $e8 $00
+	.db $e9 $00
+	.db $fc $01
+	.db $fa $00
+	.db $e0 $00
+	.db $e1 $00
+	.db $e2 $00
+	.db $e3 $00
 	.db $00
