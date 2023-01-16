@@ -983,7 +983,6 @@ shopItemState3:
 	; RANDO: Call giveTreasureCustom instead of giveTreasure in the shop iff the given item is
 	; randomized. Also set fake treasure id when buying the "flute", so that that id can be
 	; checked instead of the flute's to determine whether to stock the item.
-	; (RANDO-TODO: Ages version of this)
 	push bc
 	ld b,a
 	ld hl,@randomizedShopItemSubids
