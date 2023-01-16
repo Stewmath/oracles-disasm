@@ -1325,7 +1325,8 @@ group0Mapb9ObjectData:
 	obj_End
 
 group0MapbaObjectData:
-	obj_Interaction $6b $06
+	; RANDO: Remove black tower cutscene after d3
+	;obj_Interaction $6b $06
 	obj_End
 
 group0MapbbObjectData:
@@ -2066,7 +2067,8 @@ group2Map8eObjectData:
 group2Map90ObjectData:
 	obj_Interaction $dc $09
 	obj_Interaction $dc $0a
-	obj_Interaction $6b $11
+	; RANDO: Remove black tower cutscene after d7
+	;obj_Interaction $6b $11
 	obj_End
 
 group2Mapa0ObjectData:
