@@ -244,7 +244,7 @@ objectCollisionTable:
 
 	; ENEMYCOLLISION_GOHMA_GEL (0x35)
 	.db $02 $00 $00 $00 $0b $0b $0b $0b $0b $0b $0b $0b $00 $0b $0b $25
-	.db $00 $00 $00 $0b $00 $2f $0b $22 $0b $0b $20 $27 $0b $28 $29 $00
+	.db $00 $00 $00 $22 $00 $2f $0b $22 $0b $0b $20 $27 $0b $28 $29 $00
 
 	; ENEMYCOLLISION_SWORD_MASKED_MOBLIN (0x36)
 	.db $02 $10 $0f $0f $09 $09 $09 $0a $0a $08 $08 $0a $0d $2e $08 $25

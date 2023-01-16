@@ -15,6 +15,12 @@ parentItemCode_magnetGloves:
 	or a
 	jr nz,@deleteSelf
 
+.ifdef ROM_AGES
+	; CROSSITEMS: Don't allow using magnet gloves while underwater. (Animations look off.)
+	call isLinkUnderwater
+	jr nz,@deleteSelf
+.endif
+
 	call itemIncState
 	ld l,Item.var37
 	ld (hl),$ff
@@ -79,12 +85,6 @@ parentItemCode_magnetGloves:
 ; @param[out]	bc	Position of object locked on to
 ; @param[out]	zflag	nz if Link should move toward something
 @checkLatchedOntoTile:
-.ifdef ROM_AGES
-	lda $00
-	ret
-
-.else; ROM_SEASONS
-
 	ld a,(wLinkObjectIndex)
 	xor $01
 	and $01
@@ -112,8 +112,6 @@ parentItemCode_magnetGloves:
 	call z,@searchForTile
 	pop de
 	ret
-
-.endif
 
 ;;
 ; @param	d	Tile index to check for
@@ -172,6 +170,16 @@ parentItemCode_magnetGloves:
 	.db $ff  $00 $00  $04 $00 ; DIR_LEFT
 
 
+.ifdef ROM_SEASONS
+
 ; Tile indices for magnet tiles (per group)
 @magnetTilesTable:
 	.db $00 $e3 $00 $3f $3f $3f $3f $3f
+
+.else; ROM_AGES
+
+; CROSSITEMS: For Ages, we just set TILEINDEX_SWITCH_DIAMOND to be magnetized.
+@magnetTilesTable:
+	.db $db $db $db $db $db $db $db $db
+
+.endif

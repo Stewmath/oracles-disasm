@@ -32,6 +32,19 @@ parentItemCode_slingshot:
 	push bc
 	call parentItemLoadAnimationAndIncState
 
+.ifdef ROM_AGES
+	; CROSSITEMS: If underwater, use a different animation. (Implemented kind of hackily by
+	; checking how the seed shooter does it, but it seems to work)
+	call isLinkUnderwater
+	jr z,@notUnderwater
+	ld a,(w1Link.direction)
+	add a
+	add $48
+	ld e,Item.var31
+	ld (de),a
+@notUnderwater:
+.endif
+
 	; Create the slingshot
 	call itemCreateChild
 	pop bc
