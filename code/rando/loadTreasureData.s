@@ -238,14 +238,15 @@ progressiveUpgrades:
 
 .ifdef ROM_SEASONS
 	.db TREASURE_BOOMERANG,    $01, TREASURE_BOOMERANG,    $01 ; magic boomerang
+	.db TREASURE_BRACELET,     $01, TREASURE_BRACELET,     $01 ; power glove
 	.db TREASURE_FEATHER,      $01, TREASURE_FEATHER,      $01 ; roc's cape
 .else
 	.db TREASURE_BOOMERANG,    $01, TREASURE_BOOMERANG,    $03 ; magic boomerang
+	.db TREASURE_BRACELET,     $01, TREASURE_BRACELET,     $02 ; power glove
 	.db TREASURE_FEATHER,      $01, TREASURE_FEATHER,      $03 ; roc's cape
 .endif
 
 	; Ages items (available in both through crossitems)
-	.db TREASURE_BRACELET,     $01, TREASURE_BRACELET,     $01 ; power glove
 	.db TREASURE_SWITCH_HOOK,  $01, TREASURE_SWITCH_HOOK,  $01 ; long hook
 	.db TREASURE_FLIPPERS,     $00, TREASURE_MERMAID_SUIT, $00 ; mermaid suit
 
