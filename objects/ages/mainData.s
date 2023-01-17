@@ -2574,7 +2574,8 @@ group4Mapf3ObjectData:
 	obj_End
 
 group4Mapf6ObjectData:
-	obj_Interaction $4d $03 $f8 $78
+	; RANDO: Remove queen ambi cutscene inside black tower
+	;obj_Interaction $4d $03 $f8 $78
 	obj_End
 
 group4MapfcObjectData:
