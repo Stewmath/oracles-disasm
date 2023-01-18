@@ -2356,6 +2356,17 @@ func_03_7244:
 	ld (wCutsceneState),a
 	ld a,SNDCTRL_STOPSFX
 	call playSound
+
+	; Set the palette that the timeportal "beam" will use (we're skipping the first beam so we
+	; must set this so the second beam palette doesn't get corrupted)
+	ld a,(wTilesetFlags)
+	and $80
+	ld a,$02
+	jr nz,+
+	dec a
++
+	ld (wcc50),a
+
 	jp @state2@cbb3_00 ; Call this to prevent breakage when warping into a wall
 
 @@dontSkip:
@@ -2424,7 +2435,8 @@ func_03_7244:
 @state2:
 	; RANDO: Allow cancelling timewarp cutscenes by pressing A + B (2nd part)
 	ld a,(wTmpcbb3)
-	jr z,@@dontSkip
+	cp $02
+	jr c,@@dontSkip
 	ld a,(wGameKeysPressed)
 	cpl
 	and BTN_A | BTN_B
