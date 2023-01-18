@@ -72,6 +72,17 @@ parentItemCode_harp:
 +
 	ld (wLinkPlayingInstrument),a
 	ld (wLinkRidingObject),a
+
+	; RANDO: Allow cancelling harp/flute songs by pressing A + B
+	ld a,(wGameKeysPressed)
+	cpl
+	and BTN_A | BTN_B
+	jr nz,+
+	ld a,SNDCTRL_STOPSFX
+	call playSound
+	jr @done
++
+
 	ld c,$80
 	jr nz,++
 
@@ -85,6 +96,7 @@ parentItemCode_harp:
 	and c
 	ret z
 
+@done:
 ; Done playing song
 
 	ld hl,w1Link.collisionType
