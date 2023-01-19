@@ -8,6 +8,7 @@ parentItemCode_harp:
 	rst_jumpTable
 	.dw @state0
 	.dw @state1
+	.dw @done
 
 @state0:
 	call checkLinkOnGround
@@ -72,17 +73,6 @@ parentItemCode_harp:
 +
 	ld (wLinkPlayingInstrument),a
 	ld (wLinkRidingObject),a
-
-	; RANDO: Allow cancelling harp/flute songs by pressing A + B
-	ld a,(wGameKeysPressed)
-	cpl
-	and BTN_A | BTN_B
-	jr nz,+
-	ld a,SNDCTRL_STOPSFX
-	call playSound
-	jr @done
-+
-
 	ld c,$80
 	jr nz,++
 
@@ -94,6 +84,28 @@ parentItemCode_harp:
 	ld e,Item.animParameter
 	ld a,(de)
 	and c
+
+	; RANDO: Allow cancelling harp/flute songs by pressing A + B
+	push af
+	ld a,(wGameKeysPressed)
+	cpl
+	and BTN_A | BTN_B
+	jr nz,+
+	ld a,SNDCTRL_STOPSFX
+	call playSound
+	pop af
+
+	; Defined state 2 for rando which jumps to @done. Doing this instead of jumping directly to
+	; @done here, because it's better for other objects to "see" Link playing the harp for at
+	; least one frame. Prevents a bug where the game says your tune "echoes in vain" when
+	; playing tune of echoes for the first time after revealing a portal (but only if done
+	; frame-perfectly, ie. holding the other button before playing the harp).
+	ld a,$02
+	ld e,Item.state
+	ld (de),a
+	ret
++
+	pop af
 	ret z
 
 @done:
