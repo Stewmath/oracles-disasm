@@ -3377,7 +3377,27 @@ initializeGame:
 	ld (wRoomStateModifier),a
 	ld a,$03
 	ld (w1Link.enabled),a
+
+.ifdef ROM_AGES
+	; RANDO: Using bit 7 of direction variable to remember status of
+	; GLOBALFLAG_RANDO_ALT_DUNGEON_ENTRANCE.
+	ld a,(hl)
+	push hl
+	and $80
+	ld a,GLOBALFLAG_RANDO_ALT_DUNGEON_ENTRANCE
+	jr nz,+
+	call unsetGlobalFlag
+	jr ++
++
+	call setGlobalFlag
+++
+	pop hl
 	ldi a,(hl)
+	and $7f
+.else
+	ldi a,(hl)
+.endif
+
 	ld (w1Link.direction),a
 	ld (wLinkLocalRespawnDir),a
 	ldi a,(hl)

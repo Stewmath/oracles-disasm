@@ -3707,8 +3707,22 @@ setDeathRespawnPoint:
 	ldi (hl),a
 	ld a,(wRoomStateModifier)
 	ldi (hl),a
+
+.ifdef ROM_AGES
+	; RANDO: Squeeze in this global flag into bit 7 of direction variable
+	push hl
+	ld a,GLOBALFLAG_RANDO_ALT_DUNGEON_ENTRANCE
+	call checkGlobalFlag
 	ld a,(w1Link.direction)
+	jr z,+
+	or $80
++
+	pop hl
+.else
+	ld a,(w1Link.direction)
+.endif
 	ldi (hl),a
+
 	ld a,(w1Link.yh)
 	ldi (hl),a
 	ld a,(w1Link.xh)
