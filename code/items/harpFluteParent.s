@@ -163,7 +163,7 @@ parentItemCode_harp:
 	; Test TILESETFLAG_BIT_PAST
 	ld a,(wTilesetFlags)
 	rlca
-	jr nc,@tuneEchoesInVain
+	jr nc,@tuneOfEchoes ; RANDO: Can act like tune of echoes
 
 @tuneOfAges:
 	call restartSound

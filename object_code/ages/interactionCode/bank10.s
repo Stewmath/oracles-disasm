@@ -1565,9 +1565,11 @@ interactionCodee1:
 	ret
 
 @state1:
+	; RANDO: Activate portal not only from tune of echoes, but also currents.
 	ld a,(wLinkPlayingInstrument)
 	dec a
-	ret nz
+	cp $02
+	ret nc
 	call interactionIncState
 
 @markSpotDiscovered:
