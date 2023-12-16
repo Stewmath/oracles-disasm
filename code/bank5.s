@@ -3069,7 +3069,7 @@ warpTransition6:
 	call itemIncSubstate
 
 	ld l,SpecialObject.counter1
-	ld (hl),$1e
+	ld (hl),$01 ; RANDO: Removed half-second delay when timewarping in
 	ld l,SpecialObject.direction
 	ld (hl),DIR_DOWN
 
