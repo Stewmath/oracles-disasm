@@ -90,7 +90,7 @@ parentItemCode_harp:
 	ld a,(wGameKeysPressed)
 	cpl
 	and BTN_A | BTN_B
-	jr nz,+
+	jr nz,@noCancel
 	ld a,SNDCTRL_STOPSFX
 	call playSound
 	pop af
@@ -103,8 +103,16 @@ parentItemCode_harp:
 	ld a,$02
 	ld e,Item.state
 	ld (de),a
+
+	; That's all well and dandy but it creates another issue where pols' voices don't get killed
+	; when the animation is cancelled because those objects are disabled for an extra frame and
+	; don't see the harp being played. So, although redundant, let's re-enable those objects
+	; here in addition to in state 2.
+	xor a
+	ld (wDisabledObjects),a
 	ret
-+
+
+@noCancel:
 	pop af
 	ret z
 
