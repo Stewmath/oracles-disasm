@@ -5189,7 +5189,7 @@ checkTileWarps:
 	call checkTreasureObtained
 	jr c,@passedUnderwaterCheck
 	ld a,(wWarpDestGroup)
-	and $7f
+	and $77 ; Ignore bit 3 as this is used to mark the alternate dungeon entrance
 	cp >ROOM_AGES_556 ; Only checking the group number here
 	jr nz,@passedUnderwaterCheck
 	ld a,(wWarpDestRoom)
