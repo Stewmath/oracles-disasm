@@ -6,11 +6,11 @@
 
 .ifdef ROM_AGES
 	; Destination for "warp to start" option
-	.define HOME_WARP_ROOM $08a
-	.define HOME_WARP_POS  $34
+	.define HOME_WARP_ROOM $078
+	.define HOME_WARP_POS  $55
 .else
-	.define HOME_WARP_ROOM $0a7
-	.define HOME_WARP_POS  $54
+	.define HOME_WARP_ROOM $0f8
+	.define HOME_WARP_POS  $33
 .endif
 
 runRandoMenu:
