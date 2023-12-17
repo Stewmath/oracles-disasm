@@ -187,10 +187,6 @@ randoMenu_state1:
 	ret z
 
 	; A pressed
-	ld a,(wSaveQuitMenu.cursorIndex)
-	or a
-	call nz,saveFile ; Save for options 2 and 3
-
 	ld a,$02
 	ld (wSaveQuitMenu.state),a
 	ld a,$1e
