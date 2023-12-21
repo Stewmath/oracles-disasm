@@ -130,6 +130,10 @@ randoInitializeFile:
 	ld (wPresentRoomFlags + <ROOM_AGES_025),a ; foreman
 	ld (wPastRoomFlags    + <ROOM_AGES_113),a ; symmetry city "middle house"
 
+	; room flag 1
+	ld a,$02
+	ld (wPresentRoomFlags + <ROOM_AGES_024),a ; bridge to symmetry (bridge sealed while flag is set)
+
 	; room flag 0
 	ld a,$01
 	ld (wPresentRoomFlags + <ROOM_AGES_038),a ; maku tree (present)

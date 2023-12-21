@@ -8659,3 +8659,14 @@ interactiondc_spawnPuff:
 	ld l,Interaction.xh
 	ld (hl),c
 	ret
+
+; ==============================================================================
+; RANDO STUFF
+; ==============================================================================
+
+; There's data in "code/rando/tileSubstitutions.s" which conditionally deletes the bridge to
+; symmetry city from the left side. This function makes the bridge appear again.
+randoEnableSymmetryBridge:
+	ld hl,wPresentRoomFlags + <ROOM_AGES_024
+	res 1,(hl)
+	ret

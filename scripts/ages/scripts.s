@@ -8206,6 +8206,10 @@ carpenter_subid08Script:
 	movedown $50
 	enableallobjects
 	setglobalflag GLOBALFLAG_SYMMETRY_BRIDGE_BUILT
+
+	; RANDO: Unset a flag in the adjacent room to undo the layout change which seals the bridge.
+	asm15 scriptHelp.randoEnableSymmetryBridge
+
 	enablemenu
 	scriptend
 

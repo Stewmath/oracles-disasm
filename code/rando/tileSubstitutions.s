@@ -108,5 +108,9 @@ applyRandoTileChanges:
 	.db $05, $bc, $10, $7e, $31 ; goron's hiding place (make wall visibly bombable)
 	.db $00, $83, $10, $43, $a4 ; remove rock outside present D2
 	.db $03, $0f, $10, $66, $f9 ; water in past d6 entrance made shallow to prevent softlock
+	.db $00, $24, $02, $49, $63 ; seal left side of bridge to symmetry city
+	.db $00, $24, $02, $59, $63 ; ^
+	.db $00, $24, $02, $69, $63 ; ^
+	.db $00, $24, $02, $79, $73 ; ^
 	.db $ff
 .endif
