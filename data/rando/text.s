@@ -52,9 +52,13 @@ randoTextSubstitutionTable:
 randoText_wildTokayGame:
 	.db "Scent Seedling\0.."
 
+randoText_goronShootingGallery:
+	.db "Lava Juice\0......"
+
 
 randoTextSubstitutionTable:
-	.dw randoText_shop150Rupees ; 0xf0
-	.dw randoText_wildTokayGame ; 0xf1
+	.dw randoText_shop150Rupees        ; 0xf0
+	.dw randoText_wildTokayGame        ; 0xf1
+	.dw randoText_goronShootingGallery ; 0xf2
 
 .endif

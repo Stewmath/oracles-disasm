@@ -11825,6 +11825,7 @@ groups:
       score. Got it?
         \opt()Yes \opt()No
 
+  # RANDO: Substituting item name with special "call" opcode (see "data/rando/text.s").
   - name: TX_24d4
     index: 0xd4
     text: |-
@@ -11834,9 +11835,10 @@ groups:
       hit in \col(3)Lynna
       Village\col(0)! Right
       now, we're
-      offering \col(1)Lava
-      Juice\col(0) to one
-      player with an
+      offering a
+      \col(1)\call(0xf2)\col(0)
+      to one player
+      with an
       excellent score!
       Want to try? It
       costs 20 Rupees.
@@ -11848,7 +11850,7 @@ groups:
       \sfx(0xc7)If you don't,
       someone else
       will get the
-      \col(1)Lava Juice\col(0)!
+      \col(1)\call(0xf2)\col(0)!
 
   - name: TX_24d6
     index: 0xd6
@@ -11867,7 +11869,7 @@ groups:
     text: |-
       \sfx(0xc7)Amazing!
       You win the
-      \col(1)Lava Juice\col(0)!!!
+      \col(1)\call(0xf2)\col(0)!
 
   - name: TX_24d9
     index: 0xd9
