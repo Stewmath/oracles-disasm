@@ -4845,27 +4845,53 @@ goron_targetCarts_checkHit9OrMoreTargets:
 ;;
 ; Save Link's current inventory status, and equip the seed shooter with scent seeds
 ; equipped.
+; RANDO: Overhauled this function to work with slingshot & different seed types.
 goron_targetCarts_configureInventory:
 	ld bc,wInventoryB
 	ld hl,wTmpcfc0.targetCarts.savedBItem
+
+	; Equip either seed shooter, slingshot, or nothing
+	ld a,TREASURE_SHOOTER
+	ld d,a
+	call checkTreasureObtained
+	jr c,@equip
+	ld a,TREASURE_SLINGSHOT
+	ld d,a
+	call checkTreasureObtained
+	jr c,@equip
+
+	; No seed item. Just unequip everything.
+	ld a,(bc)
+	ldi (hl),a
+	inc c
+	ld a,(bc)
+	ldi (hl),a
+
+	xor a
+	ld (bc),a
+	dec c
+	ld (bc),a
+	jr @refreshStatusBar
+
+@equip:
 	ld a,(bc)
 	ldi (hl),a
 	ld a,(wInventoryA)
-	cp ITEMID_SHOOTER
-	jr nz,@equipToA
+	cp d
+	jr nz,@equipToB
 
-@equipToB:
+@equipToA:
 	xor a
 	ld (bc),a
 	inc c
 	ld a,(bc)
 	ldi (hl),a
-	ld a,ITEMID_SHOOTER
+	ld a,d
 	ld (bc),a
 	jr @setupSeedShooter
 
-@equipToA:
-	ld a,ITEMID_SHOOTER
+@equipToB:
+	ld a,d
 	ld (bc),a
 	inc c
 	ld a,(bc)
@@ -4874,27 +4900,60 @@ goron_targetCarts_configureInventory:
 	ld (bc),a
 
 @setupSeedShooter:
-	; Save Link's scent seed count to $cfd9, then give him 99 seeds for the game
-	ld c,<wNumScentSeeds
+	; Decide seed type to equip ('e' will hold the value)
+	push hl
+	ld hl,@seedOrderPreference
+--
+	ldi a,(hl)
+	ld e,a
+	add $20
+	call checkTreasureObtained
+	jr nc,--
+	pop hl
+
+	; Save Link's seed count to $cfd9, then give him 99 seeds for the game
+	ld a,<wNumEmberSeeds
+	add e
+	ld c,a
 	ld a,(bc)
 	ldi (hl),a
 	ld a,$99
 	ld (bc),a
 
-	; Save currently selected seeds to $cfda, then equip scent seeds
+	; Save currently selected seeds to $cfda
 	ld c,<wShooterSelectedSeeds
+	ld a,TREASURE_SHOOTER
+	cp d
+	jr z,+
+	ld c,<wSlingshotSelectedSeeds
++
 	ld a,(bc)
 	ldi (hl),a
-	ld a,$01
+
+	; Equip chosen seed type to shooter or slingshot
+	ld a,e
 	ld (bc),a
 
+@refreshStatusBar:
 	ld a,$ff
 	ld (wStatusBarNeedsRefresh),a
 	ret
 
+; RANDO: Order of preferred seed types to use in target carts
+@seedOrderPreference:
+	.db $01, $00, $02, $04, $03
+
 ;;
 goron_targetCarts_restoreInventory:
-	ld bc,wInventoryB
+	; Get seed item in 'd' (seed shooter, hyper slingshot, or nothing)
+	ld hl,wInventoryB
+	ld b,h
+	ld c,l
+	ldi a,(hl)
+	or (hl)
+	ld d,a
+
+	; Restore A/B items
 	ld hl,wTmpcfc0.targetCarts.savedBItem
 	ldi a,(hl)
 	ld (bc),a
@@ -4902,14 +4961,32 @@ goron_targetCarts_restoreInventory:
 	ldi a,(hl)
 	ld (bc),a
 
-	ld c,<wNumScentSeeds
-	ldi a,(hl)
-	ld (bc),a
+	; If no seed item equipped, nothing else to restore
+	ld a,d
+	or a
+	jr z,@refreshStatusBar
 
+	; Restore selected seed type
 	ld c,<wShooterSelectedSeeds
-	ldi a,(hl)
+	ld a,TREASURE_SHOOTER
+	cp d
+	jr z,+
+	ld c,<wSlingshotSelectedSeeds
++
+	ld a,(bc)
+	ld e,a
+	inc hl
+	ldd a,(hl)
 	ld (bc),a
 
+	; Restore seed count
+	ld a,<wNumEmberSeeds
+	add e
+	ld c,a
+	ld a,(hl)
+	ld (bc),a
+
+@refreshStatusBar:
 	ld a,$ff
 	ld (wStatusBarNeedsRefresh),a
 	ret
@@ -4925,6 +5002,13 @@ goron_targetCarts_loadCrystals:
 	inc a
 ++
 	ld (wTmpcfc0.targetCarts.targetConfiguration),a
+
+	; RANDO: because the "parseGivenObjectData" function doesn't clear the memory it uses
+	; properly, do that here. This seems to be a vanilla bug. It sometimes corrupts the minecart
+	; track collisions and makes it impossible to progress through the room.
+	xor a
+	ld (wEnemyPlacement.numEnemies),a
+
 	ld hl,objectData.targetCartCrystals
 	jp parseGivenObjectData
 
