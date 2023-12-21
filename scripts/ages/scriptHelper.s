@@ -323,7 +323,13 @@ shootingGallery_cpScore:
 
 ;;
 shootingGallery_equipSword:
+	; RANDO: Don't give a sword if Link doesn't have one
+	ld a,TREASURE_SWORD
+	call checkTreasureObtained
 	ld hl,hFF8A
+	jr nc,@noSword
+
+	; Have a sword
 	ld a,(wInventoryA)
 	cp ITEMID_SWORD
 	jr nz,@equipOnB
@@ -340,6 +346,12 @@ shootingGallery_equipSword:
 	ldi (hl),a
 	xor a
 	ld (hl),a
+	jr shootingGallery_changeEquips
+
+@noSword:
+	xor a
+	ldi (hl),a
+	ldi (hl),a
 	jr shootingGallery_changeEquips
 
 ;;
