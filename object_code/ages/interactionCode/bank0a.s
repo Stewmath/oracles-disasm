@@ -4038,9 +4038,12 @@ interactionCode81:
 	ld e,Interaction.var03
 	ld a,(de)
 	ld c,a
-	ld a,TREASURE_SEED_SATCHEL
-	call checkTreasureObtained
-	jr nc,@checkReplaceWithShovel
+
+	; RANDO: Skip seed satchel check, allowing player to buy the item as long as they have seeds
+	; for it. (Only the shield actually matters for this, since the tokay quest was removed.)
+	;ld a,TREASURE_SEED_SATCHEL
+	;call checkTreasureObtained
+	;jr nc,@checkReplaceWithShovel
 
 	; Seed satchel obtained; set var38/var39 based on whether Link can buy the item?
 
