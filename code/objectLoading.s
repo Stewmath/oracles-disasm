@@ -43,6 +43,18 @@ parseObjectData:
 ;;
 ; @param de Address of object data to parse
 parseGivenObjectData:
+	; BUG(?): Not initializing the $cec0 memory block!
+	;
+	; I've seen this affect the target carts minigame, where because wEnemyPlacement.numEnemies
+	; is uninitialized, it writes to an address in the $cfxx memory range and messes up the
+	; room's collisions after loading the crystals. But that was in rando, not sure if it can
+	; happen in vanilla.
+	;
+	; However, it could be dangerous to add such a memory clear call here; there could be some
+	; poorly designed code that's using that memory region for something else even while it's
+	; used for object loading here. Would need to do some testing to make sure it doesn't break
+	; anything.
+
 	ld a,(de)
 	cp $fe
 	jr nz,+
