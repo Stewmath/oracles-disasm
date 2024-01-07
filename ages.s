@@ -899,3 +899,10 @@ oamData_7249:
 .include "data/rando/compassChimes.s"
 .include "code/rando/rando.s"
 .include "code/rando/randoMenu.s"
+
+
+; RANDO: Moved these graphics out from "gfxDataBank1a.s" to make way for the expanded spr_link. Just
+; let the linker stuff it in wherever there's space using a superfree section.
+m_section_superfree rando_gfx_animations ALIGN $20
+	m_GfxDataSimple gfx_animations_1
+.ends

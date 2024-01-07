@@ -86,10 +86,11 @@ oamData48091:
 	.db $0c $00 $02 $20
 	.db $0c $08 $00 $20
 
+; RANDO: Modified diving animation to use expanded sprites
 oamData4809a:
 	.db $02
 	.db $0c $00 $00 $00
-	.db $0c $08 $00 $20
+	.db $0c $08 $02 $00
 
 oamData480a3:
 	.db $12

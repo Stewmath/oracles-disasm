@@ -18,5 +18,5 @@ gfxDataBank1a:
 	m_GfxDataSimple spr_magnet_gloves
 
 .ifdef ROM_AGES
-	m_GfxDataSimple gfx_animations_1		; $06b200
+	; RANDO: Moved gfx_animations_1 out of here to make room for the expanded spr_link.
 .endif
