@@ -3105,7 +3105,7 @@ menuStateFadeIntoMenu:
 ;;
 saveGraphicsOnEnterMenu_body:
 	ldh a,(<hCameraY)
-	ld hl,$cbe1
+	ld hl,wcbe1
 	ldi (hl),a
 	ldh a,(<hCameraX)
 	ld (hl),a
@@ -3152,7 +3152,7 @@ menuStateFadeOutOfMenu:
 ;;
 ; Called when exiting menus
 reloadGraphicsOnExitMenu_body:
-	ld hl,$cbe1
+	ld hl,wcbe1
 	ldi a,(hl)
 	ldh (<hCameraY),a
 	ld a,(hl)
