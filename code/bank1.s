@@ -4372,7 +4372,7 @@ calculateRoomEdge:
 	ld a,(wRoomIsLarge)
 	or a
 	jr z,+
-	ldbc (LARGE_ROOM_HEIGHT+1)*16, LARGE_ROOM_WIDTH*16
+	ldbc ((LARGE_ROOM_HEIGHT+1)*16), (LARGE_ROOM_WIDTH*16)
 +
 	ld hl,wRoomEdgeY
 	ld (hl),b
