@@ -1,74 +1,7 @@
-snddeStart:
-
-snddeChannel0:
-snddeChannel1:
-snddeChannel4:
-snddeChannel6:
-	cmdff
-
-
-snd97Start:
-sndadStart:
-sndb6Start:
-
-snd97Channel2:
-snd97Channel7:
-sndadChannel2:
-sndadChannel7:
-sndb6Channel2:
-sndb6Channel7:
-bank39ChannelFallback:
-	cmdff
-
-.redefine MUSIC_CHANNEL_FALLBACK bank39ChannelFallback
-
-
-.include "audio/sfx/common/fairyCutscene.s"
-.include "audio/sfx/common/baseball.s"
-
-.ifdef BUILD_VANILLA
-	.dsb 12 $ff
-.endif
-
-.include "audio/sfx/common/beam.s"
-.include "audio/sfx/common/breakRock.s"
-.include "audio/sfx/common/wave.s"
-.include "audio/sfx/common/swordObtained.s"
-.include "audio/sfx/seasons/magnetGloves.s"
-.include "audio/sfx/common/pieceOfPower.s"
-.include "audio/sfx/common/linkSwim.s"
-.include "audio/sfx/common/poof.s"
-.include "audio/sfx/common/bigSword.s"
-.include "audio/sfx/seasons/b5.s" ; TODO
-.include "audio/sfx/common/rumble.s"
-.include "audio/sfx/seasons/frypolarMovement.s"
-.include "audio/sfx/common/veranProjectile.s"
-.include "audio/sfx/common/shock.s"
-.include "audio/sfx/common/beam1.s"
-.include "audio/sfx/common/fadeout.s"
-.include "audio/sfx/common/pickUp.s"
-.include "audio/sfx/common/chicken.s"
-.include "audio/sfx/common/makuDisappear.s"
-.include "audio/sfx/common/beam2.s"
-.include "audio/sfx/seasons/b7.s" ; TODO
-.include "audio/sfx/common/veranFairyAttack.s"
-.include "audio/sfx/common/rumble2.s"
-.include "audio/sfx/common/opening.s"
-.include "audio/sfx/common/warpStart.s"
-.include "audio/sfx/common/endless.s"
-.include "audio/sfx/common/bigExplosion2.s"
-.include "audio/sfx/seasons/bd.s" ; TODO
-.include "audio/mus/common/mapleGame.s"
-.include "audio/mus/common/finalBoss.s"
-.include "audio/mus/common/essence.s"
-
-.include "audio/sfx/ages/switch2.s" ; CROSSITEMS: Added this
-
-.ifdef BUILD_VANILLA
-	.dsb 13 $ff
-.endif
-
-
+; MUSIC: Moved Bank $39 channel data for more room for channel data pointers
+;		 See audio/common/soundChannelDataExtra.s
+;		 as well as audio/common/channelDataPointersExtra.s
+;		 and code/audio.s
 .BANK $3a SLOT 1
 .ORG 0
 
@@ -415,6 +348,7 @@ mus3aChannel4:
 .include "audio/mus/common/credits1.s"
 .include "audio/mus/seasons/unused2.s"
 
+.include "audio/sfx/ages/switch2.s" ; CROSSITEMS: Added this
 .ifdef BUILD_VANILLA
 	.dsb 10 $ff
 .endif
