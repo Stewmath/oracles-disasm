@@ -112,5 +112,19 @@ bank42ChannelFallBack:
 
 	.include "audio/mus/ages/zoraVillage.s"
 ; MUSIC: Custom music
+	.include "audio/mus/custom/inTheFields.s"
+	.include "audio/mus/custom/linebeck.s"
+	.include "audio/mus/custom/sacredGrove.s"
+	.include "audio/mus/custom/gerudoValley.s"
+	.include "audio/mus/custom/lostWoods.s"
+
+.BANK $43 SLOT 1
+.ORG 0
+
+bank43ChannelFallBack:
+    cmdff
+
+.redefine MUSIC_CHANNEL_FALLBACK bank43ChannelFallBack
+	.include "audio/mus/custom/dragonRoostIsland.s"
 
 .undefine MUSIC_CHANNEL_FALLBACK

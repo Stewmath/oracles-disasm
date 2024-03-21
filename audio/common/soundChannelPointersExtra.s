@@ -521,3 +521,69 @@ musZoraVillage:
 	.dw musZoraVillageChannel6
 	.db $ff
 .endif
+
+musLinebeck:
+	.db $00
+	.dw musLinebeckChannel0
+	.db $01
+	.dw musLinebeckChannel1
+	.db $04
+	.dw musLinebeckChannel4
+	.db $06
+	.dw musLinebeckChannel6
+	.db $ff
+
+musInTheFields:
+	.db $00
+	.dw musInTheFieldsChannel0
+	.db $01
+	.dw musInTheFieldsChannel1
+	.db $04
+	.dw musInTheFieldsChannel4
+	.db $06
+	.dw musInTheFieldsChannel6
+	.db $ff
+
+musSacredGrove:
+	.db $00
+	.dw musSacredGroveChannel0
+	.db $01
+	.dw musSacredGroveChannel1
+	.db $04
+	.dw musSacredGroveChannel4
+	.db $06
+	.dw musSacredGroveChannel6
+	.db $ff
+
+musGerudoValley:
+	.db $00
+	.dw musGerudoValleyChannel0
+	.db $01
+	.dw musGerudoValleyChannel1
+	.db $04
+	.dw musGerudoValleyChannel4
+	.db $06
+	.dw musGerudoValleyChannel6
+	.db $ff
+
+musLostWoods:
+	.db $00
+	.dw musLostWoodsChannel0
+	.db $01
+	.dw musLostWoodsChannel1
+	.db $04
+	.dw musLostWoodsChannel4
+	.db $06
+	.dw musLostWoodsChannel6
+	.db $ff
+
+musDragonRoostIsland:
+	.db $00
+	.dw musDragonRoostIslandChannel0
+	.db $01
+	.dw musDragonRoostIslandChannel1
+	.db $04
+	.dw musDragonRoostIslandChannel4
+	.db $06
+	.dw musDragonRoostIslandChannel6
+	.db $ff
