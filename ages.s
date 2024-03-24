@@ -12,6 +12,7 @@
 .include "include/movementscript_commands.s"
 
 .include "constants/rando.s"
+.include "constants/music.s" ; RANDO: Not included from constants.s anymore
 
 .include "objects/macros.s"
 .include "include/gfxDataMacros.s"

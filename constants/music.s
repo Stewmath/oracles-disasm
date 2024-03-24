@@ -1,4 +1,8 @@
-.enum 0
+; RANDO: Since these symbols are now exported, we're not including them from constants.s since
+; they'd be exported multiple times. This means the symbols will be resolved at linking time instead
+; of assembly time, at least in some cases.
+
+.enum 0 export
 
 	MUS_NONE                  db ; $00
 	MUS_TITLESCREEN           db ; $01
@@ -392,7 +396,7 @@
 ; Aside from $de, $d5-$ef are undefined?
 
 ; Part of the implementation for "SNDCTRL_STOPMUSIC"?
-.define SNDCTRL_DE		$de
+.define SNDCTRL_DE		$de export ; RANDO: Must export to be visible from audio.s
 
 ; The following are "pseudo-sound effects" with special behaviour.
 
