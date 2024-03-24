@@ -1,12 +1,10 @@
 musTitlescreen
 musMinigame
 musOverworld
-musEssence
 musGameover
 musEssenceRoom
 musIndoors
 musFairyFountain
-musGetEssence
 musFileSelect
 musFinalDungeon
 musOnoxCastle
@@ -36,7 +34,6 @@ musGreatMoblin
 musSyrup
 musGoronCave
 musIntro1
-musIntro2
 musBlackTowerEntrance
 musPrecredits
 musOverworldPast
