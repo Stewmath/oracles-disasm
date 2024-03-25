@@ -4,3 +4,4 @@ musSacredGrove
 musGerudoValley
 musLostWoods
 musDragonRoostIsland
+musSanctuary

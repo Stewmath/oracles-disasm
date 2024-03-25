@@ -120,3 +120,4 @@ bank42ChannelFallBack:
 	.include "audio/mus/custom/gerudoValley.s"
 	.include "audio/mus/custom/lostWoods.s"
 	.include "audio/mus/custom/dragonRoostIsland.s"
+	.include "audio/mus/custom/sanctuary.s"

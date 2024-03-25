@@ -456,6 +456,14 @@ musInTheFieldsChannel4:
 .endr
 
 musInTheFieldsChannel4Measure8Loop:
+.macro m_musInTheFieldsChannel4Measure8
+	duty HI_VOL
+	beat \1 S1
+	duty LO_VOL
+	beat \1 S2
+	duty HI_VOL2
+	beat \2 T5 r T6 \2 T7 r T8
+.endm
 ; Measure 8
 	m_musInTheFieldsChannel4Measure8 cs3 cs4
 	m_musInTheFieldsChannel4Measure8 b2 b3

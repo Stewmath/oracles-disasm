@@ -275,6 +275,15 @@ musGerudoValleyChannel0:
 ; Measure 4
 	vibrato $00
 	env $0 $04
+.macro m_musGerudoValleyChannel0Measure4
+.rept 2
+	vol HI_VOL
+	beat \1 S1
+	vol LO_VOL
+	beat \1 S2 \1 S3
+	beat \1 S4+S1 \1 S2+S3 \1 S4
+.endr
+.endm
 	m_musGerudoValleyChannel0Measure4 a3
 ; Measure 5
 	m_musGerudoValleyChannel0Measure4 d4

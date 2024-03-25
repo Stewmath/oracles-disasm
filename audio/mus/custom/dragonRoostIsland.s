@@ -3,6 +3,47 @@ musDragonRoostIslandStart:
 .redefine TEMPO_2 TEMPO_1*3/2
 	tempo TEMPO_1
 
+.macro m_musDragonRoostIslandChannel0Measure5
+	tempo TEMPO_1
+	beat \1 R1 \1 Y3 \1 Y4 \1 R3
+	beat \1 R1+R2 \1 R3
+.endm
+.macro m_musDragonRoostIslandChannel0Measure6
+	tempo TEMPO_1
+	beat \1 R1 \1 Y3 \1 Y4 \1 R3
+	beat \1 R1 \1 R2 \1 R3
+.endm
+.macro m_musDragonRoostIslandChannel0Measure7
+	tempo TEMPO_1
+	beat \1 R1 \1 R2 \1 R3
+	beat \1 Y1 \1 Y2 \1 R2 \1 R3
+.endm
+.macro m_musDragonRoostIslandChannel0Measure9
+	tempo TEMPO_1
+	beat \1 R1 \1 R2 \1 R3
+	beat \1 R1 \1 R2 \1 R3
+.endm
+.macro m_musDragonRoostIslandChannel0Measure46
+	tempo TEMPO_1
+	beat \1 R1 \1 Y3 \1 Y4 \1 Y5 \1 Y6
+	beat \1 R1 \1 R2 \1 R3
+.endm
+.macro m_musDragonRoostIslandChannel0Measure47
+	tempo TEMPO_1
+	beat \1 R1 \1 R2+R3
+	beat \1 R1 \1 R2 \1 R3
+.endm
+.macro m_musDragonRoostIslandChannel0Measure62
+	tempo TEMPO_1
+	beat \1 R1 \1 Y3 \1 Y4 \1 Y5 \1 Y6
+	beat \1 R1 \1 R2 \1 Y5 \1 Y6
+.endm
+.macro m_musDragonRoostIslandChannel0Measure75
+	tempo TEMPO_1
+	beat \1 R1 \1 R2 \1 R3
+	beat \1 R1+R2 \1 R3
+.endm
+
 musDragonRoostIslandChannel1:
 	.redefine HI_VOL $6
 	.redefine LO_VOL $4
@@ -24,6 +65,129 @@ musDragonRoostIslandChannel1:
 ; Measure 7
 	m_musDragonRoostIslandChannel0Measure7 g5
 ; Measure 8-24a
+.macro m_musDragonRoostIslandChannel1Measure8
+	octave 5
+	beat f R1 f R2 f R3
+	beat f Y1 f Y2 f R2
+
+	vol HI_VOL
+	env $1 $00
+.endm
+.macro m_musDragonRoostIslandChannel1Measure8b
+; Measure 8d
+; Melody
+	beat d R3
+; Measure 9
+	beat a Y1 as Y2+R2+R3
+	beat a R1 as R2 g Y1 r Y2
+; Measure 10
+	beat ou c Q od a Q
+; Measure 11
+	beat a Y1
+
+	vibrato VIBRATO
+	beat g Y2+R2+R3
+	vibrato $01
+	env $0 $00
+	vol LO_VOL
+	beat g R1+R2
+	vol LO_VOL-2
+	beat g R3
+; Measure 12
+	vol HI_VOL
+	vibrato VIBRATO
+	env $1 $00
+	beat d Q
+	vol LO_VOL
+	vibrato $01
+	env $0 $00
+	beat d R1
+	
+	vol HI_VOL
+	vibrato $00
+	env $1 $00
+	beat f R2 d Y5 r Y6
+; Measure 13
+	beat a Y1 as Y2+R2+R3
+	beat a R1 as R2 g Y1 r Y2
+; Measure 14
+	beat as Y1 ou c Y2+R2+R3 f Q
+; Measure 15-16
+	vibrato VIBRATO
+	beat d HF
+	vibrato $01
+	env $0 $00
+	vol LO_VOL	
+	beat d R1+R2
+	vol LO_VOL-2	
+	beat d R3+R1
+	
+	vol HI_VOL
+	vibrato $00
+	env $1 $00	
+	beat od as R2 as R3
+; Measure 17-18
+	beat ou c R1+R2+Y5 d Y6
+
+	vibrato VIBRATO
+	beat c Q
+	vibrato $01
+	env $0 $00
+	vol LO_VOL	
+	beat c R1+R2
+	vol LO_VOL-2
+	beat c R3+R1
+	
+	vol HI_VOL
+	vibrato $00
+	env $1 $00	
+	beat od gs R2 ou c Y5 r Y6
+; Measure 19-20
+	beat od as Q
+
+	vibrato VIBRATO
+	beat g Q+Y1
+	vibrato $01
+	env $0 $00
+	vol LO_VOL
+	beat g Y2+R2
+	vol LO_VOL-2	
+	beat g R3+Y1 r Y2
+
+	vol HI_VOL
+	vibrato $00
+	env $1 $00		
+	beat g R2 as Y5 r Y6
+; Measure 21-22
+	beat ou c R1+R2+Y5 d Y6
+
+	vibrato VIBRATO
+	beat c Q+R1+R2
+	vibrato $01
+	env $0 $00
+	vol LO_VOL	
+	beat c R3+R1
+	vol LO_VOL-2
+	beat c R2
+	
+	vol HI_VOL
+	vibrato $00
+	env $1 $00	
+	beat od as R3
+; Measure 23-24a
+	vibrato VIBRATO
+	beat g Q+R1
+	vibrato $01
+	env $0 $00
+	vol LO_VOL
+	beat g R2+R3
+	vol LO_VOL-2	
+	beat g R1+R2
+
+	vibrato $00
+	env $0 $04
+	vol LO_VOL
+.endm
 	m_musDragonRoostIslandChannel1Measure8
 	m_musDragonRoostIslandChannel1Measure8b
 ; Measure 24a
@@ -92,6 +256,32 @@ musDragonRoostIslandChannel1Loop:
 ; Measure 58
 	m_musDragonRoostIslandChannel1Measure8
 ; Measure 58b-63b
+.macro m_musDragonRoostIslandChannel1Measure58b
+; Measure 58b
+	tempo TEMPO_1
+	octave 6
+	vibrato VIBRATO
+	env $1 $00
+	vol HI_VOL
+	beat d R3 
+; Measure 59-60
+	beat g Q f Q d Q od as Q
+; Measure 61-62
+	beat ou c Q+R1
+	env $0 $00
+	vibrato $01
+	vol LO_VOL
+	beat c R2+R3+R1
+	vol LO_VOL-2
+	beat c R2+R3
+
+	vol HI_VOL
+	vibrato VIBRATO
+	env $1 $00
+	beat d R1 od g R2 as R3
+; Measure 63
+	beat ou c Q+R1+R2+Y5
+.endm
 	m_musDragonRoostIslandChannel1Measure58b
 ; Measure 63b-64
 	octave 6
@@ -149,6 +339,7 @@ musDragonRoostIslandChannel1Loop:
 	m_musDragonRoostIslandChannel0Measure46 g5
 	
 	goto musDragonRoostIslandChannel1Loop
+	cmdff
 
 musDragonRoostIslandChannel0:
 .redefine HI_VOL $4
@@ -314,6 +505,171 @@ musDragonRoostIslandChannel0Measure27Loop:
 	goto musDragonRoostIslandChannel0Measure27Loop
 	cmdff
 
+
+.macro m_musDragonRoostIslandChannel4Measure5
+	tempo TEMPO_1
+	duty HI_VOL
+	beat \1 Y1
+	duty LO_VOL
+	beat \1 Y2 r R2+R3
+
+	duty HI_VOL
+	beat \1+7 Y1
+	duty LO_VOL
+	beat \1+7 Y2 r R2
+
+	duty HI_VOL
+	beat \1+12 Y5
+	duty LO_VOL
+	beat \1+12 Y6
+.endm
+.macro m_musDragonRoostIslandChannel4Measure6
+	tempo TEMPO_2
+	duty HI_VOL
+	beat \1 S1
+	duty LO_VOL
+	beat \1 S2 r E2
+
+	duty HI_VOL
+	beat \1+7 S1
+	duty LO_VOL
+	beat \1+7 S2 r E2
+
+	duty HI_VOL
+	beat \1+12 S1
+	duty LO_VOL
+	beat \1+12 S2 r E2
+.endm
+.macro m_musDragonRoostIslandChannel4Measure27
+; Measure 27
+	tempo TEMPO_1
+	duty HI_VOL
+	beat \1 R1 
+	duty LO_VOL
+	beat \1 Y3 r Y4
+
+	duty HI_VOL
+	beat \1 Y5
+	beat LO_VOL
+	beat \1 Y6
+
+	duty HI_VOL
+	beat \1+7 R1
+	duty LO_VOL
+	beat \1+12 Y3 r Y4
+	duty HI_VOL
+	beat \1+12 R3
+.endm
+.macro m_musDragonRoostIslandChannel4Measure28
+	tempo TEMPO_2
+	duty HI_VOL
+	beat \1 E1
+	duty LO_VOL
+	beat \1 E2
+	
+	duty HI_VOL
+	beat \1+7 E1
+	duty LO_VOL
+	beat \1+7 E2	
+
+	duty HI_VOL
+	beat \1+12 E1
+	duty LO_VOL
+	beat \1+12 E2
+.endm
+.macro m_musDragonRoostIslandChannel4Measure30
+; Measure 30
+	tempo TEMPO_2
+	duty HI_VOL
+	beat \1 E1
+	duty LO_VOL
+	beat \1 E2
+
+	duty HI_VOL
+	beat \1+7 E1
+	duty LO_VOL
+	beat \1+7 E2	
+
+	duty HI_VOL
+	beat \1 E1
+	duty LO_VOL
+	beat \1 E2
+.endm
+.macro m_musDragonRoostIslandChannel4Measure48
+	tempo TEMPO_1
+	octave 4
+	duty HI_VOL
+	beat d R1 c R2 od g Y5 r Y6
+	beat c R1 ou c R2 od c R3
+; Measure 49
+	tempo TEMPO_2
+	octaved
+	beat b E1 r E2 b S1 r S2
+	beat ou ds E2 r E1 gs S3 r S4	
+; Measure 50
+	tempo TEMPO_1
+	beat as R1 gs R2 od gs Y5 r Y6
+	beat gs R1 ou gs R2 od gs R3
+.endm
+.macro m_musDragonRoostIslandChannel4Measure59
+	tempo TEMPO_1
+	duty HI_VOL
+	beat \1 R1 
+	duty LO_VOL
+	beat \1 Y3 r Y4
+
+	duty HI_VOL
+	beat \1 Y5
+	beat LO_VOL
+	beat \1 Y6
+
+	duty HI_VOL
+	beat \1+7 R1
+	duty LO_VOL
+	beat \1+7 Y3 r Y4
+
+	duty HI_VOL
+	beat \1-5 R3
+.endm
+.macro m_musDragonRoostIslandChannel4Measure60
+	tempo TEMPO_2
+	beat \1 E1
+	duty LO_VOL
+	beat \1 E2	
+
+	duty HI_VOL
+	beat \1+7 S1
+	duty LO_VOL
+	beat \1+7 S2
+
+	duty HI_VOL
+	beat \1+7 S3 r S4	
+
+	duty HI_VOL
+	beat \1-5 E1
+	duty LO_VOL
+	beat \1-5 E2
+.endm
+.macro m_musDragonRoostIslandChannel4Measure62
+	tempo TEMPO_2
+	duty HI_VOL
+	beat \1 S1
+	duty LO_VOL
+	beat \1 S2
+
+	duty HI_VOL
+	beat \1 S3 r S4
+
+	beat \1+7 E1
+	duty LO_VOL
+	beat \1+7 E2	
+
+	duty HI_VOL
+	beat \1 E1
+	duty LO_VOL
+	beat \1 E2
+.endm
+
 musDragonRoostIslandChannel4:
 .redefine HI_VOL $0e
 .redefine LO_VOL $0f
@@ -474,6 +830,50 @@ musDragonRoostIslandChannel4Measure27Loop:
 
 	goto musDragonRoostIslandChannel4Measure27Loop
 	cmdff
+
+.macro m_musDragonRoostIslandChannel6Measure1
+; Measure 1
+	tempo TEMPO_1
+.rept 2
+   	vol HI_VOL
+   	beat HIT R1
+   	vol LO_VOL
+   	beat HIT R2
+	beat HIT R3
+.endr
+
+; Measure 2
+tempo TEMPO_2
+.rept 3
+	vol HI_VOL
+	beat HIT E1
+	vol LO_VOL
+	beat HIT E2
+.endr
+.endm
+.macro m_musDragonRoostIslandChannel6Measure3
+; Measure 3
+tempo TEMPO_1
+.rept 2
+   	vol HI_VOL
+   	beat HIT R1
+   	vol LO_VOL
+   	beat HIT R2
+	beat HIT R3
+.endr
+; Measure 4
+tempo TEMPO_2
+	vol HI_VOL
+	beat HIT E1
+.rept 2
+	vol LO_VOL
+	beat HIT S3 HIT S4
+	vol HI_VOL
+	beat HIT E1
+.endr
+	vol LO_VOL
+	beat HIT E2
+.endm
 
 musDragonRoostIslandChannel6:
 	.redefine HI_VOL $4

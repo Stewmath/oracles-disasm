@@ -186,19 +186,6 @@ musSwordAndShieldMaze:
 	.dw musSwordAndShieldMazeChannel6
 	.db $ff
 
-/*
-musMakuTree:
-	.db $00
-	.dw musMakuTreeChannel0
-	.db $01
-	.dw musMakuTreeChannel1
-	.db $04
-	.dw musMakuTreeChannel4
-	.db $06
-	.dw musMakuTreeChannel6
-	.db $ff
-*/
-
 musTarmRuins:
 	.db $00
 	.dw musTarmRuinsChannel0
@@ -364,19 +351,6 @@ musMakuPath:
 	.db $06
 	.dw musMakuPathChannel6
 	.db $ff
-
-/*
-musMakuTree:
-	.db $00
-	.dw musMakuTreeChannel0
-	.db $01
-	.dw musMakuTreeChannel1
-	.db $04
-	.dw musMakuTreeChannel4
-	.db $06
-	.dw musMakuTreeChannel6
-	.db $ff
-*/
 
 musMermaidsCave:
 	.db $00
@@ -586,4 +560,15 @@ musDragonRoostIsland:
 	.dw musDragonRoostIslandChannel4
 	.db $06
 	.dw musDragonRoostIslandChannel6
+	.db $ff
+
+musSanctuary:
+	.db $00
+	.dw musSanctuaryChannel0
+	.db $01
+	.dw musSanctuaryChannel1
+	.db $04
+	.dw musSanctuaryChannel4
+	.db $06
+	.dw musSanctuaryChannel6
 	.db $ff

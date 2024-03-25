@@ -101,6 +101,8 @@ bank41ChannelFallBack:
 	.include "audio/mus/ages/tokayHouse.s"
 	.include "audio/mus/ages/underwater.s"
 	.include "audio/mus/ages/wingDungeon.s"
+; MUSIC: Custom music
+	.include "audio/mus/custom/sanctuary.s"
 
 .BANK $42 SLOT 1
 .ORG 0
@@ -109,7 +111,7 @@ bank42ChannelFallBack:
     cmdff
 
 .redefine MUSIC_CHANNEL_FALLBACK bank42ChannelFallBack
-
+; MUSIC: Ages music
 	.include "audio/mus/ages/zoraVillage.s"
 ; MUSIC: Custom music
 	.include "audio/mus/custom/inTheFields.s"
@@ -117,6 +119,7 @@ bank42ChannelFallBack:
 	.include "audio/mus/custom/sacredGrove.s"
 	.include "audio/mus/custom/gerudoValley.s"
 	.include "audio/mus/custom/lostWoods.s"
+
 
 .BANK $43 SLOT 1
 .ORG 0
