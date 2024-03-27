@@ -5,3 +5,4 @@ musGerudoValley
 musLostWoods
 musDragonRoostIsland
 musSanctuary
+musFallingRain

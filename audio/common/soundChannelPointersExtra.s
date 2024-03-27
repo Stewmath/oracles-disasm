@@ -572,3 +572,14 @@ musSanctuary:
 	.db $06
 	.dw musSanctuaryChannel6
 	.db $ff
+
+musFallingRain:
+	.db $00
+	.dw musFallingRainChannel0
+	.db $01
+	.dw musFallingRainChannel1
+	.db $04
+	.dw musFallingRainChannel4
+	.db $06
+	.dw musFallingRainChannel6
+	.db $ff

@@ -119,7 +119,7 @@ bank42ChannelFallBack:
 	.include "audio/mus/custom/sacredGrove.s"
 	.include "audio/mus/custom/gerudoValley.s"
 	.include "audio/mus/custom/lostWoods.s"
-
+	.include "audio/mus/custom/fallingRain.s"
 
 .BANK $43 SLOT 1
 .ORG 0
