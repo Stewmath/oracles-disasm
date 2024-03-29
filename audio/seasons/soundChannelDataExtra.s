@@ -120,6 +120,7 @@ bank42ChannelFallBack:
 	.include "audio/mus/custom/gerudoValley.s"
 	.include "audio/mus/custom/lostWoods.s"
 	.include "audio/mus/custom/fallingRain.s"
+	.include "audio/mus/custom/kassThemeShort.s"
 	
 
 .BANK $43 SLOT 1

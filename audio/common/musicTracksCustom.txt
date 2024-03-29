@@ -6,3 +6,5 @@ musLostWoods
 musDragonRoostIsland
 musSanctuary
 musFallingRain
+musAttackingVahNaboris
+musKassThemeShort

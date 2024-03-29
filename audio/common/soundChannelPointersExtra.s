@@ -594,3 +594,14 @@ musAttackingVahNaboris:
 	.db $06
 	.dw musAttackingVahNaborisChannel6
 	.db $ff
+
+musKassThemeShort:
+	.db $00
+	.dw musKassThemeShortChannel0
+	.db $01
+	.dw musKassThemeShortChannel1
+	.db $04
+	.dw musKassThemeShortChannel4
+	.db $06
+	.dw musKassThemeShortChannel6
+	.db $ff

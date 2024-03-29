@@ -121,6 +121,7 @@ bank42ChannelFallBack:
 	.include "audio/mus/custom/lostWoods.s"
 	.include "audio/mus/custom/dragonRoostIsland.s"
 	.include "audio/mus/custom/sanctuary.s"
+	
 
 .BANK $43 SLOT 1
 .ORG 0
@@ -131,3 +132,4 @@ bank43ChannelFallBack:
 .redefine MUSIC_CHANNEL_FALLBACK bank43ChannelFallBack	
 	.include "audio/mus/custom/fallingRain.s"
 	.include "audio/mus/custom/attackingVahNaboris.s"
+	.include "audio/mus/custom/kassThemeShort.s"
