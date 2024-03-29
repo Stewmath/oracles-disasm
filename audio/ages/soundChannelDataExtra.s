@@ -130,3 +130,4 @@ bank43ChannelFallBack:
 
 .redefine MUSIC_CHANNEL_FALLBACK bank43ChannelFallBack	
 	.include "audio/mus/custom/fallingRain.s"
+	.include "audio/mus/custom/attackingVahNaboris.s"

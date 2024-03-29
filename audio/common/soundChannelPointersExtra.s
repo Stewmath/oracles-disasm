@@ -583,3 +583,14 @@ musFallingRain:
 	.db $06
 	.dw musFallingRainChannel6
 	.db $ff
+
+musAttackingVahNaboris:
+	.db $00
+	.dw musAttackingVahNaborisChannel0
+	.db $01
+	.dw musAttackingVahNaborisChannel1
+	.db $04
+	.dw musAttackingVahNaborisChannel4
+	.db $06
+	.dw musAttackingVahNaborisChannel6
+	.db $ff

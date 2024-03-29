@@ -878,7 +878,7 @@ tempo TEMPO_2
 musDragonRoostIslandChannel6:
 	.redefine HI_VOL $4
 	.redefine LO_VOL $2
-	.define HIT     $27
+	.redefine HIT     $27
 
 ; Measure 1-24
 .rept 6

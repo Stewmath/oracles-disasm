@@ -345,3 +345,6 @@ musFallingRainChannel4Measure9Loop:
     cmdff
 
 .define musFallingRainChannel6 MUSIC_CHANNEL_FALLBACK EXPORT
+
+.undefine LO_VOL
+.undefine HI_VOL
