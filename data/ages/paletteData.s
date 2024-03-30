@@ -4247,3 +4247,10 @@ paletteData5960:
 	m_RGB16 $0a $0a $0a
 	m_RGB16 $00 $00 $00
 
+; RANDO: Link's palette for file select screen. Randomizer will replace this with the data for
+; whichever palette was selected.
+randoFileSelectLinkPaletteData:
+	m_RGB16 $1f $1f $1f
+	m_RGB16 $00 $00 $00
+	m_RGB16 $02 $15 $08
+	m_RGB16 $1f $1a $11
