@@ -3,6 +3,10 @@
 # into the format accepted by oracles-randomizer, so that sprites can be modified in a more flexible
 # way. Use this to port sprite modifications made on vanilla Ages/Seasons or earlier versions of the
 # randomizer onto the newest version which "unflips" the sprites.
+#
+# Somewhat intelligently detects whether it's a randomizer expanded ROM or not; if it is, then it
+# knows not to do the actual unflipping and it will just dump the raw sprite data. This assumes that
+# link's sprite data is always at the beginning of bank $1a.
 
 import sys
 from PIL import Image
@@ -61,6 +65,13 @@ f = open(inFilename, 'rb')
 rom = f.read()
 f.close()
 
+isExpandedRom = len(rom) >= 2097152
+
+if isExpandedRom:
+    INPUT_HEIGHT = OUTPUT_HEIGHT
+
+lastRowEnd = 8 if isExpandedRom else 7
+
 
 PALETTES = [0x00, 0x00, 0x00, 0x55, 0x55, 0x55, 0xaa, 0xaa, 0xaa, 0xff, 0xff, 0xff]
 
@@ -86,16 +97,16 @@ y = 0
 while y < INPUT_HEIGHT:
     x = 0
     while x < WIDTH:
-        if y == INPUT_HEIGHT-1 and x >= 7: # Last couple tiles bleed into non-link stuff
+        if y == INPUT_HEIGHT-1 and x >= lastRowEnd: # Last couple tiles bleed into non-link stuff
             break
         srcAddr = linkSpriteAddr + ((y * 16) + x) * 0x20
         destX = x
         destY = y
-        if (x,y) in unflips:
+        if not isExpandedRom and (x,y) in unflips:
             destX, destY = unflips[x,y]
             drawTile(img, destX * 8, destY * 16, srcAddr)
             drawTile(img, destX * 8 + 8, destY * 16, srcAddr, True)
-        elif (x,y) in translations:
+        elif not isExpandedRom and (x,y) in translations:
             destX, destY = translations[x,y]
             drawTile(img, destX * 8, destY * 16, srcAddr)
             drawTile(img, destX * 8 + 8, destY * 16, srcAddr + 0x20)
