@@ -308,10 +308,15 @@ func_410d:
 	ld a,(hl)
 	ld l,<w1Link.oamFlagsBackup
 	cp (hl)
-	jr nz,+
+	jr nz,@damage
 	ld e,<w1Companion.oamFlagsBackup
 	ld a,(de)
-+
+	jr ++
+@damage:
+	; RANDO: don't just copy link's OAM flags over when taking damage, as they may not be using
+	; the same palette for that anymore.
+	ld a,$0d
+++
 	ld e,<w1Companion.oamFlags
 	ld (de),a
 	ld l,<w1Link.visible
