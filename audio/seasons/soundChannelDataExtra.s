@@ -132,5 +132,6 @@ bank43ChannelFallBack:
 .redefine MUSIC_CHANNEL_FALLBACK bank43ChannelFallBack
 	.include "audio/mus/custom/dragonRoostIsland.s"
 	.include "audio/mus/custom/attackingVahNaboris.s"
+	.include "audio/mus/custom/overthereStair.s"
 
 .undefine MUSIC_CHANNEL_FALLBACK

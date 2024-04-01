@@ -60,6 +60,18 @@
 		.redefine TR1 R1
 		.redefine TR2 R2
 		.redefine TR3 R3
+
+		.redefine QR1 S1
+		.redefine QR2 S2
+		.redefine QR3 S3
+		.redefine QR4 S4
+
+		.redefine SX1 Y1
+		.redefine SX2 Y2
+		.redefine SX3 Y3
+		.redefine SX4 Y4
+		.redefine SX5 Y5
+		.redefine SX6 Y6
 	.else
 	.if \1 == E1
 		.redefine HF1 S1
@@ -68,6 +80,18 @@
 		.redefine TR1 Y1
 		.redefine TR2 Y2
 		.redefine TR3 Y3
+
+		.redefine QR1 T1
+		.redefine QR2 T2
+		.redefine QR3 T3
+		.redefine QR4 T4
+
+		.redefine SX1 W1
+		.redefine SX2 W2
+		.redefine SX3 W3
+		.redefine SX4 W4
+		.redefine SX5 W5
+		.redefine SX6 W6
 	.else
 	.if \1 == E2
 		.redefine HF1 S3
@@ -76,6 +100,18 @@
 		.redefine TR1 Y4
 		.redefine TR2 Y5
 		.redefine TR3 Y6
+
+		.redefine QR1 T5
+		.redefine QR2 T6
+		.redefine QR3 T7
+		.redefine QR4 T8
+
+		.redefine SX1 W7
+		.redefine SX2 W8
+		.redefine SX3 W9
+		.redefine SX4 W10
+		.redefine SX5 W11
+		.redefine SX6 W12
 	.else
 		.fail
 	.endif

@@ -605,3 +605,14 @@ musKassThemeShort:
 	.db $06
 	.dw musKassThemeShortChannel6
 	.db $ff
+	
+musOverthereStair:
+	.db $00
+	.dw musOverthereStairChannel0
+	.db $01
+	.dw musOverthereStairChannel1
+	.db $04
+	.dw musOverthereStairChannel4
+	.db $06
+	.dw musOverthereStairChannel6
+	.db $ff
