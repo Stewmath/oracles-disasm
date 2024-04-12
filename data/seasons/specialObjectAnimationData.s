@@ -130,17 +130,17 @@ specialObject08GfxPointers:
 	m_SpecialObjectGfxPointer $01 spr_link $1680 $04
 	m_SpecialObjectGfxPointer $00 spr_link $1600 $04
 	m_SpecialObjectGfxPointer $00 spr_link $1680 $04
-	m_SpecialObjectGfxPointer $01 spr_link $0000 $04
+	m_SpecialObjectGfxPointer $00 spr_link $2300 $04
 	m_SpecialObjectGfxPointer $01 spr_link $00c0 $04
-	m_SpecialObjectGfxPointer $01 spr_link $0200 $04
+	m_SpecialObjectGfxPointer $00 spr_link $2380 $04
 	m_SpecialObjectGfxPointer $00 spr_link $00c0 $04
 	m_SpecialObjectGfxPointer $00 spr_link $2640 $04
 	m_SpecialObjectGfxPointer $01 spr_link $26c0 $04
 	m_SpecialObjectGfxPointer $00 spr_link $2680 $04
 	m_SpecialObjectGfxPointer $00 spr_link $26c0 $04
-	m_SpecialObjectGfxPointer $01 spr_link $0040 $04
+	m_SpecialObjectGfxPointer $00 spr_link $2340 $04
 	m_SpecialObjectGfxPointer $01 spr_link $1140 $04
-	m_SpecialObjectGfxPointer $01 spr_link $0180 $04
+	m_SpecialObjectGfxPointer $00 spr_link $23c0 $04
 	m_SpecialObjectGfxPointer $00 spr_link $1140 $04
 	m_SpecialObjectGfxPointer $00 spr_link $1940 $04
 	m_SpecialObjectGfxPointer $01 spr_link $19c0 $04

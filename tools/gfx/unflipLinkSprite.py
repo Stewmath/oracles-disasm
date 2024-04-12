@@ -14,41 +14,49 @@ from PIL import Image
 # 8x16 sprites to be "unflipped" (key = src tile x/y, value = dest tile x/y, where x/y are positions
 # in the sprite sheet measured in 8x16 tiles)
 unflips = {
-        (13,1): (0,19),
-        (14,1): (14,1),
-        (15,1): (0,4),
-        (0,4): (2,19),
-        (1,4): (4,19),
-        (8,4): (8,4),
-        (15,4): (6,5),
-        (4,5): (4,5),
-        (5,5): (0,6),
-        (6,5): (2,6),
-        (7,5): (4,6),
-        (0,6): (0,18),
-        (1,6): (2,18),
-        (2,6): (4,18),
-        (15,6): (2,4),
-        (4,7): (4,7),
-        (5,7): (6,7),
-        (10,7): (6,12),
-        (11,7): (8,12),
-        (6,12): (10,18),
-        (7,12): (12,18),
-        }
+  (13,1): (0,19),
+  (14,1): (14,1),
+  (15,1): (0,4),
+  (0,4): (2,19),
+  (1,4): (4,19),
+  (8,4): (8,4),
+  (15,4): (6,5),
+  (4,5): (4,5),
+  (5,5): (0,6),
+  (6,5): (2,6),
+  (7,5): (4,6),
+  (0,6): (0,18),
+  (1,6): (2,18),
+  (2,6): (4,18),
+  (15,6): (2,4),
+  (4,7): (4,7),
+  (5,7): (6,7),
+  (10,7): (6,12),
+  (11,7): (8,12),
+  (6,12): (10,18),
+  (7,12): (12,18),
+}
 
 # 16x16 sprites to be shifted somewhere else
 translations = {
-        (2,4): (6,19),
-        (9,4): (10,4),
-        (11,4): (12,4),
-        (13,4): (14,4),
-        (3,6): (6,18),
-        (5,6): (8,18),
-        (6,7): (8,7),
-        (8,7): (10,7),
-        (8,12): (14,18),
-        }
+  (2,4): (6,19),
+  (9,4): (10,4),
+  (11,4): (12,4),
+  (13,4): (14,4),
+  (3,6): (6,18),
+  (5,6): (8,18),
+  (6,7): (8,7),
+  (8,7): (10,7),
+  (8,12): (14,18),
+}
+
+# 16x16 sprites to be copied & mirrored somewhere else
+mirrors = {
+  (0,0): (8,17),
+  (2,0): (10,17),
+  (0,1): (12,17),
+  (12,0): (14,17),
+}
 
 
 # Width/height of spritesheets in 8x16 tiles
@@ -104,12 +112,22 @@ while y < INPUT_HEIGHT:
         destY = y
         if not isExpandedRom and (x,y) in unflips:
             destX, destY = unflips[x,y]
-            drawTile(img, destX * 8, destY * 16, srcAddr)
-            drawTile(img, destX * 8 + 8, destY * 16, srcAddr, True)
+            drawTile(img, destX * 8,     destY * 16, srcAddr)
+            drawTile(img, destX * 8 + 8, destY * 16, srcAddr, flipX=True)
         elif not isExpandedRom and (x,y) in translations:
             destX, destY = translations[x,y]
-            drawTile(img, destX * 8, destY * 16, srcAddr)
+            drawTile(img, destX * 8,     destY * 16, srcAddr)
             drawTile(img, destX * 8 + 8, destY * 16, srcAddr + 0x20)
+            x = x+1
+        elif not isExpandedRom and (x,y) in mirrors:
+            # Draw original unchanged
+            drawTile(img, x * 8,     y * 16, srcAddr)
+            drawTile(img, x * 8 + 8, y * 16, srcAddr + 0x20)
+
+            # Draw mirrored version
+            destX, destY = mirrors[x,y]
+            drawTile(img, destX * 8 + 8, destY * 16, srcAddr,        flipX=True)
+            drawTile(img, destX * 8,     destY * 16, srcAddr + 0x20, flipX=True)
             x = x+1
         else:
             drawTile(img, destX * 8, destY * 16, srcAddr)
