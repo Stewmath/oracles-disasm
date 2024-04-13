@@ -4964,7 +4964,7 @@ loadObjectGfx2:
 	ld c,:w4GfxBuf1
 	ld a,$01
 	ld ($ff00+R_SVBK),a
-	ld a,$3f
+	ld a,BANK_3f
 	setrombank
 	ld b,$1f
 	jp queueDmaTransfer
@@ -4982,7 +4982,7 @@ loadObjectGfx2:
 	call decompressGraphics
 	ld a,$01
 	ld ($ff00+R_SVBK),a
-	ld a,$3f
+	ld a,BANK_3f
 	setrombank
 	ret
 .endif
