@@ -638,3 +638,14 @@ musLightWorldDungeon:
 	.db $06
 	.dw musLightWorldDungeonChannel6
 	.db $ff
+
+musBlackMist:
+	.db $00
+	.dw musBlackMistChannel0
+	.db $01
+	.dw musBlackMistChannel1
+	.db $04
+	.dw musBlackMistChannel4
+	.db $06
+	.dw musBlackMistChannel6
+	.db $ff

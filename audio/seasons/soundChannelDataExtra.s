@@ -136,4 +136,14 @@ bank43ChannelFallBack:
 	.include "audio/mus/custom/overthereStair.s"
 	.include "audio/mus/custom/lightWorldDungeon.s"
 
+
+.BANK $44 SLOT 1
+.ORG 0
+
+bank44ChannelFallBack:
+    cmdff
+
+.redefine MUSIC_CHANNEL_FALLBACK bank43ChannelFallBack
+	.include "audio/mus/custom/blackMist.s"
+
 .undefine MUSIC_CHANNEL_FALLBACK

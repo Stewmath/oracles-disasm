@@ -11,3 +11,4 @@ musKassThemeShort
 musOverthereStair
 musTheGreatPalace
 musLightWorldDungeon
+musBlackMist

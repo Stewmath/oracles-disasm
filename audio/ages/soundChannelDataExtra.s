@@ -121,7 +121,6 @@ bank42ChannelFallBack:
 	.include "audio/mus/custom/dragonRoostIsland.s"
 	.include "audio/mus/custom/sanctuary.s"
 	
-	
 
 .BANK $43 SLOT 1
 .ORG 0
@@ -136,3 +135,16 @@ bank43ChannelFallBack:
 	.include "audio/mus/custom/overthereStair.s"
 	.include "audio/mus/custom/theGreatPalace.s"
 	.include "audio/mus/custom/lightWorldDungeon.s"
+	
+.BANK $44 SLOT 1
+.ORG 0
+
+bank44ChannelFallBack:
+    cmdff
+
+.redefine MUSIC_CHANNEL_FALLBACK bank44ChannelFallBack	
+	.include "audio/mus/custom/blackMist.s"
+
+
+
+.undefine MUSIC_CHANNEL_FALLBACK
