@@ -9,3 +9,4 @@ musFallingRain
 musAttackingVahNaboris
 musKassThemeShort
 musOverthereStair
+musTheGreatPalace

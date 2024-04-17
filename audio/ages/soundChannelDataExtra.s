@@ -106,7 +106,6 @@ bank41ChannelFallBack:
 	.include "audio/mus/seasons/unused2.s"
 ; MUSIC: Custom music
 
-
 .BANK $42 SLOT 1
 .ORG 0
 
@@ -122,6 +121,7 @@ bank42ChannelFallBack:
 	.include "audio/mus/custom/dragonRoostIsland.s"
 	.include "audio/mus/custom/sanctuary.s"
 	
+	
 
 .BANK $43 SLOT 1
 .ORG 0
@@ -134,3 +134,4 @@ bank43ChannelFallBack:
 	.include "audio/mus/custom/attackingVahNaboris.s"
 	.include "audio/mus/custom/kassThemeShort.s"
 	.include "audio/mus/custom/overthereStair.s"
+	.include "audio/mus/custom/theGreatPalace.s"

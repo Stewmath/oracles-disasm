@@ -288,7 +288,7 @@ musGerudoValleyChannel0:
 ; Measure 5
 	m_musGerudoValleyChannel0Measure4 d4
 ; Measure 6
-	m_musGerudoValleyChannel0Measure4 b4
+	m_musGerudoValleyChannel0Measure4 b3
 ; Measure 7
 	m_musGerudoValleyChannel0Measure4 cs4
 

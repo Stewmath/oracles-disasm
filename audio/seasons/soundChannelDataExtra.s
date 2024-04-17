@@ -121,6 +121,7 @@ bank42ChannelFallBack:
 	.include "audio/mus/custom/lostWoods.s"
 	.include "audio/mus/custom/fallingRain.s"
 	.include "audio/mus/custom/kassThemeShort.s"
+	.include "audio/mus/custom/theGreatPalace.s"
 	
 
 .BANK $43 SLOT 1

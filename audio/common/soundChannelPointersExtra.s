@@ -616,3 +616,14 @@ musOverthereStair:
 	.db $06
 	.dw musOverthereStairChannel6
 	.db $ff
+
+musTheGreatPalace:
+	.db $00
+	.dw musTheGreatPalaceChannel0
+	.db $01
+	.dw musTheGreatPalaceChannel1
+	.db $04
+	.dw musTheGreatPalaceChannel4
+	.db $06
+	.dw musTheGreatPalaceChannel6
+	.db $ff

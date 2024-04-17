@@ -4,7 +4,7 @@ soundPointers:
 	/* 0x00 */ m_soundPointer musNone
 	/* 0x01 */ m_soundPointer musTitlescreen
 	/* 0x02 */ m_soundPointer musMinigame
-	/* 0x03 */ m_soundPointer musOverworld
+	/* 0x03 */ m_soundPointer musTheGreatPalace;musOverworld
 .ifdef ROM_AGES
 	/* 0x04 */ m_soundPointer musOverworldPast
 	/* 0x05 */ m_soundPointer musCrescent
