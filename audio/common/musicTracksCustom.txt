@@ -13,3 +13,4 @@ musTheGreatPalace
 musLightWorldDungeon
 musBlackMist
 musOutsetIsland
+musTalTalHeights

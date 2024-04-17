@@ -660,3 +660,14 @@ musOutsetIsland:
 	.db $06
 	.dw musOutsetIslandChannel6
 	.db $ff
+
+musTalTalHeights:
+	.db $00
+	.dw musTalTalHeightsChannel0
+	.db $01
+	.dw musTalTalHeightsChannel1
+	.db $04
+	.dw musTalTalHeightsChannel4
+	.db $06
+	.dw musTalTalHeightsChannel6
+	.db $ff
