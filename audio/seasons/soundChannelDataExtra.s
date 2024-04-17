@@ -145,5 +145,6 @@ bank44ChannelFallBack:
 
 .redefine MUSIC_CHANNEL_FALLBACK bank43ChannelFallBack
 	.include "audio/mus/custom/blackMist.s"
+	.include "audio/mus/custom/outsetIsland.s"
 
 .undefine MUSIC_CHANNEL_FALLBACK

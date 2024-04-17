@@ -649,3 +649,14 @@ musBlackMist:
 	.db $06
 	.dw musBlackMistChannel6
 	.db $ff
+
+musOutsetIsland:
+	.db $00
+	.dw musOutsetIslandChannel0
+	.db $01
+	.dw musOutsetIslandChannel1
+	.db $04
+	.dw musOutsetIslandChannel4
+	.db $06
+	.dw musOutsetIslandChannel6
+	.db $ff

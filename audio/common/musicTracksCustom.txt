@@ -12,3 +12,4 @@ musOverthereStair
 musTheGreatPalace
 musLightWorldDungeon
 musBlackMist
+musOutsetIsland
