@@ -627,3 +627,14 @@ musTheGreatPalace:
 	.db $06
 	.dw musTheGreatPalaceChannel6
 	.db $ff
+
+musLightWorldDungeon:
+	.db $00
+	.dw musLightWorldDungeonChannel0
+	.db $01
+	.dw musLightWorldDungeonChannel1
+	.db $04
+	.dw musLightWorldDungeonChannel4
+	.db $06
+	.dw musLightWorldDungeonChannel6
+	.db $ff

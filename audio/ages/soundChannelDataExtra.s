@@ -135,3 +135,4 @@ bank43ChannelFallBack:
 	.include "audio/mus/custom/kassThemeShort.s"
 	.include "audio/mus/custom/overthereStair.s"
 	.include "audio/mus/custom/theGreatPalace.s"
+	.include "audio/mus/custom/lightWorldDungeon.s"

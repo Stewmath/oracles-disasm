@@ -10,3 +10,4 @@ musAttackingVahNaboris
 musKassThemeShort
 musOverthereStair
 musTheGreatPalace
+musLightWorldDungeon
