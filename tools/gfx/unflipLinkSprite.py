@@ -50,19 +50,28 @@ translations = {
   (8,12): (14,18),
 }
 
-# 16x16 sprites to be copied & mirrored somewhere else
+# 16x16 sprites to be copied & mirrored somewhere else. Original sprite remains
+# in place, mirrored copy created at destination.
 mirrors = {
-  (0,0): (8,17),
-  (2,0): (10,17),
-  (0,1): (12,17),
-  (12,0): (14,17),
+  (0,0):   (8,17),
+  (2,0):   (10,17),
+  (0,1):   (12,17),
+  (12,0):  (14,17),
+}
+
+# Like above, except original sprite is moved and new mirrored sprite is placed after that.
+shiftAndMirrors = {
+  (0,11):  (8,19),  # Mermaid suit up/down
+  (2,11):  (12,19),
+  (8,15):  (0,20),  # Dimitri up/down
+  (10,15): (4,20),
 }
 
 
 # Width/height of spritesheets in 8x16 tiles
 WIDTH = 16
 INPUT_HEIGHT = 18
-OUTPUT_HEIGHT = 20
+OUTPUT_HEIGHT = 21
 
 linkSpriteAddr = 0x1a * 0x4000
 
@@ -128,6 +137,16 @@ while y < INPUT_HEIGHT:
             destX, destY = mirrors[x,y]
             drawTile(img, destX * 8 + 8, destY * 16, srcAddr,        flipX=True)
             drawTile(img, destX * 8,     destY * 16, srcAddr + 0x20, flipX=True)
+            x = x+1
+        elif not isExpandedRom and (x,y) in shiftAndMirrors:
+            # Draw original at new location
+            destX, destY = shiftAndMirrors[x,y]
+            drawTile(img, destX * 8,     destY * 16, srcAddr)
+            drawTile(img, destX * 8 + 8, destY * 16, srcAddr + 0x20)
+
+            # Draw mirrored version
+            drawTile(img, destX * 8 + 16 + 8, destY * 16, srcAddr,        flipX=True)
+            drawTile(img, destX * 8 + 16,     destY * 16, srcAddr + 0x20, flipX=True)
             x = x+1
         else:
             drawTile(img, destX * 8, destY * 16, srcAddr)
