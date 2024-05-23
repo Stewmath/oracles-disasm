@@ -950,13 +950,13 @@ specialObject09GfxPointers:
 	m_SpecialObjectGfxPointer $1a spr_link $1ee0 $02
 	m_SpecialObjectGfxPointer $1a spr_link $1ea0 $02
 	m_SpecialObjectGfxPointer $19 spr_link $1ee0 $02
-	m_SpecialObjectGfxPointer $1e spr_link $1f00 $04
+	m_SpecialObjectGfxPointer $1e spr_link $2800 $04
 	m_SpecialObjectGfxPointer $1b spr_link $1f80 $04
-	m_SpecialObjectGfxPointer $1e spr_link $1f40 $04
+	m_SpecialObjectGfxPointer $1e spr_link $2880 $04
 	m_SpecialObjectGfxPointer $1c spr_link $1f80 $04
-	m_SpecialObjectGfxPointer $1d spr_link $1f00 $04
+	m_SpecialObjectGfxPointer $1e spr_link $2840 $04
 	m_SpecialObjectGfxPointer $01 spr_link $1fc0 $04
-	m_SpecialObjectGfxPointer $1d spr_link $1f40 $04
+	m_SpecialObjectGfxPointer $1e spr_link $28c0 $04
 	m_SpecialObjectGfxPointer $00 spr_link $1fc0 $04
 	m_SpecialObjectGfxPointer $1b spr_link $2040 $04
 	m_SpecialObjectGfxPointer $1e spr_link $2000 $04
