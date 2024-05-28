@@ -2604,10 +2604,10 @@ fileSelectDrawLink:
 	.db $4e $58 $00 $00
 	.db $4e $60 $02 $00
 
-@sprites2:
+@sprites2: ; RANDO: Unmirrored link sprite
 	.db $02
-	.db $4e $58 $02 $20
-	.db $4e $60 $00 $20
+	.db $4e $58 $40 $00
+	.db $4e $60 $42 $00
 
 @sprites3:
 	.db $04
@@ -2643,10 +2643,10 @@ fileSelectDrawLink:
 	.db $4e $70 $02 $0a
 	.db $3e $6d $04 $0a
 
-@sprites8:
+@sprites8: ; RANDO: Unmirrored link sprite
 	.db $05
-	.db $4e $58 $02 $20
-	.db $4e $60 $00 $20
+	.db $4e $58 $40 $00
+	.db $4e $60 $42 $00
 	.db $4e $68 $02 $2a
 	.db $4e $70 $00 $2a
 	.db $3e $6b $04 $2a
@@ -2658,10 +2658,10 @@ fileSelectDrawLink:
 	.db $4e $68 $06 $09
 	.db $4e $70 $08 $09
 
-@spritesa:
+@spritesa: ; RANDO: Unmirrored link sprite
 	.db $04
-	.db $4e $58 $02 $20
-	.db $4e $60 $00 $20
+	.db $4e $58 $40 $00
+	.db $4e $60 $42 $00
 	.db $4e $68 $08 $29
 	.db $4e $70 $06 $29
 

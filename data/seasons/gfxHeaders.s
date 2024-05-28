@@ -889,6 +889,7 @@ gfxHeader9f:
 	m_GfxHeader flg_titlescreen_scroll_1, $9c01, $3f
 gfxHeadera0:
 	m_GfxHeader spr_link, $8000, $1f|$80 $200
+	m_GfxHeader spr_link, $8400, $03|$80 $2380 ; RANDO: Unmirrored link sprite
 	m_GfxHeader spr_rod_of_seasons, $81a0, $03|$80
 	m_GfxHeader gfx_hud, $9000, $1f|$80
 	m_GfxHeader gfx_hud, $9001, $1f|$80
