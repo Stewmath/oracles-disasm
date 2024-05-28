@@ -10,7 +10,6 @@ musAttackingVahNaboris
 musKassThemeShort
 musOverthereStair
 musTheGreatPalace
-musLightWorldDungeon
 musBlackMist
 musOutsetIsland
 musTalTalHeights
