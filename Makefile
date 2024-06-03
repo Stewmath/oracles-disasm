@@ -120,7 +120,9 @@ seasons:
 
 $(GAME).gbc: $(OBJS) $(BUILD_DIR)/linkfile
 	$(LD) -S $(BUILD_DIR)/linkfile $@
+ifeq ($(BUILD_VANILLA),true)
 	@-tools/build/verify-checksum.sh $(GAME)
+endif
 
 $(BUILD_DIR)/linkfile: linkfile_$(GAME)
 	sed 's/BUILD_DIR/${BUILD_DIR}/' $< > $@
