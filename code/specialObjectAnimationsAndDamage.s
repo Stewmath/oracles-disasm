@@ -82,7 +82,7 @@ specialObjectNextAnimationFrame:
 	ret
 
 
-	.include "build/data/specialObjectAnimationPointers.s"
+	.include {"{GAME_DATA_DIR}/specialObjectAnimationPointers.s"}
 
 ;;
 loadLinkAndCompanionAnimationFrame_body:

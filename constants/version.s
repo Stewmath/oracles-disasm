@@ -1,3 +1,7 @@
+; This file should be the first thing included in any of the main code files
+; (ages.s, seasons.s, and audio.s). It is included at the top of "constants.s"
+; for this reason.
+
 ; Pick one. (For now, the regions other than "US" only activate code changes, not asset changes, and
 ; they aren't complete.)
 ;.define REGION_JP
@@ -35,3 +39,15 @@
 		.define ENABLE_EU_BUGFIXES
 	.endif
 .endif
+
+
+
+; Define to help with building directory strings, maybe other stuff
+.ifdef ROM_SEASONS
+	.define GAME "seasons"
+.else
+	.define GAME "ages"
+.endif
+
+; Game-specific data directory location
+.define GAME_DATA_DIR "data/" GAME "/"

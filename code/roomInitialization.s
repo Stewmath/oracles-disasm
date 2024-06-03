@@ -152,7 +152,7 @@ checkAndSpawnMaple:
 	ld (hl),$b8
 	ret
 
-.include "build/data/mapleLocations.s"
+.include {"{GAME_DATA_DIR}/mapleLocations.s"}
 
 
 .ifdef ROM_SEASONS

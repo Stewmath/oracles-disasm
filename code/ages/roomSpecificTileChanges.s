@@ -1020,7 +1020,7 @@ initializeVinePositions:
 	jp copyMemoryReverse
 
 @defaultVinePositions:
-	.include "build/data/defaultVinePositions.s"
+	.include {"{GAME_DATA_DIR}/defaultVinePositions.s"}
 
 ;;
 ; Present, bridge to nuun highlands

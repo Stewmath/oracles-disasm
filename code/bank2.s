@@ -81,7 +81,7 @@ updateTilesetFlagsForIndoorRoomInAltWorld:
 	ret
 
 
-.include "build/data/roomsInAltWorld.s"
+.include {"{GAME_DATA_DIR}/roomsInAltWorld.s"}
 
 
 ;;
@@ -9325,7 +9325,7 @@ mapIconOamTable:
 .endif; ROM_SEASONS
 
 
-.include "build/data/mapTextAndPopups.s"
+.include {"{GAME_DATA_DIR}/mapTextAndPopups.s"}
 
 
 ; This table changes the text of a tile on a map depending on if a dungeon has been
@@ -9370,7 +9370,7 @@ mapMenu_dungeonEntranceText:
 	.endif
 
 
-.include "build/data/treeWarps.s"
+.include {"{GAME_DATA_DIR}/treeWarps.s"}
 
 
 ;;

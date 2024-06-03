@@ -1736,7 +1736,7 @@ bombchuCheckForEnemyTarget:
 	ld (de),a
 	ret
 
-.include "build/data/bombchuTargets.s"
+.include {"{GAME_DATA_DIR}/bombchuTargets.s"}
 
 ;;
 ; ITEMID_BOMB

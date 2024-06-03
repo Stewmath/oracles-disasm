@@ -14,7 +14,7 @@
 .include "objects/macros.s"
 .include "include/gfxDataMacros.s"
 
-.include "build/textDefines.s"
+.include {"{BUILD_DIR}/textDefines.s"}
 
 
 .BANK $00 SLOT 0
@@ -66,33 +66,33 @@
 
 	 m_section_superfree RoomPacksAndMusicAssignments NAMESPACE bank4Data1
 		; These 2 includes must be in the same bank
-		.include "build/data/roomPacks.s"
-		.include "build/data/musicAssignments.s"
+		.include {"{GAME_DATA_DIR}/roomPacks.s"}
+		.include {"{GAME_DATA_DIR}/musicAssignments.s"}
 	.ends
 
 	 m_section_superfree RoomLayouts NAMESPACE roomLayouts
-		.include "build/data/roomLayoutGroupTable.s"
+		.include {"{GAME_DATA_DIR}/roomLayoutGroupTable.s"}
 	.ends
 
 	; Must be in the same bank as "Tileset_Loading_2".
 	 m_section_free Tileset_Loading_1 NAMESPACE tilesets
-		.include "build/data/tilesets.s"
-		.include "build/data/tilesetAssignments.s"
+		.include {"{GAME_DATA_DIR}/tilesets.s"}
+		.include {"{GAME_DATA_DIR}/tilesetAssignments.s"}
 	.ends
 
 	 m_section_free animationAndUniqueGfxData NAMESPACE animationAndUniqueGfxData
 		.include "code/animations.s"
 
-		.include "build/data/uniqueGfxHeaders.s"
-		.include "build/data/uniqueGfxHeaderPointers.s"
-		.include "build/data/animationGroups.s"
-		.include "build/data/animationGfxHeaders.s"
-		.include "build/data/animationData.s"
+		.include {"{GAME_DATA_DIR}/uniqueGfxHeaders.s"}
+		.include {"{GAME_DATA_DIR}/uniqueGfxHeaderPointers.s"}
+		.include {"{GAME_DATA_DIR}/animationGroups.s"}
+		.include {"{GAME_DATA_DIR}/animationGfxHeaders.s"}
+		.include {"{GAME_DATA_DIR}/animationData.s"}
 	.ends
 
 	 m_section_free roomTileChanges NAMESPACE roomTileChanges
 		.include "code/ages/tileSubstitutions.s"
-		.include "build/data/singleTileChanges.s"
+		.include {"{GAME_DATA_DIR}/singleTileChanges.s"}
 		.include "code/ages/roomSpecificTileChanges.s"
 	.ends
 
@@ -103,7 +103,7 @@
 
 		; Must be in same bank as "code/bank4.s"
 	 m_section_free Warp_Data NAMESPACE bank4
-		.include "build/data/warpData.s"
+		.include {"{GAME_DATA_DIR}/warpData.s"}
 	.ends
 
 	.include "code/ages/garbage/bank04End.s"
@@ -115,8 +115,8 @@
 	 m_section_free Bank_5 NAMESPACE bank5
 		.include "code/bank5.s"
 
-		.include "build/data/tileTypeMappings.s"
-		.include "build/data/cliffTilesTable.s"
+		.include {"{GAME_DATA_DIR}/tileTypeMappings.s"}
+		.include {"{GAME_DATA_DIR}/cliffTilesTable.s"}
 
 		.include "code/ages/garbage/bank05End.s"
 	.ends
@@ -148,16 +148,16 @@
 	.include "code/items/magnetGloveParent.s"
 
 	.include "code/items/parentItemCommon.s"
-	.include "build/data/itemUsageTables.s"
+	.include {"{GAME_DATA_DIR}/itemUsageTables.s"}
 
 	.include "object_code/common/specialObjects/minecart.s"
 	.include "object_code/common/specialObjects/raft.s"
 
-	.include "build/data/specialObjectAnimationData.s"
+	.include {"{GAME_DATA_DIR}/specialObjectAnimationData.s"}
 	.include "code/ages/cutscenes/companionCutscenes.s"
 	.include "code/ages/cutscenes/linkCutscenes.s"
-	.include "build/data/signText.s"
-	.include "build/data/breakableTileCollisionTable.s"
+	.include {"{GAME_DATA_DIR}/signText.s"}
+	.include {"{GAME_DATA_DIR}/breakableTileCollisionTable.s"}
 
 ;;
 specialObjectLoadAnimationFrameToBuffer:
@@ -198,20 +198,20 @@ specialObjectLoadAnimationFrameToBuffer:
 	 m_section_superfree Item_Code namespace itemCode
 		.include "code/updateItems.s"
 
-		.include "build/data/itemConveyorTilesTable.s"
-		.include "build/data/itemPassableCliffTilesTable.s"
-		.include "build/data/itemPassableTilesTable.s"
+		.include {"{GAME_DATA_DIR}/itemConveyorTilesTable.s"}
+		.include {"{GAME_DATA_DIR}/itemPassableCliffTilesTable.s"}
+		.include {"{GAME_DATA_DIR}/itemPassableTilesTable.s"}
 		.include "code/itemCodes.s"
-		.include "build/data/itemAttributes.s"
+		.include {"{GAME_DATA_DIR}/itemAttributes.s"}
 		.include "data/itemAnimations.s"
 	.ends
 
 	 ; This section can't be superfree, since it must be in the same bank as section
 	 ; "Enemy_Part_Collisions".
 	 m_section_free Bank_7_Data namespace bank7
-		.include "build/data/enemyActiveCollisions.s"
-		.include "build/data/partActiveCollisions.s"
-		.include "build/data/objectCollisionTable.s"
+		.include {"{GAME_DATA_DIR}/enemyActiveCollisions.s"}
+		.include {"{GAME_DATA_DIR}/partActiveCollisions.s"}
+		.include {"{GAME_DATA_DIR}/objectCollisionTable.s"}
 
 		.include "code/ages/garbage/bank07End.s"
 	.ends
@@ -275,7 +275,7 @@ specialObjectLoadAnimationFrameToBuffer:
 .ends
 
  m_section_superfree Enemy_Animations
-	.include "build/data/enemyAnimations.s"
+	.include {"{GAME_DATA_DIR}/enemyAnimations.s"}
 .ends
 
 
@@ -287,11 +287,11 @@ specialObjectLoadAnimationFrameToBuffer:
 	.include "code/enemyCommon.s"
 	.include "object_code/common/enemyCode/group2.s"
 
-        .include "build/data/orbMovementScript.s"
+        .include {"{GAME_DATA_DIR}/orbMovementScript.s"}
         .include "code/objectMovementScript.s"
 
 	.include "object_code/ages/enemyCode/bank0e.s"
-	.include "build/data/movingSidescrollPlatform.s"
+	.include {"{GAME_DATA_DIR}/movingSidescrollPlatform.s"}
 
 	.include "code/ages/garbage/bank0eEnd.s"
 
@@ -391,9 +391,9 @@ specialObjectLoadAnimationFrameToBuffer:
 	.define BASE_OAM_DATA_BANK $13
 	.export BASE_OAM_DATA_BANK
 
-	.include "build/data/specialObjectOamData.s"
+	.include {"{GAME_DATA_DIR}/specialObjectOamData.s"}
 	.include "data/itemOamData.s"
-	.include "build/data/enemyOamData.s"
+	.include {"{GAME_DATA_DIR}/enemyOamData.s"}
 
 
 .BANK $14 SLOT 1
@@ -403,8 +403,8 @@ specialObjectLoadAnimationFrameToBuffer:
 	.include "data/terrainEffects.s"
 .ends
 
-	.include "build/data/interactionOamData.s"
-	.include "build/data/partOamData.s"
+	.include {"{GAME_DATA_DIR}/interactionOamData.s"}
+	.include {"{GAME_DATA_DIR}/partOamData.s"}
 
 
 .BANK $15 SLOT 1
@@ -449,15 +449,15 @@ specialObjectLoadAnimationFrameToBuffer:
 	.include "code/loadTreasureData.s"
 
 	 m_section_free Bank16 NAMESPACE bank16
-		.include "build/data/data_4556.s"
-		.include "build/data/endgameCutsceneOamData.s"
+		.include {"{GAME_DATA_DIR}/data_4556.s"}
+		.include {"{GAME_DATA_DIR}/endgameCutsceneOamData.s"}
 	.ends
 
 
 	.include "code/staticObjects.s"
-	.include "build/data/staticDungeonObjects.s"
-	.include "build/data/chestData.s"
-	.include "build/data/treasureObjectData.s"
+	.include {"{GAME_DATA_DIR}/staticDungeonObjects.s"}
+	.include {"{GAME_DATA_DIR}/chestData.s"}
+	.include {"{GAME_DATA_DIR}/treasureObjectData.s"}
 
  m_section_free Bank16_2 NAMESPACE bank16
 
@@ -531,16 +531,16 @@ loadD6ChangingFloorPatternToBigBuffer:
 
 .ends
 
-	.include "build/data/interactionAnimations.s"
-	.include "build/data/partAnimations.s"
+	.include {"{GAME_DATA_DIR}/interactionAnimations.s"}
+	.include {"{GAME_DATA_DIR}/partAnimations.s"}
 
 
 .BANK $17 SLOT 1
 .ORG 0
 
-	.include "build/data/paletteData.s"
-	.include "build/data/tilesetCollisions.s"
-	.include "build/data/smallRoomLayoutTables.s"
+	.include {"{GAME_DATA_DIR}/paletteData.s"}
+	.include {"{GAME_DATA_DIR}/tilesetCollisions.s"}
+	.include {"{GAME_DATA_DIR}/smallRoomLayoutTables.s"}
 
 	.include "code/ages/garbage/bank17End.s"
 
@@ -556,11 +556,11 @@ loadD6ChangingFloorPatternToBigBuffer:
 		.dw tileMappingAttributeData
 
 	tileMappingTable:
-		.incbin "build/tileset_layouts/tileMappingTable.bin"
+		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingTable.bin"}
 	tileMappingIndexData:
-		.incbin "build/tileset_layouts/tileMappingIndexData.bin"
+		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingIndexData.bin"}
 	tileMappingAttributeData:
-		.incbin "build/tileset_layouts/tileMappingAttributeData.bin"
+		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingAttributeData.bin"}
 
 .ifdef ROM_AGES
 	.include "code/ages/garbage/bank18End.s"
@@ -573,15 +573,15 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
  m_section_free Gfx_19_1 ALIGN $10
-	.include "build/data/gfxDataBank19_1.s"
+	.include {"{GAME_DATA_DIR}/gfxDataBank19_1.s"}
 .ends
 
  m_section_superfree Tile_mappings
-	.include "build/data/tilesetMappings.s"
+	.include {"{GAME_DATA_DIR}/tilesetMappings.s"}
 .ends
 
  m_section_free Gfx_19_2 ALIGN $10
-	.include "build/data/gfxDataBank19_2.s"
+	.include {"{GAME_DATA_DIR}/gfxDataBank19_2.s"}
 .ends
 
 
@@ -619,20 +619,20 @@ loadD6ChangingFloorPatternToBigBuffer:
 
 	m_GfxDataSimple map_rings ; $717a0
 
-	.include "build/data/largeRoomLayoutTables.s" ; $719c0
+	.include {"{GAME_DATA_DIR}/largeRoomLayoutTables.s"} ; $719c0
 	.include "code/ages/garbage/bank1cEnd.s"
 
-	; "build/textData.s" will determine where this data starts.
+	; "${BUILD_DIR}/textData.s" will determine where this data starts.
 	;   Ages:    1d:4000
 	;   Seasons: 1c:5c00
 
-	.include "build/textData.s"
+	.include {"{BUILD_DIR}/textData.s"}
 
 	.REDEFINE DATA_ADDR TEXT_END_ADDR
 	.REDEFINE DATA_BANK TEXT_END_BANK
 
-	.include "build/data/roomLayoutData.s"
-	.include "build/data/gfxDataMain.s"
+	.include {"{GAME_DATA_DIR}/roomLayoutData.s"}
+	.include {"{GAME_DATA_DIR}/gfxDataMain.s"}
 
 
 
@@ -750,16 +750,16 @@ linkOnHorseFacingCameraSprite:
 
 
 
-.include "build/data/objectGfxHeaders.s"
-.include "build/data/treeGfxHeaders.s"
+.include {"{GAME_DATA_DIR}/objectGfxHeaders.s"}
+.include {"{GAME_DATA_DIR}/treeGfxHeaders.s"}
 
-.include "build/data/enemyData.s"
-.include "build/data/partData.s"
-.include "build/data/itemData.s"
-.include "build/data/interactionData.s"
+.include {"{GAME_DATA_DIR}/enemyData.s"}
+.include {"{GAME_DATA_DIR}/partData.s"}
+.include {"{GAME_DATA_DIR}/itemData.s"}
+.include {"{GAME_DATA_DIR}/interactionData.s"}
 
-.include "build/data/treasureCollectionBehaviours.s"
-.include "build/data/treasureDisplayData.s"
+.include {"{GAME_DATA_DIR}/treasureCollectionBehaviours.s"}
+.include {"{GAME_DATA_DIR}/treasureDisplayData.s"}
 
 oamData_714c:
 	.db $10

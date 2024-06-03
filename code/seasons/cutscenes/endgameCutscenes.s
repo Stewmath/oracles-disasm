@@ -2094,7 +2094,7 @@ seasonsFunc_03_646a:
 	ld b,$10
 	jp clearMemory
 
-.include "build/data/creditsOamData.s"
+.include {"{GAME_DATA_DIR}/creditsOamData.s"}
 
 seasonsFunc_03_66dc:
 	ld hl,wLinkHealth
