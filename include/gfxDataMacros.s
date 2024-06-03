@@ -26,11 +26,11 @@
 ; Same as last, but doesn't support inter-bank stuff, so DATA_ADDR and DATA_BANK
 ; don't need to be defined beforehand.
 .macro m_GfxDataSimple
-        .IF NARGS == 2
-                \1: .incbin {"{BUILD_DIR}/gfx//\1.cmp"} SKIP 1+\2
-        .ELSE
-                \1: .incbin {"{BUILD_DIR}/gfx//\1.cmp"} SKIP 1
-        .ENDIF
+	.IF NARGS == 2
+		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 1+(\2)
+	.ELSE
+		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 1
+	.ENDIF
 .endm
 
 ; Define graphics header, arguments: name, dest, size (and continue bit)
@@ -51,7 +51,7 @@
 	; If given bank number 0 for an address in d000-dfff, assume that
 	; a label was passed (since bank 0 in that area is basically invalid)
 	.if (\2&$f00f) == $d000
-		dwbe \2|:\2
+		dwbe (\2)|(:\2)
 	.else
 		dwbe \2
 	.endif
@@ -73,9 +73,9 @@
 	.FOPEN {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
 	.FREAD m_GfxHeaderFile mode
 
-	.db :\1 | (mode<<6)
+	.db (:\1) | (mode<<6)
 	.IF NARGS >= 4
-		dwbe \1+\4
+		dwbe (\1)+(\4)
 	.ELSE
 		dwbe \1
 	.ENDIF
@@ -85,7 +85,7 @@
 	; Note: this won't work if the label was defined in a ramsection. In that case,
 	; use m_GfxHeaderDestRam instead.
 	.if (\2&$f00f) == $d000
-		dwbe \2|:\2
+		dwbe (\2)|(:\2)
 	.else
 		dwbe \2
 	.endif
@@ -122,12 +122,12 @@
 
 	.db :\1 | (mode<<6)
 	.IF NARGS >= 4
-		dwbe \1+\4
+		dwbe (\1)+(\4)
 	.ELSE
 		dwbe \1
 	.ENDIF
 
-	dwbe \2|:\2
+	dwbe (\2)|(:\2)
 
 	.db \3
 
@@ -144,11 +144,11 @@
 	.FOPEN {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
 	.FREAD m_GfxHeaderFile mode
 
-	.db :\1 | (mode<<6)
+	.db (:\1) | (mode<<6)
 	.IF NARGS >= 3
-		dwbe \1+\3 | (\2<<8)
+		dwbe (\1)+(\3) | ((\2)<<8)
 	.ELSE
-		dwbe \1 | (\2<<8)
+		dwbe (\1) | ((\2)<<8)
 	.ENDIF
 
 	.undefine mode

@@ -47,13 +47,13 @@
 .ENDM
 
 .MACRO ldbc
-	ld bc, ((\1&$ff)<<8) | (\2&$ff)
+	ld bc, (((\1)&$ff)<<8) | ((\2)&$ff)
 .endm
 .MACRO ldde
-	ld de, ((\1&$ff)<<8) | (\2&$ff)
+	ld de, (((\1)&$ff)<<8) | ((\2)&$ff)
 .endm
 .MACRO ldhl
-	ld hl, ((\1&$ff)<<8) | (\2&$ff)
+	ld hl, (((\1)&$ff)<<8) | ((\2)&$ff)
 .endm
 
 .MACRO setrombank
@@ -200,19 +200,19 @@
 ; Define a byte and 2 words
 .macro dbww
 	.db \1
-	.dw \2 \3
+	.dw \2, \3
 .endm
 
 ; Define 2 bytes and a word
 .macro dbbw
-	.db \1 \2
+	.db \1, \2
 	.dw \3
 .endm
 
 ; Define 2 bytes and 2 words
 .macro dbbww
-	.db \1 \2
-	.dw \3 \4
+	.db \1, \2
+	.dw \3, \4
 .endm
 
 ; Define a word and a byte
@@ -224,7 +224,7 @@
 ; Define a word a 2 bytes
 .macro dwbb
 	.dw \1
-	.db \2 \3
+	.db \2, \3
 .endm
 
 ; Define a byte, a word, and a byte.
@@ -277,7 +277,7 @@
 		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
 		.FAIL
 	.ENDIF
-	.dw \1 | (\2<<5) | (\3<<10)
+	.dw \1 | ((\2)<<5) | ((\3)<<10)
 .endm
 
 ; Parameters:
@@ -294,12 +294,12 @@
 ; ARG 1: actual address
 ; ARG 2: relative address
 .MACRO m_RelativePointer
-	.dw (((\1)&$3fff+(:\1)*$4000) - (\2&$3fff+(:\2)*$4000))&$ffff
+	.dw ((((\1)&$3fff)+(:\1)*$4000) - ((\2&$3fff)+(:\2)*$4000))&$ffff
 .ENDM
 
 ; Same as above but always use absolute numbers instead of labels
 .MACRO m_RelativePointerAbs
-	.dw ((\1) - \2)&$ffff
+	.dw ((\1) - (\2)&$ffff
 .ENDM
 
 ; Macro which allows data to cross over banks, used for map layout data.
@@ -344,9 +344,9 @@
 
 	.IF mode == 3
 		; Mode 3 is dictionary compression, for large rooms, handled fairly differently
-		m_RoomLayoutDictPointer \1 \2
+		m_RoomLayoutDictPointer \1, \2
 	.ELSE
-		.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
+		.dw (((:\1)*$4000)+((\1)&$3fff) - (((:\2)*$4000)+((\2)&$3fff))) | (mode<<14)
 	.ENDIF
 
 	.undefine mode
@@ -357,7 +357,7 @@
 ; ARG 1: name
 ; ARG 2: relative offset
 .macro m_RoomLayoutDictPointer
-	.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
+	.dw (((:\1)*$4000)+(\1&$3fff) - (((:\2)*$4000)+((\2)&$3fff))) + $200
 .ENDM
 
 ; Macro to define palette headers for the background
@@ -366,7 +366,7 @@
 ; ARG 3: address of palette data
 ; ARG 4: $80 to continue reading palette headers, $00 to stop
 .macro m_PaletteHeaderBg
-	.db (\2-1) | (\1<<3) | \4
+	.db ((\2)-1) | ((\1)<<3) | (\4)
 	.dw \3
 .ENDM
 
@@ -376,7 +376,7 @@
 ; ARG 3: address of palette data
 ; ARG 4: $80 to continue reading palette headers
 .macro m_PaletteHeaderSpr
-	.db (\2-1) | (\1<<3) | \4 | $40
+	.db ((\2)-1) | ((\1)<<3) | (\4) | $40
 	.dw \3
 .ENDM
 
@@ -384,7 +384,7 @@
 ; 1 - Label: name
 ; 2 - Byte: Compression mode ($00 or $80)
 .macro m_TilesetLayoutDictionaryHeader
-	.db :\1 | \2
+	.db (:\1) | (\2)
 	dwbe \1
 .endm
 
@@ -398,8 +398,8 @@
 	.db \1
 	.db :\2
 	dwbe \2
-	dwbe \3 | :\3
-	dwbe \4 | (\5<<8)
+	dwbe (\3) | (:\3)
+	dwbe (\4) | ((\5)<<8)
 .endm
 
 
@@ -410,13 +410,13 @@
 ; 4 - 4bit: Y or Group src
 ; 5 - 4bit: X or Entrance mode
 .macro m_StandardWarp
-	.db \1 \2 \3 (\4<<4)|\5
+	.db \1, \2, \3, ((\4)<<4)|\5
 .endm
 
 ; Same as StandardWarp, except \2 represents YX.
 ; This only exists to help LynnaLab distinguish the 2.
 .macro m_PointedWarp
-	.db \1 \2 \3 (\4<<4)|\5
+	.db \1, \2, \3, ((\4)<<4)|\5
 .endm
 
 ; Args:
@@ -424,7 +424,7 @@
 ; 2 - Byte: Src map
 ; 3 - Pointer
 .macro m_PointerWarp
-	.db \1 \2
+	.db \1, \2
 	.dw \3
 .endm
 
@@ -440,15 +440,15 @@
 ; 3 - 4bit: parameter
 ; 4 - 4bit: param
 .macro m_WarpDest
-	.db \1 \2
-	.db (\3<<4) | (\4)
+	.db \1, \2
+	.db ((\3)<<4) | (\4)
 .endm
 
 
 ; Used in interactionAnimations.s, partAnimations, etc.
 .macro m_AnimationLoop
-	.db (\1-CADDR)>>8
-	.db (\1-CADDR)&$ff
+	.db ((\1)-CADDR)>>8
+	.db ((\1)-CADDR)&$ff
 .endm
 
 
@@ -466,7 +466,7 @@
 		.dw \2
 	.ELSE
 		.db \1
-		.dw \2+\3 | \4 | (:\2 - :gfxDataBank1a)
+		.dw (\2)+(\3) | (\4) | ((:\2) - :gfxDataBank1a)
 	.ENDIF
 .endm
 
@@ -481,12 +481,12 @@
 ; Arg 3: wWarpDestPos
 ; Arg 4: wWarpTransition2
 .macro m_HardcodedWarpA
-	.db $80|(\1>>8), \1&$ff
+	.db $80|((\1)>>8), \1&$ff
 	.db \2, \3, \4
 .endm
 
 .macro m_HardcodedWarpB
-	.db \1>>8, \1&$ff
+	.db (\1)>>8, (\1)&$ff
 	.db \2, \3, \4
 .endm
 
