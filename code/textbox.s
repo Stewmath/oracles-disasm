@@ -3118,22 +3118,22 @@ extraTextIndices:
 ; Potion in Syrup's hut
 @index0d:
 	.dw $cbad
-	.db <TX_0d02 <TX_0d08 <TX_0d04 <TX_0d03
+	.db <TX_0d02, <TX_0d08, <TX_0d04, <TX_0d03
 
 ; Gasha seed in Syrup's hut
 @index0e:
 	.dw $cbad
-	.db <TX_0d06 <TX_0d08 <TX_0d07 <TX_0d03
+	.db <TX_0d06, <TX_0d08, <TX_0d07, <TX_0d03
 
 ; Ring box upgrade in upstairs Lynna shop
 @index0f:
 	.dw $cbad
-	.db $ff <TX_0e06 <TX_0e05 $ff
+	.db $ff, <TX_0e06, <TX_0e05, $ff
 
 ; Bombchus in Syrup's hut
 @index11:
 	.dw $cbad
-	.db <TX_0d0c <TX_0d08 <TX_0d07 <TX_0d03
+	.db <TX_0d0c, <TX_0d08, <TX_0d07, <TX_0d03
 .else
 extraTextIndices:
 	.dw @index00
@@ -3198,25 +3198,25 @@ extraTextIndices:
 ; Potion in Syrup's hut
 @index0d:
 	.dw $cbad
-	.db <TX_0d02 <TX_0d08 <TX_0d04 <TX_0d03
+	.db <TX_0d02, <TX_0d08, <TX_0d04, <TX_0d03
 
 ; Gasha seed in Syrup's hut
 @index0e:
 	.dw $cbad
-	.db <TX_0d06 <TX_0d08 <TX_0d07 <TX_0d03
+	.db <TX_0d06, <TX_0d08, <TX_0d07, <TX_0d03
 
 ; TODO: ???
 @index0f:
 	.dw $cbad
-	.db $ff <TX_0e06 <TX_0e05 $ff
+	.db $ff, <TX_0e06, <TX_0e05, $ff
 
 @index10:
 	; corrupted version of index00?
 	.db <$cba5
-	.db $02 $03
+	.db $02, $03
 
 ; Bombchus in Syrup's hut
 @index11:
 	.dw $cbad
-	.db <TX_0d0c <TX_0d08 <TX_0d07 <TX_0d03
+	.db <TX_0d0c, <TX_0d08, <TX_0d07, <TX_0d03
 .endif

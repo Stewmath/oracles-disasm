@@ -8778,7 +8778,7 @@ mapleState5:
 ; One of these pieces of text is chosen at random when bumping into maple between the 2nd
 ; and 4th encounters (inclusive).
 @normalEncounterText:
-	.db <TX_0701 <TX_0702 <TX_0703 <TX_0704
+	.db <TX_0701, <TX_0702, <TX_0703, <TX_0704
 
 
 ; Values for collisionRadiusY/X for maple's various forms.

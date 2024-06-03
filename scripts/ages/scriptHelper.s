@@ -5300,7 +5300,7 @@ goron_subid08_pressedAScript:
 
 
 @haveVaseOrSirloin:
-	asm15 goron_showText_differentForPast <TX_2496
+	asm15 goron_showText_differentForPast, <TX_2496
 	wait 30
 	jumpiftextoptioneq $00, @acceptedTrade
 

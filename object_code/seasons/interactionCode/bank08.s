@@ -1069,9 +1069,9 @@ dungeonWiseOldMan_textLookup:
 @ret:
 	jp func_5723
 @textLookup:
-	.db <TX_3300 $00 $00 <TX_3301
-	.db $00 $00 $00 $00
-	.db $00 $00 <TX_3302
+	.db <TX_3300, $00, $00,      <TX_3301
+	.db $00,      $00, $00,      $00
+	.db $00,      $00, <TX_3302
 
 ;;
 ; @param[out]	zflag	set if NPC should not be seen

@@ -1062,8 +1062,8 @@ interactionCodeb6:
 
 ; Text to show upon getting each respective item
 @lowTextIndices:
-	.db <TX_3503 <TX_3504 <TX_3504 <TX_3504 <TX_3504 <TX_3504 <TX_3505 <TX_3506
-	.db <TX_3508 <TX_3507
+	.db <TX_3503, <TX_3504, <TX_3504, <TX_3504, <TX_3504, <TX_3504, <TX_3505, <TX_3506
+	.db <TX_3508, <TX_3507
 
 ; Obtained the item and exited the textbox; wait for link's hearts or rupee
 ; count to update fully, then make the tree disappear

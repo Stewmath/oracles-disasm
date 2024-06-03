@@ -2414,9 +2414,9 @@ interactionCode6a:
 	ld hl,mainScripts.danceLeaderScript_showLoadedText
 	jp interactionSetScript
 @@table_5f72:
-	.db <TX_010b <TX_010c <TX_010d
-	.db <TX_010e <TX_010f <TX_0110
-	.db <TX_0111 <TX_0112 <TX_0113
+	.db <TX_010b, <TX_010c, <TX_010d
+	.db <TX_010e, <TX_010f, <TX_0110
+	.db <TX_0111, <TX_0112, <TX_0113
 @@state1:
 	ld a,($cfda)
 	or a

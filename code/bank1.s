@@ -907,16 +907,16 @@ label_01_037:
 
 @positionOffsets:
 	; Large rooms
-	.db LARGE_ROOM_HEIGHT*16        $00                  ; DIR_UP
-	.db $00                      <(-LARGE_ROOM_WIDTH*16) ; DIR_RIGHT
-	.db <(-LARGE_ROOM_HEIGHT*16)    $00                  ; DIR_DOWN
-	.db $00                         LARGE_ROOM_WIDTH*16  ; DIR_LEFT
+	.db LARGE_ROOM_HEIGHT*16,        $00                  ; DIR_UP
+	.db $00,                      <(-LARGE_ROOM_WIDTH*16) ; DIR_RIGHT
+	.db <(-LARGE_ROOM_HEIGHT*16),    $00                  ; DIR_DOWN
+	.db $00,                         LARGE_ROOM_WIDTH*16  ; DIR_LEFT
 
 	; Small rooms
-	.db SMALL_ROOM_HEIGHT*16        $00                  ; DIR_UP
-	.db $00                      <(-SMALL_ROOM_WIDTH*16) ; DIR_RIGHT
-	.db <(-SMALL_ROOM_HEIGHT*16)    $00                  ; DIR_DOWN
-	.db $00                         SMALL_ROOM_WIDTH*16  ; DIR_LEFT
+	.db SMALL_ROOM_HEIGHT*16,        $00                  ; DIR_UP
+	.db $00,                      <(-SMALL_ROOM_WIDTH*16) ; DIR_RIGHT
+	.db <(-SMALL_ROOM_HEIGHT*16),    $00                  ; DIR_DOWN
+	.db $00,                         SMALL_ROOM_WIDTH*16  ; DIR_LEFT
 
 ;;
 func_4493:
@@ -1337,12 +1337,12 @@ screenTransitionState5Substate1:
 
 @offsetVariables: ; DIR_UP
 	; Large rooms
-	.db (LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16   <(-LARGE_ROOM_HEIGHT*16) ; DIR_UP
-	.db $00                                       LARGE_ROOM_HEIGHT*16  ; DIR_DOWN
+	.db (LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16,   <(-LARGE_ROOM_HEIGHT*16) ; DIR_UP
+	.db $00,                                       LARGE_ROOM_HEIGHT*16  ; DIR_DOWN
 
 	; Small rooms
-	.db $00                                    <(-SMALL_ROOM_HEIGHT*16) ; DIR_UP
-	.db $00                                       SMALL_ROOM_HEIGHT*16  ; DIR_DOWN
+	.db $00,                                    <(-SMALL_ROOM_HEIGHT*16) ; DIR_UP
+	.db $00,                                       SMALL_ROOM_HEIGHT*16  ; DIR_DOWN
 
 ;;
 @drawNextRow:

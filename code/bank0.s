@@ -2011,10 +2011,10 @@ _initialThreadStates:
 
 ; Upper bytes of addresses of flags for each group
 flagLocationGroupTable:
-	.db >wPresentRoomFlags >wPastRoomFlags
-	.db >wGroup2Flags >wPastRoomFlags
-	.db >wGroup4Flags >wGroup5Flags
-	.db >wGroup4Flags >wGroup5Flags
+	.db >wPresentRoomFlags, >wPastRoomFlags
+	.db >wGroup2Flags, >wPastRoomFlags
+	.db >wGroup4Flags, >wGroup5Flags
+	.db >wGroup4Flags, >wGroup5Flags
 
 ;;
 ; @param	hActiveFileSlot	File index

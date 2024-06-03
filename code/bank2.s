@@ -5847,14 +5847,14 @@ itemSubmenu2HeartPieceDisplayData:
 .ifdef ROM_AGES
 ; Text for essences and the options on the right side in item submenu 2.
 itemSubmenu2TextIndices:
-	.db <TX_0901 <TX_0902 <TX_0903 <TX_0904 <TX_0905 <TX_0906 <TX_0907 <TX_0908
-	.db <TX_0965 <TX_0961 <TX_0960
+	.db <TX_0901, <TX_0902, <TX_0903, <TX_0904, <TX_0905, <TX_0906, <TX_0907, <TX_0908
+	.db <TX_0965, <TX_0961, <TX_0960
 
 .else; ROM_SEASONS
 
 itemSubmenu2TextIndices:
-	.db <TX_0901 <TX_0902 <TX_0903 <TX_0904 <TX_0905 <TX_0906 <TX_0907 <TX_0908
-	.db <TX_0956 <TX_0952 <TX_0951
+	.db <TX_0901, <TX_0902, <TX_0903, <TX_0904, <TX_0905, <TX_0906, <TX_0907, <TX_0908
+	.db <TX_0956, <TX_0952, <TX_0951
 .endif
 
 ;;

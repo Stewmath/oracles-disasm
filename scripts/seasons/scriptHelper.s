@@ -1128,12 +1128,12 @@ showPiratianTextBasedOnD6Done:
 	jp showText
 @subidTable:
 	; D6 not done - D6 done
-	.db <TX_3a00 <TX_3a01
-	.db <TX_3a02 <TX_3a03
-	.db <TX_3a04 <TX_3a05
-	.db <TX_3a06 <TX_3a07
-	.db <TX_3a08 <TX_3a08
-	.db <TX_3a09 <TX_3a09
+	.db <TX_3a00, <TX_3a01
+	.db <TX_3a02, <TX_3a03
+	.db <TX_3a04, <TX_3a05
+	.db <TX_3a06, <TX_3a07
+	.db <TX_3a08, <TX_3a08
+	.db <TX_3a09, <TX_3a09
 
 piratian_waitUntilJumpDone:
 	ld c,$30
