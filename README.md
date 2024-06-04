@@ -1,7 +1,7 @@
 # About oracles-disasm
 
 This is a complete, documented disassembly of Oracle of Ages and Seasons for the Gameboy
-Color. When combined with [LynnaLab](https://github.com/drenn1/lynnalab), it is a level
+Color. When combined with [LynnaLab](https://github.com/stewmath/lynnalab), it is a level
 editing suite.
 
 This repository builds US version ROMS. JP and EU versions are not supported.
@@ -14,18 +14,20 @@ setup instructions.
 
 * Python 3
 * python3-yaml (python module)
-* [WLA-DX](https://github.com/vhelin/wla-dx) v9.11
-* Windows only: Must use either Windows Subsystem for Linux or
-  [Cygwin](http://cygwin.com/install.html).
+* [WLA-DX](https://github.com/vhelin/wla-dx) v10.6
+* On windows: Must use MSYS2 or some other linux-y environment.
 
-Note: WLA v9.11 will not produce an exact matching Seasons ROM due to quirks with how empty space is handled. Use [this branch](https://github.com/Drenn1/wla-dx/tree/emptyfill-banknumber) if you want an exact copy of the Seasons ROM. The game will still work either way, though.
+Note: WLA will not produce an exact matching Seasons ROM due to quirks with how
+empty space is handled; however, this has no effect on how the game functions.
+If you need to work around this for some reason, [This
+branch](https://github.com/Drenn1/wla-dx/tree/emptyfill-banknumber) of WLA can
+be used instead (but it needs to be updated!)
 
 
 # Build instructions
 
 Once the dependencies are installed, running `make` will build both games. To build
-a specific game, run `make ages` or `make seasons`. (Don't try "make ages seasons"; make
-will try to build them in parallel which doesn't currently work).
+a specific game, run `make ages` or `make seasons`.
 
 By default, the rom is built with precompressed assets, so that an exact copy of the
 original game is produced. In order to edit text, graphics, and other things,
@@ -33,20 +35,11 @@ switch to the "hack-base" branch. Alternatively, run the "./swapbuild.sh" script
 in the root of the repository. This will switch the build mode to "modifiable"
 instead of "precompressed".
 
-There are 4 build directories (for ages and seasons, vanilla or editable) which are
-symlinked to the "build" directory depending on which game is built for which mode.
+There are 4 build directories in total (for ages and seasons, vanilla or
+editable), selected by the makefile at build time. See Makefile for details.
 
 [See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_oracles-disasm) for detailed
 setup instructions.
-
-
-## Tools needed to generate documentation
-
-Type "make doc" to generate documentation, which may or may not work at this point.
-
-* Perl
-* Doxygen
-* Graphviz for call graphs
 
 
 # Graphics files
