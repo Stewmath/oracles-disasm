@@ -1,4 +1,4 @@
-# About oracles-disasm
+## About oracles-disasm
 
 This is a complete, documented disassembly of Oracle of Ages and Seasons for the Gameboy
 Color. When combined with [LynnaLab](https://github.com/stewmath/lynnalab), it is a level
@@ -6,11 +6,35 @@ editing suite.
 
 This repository builds US version ROMS. JP and EU versions are not supported.
 
-[See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_ages-disasm) for detailed
-setup instructions.
+[See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_oracles-disasm)
+for detailed setup instructions.
 
 
-# Required tools to build
+## Current status
+
+The disassembly complete enough to be reassembled with ROM addresses shifted
+around arbitrarily. This is fairly well tested through the
+[randomizer](https://github.com/Stewmath/oracles-randomizer-ng-webui).
+
+However there is still work to be done:
+
+- Support for Japanese and European version ROMs. This could be done either in
+  this repository or with a fork. Documenting the version differences could be
+  invaluable for glitch hunting, as Nintendo of Europe had a crack team of
+  grizzled QA testers working on these games (that's how it seems anyway...)
+- RAM address shifting is not well-tested. There are still some references to
+  hardcoded RAM addresses scattered around.
+- Documentation and variable/function naming can always be improved; in
+  particular, Seasons documentation is relatively lacking compared to Ages. Areas
+  to focus on include:
+  - Most stuff under object_code/seasons
+  - Functions named "seasonsFunc_[...]" or just "func_[...]"
+  - Things marked as TODO
+- If some genius could figure out how the original compression algorithms worked
+  we could get rid of the whole precompressed asset nonsense!
+
+
+## Required tools to build
 
 * Python 3
 * python3-yaml (python module)
@@ -24,7 +48,7 @@ branch](https://github.com/Drenn1/wla-dx/tree/emptyfill-banknumber) of WLA can
 be used instead (but it needs to be updated!)
 
 
-# Build instructions
+## Build instructions
 
 Once the dependencies are installed, running `make` will build both games. To build
 a specific game, run `make ages` or `make seasons`.
@@ -42,7 +66,7 @@ editable), selected by the makefile at build time. See Makefile for details.
 setup instructions.
 
 
-# Graphics files
+## Graphics files
 
 (Note: Graphics editing will only work if you're on the "hack-base" branch or
 have disabled the use of precompressed graphics)
@@ -98,7 +122,7 @@ python3 tools/gfx/gfx.py png gfx/common/spr_link.bin
 Both of these commands will check the `.properties` file, if it exists, to
 decode and encode the image properly.
 
-# Disclaimer
+## Disclaimer
 
 The reverse-engineered code and assets in this repository belong largely to
 Capcom and Nintendo. While I can't really stop you from doing what you want with
