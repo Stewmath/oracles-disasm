@@ -11,5 +11,9 @@ indent_size = 4
 indent_size = 8
 indent_style = tab
 
+# There is some inconsistency with this in the disassembly, but over time I
+# gradually increased my line length setting to 100. Let's keep it there.
+max_line_length = 100
+
 [Dockerfile]
 indent_size = 4
