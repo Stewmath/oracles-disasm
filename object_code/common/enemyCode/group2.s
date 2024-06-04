@@ -2648,7 +2648,7 @@ greatFairy_playSoundEvery8Frames:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-	ld a,SND_UNKNOWN7
+	ld a,SND_FAIRY_HEAL
 	jp playSound
 
 
