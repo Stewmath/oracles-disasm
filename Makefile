@@ -1,8 +1,18 @@
-# If this is true, certain precompressed assets will be used from the
+# If BUILD_VANILLA is true, certain precompressed assets will be used from the
 # "precompressed" folder, and sections will be marked with "FORCE" instead of
 # "FREE" or "SUPERFREE". This is all to make sure the rom builds as an exact
 # copy of the original game.
+#
+# The build folder also changes when this variable changes, to ensure the
+# makefile doesn't get confused due to the different assets being loaded. (Also
+# saves tons of time if you switch between branches a lot.)
 BUILD_VANILLA = true
+
+# ANSI color codes
+BOLD=\033[1;37m
+RED=\033[1;31m
+BLUE=\033[1;34m
+NC=\033[0m
 
 # Sets the default target. Can be "ages", "seasons", or "all" (both).
 .DEFAULT_GOAL = all
@@ -15,7 +25,41 @@ PYTHON = python3
 
 TOPDIR = $(CURDIR)
 
-DOCFILES =
+# Reduce noise from make output
+MAKEFLAGS += --no-print-directory
+
+
+# Removal of temporary files is annoying, disable it.
+.PRECIOUS:
+
+# Disable builtin rules for a modest speedup
+.SUFFIXES:
+
+# Rules which don't correspond to filenames
+.PHONY: all ages seasons clean test-gfx
+
+
+all:
+	@$(MAKE) ages
+	@$(MAKE) seasons
+
+ages:
+	@echo -e "$(BOLD)====================$(NC)"
+	@echo -e "$(BOLD)Building $(BLUE)Ages$(BOLD)...$(NC)"
+	@echo -e "$(BOLD)====================$(NC)"
+	@ROM_AGES=1 $(MAKE) $@.gbc
+
+seasons:
+	@echo -e "$(BOLD)====================$(NC)"
+	@echo -e "$(BOLD)Building $(RED)Seasons$(BOLD)...$(NC)"
+	@echo -e "$(BOLD)====================$(NC)"
+	@ROM_SEASONS=1 $(MAKE) $@.gbc
+
+
+# Skip the majority of this makefile if we haven't specified the game yet.
+# One of ROM_AGES or ROM_SEASONS must be defined for the below stuff to make any
+# sense.
+ifneq ($(filter 1, $(ROM_AGES) $(ROM_SEASONS)),)
 
 # defines for wla-gb
 DEFINES =
@@ -38,47 +82,83 @@ ifdef FORCE_SECTIONS
 endif
 
 ifdef ROM_SEASONS
-	DEFINES += -D ROM_SEASONS
+	GAME_DEFINE = ROM_SEASONS
 	GAME = seasons
 	OTHERGAME = ages
 	TEXT_INSERT_ADDRESS = 0x71c00
 	BUILD_DIR = $(SEASONS_BUILD_DIR)
+	GAME_COLOR = $(RED)
 else # ROM_AGES
-	DEFINES += -D ROM_AGES
+	GAME_DEFINE = ROM_AGES
 	GAME = ages
 	OTHERGAME = seasons
 	TEXT_INSERT_ADDRESS = 0x74000
 	BUILD_DIR = $(AGES_BUILD_DIR)
+	GAME_COLOR = $(BLUE)
 endif
 
-DEFINES += -D BUILD_DIR="$(BUILD_DIR)/"
+DEFINES += -D $(GAME_DEFINE) -D BUILD_DIR="$(BUILD_DIR)/"
 CFLAGS += $(DEFINES)
+
+# Locations for gfx files: uncompressible, compressible, and precompressed
+GFX_UNCMP_DIR = 'gfx'
+GFX_CMP_DIR = 'gfx_compressible'
+GFX_PRECMP_DIR = 'precompressed/gfx_compressible'
 
 
 OBJS = $(BUILD_DIR)/$(GAME).o $(BUILD_DIR)/audio.o
 
 
-BIN_GFX_FILES  = $(shell find gfx/ gfx_compressible/ -name '*.bin' | grep -v '/$(OTHERGAME)/')
-PNG_GFX_FILES  = $(shell find gfx/ gfx_compressible/ -name '*.png' | grep -v '/$(OTHERGAME)/')
+# All .bin gfx files
+BIN_GFX_FILES  = $(shell find $(GFX_UNCMP_DIR)/common  $(GFX_CMP_DIR)/common \
+                              $(GFX_UNCMP_DIR)/$(GAME) $(GFX_CMP_DIR)/$(GAME) -name '*.bin')
 
-UNCMP_GFX_FILES  = $(shell find gfx/              -name '*.bin' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
-CMP_GFX_FILES    = $(shell find gfx_compressible/ -name '*.bin' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
-PRECMP_GFX_FILES = $(shell find precompressed/gfx_compressible/ -name '*.cmp' -or -name '*.png' | grep -v '/$(OTHERGAME)/')
+# All .png gfx files
+PNG_GFX_FILES  = $(shell find $(GFX_UNCMP_DIR)/common  $(GFX_CMP_DIR)/common \
+                              $(GFX_UNCMP_DIR)/$(GAME) $(GFX_CMP_DIR)/$(GAME) -name '*.png')
 
-GFXFILES := $(foreach file,$(CMP_GFX_FILES) $(UNCMP_GFX_FILES),$(BUILD_DIR)/gfx/$(notdir $(file)))
-GFXFILES := $(foreach file,$(GFXFILES),$(basename $(file)).cmp)
+# All .bin & .png gfx files by category (uncompressible, compressible, precompressed)
+UNCMP_GFX_FILES  = $(shell find $(GFX_UNCMP_DIR)/common $(GFX_UNCMP_DIR)/$(GAME) \
+                     -name '*.bin' -or -name '*.png')
+CMP_GFX_FILES    = $(shell find $(GFX_CMP_DIR)/common $(GFX_CMP_DIR)/$(GAME) \
+                     -name '*.bin' -or -name '*.png')
+PRECMP_GFX_FILES = $(shell find $(GFX_PRECMP_DIR)/common $(GFX_PRECMP_DIR)/$(GAME) -name '*.cmp')
+
+# List of all gfx files in their final form, ie. $(BUILD_DIR)/gfx/spr_link.cmp
+GFXFILES := $(foreach file, $(CMP_GFX_FILES) $(UNCMP_GFX_FILES), \
+              $(BUILD_DIR)/gfx/$(basename $(notdir $(file))).cmp)
+
+# List of gfx files from the last build.
+OLD_GFXFILES := $(wildcard $(BUILD_DIR)/gfx/*.cmp)
+
+# gfx files with no corresponding source file: these must be deleted.
+# If they're not deleted then they could cause builds to succeed while depending
+# on files that can no longer be properly generated.
+# This could happen with other types of files but gfx files are the biggest
+# concern.
+ORPHANED_GFXFILES := $(filter-out '', $(foreach oldfile, $(OLD_GFXFILES), \
+              $(if $(findstring $(oldfile), $(GFXFILES)), '', $(oldfile))))
+
+# Delete the orphaned files
+ifneq ($(ORPHANED_GFXFILES),)
+$(shell rm $(ORPHANED_GFXFILES))
+endif
 
 ROOMLAYOUTFILES = $(wildcard rooms/$(GAME)/small/*.bin)
 ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
-ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),$(BUILD_DIR)/rooms/$(notdir $(file)))
+ROOMLAYOUTFILES := $(foreach file, $(ROOMLAYOUTFILES), \
+                    $(BUILD_DIR)/rooms/$(notdir $(file)))
 
 COLLISIONFILES = $(wildcard tileset_layouts/$(GAME)/tilesetCollisions*.bin)
 COLLISIONFILES := $(COLLISIONFILES:.bin=.cmp)
-COLLISIONFILES := $(foreach file,$(COLLISIONFILES),$(BUILD_DIR)/tileset_layouts/$(notdir $(file)))
+COLLISIONFILES := $(foreach file, $(COLLISIONFILES), \
+                    $(BUILD_DIR)/tileset_layouts/$(notdir $(file)))
 
 MAPPINGINDICESFILES = $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin)
-MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),$(BUILD_DIR)/tileset_layouts/$(notdir $(file)))
+MAPPINGINDICESFILES := $(foreach file, $(MAPPINGINDICESFILES), \
+                         $(BUILD_DIR)/tileset_layouts/$(notdir $(file)))
+
 MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 
 # Common data files (for both games)
@@ -99,30 +179,12 @@ OPTIMIZE := -o
 endif
 
 
-# Removal of temporary files is annoying, disable it.
-.PRECIOUS:
-
-.PHONY: all ages seasons clean run force test-gfx
-
-
-all:
-	@$(MAKE) --no-print-directory ages
-	@$(MAKE) --no-print-directory seasons
-
-ages:
-	@echo '=====Ages====='
-	@ROM_AGES=1 $(MAKE) ages.gbc
-
-seasons:
-	@echo '===Seasons==='
-	@ROM_SEASONS=1 $(MAKE) seasons.gbc
-
-
 $(GAME).gbc: $(OBJS) $(BUILD_DIR)/linkfile
 	$(LD) -S $(BUILD_DIR)/linkfile $@
 ifeq ($(BUILD_VANILLA),true)
 	@-tools/build/verify-checksum.sh $(GAME)
 endif
+	@echo -e "$(BOLD)Built $(GAME_COLOR)$@$(NC)."
 
 $(BUILD_DIR)/linkfile: linkfile_$(GAME)
 	sed 's/BUILD_DIR/${BUILD_DIR}/' $< > $@
@@ -130,9 +192,11 @@ $(BUILD_DIR)/linkfile: linkfile_$(GAME)
 $(MAPPINGINDICESFILES): $(BUILD_DIR)/tileset_layouts/mappingsDictionary.bin
 $(COLLISIONFILES): $(BUILD_DIR)/tileset_layouts/collisionsDictionary.bin
 
-$(BUILD_DIR)/$(GAME).o: $(MAIN_ASM_FILES)
-$(BUILD_DIR)/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(COMMONDATAFILES) $(GAMEDATAFILES)
-$(BUILD_DIR)/$(GAME).o: $(BUILD_DIR)/tileset_layouts/tileMappingTable.bin $(BUILD_DIR)/tileset_layouts/tileMappingIndexData.bin $(BUILD_DIR)/tileset_layouts/tileMappingAttributeData.bin
+$(BUILD_DIR)/$(GAME).o: $(MAIN_ASM_FILES) $(COMMONDATAFILES) $(GAMEDATAFILES)
+$(BUILD_DIR)/$(GAME).o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES)
+$(BUILD_DIR)/$(GAME).o: $(BUILD_DIR)/tileset_layouts/tileMappingTable.bin
+$(BUILD_DIR)/$(GAME).o: $(BUILD_DIR)/tileset_layouts/tileMappingIndexData.bin
+$(BUILD_DIR)/$(GAME).o: $(BUILD_DIR)/tileset_layouts/tileMappingAttributeData.bin
 $(BUILD_DIR)/$(GAME).o: rooms/$(GAME)/*.bin
 
 $(BUILD_DIR)/audio.o: $(AUDIO_FILES)
@@ -164,8 +228,8 @@ $(BUILD_DIR)/tileset_layouts/collisionsDictionary.bin: precompressed/tileset_lay
 # Rule for copying GFX files to $(BUILD_DIR)/gfx directory
 define define_copy_gfx_rules
 $(BUILD_DIR)/gfx/$(notdir $(1)): $(1) | $(BUILD_DIR)/gfx
-	@cp $$< $$@
 	@echo "Copying $$< to $(BUILD_DIR)/gfx/..."
+	@cp $$< $$@
 endef
 
 # Rule for conversion of .PNG files to .BIN files
@@ -178,8 +242,8 @@ endef
 # Rule for handling uncompressible files
 define define_uncmp_gfx_rules
 $(BUILD_DIR)/gfx/$(basename $(notdir $(1))).cmp: $(BUILD_DIR)/gfx/$(basename $(notdir $(1))).bin
-	@dd if=/dev/zero bs=1 count=1 of=$$@ 2>/dev/null
-	@cat $$< >> $$@
+	@echo "Converting $$<..."
+	@printf '\x00' | cat - $$< > $$@
 endef
 
 # Rule for handling compressible files
@@ -295,23 +359,12 @@ $(BUILD_DIR)/doc: | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
 
+endif # End of check for either ROM_AGES or ROM_SEASONS being defined
+
+
 clean:
-	-rm -R build build_ages_v/ build_ages_e/ build_seasons_v/ build_seasons_e/ doc/ \
+	-rm -R build build_ages_v/ build_ages_e/ build_seasons_v/ build_seasons_e/ \
 		ages.gbc ages.sym seasons.gbc seasons.sym
-
-run: ages
-	$(GBEMU) ages.gbc 2>/dev/null
-
-# --------------------------------------------------------------
-# Documentation generation
-# --------------------------------------------------------------
-
-doc: $(DOCFILES) | $(BUILD_DIR)/doc
-	doxygen
-
-$(BUILD_DIR)/%-s.c: %.s | $(BUILD_DIR)/doc
-	cd $(BUILD_DIR)/doc/; $(TOPDIR)/tools/build/asm4doxy.pl -ns ../../$<
-
 
 # --------------------------------------------------------------------------------
 # Testing graphics encoding: ensure that pngs are encoded correctly.
