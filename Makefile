@@ -25,6 +25,13 @@ PYTHON = python3
 
 TOPDIR = $(CURDIR)
 
+# Default to parallel build to make things much faster
+ifeq (,$(findstring -j,$(MAKEFLAGS)))
+CPUS ?= $(shell nproc)
+MAKEFLAGS += -j $(CPUS)
+$(info Note: using $(CPUS) threads by default, use -j flag to override.)
+endif
+
 # Reduce noise from make output
 MAKEFLAGS += --no-print-directory
 
