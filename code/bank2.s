@@ -9328,45 +9328,45 @@ mapIconOamTable:
 .include {"{GAME_DATA_DIR}/mapTextAndPopups.s"}
 
 
-; This table changes the text of a tile on a map depending on if a dungeon has been
-; entered.
-; b0: Room index (if Link's visited this room, use the dungeon's name as the text)
+; This table changes the text of a tile on a map depending on if a dungeon has been entered.
+; b0: Room index; if Link's visited this room, use the dungeon's name as the text. Group number is
+;     determined by bit 7 of b1 (see below).
 ; b1: Bits 0-6: Text index to use if the dungeon hasn't been entered.
-;               If it HAS been entered, the index will be $02XX, where XX is the index
-;               used for this table's lookup (a dungeon index).
-;     Bit 7: 0=group 4, 1=group 5
+;               If it HAS been entered, the index will be $02XX, where XX is the index used for this
+;               table's lookup (a dungeon index).
+;     Bit 7: 0=group 5, 1=group 4 (reversed from what you might expect)
 mapMenu_dungeonEntranceText:
 
 	.ifdef ROM_AGES
-		.db $04  $80|(<TX_0307)
-		.db $24  $80|(<TX_0309)
-		.db $46  $80|(<TX_0337)
-		.db $66  $80|(<TX_0311)
-		.db $91  $80|(<TX_0303)
-		.db $bb  $80|(<TX_0305)
-		.db $26      (<TX_0306)
-		.db $56      (<TX_030a)
-		.db $aa      (<TX_0336)
-		.db $01  $80|(<TX_0332)
-		.db $f4      (<TX_0332)
-		.db $ce  $80|(<TX_0332)
-		.db $44      (<TX_0306)
-		.db $0d  $80|(<TX_0332)
-		.db $01      (<TX_0332)
-		.db $01  $80|(<TX_0332)
+		.db $04, $80|(<TX_0307)
+		.db $24, $80|(<TX_0309)
+		.db $46, $80|(<TX_0337)
+		.db $66, $80|(<TX_0311)
+		.db $91, $80|(<TX_0303)
+		.db $bb, $80|(<TX_0305)
+		.db $26,     (<TX_0306)
+		.db $56,     (<TX_030a)
+		.db $aa,     (<TX_0336)
+		.db $01, $80|(<TX_0332)
+		.db $f4,     (<TX_0332)
+		.db $ce, $80|(<TX_0332)
+		.db $44,     (<TX_0306)
+		.db $0d, $80|(<TX_0332)
+		.db $01,     (<TX_0332)
+		.db $01, $80|(<TX_0332)
 
 	.else; ROM_SEASONS
 
-		.db $04  $80|(<TX_0313)
-		.db $1c  $80|(<TX_030f)
-		.db $39  $80|(<TX_0311)
-		.db $4b  $80|(<TX_030e)
-		.db $81  $80|(<TX_0305)
-		.db $a7  $80|(<TX_0310)
-		.db $ba  $80|(<TX_032b)
-		.db $5b      (<TX_0312)
-		.db $87      (<TX_0330)
-		.db $97      (<TX_0302)
+		.db $04, $80|(<TX_0313)
+		.db $1c, $80|(<TX_030f)
+		.db $39, $80|(<TX_0311)
+		.db $4b, $80|(<TX_030e)
+		.db $81, $80|(<TX_0305)
+		.db $a7, $80|(<TX_0310)
+		.db $ba, $80|(<TX_032b)
+		.db $5b,     (<TX_0312)
+		.db $87,     (<TX_0330)
+		.db $97,     (<TX_0302)
 	.endif
 
 
