@@ -13,6 +13,8 @@ import os
 import io
 import copy
 import operator
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 3:

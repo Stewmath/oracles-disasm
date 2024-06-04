@@ -3,7 +3,10 @@
 # (objects at $d000-$d03f, $d100-$d13f)
 
 import sys
+import os
 import io
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 2:

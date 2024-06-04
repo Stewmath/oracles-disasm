@@ -10,6 +10,8 @@ import sys
 import os
 import io
 import yaml
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 5:
