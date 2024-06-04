@@ -6,8 +6,8 @@
 ; @param[out]	l	Value of the treasure's "related variable" (ie. item level)
 checkTreasureObtained_body:
 	ld a,l
-	cp TREASURE_60
-	jr nc,@index60OrHigher
+	cp FIRST_UPGRADE_TREASURE
+	jr nc,@isUpgrade
 
 	ldh (<hFF8B),a
 	ld hl,wObtainedTreasureFlags
@@ -35,9 +35,9 @@ checkTreasureObtained_body:
 	ld h,$01
 	ret
 
-@index60OrHigher:
+@isUpgrade:
 	and $07
-	ld hl,wcca8
+	ld hl,wUpgradesObtained
 	call checkFlag
 	jr nz,@haveItem
 
@@ -246,10 +246,10 @@ giveTreasure_body:
 	.dw @modee
 	.dw @modef
 
-; Set a bit in [$cca8].
+; Set a bit in [wUpgradesObtained].
 @modeb:
 	ld a,c
-	ld hl,wcca8
+	ld hl,wUpgradesObtained
 	jp setFlag
 
 ; Set [de] to c if [de]<c. Also refreshes part of status bar. Used for items with levels.

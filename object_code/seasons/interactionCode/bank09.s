@@ -17,13 +17,13 @@ interactionCode5e:
 @state1:
 	ld a,$21
 	call objectSetCollideRadius
-	call func_5cbd
-	call func_4cb1
-	call func_4ce8
-	ld a,($d004)
-	cp $01
+	call _findItemDropAddress
+	call _findPirateSkullAddress
+	call _findBombOrScentSeedAddress
+	ld a,(w1Link.state)
+	cp LINK_STATE_NORMAL
 	ret nz
-	ld a,($d00f)
+	ld a,(w1Link.zh)
 	or a
 	ret nz
 	ld bc,$2105
@@ -33,52 +33,59 @@ interactionCode5e:
 	call cpActiveRing
 	jr z,+
 	call objectGetAngleTowardLink
-	xor $10
+	xor ANGLE_DOWN
 	ld c,a
 	ld b,$14
 	call updateLinkPositionGivenVelocity
 +
-	call func_4ca3
+	call _matchSkullNumberWithSubid
 	ld bc,$0300
 	call @checkLinkWithinAPartOfQuicksand
 	ret nc
+; If subid $00, respawn Link
 	ld e,Interaction.subid
 	ld a,(de)
 	or a
 	ld a,$01
 	jr z,@respawnLink
+; Initiate warp
 	call dropLinkHeldItem
 	call clearAllParentItems
 	ld h,d
-	ld l,$44
+	ld l,Interaction.state
 	ld (hl),$02
-	ld a,($ccc1)
+; Puts bit 7 (subid matched) into counter2
+	ld a,(wPirateSkullRandomNumber)
 	and $7f
-	ld l,$47
-	ldd (hl),a
-	ld (hl),$3c
+	ld l,Interaction.counter2
+	ldd (hl),a ; Interaction.counter1
+	ld (hl),60
 	ld a,$03
 @respawnLink:
-	ld ($cc6c),a
-	ld a,$02
-	ld ($cc6a),a
-	ld hl,$d00b
+	ld (wLinkStateParameter),a
+	ld a,LINK_STATE_RESPAWNING
+	ld (wLinkForceState),a
+	ld hl,w1Link.yh
 	jp objectCopyPosition
 @state2:
 	xor a
-	ld ($ccc1),a
+	ld (wPirateSkullRandomNumber),a
 	call interactionDecCounter1
 	ret nz
+; c is destination index
 	ld c,$03
-	ld l,$42
+; If subid is $05, skip to warp
+	ld l,Interaction.subid
 	ld a,(hl)
 	cp $05
 	jr z,+
 	dec c
-	ld e,$47
+; If subid matched wPirateSkullRandomNumber, choose index $02
+	ld e,Interaction.counter2
 	ld a,(de)
 	cp (hl)
 	jr z,+
+; Pseudo-randomly choose either $00 or $01
 	ld a,(wFrameCounter)
 	and $01
 	ld c,a
@@ -94,30 +101,37 @@ interactionCode5e:
 	ld (wWarpDestRoom),a
 	ldi a,(hl)
 	ld (wWarpDestPos),a
-	ld a,$05
+	ld a,TRANSITION_DEST_FALL
 	ld (wWarpTransition),a
+; Fadeout
 	ld a,$03
 	ld (wWarpTransition2),a
 	jp interactionDelete
 @warpDestLocations:
-	.db $85 $d0 $57 ; has like likes
-	.db $85 $d1 $57 ; business scrub selling shield
-	.db $85 $d2 $57 ; pirate skull
-	.db $84 $f4 $27 ; leads to chest
+	.db $80|(>ROOM_SEASONS_5d0), <ROOM_SEASONS_5d0, $57 ; has like likes
+	.db $80|(>ROOM_SEASONS_5d1), <ROOM_SEASONS_5d1, $57 ; business scrub selling shield
+	.db $80|(>ROOM_SEASONS_5d2), <ROOM_SEASONS_5d2, $57 ; pirate skull
+	.db $80|(>ROOM_SEASONS_4f4), <ROOM_SEASONS_4f4, $27 ; leads to chest
+
+; Param		b	Radius Y collision
+; Param		c	Radius X collision
+; Param[out]	cflag	Set if Link HAS collided
 @checkLinkWithinAPartOfQuicksand:
 	ld h,d
-	ld l,$66
+	ld l,Interaction.collisionRadiusY
 	ld (hl),b
 	inc l
 	ld (hl),b
-	ld a,($d00b)
+	ld a,(w1Link.yh)
 	add c
 	ld b,a
-	ld a,($d00d)
+	ld a,(w1Link.xh)
 	ld c,a
 	jp interactionCheckContainsPoint
-func_4ca3:
-	ld hl,$ccc1
+
+; Set bit 7 of wPirateSkullRandomNumber if that value and subid match
+_matchSkullNumberWithSubid:
+	ld hl,wPirateSkullRandomNumber
 	ld a,(hl)
 	or a
 	ret z
@@ -127,62 +141,74 @@ func_4ca3:
 	ret nz
 	set 7,(hl)
 	ret
-func_4cb1:
-	ld c,$4d
+
+; Checks for Pirate Skull, Bomb, Used Scent Seed, or Item Drop to pull into the center
+_findPirateSkullAddress:
+	ld c,INTERACID_PIRATE_SKULL
 	call objectFindSameTypeObjectWithID
 	ret nz
-	ld l,$4f
-	ld e,$7a
-	jr func_4cd2
-func_5cbd:
+	ld l,Interaction.zh
+	ld e,Interaction.var3a
+	jr _moveObjectIfGrounded
+_findItemDropAddress:
 	ld h,$d0
 -
-	ld l,$c1
+	ld l,Part.id
 	ld a,(hl)
-	cp $01
-	call z,func_4cce
+	cp PARTID_ITEM_DROP
+	call z,_objectIsPart
 	inc h
 	ld a,h
 	cp $e0
 	jr c,-
 	ret
-func_4cce:
-	ld l,$cf
-	ld e,$f1
-func_4cd2:
+
+; Object is a part
+_objectIsPart:
+	ld l,Part.zh
+	ld e,Part.var31
+
+; Param     hl      Object.zh
+; Param     e       Object's yh variable to tell it to move toward quicksand
+_moveObjectIfGrounded:
+; Checks if object is in the air
 	ldd a,(hl)
 	rlca
 	ret c
 	dec l
-	ld c,(hl)
+	ld c,(hl)		;Object.xh
 	dec l
 	dec l
-	ld b,(hl)
-	ld l,e
+	ld b,(hl)		;Object.yh
+	ld l,e			;hl = Object.var3a or var31
 	push hl
+; Ret if object has not collided with quicksand
 	call interactionCheckContainsPoint
 	pop hl
 	ret nc
+
 	call objectGetPosition
 	ld (hl),b
 	inc l
 	ld (hl),c
 	ret
-func_4ce8:
-	ld c,$03
+
+_findBombOrScentSeedAddress:
+	ld c,ITEMID_BOMB
 	call findItemWithID
-	call z,func_4cfe
-	ld c,$03
+	call z,_objectIsItem
+	ld c,ITEMID_BOMB
 	call findItemWithID_startingAfterH
-	call z,func_4cfe
-	ld c,$21
+	call z,_objectIsItem
+	ld c,ITEMID_SCENT_SEED
 	call findItemWithID
 	ret nz
-func_4cfe:
-	ld l,$0f
-	ld e,$31
-	jr func_4cd2
 
+; Object is an item
+_objectIsItem:
+	ld l,Item.zh
+	ld e,Item.var31
+	jr _moveObjectIfGrounded
 
 .include "object_code/common/interactionCode/companionSpawner.s"
 
@@ -4061,7 +4087,7 @@ strangeBrothersSubId2:
 	.dw mainScripts.strangeBrother2Script_6thScreen
 	.dw mainScripts.strangeBrother2Script_finishedScreen
 @state1:
-	ld a,($cca7)
+	ld a,(wLinkPlayingInstrument)
 	or a
 	jr nz,@func_6add
 	ld e,$7b
@@ -4772,7 +4798,6 @@ companionScript_setSubId0AndInitGraphics:
 ; var37 - 0 if enough rupees, else 1
 ; var38 - RUPEEVAL_10 if cheated, otherwise RUPEEVAL_20
 ; var39 - pointer to Blaino / script ???
-; $cca7 - ???
 ; $ccec - result of fight - $01 if won, $02 if lost, $03 if cheated
 ; $cced - $00 on init, $01 when starting fight, $03 when fight done
 ; ==============================================================================

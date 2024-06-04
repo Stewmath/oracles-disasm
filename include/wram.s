@@ -2215,9 +2215,23 @@ wEyePuzzleCorrectDirection: ; $cca5/$ccbe
 wBlockPushAngle: ; $cca6/$ccc0
 ; The angle a block is being pushed toward? bit 7 does something?
 	db
-wcca7: ; $cca7
+
+.ifdef ROM_SEASONS
+
+wPirateSkullRandomNumber: ; -/$ccc1
+; Set to a random number from $01-$04 from var38 of INTERACID_PIRATE_SKULL.
+; Bit 7 set if INTERACID_QUICKSAND subid matches.
+; Used to determine whether the right quicksand pit has been found (for the bell)
 	db
-wcca8: ; $cca8/$ccc2
+
+.else ; ROM_AGES
+
+wcca7: ; $cca7
+; Probably unused
+	db
+.endif
+
+wUpgradesObtained: ; $cca8/$ccc2
 	db
 
 .ifdef ROM_SEASONS ; TODO: related to springbloom flower state

@@ -7582,7 +7582,7 @@ interactionCode5a:
 	ld a,$03
 	ld ($cced),a
 	xor a
-	ld ($cca7),a
+	ld (wLinkPlayingInstrument),a
 	call resetLinkInvincibility
 	xor a
 	ld (wInBoxingMatch),a
@@ -7592,7 +7592,7 @@ interactionCode5a:
 
 @checkFightDone:
 	ld hl,wInventoryB
-	ld a,($cca7)
+	ld a,(wLinkPlayingInstrument)
 	or (hl)
 	inc l
 	or (hl)

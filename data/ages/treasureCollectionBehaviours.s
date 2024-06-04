@@ -19,7 +19,7 @@
 ;               8: Set [b0] to [param] if [b0]<[param]; update A/B buttons. (Shield,flute)
 ;               9: Add [param] to the unappraised ring list.
 ;               a: Add [param] to [b0]. (Heart container)
-;               b: Set bit [param] in [$cca8]. (0x60-0x67)
+;               b: Set bit [param] in [wUpgradesObtained]. (0x60-0x67)
 ;               c: Add [param] to [b0], using [b0+1] as a cap. (Health refill)
 ;                  Also plays the sound effect for regaining hearts if b0 == wLinkHealth.
 ;               d: Add [param] to [b0] as BCD, using [b0+1] as a cap. (Bombs)
@@ -36,7 +36,7 @@ treasureCollectionBehaviourTable:
 	; TREASURE_NONE (0x00)
 	.db $00
 	.db $00
-	.db $00
+	.db SND_NONE
 
 	; TREASURE_SHIELD (0x01)
 	.db <wShieldLevel

@@ -156,7 +156,7 @@
 .endif ; ROM_SEASONS
 
 
-	; Do these behave the same in seasons?
+	; Upgrades
 	TREASURE_60			db ; $60
 	TREASURE_BOMB_UPGRADE		db ; $61
 	TREASURE_SATCHEL_UPGRADE	db ; $62
@@ -166,3 +166,6 @@
 	TREASURE_66			db ; $66
 	TREASURE_67			db ; $67
 .ende
+
+; Treasures $60 and above are all upgrades and have a bit of special-case code.
+.define FIRST_UPGRADE_TREASURE $60
