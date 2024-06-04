@@ -4,7 +4,7 @@ version: 2.1
 jobs:
   build-game:
     docker:
-      - image: stewmat/oracles-disasm-builder:0.3
+      - image: stewmat/oracles-disasm-builder:0.4
     parameters:
       game:
         type: string
