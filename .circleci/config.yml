@@ -2,37 +2,14 @@
 version: 2.1
 
 jobs:
-  # Build the master branch of wla so we test with the latest version. So far
-  # none of the stable releases of WLA actually build the disassembly properly.
-  build-wla:
-    docker:
-      - image: stewmat/oracles-disasm-builder:0.2
-    steps:
-      - restore_cache:
-          key: wla-dx-master
-      - run: if [ ! -d wla-dx ]; then git clone https://github.com/vhelin/wla-dx; fi
-      - run: cd wla-dx; git pull; cmake .; make wla-gb wlalink
-      - save_cache:
-          key: wla-dx-master
-          paths:
-            - wla-dx
-      - run: mkdir -p ~/bin; cp wla-dx/binaries/* ~/bin/
-      - persist_to_workspace:
-          root: ~/bin
-          paths:
-            - wla-gb
-            - wlalink
-
   build-game:
     docker:
-      - image: stewmat/oracles-disasm-builder:0.2
+      - image: stewmat/oracles-disasm-builder:0.4
     parameters:
       game:
         type: string
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/bin
       - run: make << parameters.game >>
       # We run "verifyChecksum.sh" even though it's in the makefile, because the makefile ignores
       # its error code.
@@ -45,14 +22,9 @@ jobs:
 workflows:
   main:
     jobs:
-      - build-wla
       - build-game:
           name: build-ages
           game: ages
-          requires:
-            - build-wla
       - build-game:
           name: build-seasons
           game: seasons
-          requires:
-            - build-wla

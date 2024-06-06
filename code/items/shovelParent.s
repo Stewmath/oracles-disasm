@@ -1,6 +1,6 @@
 ;;
 ; ITEMID_SHOVEL ($15)
-_parentItemCode_shovel:
+parentItemCode_shovel:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -9,16 +9,16 @@ _parentItemCode_shovel:
 	.dw @state1
 
 @state0:
-	call _checkLinkOnGround
-	jp nz,_clearParentItem
-	jp _parentItemLoadAnimationAndIncState
+	call checkLinkOnGround
+	jp nz,clearParentItem
+	jp parentItemLoadAnimationAndIncState
 
 @state1:
-	call _specialObjectAnimate
+	call specialObjectAnimate_optimized
 	ld e,Item.animParameter
 	ld a,(de)
 	bit 7,a
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
 
 	; When [animParameter] == 1, create the child item
 	dec a

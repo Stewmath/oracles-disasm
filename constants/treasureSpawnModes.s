@@ -37,19 +37,19 @@
 
 ;;
 ; Link's animation does not change when he gets the item.
-.define TREASURE_COLLECT_MODE_NO_CHANGE 0
+.define TREASURE_GRAB_MODE_NO_CHANGE 0
 
 ;;
 ; Link holds the item over his head with 1 hand.
-.define TREASURE_COLLECT_MODE_1_HAND 1
+.define TREASURE_GRAB_MODE_1_HAND 1
 
 ;;
 ; Link holds the item over his head with 2 hands.
-.define TREASURE_COLLECT_MODE_2_HAND 2
+.define TREASURE_GRAB_MODE_2_HAND 2
 
 ;;
 ; Link performs a spin slash. (Getting the sword in Seasons.)
-.define TREASURE_COLLECT_MODE_SPIN_SLASH 3
+.define TREASURE_GRAB_MODE_SPIN_SLASH 3
 
 ; 4/5: same as 1/2?
 ; 6/7: undefined

@@ -142,7 +142,7 @@ interactionCodeca:
 	jp z,interactionDelete
 	call interactionInitGraphics
 	call interactionIncState
-	call _func_7aa7
+	call func_7aa7
 	ld a,>TX_4c00
 	call interactionSetHighTextIndex
 	ld a,GLOBALFLAG_DONE_CLOCK_SHOP_SECRET
@@ -169,11 +169,11 @@ interactionCodeca:
 	ret nz
 	jp npcFaceLinkAndAnimate
 @state2:
-	call _func_79df
+	call func_79df
 	call interactionDecCounter1
 	jr nz,+
 	ld (hl),$b4
-	call _func_7a0d
+	call func_7a0d
 +
 	ld hl,$ccf8
 	ldi a,(hl)
@@ -210,7 +210,7 @@ interactionCodeca:
 	ldi (hl),a
 	ld (hl),a
 	ret
-_func_79df:
+func_79df:
 	ld hl,$ccf7
 	ldi a,(hl)
 	cp $59
@@ -223,15 +223,15 @@ _func_79df:
 	ret z
 +
 	ld hl,$ccf7
-	call _func_7a01
+	call func_7a01
 	ret nz
 	inc hl
-	call _func_7a01
+	call func_7a01
 	ret nz
 	inc hl
 	ld b,$00
 	jr +
-_func_7a01:
+func_7a01:
 	ld b,$60
 +
 	ld a,(hl)
@@ -243,7 +243,7 @@ _func_7a01:
 +
 	ld (hl),a
 	ret
-_func_7a0d:
+func_7a0d:
 	ld a,$04
 	ld hl,$cc30
 	sub (hl)
@@ -264,19 +264,19 @@ _func_7a0d:
 	jr z,+
 	inc a
 	ld (hl),a
-	ld hl,_table_7a3d-1
+	ld hl,table_7a3d-1
 	rst_addAToHl
 	ld a,(hl)
-	call _func_7a49
+	call func_7a49
 	ldh a,(<hFF8B)
 	ld hl,$ff8d
 	cp (hl)
-_func_7a3a:
+func_7a3a:
 	jr nz,--
 +
 	ret
 
-_table_7a3d:
+table_7a3d:
 	; lookup into enemy table below
 	.db $00 $00
 	.db $00 $00
@@ -284,8 +284,8 @@ _table_7a3d:
 	.db $02 $03
 	.db $04 $05
 	.db $06 $07
-_func_7a49:
-	ld bc,_table_7a76
+func_7a49:
+	ld bc,table_7a76
 	call addDoubleIndexToBc
 	call getFreeEnemySlot
 	ret nz
@@ -299,7 +299,7 @@ _func_7a49:
 	inc a
 	and $03
 	ld (de),a
-	ld bc,_table_7a86
+	ld bc,table_7a86
 	call addDoubleIndexToBc
 	ld l,$8b
 	ld a,(bc)
@@ -312,8 +312,8 @@ _func_7a49:
 	ld a,(hl)
 	cp $10
 	ret z
-	jr _func_7a8e
-_table_7a76:
+	jr func_7a8e
+table_7a76:
 	.db ENEMYID_ROPE $01
 	.db ENEMYID_MASKED_MOBLIN $00
 	.db ENEMYID_SWORD_DARKNUT $00
@@ -322,15 +322,15 @@ _table_7a76:
 	.db ENEMYID_WIZZROBE $02
 	.db ENEMYID_LYNEL $00
 	.db ENEMYID_LYNEL $01
-_table_7a86:
+table_7a86:
 	.db $30 $40
 	.db $30 $b0
 	.db $80 $40
 	.db $80 $b0
-_func_7a8e:
+func_7a8e:
 	ld e,$79
 	ld a,(de)
-	ld bc,_table_7a86
+	ld bc,table_7a86
 	call addDoubleIndexToBc
 	call getFreeInteractionSlot
 	ret nz
@@ -343,7 +343,7 @@ _func_7a8e:
 	ld a,(bc)
 	ld (hl),a
 	ret
-_func_7aa7:
+func_7aa7:
 	ld a,TREASURE_SWORD
 	call checkTreasureObtained
 	jr nc,@nobleSword
@@ -438,7 +438,7 @@ interactionCodecb:
 	ld a,(hl)
 	ld e,$7d
 	ld (de),a
-	call _func_7c3f
+	call func_7c3f
 	jp objectSetVisible81
 @@table_7b4d:
 	.db $03 $04 $05 $06
@@ -472,9 +472,9 @@ interactionCodecb:
 	call interactionRunScript
 	ret nc
 	call interactionIncSubstate
-	jp _func_7c0f
+	jp func_7c0f
 @@substate1:
-	call _func_7bf9
+	call func_7bf9
 	ret nz
 	ld l,$45
 	inc (hl)
@@ -482,7 +482,7 @@ interactionCodecb:
 	ld (hl),$3c
 	ret
 @@substate2:
-	call _func_7bf9
+	call func_7bf9
 	ret nz
 	ld l,$45
 	inc (hl)
@@ -499,12 +499,12 @@ interactionCodecb:
 	ld l,$7f
 	ld a,(hl)
 	cp $00
-	jp z,_func_71c5
-	jp _func_7c0f
+	jp z,func_71c5
+	jp func_7c0f
 @state2:
 	call interactionAnimate
 	call @func_7be1
-	call _func_7bf9
+	call func_7bf9
 	jp z,interactionDelete
 	ld l,$46
 	ld a,(hl)
@@ -518,7 +518,7 @@ interactionCodecb:
 	ld c,(hl)
 	ld e,$7f
 	call objectSetPositionInCircleArc
-	jp _func_7bfe
+	jp func_7bfe
 
 @func_7be1:
 	ld h,d
@@ -535,12 +535,12 @@ interactionCodecb:
 @state3:
 	call interactionRunScript
 	jp interactionAnimateAsNpc
-_func_7bf9:
+func_7bf9:
 	ld h,d
 	ld l,$79
 	dec (hl)
 	ret
-_func_7bfe:
+func_7bfe:
 	ld a,(wFrameCounter)
 	rrca
 	ret nc
@@ -553,12 +553,12 @@ _func_7bfe:
 	and $1f
 	ld (hl),a
 	ret
-_func_7c0f:
+func_7c0f:
 	ld e,$7a
 	xor a
 	ld (de),a
 	jr ++
-_func_71c5:
+func_71c5:
 	ld e,$7a
 	ld a,(de)
 	inc a
@@ -568,7 +568,7 @@ _func_71c5:
 +
 	ld (de),a
 ++
-	call _func_7c3f
+	call func_7c3f
 	call getRandomNumber
 	and $01
 	ld e,$7c
@@ -580,21 +580,21 @@ _func_71c5:
 	pop de
 	xor a
 	ld ($cc30),a
-	call _func_7c50
-	jp _func_7cce
-_func_7c3f:
+	call func_7c50
+	jp func_7cce
+func_7c3f:
 	ld e,$7a
 	ld a,(de)
-	ld bc,_table_7c4d
+	ld bc,table_7c4d
 	call addAToBc
 	ld a,(bc)
 	ld e,$79
 	ld (de),a
 	ret
-_table_7c4d:
+table_7c4d:
 	.db $f0 $b4 $78
 
-_func_7c50:
+func_7c50:
 	ld hl,$cee0
 	xor a
 -
@@ -608,7 +608,7 @@ _func_7c50:
 	ld e,$7b
 	ld (de),a
 	ret
-_func_7c62:
+func_7c62:
 	ld e,$7d
 	ld a,(de)
 	ld b,a
@@ -643,20 +643,20 @@ _func_7c62:
 +
 	pop de
 	ret
-_func_7c8a:
+func_7c8a:
 	ld h,d
 	ld l,$7a
 	ld a,(hl)
 	swap a
 	ld l,$7b
 	add (hl)
-	ld bc,_table_7c9e
+	ld bc,table_7c9e
 	call addAToBc
 	ld a,(bc)
 	ld l,$7c
 	xor (hl)
 	ret
-_table_7c9e:
+table_7c9e:
 	.db $01 $01 $01 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 	.db $01 $01 $01 $01 $01 $00 $00 $00
@@ -664,13 +664,13 @@ _table_7c9e:
 	.db $01 $01 $01 $01 $01 $01 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
-_func_7cce:
+func_7cce:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_S_LINKED_GAME_GHINI
 	inc hl
 	push hl
-	call _func_7c8a
+	call func_7c8a
 	pop hl
 	inc a
 	ld (hl),a
@@ -679,11 +679,11 @@ _func_7cce:
 	ld l,$7a
 	ld (hl),a
 	push hl
-	call _func_7c62
+	call func_7c62
 	pop hl
 	ld e,$7e
 	ld a,(de)
-	ld bc,_table_7d03
+	ld bc,table_7d03
 	call addDoubleIndexToBc
 	ld l,$4b
 	ld a,(bc)
@@ -697,9 +697,9 @@ _func_7cce:
 	inc a
 	ld (de),a
 	cp $0d
-	jr nz,_func_7cce
+	jr nz,func_7cce
 	ret
-_table_7d03:
+table_7d03:
 	.db $1c $20 $1c $40 $1c $60 $1c $80
 	.db $34 $30 $34 $50 $34 $70 $4c $20
 	.db $4c $40 $4c $60 $4c $80 $64 $30
@@ -758,7 +758,7 @@ interactionCodecc:
 	call seasonsFunc_0f_7dac
 	call checkInteractionSubstate
 	ret nz
-	call _func_7d95
+	call func_7d95
 	ld a,TILEINDEX_GRASS
 	call findTileInRoom
 	ret z
@@ -773,7 +773,7 @@ interactionCodecc:
 	ld l,$79
 	ld (hl),b
 	ret
-_func_7d95:
+func_7d95:
 	ld c,TREASURE_BOOMERANG
 	call findItemWithID
 	ld h,d
@@ -910,7 +910,7 @@ interactionCodecd:
 	dec a
 	jr nz,+
 	; Inside waterfall cave
-	callab _func_79df
+	callab func_79df
 +
 	call interactionRunScript
 	jp c,interactionDelete
@@ -1000,14 +1000,14 @@ interactionCoded5:
 	and $38
 	swap a
 	rlca
-	ld hl,_table_7f1f
+	ld hl,table_7f1f
 	rst_addAToHl
 	ld e,$4f
 	ld a,(de)
 	add (hl)
 	ld (de),a
 	ret
-_table_7f1f:
+table_7f1f:
 	.db $ff $fe $ff $00
 	.db $01 $02 $01 $00
 

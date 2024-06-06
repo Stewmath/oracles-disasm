@@ -1,3 +1,5 @@
+m_section_free TreasureObjectData NAMESPACE treasureData
+
 ; Treasure objects are a kind of Interaction (INTERACID_TREASURE). Each "Treasure Object" contains
 ; the information necessary to display a specific treasure (see "constants/treasure.s") and give it
 ; to Link. Many treasures need a "parameter" to go with them (ie. level, amount). All of this "extra
@@ -11,7 +13,7 @@
 ;   b1: Parameter (value of 'c' to pass to "giveTreasure")
 ;   b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
 ;   b3: Graphics to use. (Gets copied to object's subid, so graphics are determined by the
-;       corresponding value for interaction $60 in data/interactionData.s.)
+;       corresponding value for interaction $60 in data/{game}/interactionData.s.)
 ;
 ; The macro takes a final parameter, which will be the name to give this new subid of the treasure
 ; index. This name will resolve to a 4-digit hex number (XXYY, where XX = treasure index and YY
@@ -347,3 +349,4 @@ treasureObjectData4d:
 	m_TreasureSubid $08, $00, $4a, $37, TREASURE_OBJECT_PYRAMID_JEWEL_00
 	m_TreasureSubid $02, $00, $4a, $37, TREASURE_OBJECT_PYRAMID_JEWEL_01
 
+.ends

@@ -1,20 +1,20 @@
 ;;
 ; ITEMID_SLINGSHOT ($13)
 ; @snaddr{4d25}
-_parentItemCode_slingshot:
+parentItemCode_slingshot:
 .ifdef ROM_SEASONS
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _parentItemGenericState1
+	.dw parentItemGenericState1
 
 @state0:
 	ld a,(wLinkSwimmingState)
 	ld b,a
 	ld a,(wIsSeedShooterInUse)
 	or b
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
 
 	call updateLinkDirectionFromAngle
 	ld c,$01
@@ -23,15 +23,15 @@ _parentItemCode_slingshot:
 	jr nz,+
 	ld c,$03
 +
-	call _getNumFreeItemSlots
+	call getNumFreeItemSlots
 	cp c
-	jp c,_clearParentItem
+	jp c,clearParentItem
 
 	ld a,$01
-	call _clearSelfIfNoSeeds
+	call clearSelfIfNoSeeds
 	; b = seed ID after above call
 	push bc
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 
 	; Create the slingshot
 	call itemCreateChild
@@ -59,7 +59,7 @@ _parentItemCode_slingshot:
 
 ;;
 ; ITEMID_SHOOTER ($0f)
-_parentItemCode_shooter:
+parentItemCode_shooter:
 .ifdef ROM_AGES
 	ld e,Item.state
 	ld a,(de)
@@ -71,10 +71,10 @@ _parentItemCode_shooter:
 ; Initialization
 @state0:
 	ld a,$01
-	call _clearSelfIfNoSeeds
+	call clearSelfIfNoSeeds
 
 	call updateLinkDirectionFromAngle
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 	call itemCreateChild
 	ld a,(wLinkAngle)
 	bit 7,a
@@ -87,24 +87,24 @@ _parentItemCode_shooter:
 ; Waiting for button to be released
 @state1:
 	ld a,$01
-	call _clearSelfIfNoSeeds
-	call _parentItemCheckButtonPressed
+	call clearSelfIfNoSeeds
+	call parentItemCheckButtonPressed
 	jr nz,@checkUpdateAngle
 
 ; Button released
 
 	ld a,(wIsSeedShooterInUse)
 	or a
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
 
 	ld e,Item.relatedObj2+1
 	ld a,>w1Link
 	ld (de),a
 
 	ld a,$01
-	call _clearSelfIfNoSeeds
+	call clearSelfIfNoSeeds
 
-	; Note: here, 'c' = the "behaviour" value from the "_itemUsageParameterTable" for
+	; Note: here, 'c' = the "behaviour" value from the "itemUsageParameterTable" for
 	; button B, and this will become the subid for the new item? (The only important
 	; thing is that it's nonzero, to indicate the seed came from the shooter.)
 	push bc
@@ -145,7 +145,7 @@ _parentItemCode_shooter:
 	call updateLinkDirectionFromAngle
 	pop af
 	ld (wLinkAngle),a
-	jp _clearParentItem
+	jp clearParentItem
 
 
 ; Note: seed shooter's angle is a value from 0-7, instead of $00-$1f like usual
@@ -187,7 +187,7 @@ _parentItemCode_shooter:
 	ld (hl),$10
 
 @determineBaseAnimation:
-	call _isLinkUnderwater
+	call isLinkUnderwater
 	ld a,$48
 	jr nz,++
 	ld a,(w1Companion.id)
@@ -210,40 +210,40 @@ _parentItemCode_shooter:
 
 ;;
 ; ITEMID_SEED_SATCHEL ($19)
-_parentItemCode_satchel:
+parentItemCode_satchel:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _parentItemGenericState1
+	.dw parentItemGenericState1
 
 @state0:
 .ifdef ROM_AGES
 	ld a,(w1Companion.id)
 	cp SPECIALOBJECTID_RAFT
-	jp z,_clearParentItem
-	call _isLinkUnderwater
-	jp nz,_clearParentItem
+	jp z,clearParentItem
+	call isLinkUnderwater
+	jp nz,clearParentItem
 .endif
 	ld a,(wLinkSwimmingState)
 	or a
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
 
-	call _clearSelfIfNoSeeds
+	call clearSelfIfNoSeeds
 
 	ld a,b
 	cp ITEMID_PEGASUS_SEED
 	jr z,@pegasusSeeds
 
 	push bc
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 	pop bc
 	push bc
 	ld c,$00
 	ld e,$01
 	call itemCreateChildWithID
 	pop bc
-	jp c,_clearParentItem
+	jp c,clearParentItem
 
 	ld a,b
 	jp decNumActiveSeeds
@@ -267,7 +267,7 @@ _parentItemCode_satchel:
 	ldi (hl),a
 	ld (hl),ITEMID_DUST
 @clear:
-	jp _clearParentItem
+	jp clearParentItem
 
 ;;
 ; Gets the number of seeds available, or returns from caller if none are available.
@@ -276,7 +276,7 @@ _parentItemCode_satchel:
 ; @param[out]	a	# of seeds of that type
 ; @param[out]	b	Item ID for seed type (value between $20-$24)
 ; @param[out]	hl	Address of "wNum*Seeds" variable
-_clearSelfIfNoSeeds:
+clearSelfIfNoSeeds:
 	ld hl,wSatchelSelectedSeeds
 	rst_addAToHl
 	ld a,(hl)
@@ -289,14 +289,14 @@ _clearSelfIfNoSeeds:
 	or a
 	ret nz
 	pop hl
-	jp _clearParentItem
+	jp clearParentItem
 
 ;;
 ; This is "state 1" for the satchel, bombchu, and bomb "parent items". It simply updates
 ; Link's animation, then deletes the parent.
-_parentItemGenericState1:
+parentItemGenericState1:
 	ld e,Item.animParameter
 	ld a,(de)
 	rlca
-	jp nc,_specialObjectAnimate
-	jp _clearParentItem
+	jp nc,specialObjectAnimate_optimized
+	jp clearParentItem

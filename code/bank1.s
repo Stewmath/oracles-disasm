@@ -1,4 +1,4 @@
- m_section_free "Bank_1_Code_1" NAMESPACE "bank1"
+ m_section_free Bank_1_Code_1 NAMESPACE bank1
 
 ;;
 func_4000:
@@ -13,18 +13,18 @@ func_4000:
 func_400b:
 	ld a,(wScreenTransitionState)
 	rst_jumpTable
-	.dw _screenTransitionState0
-	.dw _screenTransitionState1
-	.dw _screenTransitionState2
-	.dw _screenTransitionState3
-	.dw _screenTransitionState4
-	.dw _screenTransitionState5
+	.dw screenTransitionState0
+	.dw screenTransitionState1
+	.dw screenTransitionState2
+	.dw screenTransitionState3
+	.dw screenTransitionState4
+	.dw screenTransitionState5
 
 ;;
 ; State 0: Entering a room from scratch (after entering/exiting a building, fadeout
 ; transition, etc)
 ;
-_screenTransitionState0:
+screenTransitionState0:
 	xor a
 	ld (wPaletteThread_parameter),a
 	call checkDarkenRoom
@@ -90,7 +90,7 @@ initializeRoomBoundaryAndLoadAnimations:
 ;;
 ; State 1: Waiting a bit before giving control to return to Link.
 ;
-_screenTransitionState1:
+screenTransitionState1:
 	ld a,(wcd03)
 	inc a
 	ld (wcd03),a
@@ -190,7 +190,7 @@ setScreenTransitionState02:
 ;
 ; Called every frame.
 ;
-_screenTransitionState2:
+screenTransitionState2:
 	ld a,(wLinkInAir)
 	add a
 	jr c,+
@@ -575,7 +575,7 @@ updateGfxRegs2Scroll:
 ;;
 ; State 3: the edge of the screen has just been touched
 ;
-_screenTransitionState3:
+screenTransitionState3:
 	ld a,(wScrollMode)
 	bit 7,a
 	ret nz
@@ -662,21 +662,21 @@ checkBrightenRoom:
 ; State 4: reload unique gfx / palettes, then proceed to state 5?
 ;
 ; HACK-BASE: Deleted for expanded tilesets patch.
-_screenTransitionState4:
+screenTransitionState4:
 	jp panic
 
 ;;
 ; State 5: Scrolling between 2 screens
 ;
-_screenTransitionState5:
+screenTransitionState5:
 	ld a,(wScreenTransitionState2)
 	rst_jumpTable
-	.dw _screenTransitionState5Substate0
-	.dw _screenTransitionState5Substate1
-	.dw _screenTransitionState5Substate2
+	.dw screenTransitionState5Substate0
+	.dw screenTransitionState5Substate1
+	.dw screenTransitionState5Substate2
 
 ;;
-_screenTransitionState5Substate0:
+screenTransitionState5Substate0:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -839,12 +839,12 @@ finishScrollingTransition:
 	ld a,(wScreenTransitionDirection)
 	add a
 	add e
-	ld de,_label_01_037@positionOffsets
+	ld de,label_01_037@positionOffsets
 	call addAToDe
 
 ;;
 ; @param	de	Pointer to 2 bytes (values to add to Link's Y/X)
-_label_01_037:
+label_01_037:
 	ld a,(wLinkObjectIndex)
 	ld h,a
 
@@ -894,23 +894,23 @@ _label_01_037:
 
 @positionOffsets:
 	; Large rooms
-	.db LARGE_ROOM_HEIGHT*16        $00                  ; DIR_UP
-	.db $00                      <(-LARGE_ROOM_WIDTH*16) ; DIR_RIGHT
-	.db <(-LARGE_ROOM_HEIGHT*16)    $00                  ; DIR_DOWN
-	.db $00                         LARGE_ROOM_WIDTH*16  ; DIR_LEFT
+	.db LARGE_ROOM_HEIGHT*16,        $00                  ; DIR_UP
+	.db $00,                      <(-LARGE_ROOM_WIDTH*16) ; DIR_RIGHT
+	.db <(-LARGE_ROOM_HEIGHT*16),    $00                  ; DIR_DOWN
+	.db $00,                         LARGE_ROOM_WIDTH*16  ; DIR_LEFT
 
 	; Small rooms
-	.db SMALL_ROOM_HEIGHT*16        $00                  ; DIR_UP
-	.db $00                      <(-SMALL_ROOM_WIDTH*16) ; DIR_RIGHT
-	.db <(-SMALL_ROOM_HEIGHT*16)    $00                  ; DIR_DOWN
-	.db $00                         SMALL_ROOM_WIDTH*16  ; DIR_LEFT
+	.db SMALL_ROOM_HEIGHT*16,        $00                  ; DIR_UP
+	.db $00,                      <(-SMALL_ROOM_WIDTH*16) ; DIR_RIGHT
+	.db <(-SMALL_ROOM_HEIGHT*16),    $00                  ; DIR_DOWN
+	.db $00,                         SMALL_ROOM_WIDTH*16  ; DIR_LEFT
 
 ;;
 func_4493:
 	ld a,(wScreenTransitionDirection)
 	ld de,@positionOffsets
 	call addDoubleIndexToDe
-	jr _label_01_037
+	jr label_01_037
 
 @positionOffsets:
 	.db $70 $00 ; DIR_UP
@@ -991,7 +991,7 @@ resetFollowingLinkObjectPosition:
 ; State 5 substate 2: horizontal scrolling transition. Very similar to the vertical
 ; scrolling code below (state 5 substate 1).
 ;
-_screenTransitionState5Substate2:
+screenTransitionState5Substate2:
 	ld a,(wScreenTransitionState3)
 	rst_jumpTable
 	.dw @state0
@@ -1087,7 +1087,7 @@ _screenTransitionState5Substate2:
 	call updateTilesetPalette
 	call setInstrumentsDisabledCounterAndScrollMode
 
-	; Return to _screenTransitionState2 (no active transition)
+	; Return to screenTransitionState2 (no active transition)
 	xor a
 	ld (wScreenTransitionState2),a
 	ld (wScreenTransitionState3),a
@@ -1179,7 +1179,7 @@ addFunctionsToVBlankQueue:
 ; State 5 substate 1: vertical scrolling transition. Practically a copy of the horizontal
 ; transition code above.
 ;
-_screenTransitionState5Substate1:
+screenTransitionState5Substate1:
 	ld a,(wScreenTransitionState3)
 	rst_jumpTable
 	.dw @state0
@@ -1275,7 +1275,7 @@ _screenTransitionState5Substate1:
 	call updateTilesetPalette
 	call setInstrumentsDisabledCounterAndScrollMode
 
-	; Return to _screenTransitionState2 (no active transition)
+	; Return to screenTransitionState2 (no active transition)
 	xor a
 	ld (wScreenTransitionState2),a
 	ld (wScreenTransitionState3),a
@@ -1310,12 +1310,12 @@ _screenTransitionState5Substate1:
 
 @offsetVariables: ; DIR_UP
 	; Large rooms
-	.db (LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16   <(-LARGE_ROOM_HEIGHT*16) ; DIR_UP
-	.db $00                                       LARGE_ROOM_HEIGHT*16  ; DIR_DOWN
+	.db (LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16,   <(-LARGE_ROOM_HEIGHT*16) ; DIR_UP
+	.db $00,                                       LARGE_ROOM_HEIGHT*16  ; DIR_DOWN
 
 	; Small rooms
-	.db $00                                    <(-SMALL_ROOM_HEIGHT*16) ; DIR_UP
-	.db $00                                       SMALL_ROOM_HEIGHT*16  ; DIR_DOWN
+	.db $00,                                    <(-SMALL_ROOM_HEIGHT*16) ; DIR_UP
+	.db $00,                                       SMALL_ROOM_HEIGHT*16  ; DIR_DOWN
 
 ;;
 @drawNextRow:
@@ -1814,7 +1814,7 @@ applyPaletteFadeTransitionData:
 
 .endif ; ROM_SEASONS
 
-.include "build/data/paletteTransitions.s"
+.include {"{GAME_DATA_DIR}/paletteTransitions.s"}
 
 
 ;;
@@ -2003,29 +2003,29 @@ setObjectsEnabledTo2:
 	call setItemsEnabledTo2
 	ld hl,$d000
 	ld c,$d2
-	jr _setObjectsEnabledTo2_hlpr
+	jr setObjectsEnabledTo2_hlpr
 
 ;;
 setItemsEnabledTo2:
-	ld hl,FIRST_ITEM_INDEX<<8 + $00
+	ld hl,(FIRST_ITEM_INDEX<<8) + $00
 	ld c,$e0
-	jr _setObjectsEnabledTo2_hlpr
+	jr setObjectsEnabledTo2_hlpr
 ;;
 setInteractionsEnabledTo2:
 	ld hl,$d040
 	ld c,$e0
-	jr _setObjectsEnabledTo2_hlpr
+	jr setObjectsEnabledTo2_hlpr
 ;;
 setEnemiesEnabledTo2:
 	ld hl,$d080
 	ld c,$e0
-	jr _setObjectsEnabledTo2_hlpr
+	jr setObjectsEnabledTo2_hlpr
 ;;
 setPartsEnabledTo2:
 	ld hl,$d0c0
 	ld c,$e0
 
-_setObjectsEnabledTo2_hlpr:
+setObjectsEnabledTo2_hlpr:
 	ld a,(hl)
 	and $03
 	cp $01
@@ -2039,7 +2039,7 @@ _setObjectsEnabledTo2_hlpr:
 	inc h
 	ld a,h
 	cp c
-	jr c,_setObjectsEnabledTo2_hlpr
+	jr c,setObjectsEnabledTo2_hlpr
 	ret
 
 ;;
@@ -2054,7 +2054,7 @@ clearObjectsWithEnabled2:
 
 ;;
 clearItemsWithEnabled2:
-	ld hl,FIRST_ITEM_INDEX<<8 + $00
+	ld hl,(FIRST_ITEM_INDEX<<8) + $00
 	ld c,$e0
 	jr clearObjectsWithEnabled2_hlpr
 
@@ -2225,7 +2225,7 @@ cutscene17:
 	call reloadTileMap
 	ld a,$01
 	ld (wCutsceneState),a
-	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 + Interaction.enabled
+	ld hl,(FIRST_DYNAMIC_INTERACTION_INDEX<<8) + Interaction.enabled
 --
 	ld l,Interaction.enabled
 	ldi a,(hl)
@@ -2253,7 +2253,7 @@ cutscene17:
 	ldh (<hNextLcdInterruptBehaviour),a
 	xor a
 	ld (wGenericCutscene.cbb7),a
-	call _initWaveScrollValuesForEverySecondLine
+	call initWaveScrollValuesForEverySecondLine
 	ld a,SND_ENDLESS
 	jp playSound
 
@@ -2263,7 +2263,7 @@ cutscene17:
 	ld hl,wGenericCutscene.cbb7
 	inc (hl)
 	ld a,(hl)
-	jp nz,_initWaveScrollValuesForEverySecondLine
+	jp nz,initWaveScrollValuesForEverySecondLine
 
 	ld a,$02
 	ld (wCutsceneState),a
@@ -2349,7 +2349,7 @@ cutscene17:
 ; Calls initWaveScrollValues, then sets every other line to have a normal scroll value.
 ;
 ; @param	a	Amplitude
-_initWaveScrollValuesForEverySecondLine:
+initWaveScrollValuesForEverySecondLine:
 	call initWaveScrollValues
 	ld a,:w2WaveScrollValues
 	ld ($ff00+R_SVBK),a
@@ -2555,15 +2555,15 @@ cutscene19:
 
 .ENDS
 
- m_section_free "Bank_1_Data_1" NAMESPACE "bank1"
+ m_section_free Bank_1_Data_1 NAMESPACE bank1
 
-.include "build/data/dungeonData.s"
+.include {"{GAME_DATA_DIR}/dungeonData.s"}
 .include "data/dungeonProperties.s"
-.include "build/data/dungeonLayouts.s"
+.include {"{GAME_DATA_DIR}/dungeonLayouts.s"}
 
 .ends
 
- m_section_free "Bank_1_Code_2" NAMESPACE "bank1"
+ m_section_free Bank_1_Code_2 NAMESPACE bank1
 
 ;;
 ; Load 8 bytes into wDungeonMapData and up to $100 bytes into w2DungeonLayout.
@@ -2681,34 +2681,34 @@ getFirstDungeonLayoutAddress:
 paletteFadeHandler:
 	ld a,(wPaletteThread_mode)
 	rst_jumpTable
-	.dw _paletteFadeHandler00
-	.dw _paletteFadeHandler01
-	.dw _paletteFadeHandler02
-	.dw _paletteFadeHandler03
-	.dw _paletteFadeHandler04
-	.dw _paletteFadeHandler05
-	.dw _paletteFadeHandler06
-	.dw _paletteFadeHandler07
+	.dw paletteFadeHandler00
+	.dw paletteFadeHandler01
+	.dw paletteFadeHandler02
+	.dw paletteFadeHandler03
+	.dw paletteFadeHandler04
+	.dw paletteFadeHandler05
+	.dw paletteFadeHandler06
+	.dw paletteFadeHandler07
 	.dw paletteFadeHandler08
-	.dw _paletteFadeHandler09
-	.dw _paletteFadeHandler0a
-	.dw _paletteFadeHandler0b
-	.dw _paletteFadeHandler0c
+	.dw paletteFadeHandler09
+	.dw paletteFadeHandler0a
+	.dw paletteFadeHandler0b
+	.dw paletteFadeHandler0c
 
 .ifdef ROM_AGES
-	.dw _paletteFadeHandler0d
-	.dw _paletteFadeHandler0e
+	.dw paletteFadeHandler0d
+	.dw paletteFadeHandler0e
 .endif
 
 
 ;;
-_paletteFadeHandler09:
+paletteFadeHandler09:
 	call paletteThread_decCounter
 	ret nz
 
 ;;
 ; Fade out to white
-_paletteFadeHandler01:
+paletteFadeHandler01:
 	ld a,$1f
 	ldh (<hFF8B),a
 
@@ -2717,7 +2717,7 @@ _paletteFadeHandler01:
 	ld a,(wPaletteThread_fadeOffset)
 	add c
 	cp $20
-	jp nc,_paletteThread_stop
+	jp nc,paletteThread_stop
 
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
@@ -2730,7 +2730,7 @@ _paletteFadeHandler01:
 ;
 ; @param	c	Value to add to each color component
 ; @param	hFF8B	Intensity of a color component after overflowing ($00 or $1f?)
-_updateFadingPalettes:
+updateFadingPalettes:
 	call paletteThread_calculateFadingPalettes
 
 	ld hl,wDirtyFadeBgPalettes
@@ -2747,37 +2747,37 @@ _updateFadingPalettes:
 	ld a,(hl)
 	ldh (<hSprPaletteSources),a
 ;;
-_paletteFadeHandler00:
+paletteFadeHandler00:
 	ret
 
 ;;
-_paletteFadeHandler0a:
+paletteFadeHandler0a:
 	call paletteThread_decCounter
 	ret nz
 
 ;;
 ; Fade in from white
-_paletteFadeHandler02:
+paletteFadeHandler02:
 	ld a,$1f
 	ldh (<hFF8B),a
 	ld a,(wPaletteThread_speed)
 	ld c,a
 	ld a,(wPaletteThread_fadeOffset)
 	sub c
-	jr c,_paletteThread_stop
+	jr c,paletteThread_stop
 
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
-	jr _updateFadingPalettes
+	jr updateFadingPalettes
 
 ;;
-_paletteFadeHandler0b:
+paletteFadeHandler0b:
 	call paletteThread_decCounter
 	ret nz
 
 ;;
 ; Fade out to black
-_paletteFadeHandler03:
+paletteFadeHandler03:
 	xor a
 	ldh (<hFF8B),a
 	ld a,(wPaletteThread_speed)
@@ -2785,37 +2785,37 @@ _paletteFadeHandler03:
 	ld a,(wPaletteThread_fadeOffset)
 	sub c
 	cp $e0
-	jr c,_paletteThread_stop
+	jr c,paletteThread_stop
 
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
-	jr _updateFadingPalettes
+	jr updateFadingPalettes
 
 ;;
-_paletteFadeHandler0c:
+paletteFadeHandler0c:
 	call paletteThread_decCounter
 	ret nz
 
 ;;
 ; Fade in from black
-_paletteFadeHandler04:
+paletteFadeHandler04:
 	xor a
 	ldh (<hFF8B),a
 	ld a,(wPaletteThread_speed)
 	ld c,a
 	ld a,(wPaletteThread_fadeOffset)
 	add c
-	jr c,_paletteThread_stop
+	jr c,paletteThread_stop
 
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
-	jp _updateFadingPalettes
+	jp updateFadingPalettes
 
 
 .ifdef ROM_AGES
 ;;
 ; @param	b	"inverted" value for wPaletteThread_fadeOffset?
-_paletteThread_setFadeOffsetAndStop:
+paletteThread_setFadeOffsetAndStop:
 	ld a,b
 	sub $1f
 	ld (wPaletteThread_fadeOffset),a
@@ -2823,7 +2823,7 @@ _paletteThread_setFadeOffsetAndStop:
 
 ;;
 ; Clears some variables and stops operation (goes to mode 0).
-_paletteThread_stop:
+paletteThread_stop:
 	xor a
 	ld (wPaletteThread_updateRate),a
 	ld (wPaletteThread_mode),a
@@ -2831,7 +2831,7 @@ _paletteThread_stop:
 
 ;;
 ; Like above, but also marks all palettes as dirty.
-_paletteThread_refreshPalettesAndStop:
+paletteThread_refreshPalettesAndStop:
 	xor a
 	ld (wPaletteThread_updateRate),a
 	ld (wPaletteThread_mode),a
@@ -2840,14 +2840,14 @@ _paletteThread_refreshPalettesAndStop:
 
 .ifdef ROM_AGES
 ;;
-_paletteFadeHandler0d:
+paletteFadeHandler0d:
 	call paletteThread_decCounter
 	ret nz
 .endif
 
 ;;
 ; Fade out to black, stop eventually depending on wPaletteThread_parameter
-_paletteFadeHandler05:
+paletteFadeHandler05:
 
 .ifdef ROM_AGES
 	xor a
@@ -2860,12 +2860,12 @@ _paletteFadeHandler05:
 	ld a,(wPaletteThread_fadeOffset)
 	sub c
 	cp b
-	jr z,_paletteThread_stop
-	jr c,_paletteThread_stop
+	jr z,paletteThread_stop
+	jr c,paletteThread_stop
 
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
-	jp _updateFadingPalettes
+	jp updateFadingPalettes
 
 .else ; ROM_SEASONS
 
@@ -2877,24 +2877,24 @@ _paletteFadeHandler05:
 	ld a,(wPaletteThread_fadeOffset)
 	dec a
 	cp b
-	jr z,_paletteThread_stop
+	jr z,paletteThread_stop
 
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
-	jp _updateFadingPalettes
+	jp updateFadingPalettes
 .endif
 
 
 .ifdef ROM_AGES
 ;;
-_paletteFadeHandler0e:
+paletteFadeHandler0e:
 	call paletteThread_decCounter
 	ret nz
 .endif
 
 ;;
 ; Fade in from black, stop eventually depending on wPaletteThread_parameter
-_paletteFadeHandler06:
+paletteFadeHandler06:
 
 .ifdef ROM_AGES
 	xor a
@@ -2908,13 +2908,13 @@ _paletteFadeHandler06:
 	add $1f
 	add c
 	cp b
-	jr z,_paletteThread_stop
-	jp nc,_paletteThread_setFadeOffsetAndStop
+	jr z,paletteThread_stop
+	jp nc,paletteThread_setFadeOffsetAndStop
 
 	sub $1f
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
-	jp _updateFadingPalettes
+	jp updateFadingPalettes
 
 .else ; ROM_SEASONS
 
@@ -2926,18 +2926,18 @@ _paletteFadeHandler06:
 	ld a,(wPaletteThread_fadeOffset)
 	inc a
 	cp b
-	jr z,_paletteThread_stop
+	jr z,paletteThread_stop
 
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
-	jp _updateFadingPalettes
+	jp updateFadingPalettes
 
 .endif
 
 
 ;;
 ; Fade in from white for a dark room
-_paletteFadeHandler07:
+paletteFadeHandler07:
 	ld a,$1f
 	ldh (<hFF8B),a
 	ld a,(wPaletteThread_speed)
@@ -2948,7 +2948,7 @@ _paletteFadeHandler07:
 
 	ld (wPaletteThread_fadeOffset),a
 	ld c,a
-	jp _updateFadingPalettes
+	jp updateFadingPalettes
 +
 	; The room's completely faded in now
 
@@ -2959,7 +2959,7 @@ _paletteFadeHandler07:
 	; Check if the room should be darkened
 	ld a,(wPaletteThread_parameter)
 	or a
-	jr z,_paletteThread_refreshPalettesAndStop
+	jr z,paletteThread_refreshPalettesAndStop
 
 	ld b,a
 	xor a
@@ -2991,9 +2991,9 @@ paletteFadeHandler08:
 	ldh (<hFF90),a
 	ld a,(hl)
 	rrca
-	jp c,_paletteThread_mixBG234Palettes
+	jp c,paletteThread_mixBG234Palettes
 
-	call _paletteThread_mixBG567Palettes
+	call paletteThread_mixBG567Palettes
 
 	; Mark BG palettes 2-7 as needing refresh
 	ldh a,(<hDirtyBgPalettes)
@@ -3004,7 +3004,7 @@ paletteFadeHandler08:
 	ret
 
 @stop:
-	jp _paletteThread_stop
+	jp paletteThread_stop
 
 ;;
 ; Adds the given value to each color in w2TilesetBgPalettes/w2TilesetSprPalettes, and stores the
@@ -3092,7 +3092,7 @@ paletteThread_calculateFadingPalettes:
 ; Game alternates between calling this and the below function when fading between
 ; palettes.
 ;
-_paletteThread_mixBG234Palettes:
+paletteThread_mixBG234Palettes:
 	ld hl,w2TilesetBgPalettes+2*8
 	ld e,<w2ColorComponentBuffer1+$00
 	ld b,3*4
@@ -3101,7 +3101,7 @@ _paletteThread_mixBG234Palettes:
 ;;
 ; Mix BG5-7 palettes.
 ;
-_paletteThread_mixBG567Palettes:
+paletteThread_mixBG567Palettes:
 	ld hl,w2TilesetBgPalettes+5*8
 	ld e,<w2ColorComponentBuffer1+$24
 	ld b,3*4
@@ -3321,14 +3321,14 @@ checkUpdateDungeonMinimap:
 runGameLogic:
 	ld a,(wGameState)
 	rst_jumpTable
-	.dw _initializeGame
-	.dw _loadingRoom
-	.dw _standardGameState
+	.dw initializeGame
+	.dw loadingRoom
+	.dw standardGameState
 	.dw linkSummonedCutscene
 
 ;;
 ; Clears a lot of memory, loads common palette header $0f,
-_initializeGame:
+initializeGame:
 	ld hl,wOamEnd
 	ld bc,$d000-wOamEnd
 	call clearMemoryBc
@@ -3454,7 +3454,7 @@ _initializeGame:
 
 	ld a,GLOBALFLAG_PREGAME_INTRO_DONE
 	call checkGlobalFlag
-	jr nz,_func_5a60
+	jr nz,func_5a60
 
 	ld a,GLOBALFLAG_3d
 	call checkGlobalFlag
@@ -3475,7 +3475,7 @@ _initializeGame:
 	ret
 
 ;;
-_loadingRoom:
+loadingRoom:
 	call clearScreenVariablesAndWramBank1
 	call clearStaticObjects
 	call stopTextThread
@@ -3484,7 +3484,7 @@ _loadingRoom:
 	call applyWarpDest
 
 ;;
-_func_5a60:
+func_5a60:
 	call clearOam
 	call initializeVramMaps
 	call clearMemoryOnScreenReload
@@ -3523,7 +3523,7 @@ _func_5a60:
 	jp func_593a
 
 ;;
-_standardGameState:
+standardGameState:
 	ld a,(wLinkDeathTrigger)
 	cp $ff
 	jr nz,+
@@ -3738,7 +3738,7 @@ cutscene03:
 	cp $ff
 	call z,clearEnemiesKilledList
 
-_func_5c18:
+func_5c18:
 
 .ifdef ROM_AGES
 	call checkUpdateDungeonMinimap
@@ -3835,7 +3835,7 @@ cutscene05:
 
 	call disableLcd
 	call clearOam
-	call _func_5cfe
+	call func_5cfe
 ++
 	call setInteractionsEnabledTo2
 	call clearObjectsWithEnabled2
@@ -3863,10 +3863,10 @@ cutscene05:
 	ld de,w1Link.yh
 	call getShortPositionFromDE
 	ld (wWarpDestPos),a
-	jp _func_5c18
+	jp func_5c18
 
 ;;
-_func_5cfe:
+func_5cfe:
 	ld a,(wcc4c)
 	or a
 	jr z,+++
@@ -4020,7 +4020,7 @@ cutscene13:
 
 ;;
 ; Seasons-only
-_func_5d31:
+func_5d31:
 	call func_1613
 	ld a,(wWarpTransition2)
 	or a
@@ -4607,7 +4607,7 @@ screenTransitionLostWoods:
 	ret
 
 @transition1:
-	ldbc DIR_DOWN, SEASON_FALL
+	ldbc DIR_DOWN, SEASON_AUTUMN
 	jr @checkTransitionForNorth
 
 @transition2:
@@ -4644,7 +4644,7 @@ screenTransitionLostWoods:
 	jr @checkTransition
 
 @@transition1:
-	ldbc DIR_LEFT, SEASON_FALL
+	ldbc DIR_LEFT, SEASON_AUTUMN
 	ld hl,wLostWoodsTransitionCounter2
 	jr @checkTransition
 
@@ -4772,7 +4772,7 @@ updateSeedTreeRefillData:
 	ld c,a
 	ld a,(hl)
 	ld e,a
-	call _checkSeedTreeRefillIndex
+	call checkSeedTreeRefillIndex
 	inc hl
 	pop bc
 	dec b
@@ -4782,7 +4782,7 @@ updateSeedTreeRefillData:
 	ld ($ff00+R_SVBK),a
 	ret
 
-.include "build/data/seedTreeRefillData.s"
+.include {"{GAME_DATA_DIR}/seedTreeRefillData.s"}
 
 ;;
 ; Season's implementation of this function is quite different. It appears that they
@@ -4791,7 +4791,7 @@ updateSeedTreeRefillData:
 ; @param	b	Seed tree index (actually NUM_SEED_TREES - index)
 ; @param	c	Screen the seed tree is on
 ; @param	e	Group?
-_checkSeedTreeRefillIndex:
+checkSeedTreeRefillIndex:
 	ld a,b
 	ldh (<hFF8D),a
 
@@ -4971,9 +4971,9 @@ func_60cd:
 	or a
 	ret nz
 
-	call _checkScreenEdgeWarps
+	call checkScreenEdgeWarps
 	ret nc
-	jr _initiateScreenEdgeWarp
+	jr initiateScreenEdgeWarp
 
 ;;
 ; Checks for warps?
@@ -5001,7 +5001,7 @@ func_60e9:
 	or a
 	ret nz
 
-	ld a,(wcc90)
+	ld a,(wDisableWarpTiles)
 	or a
 	ret nz
 
@@ -5022,59 +5022,59 @@ func_60e9:
 	and $04
 	jr nz,+
 
-	call _checkStandingOnDeactivatedWarpTile
+	call checkStandingOnDeactivatedWarpTile
 	ret nc
 +
 	ld a,$ff
 	ld (wEnteredWarpPosition),a
 	ld a,(wActiveGroup)
 	rst_jumpTable
-	.dw _checkWarpsTopDown
-	.dw _checkWarpsTopDown
-	.dw _checkWarpsTopDown
-	.dw _checkWarpsTopDown
-	.dw _checkWarpsTopDown
-	.dw _checkWarpsTopDown
-	.dw _checkWarpsSidescrolling
-	.dw _checkWarpsSidescrolling
+	.dw checkWarpsTopDown
+	.dw checkWarpsTopDown
+	.dw checkWarpsTopDown
+	.dw checkWarpsTopDown
+	.dw checkWarpsTopDown
+	.dw checkWarpsTopDown
+	.dw checkWarpsSidescrolling
+	.dw checkWarpsSidescrolling
 
 ;;
 ; @param	hFF8C	Tile Link is on
 ; @param	hFF8D	Position of tile Link is on
-_checkWarpsTopDown:
-	call _checkTileWarps
+checkWarpsTopDown:
+	call checkTileWarps
 	ret c
 
-	call _checkScreenEdgeWarps
+	call checkScreenEdgeWarps
 	ret nc
-	jr _initiateScreenEdgeWarp
+	jr initiateScreenEdgeWarp
 
 ;;
 ; @param	hFF8C	Tile Link is on
 ; @param	hFF8D	Position of tile Link is on
-_checkWarpsSidescrolling:
-	call _checkScreenEdgeWarps
+checkWarpsSidescrolling:
+	call checkScreenEdgeWarps
 	ret nc
 
 	ld a,(wWarpTransition)
 	or $30
 	ld (wWarpTransition),a
-	jr _initiateWarp
+	jr initiateWarp
 
-_initiateScreenEdgeWarp:
+initiateScreenEdgeWarp:
 	ld a,(wWarpTransition)
 	or $10
 	ld (wWarpTransition),a
 
 ;;
-_initiateWarp:
+initiateWarp:
 	ld a,$00
 	ld (wScrollMode),a
 	ld a,$1e
 	ld (wDisabledObjects),a
 	ld a,LINK_STATE_WARPING
 	ld (wLinkForceState),a
-	jr _warpInitiated
+	jr warpInitiated
 
 ;;
 ; Checks if Link is within the appropriate bounds of a warp tile to initiate a warp?
@@ -5082,7 +5082,7 @@ _initiateWarp:
 ; So, touching the tile is not quite enough; Link needs to be close enough to the center?
 ;
 ; @param[out]	cflag	Set if Link's close enough to the tile's center.
-_checkLinkCloseEnoughToWarpTileCenter:
+checkLinkCloseEnoughToWarpTileCenter:
 	ld h,LINK_OBJECT_INDEX
 	ldh a,(<hFF8D)
 	ld c,a
@@ -5117,7 +5117,7 @@ _checkLinkCloseEnoughToWarpTileCenter:
 
 ;;
 ; @param[out]	cflag	Set to indicate a warp has occurred.
-_warpInitiated:
+warpInitiated:
 	ld a,$01
 	ld (wDisableLinkCollisionsAndMenu),a
 	scf
@@ -5125,7 +5125,7 @@ _warpInitiated:
 
 ;;
 ; @param[out]	cflag	Unset to indicate no warp has occurred.
-_noWarpInitiated:
+noWarpInitiated:
 	xor a
 	ret
 
@@ -5133,7 +5133,7 @@ _noWarpInitiated:
 ; Check for warps initiated by touching certain tiles (ie. stairs).
 ;
 ; @param[out]	cflag	Set if a warp has occurred.
-_checkTileWarps:
+checkTileWarps:
 	ld a,(wLinkObjectIndex)
 	ld h,a
 	ld l,SpecialObject.zh
@@ -5143,11 +5143,11 @@ _checkTileWarps:
 
 	ld a,(wMenuDisabled)
 	or a
-	jr nz,_noWarpInitiated
+	jr nz,noWarpInitiated
 
 	ldh a,(<hFF8C)
 	call checkTileIsWarpTile
-	jr nc,_noWarpInitiated
+	jr nc,noWarpInitiated
 
 .ifdef ROM_SEASONS
 	dec a
@@ -5156,16 +5156,16 @@ _checkTileWarps:
 
 	ld a,(wLinkGrabState)
 	or a
-	jr nz,_noWarpInitiated
+	jr nz,noWarpInitiated
 
 	call @checkAdjacentTileIsWarpTile
 	jr c,@checkLinkCloseEnoughToWarpTileCenter_multiTileDoor
-	call _checkLinkCloseEnoughToWarpTileCenter
-	jr nc,_noWarpInitiated
+	call checkLinkCloseEnoughToWarpTileCenter
+	jr nc,noWarpInitiated
 
 @initiateWarp:
 	callab bank4.findWarpSourceAndDest
-	jp _initiateWarp
+	jp initiateWarp
 
 .ifdef ROM_SEASONS
 
@@ -5203,7 +5203,7 @@ _checkTileWarps:
 	jr checkTileIsWarpTile
 
 ;;
-; This is similar to "_checkLinkCloseEnoughToWarpTileCenter", but this is used when there
+; This is similar to "checkLinkCloseEnoughToWarpTileCenter", but this is used when there
 ; are multiple door tiles lined up horizontally. So, it skips the check for being close
 ; enough to the horizontal center of the tile.
 ;
@@ -5246,7 +5246,7 @@ _checkTileWarps:
 ; prevents warps from occurring if this is the case.
 ;
 ; @param[out]	cflag	Set if the game may proceed to check for warps
-_checkStandingOnDeactivatedWarpTile:
+checkStandingOnDeactivatedWarpTile:
 	scf
 	ld a,(wEnteredWarpPosition)
 	inc a
@@ -5276,24 +5276,24 @@ _checkStandingOnDeactivatedWarpTile:
 
 ;;
 ; @param[out]	cflag	Set if warp activated
-_checkScreenEdgeWarps:
+checkScreenEdgeWarps:
 	ld a,$ff
 	ld (wTmpcec0),a
 	callab bank4.findScreenEdgeWarpSource
 	ld a,(wTmpcec0)
 	cp $ff
-	jp z,_noWarpInitiated
-	jp _warpInitiated
+	jp z,noWarpInitiated
+	jp warpInitiated
 
 ;;
 ; @param	a	Tile index
 ; @param[out]	cflag	Set if this tile is a warp tile.
 checkTileIsWarpTile:
-	ld hl,_warpTileTable
+	ld hl,warpTileTable
 	jp lookupCollisionTable
 
 ; This is a list of tiles that initiate warps when touched.
-_warpTileTable:
+warpTileTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -5399,19 +5399,18 @@ _warpTileTable:
 
 
 ; This is superfree (bank can change) so namespace should be different from the others
- m_section_superfree "Bank_1_Data_2" NAMESPACE "bank1Moveable"
+ m_section_superfree Bank_1_Data_2 NAMESPACE bank1Moveable
 
-	.include "build/data/paletteHeaders.s"
-	.include "build/data/uncmpGfxHeaders.s"
-	.include "build/data/gfxHeaders.s"
-
+	.include {"{GAME_DATA_DIR}/paletteHeaders.s"}
+	.include {"{GAME_DATA_DIR}/uncmpGfxHeaders.s"}
+	.include {"{GAME_DATA_DIR}/gfxHeaders.s"}
 	; HACK-BASE: Removed for expanded tilesets patch
-	;.include "build/data/tilesetHeaders.s"
+	;.include {"{GAME_DATA_DIR}/tilesetHeaders.s"}
 
 .ends
 
 
- m_section_free "Bank_1_Code_3" NAMESPACE "bank1"
+ m_section_free Bank_1_Code_3 NAMESPACE bank1
 
 .ifdef ROM_AGES
 ;;
@@ -5580,13 +5579,13 @@ checkRoomPack:
 	ld a,b
 	ld (wRoomPack),a
 	or a
-	jr z,_setHoronVillageSeason
+	jr z,setHoronVillageSeason
 
 ;;
 ; @param	a	Room pack value
-_determineSeasonForRoomPack:
+determineSeasonForRoomPack:
 	cp $f0
-	jr nc,_determineCompanionRegionSeason
+	jr nc,determineCompanionRegionSeason
 
 	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING
 	call checkGlobalFlag
@@ -5594,12 +5593,12 @@ _determineSeasonForRoomPack:
 	jr z,+
 	and $0f
 +
-	ld hl,_roomPackSeasonTable
+	ld hl,roomPackSeasonTable
 	rst_addAToHl
 	ld a,(hl)
 
 ;;
-_setSeason:
+setSeason:
 	ld (wRoomStateModifier),a
 	or $01
 	ret
@@ -5614,34 +5613,32 @@ _setSeason:
 
 ;;
 ; Set a random season for horon village (unless it's spring).
-_setHoronVillageSeason:
+setHoronVillageSeason:
 	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING
 	call checkGlobalFlag
 	ld a,$00
-	jr nz,_setSeason
+	jr nz,setSeason
 	call getRandomNumber
 	and $03
-	jr _setSeason
+	jr setSeason
 
 ;;
 ; @param	a
-_determineCompanionRegionSeason:
+determineCompanionRegionSeason:
 	cp $ff
 	jr z,@companionRegion
 	ld a,$01
-	jr _setSeason
+	jr setSeason
 
 @companionRegion:
 	ld a,(wAnimalCompanion)
 	sub SPECIALOBJECTID_RICKY-1
 	and $03
 	ld (wRoomStateModifier),a
-	jr _setSeason
+	jr setSeason
 
 
-_roomPackSeasonTable:
-	.db $00 $00 $00 $00 $00 $00 $03 $00 $00 $01 $00 $00 $00 $00 $00 $00
-	.db $03 $02 $01 $02 $00 $01 $03 $02 $00 $01 $00 $03 $03 $03
+.include "data/seasons/roomPackSeasonTable.s"
 
 ;;
 ; Similar to "checkRoomPack" function, but called after a "warp" transition (ie. exited
@@ -5650,16 +5647,16 @@ checkRoomPackAfterWarp_body:
 	ld a,GLOBALFLAG_SEASON_ALWAYS_SPRING
 	call checkGlobalFlag
 	ld a,(wRoomPack)
-	jp nz,_determineSeasonForRoomPack
+	jp nz,determineSeasonForRoomPack
 
 	cp $f0
-	jp nc,_determineCompanionRegionSeason
+	jp nc,determineCompanionRegionSeason
 
 	; Horon village: don't calculate anything (season stays the same as last area)
 	or a
 	ret z
 
-	ld hl,_roomPackSeasonTable
+	ld hl,roomPackSeasonTable
 	rst_addAToHl
 	ld a,(hl)
 	ld (wRoomStateModifier),a

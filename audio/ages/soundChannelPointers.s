@@ -1,718 +1,719 @@
-; @addr{511c}
-sound00:
-sound01:
+musNone:
+musTitlescreen:
 	.db $00
-	.dw sound00Channel0
+	.dw musNoneChannel0
 	.db $01
-	.dw sound00Channel1
+	.dw musNoneChannel1
 	.db $04
-	.dw sound00Channel4
+	.dw musNoneChannel4
 	.db $06
-	.dw sound00Channel6
+	.dw musNoneChannel6
 	.db $ff
-; @addr{5129}
-sound02:
+
+musMinigame:
 	.db $00
-	.dw sound02Channel0
+	.dw musMinigameChannel0
 	.db $01
-	.dw sound02Channel1
+	.dw musMinigameChannel1
 	.db $04
-	.dw sound02Channel4
+	.dw musMinigameChannel4
 	.db $06
-	.dw sound02Channel6
+	.dw musMinigameChannel6
 	.db $ff
-; @addr{5136}
-sound03:
+
+musOverworld:
 	.db $00
-	.dw sound03Channel0
+	.dw musOverworldChannel0
 	.db $01
-	.dw sound03Channel1
+	.dw musOverworldChannel1
 	.db $04
-	.dw sound03Channel4
+	.dw musOverworldChannel4
 	.db $06
-	.dw sound03Channel6
+	.dw musOverworldChannel6
 	.db $ff
-; @addr{5143}
-sound37:
-sound3a:
-sound3b:
-sound3d:
-sound41:
-sound42:
-sound43:
-sound44:
-sound45:
-sound47:
-sound48:
-sound49:
-sound4b:
-soundd6:
-soundd7:
-soundd8:
-soundd9:
-soundda:
-sounddb:
-sounddc:
-sounddd:
+
+mus37:
+mus3a:
+mus3b:
+mus3d:
+mus41:
+mus42:
+mus43:
+mus44:
+mus45:
+mus47:
+mus48:
+mus49:
+mus4b:
+sndd6:
+sndd7:
+sndd8:
+sndd9:
+sndda:
+snddb:
+snddc:
+snddd:
 	.db $00
-	.dw sound37Channel0
+	.dw mus37Channel0
 	.db $01
-	.dw sound37Channel1
+	.dw mus37Channel1
 	.db $04
-	.dw sound37Channel4
+	.dw mus37Channel4
 	.db $06
-	.dw sound37Channel6
+	.dw mus37Channel6
 	.db $ff
-; @addr{5150}
-sound09:
+
+musGameover:
 	.db $00
-	.dw sound09Channel0
+	.dw musGameoverChannel0
 	.db $01
-	.dw sound09Channel1
+	.dw musGameoverChannel1
 	.db $04
-	.dw sound09Channel4
+	.dw musGameoverChannel4
 	.db $06
-	.dw sound09Channel6
+	.dw musGameoverChannel6
 	.db $ff
-; @addr{515d}
-sound0c:
+
+musZoraVillage:
 	.db $00
-	.dw sound0cChannel0
+	.dw musZoraVillageChannel0
 	.db $01
-	.dw sound0cChannel1
+	.dw musZoraVillageChannel1
 	.db $04
-	.dw sound0cChannel4
+	.dw musZoraVillageChannel4
 	.db $06
-	.dw sound0cChannel6
+	.dw musZoraVillageChannel6
 	.db $ff
-; @addr{516a}
-sound0d:
+
+musEssenceRoom:
 	.db $00
-	.dw sound0dChannel0
+	.dw musEssenceRoomChannel0
 	.db $01
-	.dw sound0dChannel1
+	.dw musEssenceRoomChannel1
 	.db $04
-	.dw sound0dChannel4
+	.dw musEssenceRoomChannel4
 	.db $06
-	.dw sound0dChannel6
+	.dw musEssenceRoomChannel6
 	.db $ff
-; @addr{5177}
-sound0e:
+
+musIndoors:
 	.db $00
-	.dw sound0eChannel0
+	.dw musIndoorsChannel0
 	.db $01
-	.dw sound0eChannel1
+	.dw musIndoorsChannel1
 	.db $04
-	.dw sound0eChannel4
+	.dw musIndoorsChannel4
 	.db $06
-	.dw sound0eChannel6
+	.dw musIndoorsChannel6
 	.db $ff
-; @addr{5184}
-sound0f:
+
+musFairyFountain:
 	.db $00
-	.dw sound0fChannel0
+	.dw musFairyFountainChannel0
 	.db $01
-	.dw sound0fChannel1
+	.dw musFairyFountainChannel1
 	.db $04
-	.dw sound0fChannel4
+	.dw musFairyFountainChannel4
 	.db $06
-	.dw sound0fChannel6
+	.dw musFairyFountainChannel6
 	.db $ff
-; @addr{5191}
-sound10:
+
+musGetEssence:
 	.db $00
-	.dw sound10Channel0
+	.dw musGetEssenceChannel0
 	.db $01
-	.dw sound10Channel1
+	.dw musGetEssenceChannel1
 	.db $04
-	.dw sound10Channel4
+	.dw musGetEssenceChannel4
 	.db $06
-	.dw sound10Channel6
+	.dw musGetEssenceChannel6
 	.db $ff
-; @addr{519e}
-sound11:
+
+musFileSelect:
 	.db $00
-	.dw sound11Channel0
+	.dw musFileSelectChannel0
 	.db $01
-	.dw sound11Channel1
+	.dw musFileSelectChannel1
 	.db $04
-	.dw sound11Channel4
+	.dw musFileSelectChannel4
 	.db $06
-	.dw sound11Channel6
+	.dw musFileSelectChannel6
 	.db $ff
-; @addr{51ab}
-sound1b:
+
+musFinalDungeon:
 	.db $00
-	.dw sound1bChannel0
+	.dw musFinalDungeonChannel0
 	.db $01
-	.dw sound1bChannel1
+	.dw musFinalDungeonChannel1
 	.db $04
-	.dw sound1bChannel4
+	.dw musFinalDungeonChannel4
 	.db $06
-	.dw sound1bChannel6
+	.dw musFinalDungeonChannel6
 	.db $ff
-; @addr{51b8}
-sound1c:
+
+musOnoxCastle:
 	.db $00
-	.dw sound1cChannel0
+	.dw musOnoxCastleChannel0
 	.db $01
-	.dw sound1cChannel1
+	.dw musOnoxCastleChannel1
 	.db $04
-	.dw sound1cChannel4
+	.dw musOnoxCastleChannel4
 	.db $06
-	.dw sound1cChannel6
+	.dw musOnoxCastleChannel6
 	.db $ff
-; @addr{51c5}
-sound1d:
+
+musRoomOfRites:
 	.db $00
-	.dw sound1dChannel0
+	.dw musRoomOfRitesChannel0
 	.db $01
-	.dw sound1dChannel1
+	.dw musRoomOfRitesChannel1
 	.db $04
-	.dw sound1dChannel4
+	.dw musRoomOfRitesChannel4
 	.db $06
-	.dw sound1dChannel6
+	.dw musRoomOfRitesChannel6
 	.db $ff
-; @addr{51d2}
-sound1e:
+
+musMakuTree:
 	.db $00
-	.dw sound1eChannel0
+	.dw musMakuTreeChannel0
 	.db $01
-	.dw sound1eChannel1
+	.dw musMakuTreeChannel1
 	.db $04
-	.dw sound1eChannel4
+	.dw musMakuTreeChannel4
 	.db $06
-	.dw sound1eChannel6
+	.dw musMakuTreeChannel6
 	.db $ff
-; @addr{51df}
-sound1f:
+
+musSadness:
 	.db $00
-	.dw sound1fChannel0
+	.dw musSadnessChannel0
 	.db $01
-	.dw sound1fChannel1
+	.dw musSadnessChannel1
 	.db $04
-	.dw sound1fChannel4
+	.dw musSadnessChannel4
 	.db $06
-	.dw sound1fChannel6
+	.dw musSadnessChannel6
 	.db $ff
-; @addr{51ec}
-sound20:
+
+musTriumphant:
 	.db $00
-	.dw sound20Channel0
+	.dw musTriumphantChannel0
 	.db $01
-	.dw sound20Channel1
+	.dw musTriumphantChannel1
 	.db $04
-	.dw sound20Channel4
+	.dw musTriumphantChannel4
 	.db $06
-	.dw sound20Channel6
+	.dw musTriumphantChannel6
 	.db $ff
-; @addr{51f9}
-sound21:
+
+musDisaster:
 	.db $00
-	.dw sound21Channel0
+	.dw musDisasterChannel0
 	.db $01
-	.dw sound21Channel1
+	.dw musDisasterChannel1
 	.db $04
-	.dw sound21Channel4
+	.dw musDisasterChannel4
 	.db $06
-	.dw sound21Channel6
+	.dw musDisasterChannel6
 	.db $ff
-; @addr{5206}
-sound23:
+
+musPirates:
 	.db $00
-	.dw sound23Channel0
+	.dw musPiratesChannel0
 	.db $01
-	.dw sound23Channel1
+	.dw musPiratesChannel1
 	.db $04
-	.dw sound23Channel4
+	.dw musPiratesChannel4
 	.db $06
-	.dw sound23Channel6
+	.dw musPiratesChannel6
 	.db $ff
-; @addr{5213}
-sound27:
+
+musRosaDate:
 	.db $00
-	.dw sound27Channel0
+	.dw musRosaDateChannel0
 	.db $01
-	.dw sound27Channel1
+	.dw musRosaDateChannel1
 	.db $04
-	.dw sound27Channel4
+	.dw musRosaDateChannel4
 	.db $06
-	.dw sound27Channel6
+	.dw musRosaDateChannel6
 	.db $ff
-; @addr{5220}
-sound29:
+
+musCredits1:
 	.db $00
-	.dw sound29Channel0
+	.dw musCredits1Channel0
 	.db $01
-	.dw sound29Channel1
+	.dw musCredits1Channel1
 	.db $04
-	.dw sound29Channel4
+	.dw musCredits1Channel4
 	.db $06
-	.dw sound29Channel6
+	.dw musCredits1Channel6
 	.db $ff
-; @addr{522d}
-sound2a:
+
+musCredits2:
 	.db $00
-	.dw sound2aChannel0
+	.dw musCredits2Channel0
 	.db $01
-	.dw sound2aChannel1
+	.dw musCredits2Channel1
 	.db $04
-	.dw sound2aChannel4
+	.dw musCredits2Channel4
 	.db $06
-	.dw sound2aChannel6
+	.dw musCredits2Channel6
 	.db $ff
-; @addr{523a}
-sound2b:
+
+musMapleTheme:
 	.db $00
-	.dw sound2bChannel0
+	.dw musMapleThemeChannel0
 	.db $01
-	.dw sound2bChannel1
+	.dw musMapleThemeChannel1
 	.db $04
-	.dw sound2bChannel4
+	.dw musMapleThemeChannel4
 	.db $06
-	.dw sound2bChannel6
+	.dw musMapleThemeChannel6
 	.db $ff
-; @addr{5247}
-sound2c:
+
+musMapleGame:
 	.db $00
-	.dw sound2cChannel0
+	.dw musMapleGameChannel0
 	.db $01
-	.dw sound2cChannel1
+	.dw musMapleGameChannel1
 	.db $04
-	.dw sound2cChannel4
+	.dw musMapleGameChannel4
 	.db $06
-	.dw sound2cChannel6
+	.dw musMapleGameChannel6
 	.db $ff
-; @addr{5254}
-sound2d:
+
+musMiniboss:
 	.db $00
-	.dw sound2dChannel0
+	.dw musMinibossChannel0
 	.db $01
-	.dw sound2dChannel1
+	.dw musMinibossChannel1
 	.db $04
-	.dw sound2dChannel4
+	.dw musMinibossChannel4
 	.db $06
-	.dw sound2dChannel6
+	.dw musMinibossChannel6
 	.db $ff
-; @addr{5261}
-sound2e:
+
+musBoss:
 	.db $00
-	.dw sound2eChannel0
+	.dw musBossChannel0
 	.db $01
-	.dw sound2eChannel1
+	.dw musBossChannel1
 	.db $04
-	.dw sound2eChannel4
+	.dw musBossChannel4
 	.db $06
-	.dw sound2eChannel6
+	.dw musBossChannel6
 	.db $ff
-; @addr{526e}
-sound2f:
+
+musLadxSideview:
 	.db $00
-	.dw sound2fChannel0
+	.dw musLadxSideviewChannel0
 	.db $01
-	.dw sound2fChannel1
+	.dw musLadxSideviewChannel1
 	.db $04
-	.dw sound2fChannel4
+	.dw musLadxSideviewChannel4
 	.db $06
-	.dw sound2fChannel6
+	.dw musLadxSideviewChannel6
 	.db $ff
-; @addr{527b}
-sound31:
+
+musCrazyDance:
 	.db $00
-	.dw sound31Channel0
+	.dw musCrazyDanceChannel0
 	.db $01
-	.dw sound31Channel1
+	.dw musCrazyDanceChannel1
 	.db $04
-	.dw sound31Channel4
+	.dw musCrazyDanceChannel4
 	.db $06
-	.dw sound31Channel6
+	.dw musCrazyDanceChannel6
 	.db $ff
-; @addr{5288}
-sound32:
+
+musFinalBoss:
 	.db $00
-	.dw sound32Channel0
+	.dw musFinalBossChannel0
 	.db $01
-	.dw sound32Channel1
+	.dw musFinalBossChannel1
 	.db $04
-	.dw sound32Channel4
+	.dw musFinalBossChannel4
 	.db $06
-	.dw sound32Channel6
+	.dw musFinalBossChannel6
 	.db $ff
-; @addr{5295}
-sound33:
+
+musTwinrova:
 	.db $00
-	.dw sound33Channel0
+	.dw musTwinrovaChannel0
 	.db $01
-	.dw sound33Channel1
+	.dw musTwinrovaChannel1
 	.db $04
-	.dw sound33Channel4
+	.dw musTwinrovaChannel4
 	.db $06
-	.dw sound33Channel6
+	.dw musTwinrovaChannel6
 	.db $ff
-; @addr{52a2}
-sound34:
+
+musGanon:
 	.db $00
-	.dw sound34Channel0
+	.dw musGanonChannel0
 	.db $01
-	.dw sound34Channel1
+	.dw musGanonChannel1
 	.db $04
-	.dw sound34Channel4
+	.dw musGanonChannel4
 	.db $06
-	.dw sound34Channel6
+	.dw musGanonChannel6
 	.db $ff
-; @addr{52af}
-sound36:
+
+musCave:
 	.db $00
-	.dw sound36Channel0
+	.dw musCaveChannel0
 	.db $01
-	.dw sound36Channel1
+	.dw musCaveChannel1
 	.db $04
-	.dw sound36Channel4
+	.dw musCaveChannel4
 	.db $06
-	.dw sound36Channel6
+	.dw musCaveChannel6
 	.db $ff
-; @addr{52bc}
-sound38:
+
+musZeldaSaved:
 	.db $00
-	.dw sound38Channel0
+	.dw musZeldaSavedChannel0
 	.db $01
-	.dw sound38Channel1
+	.dw musZeldaSavedChannel1
 	.db $04
-	.dw sound38Channel4
+	.dw musZeldaSavedChannel4
 	.db $06
-	.dw sound38Channel6
+	.dw musZeldaSavedChannel6
 	.db $ff
-; @addr{52c9}
-sound39:
+
+musGreatMoblin:
 	.db $00
-	.dw sound39Channel0
+	.dw musGreatMoblinChannel0
 	.db $01
-	.dw sound39Channel1
+	.dw musGreatMoblinChannel1
 	.db $04
-	.dw sound39Channel4
+	.dw musGreatMoblinChannel4
 	.db $06
-	.dw sound39Channel6
+	.dw musGreatMoblinChannel6
 	.db $ff
-; @addr{52d6}
-sound3c:
+
+musSyrup:
 	.db $00
-	.dw sound3cChannel0
+	.dw musSyrupChannel0
 	.db $01
-	.dw sound3cChannel1
+	.dw musSyrupChannel1
 	.db $04
-	.dw sound3cChannel4
+	.dw musSyrupChannel4
 	.db $06
-	.dw sound3cChannel6
+	.dw musSyrupChannel6
 	.db $ff
-; @addr{52e3}
-sound3e:
+
+musGoronCave:
 	.db $00
-	.dw sound3eChannel0
+	.dw musGoronCaveChannel0
 	.db $01
-	.dw sound3eChannel1
+	.dw musGoronCaveChannel1
 	.db $04
-	.dw sound3eChannel4
+	.dw musGoronCaveChannel4
 	.db $06
-	.dw sound3eChannel6
+	.dw musGoronCaveChannel6
 	.db $ff
-; @addr{52f0}
-sound3f:
+
+musIntro1:
 	.db $00
-	.dw sound3fChannel0
+	.dw musIntro1Channel0
 	.db $01
-	.dw sound3fChannel1
+	.dw musIntro1Channel1
 	.db $04
-	.dw sound3fChannel4
+	.dw musIntro1Channel4
 	.db $06
-	.dw sound3fChannel6
+	.dw musIntro1Channel6
 	.db $ff
-; @addr{52fd}
-sound40:
+
+musIntro2:
 	.db $00
-	.dw sound40Channel0
+	.dw musIntro2Channel0
 	.db $01
-	.dw sound40Channel1
+	.dw musIntro2Channel1
 	.db $04
-	.dw sound40Channel4
+	.dw musIntro2Channel4
 	.db $06
-	.dw sound40Channel6
+	.dw musIntro2Channel6
 	.db $ff
-; @addr{530a}
-sound46:
+
+musBlackTowerEntrance:
 	.db $00
-	.dw sound46Channel0
+	.dw musBlackTowerEntranceChannel0
 	.db $01
-	.dw sound46Channel1
+	.dw musBlackTowerEntranceChannel1
 	.db $04
-	.dw sound46Channel4
+	.dw musBlackTowerEntranceChannel4
 	.db $06
-	.dw sound46Channel6
+	.dw musBlackTowerEntranceChannel6
 	.db $ff
-; @addr{5317}
-sound4a:
+
+musPrecredits:
 	.db $00
-	.dw sound4aChannel0
+	.dw musPrecreditsChannel0
 	.db $01
-	.dw sound4aChannel1
+	.dw musPrecreditsChannel1
 	.db $04
-	.dw sound4aChannel4
+	.dw musPrecreditsChannel4
 	.db $06
-	.dw sound4aChannel6
+	.dw musPrecreditsChannel6
 	.db $ff
-; @addr{5324}
-sound06:
+
+musEssence:
 	.db $00
-	.dw sound06Channel0
+	.dw musEssenceChannel0
 	.db $01
-	.dw sound06Channel1
+	.dw musEssenceChannel1
 	.db $04
-	.dw sound06Channel4
+	.dw musEssenceChannel4
 	.db $06
-	.dw sound06Channel6
+	.dw musEssenceChannel6
 	.db $ff
-; @addr{5331}
-sound04:
+
+musOverworldPast:
 	.db $00
-	.dw sound04Channel0
+	.dw musOverworldPastChannel0
 	.db $01
-	.dw sound04Channel1
+	.dw musOverworldPastChannel1
 	.db $04
-	.dw sound04Channel4
+	.dw musOverworldPastChannel4
 	.db $06
-	.dw sound04Channel6
+	.dw musOverworldPastChannel6
 	.db $ff
-; @addr{533e}
-sound08:
+
+musNayru:
 	.db $00
-	.dw sound08Channel0
+	.dw musNayruChannel0
 	.db $01
-	.dw sound08Channel1
+	.dw musNayruChannel1
 	.db $04
-	.dw sound08Channel4
+	.dw musNayruChannel4
 	.db $06
-	.dw sound08Channel6
+	.dw musNayruChannel6
 	.db $ff
-; @addr{534b}
-sound05:
+
+musCrescent:
 	.db $00
-	.dw sound05Channel0
+	.dw musCrescentChannel0
 	.db $01
-	.dw sound05Channel1
+	.dw musCrescentChannel1
 	.db $04
-	.dw sound05Channel4
+	.dw musCrescentChannel4
 	.db $06
-	.dw sound05Channel6
+	.dw musCrescentChannel6
 	.db $ff
-; @addr{5358}
-sound07:
+
+musAmbiPalace:
 	.db $00
-	.dw sound07Channel0
+	.dw musAmbiPalaceChannel0
 	.db $01
-	.dw sound07Channel1
+	.dw musAmbiPalaceChannel1
 	.db $04
-	.dw sound07Channel4
+	.dw musAmbiPalaceChannel4
 	.db $06
-	.dw sound07Channel6
+	.dw musAmbiPalaceChannel6
 	.db $ff
-; @addr{5365}
-sound18:
+
+musMermaidsCave:
 	.db $00
-	.dw sound18Channel0
+	.dw musMermaidsCaveChannel0
 	.db $01
-	.dw sound18Channel1
+	.dw musMermaidsCaveChannel1
 	.db $04
-	.dw sound18Channel4
+	.dw musMermaidsCaveChannel4
 	.db $06
-	.dw sound18Channel6
+	.dw musMermaidsCaveChannel6
 	.db $ff
-; @addr{5372}
-sound16:
+
+musSkullDungeon:
 	.db $00
-	.dw sound16Channel0
+	.dw musSkullDungeonChannel0
 	.db $01
-	.dw sound16Channel1
+	.dw musSkullDungeonChannel1
 	.db $04
-	.dw sound16Channel4
+	.dw musSkullDungeonChannel4
 	.db $06
-	.dw sound16Channel6
+	.dw musSkullDungeonChannel6
 	.db $ff
-; @addr{537f}
-sound26:
+
+musTokayHouse:
 	.db $00
-	.dw sound26Channel0
+	.dw musTokayHouseChannel0
 	.db $01
-	.dw sound26Channel1
+	.dw musTokayHouseChannel1
 	.db $04
-	.dw sound26Channel4
+	.dw musTokayHouseChannel4
 	.db $06
-	.dw sound26Channel6
+	.dw musTokayHouseChannel6
 	.db $ff
-; @addr{538c}
-sound28:
+
+musBlackTower:
 	.db $00
-	.dw sound28Channel0
+	.dw musBlackTowerChannel0
 	.db $01
-	.dw sound28Channel1
+	.dw musBlackTowerChannel1
 	.db $04
-	.dw sound28Channel4
+	.dw musBlackTowerChannel4
 	.db $06
-	.dw sound28Channel6
+	.dw musBlackTowerChannel6
 	.db $ff
-; @addr{5399}
-sound30:
+
+musFairyForest:
 	.db $00
-	.dw sound30Channel0
+	.dw musFairyForestChannel0
 	.db $01
-	.dw sound30Channel1
+	.dw musFairyForestChannel1
 	.db $04
-	.dw sound30Channel4
+	.dw musFairyForestChannel4
 	.db $06
-	.dw sound30Channel6
+	.dw musFairyForestChannel6
 	.db $ff
-; @addr{53a6}
-sound35:
+
+musRalph:
 	.db $00
-	.dw sound35Channel0
+	.dw musRalphChannel0
 	.db $01
-	.dw sound35Channel1
+	.dw musRalphChannel1
 	.db $04
-	.dw sound35Channel4
+	.dw musRalphChannel4
 	.db $06
-	.dw sound35Channel6
+	.dw musRalphChannel6
 	.db $ff
-; @addr{53b3}
-sound0a:
+
+musLynnaCity:
 	.db $00
-	.dw sound0aChannel0
+	.dw musLynnaCityChannel0
 	.db $01
-	.dw sound0aChannel1
+	.dw musLynnaCityChannel1
 	.db $04
-	.dw sound0aChannel4
+	.dw musLynnaCityChannel4
 	.db $06
-	.dw sound0aChannel6
+	.dw musLynnaCityChannel6
 	.db $ff
-; @addr{53c0}
-sound0b:
+
+musLynnaVillage:
 	.db $00
-	.dw sound0bChannel0
+	.dw musLynnaVillageChannel0
 	.db $01
-	.dw sound0bChannel1
+	.dw musLynnaVillageChannel1
 	.db $04
-	.dw sound0bChannel4
+	.dw musLynnaVillageChannel4
 	.db $06
-	.dw sound0bChannel6
+	.dw musLynnaVillageChannel6
 	.db $ff
-; @addr{53cd}
-sound12:
+
+musMakuPath:
 	.db $00
-	.dw sound12Channel0
+	.dw musMakuPathChannel0
 	.db $01
-	.dw sound12Channel1
+	.dw musMakuPathChannel1
 	.db $04
-	.dw sound12Channel4
+	.dw musMakuPathChannel4
 	.db $06
-	.dw sound12Channel6
+	.dw musMakuPathChannel6
 	.db $ff
-; @addr{53da}
-sound13:
+
+musSpiritsGrave:
 	.db $00
-	.dw sound13Channel0
+	.dw musSpiritsGraveChannel0
 	.db $01
-	.dw sound13Channel1
+	.dw musSpiritsGraveChannel1
 	.db $04
-	.dw sound13Channel4
+	.dw musSpiritsGraveChannel4
 	.db $06
-	.dw sound13Channel6
+	.dw musSpiritsGraveChannel6
 	.db $ff
-; @addr{53e7}
-sound14:
+
+musWingDungeon:
 	.db $00
-	.dw sound14Channel0
+	.dw musWingDungeonChannel0
 	.db $01
-	.dw sound14Channel1
+	.dw musWingDungeonChannel1
 	.db $04
-	.dw sound14Channel4
+	.dw musWingDungeonChannel4
 	.db $06
-	.dw sound14Channel6
+	.dw musWingDungeonChannel6
 	.db $ff
-; @addr{53f4}
-sound15:
+
+musMoonlitGrotto:
 	.db $00
-	.dw sound15Channel0
+	.dw musMoonlitGrottoChannel0
 	.db $01
-	.dw sound15Channel1
+	.dw musMoonlitGrottoChannel1
 	.db $04
-	.dw sound15Channel4
+	.dw musMoonlitGrottoChannel4
 	.db $06
-	.dw sound15Channel6
+	.dw musMoonlitGrottoChannel6
 	.db $ff
-; @addr{5401}
-sound17:
+
+musCrownDungeon:
 	.db $00
-	.dw sound17Channel0
+	.dw musCrownDungeonChannel0
 	.db $01
-	.dw sound17Channel1
+	.dw musCrownDungeonChannel1
 	.db $04
-	.dw sound17Channel4
+	.dw musCrownDungeonChannel4
 	.db $06
-	.dw sound17Channel6
+	.dw musCrownDungeonChannel6
 	.db $ff
-; @addr{540e}
-sound19:
+
+musJabuJabusBelly:
 	.db $00
-	.dw sound19Channel0
+	.dw musJabuJabusBellyChannel0
 	.db $01
-	.dw sound19Channel1
+	.dw musJabuJabusBellyChannel1
 	.db $04
-	.dw sound19Channel4
+	.dw musJabuJabusBellyChannel4
 	.db $06
-	.dw sound19Channel6
+	.dw musJabuJabusBellyChannel6
 	.db $ff
-; @addr{541b}
-sound1a:
+
+musAncientTomb:
 	.db $00
-	.dw sound1aChannel0
+	.dw musAncientTombChannel0
 	.db $01
-	.dw sound1aChannel1
+	.dw musAncientTombChannel1
 	.db $04
-	.dw sound1aChannel4
+	.dw musAncientTombChannel4
 	.db $06
-	.dw sound1aChannel6
+	.dw musAncientTombChannel6
 	.db $ff
-; @addr{5428}
-sound22:
+
+musUnderwater:
 	.db $00
-	.dw sound22Channel0
+	.dw musUnderwaterChannel0
 	.db $01
-	.dw sound22Channel1
+	.dw musUnderwaterChannel1
 	.db $04
-	.dw sound22Channel4
+	.dw musUnderwaterChannel4
 	.db $06
-	.dw sound22Channel6
+	.dw musUnderwaterChannel6
 	.db $ff
-; @addr{5435}
-sound24:
+
+musSymmetryPresent:
 	.db $00
-	.dw sound24Channel0
+	.dw musSymmetryPresentChannel0
 	.db $01
-	.dw sound24Channel1
+	.dw musSymmetryPresentChannel1
 	.db $04
-	.dw sound24Channel4
+	.dw musSymmetryPresentChannel4
 	.db $06
-	.dw sound24Channel6
+	.dw musSymmetryPresentChannel6
 	.db $ff
-; @addr{5442}
-sound25:
+
+musSymmetryPast:
 	.db $00
-	.dw sound25Channel0
+	.dw musSymmetryPastChannel0
 	.db $01
-	.dw sound25Channel1
+	.dw musSymmetryPastChannel1
 	.db $04
-	.dw sound25Channel4
+	.dw musSymmetryPastChannel4
 	.db $06
-	.dw sound25Channel6
+	.dw musSymmetryPastChannel6
 	.db $ff
-; GAP $e544f
+
+.ifdef BUILD_VANILLA
+	; Unused data?
 	.db $02
 	.dw $4000
 	.db $03
@@ -722,413 +723,419 @@ sound25:
 	.db $07
 	.dw $4000
 	.db $ff
-; @addr{545c}
-sound4c:
+.endif
+
+sndGetItem:
 	.db $72
-	.dw sound4cChannel2
+	.dw sndGetItemChannel2
 	.db $73
-	.dw sound4cChannel3
+	.dw sndGetItemChannel3
 	.db $75
-	.dw sound4cChannel5
+	.dw sndGetItemChannel5
 	.db $77
-	.dw sound4cChannel7
+	.dw sndGetItemChannel7
 	.db $ff
-; @addr{5469}
-sound4d:
+
+sndSolvePuzzle:
 	.db $b2
-	.dw sound4dChannel2
+	.dw sndSolvePuzzleChannel2
 	.db $ff
-; @addr{546d}
-sound4e:
+
+sndDamageEnemy:
 	.db $02
-	.dw sound4eChannel2
+	.dw sndDamageEnemyChannel2
 	.db $ff
-; @addr{5471}
-sound4f:
+
+sndChargeSword:
 	.db $92
-	.dw sound4fChannel2
+	.dw sndChargeSwordChannel2
 	.db $ff
-; @addr{5475}
-sound50:
+
+sndClink:
 	.db $92
-	.dw sound50Channel2
+	.dw sndClinkChannel2
 	.db $ff
-; @addr{5479}
-sound51:
+
+sndThrow:
 	.db $02
-	.dw sound51Channel2
+	.dw sndThrowChannel2
 	.db $ff
-; @addr{547d}
-sound52:
+
+sndBombLand:
 	.db $02
-	.dw sound52Channel2
+	.dw sndBombLandChannel2
 	.db $ff
-; @addr{5481}
-sound53:
+
+sndJump:
 	.db $62
-	.dw sound53Channel2
+	.dw sndJumpChannel2
 	.db $ff
-; @addr{5485}
-sound54:
+
+sndOpenMenu:
 	.db $02
-	.dw sound54Channel2
+	.dw sndOpenMenuChannel2
 	.db $03
-	.dw sound54Channel3
+	.dw sndOpenMenuChannel3
 	.db $ff
-; @addr{548c}
-sound55:
+
+sndCloseMenu:
 	.db $02
-	.dw sound55Channel2
+	.dw sndCloseMenuChannel2
 	.db $03
-	.dw sound55Channel3
+	.dw sndCloseMenuChannel3
 	.db $ff
-; @addr{5493}
-sound56:
+
+sndSelectItem:
 	.db $02
-	.dw sound56Channel2
+	.dw sndSelectItemChannel2
 	.db $ff
-; @addr{5497}
-sound57:
+
+sndGainHeart:
 	.db $02
-	.dw sound57Channel2
+	.dw sndGainHeartChannel2
 	.db $ff
-; @addr{549b}
-sound58:
+
+sndClink2:
 	.db $32
-	.dw sound58Channel2
+	.dw sndClink2Channel2
 	.db $ff
-; @addr{549f}
-sound59:
+
+sndFallInHole:
 	.db $02
-	.dw sound59Channel2
+	.dw sndFallInHoleChannel2
 	.db $ff
-; @addr{54a3}
-sound5a:
+
+sndError:
 	.db $92
-	.dw sound5aChannel2
+	.dw sndErrorChannel2
 	.db $ff
-; @addr{54a7}
-sound5b:
+
+sndSolvePuzzle2:
 	.db $b2
-	.dw sound5bChannel2
+	.dw sndSolvePuzzle2Channel2
 	.db $b3
-	.dw sound5bChannel3
+	.dw sndSolvePuzzle2Channel3
 	.db $ff
-; @addr{54ae}
-sound5c:
+
+sndEnergyThing:
 	.db $72
-	.dw sound5cChannel2
+	.dw sndEnergyThingChannel2
 	.db $ff
-; @addr{54b2}
-sound5d:
+
+sndSwordBeam:
 	.db $22
-	.dw sound5dChannel2
+	.dw sndSwordBeamChannel2
 	.db $ff
-; @addr{54b6}
-sound5e:
+
+sndGetSeed:
 	.db $a2
-	.dw sound5eChannel2
+	.dw sndGetSeedChannel2
 	.db $ff
-; @addr{54ba}
-sound5f:
+
+sndDamageLink:
 	.db $05
-	.dw sound5fChannel5
+	.dw sndDamageLinkChannel5
 	.db $ff
-; @addr{54be}
-sound60:
+
+sndHeartBeep:
 	.db $52
-	.dw sound60Channel2
+	.dw sndHeartBeepChannel2
 	.db $ff
-; @addr{54c2}
-sound61:
+
+sndRupee:
 	.db $02
-	.dw sound61Channel2
+	.dw sndRupeeChannel2
 	.db $ff
-; @addr{54c6}
-sound62:
+
+sndGohmaSpawnGel:
 	.db $02
-	.dw sound62Channel2
+	.dw sndGohmaSpawnGelChannel2
 	.db $ff
-; @addr{54ca}
-sound63:
+
+sndBossDamage:
 	.db $b2
-	.dw sound63Channel2
+	.dw sndBossDamageChannel2
 	.db $ff
-; @addr{54ce}
-sound64:
+
+sndLinkDead:
 	.db $05
-	.dw sound64Channel5
+	.dw sndLinkDeadChannel5
 	.db $ff
-; @addr{54d2}
-sound65:
+
+sndLinkFall:
 	.db $05
-	.dw sound65Channel5
+	.dw sndLinkFallChannel5
 	.db $ff
-; @addr{54d6}
-sound66:
+
+sndText:
 	.db $02
-	.dw sound66Channel2
+	.dw sndTextChannel2
 	.db $ff
-; @addr{54da}
-sound67:
+
+sndBossDead:
 	.db $b2
-	.dw sound67Channel2
+	.dw sndBossDeadChannel2
 	.db $ff
-; @addr{54de}
-sound68:
+
+sndUnknown3:
 	.db $02
-	.dw sound68Channel2
+	.dw sndUnknown3Channel2
 	.db $ff
-; @addr{54e2}
-sound69:
+
+sndUnknown4:
 	.db $02
-	.dw sound69Channel2
+	.dw sndUnknown4Channel2
 	.db $ff
-; @addr{54e6}
-sound6a:
+
+sndSlash:
 	.db $07
-	.dw sound6aChannel7
+	.dw sndSlashChannel7
 	.db $ff
-; @addr{54ea}
-sound6b:
+
+sndSwordSpin:
 	.db $07
-	.dw sound6bChannel7
+	.dw sndSwordSpinChannel7
 	.db $ff
-; @addr{54ee}
-sound6c:
+
+sndOpenChest:
 	.db $07
-	.dw sound6cChannel7
+	.dw sndOpenChestChannel7
 	.db $ff
-; @addr{54f2}
-sound6d:
+
+sndCutGrass:
 	.db $07
-	.dw sound6dChannel7
+	.dw sndCutGrassChannel7
 	.db $ff
-; @addr{54f6}
-sound6e:
+
+sndEnterCave:
 	.db $07
-	.dw sound6eChannel7
+	.dw sndEnterCaveChannel7
 	.db $ff
-; @addr{54fa}
-sound6f:
+
+sndExplosion:
 	.db $a7
-	.dw sound6fChannel7
+	.dw sndExplosionChannel7
 	.db $ff
-; @addr{54fe}
-sound70:
+
+sndDoorClose:
 	.db $92
-	.dw sound70Channel2
+	.dw sndDoorCloseChannel2
 	.db $97
-	.dw sound70Channel7
+	.dw sndDoorCloseChannel7
 	.db $ff
-; @addr{5505}
-sound71:
+
+sndMoveBlock:
 	.db $07
-	.dw sound71Channel7
+	.dw sndMoveBlockChannel7
 	.db $ff
-; @addr{5509}
-sound72:
+
+sndLightTorch:
 	.db $07
-	.dw sound72Channel7
+	.dw sndLightTorchChannel7
 	.db $ff
-; @addr{550d}
-sound73:
+
+sndKillEnemy:
 	.db $37
-	.dw sound73Channel7
+	.dw sndKillEnemyChannel7
 	.db $ff
-; @addr{5511}
-sound74:
+
+sndSwordSlash:
 	.db $07
-	.dw sound74Channel7
+	.dw sndSwordSlashChannel7
 	.db $ff
-; @addr{5515}
-sound75:
+
+sndUnknown5:
 	.db $07
-	.dw sound75Channel7
+	.dw sndUnknown5Channel7
 	.db $ff
-; @addr{5519}
-sound76:
+
+sndShield:
 	.db $02
-	.dw sound76Channel2
+	.dw sndShieldChannel2
 	.db $07
-	.dw sound76Channel7
+	.dw sndShieldChannel7
 	.db $ff
-; @addr{5520}
-sound77:
+
+sndDropEssence:
 	.db $02
-	.dw sound77Channel2
+	.dw sndDropEssenceChannel2
 	.db $ff
-; @addr{5524}
-sound78:
+
+sndBoomerang:
 	.db $07
-	.dw sound78Channel7
+	.dw sndBoomerangChannel7
 	.db $ff
-; @addr{5528}
-sound79:
+
+sndBigExplosion:
 	.db $97
-	.dw sound79Channel7
+	.dw sndBigExplosionChannel7
 	.db $ff
-; @addr{552c}
-sound7b:
+
+sndMysterySeed:
 	.db $32
-	.dw sound7bChannel2
+	.dw sndMysterySeedChannel2
 	.db $ff
-; @addr{5530}
-sound7c:
+
+sndAquamentusHover:
 	.db $02
-	.dw sound7cChannel2
+	.dw sndAquamentusHoverChannel2
 	.db $ff
-; @addr{5534}
-sound7e:
+
+sndSwitch:
 	.db $92
-	.dw sound7eChannel2
+	.dw sndSwitchChannel2
 	.db $ff
-; @addr{5538}
-sound80:
+
+sndMinecart:
 	.db $07
-	.dw sound80Channel7
+	.dw sndMinecartChannel7
 	.db $ff
-; @addr{553c}
-sound81:
+
+sndStrongPound:
 	.db $02
-	.dw sound81Channel2
+	.dw sndStrongPoundChannel2
 	.db $07
-	.dw sound81Channel7
+	.dw sndStrongPoundChannel7
 	.db $ff
-; @addr{5543}
-sound82:
+
+sndRoller:
 	.db $02
-	.dw sound82Channel2
+	.dw sndRollerChannel2
 	.db $07
-	.dw sound82Channel7
+	.dw sndRollerChannel7
 	.db $ff
-; @addr{554a}
-sound83:
+
+sndMagicPowder:
 	.db $02
-	.dw sound83Channel2
+	.dw sndMagicPowderChannel2
 	.db $ff
-; @addr{554e}
-sound84:
+
+sndMenuMove:
 	.db $02
-	.dw sound84Channel2
+	.dw sndMenuMoveChannel2
 	.db $ff
-; @addr{5552}
-sound85:
+
+sndScentSeed:
 	.db $02
-	.dw sound85Channel2
+	.dw sndScentSeedChannel2
 	.db $ff
-; @addr{5556}
-sound86:
+
+snd86:
 	.db $f2
-	.dw sound86Channel2
+	.dw snd86Channel2
 	.db $ff
-; @addr{555a}
-sound87:
+
+sndSplash:
 	.db $42
-	.dw sound87Channel2
+	.dw sndSplashChannel2
 	.db $ff
-; @addr{555e}
-sound88:
+
+sndLinkSwim:
 	.db $02
-	.dw sound88Channel2
+	.dw sndLinkSwimChannel2
 	.db $ff
-; @addr{5562}
-sound89:
+
+sndText2:
 	.db $42
-	.dw sound89Channel2
+	.dw sndText2Channel2
 	.db $ff
-; @addr{5566}
-sound8a:
+
+sndPieceOfPower:
 	.db $02
-	.dw sound8aChannel2
+	.dw sndPieceOfPowerChannel2
 	.db $ff
-; @addr{556a}
-sound8b:
+
+sndFilledHeartContainer:
 	.db $a2
-	.dw sound8bChannel2
+	.dw sndFilledHeartContainerChannel2
 	.db $ff
-; @addr{556e}
-sound8c:
+
+sndUnknown7:
 	.db $02
-	.dw sound8cChannel2
+	.dw sndUnknown7Channel2
 	.db $ff
-; @addr{5572}
-sound8d:
+
+sndTeleport:
 	.db $a2
-	.dw sound8dChannel2
+	.dw sndTeleportChannel2
 	.db $ff
-; @addr{5576}
-sound8f:
+
+sndEnemyJump:
 	.db $02
-	.dw sound8fChannel2
+	.dw sndEnemyJumpChannel2
 	.db $ff
-; @addr{557a}
-sound90:
+
+sndGaleSeed:
 	.db $02
-	.dw sound90Channel2
+	.dw sndGaleSeedChannel2
 	.db $ff
-; @addr{557e}
-sound91:
+
+sndFairyCutscene:
 	.db $02
-	.dw sound91Channel2
+	.dw sndFairyCutsceneChannel2
 	.db $ff
-; GAP $e5582
+
+.ifdef BUILD_VANILLA
+	; Unused data?
 	.db $02
 	.dw $5a00
 	.db $07
 	.dw $5a00
 	.db $ff
-; @addr{5589}
-sound93:
+.endif
+
+snd93:
 	.db $02
-	.dw sound93Channel2
+	.dw snd93Channel2
 	.db $ff
-; @addr{558d}
-sound94:
+
+snd94:
 	.db $02
-	.dw sound94Channel2
+	.dw snd94Channel2
 	.db $ff
-; @addr{5591}
-sound95:
+
+sndWarpStart:
 	.db $b2
-	.dw sound95Channel2
+	.dw sndWarpStartChannel2
 	.db $ff
-; @addr{5595}
-sound96:
+
+sndGhost:
 	.db $02
-	.dw sound96Channel2
+	.dw sndGhostChannel2
 	.db $ff
-; @addr{5599}
-sound97:
+
+snd97:
 	.db $02
-	.dw sound97Channel2
+	.dw snd97Channel2
 	.db $ff
-; @addr{559d}
-sound98:
+
+sndPoof:
 	.db $02
-	.dw sound98Channel2
+	.dw sndPoofChannel2
 	.db $ff
-; @addr{55a1}
-sound99:
+
+sndBaseball:
 	.db $02
-	.dw sound99Channel2
+	.dw sndBaseballChannel2
 	.db $ff
-; @addr{55a5}
-sound9a:
+
+sndBecomeBaby:
 	.db $a2
-	.dw sound9aChannel2
+	.dw sndBecomeBabyChannel2
 	.db $ff
-; @addr{55a9}
-sound9b:
+
+sndJingle:
 	.db $b2
-	.dw sound9bChannel2
+	.dw sndJingleChannel2
 	.db $ff
-; @addr{55ad}
-sound9c:
+
+sndPickup:
 	.db $02
-	.dw sound9cChannel2
+	.dw sndPickupChannel2
 	.db $ff
-; GAP $e55b1
+
+.ifdef BUILD_VANILLA
+	; Unused data?
 	.db $f3
 	.dw $5a00
 	.db $f2
@@ -1156,425 +1163,394 @@ sound9c:
 	.db $f7
 	.dw $5a00
 	.db $ff
-; @addr{55d8}
-sounda0:
+.endif
+
+sndChicken:
 	.db $02
-	.dw sounda0Channel2
+	.dw sndChickenChannel2
 	.db $ff
-; @addr{55dc}
-sounda1:
+
+sndMonkey:
 	.db $02
-	.dw sounda1Channel2
+	.dw sndMonkeyChannel2
 	.db $07
-	.dw sounda1Channel7
+	.dw sndMonkeyChannel7
 	.db $ff
-; @addr{55e3}
-sounda2:
+
+sndCompass:
 	.db $b2
-	.dw sounda2Channel2
+	.dw sndCompassChannel2
 	.db $ff
-; @addr{55e7}
-sounda3:
+
+sndLand:
 	.db $07
-	.dw sounda3Channel7
+	.dw sndLandChannel7
 	.db $ff
-; @addr{55eb}
-sounda4:
+
+sndBeam:
 	.db $a2
-	.dw sounda4Channel2
+	.dw sndBeamChannel2
 	.db $a7
-	.dw sounda4Channel7
+	.dw sndBeamChannel7
 	.db $ff
-; @addr{55f2}
-sounda5:
+
+sndBreakRock:
 	.db $07
-	.dw sounda5Channel7
+	.dw sndBreakRockChannel7
 	.db $ff
-; @addr{55f6}
-sounda6:
+
+sndStrike:
 	.db $07
-	.dw sounda6Channel7
+	.dw sndStrikeChannel7
 	.db $ff
-; @addr{55fa}
-sounda7:
+
+sndSwitchHook:
 	.db $02
-	.dw sounda7Channel2
+	.dw sndSwitchHookChannel2
 	.db $ff
-; @addr{55fe}
-sounda8:
+
+sndVeranFairyAttack:
 	.db $02
-	.dw sounda8Channel2
+	.dw sndVeranFairyAttackChannel2
 	.db $07
-	.dw sounda8Channel7
+	.dw sndVeranFairyAttackChannel7
 	.db $ff
-; @addr{5605}
-sounda9:
+
+sndDig:
 	.db $07
-	.dw sounda9Channel7
+	.dw sndDigChannel7
 	.db $ff
-; @addr{5609}
-soundaa:
+
+sndWave:
 	.db $07
-	.dw soundaaChannel7
+	.dw sndWaveChannel7
 	.db $ff
-; @addr{560d}
-soundab:
+
+sndSwordObtained:
 	.db $02
-	.dw soundabChannel2
+	.dw sndSwordObtainedChannel2
 	.db $07
-	.dw soundabChannel7
+	.dw sndSwordObtainedChannel7
 	.db $ff
-; @addr{5614}
-soundac:
+
+sndShock:
 	.db $02
-	.dw soundacChannel2
+	.dw sndShockChannel2
 	.db $07
-	.dw soundacChannel7
+	.dw sndShockChannel7
 	.db $ff
-; @addr{561b}
-soundb0:
+
+sndOpening:
 	.db $02
-	.dw soundb0Channel2
+	.dw sndOpeningChannel2
 	.db $07
-	.dw soundb0Channel7
+	.dw sndOpeningChannel7
 	.db $ff
-; @addr{5622}
-soundb1:
+
+sndBigSword:
 	.db $17
-	.dw soundb1Channel7
+	.dw sndBigSwordChannel7
 	.db $ff
-; @addr{5626}
-soundb2:
+
+sndMakuDisappear:
 	.db $02
-	.dw soundb2Channel2
+	.dw sndMakuDisappearChannel2
 	.db $07
-	.dw soundb2Channel7
+	.dw sndMakuDisappearChannel7
 	.db $ff
-; @addr{562d}
-soundb3:
+
+sndRumble:
 	.db $02
-	.dw soundb3Channel2
+	.dw sndRumbleChannel2
 	.db $07
-	.dw soundb3Channel7
+	.dw sndRumbleChannel7
 	.db $ff
-; @addr{5634}
-soundb4:
+
+sndFadeout:
 	.db $07
-	.dw soundb4Channel7
+	.dw sndFadeoutChannel7
 	.db $ff
-; @addr{5638}
-soundb7:
+
+sndb7:
 	.db $02
-	.dw soundb7Channel2
+	.dw sndb7Channel2
 	.db $07
-	.dw soundb7Channel7
+	.dw sndb7Channel7
 	.db $ff
-; @addr{563f}
-soundb8:
+
+sndRumble2:
 	.db $02
-	.dw soundb8Channel2
+	.dw sndRumble2Channel2
 	.db $07
-	.dw soundb8Channel7
+	.dw sndRumble2Channel7
 	.db $ff
-; @addr{5646}
-soundb9:
+
+sndEndless:
 	.db $c7
-	.dw soundb9Channel7
+	.dw sndEndlessChannel7
 	.db $ff
-; @addr{564a}
-soundba:
+
+sndBeam1:
 	.db $07
-	.dw soundbaChannel7
+	.dw sndBeam1Channel7
 	.db $ff
-; @addr{564e}
-soundbb:
+
+sndBeam2:
 	.db $07
-	.dw soundbbChannel7
+	.dw sndBeam2Channel7
 	.db $ff
-; @addr{5652}
-soundbc:
+
+sndBigExplosion2:
 	.db $87
-	.dw soundbcChannel7
+	.dw sndBigExplosion2Channel7
 	.db $ff
-; @addr{5656}
-soundbd:
+
+sndbd:
 	.db $02
-	.dw soundbdChannel2
+	.dw sndbdChannel2
 	.db $ff
-; @addr{565a}
-soundbe:
+
+sndVeranProjectile:
 	.db $02
-	.dw soundbeChannel2
+	.dw sndVeranProjectileChannel2
 	.db $ff
-; @addr{565e}
-soundbf:
+
+sndBlueStalfosCharge:
 	.db $02
-	.dw soundbfChannel2
+	.dw sndBlueStalfosChargeChannel2
 	.db $ff
-; @addr{5662}
-soundc0:
+
+sndTransform:
 	.db $02
-	.dw soundc0Channel2
+	.dw sndTransformChannel2
 	.db $ff
-; @addr{5666}
-soundc1:
+
+sndRestore:
 	.db $b2
-	.dw soundc1Channel2
+	.dw sndRestoreChannel2
 	.db $ff
-; @addr{566a}
-soundc2:
+
+sndFloodgates:
 	.db $07
-	.dw soundc2Channel7
+	.dw sndFloodgatesChannel7
 	.db $ff
-; @addr{566e}
-soundc3:
+
+sndRicky:
 	.db $05
-	.dw soundc3Channel5
+	.dw sndRickyChannel5
 	.db $ff
-; @addr{5672}
-soundc4:
+
+sndDimitri:
 	.db $05
-	.dw soundc4Channel5
+	.dw sndDimitriChannel5
 	.db $ff
-; @addr{5676}
-soundc5:
+
+sndMoosh:
 	.db $05
-	.dw soundc5Channel5
+	.dw sndMooshChannel5
 	.db $ff
-; @addr{567a}
-soundc6:
+
+sndDekuScrub:
 	.db $a2
-	.dw soundc6Channel2
+	.dw sndDekuScrubChannel2
 	.db $ff
-; @addr{567e}
-soundc7:
+
+sndGoron:
 	.db $a2
-	.dw soundc7Channel2
+	.dw sndGoronChannel2
 	.db $ff
-; @addr{5682}
-soundc8:
+
+sndDing:
 	.db $02
-	.dw soundc8Channel2
+	.dw sndDingChannel2
 	.db $07
-	.dw soundc8Channel7
+	.dw sndDingChannel7
 	.db $ff
-; @addr{5689}
-soundc9:
+
+sndCircling:
 	.db $02
-	.dw soundc9Channel2
+	.dw sndCirclingChannel2
 	.db $ff
-; @addr{568d}
-soundca:
+
+sndca:
 	.db $02
-	.dw soundcaChannel2
+	.dw sndcaChannel2
 	.db $07
-	.dw soundcaChannel7
+	.dw sndcaChannel7
 	.db $ff
-; @addr{5694}
-soundcb:
+
+sndSeedShooter:
 	.db $02
-	.dw soundcbChannel2
+	.dw sndSeedShooterChannel2
 	.db $07
-	.dw soundcbChannel7
+	.dw sndSeedShooterChannel7
 	.db $ff
-; @addr{569b}
-soundcc:
+
+sndWhistle:
 	.db $a2
-	.dw soundccChannel2
+	.dw sndWhistleChannel2
 	.db $ff
-; @addr{569f}
-soundcd:
+
+sndGoronDanceB:
 	.db $02
-	.dw soundcdChannel2
+	.dw sndGoronDanceBChannel2
 	.db $03
-	.dw soundcdChannel3
+	.dw sndGoronDanceBChannel3
 	.db $07
-	.dw soundcdChannel7
+	.dw sndGoronDanceBChannel7
 	.db $ff
-; @addr{56a9}
-soundce:
+
+sndMakuTreePast:
 	.db $02
-	.dw soundceChannel2
+	.dw sndMakuTreePastChannel2
 	.db $05
-	.dw soundceChannel5
+	.dw sndMakuTreePastChannel5
 	.db $07
-	.dw soundceChannel7
+	.dw sndMakuTreePastChannel7
 	.db $ff
-; @addr{56b3}
-soundcf:
+
+sndcf:
 	.db $02
-	.dw soundcfChannel2
+	.dw sndcfChannel2
 	.db $ff
-; @addr{56b7}
-soundd0:
+
+sndPirateBell:
 	.db $02
-	.dw soundd0Channel2
+	.dw sndPirateBellChannel2
 	.db $07
-	.dw soundd0Channel7
+	.dw sndPirateBellChannel7
 	.db $ff
-; @addr{56be}
-soundd2:
+
+sndLightning:
 	.db $87
-	.dw soundd2Channel7
+	.dw sndLightningChannel7
 	.db $ff
-; @addr{56c2}
-soundd3:
+
+sndWind:
 	.db $07
-	.dw soundd3Channel7
+	.dw sndWindChannel7
 	.db $ff
-; @addr{56c6}
-soundd5:
+
+sndd5:
 	.db $02
-	.dw soundd5Channel2
+	.dw sndd5Channel2
 	.db $ff
-; @addr{56ca}
-sound92:
+
+snd92:
 	.db $02
-	.dw sound92Channel2
+	.dw snd92Channel2
 	.db $ff
-; @addr{56ce}
-sound9d:
+
+sndFluteRicky:
 	.db $f3
-	.dw sound9dChannel3
+	.dw sndFluteRickyChannel3
 	.db $f2
-	.dw sound9dChannel2
+	.dw sndFluteRickyChannel2
 	.db $f5
-	.dw sound9dChannel5
+	.dw sndFluteRickyChannel5
 	.db $f7
-	.dw sound9dChannel7
+	.dw sndFluteRickyChannel7
 	.db $ff
-; @addr{56db}
-sound9e:
+
+sndFluteDimitri:
 	.db $f3
-	.dw sound9eChannel3
+	.dw sndFluteDimitriChannel3
 	.db $f2
-	.dw sound9eChannel2
+	.dw sndFluteDimitriChannel2
 	.db $f5
-	.dw sound9eChannel5
+	.dw sndFluteDimitriChannel5
 	.db $f7
-	.dw sound9eChannel7
+	.dw sndFluteDimitriChannel7
 	.db $ff
-; @addr{56e8}
-sound9f:
+
+sndFluteMoosh:
 	.db $f3
-	.dw sound9fChannel3
+	.dw sndFluteMooshChannel3
 	.db $f2
-	.dw sound9fChannel2
+	.dw sndFluteMooshChannel2
 	.db $f5
-	.dw sound9fChannel5
+	.dw sndFluteMooshChannel5
 	.db $f7
-	.dw sound9fChannel7
+	.dw sndFluteMooshChannel7
 	.db $ff
-; @addr{56f5}
-soundad:
+
+sndEchoes:
 	.db $f2
-	.dw soundadChannel2
+	.dw sndEchoesChannel2
 	.db $f3
-	.dw soundadChannel3
+	.dw sndEchoesChannel3
 	.db $f5
-	.dw soundadChannel5
+	.dw sndEchoesChannel5
 	.db $f7
-	.dw soundadChannel7
+	.dw sndEchoesChannel7
 	.db $ff
-; @addr{5702}
-soundae:
+
+sndCurrents:
 	.db $f2
-	.dw soundaeChannel2
+	.dw sndCurrentsChannel2
 	.db $f3
-	.dw soundaeChannel3
+	.dw sndCurrentsChannel3
 	.db $f5
-	.dw soundaeChannel5
+	.dw sndCurrentsChannel5
 	.db $f7
-	.dw soundaeChannel7
+	.dw sndCurrentsChannel7
 	.db $ff
-; @addr{570f}
-soundaf:
+
+sndAges:
 	.db $f2
-	.dw soundafChannel2
+	.dw sndAgesChannel2
 	.db $f3
-	.dw soundafChannel3
+	.dw sndAgesChannel3
 	.db $f5
-	.dw soundafChannel5
+	.dw sndAgesChannel5
 	.db $f7
-	.dw soundafChannel7
+	.dw sndAgesChannel7
 	.db $ff
-; @addr{571c}
-sound7a:
+
+snd7a:
 	.db $02
-	.dw sound7aChannel2
+	.dw snd7aChannel2
 	.db $ff
-; @addr{5720}
-sound8e:
+
+sndSwitch2:
 	.db $a2
-	.dw sound8eChannel2
+	.dw sndSwitch2Channel2
 	.db $ff
-; @addr{5724}
-sound7d:
+
+sndOpenGate:
 	.db $a2
-	.dw sound7dChannel2
+	.dw sndOpenGateChannel2
 	.db $a7
-	.dw sound7dChannel7
+	.dw sndOpenGateChannel7
 	.db $ff
-; @addr{572b}
-sound7f:
+
+sndMoveBlock2:
 	.db $92
-	.dw sound7fChannel2
+	.dw sndMoveBlock2Channel2
 	.db $ff
-; @addr{572f}
-soundb5:
+
+sndTingle:
 	.db $a2
-	.dw soundb5Channel2
+	.dw sndTingleChannel2
 	.db $ff
-; @addr{5733}
-soundb6:
+
+sndTokay:
 	.db $a2
-	.dw soundb6Channel2
+	.dw sndTokayChannel2
 	.db $ff
-; @addr{5737}
-soundd1:
+
+sndTimewarpInitiated:
 	.db $a2
-	.dw soundd1Channel2
+	.dw sndTimewarpInitiatedChannel2
 	.db $a3
-	.dw soundd1Channel3
+	.dw sndTimewarpInitiatedChannel3
 	.db $a5
-	.dw soundd1Channel5
+	.dw sndTimewarpInitiatedChannel5
 	.db $a7
-	.dw soundd1Channel7
+	.dw sndTimewarpInitiatedChannel7
 	.db $ff
-; @addr{5744}
-soundd4:
+
+sndTimewarpCompleted:
 	.db $a2
-	.dw soundd4Channel2
+	.dw sndTimewarpCompletedChannel2
 	.db $ff
-; GAP $e5748
-
-.ifdef BUILD_VANILLA
-.ORGA $59e5
-.endif
-
-; @addr{59e5}
-soundde:
-	.db $00
-	.dw sounddeChannel0
-	.db $01
-	.dw sounddeChannel1
-	.db $04
-	.dw sounddeChannel4
-	.db $06
-	.dw sounddeChannel6
-	.db $ff
-; @addr{59f2}
-soundUnref:
-	.db $02
-	.dw $59ff
-	.db $03
-	.dw $59ff
-	.db $05
-	.dw $59ff
-	.db $07
-	.dw $59ff
-	.db $ff
-
-.ifdef BUILD_VANILLA
-.ORGA $5748
-.endif

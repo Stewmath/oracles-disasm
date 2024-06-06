@@ -1,3 +1,5 @@
+.include "constants/version.s"
+
 .include "constants/breakableTileSources.s"
 .include "constants/directions.s"
 .include "constants/collisionEffects.s"
@@ -36,6 +38,7 @@
 .include "constants/tradeitems.s"
 .include "constants/transitions.s"
 .include "constants/treasure.s"
+.include "constants/treasureSpawnModes.s"
 .include "constants/treeGfxHeaders.s"
 .include "constants/uncmpGfxHeaders.s"
 .include "constants/uniqueGfxHeaders.s"

@@ -1,6 +1,6 @@
 ;;
 ; ITEMID_FEATHER ($17)
-_parentItemCode_feather:
+parentItemCode_feather:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -10,7 +10,7 @@ _parentItemCode_feather:
 @state0:
 
 .ifdef ROM_AGES
-	call _isLinkUnderwater
+	call isLinkUnderwater
 	jr nz,@deleteParent
 
 	; Can't use the feather while using the switch hook
@@ -29,7 +29,7 @@ _parentItemCode_feather:
 	or a
 	jr nz,@deleteParent
 
-	call _isLinkInHole
+	call isLinkInHole
 	jr c,@deleteParent
 
 	ld hl,wLinkSwimmingState
@@ -81,18 +81,18 @@ _parentItemCode_feather:
 	ret
 
 @deleteParent:
-	jp _clearParentItem
+	jp clearParentItem
 
 @state1:
 
 .ifdef ROM_AGES
-	jp _clearParentItem
+	jp clearParentItem
 .else
 	ld a,(wLinkInAir)
 	bit 5,a
 	jr nz,@deleteParent
 
-	call _parentItemCheckButtonPressed
+	call parentItemCheckButtonPressed
 	jr z,@deleteParent
 
 	ld hl,w1Link.speedZ
@@ -121,5 +121,5 @@ _parentItemCode_feather:
 	set 5,(hl)
 	ld a,SND_THROW
 	call playSound
-	jp _clearParentItem
+	jp clearParentItem
 .endif

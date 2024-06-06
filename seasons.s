@@ -1,8 +1,8 @@
 ; Main file for Oracle of Seasons, US version
 
+.include "include/constants.s"
 .include "include/rominfo.s"
 .include "include/emptyfill.s"
-.include "include/constants.s"
 .include "include/structs.s"
 .include "include/wram.s"
 .include "include/hram.s"
@@ -15,7 +15,7 @@
 .include "include/gfxDataMacros.s"
 .include "include/musicMacros.s"
 
-.include "build/textDefines.s"
+.include {"{BUILD_DIR}/textDefines.s"}
 
 
 .BANK $00 SLOT 0
@@ -44,7 +44,7 @@
 	; Note: There appears to be exactly one function call (in seasons) that performs a call from
 	; this section to code in the "bank3.s" include above. For this reason we can't make this
 	; section "superfree".
-	 m_section_free "Bank_3_Cutscenes" NAMESPACE "bank3Cutscenes"
+	 m_section_free Bank_3_Cutscenes NAMESPACE bank3Cutscenes
 		.include "code/bank3Cutscenes.s"
 		.include "code/seasons/cutscenes/endgameCutscenes.s"
 		.include "code/seasons/cutscenes/pirateShipDeparting.s"
@@ -59,62 +59,62 @@
 
 	.include "code/bank4.s"
 
-	 m_section_superfree "RoomPacksAndMusicAssignments" NAMESPACE "bank4Data1"
+	 m_section_superfree RoomPacksAndMusicAssignments NAMESPACE bank4Data1
 		; These 2 includes must be in the same bank
-		.include "build/data/roomPacks.s"
-		.include "build/data/musicAssignments.s"
+		.include {"{GAME_DATA_DIR}/roomPacks.s"}
+		.include {"{GAME_DATA_DIR}/musicAssignments.s"}
 	.ends
 
-	 m_section_superfree "RoomLayouts" NAMESPACE "roomLayouts"
-		.include "build/data/roomLayoutGroupTable.s"
+	 m_section_superfree RoomLayouts NAMESPACE roomLayouts
+		.include {"{GAME_DATA_DIR}/roomLayoutGroupTable.s"}
 	.ends
 
 	; Must be in the same bank as "Tileset_Loading_2".
-	 m_section_free "Tileset_Loading_1" NAMESPACE "tilesets"
-		.include "build/data/tilesets.s"
-		.include "build/data/tilesetAssignments.s"
+	 m_section_free Tileset_Loading_1 NAMESPACE tilesets
+		.include {"{GAME_DATA_DIR}/tilesets.s"}
+		.include {"{GAME_DATA_DIR}/tilesetAssignments.s"}
 	.ends
 
-	 m_section_free "animationAndUniqueGfxData" NAMESPACE "animationAndUniqueGfxData"
+	 m_section_free animationAndUniqueGfxData NAMESPACE animationAndUniqueGfxData
 		.include "code/animations.s"
 
-		.include "build/data/uniqueGfxHeaders.s"
-		.include "build/data/uniqueGfxHeaderPointers.s"
-		.include "build/data/animationGroups.s"
-		.include "build/data/animationGfxHeaders.s"
-		.include "build/data/animationData.s"
+		.include {"{GAME_DATA_DIR}/uniqueGfxHeaders.s"}
+		.include {"{GAME_DATA_DIR}/uniqueGfxHeaderPointers.s"}
+		.include {"{GAME_DATA_DIR}/animationGroups.s"}
+		.include {"{GAME_DATA_DIR}/animationGfxHeaders.s"}
+		.include {"{GAME_DATA_DIR}/animationData.s"}
 	.ends
 
-	 m_section_free "roomTileChanges" NAMESPACE "roomTileChanges"
+	 m_section_free roomTileChanges NAMESPACE roomTileChanges
 		.include "code/seasons/tileSubstitutions.s"
-		.include "build/data/singleTileChanges.s"
+		.include {"{GAME_DATA_DIR}/singleTileChanges.s"}
 		.include "code/seasons/roomSpecificTileChanges.s"
 	.ends
 
 	; The 2 sections to follow must be in the same bank. (Namespaces only differ because the
 	; roomGfxChanges file is in a different bank in Ages.)
-	 m_section_free "roomGfxChanges" NAMESPACE "roomGfxChanges"
+	 m_section_free roomGfxChanges NAMESPACE roomGfxChanges
 		.include "code/seasons/roomGfxChanges.s"
 	.ends
-	 m_section_free "Tileset_Loading_2" NAMESPACE "tilesets"
+	 m_section_free Tileset_Loading_2 NAMESPACE tilesets
 		.include "code/loadTilesToRam.s"
 		.include "code/seasons/loadTilesetData.s"
 	.ends
 
 	; Must be in same bank as "code/bank4.s"
-	 m_section_free "Warp_Data" NAMESPACE "bank4"
-		.include "build/data/warpData.s"
+	 m_section_free Warp_Data NAMESPACE bank4
+		.include {"{GAME_DATA_DIR}/warpData.s"}
 	.ends
 
 
 .BANK $05 SLOT 1
 .ORG 0
 
-	 m_section_free "Bank_5" NAMESPACE bank5
+	 m_section_free Bank_5 NAMESPACE bank5
 		.include "code/bank5.s"
 
-		.include "build/data/tileTypeMappings.s"
-		.include "build/data/cliffTilesTable.s"
+		.include {"{GAME_DATA_DIR}/tileTypeMappings.s"}
+		.include {"{GAME_DATA_DIR}/cliffTilesTable.s"}
 
 		.include "code/seasons/subrosiaDanceLink.s"
 	.ends
@@ -122,7 +122,7 @@
 .BANK $06 SLOT 1
 .ORG 0
 
- m_section_free "Bank_6" NAMESPACE bank6
+ m_section_free Bank_6 NAMESPACE bank6
 
 	.include "code/interactableTiles.s"
 	.include "code/specialObjectAnimationsAndDamage.s"
@@ -144,16 +144,15 @@
 	.include "code/items/magnetGloveParent.s"
 
 	.include "code/items/parentItemCommon.s"
-	.include "build/data/itemUsageTables.s"
+	.include {"{GAME_DATA_DIR}/itemUsageTables.s"}
 
 	.include "object_code/common/specialObjects/minecart.s"
-	.include "object_code/common/specialObjects/raft.s"
 
-	.include "build/data/specialObjectAnimationData.s"
+	.include {"{GAME_DATA_DIR}/specialObjectAnimationData.s"}
 	.include "code/seasons/cutscenes/companionCutscenes.s"
 	.include "code/seasons/cutscenes/linkCutscenes.s"
-	.include "build/data/signText.s"
-	.include "build/data/breakableTileCollisionTable.s"
+	.include {"{GAME_DATA_DIR}/signText.s"}
+	.include {"{GAME_DATA_DIR}/breakableTileCollisionTable.s"}
 
 .ends
 
@@ -161,33 +160,33 @@
 .BANK $07 SLOT 1
 .ORG 0
 
-	 m_section_superfree "File_Management" namespace "fileManagement"
+	 m_section_superfree File_Management namespace fileManagement
 		.include "code/fileManagement.s"
 	.ends
 
 	 ; This section can't be superfree, since it must be in the same bank as section
 	 ; "Bank_7_Data".
-	 m_section_free "Enemy_Part_Collisions" namespace "bank7"
+	 m_section_free Enemy_Part_Collisions namespace bank7
 		.include "code/collisionEffects.s"
 	.ends
 
-	 m_section_superfree "Item_Code" namespace "itemCode"
+	 m_section_superfree Item_Code namespace itemCode
 		.include "code/updateItems.s"
 
-		.include "build/data/itemConveyorTilesTable.s"
-		.include "build/data/itemPassableCliffTilesTable.s"
-		.include "build/data/itemPassableTilesTable.s"
+		.include {"{GAME_DATA_DIR}/itemConveyorTilesTable.s"}
+		.include {"{GAME_DATA_DIR}/itemPassableCliffTilesTable.s"}
+		.include {"{GAME_DATA_DIR}/itemPassableTilesTable.s"}
 		.include "code/itemCodes.s"
-		.include "build/data/itemAttributes.s"
+		.include {"{GAME_DATA_DIR}/itemAttributes.s"}
 		.include "data/itemAnimations.s"
 	.ends
 
 	 ; This section can't be superfree, since it must be in the same bank as section
 	 ; "Enemy_Part_Collisions".
-	 m_section_free "Bank_7_Data" namespace "bank7"
-		.include "build/data/enemyActiveCollisions.s"
-		.include "build/data/partActiveCollisions.s"
-		.include "build/data/objectCollisionTable.s"
+	 m_section_free Bank_7_Data namespace bank7
+		.include {"{GAME_DATA_DIR}/enemyActiveCollisions.s"}
+		.include {"{GAME_DATA_DIR}/partActiveCollisions.s"}
+		.include {"{GAME_DATA_DIR}/objectCollisionTable.s"}
 	.ends
 
 
@@ -218,7 +217,7 @@
 .BANK $0b SLOT 1
 .ORG 0
 
-	 m_section_free "Scripts" namespace "mainScripts"
+	 m_section_free Scripts namespace mainScripts
 		.include "code/scripting.s"
 		.include "scripts/seasons/scripts.s"
 	.ends
@@ -227,36 +226,39 @@
 .BANK $0c SLOT 1
 .ORG 0
 
-.section Enemy_Code_Bank0c
+m_section_free Enemy_Code_Bank0c NAMESPACE bank0c
 
 	.include "code/enemyCommon.s"
 	.include "object_code/common/enemyCode/group1.s"
 	.include "object_code/seasons/enemyCode/bank0c.s"
-	.include "build/data/enemyAnimations.s"
+.ends
 
+m_section_superfree Enemy_Animations
+	.include {"{GAME_DATA_DIR}/enemyAnimations.s"}
 .ends
 
 .BANK $0d SLOT 1
 .ORG 0
 
-.section Enemy_Code_Bank0d
+m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
 	.include "code/enemyCommon.s"
 	.include "object_code/common/enemyCode/group2.s"
 
-        .include "build/data/orbMovementScript.s"
+        .include {"{GAME_DATA_DIR}/orbMovementScript.s"}
 
 	.include "object_code/seasons/enemyCode/bank0d.s"
 
 	.include "code/objectMovementScript.s"
-	.include "build/data/movingSidescrollPlatform.s"
+	.include {"{GAME_DATA_DIR}/movingSidescrollPlatform.s"}
 
 .ends
+
 
 .BANK $0e SLOT 1
 .ORG 0
 
-.section Enemy_Code_Bank0e
+m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
@@ -267,7 +269,7 @@
 .BANK $0f SLOT 1
 .ORG 0
 
-.section Enemy_Code_Bank0f
+m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
@@ -292,7 +294,7 @@
 	.define PART_BANK $10
 	.export PART_BANK
 
- m_section_free "Part_Code" NAMESPACE "partCode"
+ m_section_free Part_Code NAMESPACE partCode
 
 	.include "code/partCommon.s"
 	.include "object_code/common/partCode.s" ; Note: closes and opens a new section (seasons only)
@@ -307,7 +309,7 @@
 
 	.include "code/objectLoading.s"
 
- m_section_free "Objects_2" namespace "objectData"
+ m_section_free Objects_2 namespace objectData
 	.include "objects/seasons/pointers.s"
 	.include "objects/seasons/mainData.s"
 	.include "objects/seasons/extraData3.s"
@@ -320,33 +322,33 @@
 	.define BASE_OAM_DATA_BANK $12
 	.export BASE_OAM_DATA_BANK
 
-	.include "build/data/specialObjectOamData.s"
+	.include {"{GAME_DATA_DIR}/specialObjectOamData.s"}
 	.include "data/itemOamData.s"
-	.include "build/data/enemyOamData.s"
+	.include {"{GAME_DATA_DIR}/enemyOamData.s"}
 
 
 .BANK $13 SLOT 1
 .ORG 0
 
- m_section_superfree "Terrain_Effects" NAMESPACE "terrainEffects"
+ m_section_superfree Terrain_Effects NAMESPACE terrainEffects
 	.include "data/terrainEffects.s"
 .ends
 
-	.include "build/data/interactionOamData.s"
-	.include "build/data/partOamData.s"
+	.include {"{GAME_DATA_DIR}/interactionOamData.s"}
+	.include {"{GAME_DATA_DIR}/partOamData.s"}
 
 
 .BANK $14 SLOT 1
 .ORG 0
 
-	.include "build/data/data_4556.s"
+	.include {"{GAME_DATA_DIR}/data_4556.s"}
 
 	; TODO: "SIMPLE_SCRIPT_BANK" define should be tied to this section somehow
-	 m_section_free "Scripts2" NAMESPACE scripts2
+	 m_section_free Scripts2 NAMESPACE scripts2
 		.include "scripts/seasons/scripts2.s"
 	.ends
 
-	.include "build/data/interactionAnimations.s"
+	.include {"{GAME_DATA_DIR}/interactionAnimations.s"}
 
 
 .BANK $15 SLOT 1
@@ -354,9 +356,7 @@
 
 	.include "code/serialFunctions.s"
 
-	 m_section_free "Bank_15" NAMESPACE scriptHelp
-		.include "scripts/common/scriptHelper.s"
-	.ends
+	.include "scripts/common/scriptHelper.s"
 
 	.include "object_code/common/interactionCode/group7.s"
 	.include "object_code/common/interactionCode/group8.s"
@@ -407,26 +407,25 @@ oamData_15_4e0c:
 
 
 	.include "code/staticObjects.s"
-	.include "build/data/staticDungeonObjects.s"
-	.include "build/data/chestData.s"
+	.include {"{GAME_DATA_DIR}/staticDungeonObjects.s"}
+	.include {"{GAME_DATA_DIR}/chestData.s"}
+	.include {"{GAME_DATA_DIR}/treasureObjectData.s"}
 
-	.include "build/data/treasureObjectData.s"
-
-	 m_section_free "Bank_15_2" NAMESPACE scriptHelp
+	m_section_free Bank_15_3 NAMESPACE scriptHelp
 		.include "scripts/seasons/scriptHelper.s"
 	.ends
 
 	.include "object_code/seasons/interactionCode/bank15.s"
 
-	.include "build/data/partAnimations.s"
+	.include {"{GAME_DATA_DIR}/partAnimations.s"}
 
 
 .BANK $16 SLOT 1
 .ORG 0
 
-	.include "build/data/paletteData.s"
-	.include "build/data/tilesetCollisions.s"
-	.include "build/data/smallRoomLayoutTables.s"
+	.include {"{GAME_DATA_DIR}/paletteData.s"}
+	.include {"{GAME_DATA_DIR}/tilesetCollisions.s"}
+	.include {"{GAME_DATA_DIR}/smallRoomLayoutTables.s"}
 
 
 .BANK $17 SLOT 1
@@ -440,17 +439,17 @@ oamData_15_4e0c:
 		.dw tileMappingAttributeData
 
 	tileMappingTable:
-		.incbin "build/tileset_layouts/tileMappingTable.bin"
+		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingTable.bin"}
 	tileMappingIndexData:
-		.incbin "build/tileset_layouts/tileMappingIndexData.bin"
+		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingIndexData.bin"}
 	tileMappingAttributeData:
-		.incbin "build/tileset_layouts/tileMappingAttributeData.bin"
+		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingAttributeData.bin"}
 .ends
 
 .BANK $18 SLOT 1
 .ORG 0
 
-	.include "build/data/largeRoomLayoutTables.s"
+	.include {"{GAME_DATA_DIR}/largeRoomLayoutTables.s"}
 
 	m_GfxDataSimple gfx_animations_1
 	m_GfxDataSimple gfx_animations_2
@@ -464,8 +463,8 @@ oamData_15_4e0c:
 .BANK $19 SLOT 1
 .ORG 0
 
- m_section_superfree "Tile_mappings"
-	.include "build/data/tilesetMappings.s"
+ m_section_superfree Tile_mappings
+	.include {"{GAME_DATA_DIR}/tilesetMappings.s"}
 .ends
 
 
@@ -495,17 +494,17 @@ oamData_15_4e0c:
 
 	m_GfxDataSimple map_rings ; $717a0
 
-	; "build/textData.s" will determine where this data starts.
+	; "${BUILD_DIR}/textData.s" will determine where this data starts.
 	;   Ages:    1d:4000
 	;   Seasons: 1c:5c00
 
-	.include "build/textData.s"
+	.include {"{BUILD_DIR}/textData.s"}
 
 	.REDEFINE DATA_ADDR TEXT_END_ADDR
 	.REDEFINE DATA_BANK TEXT_END_BANK
 
-	.include "build/data/roomLayoutData.s"
-	.include "build/data/gfxDataMain.s"
+	.include {"{GAME_DATA_DIR}/roomLayoutData.s"}
+	.include {"{GAME_DATA_DIR}/gfxDataMain.s"}
 
 .BANK $3f SLOT 1
 .ORG 0
@@ -519,15 +518,15 @@ oamData_15_4e0c:
 	.include "code/textbox.s"
 	.include "object_code/common/interactionCode/faroreMakeChest.s"
 
-	.include "build/data/objectGfxHeaders.s"
-	.include "build/data/treeGfxHeaders.s"
+	.include {"{GAME_DATA_DIR}/objectGfxHeaders.s"}
+	.include {"{GAME_DATA_DIR}/treeGfxHeaders.s"}
 
-	.include "build/data/enemyData.s"
-	.include "build/data/partData.s"
-	.include "build/data/itemData.s"
-	.include "build/data/interactionData.s"
+	.include {"{GAME_DATA_DIR}/enemyData.s"}
+	.include {"{GAME_DATA_DIR}/partData.s"}
+	.include {"{GAME_DATA_DIR}/itemData.s"}
+	.include {"{GAME_DATA_DIR}/interactionData.s"}
 
-	.include "build/data/treasureCollectionBehaviours.s"
-	.include "build/data/treasureDisplayData.s"
+	.include {"{GAME_DATA_DIR}/treasureCollectionBehaviours.s"}
+	.include {"{GAME_DATA_DIR}/treasureDisplayData.s"}
 
 .ends

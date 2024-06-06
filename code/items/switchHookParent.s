@@ -1,6 +1,6 @@
 ;;
 ; ITEMID_SWITCH_HOOK ($08)
-_parentItemCode_switchHook:
+parentItemCode_switchHook:
 .ifdef ROM_AGES
 	ld e,Item.state
 	ld a,(de)
@@ -11,12 +11,12 @@ _parentItemCode_switchHook:
 @state0:
 	ld a,(wLinkObjectIndex)
 	rrca
-	jp c,_clearParentItem
+	jp c,clearParentItem
 	ld a,(wLinkInAir)
 	or a
-	jp nz,_clearParentItem
-	call _isLinkInHole
-	jp c,_clearParentItem
+	jp nz,clearParentItem
+	call isLinkInHole
+	jp c,clearParentItem
 
 	call updateLinkDirectionFromAngle
 	call clearVariousLinkVariables
@@ -26,11 +26,11 @@ _parentItemCode_switchHook:
 	ld l,Item.enabled
 	ld (hl),$ff
 
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 	call itemCreateChild
 
 	; If underwater, use a different animation
-	call _isLinkUnderwater
+	call isLinkUnderwater
 	ret z
 	ld a,LINK_ANIM_MODE_2e
 	jp specialObjectSetAnimationWithLinkData
@@ -38,7 +38,7 @@ _parentItemCode_switchHook:
 @state1:
 	ld a,(w1WeaponItem.var2f)
 	or a
-	jp z,_clearParentItem
+	jp z,clearParentItem
 
 	ld (wDisallowMountingCompanion),a
 	call clearVariousLinkVariables

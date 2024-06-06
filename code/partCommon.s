@@ -1,7 +1,7 @@
 ;;
 ; @param[out]	zflag	nz if there's a tile collision in the direction this part is
 ;			moving
-_partCommon_getTileCollisionInFront:
+partCommon_getTileCollisionInFront:
 	ld e,Part.angle
 	ld a,(de)
 
@@ -9,11 +9,11 @@ _partCommon_getTileCollisionInFront:
 ; @param	a	Angle
 ; @param[out]	bc	Position
 ; @param[out]	zflag	nz if there's a tile collision in that direction
-_partCommon_getTileCollisionAtAngle:
+partCommon_getTileCollisionAtAngle:
 	add $02
 	and $1c
 	rrca
-	ld hl,_partCommon_anglePositionOffsets
+	ld hl,partCommon_anglePositionOffsets
 	rst_addAToHl
 	ld e,Part.yh
 	ld a,(de)
@@ -29,7 +29,7 @@ _partCommon_getTileCollisionAtAngle:
 
 ; Position offsets used by specific angle values to check when it should be considered
 ; "off-screen".
-_partCommon_anglePositionOffsets:
+partCommon_anglePositionOffsets:
 	.db $fb $00 ; Up
 	.db $fb $04 ; Up/right
 	.db $00 $04 ; Right
@@ -42,15 +42,15 @@ _partCommon_anglePositionOffsets:
 ;;
 ; @param	a	Angle
 ; @param[out]	zflag
-_partCommon_getTileCollisionAtAngle_allowHoles:
-	call _partCommon_getTileCollisionAtAngle
+partCommon_getTileCollisionAtAngle_allowHoles:
+	call partCommon_getTileCollisionAtAngle
 	ret z
 	jr +++
 
 ;;
 ; @param[out]	cflag	c if there's a collision
-_partCommon_getTileCollisionInFront_allowHoles:
-	call _partCommon_getTileCollisionInFront
+partCommon_getTileCollisionInFront_allowHoles:
+	call partCommon_getTileCollisionInFront
 	ret z
 +++
 	add $01
@@ -131,7 +131,7 @@ partCommon_checkOutOfBounds:
 	call @roundAngleToDiagonal
 	ld a,e
 	rrca
-	ld hl,_partCommon_anglePositionOffsets
+	ld hl,partCommon_anglePositionOffsets
 	rst_addAToHl
 
 	ldi a,(hl)
@@ -170,7 +170,7 @@ partCommon_decCounter1IfNonzero:
 
 ;;
 ; Reverses direction & bounces upward when collisions are enabled?
-_partCommon_bounceWhenCollisionsEnabled:
+partCommon_bounceWhenCollisionsEnabled:
 	ld h,d
 	ld l,Part.collisionType
 	bit 7,(hl)
@@ -193,7 +193,7 @@ _partCommon_bounceWhenCollisionsEnabled:
 	ret
 
 ;;
-_partCommon_updateSpeedAndDeleteWhenCounter1Is0:
+partCommon_updateSpeedAndDeleteWhenCounter1Is0:
 	call partCommon_decCounter1IfNonzero
 	jp z,partDelete
 	ld c,$0e
@@ -202,7 +202,7 @@ _partCommon_updateSpeedAndDeleteWhenCounter1Is0:
 	jp objectApplySpeed
 
 ;;
-_partCommon_setPositionOffsetAndRadiusFromAngle:
+partCommon_setPositionOffsetAndRadiusFromAngle:
 	ld e,Part.angle
 	ld a,(de)
 	add $04
@@ -235,7 +235,7 @@ _partCommon_setPositionOffsetAndRadiusFromAngle:
 	.db $02 $f8 $03 $06 ; DIR_LEFT
 
 ;;
-_partCommon_incSubstate:
+partCommon_incSubstate:
 	ld h,d
 	ld l,Part.substate
 	inc (hl)

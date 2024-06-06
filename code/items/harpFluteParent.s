@@ -1,8 +1,8 @@
 ;;
 ; ITEMID_FLUTE ($0e)
 ; ITEMID_HARP ($11)
-_parentItemCode_flute:
-_parentItemCode_harp:
+parentItemCode_flute:
+parentItemCode_harp:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -10,22 +10,22 @@ _parentItemCode_harp:
 	.dw @state1
 
 @state0:
-	call _checkLinkOnGround
-	jp nz,_clearParentItem
+	call checkLinkOnGround
+	jp nz,clearParentItem
 	ld a,(wInstrumentsDisabledCounter)
 	or a
-	jp nz,_clearParentItem
-	call _isLinkInHole
-	jp c,_clearParentItem
-	call _checkNoOtherParentItemsInUse
-	jp nz,_clearParentItem
+	jp nz,clearParentItem
+	call isLinkInHole
+	jp c,clearParentItem
+	call checkNoOtherParentItemsInUse
+	jp nz,clearParentItem
 
 	ld a,$80
 	ld (wcc95),a
 	ld a,$ff ~ DISABLE_LINK ~ DISABLE_ALL_BUT_INTERACTIONS
 	ld (wDisabledObjects),a
 
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 
 	; Determine what sound to play
 	ld b,$00
@@ -63,7 +63,7 @@ _parentItemCode_harp:
 	call objectCreateFloatingMusicNote
 	pop de
 ++
-	call _specialObjectAnimate
+	call specialObjectAnimate_optimized
 	call @getSelectedSongAddr
 
 .ifdef ROM_AGES
@@ -111,7 +111,7 @@ _parentItemCode_harp:
 	xor a
 	ld (wDisabledObjects),a
 	ld (wcc95),a
-	jp _clearParentItem
+	jp clearParentItem
 
 
 .ifdef ROM_AGES ; Harp code
@@ -157,20 +157,20 @@ _parentItemCode_harp:
 	ld (wDisableLinkCollisionsAndMenu),a
 	ld (wcde0),a
 	call clearAllItemsAndPutLinkOnGround
-	jp _specialObjectAnimate
+	jp specialObjectAnimate_optimized
 
 .endif ; ROM_AGES
 
 
 @sfxList:
-	.db SND_CRANEGAME
+	.db SND_FILLED_HEART_CONTAINER
 	.db SND_FLUTE_RICKY
 	.db SND_FLUTE_DIMITRI
 	.db SND_FLUTE_MOOSH
 .ifdef ROM_AGES
-	.db SND_ECHO
-	.db SND_CURRENT
-	.db SND_AGES
+	.db SND_TUNE_OF_ECHOES
+	.db SND_TUNE_OF_CURRENTS
+	.db SND_TUNE_OF_AGES
 .endif
 
 ;;

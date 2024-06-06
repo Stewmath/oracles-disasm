@@ -1,4 +1,4 @@
-.ifdef BUILD_VANILLA
+.ifdef INCLUDE_GARBAGE
 
 ; Garbage data? Looks like a partial repeat of the last warp.
 unknownData7ede:

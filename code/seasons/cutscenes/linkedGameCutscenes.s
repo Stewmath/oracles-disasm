@@ -58,10 +58,10 @@ flameOfDestructionCutscene_state1:
 	ld a,$28
 	ld (wGenericCutscene.cbb5),a
 	call fastFadeoutToBlack
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @roomOfRitesStart:
-	call _waitUntilFadeIsDone
+	call waitUntilFadeIsDone
 	ret nz
 	call bank3CutsceneLoadRoomOfRites
 	call getFreeInteractionSlot
@@ -79,7 +79,7 @@ flameOfDestructionCutscene_state1:
 	ld (wGenericCutscene.cbb6),a
 	dec a
 	ld (wGenericCutscene.cbba),a
-	call _incTmpcbb3
+	call incTmpcbb3
 
 @flashScreen:
 	ld hl,wGenericCutscene.cbb5
@@ -87,7 +87,7 @@ flameOfDestructionCutscene_state1:
 	call flashScreen
 	ret z
 	call clearPaletteFadeVariablesAndRefreshPalettes
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @changePalettes:
 	call getFreeInteractionSlot
@@ -100,11 +100,11 @@ flameOfDestructionCutscene_state1:
 	call playSound
 	ld a,$04
 	ld (wGenericCutscene.cbb5),a
-	call _clearFadingPalettes
+	call clearFadingPalettes2
 	ld a,$ef
 	ldh (<hSprPaletteSources),a
 	ldh (<hDirtySprPalettes),a
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @startCutsceneText08:
 	ld hl,wGenericCutscene.cbb5
@@ -127,16 +127,16 @@ flameOfDestructionCutscene_state1:
 	jp playSound
 
 @startFadeInAndLightTorch:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld b,$40
 	call @fadeInAndLightTorch
 	ld a,$1e
 	ld (wGenericCutscene.cbb5),a
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @createSomeObjects:
-	call _waitUntilFadeIsDone
+	call waitUntilFadeIsDone
 	ret nz
 	call fadeinFromBlack
 	ld a,$af
@@ -151,28 +151,28 @@ flameOfDestructionCutscene_state1:
 	call playSound
 	ld a,$1e
 	ld (wGenericCutscene.cbb5),a
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @startCutsceneText09:
-	call _waitUntilFadeIsDone
+	call waitUntilFadeIsDone
 	ret nz
 	ld c,<TX_5009
 	jp showCutscene50xxText
 
 @startCutsceneText0a:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld c,<TX_500a
 	jp showCutscene50xxText
 
 @startCutsceneText0b:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld c,<TX_500b
 	jp showCutscene50xxText
 
 @startCutsceneText0c:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld c,<TX_500c
 	call showCutscene50xxText
@@ -181,7 +181,7 @@ flameOfDestructionCutscene_state1:
 	ret
 
 @finish:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	xor a
 	ld (wMenuDisabled),a
@@ -212,7 +212,7 @@ zeldaAndVillagersCutscene_state1:
 
 @start:
 	call fadeoutToWhite
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @loadImpaRoomAndMusic:
 	ld a,(wPaletteThread_mode)
@@ -232,20 +232,20 @@ zeldaAndVillagersCutscene_state1:
 	xor a
 	call loadGroupOfInteractions
 	call fadeinFromWhite
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @waitUntilFadeInDone:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @waitToFadeOut:
 	ld a,($cfc0)
 	bit 1,a
 	ret z
 	call fadeoutToWhite
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @loadSokraRoomAndMusic:
 	ld a,(wPaletteThread_mode)
@@ -262,7 +262,7 @@ zeldaAndVillagersCutscene_state1:
 	ld a,$01
 	call loadGroupOfInteractions
 	call fadeinFromWhite
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @waitUntilFadeInDone2:
 	ld a,(wPaletteThread_mode)
@@ -272,7 +272,7 @@ zeldaAndVillagersCutscene_state1:
 	jp showCutscene50xxText
 
 @finish:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	xor a
 	ld (wMenuDisabled),a
@@ -323,7 +323,7 @@ zeldaKidnappedCutscene_state1Handler:
 
 @startByFadingOut:
 	call fadeoutToWhite
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @loadSokraRoomAndInteractions:
 	ld a,(wPaletteThread_mode)
@@ -340,16 +340,16 @@ zeldaKidnappedCutscene_state1Handler:
 	call fadeinFromWhite
 	ld a,$3c
 	ld (wGenericCutscene.cbb5),a
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @waitUntilRoomLoaded:
-	call _waitUntilFadeIsDone
+	call waitUntilFadeIsDone
 	ret nz
 	ld hl,$cfc0
 	set 7,(hl)
 	ld a,$ff
 	ld (wGenericCutscene.cbb5),a
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @startCutsceneText11:
 	ld hl,wGenericCutscene.cbb5
@@ -362,7 +362,7 @@ zeldaKidnappedCutscene_state1Handler:
 	ret
 
 @func4:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	jr z,+
 	ld a,$3c
 	cp (hl)
@@ -375,7 +375,7 @@ zeldaKidnappedCutscene_state1Handler:
 	set 5,(hl)
 	ld a,$3c
 	ld (wGenericCutscene.cbb5),a
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @func5:
 	ld hl,wGenericCutscene.cbb5
@@ -390,7 +390,7 @@ zeldaKidnappedCutscene_state1Handler:
 	ld a,$21
 	ld (wActiveMusic),a
 	call playSound
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @startCutsceneText12:
 	ld a,($cfc0)
@@ -403,23 +403,23 @@ zeldaKidnappedCutscene_state1Handler:
 	jp showCutscene50xxText
 
 @startCutsceneText13:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld c,<TX_5013
 	jp showCutscene50xxText
 
 @startCutsceneText14:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld c,<TX_5014
 	jp showCutscene50xxText
 
 @func9:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld hl,$cfc0
 	res 0,(hl)
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @funca:
 	ld a,($cfc0)
@@ -429,7 +429,7 @@ zeldaKidnappedCutscene_state1Handler:
 	ld (wGenericCutscene.cbb4),a
 	ld a,SND_LIGHTNING
 	call playSound
-	call _incTmpcbb3
+	call incTmpcbb3
 
 @funcb:
 	call zeldaKidnappedFlashFadeoutToWhite
@@ -444,22 +444,22 @@ zeldaKidnappedCutscene_state1Handler:
 	call fadeinFromWhiteWithDelay
 	ld a,$1e
 	ld (wGenericCutscene.cbb5),a
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @startCutsceneText16:
-	call _waitUntilFadeIsDone
+	call waitUntilFadeIsDone
 	ret nz
 	ld c,<TX_5016
 	jp showCutscene50xxText
 
 @startCutsceneText17:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld c,<TX_5017
 	jp showCutscene50xxText
 
 @funce:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld hl,$cfc0
 	set 0,(hl)
@@ -467,14 +467,14 @@ zeldaKidnappedCutscene_state1Handler:
 	ld (wGenericCutscene.cbb5),a
 	ld a,$bb
 	call playSound
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @funcf:
 	ld hl,wGenericCutscene.cbb5
 	dec (hl)
 	ret nz
 	call fadeoutToWhite
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @loadRoomOfRitesAndInteractions:
 	ld a,(wPaletteThread_mode)
@@ -496,28 +496,28 @@ zeldaKidnappedCutscene_state1Handler:
 	call fadeinFromBlack
 	ld a,$1e
 	ld (wGenericCutscene.cbb5),a
-	jp _incTmpcbb3
+	jp incTmpcbb3
 
 @startCutsceneText18:
-	call _waitUntilFadeIsDone
+	call waitUntilFadeIsDone
 	ret nz
 	ld c,<TX_5018
 	jp showCutscene50xxText
 
 @startCutsceneText19:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld c,<TX_5019
 	jp showCutscene50xxText
 
 @startCutsceneText1a:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	ld c,<TX_501a
 	jp showCutscene50xxText
 
 @finish:
-	call _waitUntilTextInactive
+	call waitUntilTextInactive
 	ret nz
 	xor a
 	ld (wMenuDisabled),a
@@ -547,7 +547,7 @@ zeldaKidnappedFlashFadeoutToWhite:
 --
 	ld (wGenericCutscene.cbb5),a
 	call clearFadingPalettes
-	jp _incTmpcbb4
+	jp incTmpcbb4
 @func1:
 	ld hl,wGenericCutscene.cbb5
 	dec (hl)
@@ -556,7 +556,7 @@ zeldaKidnappedFlashFadeoutToWhite:
 -
 	ld (wGenericCutscene.cbb5),a
 	call fastFadeoutToWhite
-	jp _incTmpcbb4
+	jp incTmpcbb4
 @func3:
 	ld a,$14
 	jr --
@@ -567,7 +567,7 @@ zeldaKidnappedFlashFadeoutToWhite:
 	ld a,$1e
 	jr -
 @func5:
-	jp _waitUntilFadeIsDone
+	jp waitUntilFadeIsDone
 
 showCutscene50xxText:
 	ld b,$50
@@ -575,17 +575,17 @@ showCutscene50xxText:
 	ld a,$1e
 	ld (wGenericCutscene.cbb5),a
 
-_incTmpcbb3:
+incTmpcbb3:
 	ld hl,wGenericCutscene.cbb3
 	inc (hl)
 	ret
 
-_incTmpcbb4:
+incTmpcbb4:
 	ld hl,wGenericCutscene.cbb4
 	inc (hl)
 	ret
 
-_waitUntilTextInactive:
+waitUntilTextInactive:
 	ld a,(wTextIsActive)
 	or a
 	ret nz
@@ -593,7 +593,7 @@ _waitUntilTextInactive:
 	dec (hl)
 	ret
 
-_waitUntilFadeIsDone:
+waitUntilFadeIsDone:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz

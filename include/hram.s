@@ -105,17 +105,25 @@
 	; This is 0 until the capcom screen is over
 	hIntroInputsEnabled		db	; $ffb9/$ffb7
 
-	; Tentative name
+	; If this is nonzero then this gameboy uses an external clock (is the "slave").
+	; In JP region, this is $d0 or $d1; in the US region, it's $e0 or $e1.
 	hSerialInterruptBehaviour	db	; $ffba/$ffb8
-	; Serial interrupt sets to 1 if a byte has been read
-	hSerialRead			db	; $ffbb/$ffb9
+	; Serial interrupt sets this to 1 if a byte has been read
+	hReceivedSerialByte		db	; $ffbb/$ffb9
 	; Value of byte from R_SB
 	hSerialByte			db	; $ffbc/$ffba
 
 	hFFBD				db	; $ffbd/$ffbb
 
+	; This variable is the link "mode" (what it's doing right now).
+	; $01: either ring link or ring fortune
+	; $02: either ring link or ring fortune
+	; $03: ready to receive a link (titlescreen or "can't run on DMG" screen)
+	; $04: "game link"
 	hFFBE				db	; $ffbe/$ffbc
-	hFFBF				db	; $ffbf/$ffbd
+
+	; This keeps track of the "state" corresponding to the above link mode.
+	hSerialLinkState		db	; $ffbf/$ffbd
 
 	; Marker for end of "normal" hram (memory gets cleared up to here upon game initialization)
 	hramEnd			 	.db	; $ffc0/$ffbe

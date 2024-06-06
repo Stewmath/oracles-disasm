@@ -285,7 +285,7 @@ showSamasaGateCombination:
 piratianCaptain_preCutsceneScene:
 	disableinput
 	asm15 scriptHelp.pirateCaptain_freezeLinkForCutscene
-	writememory wcc90, $01
+	writememory wDisableWarpTiles, $01
 	delay 8
 	asm15 scriptHelp.piratesDeparting_spawnPirateFromShip
 	checkcfc0bit 0

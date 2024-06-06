@@ -1,35 +1,35 @@
 ;;
 ; ITEMID_ROD_OF_SEASONS ($07)
-_parentItemCode_rodOfSeasons:
+parentItemCode_rodOfSeasons:
 .ifdef ROM_SEASONS
-	call _clearParentItemIfCantUseSword
+	call clearParentItemIfCantUseSword
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _parentItemCode_foolsOre@rod_state0
-	.dw _parentItemCode_punch@state1
+	.dw parentItemCode_foolsOre@rod_state0
+	.dw parentItemCode_punch@state1
 .endif
 
 ;;
 ; ITEMID_BIGGORON_SWORD ($0c)
-_parentItemCode_biggoronSword:
-	call _clearParentItemIfCantUseSword
+parentItemCode_biggoronSword:
+	call clearParentItemIfCantUseSword
 
 .ifdef ROM_AGES
-	call _isLinkUnderwater
-	jp nz,_clearParentItem
+	call isLinkUnderwater
+	jp nz,clearParentItem
 .endif
 
 	; Biggoron's sword falls through to fool's ore code
 
 ;;
 ; ITEMID_FOOLS_ORE ($1e)
-_parentItemCode_foolsOre:
+parentItemCode_foolsOre:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _parentItemCode_punch@state1
+	.dw parentItemCode_punch@state1
 
 .ifdef ROM_SEASONS
 @rod_state0:
@@ -45,12 +45,12 @@ _parentItemCode_foolsOre:
 	ld (de),a
 ++
 	call updateLinkDirectionFromAngle
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 	jp itemCreateChild
 
 ;;
 ; ITEMID_PUNCH ($02)
-_parentItemCode_punch:
+parentItemCode_punch:
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -64,7 +64,7 @@ _parentItemCode_punch:
 
 	call updateLinkDirectionFromAngle
 
-	call _parentItemLoadAnimationAndIncState
+	call parentItemLoadAnimationAndIncState
 
 	; hl = physical punch item
 	call itemCreateChild
@@ -80,7 +80,7 @@ _parentItemCode_punch:
 	jr z,@expertsRing
 
 	; If link is underwater with fist ring equipped, set animation to LINK_ANIM_MODE_37
-	call _isLinkUnderwater
+	call isLinkUnderwater
 	ret z
 	ld a,LINK_ANIM_MODE_37
 	jp specialObjectSetAnimationWithLinkData
@@ -105,7 +105,7 @@ _parentItemCode_punch:
 	jr @setAnimation
 +
 	; If underwater, use LINK_ANIM_MODE_36
-	call _isLinkUnderwater
+	call isLinkUnderwater
 	jr z,@setAnimation
 	ld c,LINK_ANIM_MODE_36
 
@@ -127,5 +127,5 @@ _parentItemCode_punch:
 	ld e,Item.animParameter
 	ld a,(de)
 	rlca
-	jp nc,_specialObjectAnimate
-	jp _clearParentItem
+	jp nc,specialObjectAnimate_optimized
+	jp clearParentItem

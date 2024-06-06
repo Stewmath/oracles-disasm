@@ -338,7 +338,7 @@ seasonsFunc_0f_7182:
 	ret z
 	call getRandomNumber_noPreserveVars
 	and $03
-	ld hl,_table_71cb
+	ld hl,table_71cb
 	rst_addAToHl
 	ld a,($c490)
 	add (hl)
@@ -349,7 +349,7 @@ seasonsFunc_0f_7182:
 	sub (hl)
 	ld ($c4a0),a
 	ret
-_table_71cb:
+table_71cb:
 	.db $ff $fe $01 $02
 
 ;;
@@ -428,7 +428,7 @@ seasons_func_0f_722f:
 	ld b,a
 	push bc
 	ld a,($cfcb)
-	ld hl,_table_7291
+	ld hl,table_7291
 	rst_addAToHl
 	ld a,(hl)
 	ldh (<hFF8B),a
@@ -453,7 +453,7 @@ seasons_func_0f_722f:
 	call seasons_func_0f_7325
 	ld a,UNCMP_GFXH_2f
 	jp loadUncompressedGfxHeader
-_table_7291:
+table_7291:
 	.db $07 $05 $04 $05 $07 $08
 	
 ;;

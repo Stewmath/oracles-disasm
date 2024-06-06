@@ -12,11 +12,12 @@
 ;   var30: former value of subid (treasure index)
 ;
 ;   var31-var35 based on data from "treasureObjectData.s":
-;     var31: spawn mode
-;     var32: collect mode
-;     var33: a boolean?
-;     var34: parameter (value of 'c' for "giveTreasure" function)
-;     var35: low text ID
+;   var31: spawn mode
+;   var32: collect mode
+;   var33: if nonzero, set ROOMFLAG_ITEM
+;   var34: parameter (value of 'c' for "giveTreasure" function)
+;   var35: low text ID
+;
 ;   var39: If set, this is part of the chest minigame? Gets written to "wDisabledObjects"?
 ; ==============================================================================
 interactionCode60:
@@ -32,11 +33,7 @@ interactionCode60:
 @state0:
 	ld a,$01
 	ld (de),a
-.ifdef ROM_AGES
-	callab bank16.interactionLoadTreasureData
-.else
-	callab scriptHelp.interactionLoadTreasureData
-.endif
+	callab treasureData.interactionLoadTreasureData
 	ld a,$06
 	call objectSetCollideRadius
 
@@ -93,7 +90,7 @@ interactionCode60:
 	ld a,$01
 	ld (de),a
 	ld e,Interaction.counter1
-	ld a,$1e
+	ld a,30
 	ld (de),a
 	call objectCreatePuff
 	ret nz
@@ -116,7 +113,7 @@ interactionCode60:
 	ld (de),a
 	ld h,d
 	ld l,Interaction.counter1
-	ld (hl),$28
+	ld (hl),40
 	ld a,SND_SOLVEPUZZLE
 	jp playSound
 
@@ -152,20 +149,20 @@ interactionCode60:
 	jr z,@landedOnWater
 	jp objectReplaceWithFallingDownHoleInteraction
 +
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld a,SND_DROPESSENCE
 	call playSound
 .else
 	ld e,Interaction.var30
 	ld a,(de)
-	cp $30
+	cp TREASURE_SMALL_KEY
 	ld a,SND_DROPESSENCE
 	call z,playSound
 .endif
 	call interactionDecCounter1
 	jr z,@gotoState2
 
-	ld bc,$ff56
+	ld bc,-$aa
 	jp objectSetSpeedZ
 
 @gotoState2:
@@ -240,7 +237,7 @@ interactionCode60:
 	ld (hl),SPEED_40
 
 	ld l,Interaction.counter1
-	ld (hl),$20
+	ld (hl),32
 	jp objectSetVisible80
 
 @m3State1:
@@ -288,7 +285,7 @@ interactionCode60:
 	ld (wDisableLinkCollisionsAndMenu),a
 	call interactionSetAlwaysUpdateBit
 	ld l,Interaction.counter1
-	ld (hl),$0f
+	ld (hl),15
 @m6State1:
 	call interactionDecCounter1
 	ret nz
@@ -353,17 +350,17 @@ interactionCode60:
 	inc a
 	ret nz
 
-	ld bc,$ff00
+	ld bc,-$100
 	call objectSetSpeedZ
 	ld l,Interaction.substate
 	inc (hl)
 	ld a,(w1Link.direction)
 	swap a
 	rrca
-	ld l,$49
+	ld l,Interaction.angle
 	ld (hl),a
-	ld l,$50
-	ld (hl),$14
+	ld l,Interaction.speed
+	ld (hl),SPEED_080
 	jp objectSetVisiblec2
 
 @m5State2:
@@ -441,8 +438,12 @@ interactionCode60:
 	call retIfTextIsActive
 	ld hl,wDisabledObjects
 	res 0,(hl)
+
+.ifndef REGION_JP
 	ld a,$0f
 	ld (wInstrumentsDisabledCounter),a
+.endif
+
 	jp interactionDelete
 
 
@@ -589,9 +590,11 @@ interactionCode60:
 	or a
 	ret nz
 
+.ifndef REGION_JP
 	ld a,(wLinkPlayingInstrument)
 	or a
 	ret nz
+.endif
 
 	ld a,(w1Link.state)
 	cp LINK_STATE_NORMAL

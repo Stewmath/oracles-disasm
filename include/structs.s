@@ -531,7 +531,7 @@
 	; Bit 5: Unused?
 	; Bit 6: Set when the item enters or leaves water (that is, when bit 0 changes)
 	; Bit 7: Flips every frame the item is on the ground?
-	; See the _itemUpdateThrowing (07:4aa5) function.
+	; See the itemUpdateThrowing (07:4aa5) function.
 	var3b			db ; $3b
 
 	; Projectiles: current tile position

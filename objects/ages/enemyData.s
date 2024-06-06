@@ -276,7 +276,11 @@ group5Mapf7EnemyObjectData:
 	obj_EndPointer
 
 group1Map0eEnemyObjectData:
+.ifdef REGION_JP
+	obj_Part $13 $09 $23
+.else
 	obj_Part $13 $13 $23
+.endif
 	obj_ItemDrop $00 $05 $28
 	obj_ItemDrop     $05 $24
 	obj_EndPointer

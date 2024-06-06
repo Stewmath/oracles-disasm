@@ -49,7 +49,7 @@ cutscene02:
 @state1:
 	ld a,SND_DOORCLOSE
 	call playSound
-	ld a,UNCMP_GFXH_3e
+	ld a,UNCMP_GFXH_AGES_3e
 	call loadUncompressedGfxHeader
 	jr ---
 

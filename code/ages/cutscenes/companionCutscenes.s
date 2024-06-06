@@ -4,29 +4,29 @@ specialObjectCode_companionCutscene:
 	ld a,(hl)
 	sub SPECIALOBJECTID_RICKY_CUTSCENE
 	rst_jumpTable
-	.dw _specialObjectCode_rickyCutscene
-	.dw _specialObjectCode_dimitriCutscene
-	.dw _specialObjectCode_mooshCutscene
-	.dw _specialObjectCode_mapleCutscene
+	.dw specialObjectCode_rickyCutscene
+	.dw specialObjectCode_dimitriCutscene
+	.dw specialObjectCode_mooshCutscene
+	.dw specialObjectCode_mapleCutscene
 
 ;;
-_specialObjectCode_rickyCutscene:
+specialObjectCode_rickyCutscene:
 	ld e,SpecialObject.state
 	ld a,(de)
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
-	.dw _rickyCutscene_state1
+	.dw rickyCutscene_state1
 
 @state0:
-	call _companionCutsceneInitOam
+	call companionCutsceneInitOam
 	ld h,d
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_200
 	ld l,SpecialObject.angle
 	ld (hl),$08
 
-_rickyCutsceneJump:
+rickyCutsceneJump:
 	ld bc,$fe00
 	call objectSetSpeedZ
 	ld a,$02
@@ -35,14 +35,14 @@ _rickyCutsceneJump:
 
 ;;
 ; @param	de	Pointer to Object.state variable
-_companionCutsceneInitOam:
+companionCutsceneInitOam:
 	ld a,$01
 	ld (de),a
 	callab bank5.specialObjectSetOamVariables
 	jp objectSetVisiblec0
 
 
-_rickyCutscene_state1:
+rickyCutscene_state1:
 	ld e,SpecialObject.subid
 	ld a,(de)
 	rst_jumpTable
@@ -109,7 +109,7 @@ _rickyCutscene_state1:
 	ret nz
 	ld l,SpecialObject.substate
 	dec (hl)
-	jp _rickyCutsceneJump
+	jp rickyCutsceneJump
 
 @substate3:
 	call itemDecCounter1
@@ -234,7 +234,7 @@ _rickyCutscene_state1:
 	jp @jump
 
 ;;
-_specialObjectCode_mooshCutscene:
+specialObjectCode_mooshCutscene:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -242,7 +242,7 @@ _specialObjectCode_mooshCutscene:
 	.dw @state1
 
 @state0:
-	call _companionCutsceneInitOam
+	call companionCutsceneInitOam
 	ld h,d
 	ld l,SpecialObject.counter1
 	ld (hl),$5a
@@ -297,7 +297,7 @@ _specialObjectCode_mooshCutscene:
 	ld (hl),$06
 	ld l,SpecialObject.substate
 	inc (hl)
-	jp _companionCutsceneFunc_7081
+	jp companionCutsceneFunc_7081
 
 @substate2:
 	ld h,d
@@ -313,9 +313,9 @@ _specialObjectCode_mooshCutscene:
 	ld l,SpecialObject.counter1
 	dec (hl)
 	ret nz
-	call _companionCutsceneDecAngle
+	call companionCutsceneDecAngle
 	ld (hl),$06
-	jp _companionCutsceneFunc_7081
+	jp companionCutsceneFunc_7081
 
 @substate3:
 	ld h,d
@@ -347,7 +347,7 @@ _specialObjectCode_mooshCutscene:
 	ret
 
 ;;
-_specialObjectCode_dimitriCutscene:
+specialObjectCode_dimitriCutscene:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -355,7 +355,7 @@ _specialObjectCode_dimitriCutscene:
 	.dw @state1
 
 @state0:
-	call _companionCutsceneInitOam
+	call companionCutsceneInitOam
 	ld h,d
 	ld l,SpecialObject.speed
 	ld (hl),SPEED_100
@@ -507,7 +507,7 @@ _specialObjectCode_dimitriCutscene:
 	ret
 
 ;;
-_specialObjectCode_mapleCutscene:
+specialObjectCode_mapleCutscene:
 	ld e,SpecialObject.state
 	ld a,(de)
 	rst_jumpTable
@@ -515,7 +515,7 @@ _specialObjectCode_mapleCutscene:
 	.dw @state1
 
 @state0:
-	call _companionCutsceneInitOam
+	call companionCutsceneInitOam
 	ld h,d
 	ld l,SpecialObject.zh
 	ld (hl),$f0
@@ -620,7 +620,7 @@ _specialObjectCode_mapleCutscene:
 
 ;;
 ; @param	a	Angle
-_companionCutsceneFunc_7081:
+companionCutsceneFunc_7081:
 	sub $04
 	and $07
 	ret nz
@@ -636,7 +636,7 @@ _companionCutsceneFunc_7081:
 	jp specialObjectSetAnimation
 
 ;;
-_companionCutsceneDecAngle:
+companionCutsceneDecAngle:
 	ld e,SpecialObject.angle
 	ld a,(de)
 	dec a

@@ -190,429 +190,429 @@ paletteHeaderTable:
 	.dw paletteHeaderbc
 	.dw paletteHeaderbd
 
-paletteHeader00: ; $640c
-	m_PaletteHeaderBg  0 1 paletteData4000 $00
-paletteHeader01: ; $640f
-	m_PaletteHeaderBg  0 2 paletteData4008 $00
-paletteHeader02: ; $6412
-	m_PaletteHeaderBg  0 1 paletteData5e50 $80
-	m_PaletteHeaderSpr 0 1 paletteData5e50 $00
-paletteHeader03: ; $6418
-	m_PaletteHeaderBg  0 8 paletteData4018 $80
-	m_PaletteHeaderSpr 0 8 paletteData4058 $00
-paletteHeader04: ; $641e
-	m_PaletteHeaderBg  0 4 paletteData45b0 $00
-paletteHeader05: ; $6421
-	m_PaletteHeaderBg  0 1 paletteData4830 $80
-	m_PaletteHeaderBg  2 5 paletteData5db8 $80
-	m_PaletteHeaderSpr 0 4 standardSpritePaletteData $80
-	m_PaletteHeaderSpr 4 3 paletteData5d98 $00
-paletteHeader06: ; $642d
-	m_PaletteHeaderBg  0 1 paletteData4830 $80
-	m_PaletteHeaderBg  2 5 paletteData5de0 $80
-	m_PaletteHeaderSpr 0 4 standardSpritePaletteData $80
-	m_PaletteHeaderSpr 4 3 paletteData5d98 $00
-paletteHeader07: ; $6439
-	m_PaletteHeaderBg  0 8 paletteData4098 $80
-	m_PaletteHeaderSpr 0 8 paletteData40d8 $00
-paletteHeader08: ; $643f
-	m_PaletteHeaderBg  0 8 paletteData4118 $80
-	m_PaletteHeaderSpr 0 8 paletteData4158 $00
-paletteHeader09: ; $6445
-	m_PaletteHeaderBg  2 4 paletteData4198 $80
-	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $00
-paletteHeader0a: ; $644b
-	m_PaletteHeaderBg  0 2 paletteData4830 $80
-	m_PaletteHeaderBg  2 6 standardSpritePaletteData $80
-	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $80
-	m_PaletteHeaderSpr 7 1 paletteData5e48 $00
-paletteHeader0b: ; $6457
-	m_PaletteHeaderSpr 0 4 standardSpritePaletteData $80
-	m_PaletteHeaderSpr 2 1 paletteData4468 $80
-	m_PaletteHeaderSpr 4 3 paletteData46f8 $00
-paletteHeader0c: ; $6460
-	m_PaletteHeaderBg  0 8 paletteData4930 $80
-	m_PaletteHeaderSpr 0 8 paletteData4970 $00
-paletteHeader0d: ; $6466
-	m_PaletteHeaderBg  1 1 paletteData4878 $00
-paletteHeader0e: ; $6469
-	m_PaletteHeaderBg  1 1 paletteData4870 $00
-paletteHeader0f: ; $646c
-	m_PaletteHeaderBg  0 1 paletteData4830 $80
-	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $00
-paletteHeader10: ; $6472
-	m_PaletteHeaderBg  2 6 paletteData49b0 $00
-paletteHeader11: ; $6475
-	m_PaletteHeaderBg  2 6 paletteData49e0 $00
-paletteHeader12: ; $6478
-	m_PaletteHeaderBg  2 6 paletteData4a10 $00
-paletteHeader13: ; $647b
-	m_PaletteHeaderBg  2 6 paletteData4a40 $00
-paletteHeader14: ; $647e
-	m_PaletteHeaderBg  2 6 paletteData4a70 $00
-paletteHeader15: ; $6481
-	m_PaletteHeaderBg  2 6 paletteData4aa0 $00
-paletteHeader16: ; $6484
-	m_PaletteHeaderBg  2 6 paletteData4ad0 $00
-paletteHeader17: ; $6487
-	m_PaletteHeaderBg  2 6 paletteData4b00 $00
-paletteHeader18: ; $648a
-	m_PaletteHeaderBg  2 6 paletteData4b30 $00
-paletteHeader19: ; $648d
-	m_PaletteHeaderBg  2 6 paletteData4b60 $00
-paletteHeader1a: ; $6490
-	m_PaletteHeaderBg  2 6 paletteData4b90 $00
-paletteHeader1b: ; $6493
-	m_PaletteHeaderBg  2 6 paletteData4bc0 $00
-paletteHeader1c: ; $6496
-	m_PaletteHeaderBg  2 6 paletteData4bf0 $00
-paletteHeader1d: ; $6499
-	m_PaletteHeaderBg  2 6 paletteData4c20 $00
-paletteHeader1e: ; $649c
-	m_PaletteHeaderBg  2 6 paletteData4c50 $00
-paletteHeader1f: ; $649f
-	m_PaletteHeaderBg  2 6 paletteData4c80 $00
-paletteHeader20: ; $64a2
-	m_PaletteHeaderBg  2 6 paletteData4cb0 $00
-paletteHeader21: ; $64a5
-	m_PaletteHeaderBg  2 6 paletteData4ce0 $00
-paletteHeader22: ; $64a8
-	m_PaletteHeaderBg  2 6 paletteData4d10 $00
-paletteHeader23: ; $64ab
-	m_PaletteHeaderBg  2 6 paletteData4d40 $00
-paletteHeader24: ; $64ae
-	m_PaletteHeaderBg  2 6 paletteData4da0 $00
-paletteHeader25: ; $64b1
-	m_PaletteHeaderBg  2 6 paletteData4dd0 $00
-paletteHeader26: ; $64b4
-	m_PaletteHeaderBg  2 6 paletteData4e00 $00
-paletteHeader27: ; $64b7
-	m_PaletteHeaderBg  2 6 paletteData4e30 $00
-paletteHeader28: ; $64ba
-	m_PaletteHeaderBg  2 6 paletteData4e60 $00
-paletteHeader29: ; $64bd
-	m_PaletteHeaderBg  2 6 paletteData4e90 $00
-paletteHeader2a: ; $64c0
-	m_PaletteHeaderBg  2 6 paletteData4ec0 $00
-paletteHeader2b: ; $64c3
-	m_PaletteHeaderBg  2 6 paletteData4ef0 $00
-paletteHeader2c: ; $64c6
-	m_PaletteHeaderBg  2 6 paletteData4f20 $00
-paletteHeader2d: ; $64c9
-	m_PaletteHeaderBg  2 6 paletteData4f50 $00
-paletteHeader2e: ; $64cc
-	m_PaletteHeaderBg  2 6 paletteData4f80 $00
-paletteHeader2f: ; $64cf
-	m_PaletteHeaderBg  2 6 paletteData4fb0 $00
-paletteHeader30: ; $64d2
-	m_PaletteHeaderBg  2 6 paletteData4fe0 $00
-paletteHeader31: ; $64d5
-	m_PaletteHeaderBg  2 6 paletteData5010 $00
-paletteHeader32: ; $64d8
-	m_PaletteHeaderBg  2 6 paletteData5040 $00
-paletteHeader33: ; $64db
-	m_PaletteHeaderBg  2 6 paletteData5070 $00
-paletteHeader34: ; $64de
-	m_PaletteHeaderBg  2 6 paletteData50a0 $00
-paletteHeader35: ; $64e1
-	m_PaletteHeaderBg  2 6 paletteData50d0 $00
-paletteHeader36: ; $64e4
-	m_PaletteHeaderBg  2 6 paletteData5100 $00
-paletteHeader37: ; $64e7
-	m_PaletteHeaderBg  2 6 paletteData5130 $00
-paletteHeader38: ; $64ea
-	m_PaletteHeaderBg  2 6 paletteData5160 $00
-paletteHeader39: ; $64ed
-	m_PaletteHeaderBg  2 6 paletteData5190 $00
-paletteHeader3a: ; $64f0
-	m_PaletteHeaderBg  2 6 paletteData51c0 $00
-paletteHeader3b: ; $64f3
-	m_PaletteHeaderBg  2 6 paletteData51f0 $00
-paletteHeader3c: ; $64f6
-	m_PaletteHeaderBg  2 6 paletteData59d0 $00
-paletteHeader3d: ; $64f9
-	m_PaletteHeaderBg  2 6 paletteData5a00 $00
-paletteHeader3e: ; $64fc
-	m_PaletteHeaderBg  2 6 paletteData5a60 $00
-paletteHeader3f: ; $64ff
-	m_PaletteHeaderBg  2 4 paletteData5e08 $80
-	m_PaletteHeaderSpr 0 8 paletteData41b8 $00
-paletteHeader40: ; $6505
-	m_PaletteHeaderBg  2 6 paletteData5460 $00
-paletteHeader41: ; $6508
-	m_PaletteHeaderBg  2 6 paletteData5490 $00
-paletteHeader42: ; $650b
-	m_PaletteHeaderBg  2 6 paletteData54c0 $00
-paletteHeader43: ; $650e
-	m_PaletteHeaderBg  2 6 paletteData54f0 $00
-paletteHeader44: ; $6511
-	m_PaletteHeaderBg  2 6 paletteData5520 $00
-paletteHeader45: ; $6514
-	m_PaletteHeaderBg  2 6 paletteData5550 $00
-paletteHeader46: ; $6517
-	m_PaletteHeaderBg  2 6 paletteData5580 $00
-paletteHeader47: ; $651a
-	m_PaletteHeaderBg  2 6 paletteData55b0 $00
-paletteHeader48: ; $651d
-	m_PaletteHeaderBg  2 6 paletteData5610 $00
-paletteHeader49: ; $6520
-	m_PaletteHeaderBg  2 6 paletteData56a0 $00
-paletteHeader4a: ; $6523
-	m_PaletteHeaderBg  2 6 paletteData56d0 $00
-paletteHeader4b: ; $6526
+paletteHeader00:
+	m_PaletteHeaderBg  0, 1, paletteData4000, $00
+paletteHeader01:
+	m_PaletteHeaderBg  0, 2, paletteData4008, $00
+paletteHeader02:
+	m_PaletteHeaderBg  0, 1, paletteData5e50, $80
+	m_PaletteHeaderSpr 0, 1, paletteData5e50, $00
+paletteHeader03:
+	m_PaletteHeaderBg  0, 8, paletteData4018, $80
+	m_PaletteHeaderSpr 0, 8, paletteData4058, $00
+paletteHeader04:
+	m_PaletteHeaderBg  0, 4, paletteData45b0, $00
+paletteHeader05:
+	m_PaletteHeaderBg  0, 1, paletteData4830, $80
+	m_PaletteHeaderBg  2, 5, paletteData5db8, $80
+	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData, $80
+	m_PaletteHeaderSpr 4, 3, paletteData5d98, $00
+paletteHeader06:
+	m_PaletteHeaderBg  0, 1, paletteData4830, $80
+	m_PaletteHeaderBg  2, 5, paletteData5de0, $80
+	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData, $80
+	m_PaletteHeaderSpr 4, 3, paletteData5d98, $00
+paletteHeader07:
+	m_PaletteHeaderBg  0, 8, paletteData4098, $80
+	m_PaletteHeaderSpr 0, 8, paletteData40d8, $00
+paletteHeader08:
+	m_PaletteHeaderBg  0, 8, paletteData4118, $80
+	m_PaletteHeaderSpr 0, 8, paletteData4158, $00
+paletteHeader09:
+	m_PaletteHeaderBg  2, 4, paletteData4198, $80
+	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData, $00
+paletteHeader0a:
+	m_PaletteHeaderBg  0, 2, paletteData4830, $80
+	m_PaletteHeaderBg  2, 6, standardSpritePaletteData, $80
+	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData, $80
+	m_PaletteHeaderSpr 7, 1, paletteData5e48, $00
+paletteHeader0b:
+	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData, $80
+	m_PaletteHeaderSpr 2, 1, paletteData4468, $80
+	m_PaletteHeaderSpr 4, 3, paletteData46f8, $00
+paletteHeader0c:
+	m_PaletteHeaderBg  0, 8, paletteData4930, $80
+	m_PaletteHeaderSpr 0, 8, paletteData4970, $00
+paletteHeader0d:
+	m_PaletteHeaderBg  1, 1, paletteData4878, $00
+paletteHeader0e:
+	m_PaletteHeaderBg  1, 1, paletteData4870, $00
+paletteHeader0f:
+	m_PaletteHeaderBg  0, 1, paletteData4830, $80
+	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData, $00
+paletteHeader10:
+	m_PaletteHeaderBg  2, 6, paletteData49b0, $00
+paletteHeader11:
+	m_PaletteHeaderBg  2, 6, paletteData49e0, $00
+paletteHeader12:
+	m_PaletteHeaderBg  2, 6, paletteData4a10, $00
+paletteHeader13:
+	m_PaletteHeaderBg  2, 6, paletteData4a40, $00
+paletteHeader14:
+	m_PaletteHeaderBg  2, 6, paletteData4a70, $00
+paletteHeader15:
+	m_PaletteHeaderBg  2, 6, paletteData4aa0, $00
+paletteHeader16:
+	m_PaletteHeaderBg  2, 6, paletteData4ad0, $00
+paletteHeader17:
+	m_PaletteHeaderBg  2, 6, paletteData4b00, $00
+paletteHeader18:
+	m_PaletteHeaderBg  2, 6, paletteData4b30, $00
+paletteHeader19:
+	m_PaletteHeaderBg  2, 6, paletteData4b60, $00
+paletteHeader1a:
+	m_PaletteHeaderBg  2, 6, paletteData4b90, $00
+paletteHeader1b:
+	m_PaletteHeaderBg  2, 6, paletteData4bc0, $00
+paletteHeader1c:
+	m_PaletteHeaderBg  2, 6, paletteData4bf0, $00
+paletteHeader1d:
+	m_PaletteHeaderBg  2, 6, paletteData4c20, $00
+paletteHeader1e:
+	m_PaletteHeaderBg  2, 6, paletteData4c50, $00
+paletteHeader1f:
+	m_PaletteHeaderBg  2, 6, paletteData4c80, $00
+paletteHeader20:
+	m_PaletteHeaderBg  2, 6, paletteData4cb0, $00
+paletteHeader21:
+	m_PaletteHeaderBg  2, 6, paletteData4ce0, $00
+paletteHeader22:
+	m_PaletteHeaderBg  2, 6, paletteData4d10, $00
+paletteHeader23:
+	m_PaletteHeaderBg  2, 6, paletteData4d40, $00
+paletteHeader24:
+	m_PaletteHeaderBg  2, 6, paletteData4da0, $00
+paletteHeader25:
+	m_PaletteHeaderBg  2, 6, paletteData4dd0, $00
+paletteHeader26:
+	m_PaletteHeaderBg  2, 6, paletteData4e00, $00
+paletteHeader27:
+	m_PaletteHeaderBg  2, 6, paletteData4e30, $00
+paletteHeader28:
+	m_PaletteHeaderBg  2, 6, paletteData4e60, $00
+paletteHeader29:
+	m_PaletteHeaderBg  2, 6, paletteData4e90, $00
+paletteHeader2a:
+	m_PaletteHeaderBg  2, 6, paletteData4ec0, $00
+paletteHeader2b:
+	m_PaletteHeaderBg  2, 6, paletteData4ef0, $00
+paletteHeader2c:
+	m_PaletteHeaderBg  2, 6, paletteData4f20, $00
+paletteHeader2d:
+	m_PaletteHeaderBg  2, 6, paletteData4f50, $00
+paletteHeader2e:
+	m_PaletteHeaderBg  2, 6, paletteData4f80, $00
+paletteHeader2f:
+	m_PaletteHeaderBg  2, 6, paletteData4fb0, $00
+paletteHeader30:
+	m_PaletteHeaderBg  2, 6, paletteData4fe0, $00
+paletteHeader31:
+	m_PaletteHeaderBg  2, 6, paletteData5010, $00
+paletteHeader32:
+	m_PaletteHeaderBg  2, 6, paletteData5040, $00
+paletteHeader33:
+	m_PaletteHeaderBg  2, 6, paletteData5070, $00
+paletteHeader34:
+	m_PaletteHeaderBg  2, 6, paletteData50a0, $00
+paletteHeader35:
+	m_PaletteHeaderBg  2, 6, paletteData50d0, $00
+paletteHeader36:
+	m_PaletteHeaderBg  2, 6, paletteData5100, $00
+paletteHeader37:
+	m_PaletteHeaderBg  2, 6, paletteData5130, $00
+paletteHeader38:
+	m_PaletteHeaderBg  2, 6, paletteData5160, $00
+paletteHeader39:
+	m_PaletteHeaderBg  2, 6, paletteData5190, $00
+paletteHeader3a:
+	m_PaletteHeaderBg  2, 6, paletteData51c0, $00
+paletteHeader3b:
+	m_PaletteHeaderBg  2, 6, paletteData51f0, $00
+paletteHeader3c:
+	m_PaletteHeaderBg  2, 6, paletteData59d0, $00
+paletteHeader3d:
+	m_PaletteHeaderBg  2, 6, paletteData5a00, $00
+paletteHeader3e:
+	m_PaletteHeaderBg  2, 6, paletteData5a60, $00
+paletteHeader3f:
+	m_PaletteHeaderBg  2, 4, paletteData5e08, $80
+	m_PaletteHeaderSpr 0, 8, paletteData41b8, $00
+paletteHeader40:
+	m_PaletteHeaderBg  2, 6, paletteData5460, $00
+paletteHeader41:
+	m_PaletteHeaderBg  2, 6, paletteData5490, $00
+paletteHeader42:
+	m_PaletteHeaderBg  2, 6, paletteData54c0, $00
+paletteHeader43:
+	m_PaletteHeaderBg  2, 6, paletteData54f0, $00
+paletteHeader44:
+	m_PaletteHeaderBg  2, 6, paletteData5520, $00
+paletteHeader45:
+	m_PaletteHeaderBg  2, 6, paletteData5550, $00
+paletteHeader46:
+	m_PaletteHeaderBg  2, 6, paletteData5580, $00
+paletteHeader47:
+	m_PaletteHeaderBg  2, 6, paletteData55b0, $00
+paletteHeader48:
+	m_PaletteHeaderBg  2, 6, paletteData5610, $00
+paletteHeader49:
+	m_PaletteHeaderBg  2, 6, paletteData56a0, $00
+paletteHeader4a:
+	m_PaletteHeaderBg  2, 6, paletteData56d0, $00
+paletteHeader4b:
 paletteHeader4c:
 paletteHeader4d:
-	m_PaletteHeaderBg  2 6 paletteData55e0 $00
-paletteHeader4e: ; $6529
-	m_PaletteHeaderBg  2 6 paletteData5640 $00
-paletteHeader4f: ; $652c
-	m_PaletteHeaderBg  2 6 paletteData5670 $00
-paletteHeader50: ; $652f
-	m_PaletteHeaderBg  2 6 paletteData5c10 $00
-paletteHeader51: ; $6532
-	m_PaletteHeaderBg  2 6 paletteData5c40 $00
-paletteHeader52: ; $6535
-	m_PaletteHeaderSpr 6 1 paletteData5c70 $00
-paletteHeader53: ; $6538
+	m_PaletteHeaderBg  2, 6, paletteData55e0, $00
+paletteHeader4e:
+	m_PaletteHeaderBg  2, 6, paletteData5640, $00
+paletteHeader4f:
+	m_PaletteHeaderBg  2, 6, paletteData5670, $00
+paletteHeader50:
+	m_PaletteHeaderBg  2, 6, paletteData5c10, $00
+paletteHeader51:
+	m_PaletteHeaderBg  2, 6, paletteData5c40, $00
+paletteHeader52:
+	m_PaletteHeaderSpr 6, 1, paletteData5c70, $00
+paletteHeader53:
 paletteHeader54:
-	m_PaletteHeaderBg  2 6 paletteData4d70 $80
-	m_PaletteHeaderSpr 6 1 paletteData5c88 $00
-paletteHeader55: ; $653e
-	m_PaletteHeaderSpr 6 1 paletteData5c80 $00
-paletteHeader56: ; $6541
-	m_PaletteHeaderBg  2 6 paletteData4dd0 $80
-	m_PaletteHeaderSpr 6 1 paletteData5c90 $00
-paletteHeader57: ; $6547
-	m_PaletteHeaderSpr 6 1 $dea0 $00
-paletteHeader58: ; $654a
-	m_PaletteHeaderBg  2 6 paletteData5310 $00
-paletteHeader59: ; $654d
-	m_PaletteHeaderBg  2 6 paletteData52e0 $00
-paletteHeader5a: ; $6550
-	m_PaletteHeaderBg  2 6 paletteData5340 $00
-paletteHeader5b: ; $6553
-	m_PaletteHeaderBg  2 6 paletteData5370 $00
-paletteHeader5c: ; $6556
-	m_PaletteHeaderBg  2 6 paletteData53a0 $00
-paletteHeader5d: ; $6559
-	m_PaletteHeaderBg  2 6 paletteData53d0 $00
-paletteHeader5e: ; $655c
-	m_PaletteHeaderBg  2 6 paletteData5400 $00
-paletteHeader5f: ; $655f
-	m_PaletteHeaderBg  2 6 paletteData5430 $00
-paletteHeader60: ; $6562
-	m_PaletteHeaderBg  2 6 paletteData5ca8 $00
-paletteHeader61: ; $6565
-	m_PaletteHeaderBg  2 6 paletteData5cd8 $00
-paletteHeader62: ; $6568
-	m_PaletteHeaderBg  2 6 paletteData5d08 $00
-paletteHeader63: ; $656b
-	m_PaletteHeaderBg  2 6 paletteData5d38 $00
-paletteHeader64: ; $656e
-	m_PaletteHeaderBg  2 6 paletteData5250 $00
-paletteHeader65: ; $6571
-	m_PaletteHeaderBg  2 6 paletteData5280 $00
-paletteHeader66: ; $6574
-	m_PaletteHeaderBg  2 6 paletteData52b0 $00
-paletteHeader67: ; $6577
+	m_PaletteHeaderBg  2, 6, paletteData4d70, $80
+	m_PaletteHeaderSpr 6, 1, paletteData5c88, $00
+paletteHeader55:
+	m_PaletteHeaderSpr 6, 1, paletteData5c80, $00
+paletteHeader56:
+	m_PaletteHeaderBg  2, 6, paletteData4dd0, $80
+	m_PaletteHeaderSpr 6, 1, paletteData5c90, $00
+paletteHeader57:
+	m_PaletteHeaderSpr 6, 1, $dea0, $00
+paletteHeader58:
+	m_PaletteHeaderBg  2, 6, paletteData5310, $00
+paletteHeader59:
+	m_PaletteHeaderBg  2, 6, paletteData52e0, $00
+paletteHeader5a:
+	m_PaletteHeaderBg  2, 6, paletteData5340, $00
+paletteHeader5b:
+	m_PaletteHeaderBg  2, 6, paletteData5370, $00
+paletteHeader5c:
+	m_PaletteHeaderBg  2, 6, paletteData53a0, $00
+paletteHeader5d:
+	m_PaletteHeaderBg  2, 6, paletteData53d0, $00
+paletteHeader5e:
+	m_PaletteHeaderBg  2, 6, paletteData5400, $00
+paletteHeader5f:
+	m_PaletteHeaderBg  2, 6, paletteData5430, $00
+paletteHeader60:
+	m_PaletteHeaderBg  2, 6, paletteData5ca8, $00
+paletteHeader61:
+	m_PaletteHeaderBg  2, 6, paletteData5cd8, $00
+paletteHeader62:
+	m_PaletteHeaderBg  2, 6, paletteData5d08, $00
+paletteHeader63:
+	m_PaletteHeaderBg  2, 6, paletteData5d38, $00
+paletteHeader64:
+	m_PaletteHeaderBg  2, 6, paletteData5250, $00
+paletteHeader65:
+	m_PaletteHeaderBg  2, 6, paletteData5280, $00
+paletteHeader66:
+	m_PaletteHeaderBg  2, 6, paletteData52b0, $00
+paletteHeader67:
 paletteHeader68:
-	m_PaletteHeaderBg  2 6 paletteData5a30 $00
-paletteHeader69: ; $657a
-	m_PaletteHeaderBg  2 6 paletteData5a90 $00
-paletteHeader6a: ; $657d
-	m_PaletteHeaderBg  2 6 paletteData5ac0 $00
-paletteHeader6b: ; $6580
-	m_PaletteHeaderBg  2 6 paletteData5af0 $00
-paletteHeader6c: ; $6583
-	m_PaletteHeaderBg  2 6 paletteData5b20 $00
-paletteHeader6d: ; $6586
-	m_PaletteHeaderBg  2 6 paletteData5b80 $00
-paletteHeader6e: ; $6589
-	m_PaletteHeaderBg  2 6 paletteData5bb0 $00
-paletteHeader6f: ; $658c
-	m_PaletteHeaderBg  2 6 paletteData5be0 $00
-paletteHeader70: ; $658f
-	m_PaletteHeaderBg  2 6 paletteData5760 $00
-paletteHeader71: ; $6592
-	m_PaletteHeaderBg  2 6 paletteData5790 $00
-paletteHeader72: ; $6595
-	m_PaletteHeaderBg  2 6 paletteData57c0 $00
-paletteHeader73: ; $6598
-	m_PaletteHeaderBg  2 6 paletteData57f0 $00
-paletteHeader74: ; $659b
-	m_PaletteHeaderBg  2 6 paletteData5d68 $00
-paletteHeader75: ; $659e
-	m_PaletteHeaderBg  2 6 paletteData5820 $00
-paletteHeader76: ; $65a1
-	m_PaletteHeaderBg  2 6 paletteData5850 $00
-paletteHeader77: ; $65a4
-	m_PaletteHeaderBg  2 6 paletteData5880 $00
-paletteHeader78: ; $65a7
-	m_PaletteHeaderBg  2 6 paletteData58b0 $00
-paletteHeader79: ; $65aa
-	m_PaletteHeaderBg  2 6 paletteData58e0 $00
-paletteHeader7a: ; $65ad
-	m_PaletteHeaderBg  2 6 paletteData5910 $00
-paletteHeader7b: ; $65b0
-	m_PaletteHeaderBg  2 6 paletteData5940 $00
-paletteHeader7c: ; $65b3
-	m_PaletteHeaderBg  2 6 paletteData5970 $00
-paletteHeader7d: ; $65b6
-	m_PaletteHeaderBg  2 6 paletteData59a0 $00
-paletteHeader7e: ; $65b9
+	m_PaletteHeaderBg  2, 6, paletteData5a30, $00
+paletteHeader69:
+	m_PaletteHeaderBg  2, 6, paletteData5a90, $00
+paletteHeader6a:
+	m_PaletteHeaderBg  2, 6, paletteData5ac0, $00
+paletteHeader6b:
+	m_PaletteHeaderBg  2, 6, paletteData5af0, $00
+paletteHeader6c:
+	m_PaletteHeaderBg  2, 6, paletteData5b20, $00
+paletteHeader6d:
+	m_PaletteHeaderBg  2, 6, paletteData5b80, $00
+paletteHeader6e:
+	m_PaletteHeaderBg  2, 6, paletteData5bb0, $00
+paletteHeader6f:
+	m_PaletteHeaderBg  2, 6, paletteData5be0, $00
+paletteHeader70:
+	m_PaletteHeaderBg  2, 6, paletteData5760, $00
+paletteHeader71:
+	m_PaletteHeaderBg  2, 6, paletteData5790, $00
+paletteHeader72:
+	m_PaletteHeaderBg  2, 6, paletteData57c0, $00
+paletteHeader73:
+	m_PaletteHeaderBg  2, 6, paletteData57f0, $00
+paletteHeader74:
+	m_PaletteHeaderBg  2, 6, paletteData5d68, $00
+paletteHeader75:
+	m_PaletteHeaderBg  2, 6, paletteData5820, $00
+paletteHeader76:
+	m_PaletteHeaderBg  2, 6, paletteData5850, $00
+paletteHeader77:
+	m_PaletteHeaderBg  2, 6, paletteData5880, $00
+paletteHeader78:
+	m_PaletteHeaderBg  2, 6, paletteData58b0, $00
+paletteHeader79:
+	m_PaletteHeaderBg  2, 6, paletteData58e0, $00
+paletteHeader7a:
+	m_PaletteHeaderBg  2, 6, paletteData5910, $00
+paletteHeader7b:
+	m_PaletteHeaderBg  2, 6, paletteData5940, $00
+paletteHeader7c:
+	m_PaletteHeaderBg  2, 6, paletteData5970, $00
+paletteHeader7d:
+	m_PaletteHeaderBg  2, 6, paletteData59a0, $00
+paletteHeader7e:
 paletteHeader7f:
-	m_PaletteHeaderSpr 7 1 paletteData4888 $00
-paletteHeader80: ; $65bc
-	m_PaletteHeaderSpr 6 1 paletteData4890 $00
-paletteHeader81: ; $65bf
-	m_PaletteHeaderSpr 6 1 paletteData4898 $00
-paletteHeader82: ; $65c2
-	m_PaletteHeaderSpr 6 1 paletteData48a0 $00
-paletteHeader83: ; $65c5
+	m_PaletteHeaderSpr 7, 1, paletteData4888, $00
+paletteHeader80:
+	m_PaletteHeaderSpr 6, 1, paletteData4890, $00
+paletteHeader81:
+	m_PaletteHeaderSpr 6, 1, paletteData4898, $00
+paletteHeader82:
+	m_PaletteHeaderSpr 6, 1, paletteData48a0, $00
+paletteHeader83:
 paletteHeader84:
-	m_PaletteHeaderSpr 6 1 paletteData48a8 $00
-paletteHeader85: ; $65c8
-	m_PaletteHeaderSpr 6 1 paletteData48b0 $00
-paletteHeader86: ; $65cb
-	m_PaletteHeaderSpr 6 1 $deb0 $00
-paletteHeader87: ; $65ce
-	m_PaletteHeaderSpr 6 1 paletteData48b8 $00
-paletteHeader88: ; $65d1
-	m_PaletteHeaderSpr 6 1 paletteData48c0 $00
-paletteHeader89: ; $65d4
-	m_PaletteHeaderSpr 6 1 paletteData48c8 $00
-paletteHeader8a: ; $65d7
-	m_PaletteHeaderSpr 6 1 paletteData48d0 $00
-paletteHeader8b: ; $65da
-	m_PaletteHeaderSpr 6 1 paletteData48d8 $80
-	m_PaletteHeaderBg  7 1 paletteData5700 $00
-paletteHeader8c: ; $65e0
-	m_PaletteHeaderSpr 6 1 paletteData48e0 $00
-paletteHeader8d: ; $65e3
-	m_PaletteHeaderBg  0 8 paletteData48e8 $00
-paletteHeader8e: ; $65e6
-	m_PaletteHeaderBg  2 6 paletteData56d0 $80
-	m_PaletteHeaderBg  6 1 paletteData4928 $00
-paletteHeader8f: ; $65ec
-	m_PaletteHeaderBg  0 6 paletteData4800 $80
-	m_PaletteHeaderSpr 0 6 paletteData4800 $00
-paletteHeader90: ; $65f2
-	m_PaletteHeaderBg  0 8 paletteData41f8 $80
-	m_PaletteHeaderSpr 0 8 paletteData4238 $00
-paletteHeader91: ; $65f8
-	m_PaletteHeaderBg  0 1 paletteData4830 $80
-	m_PaletteHeaderBg  2 6 paletteData56a0 $80
-	m_PaletteHeaderSpr 0 6 standardSpritePaletteData $80
-	m_PaletteHeaderSpr 6 1 paletteData4468 $00
-paletteHeader92: ; $6604
-	m_PaletteHeaderBg  0 8 paletteData4278 $80
-	m_PaletteHeaderSpr 0 8 paletteData4378 $00
-paletteHeader93: ; $660a
-	m_PaletteHeaderBg  0 8 paletteData42b8 $80
-	m_PaletteHeaderSpr 0 8 paletteData43b8 $00
-paletteHeader94: ; $6610
-	m_PaletteHeaderBg  0 8 paletteData4338 $80
-	m_PaletteHeaderSpr 2 3 paletteData43f8 $00
-paletteHeader95: ; $6616
-	m_PaletteHeaderBg  0 8 paletteData4470 $80
-	m_PaletteHeaderSpr 0 7 paletteData44b0 $00
-paletteHeader96: ; $661c
-	m_PaletteHeaderBg  0 8 paletteData42f8 $80
-	m_PaletteHeaderSpr 0 8 paletteData42f8 $00
-paletteHeader97: ; $6622
-	m_PaletteHeaderBg  2 6 paletteData54c0 $80
-	m_PaletteHeaderSpr 6 1 paletteData48c8 $00
-paletteHeader98: ; $6628
-	m_PaletteHeaderBg  1 7 paletteData4410 $80
-	m_PaletteHeaderSpr 1 4 paletteData4448 $00
-paletteHeader99: ; $662e
-	m_PaletteHeaderBg  5 2 paletteData5220 $80
-	m_PaletteHeaderBg  3 1 paletteData5230 $00
-paletteHeader9a: ; $6634
-	m_PaletteHeaderBg  5 2 paletteData5238 $80
-	m_PaletteHeaderBg  3 1 paletteData5248 $80
-	m_PaletteHeaderSpr 7 1 paletteData5ca0 $00
-paletteHeader9b: ; $663d
-	m_PaletteHeaderSpr 6 1 paletteData5c78 $00
-paletteHeader9c: ; $6640
-	m_PaletteHeaderBg  0 4 paletteData45b0 $00
-paletteHeader9d: ; $6643
-	m_PaletteHeaderBg  1 7 paletteData4508 $80
-	m_PaletteHeaderSpr 1 6 paletteData4578 $00
-paletteHeader9e: ; $6649
-	m_PaletteHeaderBg  1 7 paletteData4540 $80
-	m_PaletteHeaderSpr 1 1 paletteData45a8 $00
-paletteHeader9f: ; $664f
-	m_PaletteHeaderBg  0 8 paletteData4740 $80
-	m_PaletteHeaderSpr 0 8 paletteData4780 $00
-paletteHeadera0: ; $6655
-	m_PaletteHeaderBg  0 5 paletteData46c0 $80
-	m_PaletteHeaderSpr 0 2 paletteData46e8 $00
-paletteHeadera1: ; $665b
-	m_PaletteHeaderBg  0 4 paletteData4620 $80
-	m_PaletteHeaderSpr 0 2 paletteData4640 $00
-paletteHeadera2: ; $6661
-	m_PaletteHeaderBg  0 4 paletteData4620 $80
-	m_PaletteHeaderSpr 0 2 paletteData4650 $00
-paletteHeadera3: ; $6667
-	m_PaletteHeaderBg  0 4 paletteData4620 $80
-	m_PaletteHeaderSpr 0 2 paletteData4660 $00
-paletteHeadera4: ; $666d
-	m_PaletteHeaderBg  0 4 paletteData4620 $80
-	m_PaletteHeaderSpr 0 2 paletteData4670 $00
-paletteHeadera5: ; $6673
-	m_PaletteHeaderBg  0 4 paletteData4620 $80
-	m_PaletteHeaderSpr 0 2 paletteData4640 $00
-paletteHeadera6: ; $6679
-	m_PaletteHeaderBg  0 4 paletteData4620 $80
-	m_PaletteHeaderSpr 0 2 paletteData4650 $00
-paletteHeadera7: ; $667f
-	m_PaletteHeaderBg  0 4 paletteData4620 $80
-	m_PaletteHeaderSpr 0 2 paletteData4660 $00
-paletteHeadera8: ; $6685
-	m_PaletteHeaderBg  0 4 paletteData4620 $80
-	m_PaletteHeaderSpr 0 2 paletteData4670 $00
-paletteHeadera9: ; $668b
-	m_PaletteHeaderBg  2 6 paletteData4710 $00
-paletteHeaderaa: ; $668e
-	m_PaletteHeaderBg  0 6 paletteData47c0 $80
-	m_PaletteHeaderSpr 4 4 paletteData47e0 $00
-paletteHeaderab: ; $6694
-	m_PaletteHeaderSpr 7 1 paletteData5e48 $00
-paletteHeaderac: ; $6697
-	m_PaletteHeaderSpr 6 2 paletteData5e30 $00
-paletteHeaderad: ; $669a
-	m_PaletteHeaderBg  0 8 paletteData45d0 $80
-	m_PaletteHeaderSpr 0 8 paletteData45d0 $00
-paletteHeaderae: ; $66a0
-	m_PaletteHeaderBg  0 8 paletteData4680 $00
-paletteHeaderaf: ; $66a3
-	m_PaletteHeaderSpr 7 1 paletteData5e40 $00
-paletteHeaderb0: ; $66a6
-	m_PaletteHeaderSpr 6 1 paletteData5e28 $00
-paletteHeaderb1: ; $66a9
-	m_PaletteHeaderBg  7 1 paletteData5700 $00
-paletteHeaderb2: ; $66ac
-	m_PaletteHeaderBg  7 1 paletteData5708 $00
-paletteHeaderb3: ; $66af
-	m_PaletteHeaderBg  7 1 paletteData5710 $00
-paletteHeaderb4: ; $66b2
-	m_PaletteHeaderBg  7 1 paletteData5718 $00
-paletteHeaderb5: ; $66b5
-	m_PaletteHeaderBg  7 1 paletteData5720 $00
-paletteHeaderb6: ; $66b8
-	m_PaletteHeaderBg  7 1 paletteData5728 $00
-paletteHeaderb7: ; $66bb
-	m_PaletteHeaderBg  7 1 paletteData5730 $00
-paletteHeaderb8: ; $66be
-	m_PaletteHeaderBg  7 1 paletteData5738 $00
-paletteHeaderb9: ; $66c1
-	m_PaletteHeaderBg  7 1 paletteData5740 $00
-paletteHeaderba: ; $66c4
-	m_PaletteHeaderBg  7 1 paletteData5748 $00
-paletteHeaderbb: ; $66c7
-	m_PaletteHeaderBg  7 1 paletteData5750 $00
-paletteHeaderbc: ; $66ca
-	m_PaletteHeaderBg  7 1 paletteData5758 $00
-paletteHeaderbd: ; $66cd
-	m_PaletteHeaderBg  1 1 paletteData4880 $00
+	m_PaletteHeaderSpr 6, 1, paletteData48a8, $00
+paletteHeader85:
+	m_PaletteHeaderSpr 6, 1, paletteData48b0, $00
+paletteHeader86:
+	m_PaletteHeaderSpr 6, 1, $deb0, $00
+paletteHeader87:
+	m_PaletteHeaderSpr 6, 1, paletteData48b8, $00
+paletteHeader88:
+	m_PaletteHeaderSpr 6, 1, paletteData48c0, $00
+paletteHeader89:
+	m_PaletteHeaderSpr 6, 1, paletteData48c8, $00
+paletteHeader8a:
+	m_PaletteHeaderSpr 6, 1, paletteData48d0, $00
+paletteHeader8b:
+	m_PaletteHeaderSpr 6, 1, paletteData48d8, $80
+	m_PaletteHeaderBg  7, 1, paletteData5700, $00
+paletteHeader8c:
+	m_PaletteHeaderSpr 6, 1, paletteData48e0, $00
+paletteHeader8d:
+	m_PaletteHeaderBg  0, 8, paletteData48e8, $00
+paletteHeader8e:
+	m_PaletteHeaderBg  2, 6, paletteData56d0, $80
+	m_PaletteHeaderBg  6, 1, paletteData4928, $00
+paletteHeader8f:
+	m_PaletteHeaderBg  0, 6, paletteData4800, $80
+	m_PaletteHeaderSpr 0, 6, paletteData4800, $00
+paletteHeader90:
+	m_PaletteHeaderBg  0, 8, paletteData41f8, $80
+	m_PaletteHeaderSpr 0, 8, paletteData4238, $00
+paletteHeader91:
+	m_PaletteHeaderBg  0, 1, paletteData4830, $80
+	m_PaletteHeaderBg  2, 6, paletteData56a0, $80
+	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData, $80
+	m_PaletteHeaderSpr 6, 1, paletteData4468, $00
+paletteHeader92:
+	m_PaletteHeaderBg  0, 8, paletteData4278, $80
+	m_PaletteHeaderSpr 0, 8, paletteData4378, $00
+paletteHeader93:
+	m_PaletteHeaderBg  0, 8, paletteData42b8, $80
+	m_PaletteHeaderSpr 0, 8, paletteData43b8, $00
+paletteHeader94:
+	m_PaletteHeaderBg  0, 8, paletteData4338, $80
+	m_PaletteHeaderSpr 2, 3, paletteData43f8, $00
+paletteHeader95:
+	m_PaletteHeaderBg  0, 8, paletteData4470, $80
+	m_PaletteHeaderSpr 0, 7, paletteData44b0, $00
+paletteHeader96:
+	m_PaletteHeaderBg  0, 8, paletteData42f8, $80
+	m_PaletteHeaderSpr 0, 8, paletteData42f8, $00
+paletteHeader97:
+	m_PaletteHeaderBg  2, 6, paletteData54c0, $80
+	m_PaletteHeaderSpr 6, 1, paletteData48c8, $00
+paletteHeader98:
+	m_PaletteHeaderBg  1, 7, paletteData4410, $80
+	m_PaletteHeaderSpr 1, 4, paletteData4448, $00
+paletteHeader99:
+	m_PaletteHeaderBg  5, 2, paletteData5220, $80
+	m_PaletteHeaderBg  3, 1, paletteData5230, $00
+paletteHeader9a:
+	m_PaletteHeaderBg  5, 2, paletteData5238, $80
+	m_PaletteHeaderBg  3, 1, paletteData5248, $80
+	m_PaletteHeaderSpr 7, 1, paletteData5ca0, $00
+paletteHeader9b:
+	m_PaletteHeaderSpr 6, 1, paletteData5c78, $00
+paletteHeader9c:
+	m_PaletteHeaderBg  0, 4, paletteData45b0, $00
+paletteHeader9d:
+	m_PaletteHeaderBg  1, 7, paletteData4508, $80
+	m_PaletteHeaderSpr 1, 6, paletteData4578, $00
+paletteHeader9e:
+	m_PaletteHeaderBg  1, 7, paletteData4540, $80
+	m_PaletteHeaderSpr 1, 1, paletteData45a8, $00
+paletteHeader9f:
+	m_PaletteHeaderBg  0, 8, paletteData4740, $80
+	m_PaletteHeaderSpr 0, 8, paletteData4780, $00
+paletteHeadera0:
+	m_PaletteHeaderBg  0, 5, paletteData46c0, $80
+	m_PaletteHeaderSpr 0, 2, paletteData46e8, $00
+paletteHeadera1:
+	m_PaletteHeaderBg  0, 4, paletteData4620, $80
+	m_PaletteHeaderSpr 0, 2, paletteData4640, $00
+paletteHeadera2:
+	m_PaletteHeaderBg  0, 4, paletteData4620, $80
+	m_PaletteHeaderSpr 0, 2, paletteData4650, $00
+paletteHeadera3:
+	m_PaletteHeaderBg  0, 4, paletteData4620, $80
+	m_PaletteHeaderSpr 0, 2, paletteData4660, $00
+paletteHeadera4:
+	m_PaletteHeaderBg  0, 4, paletteData4620, $80
+	m_PaletteHeaderSpr 0, 2, paletteData4670, $00
+paletteHeadera5:
+	m_PaletteHeaderBg  0, 4, paletteData4620, $80
+	m_PaletteHeaderSpr 0, 2, paletteData4640, $00
+paletteHeadera6:
+	m_PaletteHeaderBg  0, 4, paletteData4620, $80
+	m_PaletteHeaderSpr 0, 2, paletteData4650, $00
+paletteHeadera7:
+	m_PaletteHeaderBg  0, 4, paletteData4620, $80
+	m_PaletteHeaderSpr 0, 2, paletteData4660, $00
+paletteHeadera8:
+	m_PaletteHeaderBg  0, 4, paletteData4620, $80
+	m_PaletteHeaderSpr 0, 2, paletteData4670, $00
+paletteHeadera9:
+	m_PaletteHeaderBg  2, 6, paletteData4710, $00
+paletteHeaderaa:
+	m_PaletteHeaderBg  0, 6, paletteData47c0, $80
+	m_PaletteHeaderSpr 4, 4, paletteData47e0, $00
+paletteHeaderab:
+	m_PaletteHeaderSpr 7, 1, paletteData5e48, $00
+paletteHeaderac:
+	m_PaletteHeaderSpr 6, 2, paletteData5e30, $00
+paletteHeaderad:
+	m_PaletteHeaderBg  0, 8, paletteData45d0, $80
+	m_PaletteHeaderSpr 0, 8, paletteData45d0, $00
+paletteHeaderae:
+	m_PaletteHeaderBg  0, 8, paletteData4680, $00
+paletteHeaderaf:
+	m_PaletteHeaderSpr 7, 1, paletteData5e40, $00
+paletteHeaderb0:
+	m_PaletteHeaderSpr 6, 1, paletteData5e28, $00
+paletteHeaderb1:
+	m_PaletteHeaderBg  7, 1, paletteData5700, $00
+paletteHeaderb2:
+	m_PaletteHeaderBg  7, 1, paletteData5708, $00
+paletteHeaderb3:
+	m_PaletteHeaderBg  7, 1, paletteData5710, $00
+paletteHeaderb4:
+	m_PaletteHeaderBg  7, 1, paletteData5718, $00
+paletteHeaderb5:
+	m_PaletteHeaderBg  7, 1, paletteData5720, $00
+paletteHeaderb6:
+	m_PaletteHeaderBg  7, 1, paletteData5728, $00
+paletteHeaderb7:
+	m_PaletteHeaderBg  7, 1, paletteData5730, $00
+paletteHeaderb8:
+	m_PaletteHeaderBg  7, 1, paletteData5738, $00
+paletteHeaderb9:
+	m_PaletteHeaderBg  7, 1, paletteData5740, $00
+paletteHeaderba:
+	m_PaletteHeaderBg  7, 1, paletteData5748, $00
+paletteHeaderbb:
+	m_PaletteHeaderBg  7, 1, paletteData5750, $00
+paletteHeaderbc:
+	m_PaletteHeaderBg  7, 1, paletteData5758, $00
+paletteHeaderbd:
+	m_PaletteHeaderBg  1, 1, paletteData4880, $00

@@ -7,11 +7,11 @@ interactionCoded9:
 	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
-	.dw _interactiond9_state0
-	.dw _interactiond9_state1
-	.dw _interactiond9_state2
+	.dw interactiond9_state0
+	.dw interactiond9_state1
+	.dw interactiond9_state2
 
-_interactiond9_state0:
+interactiond9_state0:
 	ld a,$01
 	ld (wLoadedTreeGfxIndex),a
 
@@ -58,7 +58,7 @@ _interactiond9_state0:
 ; @param[out]	bc	The item ID.
 ;			If this is an upgrade, 'c' is a value from 0-4 indicating the
 ;			behaviour (ie. compare with current ring box level, sword level)
-_interactiond9_getItemID:
+interactiond9_getItemID:
 	ld e,Interaction.subid
 	ld a,(de)
 	ld hl,@chestContents
@@ -82,7 +82,7 @@ _interactiond9_getItemID:
 
 
 ; State 1: it's a new item, not an upgrade
-_interactiond9_state1:
+interactiond9_state1:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -98,7 +98,7 @@ _interactiond9_state1:
 	xor a
 	ld (wcca2),a
 
-	call _interactiond9_getItemID
+	call interactiond9_getItemID
 	ld a,b
 	ld (wChestContentsOverride),a
 	ld a,c
@@ -138,7 +138,7 @@ _interactiond9_state1:
 	or a
 	ret z
 
-	call _interactiond9_markSecretAsTold
+	call interactiond9_markSecretAsTold
 	ld e,Interaction.counter1
 	ld a,$1e
 	ld (de),a
@@ -158,7 +158,7 @@ _interactiond9_state1:
 
 
 ; State 2: it's an upgrade; it doesn't go in a chest.
-_interactiond9_state2:
+interactiond9_state2:
 	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
@@ -229,7 +229,7 @@ _interactiond9_state2:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _interactiond9_getItemID
+	call interactiond9_getItemID
 	ld a,c
 	rst_jumpTable
 	.dw @swordUpgrade
@@ -330,7 +330,7 @@ _interactiond9_state2:
 
 	ld bc,TX_5509
 	call showText
-	call _interactiond9_markSecretAsTold
+	call interactiond9_markSecretAsTold
 	jp interactionDelete
 
 @substate8:
@@ -346,7 +346,7 @@ _interactiond9_state2:
 	jp objectCopyPosition
 
 ;;
-_interactiond9_markSecretAsTold:
+interactiond9_markSecretAsTold:
 	ld e,Interaction.subid
 	ld a,(de)
 .ifdef ROM_AGES

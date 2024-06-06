@@ -1,19 +1,19 @@
 ;;
 ; Unused function (in both ages and seasons)
-_func_5358:
-	call _checkNoOtherParentItemsInUse
+func_5358:
+	call checkNoOtherParentItemsInUse
 --
 	push hl
-	call nz,_clearParentItemH
+	call nz,clearParentItemH
 	pop hl
-	call _checkNoOtherParentItemsInUse@nextItem
+	call checkNoOtherParentItemsInUse@nextItem
 	jr nz,--
 	ret
 
 ;;
 ; @param	d	The current parent item
 ; @param[out]	zflag	Set if there are no other parent item slots in use
-_checkNoOtherParentItemsInUse:
+checkNoOtherParentItemsInUse:
 	ld hl,w1ParentItem2.enabled
 --
 	ld a,d
@@ -36,13 +36,13 @@ _checkNoOtherParentItemsInUse:
 ;
 ; * Disables movement, turning
 ; * Sets Item.state to $01
-; * Loads an animation for Link by reading from _linkItemAnimationTable
+; * Loads an animation for Link by reading from linkItemAnimationTable
 ; * Sets Item.relatedObj2 to something
 ; * Sets Item.var3f to something
 ;
-_parentItemLoadAnimationAndIncState:
-	call _itemDisableLinkMovement
-	call _itemDisableLinkTurning
+parentItemLoadAnimationAndIncState:
+	call itemDisableLinkMovement
+	call itemDisableLinkTurning
 
 	ld e,Item.state
 	ld a,$01
@@ -50,7 +50,7 @@ _parentItemLoadAnimationAndIncState:
 
 	ld e,Item.id
 	ld a,(de)
-	ld hl,_linkItemAnimationTable
+	ld hl,linkItemAnimationTable
 	rst_addDoubleIndex
 
 	; Read Item.relatedObj2 from the table
@@ -76,7 +76,7 @@ _parentItemLoadAnimationAndIncState:
 
 	ld c,(hl)
 	bit 7,b
-	call nz,_setLinkUsingItem1
+	call nz,setLinkUsingItem1
 
 .ifdef ROM_AGES
 	ld a,(w1Companion.id)
@@ -129,7 +129,7 @@ itemCreateChildIfDoesntExistAlready:
 itemCreateChildAndDeleteOnFailure:
 	call itemCreateChild
 	ret nc
-	jp _clearParentItem
+	jp clearParentItem
 
 ;;
 ; Creates an item object, based on the id of another item object?
@@ -166,7 +166,7 @@ itemCreateChildWithID:
 
 	; If relatedObj2 is pointing to something other than Link, this will overwrite that.
 	cp >w1Link
-	call z,_getFreeItemSlotWithObjectCap
+	call z,getFreeItemSlotWithObjectCap
 	ret c
 
 	; Set Item.enabled
@@ -214,7 +214,7 @@ itemCreateChildWithID:
 ; @param	e	Maximum number of items with ID "bc" that can exist (0 means 256).
 ; @param[out]	hl	Free item slot
 ; @param[out]	cflag	Set on failure.
-_getFreeItemSlotWithObjectCap:
+getFreeItemSlotWithObjectCap:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.id
 
 	; Loop through all existing items, make sure that the maximum number of objects of
@@ -250,7 +250,7 @@ _getFreeItemSlotWithObjectCap:
 ;
 ; @param[out]	a	Number of available slots
 ; @param[out]	zflag
-_getNumFreeItemSlots:
+getNumFreeItemSlots:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.start
 	ld b,$00
 --
@@ -269,8 +269,8 @@ _getNumFreeItemSlots:
 
 ;;
 ; @param d Parent item to add to wLinkUsingItem1
-_setLinkUsingItem1:
-	call _itemIndexToBit
+setLinkUsingItem1:
+	call itemIndexToBit
 	swap a
 	or (hl)
 	ld hl,wLinkUsingItem1
@@ -280,8 +280,8 @@ _setLinkUsingItem1:
 
 ;;
 ; @param d Parent item to clear from wLinkUsingItem1
-_clearLinkUsingItem1:
-	call _itemIndexToBit
+clearLinkUsingItem1:
+	call itemIndexToBit
 	swap a
 	or (hl)
 	cpl
@@ -292,8 +292,8 @@ _clearLinkUsingItem1:
 
 ;;
 ; @param d Parent item to add to wLinkImmobilized
-_itemDisableLinkMovement:
-	call _itemIndexToBit
+itemDisableLinkMovement:
+	call itemIndexToBit
 	ld hl,wLinkImmobilized
 	or (hl)
 	ld (hl),a
@@ -301,8 +301,8 @@ _itemDisableLinkMovement:
 
 ;;
 ; @param d Parent item to clear from wLinkImmobilized
-_itemEnableLinkMovement:
-	call _itemIndexToBit
+itemEnableLinkMovement:
+	call itemIndexToBit
 	ld hl,wLinkImmobilized
 	cpl
 	and (hl)
@@ -311,8 +311,8 @@ _itemEnableLinkMovement:
 
 ;;
 ; @param d Parent item to add to wLinkTurningDisabled
-_itemDisableLinkTurning:
-	call _itemIndexToBit
+itemDisableLinkTurning:
+	call itemIndexToBit
 	ld hl,wLinkTurningDisabled
 	or (hl)
 	ld (hl),a
@@ -320,8 +320,8 @@ _itemDisableLinkTurning:
 
 ;;
 ; @param d Parent item to clear from wLinkTurningDisabled
-_itemEnableLinkTurning:
-	call _itemIndexToBit
+itemEnableLinkTurning:
+	call itemIndexToBit
 	ld hl,wLinkTurningDisabled
 	cpl
 	and (hl)
@@ -332,8 +332,8 @@ _itemEnableLinkTurning:
 ; Unused?
 ;
 ; @param d Parent item to add to wcc95
-_setCc95Bit:
-	call _itemIndexToBit
+setCc95Bit:
+	call itemIndexToBit
 	ld hl,wcc95
 	or (hl)
 	ld (hl),a
@@ -344,7 +344,7 @@ _setCc95Bit:
 ;
 ; @param	d	Parent item object
 ; @param[out]	a	Bitmask for the item
-_itemIndexToBit:
+itemIndexToBit:
 	ld a,d
 	sub >w1ParentItem2
 	ld hl,bitTable
@@ -357,20 +357,20 @@ _itemIndexToBit:
 ; Checks if the button corresponding to the parent item object is pressed (the bitmask is
 ; stored in var03).
 ;
-_parentItemCheckButtonPressed:
+parentItemCheckButtonPressed:
 	ld h,d
 	ld l,Item.var03
 
 ;;
 ; @param	hl
-_andHlWithGameKeysPressed:
+andHlWithGameKeysPressed:
 	ld a,(wGameKeysPressed)
 	and (hl)
 	ret
 
 ;;
 ; @param	d	Parent item object
-_clearParentItemIfCantUseSword:
+clearParentItemIfCantUseSword:
 	; Check if in a spinner
 	ld a,(wcc95)
 	rlca
@@ -396,12 +396,12 @@ _clearParentItemIfCantUseSword:
 	pop af
 	xor a
 	ld (wcc63),a
-	jp _clearParentItem
+	jp clearParentItem
 
 ;;
 ; @param[out]	zflag	Set if link is on the ground (not on companion, not underwater,
 ;			not swimming, not in the air).
-_checkLinkOnGround:
+checkLinkOnGround:
 	ld a,(wLinkObjectIndex)
 	and $01
 	ret nz
@@ -414,7 +414,7 @@ _checkLinkOnGround:
 
 .ifdef ROM_AGES
 	ret nz
-	jr _isLinkUnderwater
+	jr isLinkUnderwater
 
 .else; ROM_SEASONS
 	ret
@@ -425,7 +425,7 @@ _checkLinkOnGround:
 ;;
 ; TODO: rename this to the inverse of what it is now
 ; @param[out]	zflag	z if Link is not in an underwater map
-_isLinkUnderwater:
+isLinkUnderwater:
 	ld a,(w1Link.var2f)
 	bit 7,a
 	ret
@@ -433,7 +433,7 @@ _isLinkUnderwater:
 
 ;;
 ; @param[out]	cflag	Set if link is currently in a hole.
-_isLinkInHole:
+isLinkInHole:
 	ld a,(wActiveTileType)
 	dec a
 	cp $02

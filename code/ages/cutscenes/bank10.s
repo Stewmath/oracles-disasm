@@ -76,7 +76,7 @@ agesFunc_10_70f6:
 	call clearOam
 	xor a
 	ld ($cfde),a
-	ld a,$95
+	ld a,GFXH_95
 	call loadGfxHeader
 	ld a,PALH_a0
 	call loadPaletteHeader
@@ -86,7 +86,7 @@ agesFunc_10_70f6:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL
-	ld l,$4b
+	ld l,Interaction.yh
 	ld (hl),$e8
 	inc l
 	inc l
@@ -276,9 +276,11 @@ agesFunc_10_7298:
 	.dw @substate6
 	.dw @substate7
 	.dw @substate8
+.ifndef REGION_JP
 	.dw @substate9
 	.dw @substateA
 	.dw @substateB
+.endif
 @substate0:
 	call checkIsLinkedGame
 	call nz,agesFunc_10_70f6@func_71fd
@@ -391,7 +393,7 @@ agesFunc_10_7298:
 	ld a,TEXT_BANK
 	ld ($ff00+R_SVBK),a
 	ld hl,w7SecretText1
-	ld de,$d800
+	ld de,w7d800
 	ld bc,$1800
 -
 	ldi a,(hl)
@@ -401,14 +403,14 @@ agesFunc_10_7298:
 	pop af
 	ld ($ff00+R_SVBK),a
 	
-	ld a,$97
+	ld a,GFXH_97
 	call loadGfxHeader
 	ld a,PALH_05
 	call loadPaletteHeader
 	ld a,UNCMP_GFXH_2b
 	call loadUncompressedGfxHeader
 	call checkIsLinkedGame
-	ld a,$06
+	ld a,GFXH_06
 	call nz,loadGfxHeader
 	call clearDynamicInteractions
 	call clearOam
@@ -468,6 +470,10 @@ agesFunc_10_7298:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
+
+.ifdef REGION_JP
+	jp resetGame
+.else
 	call checkIsLinkedGame
 	jp nz,resetGame
 	call disableLcd
@@ -515,5 +521,7 @@ agesFunc_10_7298:
 	or a
 	ret nz
 	jp resetGame
+
+.endif ; !REGION_JP
 
 .ends

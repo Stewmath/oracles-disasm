@@ -43,7 +43,7 @@ func_4f5d:
 ; @param	b	Length of bridge (in 8x8 tiles)
 ; @param	c	Direction the bridge should extend (0-3)
 ; @param	e	Position to start at
-_spawnBridge:
+spawnBridge:
 	call getFreePartSlot
 	ret nz
 	ld (hl),PARTID_BRIDGE_SPAWNER
@@ -62,7 +62,7 @@ mermaidsCave_spawnBridge_room38:
 	call playSound
 	ld bc,$0800
 	ld e,$69
-	jp _spawnBridge
+	jp spawnBridge
 
 herosCave_spawnBridge_roomc9:
 	call getThisRoomFlags
@@ -71,7 +71,7 @@ herosCave_spawnBridge_roomc9:
 	call playSound
 	ld bc,$0803
 	ld e,$2a
-	jp _spawnBridge
+	jp spawnBridge
 
 ancientTomb_startWallRetractionCutscene:
 	ld a,CUTSCENE_WALL_RETRACTION
@@ -83,9 +83,9 @@ moonlitGrotto_enableControlAfterBreakingCrystal:
 	xor a
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
-_label_15_031:
+label_15_031:
 	ld (wDisableScreenTransitions),a
-	ld (wcc90),a
+	ld (wDisableWarpTiles),a
 	ret
 
 ; ==============================================================================
@@ -241,7 +241,7 @@ oldMan_takeRupees:
 	ld (de),a
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_oldMan_rupeeValues
+	ld hl,oldMan_rupeeValues
 	rst_addAToHl
 	ld a,(hl)
 	jp removeRupeeValue
@@ -250,13 +250,13 @@ oldMan_takeRupees:
 oldMan_giveRupees:
 	ld e,Interaction.subid
 	ld a,(de)
-	ld hl,_oldMan_rupeeValues
+	ld hl,oldMan_rupeeValues
 	rst_addAToHl
 	ld c,(hl)
 	ld a,TREASURE_RUPEES
 	jp giveTreasure
 
-_oldMan_rupeeValues:
+oldMan_rupeeValues:
 	.db RUPEEVAL_200
 	.db RUPEEVAL_100
 
@@ -284,7 +284,7 @@ shootingGallery_beginGame:
 ;;
 shootingGallery_cpScore:
 	call @cpScore
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 @cpScore:
 	ld hl,@scores
@@ -333,14 +333,14 @@ shootingGallery_equipSword:
 	ldi (hl),a
 	ld a,ITEMID_SWORD
 	ld (hl),a
-	jr _shootingGallery_changeEquips
+	jr shootingGallery_changeEquips
 
 @equipOnB:
 	ld a,ITEMID_SWORD
 	ldi (hl),a
 	xor a
 	ld (hl),a
-	jr _shootingGallery_changeEquips
+	jr shootingGallery_changeEquips
 
 ;;
 shootingGallery_equipBiggoronSword:
@@ -354,7 +354,7 @@ shootingGallery_equipBiggoronSword:
 
 ; @param	hFF8A	B-button item to equip
 ; @param	hFF8B	A-button item to equip
-_shootingGallery_changeEquips:
+shootingGallery_changeEquips:
 	ld bc,wInventoryB
 	ld hl,wTmpcfc0.shootingGallery.savedBItem
 	ld a,(bc)
@@ -431,7 +431,7 @@ shootingGallery_checkLinkHasRupees:
 	call cpRupeeValue
 
 ;;
-_writeFlagsTocddb:
+writeFlagsTocddb:
 	push af
 	pop bc
 	ld a,c
@@ -541,12 +541,12 @@ setLinkToState08:
 ;;
 checkIsLinkedGameForScript:
 	call checkIsLinkedGame
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 shootingGallery_checkIsNotLinkedGame:
 	call checkIsLinkedGame
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 	cpl
 	ld (wcddb),a
 	ret
@@ -567,7 +567,7 @@ beginJump:
 updateGravity:
 	ld c,$30
 	call objectUpdateSpeedZ_paramC
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; @param	a	Value to add to $ccd4
@@ -1091,7 +1091,7 @@ nayruScript02_part2:
 	writememory wTmpcfc0.genericCutscene.cfd0, $06
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
-	playsound SND_AGES
+	playsound SND_TUNE_OF_AGES
 	wait 260
 
 	spawninteraction INTERACID_PLAY_HARP_SONG, $02, $00, $00
@@ -1154,7 +1154,7 @@ nayruScript07:
 
 	setanimation $07
 	writeobjectbyte Interaction.direction, $07
-	asm15 playSound, SND_ECHO
+	asm15 playSound, SND_TUNE_OF_ECHOES
 	wait 210
 
 	xorcfc0bit 0
@@ -1346,11 +1346,11 @@ ralph_beginHighJump:
 ralph_updateGravity:
 	ld c,$c0
 	call objectUpdateSpeedZ_paramC
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ralph_restoreMusic:
-	ld a,MUS_OVERWORLD_PRES
+	ld a,MUS_OVERWORLD
 	ld (wActiveMusic2),a
 	ld (wActiveMusic),a
 	jp playSound
@@ -1359,7 +1359,7 @@ ralph_restoreMusic:
 ; Flashes the screen a few times when Ralph tries to attack Ambi?
 ralph_flashScreen:
 	call @func
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 @func:
 	ld a,(wTmpcfc0.genericCutscene.cfde)
@@ -1411,7 +1411,7 @@ ralph_decVar3f:
 	ld h,d
 	ld l,Interaction.var3f
 	dec (hl)
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 
 ; Cutscene after Nayru is possessed
@@ -1525,7 +1525,7 @@ ralphSubid0bScript:
 	setspeed SPEED_200
 	setsubstate $00
 	moveright $38
-	scriptjump _ralphEndCutscene
+	scriptjump ralphEndCutscene
 
 
 ; Cutscene after talking to Cheval
@@ -1551,7 +1551,7 @@ ralphSubid10Script:
 	setsubstate $00
 	movedown $38
 
-_ralphEndCutscene:
+ralphEndCutscene:
 	orroomflag $40
 	wait 30
 	resetmusic
@@ -1792,7 +1792,7 @@ boy_runFunnyJokeCutscene:
 	ld l,Interaction.var3e
 	ld a,(hl)
 	cp $14
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 	ret z
 
 	ld a,(hl)
@@ -1910,9 +1910,9 @@ boySubid07Script:
 ; ==============================================================================
 
 ;;
-_ghostVeranApplySpeedUntilVar38Zero:
+ghostVeranApplySpeedUntilVar38Zero:
 	ld h,d
-	ld l,$78
+	ld l,Interaction.var38
 	dec (hl)
 	ret z
 	call objectApplySpeed
@@ -1931,7 +1931,7 @@ ghostVeranSubid0Script_part1:
 	playsound SND_SWORDSPIN
 	writeobjectbyte Interaction.var38, $11
 --
-	asm15 _ghostVeranApplySpeedUntilVar38Zero
+	asm15 ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement1
 	scriptjump --
@@ -1942,7 +1942,7 @@ ghostVeranSubid0Script_part1:
 	playsound SND_SWORDSPIN
 	writeobjectbyte Interaction.var38, $25
 --
-	asm15 _ghostVeranApplySpeedUntilVar38Zero
+	asm15 ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement2
 	scriptjump --
@@ -1953,7 +1953,7 @@ ghostVeranSubid0Script_part1:
 	playsound SND_SWORDSPIN
 	writeobjectbyte Interaction.var38, $13
 --
-	asm15 _ghostVeranApplySpeedUntilVar38Zero
+	asm15 ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement3
 	scriptjump --
@@ -1964,7 +1964,7 @@ ghostVeranSubid0Script_part1:
 	playsound SND_SWORDSPIN
 	writeobjectbyte Interaction.var38, $19
 --
-	asm15 _ghostVeranApplySpeedUntilVar38Zero
+	asm15 ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement4
 	scriptjump --
@@ -1975,7 +1975,7 @@ ghostVeranSubid0Script_part1:
 	playsound SND_SWORDSPIN
 	writeobjectbyte Interaction.var38, $0c
 --
-	asm15 _ghostVeranApplySpeedUntilVar38Zero
+	asm15 ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement5
 	scriptjump --
@@ -1986,7 +1986,7 @@ ghostVeranSubid0Script_part1:
 	playsound SND_SWORDSPIN
 	writeobjectbyte Interaction.var38, $11
 --
-	asm15 _ghostVeranApplySpeedUntilVar38Zero
+	asm15 ghostVeranApplySpeedUntilVar38Zero
 	wait 1
 	jumpifobjectbyteeq Interaction.var38, $00, @movement6
 	scriptjump --
@@ -2412,7 +2412,7 @@ tokayTurnToFaceLink:
 	ld (de),a
 
 ;;
-_tokayUpdateAnimationFromAngle:
+tokayUpdateAnimationFromAngle:
 	call convertAngleDeToDirection
 	jp interactionSetAnimation
 
@@ -2423,7 +2423,7 @@ tokayFlipDirection:
 	ld a,(de)
 	xor $10
 	ld (de),a
-	jr _tokayUpdateAnimationFromAngle
+	jr tokayUpdateAnimationFromAngle
 
 ;;
 ; Removes the seedling from Link's inventory, and sets flag on the present and past
@@ -2582,7 +2582,7 @@ ambiDecVar3f:
 	ld h,d
 	ld l,Interaction.var3f
 	dec (hl)
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; Ambi rises by 4 pixels per frame until z-position = -$40
@@ -2592,7 +2592,7 @@ ambiRiseUntilOffScreen:
 	sub $04
 	ld (de),a
 	cp $c0
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 
 ; The guy who you trade a dumbbell to for a mustache
@@ -2698,7 +2698,7 @@ oldManWarpLinkToLibrary:
 ;;
 oldManSetAnimationToVar38:
 	ld e,$78
-_label_15_097:
+label_15_097:
 	ld a,(de)
 	jp interactionSetAnimation
 
@@ -3001,12 +3001,12 @@ mamamuDog_reverseDirection:
 mamamuDog_setCounterRandomly:
 	call getRandomNumber
 	and $07
-	ld hl,_mamamuDog_randomCounterValues
+	ld hl,mamamuDog_randomCounterValues
 	rst_addAToHl
 	ld a,(hl)
 	ld e,Interaction.var3e
 	ld (de),a
-	call _mamamuDog_hop
+	call mamamuDog_hop
 
 ;;
 mamamuDog_setZPositionTo0:
@@ -3017,7 +3017,7 @@ mamamuDog_setZPositionTo0:
 	ld (hl),a
 	ret
 
-_mamamuDog_randomCounterValues:
+mamamuDog_randomCounterValues:
 	.db $78 $b4 $f0 $ff $b4 $f0 $ff $ff
 
 
@@ -3026,7 +3026,7 @@ mamamuDog_updateSpeedZ:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-_mamamuDog_hop:
+mamamuDog_hop:
 	ld bc,-$c0
 	jp objectSetSpeedZ
 
@@ -3034,7 +3034,7 @@ mamamuDog_decCounter:
 	ld h,d
 	ld l,Interaction.var3e
 	dec (hl)
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 
 ; ==============================================================================
@@ -3238,7 +3238,7 @@ hardhatWorker_decPatrolCounter:
 	ld h,d
 	ld l,Interaction.var3c
 	dec (hl)
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 hardhatWorker_chooseTextForPatroller:
@@ -3269,13 +3269,13 @@ hardhatWorker_chooseTextForPatroller:
 ;;
 hardhatWorker_checkBlackTowerProgressIs00:
 	call getBlackTowerProgress
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 hardhatWorker_checkBlackTowerProgressIs01:
 	call getBlackTowerProgress
 	cp $01
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 
 ; NPC who guards the entrance to the black tower.
@@ -3431,7 +3431,7 @@ poe_decCounterAndFlickerVisibility:
 	ld l,Interaction.var3e
 	ld a,(hl)
 	or a
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 	jr z,@setVisible
 
 	dec (hl)
@@ -3568,7 +3568,7 @@ toiletHand_checkLinkIsClose:
 	cp b
 	jr nz,@loop
 ++
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 @data: ; List of positions that are close to the toilet?
 	.db $57 $68 $67 $00
@@ -3584,19 +3584,19 @@ toiletHand_retreatIntoToiletIfNotAlready:
 ;;
 toiletHand_retreatIntoToilet:
 	ld a,$02
-	jr _toiletHand_setAnimation
+	jr toiletHand_setAnimation
 
 ;;
 toiletHand_comeOutOfToilet:
 	ld a,$01
-	jr _toiletHand_setAnimation
+	jr toiletHand_setAnimation
 
 ;;
 toiletHand_disappear:
 	ld a,$00
 
 ;;
-_toiletHand_setAnimation:
+toiletHand_setAnimation:
 	ld e,Interaction.direction
 	ld (de),a
 	jp interactionSetAnimation
@@ -3709,7 +3709,7 @@ checkEssenceObtained:
 checkEssenceNotObtained:
 	ld hl,wEssencesObtained
 	call checkFlag
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 comedian_enableMustache:
@@ -3845,7 +3845,7 @@ goronDance_restartGame:
 goron_checkInPresent:
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_PAST
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; Unused?
@@ -3854,32 +3854,32 @@ goron_checkInPast:
 	ld a,(wTilesetFlags)
 	cpl
 	and TILESETFLAG_PAST
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 goronDance_initLinkPosition:
 	ld a,DIR_DOWN
 	ld bc,$5c50
-	jr _goron_setLinkPositionAndDirection
+	jr goron_setLinkPositionAndDirection
 
 ;;
 goron_targetCarts_setLinkPositionToCartPlatform:
 	ld a,DIR_UP
 	ld bc,$8838
-	jr _goron_setLinkPositionAndDirection
+	jr goron_setLinkPositionAndDirection
 
 ;;
 goron_targetCarts_setLinkPositionAfterGame:
 	ld a,DIR_RIGHT
 	ld bc,$78a8
-	jr _goron_setLinkPositionAndDirection
+	jr goron_setLinkPositionAndDirection
 
 ;;
 goron_bigBang_initLinkPosition:
 	ld a,DIR_UP
 	ld bc,$4850
 
-_goron_setLinkPositionAndDirection:
+goron_setLinkPositionAndDirection:
 	ld hl,w1Link.direction
 	ld (hl),a
 	ld l,<w1Link.yh
@@ -3908,7 +3908,7 @@ goronDance_checkNumFailedRounds:
 	ld (hl),$00
 	ld a,(wTmpcfc0.goronDance.numFailedRounds)
 	or a
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; Give the reward for a perfect game at platinum or gold level.
@@ -4211,7 +4211,7 @@ goron_checkShouldBeNapping:
 	call objectSetCollideRadii
 	call objectCheckCollidedWithLink_ignoreZ
 	ccf
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 	ld bc,$0606
 	jp objectSetCollideRadii
 
@@ -4302,7 +4302,7 @@ goron_cpYTo60:
 	ld h,d
 	ld l,Interaction.yh
 	cp (hl)
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; @param[out]	zflag	z if Goron's X is Link's X minus 14 (in wcddb)
@@ -4319,14 +4319,14 @@ goron_cpXTo48:
 	ld h,d
 	ld l,Interaction.xh
 	cp (hl)
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; @param[out]	cflag	c if Link approached with bomb flower (in wcddb}
 goron_checkLinkApproachedWithBombFlower:
 	ld a,TREASURE_BOMB_FLOWER
 	call checkTreasureObtained
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 	ret nc
 
 	; Store old Y/X position, replace with position we want to see Link cross
@@ -4343,7 +4343,7 @@ goron_checkLinkApproachedWithBombFlower:
 	ld bc,$1808
 	call objectSetCollideRadii
 	call objectCheckCollidedWithLink_ignoreZ
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 	ld bc,$0606
 	call objectSetCollideRadii
 
@@ -4364,7 +4364,7 @@ goron_decMovementCounter:
 	ld h,d
 	ld l,Interaction.var3c
 	call decHlRef16WithCap
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 goron_initCountersForBombFlowerExplosion:
@@ -4498,13 +4498,13 @@ goron_tryTakeEmberSeedsAndBombs:
 	ld (wNumEmberSeeds),a
 	call setStatusBarNeedsRefreshBit1
 	xor a
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 @popAndDontGiveItems:
 	pop af
 @dontGiveItems:
 	or d
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; @param[out]	zflag	z if enough time passed for goron to finish breaking the cave
@@ -4513,7 +4513,7 @@ goron_checkEnoughTimePassed:
 	ld a,(wSeedTreeRefilledBitset)
 	cpl
 	bit 0,a
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 
 ;;
 ; Clear the bit used by the goron breaking down the cave that tracks progress (same system
@@ -4635,12 +4635,12 @@ goron_bigBang_spawnPrize:
 	.db $02 $02 $02 $02 $02 $03 $03 $04
 
 @prizes:
-	.db TREASURE_MERMAID_KEY, $01
-	.db TREASURE_RUPEES,      $12
-	.db TREASURE_RUPEES,      $13
-	.db TREASURE_GASHA_SEED,  $06
-	.db TREASURE_RING,        $12
-	.db TREASURE_RING,        $13
+	.db TREASURE_OLD_MERMAID_KEY, $01
+	.db TREASURE_RUPEES,          $12
+	.db TREASURE_RUPEES,          $13
+	.db TREASURE_GASHA_SEED,      $06
+	.db TREASURE_RING,            $12
+	.db TREASURE_RING,            $13
 
 
 ;;
@@ -4648,7 +4648,7 @@ goron_bigBang_spawnPrize:
 ; displayed treasure when starting target carts, ...
 goron_deleteTreasure:
 	ld b,INTERACID_TREASURE
-	call _goron_findInteractionWithID
+	call goron_findInteractionWithID
 	ld l,Interaction.state
 	ld (hl),$04 ; State 4 causes deletion
 	ret
@@ -4656,7 +4656,7 @@ goron_deleteTreasure:
 ;;
 goron_targetCarts_deleteMinecartAndClearStaticObjects:
 	ld b,INTERACID_MINECART
-	call _goron_findInteractionWithID
+	call goron_findInteractionWithID
 	push de
 	ld e,l
 	ld d,h
@@ -4667,7 +4667,7 @@ goron_targetCarts_deleteMinecartAndClearStaticObjects:
 ;;
 ; @param	b	ID to match
 ; @param[out]	zflag	z if match found
-_goron_findInteractionWithID:
+goron_findInteractionWithID:
 	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.enabled
 @loop:
 	ld a,(hl)
@@ -4722,20 +4722,20 @@ goron_targetCarts_beginGame:
 	ld (wTmpcfc0.targetCarts.crystalsHitInFirstRoom),a
 	ld (wTmpcfc0.targetCarts.numTargetsHit),a
 	ld (wTmpcfc0.targetCarts.cfdc),a
-	jp _goron_targetCarts_setPlayingFlag
+	jp goron_targetCarts_setPlayingFlag
 
 ;;
 goron_targetCarts_endGame:
-	jp _goron_targetCarts_clearPlayingFlag
+	jp goron_targetCarts_clearPlayingFlag
 
 ;;
-_goron_targetCarts_setPlayingFlag:
+goron_targetCarts_setPlayingFlag:
 	call getThisRoomFlags
 	set 7,(hl)
 	ret
 
 ;;
-_goron_targetCarts_clearPlayingFlag:
+goron_targetCarts_clearPlayingFlag:
 	call getThisRoomFlags
 	res 7,(hl)
 	ret
@@ -4745,13 +4745,13 @@ _goron_targetCarts_clearPlayingFlag:
 goron_checkLinkNotInAir:
 	ld a,(wLinkInAir)
 	bit 7,a
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 goron_checkLinkInAir:
 	ld a,(wLinkInAir)
 	or a
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 goron_targetCarts_setupNumTargetsHitText:
@@ -4769,7 +4769,7 @@ goron_targetCarts_setupNumTargetsHitText:
 goron_targetCarts_checkHitAllTargets:
 	ld a,(wTmpcfc0.targetCarts.numTargetsHit)
 	cp $0c
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; @param[out]	cflag	c if hit less than 9 targets (in wcddb)
@@ -4777,7 +4777,7 @@ goron_targetCarts_checkHit9OrMoreTargets:
 	ld a,(wTmpcfc0.targetCarts.numTargetsHit)
 	cp $09
 	ccf
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; Save Link's current inventory status, and equip the seed shooter with scent seeds
@@ -4896,7 +4896,7 @@ goron_checkGracefulGoronQuestStatus:
 	ld a,TREASURE_LAVA_JUICE
 	call checkTreasureObtained
 	jr nc,@noLavaJuice
-	ld a,TREASURE_MERMAID_KEY
+	ld a,TREASURE_OLD_MERMAID_KEY
 	call checkTreasureObtained
 	jr nc,@noMermaidKey
 
@@ -4914,6 +4914,7 @@ goron_checkGracefulGoronQuestStatus:
 	ld (de),a
 	ret
 
+.ifndef REGION_JP
 ;;
 goron_showTextForClairvoyantGoron:
 	ld b,$00
@@ -4978,13 +4979,15 @@ goron_showTextForClairvoyantGoron:
 	jp showText
 
 @treasures:
-	.db TREASURE_OLD_MERMAID_KEY
-	.db TREASURE_GORON_LETTER
 	.db TREASURE_MERMAID_KEY
+	.db TREASURE_GORON_LETTER
+	.db TREASURE_OLD_MERMAID_KEY
 	.db TREASURE_GORONADE
 	.db TREASURE_GORON_VASE
 	.db TREASURE_ROCK_BRISKET
 	.db TREASURE_BROTHER_EMBLEM
+
+.endif ; REGION_US, REGION_EU
 
 ;;
 ; Big bang npc: set collision radius to 0 and make him invisible.
@@ -5015,7 +5018,7 @@ goron_bigBang_unhideSelf:
 goron_bigBang_checkLinkHitByBomb:
 	ld a,(w1Link.invincibilityCounter)
 	or a
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 	cpl
 	ld (wcddb),a
 	ret
@@ -5132,38 +5135,38 @@ goron_createExplosionIndex:
 ;;
 ; Load a layout for the big bang game.
 goron_bigBang_loadMinigameLayout1_topHalf:
-	ld hl,_goron_bigBang_minigameLayout1_topHalf
+	ld hl,goron_bigBang_minigameLayout1_topHalf
 	ld c,$11
-	jr _goron_bigBang_loadRoomLayout
+	jr goron_bigBang_loadRoomLayout
 
 goron_bigBang_loadMinigameLayout1_bottomHalf:
-	ld hl,_goron_bigBang_minigameLayout1_bottomHalf
+	ld hl,goron_bigBang_minigameLayout1_bottomHalf
 	ld c,$41
-	jr _goron_bigBang_loadRoomLayout
+	jr goron_bigBang_loadRoomLayout
 
 goron_bigBang_loadMinigameLayout2_topHalf:
-	ld hl,_goron_bigBang_minigameLayout2_topHalf
+	ld hl,goron_bigBang_minigameLayout2_topHalf
 	ld c,$11
-	jr _goron_bigBang_loadRoomLayout
+	jr goron_bigBang_loadRoomLayout
 
 goron_bigBang_loadMinigameLayout2_bottomHalf:
-	ld hl,_goron_bigBang_minigameLayout2_bottomHalf
+	ld hl,goron_bigBang_minigameLayout2_bottomHalf
 	ld c,$41
-	jr _goron_bigBang_loadRoomLayout
+	jr goron_bigBang_loadRoomLayout
 
 goron_bigBang_loadNormalRoomLayout_topHalf:
-	ld hl,_goron_bigBang_normalRoomLayout
+	ld hl,goron_bigBang_normalRoomLayout
 	ld c,$11
-	jr _goron_bigBang_loadRoomLayout
+	jr goron_bigBang_loadRoomLayout
 
 goron_bigBang_loadNormalRoomLayout_bottomHalf:
-	ld hl,_goron_bigBang_normalRoomLayout
+	ld hl,goron_bigBang_normalRoomLayout
 	ld c,$41
 
 ;;
 ; @param	hl	Tile data to load
 ; @param	c	Tile position to start loading at
-_goron_bigBang_loadRoomLayout:
+goron_bigBang_loadRoomLayout:
 	ld a,$03
 @nextRow:
 	ldh (<hFF93),a
@@ -5187,25 +5190,25 @@ _goron_bigBang_loadRoomLayout:
 	ret
 
 
-_goron_bigBang_minigameLayout1_topHalf:
+goron_bigBang_minigameLayout1_topHalf:
 	.db $17 $57 $57 $57 $55 $55 $55 $56
 	.db $56 $57 $57 $54 $54 $17 $55 $56
 	.db $55 $55 $54 $54 $54 $54 $57 $57
-_goron_bigBang_minigameLayout1_bottomHalf:
+goron_bigBang_minigameLayout1_bottomHalf:
 	.db $55 $17 $56 $56 $56 $56 $57 $17
 	.db $54 $57 $57 $56 $17 $55 $55 $54
 	.db $57 $57 $57 $57 $55 $55 $55 $54
 
-_goron_bigBang_minigameLayout2_topHalf:
+goron_bigBang_minigameLayout2_topHalf:
 	.db $56 $54 $56 $54 $56 $17 $56 $54
 	.db $56 $54 $17 $54 $56 $54 $56 $54
 	.db $56 $54 $56 $54 $56 $54 $17 $54
-_goron_bigBang_minigameLayout2_bottomHalf:
+goron_bigBang_minigameLayout2_bottomHalf:
 	.db $54 $56 $54 $56 $54 $56 $54 $56
 	.db $54 $56 $54 $56 $17 $56 $54 $56
 	.db $54 $17 $54 $56 $54 $56 $54 $56
 
-_goron_bigBang_normalRoomLayout:
+goron_bigBang_normalRoomLayout:
 	.db $ef $ef $ef $ef $ef $ef $ef $ef
 	.db $ef $ef $ef $ef $ef $ef $ef $ef
 	.db $ef $ef $ef $ef $ef $ef $ef $ef
@@ -5297,7 +5300,7 @@ goron_subid08_pressedAScript:
 
 
 @haveVaseOrSirloin:
-	asm15 goron_showText_differentForPast <TX_2496
+	asm15 goron_showText_differentForPast, <TX_2496
 	wait 30
 	jumpiftextoptioneq $00, @acceptedTrade
 
@@ -5409,14 +5412,14 @@ cheval_setTalkedGlobalflag:
 ; ==============================================================================
 
 ;;
-_interaction6b_loadMoblinsAttackingMakuSprout:
+interaction6b_loadMoblinsAttackingMakuSprout:
 	ld hl,objectData.moblinsAttackingMakuSprout
 	jp parseGivenObjectData
 
 ;;
 ; Set make tree present to use unswapped room, maku tree past to use sawpped room
 ; (the room in the underwater version of the map).
-_interaction6b_layoutSwapMakuTreeRooms:
+interaction6b_layoutSwapMakuTreeRooms:
 	ld hl,wPresentRoomFlags+$38
 	res 0,(hl)
 	ld hl,wPastRoomFlags+$48
@@ -5427,7 +5430,7 @@ _interaction6b_layoutSwapMakuTreeRooms:
 ; Used for checking whin the maku sprout should talk to Link before leaving the screen.
 ;
 ; @param[out]	cflag	nc if Link is near the bottom of the screen (in wcddb)
-_interaction6b_isLinkAtScreenEdge:
+interaction6b_isLinkAtScreenEdge:
 	ld hl,w1Link.yh
 	call @func
 	ld a,$01
@@ -5435,7 +5438,7 @@ _interaction6b_isLinkAtScreenEdge:
 	xor a
 +
 	or a
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 @func:
 	ldi a,(hl)
@@ -5471,7 +5474,7 @@ interaction6b_checkGotBombsFromAmbi:
 	; Bit 7 of d2's entrance screen is set after that cutscene?
 	ld a,(wPresentRoomFlags+$83)
 	bit 7,a
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; Sets var38 to $01 if Link can grab the item here (he's touching it, not in the air...)
@@ -5506,7 +5509,7 @@ interaction6b_subid04Script:
 	disableinput
 	asm15 restartSound
 	writememory wDisableScreenTransitions, $01
-	asm15 _interaction6b_loadMoblinsAttackingMakuSprout
+	asm15 interaction6b_loadMoblinsAttackingMakuSprout
 
 	wait 60
 	spawninteraction INTERACID_PUFF, $00, $58, $28
@@ -5596,13 +5599,13 @@ interaction6b_subid04Script:
 	writememory wMakuMapTextPast, <TX_05d6
 	setglobalflag GLOBALFLAG_MAKU_TREE_SAVED
 	asm15 incMakuTreeState
-	asm15 _interaction6b_layoutSwapMakuTreeRooms
+	asm15 interaction6b_layoutSwapMakuTreeRooms
 	resetmusic
 	enableinput
 
 @waitForLinkToApproachScreenEdge:
 	wait 1
-	asm15 _interaction6b_isLinkAtScreenEdge
+	asm15 interaction6b_isLinkAtScreenEdge
 	jumpifmemoryset wcddb, CPU_ZFLAG, @waitForLinkToApproachScreenEdge
 
 	showtext TX_05d4
@@ -5787,20 +5790,20 @@ nayruSavedCutscene_setSpeedZIndex:
 
 ;;
 nayruSavedCutscene_loadAngleAndAnimationPreset:
-	ld hl,_nayruSavedCutscene_angleAndAnimationPresets
+	ld hl,nayruSavedCutscene_angleAndAnimationPresets
 	rst_addDoubleIndex
 
-_nayruSavedCutscene_setAngleAndAnimationAtAddress:
+nayruSavedCutscene_setAngleAndAnimationAtAddress:
 	ld e,Interaction.angle
 	ldi a,(hl)
 	ld (de),a
 
-_nayruSavedCutscene_setAnimationAtAddress:
+nayruSavedCutscene_setAnimationAtAddress:
 	ld a,(hl)
 	jp interactionSetAnimation
 
 
-_nayruSavedCutscene_angleAndAnimationPresets:
+nayruSavedCutscene_angleAndAnimationPresets:
 	.db $18 $13
 	.db $00 $10
 	.db $00 $0c
@@ -5816,7 +5819,7 @@ nayruSavedCutscene_loadGuardAngleToMoveTowardCenter:
 	ld a,(de)
 	ld hl,@guardAnglesAndAnimations
 	rst_addDoubleIndex
-	jr _nayruSavedCutscene_setAngleAndAnimationAtAddress
+	jr nayruSavedCutscene_setAngleAndAnimationAtAddress
 
 @guardAnglesAndAnimations:
 	.db $0f $0e
@@ -5832,7 +5835,7 @@ nayruSavedCutscene_loadGuardAnimation:
 	ld a,(de)
 	ld hl,@guardAnimations
 	rst_addAToHl
-	jr _nayruSavedCutscene_setAnimationAtAddress
+	jr nayruSavedCutscene_setAnimationAtAddress
 
 @guardAnimations:
 	.db $0e $0e $0e $0f $0d $0f
@@ -6115,13 +6118,13 @@ ghiniHarassingMoosh_beginCircularMovement:
 tokayShopItem_giveFeatherAndLoseShovel:
 	ld c,$02
 	ld a,TREASURE_SHOVEL
-	jr _tokayShopItem_giveAndLoseTreasure
+	jr tokayShopItem_giveAndLoseTreasure
 
 ;;
 tokayShopItem_giveBraceletAndLoseShovel:
 	ld c,$03
 	ld a,TREASURE_SHOVEL
-	jr _tokayShopItem_giveAndLoseTreasure
+	jr tokayShopItem_giveAndLoseTreasure
 
 ;;
 tokayShopItem_giveShovelAndLoseFeather:
@@ -6142,10 +6145,10 @@ tokayShopItem_giveShovelAndLoseBracelet:
 ; @param	a	Treasure to lose
 ; @param	c	Subid of treasure to give
 ; @param	var3c	ID of treasure to give (set by main object code)
-_tokayShopItem_giveAndLoseTreasure:
+tokayShopItem_giveAndLoseTreasure:
 	ld e,Interaction.var3b
 	ld (de),a
-	call _tokayShopItem_createTreasureAtLink
+	call tokayShopItem_createTreasureAtLink
 	ld e,Interaction.var3b
 	ld a,(de)
 	call loseTreasure
@@ -6160,19 +6163,19 @@ tokayShopItem_giveShieldToLink:
 	ld a,(de)
 	sub $04
 	ld c,a
-	jr _tokayShopItem_createTreasureAtLink
+	jr tokayShopItem_createTreasureAtLink
 
 ;;
 tokayShopItem_giveBraceletToLink:
 	ld c,$03
-	jr _tokayShopItem_createTreasureAtLink
+	jr tokayShopItem_createTreasureAtLink
 
 ;;
 tokayShopItem_giveFeatherToLink:
 	ld c,$02
 
 ;;
-_tokayShopItem_createTreasureAtLink:
+tokayShopItem_createTreasureAtLink:
 	ld e,Interaction.var3c
 	ld a,(de)
 	ld b,a
@@ -6249,7 +6252,7 @@ bombUpgradeFairy_decreaseLinkHealth:
 	ret c
 	ld (hl),$04
 
-_bombUpgradeFairy_linkCollapsed:
+bombUpgradeFairy_linkCollapsed:
 	ld a,LINK_ANIM_MODE_COLLAPSED
 	ld (wcc50),a
 	ret
@@ -6259,7 +6262,7 @@ bombUpgradeFairy_loseAllBombs:
 	ld a,$01
 	ld (wNumBombs),a
 	call decNumBombs
-	jr _bombUpgradeFairy_linkCollapsed
+	jr bombUpgradeFairy_linkCollapsed
 
 ;;
 bombUpgradeFairy_giveBombUpgrade:
@@ -6369,55 +6372,55 @@ makuTree_setAnimation:
 ; Takes [var3f] + 'a', shows the corresponding text, and updates the map text accordingly.
 ; In linked games, $20 or $10 is added to the index?
 makuTree_showTextWithOffsetAndUpdateMapText:
-	call _makuTree_func_70a2
-	jr _label_15_203
+	call makuTree_func_70a2
+	jr label_15_203
 
 ;;
 ; Takes [var3f] + 'a', and shows the corresponding text.
 ; In linked games, $20 or $10 is added to the index?
 makuTree_showTextWithOffset:
-	call _makuTree_func_709c
-	jr _label_15_203
+	call makuTree_func_709c
+	jr label_15_203
 
 ;;
 ; In linked games, $20 or $10 is added to the index?
 makuTree_showTextAndUpdateMapText:
-	call _makuTree_checkLinkedAndUpdateMapText
-	jr _label_15_203
+	call makuTree_checkLinkedAndUpdateMapText
+	jr label_15_203
 
 ;;
 ; In linked games, $20 or $10 is added to the index?
 makuTree_showText:
-	call _makuTree_modifyTextIndexForLinked
-	jr _label_15_203
+	call makuTree_modifyTextIndexForLinked
+	jr label_15_203
 
 ; TODO: ?
 	ld c,a
 
 ;;
-_label_15_203:
+label_15_203:
 	ld b,>TX_0500
 	jp showText
 
 ;;
 ; @param	a	Text index
-_makuTree_func_709c:
+makuTree_func_709c:
 	ld h,d
 	ld l,Interaction.var3f
 	add (hl)
-	jr _makuTree_modifyTextIndexForLinked
+	jr makuTree_modifyTextIndexForLinked
 
 ;;
 ; @param	a	Text index
-_makuTree_func_70a2:
+makuTree_func_70a2:
 	ld h,d
 	ld l,Interaction.var3f
 	add (hl)
 
 ;;
 ; @param	a	Text index
-_makuTree_checkLinkedAndUpdateMapText:
-	call _makuTree_modifyTextIndexForLinked
+makuTree_checkLinkedAndUpdateMapText:
+	call makuTree_modifyTextIndexForLinked
 	ld e,Interaction.var3d
 	ld a,(de)
 	ld hl,wMakuMapTextPresent
@@ -6428,12 +6431,12 @@ _makuTree_checkLinkedAndUpdateMapText:
 ;;
 ; @param	a	Text index (original)
 ; @param[out]	c	Text index (modified if linked game)
-_makuTree_modifyTextIndexForLinked:
+makuTree_modifyTextIndexForLinked:
 	ld c,a
 	call checkIsLinkedGame
 	ret z
 	call @getLinkedTextOffset
-	ld hl,_makuTree_textOffsetsForLinked
+	ld hl,makuTree_textOffsetsForLinked
 	rst_addAToHl
 	ld a,(hl)
 	add c
@@ -6452,11 +6455,11 @@ _makuTree_modifyTextIndexForLinked:
 	sub INTERACID_MAKU_TREE
 	ret
 
-_makuTree_textOffsetsForLinked:
+makuTree_textOffsetsForLinked:
 	.db $20, $20, $10
 
 ;;
-_makuTree_dropSeedSatchel:
+makuTree_dropSeedSatchel:
 	call getThisRoomFlags
 	bit 7,a
 	ret nz
@@ -6712,7 +6715,7 @@ makuTree_subid02Script_body:
 
 	showtextlowindex <TX_0550
 	wait 30
-	asm15 _makuTree_dropSeedSatchel
+	asm15 makuTree_dropSeedSatchel
 	wait 140
 	showtextlowindex <TX_0561
 	wait 30
@@ -8218,7 +8221,7 @@ troySubid1Script:
 linkedNpc_checkShouldSpawn:
 	call checkIsLinkedGame
 	jr nz,++
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 ++
 	ld e,Interaction.var3f
 	ld a,(de)
@@ -8248,7 +8251,7 @@ linkedNpc_checkShouldSpawn:
 	jp checkEssenceNotObtained
 @always:
 	or d
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 ;;
 ; Checks whether the linked NPC asks you for additional confirmation before giving you the
@@ -8260,7 +8263,7 @@ linkedNpc_checkHasExtraTextBox:
 	rst_addAToHl
 	ld a,(hl)
 	or a
-	jp _writeFlagsTocddb
+	jp writeFlagsTocddb
 
 @data:
 	.db $01 $01 $01 $00 $00 $00 $01 $00 $00 $01
@@ -8268,7 +8271,7 @@ linkedNpc_checkHasExtraTextBox:
 ;;
 linkedNpc_generateSecret:
 	ld h,d
-	ld l,$7f
+	ld l,Interaction.var3f
 	ld b,(hl)
 	ld a,GLOBALFLAG_FIRST_AGES_BEGAN_SECRET
 	add b
@@ -8363,7 +8366,7 @@ plenSubid0Script:
 greatFairy_checkScreenIsScrolling:
 	ld a,(wScrollMode)
 	and $01
-	call _writeFlagsTocddb
+	call writeFlagsTocddb
 	cpl
 	ld (wcddb),a
 	ret
@@ -8454,15 +8457,15 @@ interactiondc_removeGraveyardGateTiles1:
 	call setTile
 
 	ld hl,@interleavedTiles
-	call _interactiondc_7bde
-	call _interactiondc_7bde
-	call _interactiondc_7bde
-	call _interactiondc_7bde
+	call interactiondc_7bde
+	call interactiondc_7bde
+	call interactiondc_7bde
+	call interactiondc_7bde
 
 	ld bc,$4840
-	call _interactiondc_spawnPuff
+	call interactiondc_spawnPuff
 	ld bc,$4850
-	jp _interactiondc_spawnPuff
+	jp interactiondc_spawnPuff
 
 @interleavedTiles:
 	.db $33 $3a $89 $01
@@ -8487,12 +8490,12 @@ interactiondc_removeGraveyardGateTiles2:
 	ld c,$45
 	call setTile
 	ld bc,$4830
-	call _interactiondc_spawnPuff
+	call interactiondc_spawnPuff
 	ld bc,$4860
-	jp _interactiondc_spawnPuff
+	jp interactiondc_spawnPuff
 
 ;;
-_interactiondc_7bde:
+interactiondc_7bde:
 	ldi a,(hl)
 	ldh (<hFF8C),a
 	ldi a,(hl)
@@ -8506,7 +8509,7 @@ _interactiondc_7bde:
 	ret
 
 ;;
-_interactiondc_spawnPuff:
+interactiondc_spawnPuff:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERACID_PUFF

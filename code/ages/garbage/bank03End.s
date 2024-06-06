@@ -1,4 +1,4 @@
-.ifdef BUILD_VANILLA
+.ifdef INCLUDE_GARBAGE
 
 ; Garbage functions appear to follow (corrupted repeats of the above functions).
 

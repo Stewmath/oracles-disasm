@@ -534,6 +534,4 @@ interactionCode5f:
 .endif
 
 
-.include "build/data/companionCallableRooms.s"
-
-
+.include {"{GAME_DATA_DIR}/companionCallableRooms.s"}

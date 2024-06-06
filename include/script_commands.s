@@ -715,7 +715,7 @@
 .MACRO spawnitem
 	.db $dd
 	.if NARGS == 1
-		.db (\1)>>8 (\1)&$ff
+		.db (\1)>>8, (\1)&$ff
 	.else
 		.db \1, \2
 	.endif

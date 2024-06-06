@@ -1,198 +1,197 @@
 ; Values are close enough between ages and seasons that it's usually ok to share them?
 ; There are some cases where they're different though. TODO: find those.
 
-.DEFINE GFXH_00 $00
-.DEFINE GFXH_01 $01
-.DEFINE GFXH_02 $02
-.DEFINE GFXH_03 $03
-.DEFINE GFXH_04 $04
-.DEFINE GFXH_05 $05
-.DEFINE GFXH_06 $06
-.DEFINE GFXH_07 $07
-.DEFINE GFXH_08 $08
-.DEFINE GFXH_09 $09
-.DEFINE GFXH_0a $0a
-.DEFINE GFXH_0b $0b
-.DEFINE GFXH_0c $0c
-.DEFINE GFXH_0d $0d
-.DEFINE GFXH_0e $0e
-.DEFINE GFXH_0f $0f
-.DEFINE GFXH_10 $10
-.DEFINE GFXH_11 $11
-.DEFINE GFXH_12 $12
-.DEFINE GFXH_13 $13
-.DEFINE GFXH_14 $14
-.DEFINE GFXH_15 $15
-.DEFINE GFXH_16 $16
-.DEFINE GFXH_17 $17
-.DEFINE GFXH_18 $18
-.DEFINE GFXH_19 $19
-.DEFINE GFXH_1a $1a
-.DEFINE GFXH_1b $1b
-.DEFINE GFXH_1c $1c
-.DEFINE GFXH_1d $1d
-.DEFINE GFXH_1e $1e
-.DEFINE GFXH_1f $1f
-.DEFINE GFXH_HUD $20
-.DEFINE GFXH_21 $21
-.DEFINE GFXH_22 $22
-.DEFINE GFXH_23 $23
-.DEFINE GFXH_24 $24
-.DEFINE GFXH_25 $25
-.DEFINE GFXH_26 $26
-.DEFINE GFXH_27 $27
-.DEFINE GFXH_28 $28
-.DEFINE GFXH_29 $29
-.DEFINE GFXH_2a $2a
-.DEFINE GFXH_2b $2b
-.DEFINE GFXH_2c $2c
-.DEFINE GFXH_2d $2d
-.DEFINE GFXH_2e $2e
-.DEFINE GFXH_2f $2f
-.DEFINE GFXH_30 $30
-.DEFINE GFXH_31 $31
-.DEFINE GFXH_32 $32
-.DEFINE GFXH_33 $33
-.DEFINE GFXH_34 $34
-.DEFINE GFXH_35 $35
-.DEFINE GFXH_36 $36
-.DEFINE GFXH_37 $37
-.DEFINE GFXH_38 $38
-.DEFINE GFXH_39 $39
-.DEFINE GFXH_3a $3a
-.DEFINE GFXH_3b $3b
-.DEFINE GFXH_3c $3c
+.ENUM 0
+	GFXH_00:                  db ; $00
+	GFXH_01:                  db ; $01
+	GFXH_02:                  db ; $02
+	GFXH_03:                  db ; $03
+	GFXH_04:                  db ; $04
+	GFXH_05:                  db ; $05
+	GFXH_06:                  db ; $06
+	GFXH_07:                  db ; $07
+	GFXH_08:                  db ; $08
+	GFXH_09:                  db ; $09
+	GFXH_0a:                  db ; $0a
+	GFXH_0b:                  db ; $0b
+	GFXH_0c:                  db ; $0c
+	GFXH_0d:                  db ; $0d
+	GFXH_0e:                  db ; $0e
+	GFXH_0f:                  db ; $0f
+	GFXH_10:                  db ; $10
+	GFXH_11:                  db ; $11
+	GFXH_12:                  db ; $12
+	GFXH_13:                  db ; $13
+	GFXH_14:                  db ; $14
+	GFXH_15:                  db ; $15
+	GFXH_16:                  db ; $16
+	GFXH_17:                  db ; $17
+	GFXH_18:                  db ; $18
+	GFXH_19:                  db ; $19
+	GFXH_1a:                  db ; $1a
+	GFXH_1b:                  db ; $1b
+	GFXH_1c:                  db ; $1c
+	GFXH_1d:                  db ; $1d
+	GFXH_1e:                  db ; $1e
+	GFXH_1f:                  db ; $1f
+	GFXH_HUD:                 db ; $20
+	GFXH_21:                  db ; $21
+	GFXH_22:                  db ; $22
+	GFXH_23:                  db ; $23
+	GFXH_24:                  db ; $24
+	GFXH_25:                  db ; $25
+	GFXH_26:                  db ; $26
+	GFXH_27:                  db ; $27
+	GFXH_28:                  db ; $28
+	GFXH_29:                  db ; $29
+	GFXH_2a:                  db ; $2a
+	GFXH_2b:                  db ; $2b
+	GFXH_2c:                  db ; $2c
+	GFXH_2d:                  db ; $2d
+	GFXH_2e:                  db ; $2e
+	GFXH_2f:                  db ; $2f
+	GFXH_30:                  db ; $30
+	GFXH_31:                  db ; $31
+	GFXH_32:                  db ; $32
+	GFXH_33:                  db ; $33
+	GFXH_34:                  db ; $34
+	GFXH_35:                  db ; $35
+	GFXH_36:                  db ; $36
+	GFXH_37:                  db ; $37
+	GFXH_38:                  db ; $38
+	GFXH_39:                  db ; $39
+	GFXH_3a:                  db ; $3a
+	GFXH_3b:                  db ; $3b
+	GFXH_3c:                  db ; $3c
 
-; Loaded when gasha tree disappears
-.DEFINE GFXH_3d $3d
+	; Loaded when gasha tree disappears
+	GFXH_3d:                  db ; $3d
+	; Loaded for specific gasha trees while disappearing (sandy path?)
+	GFXH_3e:                  db ; $3e
+	; Loaded for specific gasha trees while disappearing (other type of path?)
+	GFXH_3f:                  db ; $3f
 
-; Loaded for specific gasha trees while disappearing (sandy path?)
-.DEFINE GFXH_3e $3e
-
-; Loaded for specific gasha trees while disappearing (other type of path?)
-.DEFINE GFXH_3f $3f
-
-.DEFINE GFXH_40 $40
-.DEFINE GFXH_41 $41
-.DEFINE GFXH_42 $42
-.DEFINE GFXH_43 $43
-.DEFINE GFXH_SEAWEED_CUT $44
-.DEFINE GFXH_45 $45
-.DEFINE GFXH_46 $46
-.DEFINE GFXH_47 $47
-.DEFINE GFXH_48 $48
-.DEFINE GFXH_49 $49
-.DEFINE GFXH_4a $4a
-.DEFINE GFXH_4b $4b
-.DEFINE GFXH_4c $4c
-.DEFINE GFXH_4d $4d
-.DEFINE GFXH_4e $4e
-.DEFINE GFXH_4f $4f
-.DEFINE GFXH_50 $50
-.DEFINE GFXH_51 $51
-.DEFINE GFXH_52 $52
-.DEFINE GFXH_53 $53 ; Similar to PIRATE_SHIP_BODY_TILEMAP?
-.DEFINE GFXH_54 $54
-.DEFINE GFXH_PIRATE_SHIP_BOW_TILEMAP	$55
-.DEFINE GFXH_PIRATE_SHIP_BODY_TILEMAP	$56
-.DEFINE GFXH_57 $57
-.DEFINE GFXH_58 $58
-.DEFINE GFXH_59 $59
-.DEFINE GFXH_5a $5a
-.DEFINE GFXH_5b $5b
-.DEFINE GFXH_5c $5c
-.DEFINE GFXH_5d $5d
-.DEFINE GFXH_5e $5e
-.DEFINE GFXH_5f $5f
-.DEFINE GFXH_60 $60
-.DEFINE GFXH_61 $61
-.DEFINE GFXH_62 $62
-.DEFINE GFXH_63 $63
-.DEFINE GFXH_64 $64
-.DEFINE GFXH_65 $65
-.DEFINE GFXH_66 $66
-.DEFINE GFXH_67 $67
-.DEFINE GFXH_68 $68
-.DEFINE GFXH_69 $69
-.DEFINE GFXH_6a $6a
-.DEFINE GFXH_6b $6b
-.DEFINE GFXH_6c $6c
-.DEFINE GFXH_6d $6d
-.DEFINE GFXH_6e $6e
-.DEFINE GFXH_6f $6f
-.DEFINE GFXH_70 $70
-.DEFINE GFXH_71 $71
-.DEFINE GFXH_72 $72
-.DEFINE GFXH_73 $73
-.DEFINE GFXH_74 $74
-.DEFINE GFXH_75 $75
-.DEFINE GFXH_76 $76
-.DEFINE GFXH_77 $77
-.DEFINE GFXH_78 $78
-.DEFINE GFXH_79 $79
-.DEFINE GFXH_7a $7a
-.DEFINE GFXH_7b $7b
-.DEFINE GFXH_7c $7c
-.DEFINE GFXH_7d $7d
-.DEFINE GFXH_7e $7e
-.DEFINE GFXH_7f $7f
-.DEFINE GFXH_80 $80
-.DEFINE GFXH_81 $81
-.DEFINE GFXH_82 $82
-.DEFINE GFXH_COMMON_SPRITES $83
-.DEFINE GFXH_84 $84
-.DEFINE GFXH_85 $85
-.DEFINE GFXH_86 $86
-.DEFINE GFXH_87 $87
-.DEFINE GFXH_88 $88
-.DEFINE GFXH_89 $89
-.DEFINE GFXH_8a $8a
-.DEFINE GFXH_8b $8b
-.DEFINE GFXH_8c $8c
-.DEFINE GFXH_8d $8d
-.DEFINE GFXH_8e $8e
-.DEFINE GFXH_8f $8f
-.DEFINE GFXH_90 $90
-.DEFINE GFXH_91 $91
-.DEFINE GFXH_92 $92
-.DEFINE GFXH_93 $93
-.DEFINE GFXH_94 $94
-.DEFINE GFXH_95 $95
-.DEFINE GFXH_96 $96
-.DEFINE GFXH_97 $97
-.DEFINE GFXH_98 $98
-.DEFINE GFXH_99 $99
-.DEFINE GFXH_9a $9a
-.DEFINE GFXH_9b $9b
-.DEFINE GFXH_9c $9c
-.DEFINE GFXH_9d $9d
-.DEFINE GFXH_9e $9e
-.DEFINE GFXH_9f $9f
-.DEFINE GFXH_a0 $a0
-.DEFINE GFXH_a1 $a1
-.DEFINE GFXH_a2 $a2
-.DEFINE GFXH_a3 $a3
-.DEFINE GFXH_a4 $a4
-.DEFINE GFXH_a5 $a5
-.DEFINE GFXH_a6 $a6
-.DEFINE GFXH_a7 $a7
-.DEFINE GFXH_a8 $a8
-.DEFINE GFXH_a9 $a9
-.DEFINE GFXH_aa $aa
-.DEFINE GFXH_ab $ab
-.DEFINE GFXH_ac $ac
-.DEFINE GFXH_ad $ad
-.DEFINE GFXH_ae $ae
-.DEFINE GFXH_af $af
-.DEFINE GFXH_b0 $b0
-.DEFINE GFXH_b1 $b1
-.DEFINE GFXH_b2 $b2
-.DEFINE GFXH_b3 $b3
-.DEFINE GFXH_b4 $b4
-.DEFINE GFXH_b5 $b5
-.DEFINE GFXH_b6 $b6
-.DEFINE GFXH_b7 $b7
-.DEFINE GFXH_b8 $b8
-.DEFINE GFXH_b9 $b9
-.DEFINE GFXH_ba $ba
-.DEFINE GFXH_bb $bb
+	GFXH_40:                  db ; $40
+	GFXH_41:                  db ; $41
+	GFXH_42:                  db ; $42
+	GFXH_43:                  db ; $43
+	GFXH_SEAWEED_CUT:         db ; $44
+	GFXH_45:                  db ; $45
+	GFXH_46:                  db ; $46
+	GFXH_47:                  db ; $47
+	GFXH_48:                  db ; $48
+	GFXH_49:                  db ; $49
+	GFXH_4a:                  db ; $4a
+	GFXH_4b:                  db ; $4b
+	GFXH_4c:                  db ; $4c
+	GFXH_4d:                  db ; $4d
+	GFXH_4e:                  db ; $4e
+	GFXH_4f:                  db ; $4f
+	GFXH_50:                  db ; $50
+	GFXH_51:                  db ; $51
+	GFXH_52:                  db ; $52
+	GFXH_53:                  db ; $53: Similar to PIRATE_SHIP_BODY_TILEMAP?
+	GFXH_54:                  db ; $54
+	GFXH_PIRATE_SHIP_BOW_TILEMAP:    db ;    $55
+	GFXH_PIRATE_SHIP_BODY_TILEMAP:   db ;    $56
+	GFXH_57:                  db ; $57
+	GFXH_58:                  db ; $58
+	GFXH_59:                  db ; $59
+	GFXH_5a:                  db ; $5a
+	GFXH_5b:                  db ; $5b
+	GFXH_5c:                  db ; $5c
+	GFXH_5d:                  db ; $5d
+	GFXH_5e:                  db ; $5e
+	GFXH_5f:                  db ; $5f
+	GFXH_60:                  db ; $60
+	GFXH_61:                  db ; $61
+	GFXH_62:                  db ; $62
+	GFXH_63:                  db ; $63
+	GFXH_64:                  db ; $64
+	GFXH_65:                  db ; $65
+	GFXH_66:                  db ; $66
+	GFXH_67:                  db ; $67
+	GFXH_68:                  db ; $68
+	GFXH_69:                  db ; $69
+	GFXH_6a:                  db ; $6a
+	GFXH_6b:                  db ; $6b
+	GFXH_6c:                  db ; $6c
+	GFXH_6d:                  db ; $6d
+	GFXH_6e:                  db ; $6e
+	GFXH_6f:                  db ; $6f
+	GFXH_70:                  db ; $70
+	GFXH_71:                  db ; $71
+	GFXH_72:                  db ; $72
+	GFXH_73:                  db ; $73
+	GFXH_74:                  db ; $74
+	GFXH_75:                  db ; $75
+	GFXH_76:                  db ; $76
+	GFXH_77:                  db ; $77
+	GFXH_78:                  db ; $78
+	GFXH_79:                  db ; $79
+	GFXH_7a:                  db ; $7a
+	GFXH_7b:                  db ; $7b
+	GFXH_7c:                  db ; $7c
+	GFXH_7d:                  db ; $7d
+	GFXH_7e:                  db ; $7e
+	GFXH_7f:                  db ; $7f
+	GFXH_80:                  db ; $80
+	GFXH_81:                  db ; $81
+	GFXH_82:                  db ; $82
+	GFXH_COMMON_SPRITES:      db ; $83
+	GFXH_84:                  db ; $84
+	GFXH_85:                  db ; $85
+	GFXH_86:                  db ; $86
+	GFXH_87:                  db ; $87
+	GFXH_88:                  db ; $88
+	GFXH_89:                  db ; $89
+	GFXH_8a:                  db ; $8a
+	GFXH_8b:                  db ; $8b
+	GFXH_8c:                  db ; $8c
+	GFXH_8d:                  db ; $8d
+	GFXH_8e:                  db ; $8e
+	GFXH_8f:                  db ; $8f
+	GFXH_90:                  db ; $90
+	GFXH_91:                  db ; $91
+	GFXH_92:                  db ; $92
+	GFXH_93:                  db ; $93
+	GFXH_94:                  db ; $94
+	GFXH_95:                  db ; $95
+	GFXH_96:                  db ; $96
+	GFXH_97:                  db ; $97
+	GFXH_98:                  db ; $98
+	GFXH_99:                  db ; $99
+	GFXH_9a:                  db ; $9a
+	GFXH_9b:                  db ; $9b
+	GFXH_9c:                  db ; $9c
+	GFXH_9d:                  db ; $9d
+	GFXH_9e:                  db ; $9e
+	GFXH_9f:                  db ; $9f
+	GFXH_a0:                  db ; $a0
+	GFXH_a1:                  db ; $a1
+	GFXH_a2:                  db ; $a2
+	GFXH_a3:                  db ; $a3
+	GFXH_a4:                  db ; $a4
+	GFXH_a5:                  db ; $a5
+	GFXH_a6:                  db ; $a6
+	GFXH_a7:                  db ; $a7
+	GFXH_a8:                  db ; $a8
+	GFXH_a9:                  db ; $a9
+	GFXH_aa:                  db ; $aa
+	GFXH_ab:                  db ; $ab
+	GFXH_ac:                  db ; $ac
+	GFXH_ad:                  db ; $ad
+	GFXH_ae:                  db ; $ae
+	GFXH_af:                  db ; $af
+	GFXH_b0:                  db ; $b0
+	GFXH_b1:                  db ; $b1
+	GFXH_b2:                  db ; $b2
+	GFXH_b3:                  db ; $b3
+	GFXH_b4:                  db ; $b4
+	GFXH_b5:                  db ; $b5
+	GFXH_b6:                  db ; $b6
+	GFXH_b7:                  db ; $b7
+	GFXH_b8:                  db ; $b8
+	GFXH_b9:                  db ; $b9
+	GFXH_ba:                  db ; $ba
+.ENDE

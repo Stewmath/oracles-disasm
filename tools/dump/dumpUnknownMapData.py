@@ -2,6 +2,9 @@
 # This file made for extracting certain data around 4b96e
 
 import sys
+import os
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 3:

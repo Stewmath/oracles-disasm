@@ -14,7 +14,7 @@
 
 	TREASURE_NONE			db ; $00
 	TREASURE_SHIELD			db ; $01
-	TREASURE_PUNCH			db ; $02 ; Set by default on the file
+	TREASURE_PUNCH			db ; $02 ; Set by default on the file, used as dummy value
 	TREASURE_BOMBS			db ; $03
 	TREASURE_CANE_OF_SOMARIA	db ; $04
 	TREASURE_SWORD			db ; $05
@@ -86,8 +86,8 @@
 
 	TREASURE_GRAVEYARD_KEY		db ; $42
 	TREASURE_CROWN_KEY		db ; $43
-	TREASURE_OLD_MERMAID_KEY	db ; $44
-	TREASURE_MERMAID_KEY		db ; $45
+	TREASURE_MERMAID_KEY		db ; $44
+	TREASURE_OLD_MERMAID_KEY	db ; $45
 	TREASURE_LIBRARY_KEY		db ; $46
 	TREASURE_47			db ; $47
 	TREASURE_RICKY_GLOVES		db ; $48
@@ -98,15 +98,15 @@
 	TREASURE_SCENT_SEEDLING		db ; $4d
 	TREASURE_ZORA_SCALE		db ; $4e
 	TREASURE_TOKAY_EYEBALL		db ; $4f
-	TREASURE_EMPTY_BOTTLE		db ; $50: unused? (similar to fairy powder)
+	TREASURE_EMPTY_BOTTLE		db ; $50: Unused? (similar to fairy powder)
 	TREASURE_FAIRY_POWDER		db ; $51
 	TREASURE_CHEVAL_ROPE		db ; $52
-	TREASURE_MEMBERS_CARD		db ; $53
+	TREASURE_MEMBERS_CARD		db ; $53: Unused but appears in the inventory if given
 	TREASURE_ISLAND_CHART		db ; $54
 	TREASURE_BOOK_OF_SEALS		db ; $55
 	TREASURE_56			db ; $56
 	TREASURE_57			db ; $57
-	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: lower half of bomb flower (uses different palette)
+	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: Lower half of bomb flower (uses different palette)
 	TREASURE_GORON_LETTER		db ; $59
 	TREASURE_LAVA_JUICE		db ; $5a
 	TREASURE_BROTHER_EMBLEM		db ; $5b
@@ -141,7 +141,7 @@
 	TREASURE_55			db ; $55
 	TREASURE_56			db ; $56
 	TREASURE_57			db ; $57
-	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: lower half of bomb flower (uses different palette)
+	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: Lower half of bomb flower (uses different palette)
 
 	; The remainder appear as seeds in seed satchel/slingshot, but that probably
 	; doesn't mean anything. These may not be valid treasures.
@@ -156,7 +156,7 @@
 .endif ; ROM_SEASONS
 
 
-	; Do these behave the same in seasons?
+	; Upgrades
 	TREASURE_60			db ; $60
 	TREASURE_BOMB_UPGRADE		db ; $61
 	TREASURE_SATCHEL_UPGRADE	db ; $62
@@ -166,3 +166,6 @@
 	TREASURE_66			db ; $66
 	TREASURE_67			db ; $67
 .ende
+
+; Treasures $60 and above are all upgrades and have a bit of special-case code.
+.define FIRST_UPGRADE_TREASURE $60

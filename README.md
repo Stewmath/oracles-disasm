@@ -1,26 +1,57 @@
-# About
+## About oracles-disasm
 
-This is intended to be a full disassembly of Oracle of Ages and Seasons for the Gameboy
-Color. When combined with [LynnaLab](https://github.com/drenn1/lynnalab), it is a level
+This is a complete, documented disassembly of Oracle of Ages and Seasons for the Gameboy
+Color. When combined with [LynnaLab](https://github.com/stewmath/lynnalab), it is a level
 editing suite.
 
-[See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_ages-disasm) for detailed
-setup instructions.
+This repository builds US version ROMS. JP and EU versions are not supported.
+
+[See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_oracles-disasm)
+for detailed setup instructions.
 
 
-# Required tools to build
+## Current status
+
+The disassembly complete enough to be reassembled with ROM addresses shifted
+around arbitrarily. This is fairly well tested through the
+[randomizer](https://github.com/Stewmath/oracles-randomizer-ng-webui).
+
+However there is still work to be done:
+
+- Support for Japanese and European version ROMs. This could be done either in
+  this repository or with a fork. Documenting the version differences could be
+  invaluable for glitch hunting, as Nintendo of Europe had a crack team of
+  grizzled QA testers working on these games (that's how it seems anyway...)
+- RAM address shifting is not well-tested. There are still some references to
+  hardcoded RAM addresses scattered around.
+- Documentation and variable/function naming can always be improved; in
+  particular, Seasons documentation is relatively lacking compared to Ages. Areas
+  to focus on include:
+  - Most stuff under object_code/seasons
+  - Functions named "seasonsFunc_[...]" or just "func_[...]"
+  - Things marked as TODO
+- If some genius could figure out how the original compression algorithms worked
+  we could get rid of the whole precompressed asset nonsense!
+
+
+## Required tools to build
 
 * Python 3
-* [WLA-DX](https://github.com/vhelin/wla-dx) (A recent build is required)
-** For Seasons to build properly, use [this branch](https://github.com/Drenn1/wla-dx/tree/emptyfill-banknumber). Otherwise, empty space won't be filled with the correct values (but the game will still work).
-* [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
+* python3-yaml (python module)
+* [WLA-DX](https://github.com/vhelin/wla-dx) v10.6
+* On windows: Must use MSYS2 or some other linux-y environment.
+
+Note: WLA will not produce an exact matching Seasons ROM due to quirks with how
+empty space is handled; however, this has no effect on how the game functions.
+If you need to work around this for some reason, [This
+branch](https://github.com/Drenn1/wla-dx/tree/emptyfill-banknumber) of WLA can
+be used instead (but it needs to be updated!)
 
 
-# Build instructions
+## Build instructions
 
 Once the dependencies are installed, running `make` will build both games. To build
-a specific game, run `make ages` or `make seasons`. (Don't try "make ages seasons"; make
-will try to build them in parallel which doesn't currently work).
+a specific game, run `make ages` or `make seasons`.
 
 By default, the rom is built with precompressed assets, so that an exact copy of the
 original game is produced. In order to edit text, graphics, and other things,
@@ -28,23 +59,14 @@ switch to the "hack-base" branch. Alternatively, run the "./swapbuild.sh" script
 in the root of the repository. This will switch the build mode to "modifiable"
 instead of "precompressed".
 
-There are 4 build directories (for ages and seasons, vanilla or editable) which are
-symlinked to the "build" directory depending on which game is built for which mode.
+There are 4 build directories in total (for ages and seasons, vanilla or
+editable), selected by the makefile at build time. See Makefile for details.
 
-[See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_ages-disasm) for detailed
+[See the wiki](https://wiki.zeldahacking.net/oracle/Setting_up_oracles-disasm) for detailed
 setup instructions.
 
 
-## Tools needed to generate documentation
-
-Type "make doc" to generate documentation, which may or may not work at this point.
-
-* Perl
-* Doxygen
-* Graphviz for call graphs
-
-
-# Graphics files
+## Graphics files
 
 (Note: Graphics editing will only work if you're on the "hack-base" branch or
 have disabled the use of precompressed graphics)
@@ -99,3 +121,14 @@ python3 tools/gfx/gfx.py png gfx/common/spr_link.bin
 
 Both of these commands will check the `.properties` file, if it exists, to
 decode and encode the image properly.
+
+## Disclaimer
+
+The reverse-engineered code and assets in this repository belong largely to
+Capcom and Nintendo. While I can't really stop you from doing what you want with
+it, I strongly disavow its use for any commercial purposes. The purpose of this
+project is to research the inner workings of the Zelda Oracle games and
+facilitate the creation of non-commercial ROM hacks.
+
+Scripts which do not contain any Nintendo/Capcom code (ie. python scripts in the
+"tools/" folder) may be considered "public domain" unless stated otherwise.

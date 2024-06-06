@@ -1,4 +1,4 @@
-.ifdef BUILD_VANILLA
+.ifdef INCLUDE_GARBAGE
 
 ; Garbage function follows (partial repeat of the last function)
 

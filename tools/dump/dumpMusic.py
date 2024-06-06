@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 import sys
+import os
 import io
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 2:
@@ -72,7 +75,7 @@ for i in range(numSoundIndices):
         ptr = SoundPointer(i, address, bank, label)
         soundPointers.append(ptr)
     pointerOutput.write('\tm_soundPointer ' + label)
-    pointerOutput.write(' ; ' + wlahex(address))
+    #pointerOutput.write(' ; ' + wlahex(address))
     pointerOutput.write('\n')
 
 # Hardcoded address for unreferenced sound data
@@ -129,7 +132,7 @@ def parseChannelPointers(address, ptr, bank, dataOutput):
 
 for ptr in soundPointers:
     if lastAddress != -1 and lastAddress != ptr.address:
-        dataOutput.write('; GAP ' + wlahex(lastAddress) + '\n')
+        #dataOutput.write('; GAP ' + wlahex(lastAddress) + '\n')
         if lastAddress == soundPointerTable:
             dataOutput.write('\n.ifdef BUILD_VANILLA\n')
             dataOutput.write('.ORGA ' + wlahex(toGbPointer(ptr.address)) + '\n')
@@ -138,7 +141,8 @@ for ptr in soundPointers:
             while lastAddress < ptr.address:
                 lastAddress = parseChannelPointers(lastAddress, None, soundBaseBank+5, dataOutput)
 
-    dataOutput.write('; @addr{' + myhex(toGbPointer(ptr.address)) + '}\n')
+    #dataOutput.write('; @addr{' + myhex(toGbPointer(ptr.address)) + '}\n')
+    dataOutput.write('\n')
     for l in ptr.labels:
         dataOutput.write(l + ':\n')
     address = ptr.address
@@ -201,7 +205,7 @@ def parseChannelData(address, channel, chanOut):
         elif b == 0x60:
             param = rom[address]
             address+=1
-            chanOut.write('\twait1 ' + wlahex(param,2) + '\n')
+            chanOut.write('\trest ' + wlahex(param,2) + '\n')
 
         elif channel >= 6:
             # Noise channels
@@ -218,7 +222,7 @@ def parseChannelData(address, channel, chanOut):
         elif b == 0x61:
             param = rom[address]
             address+=1
-            chanOut.write('\twait2 ' + wlahex(param,2) + '\n')
+            chanOut.write('\trest2 ' + wlahex(param,2) + '\n')
         elif b >= 0 and b <= 0x58: # and b >= 0xc
             l = rom[address]
             address+=1
@@ -238,7 +242,7 @@ for ptr in channelPointers:
         if lastAddress >= address:
             chanOut.write('; BACKWARD GAP\n')
             continue
-        chanOut.write('; GAP\n')
+        #chanOut.write('; GAP\n')
         while lastAddress < address:
             lastAddress = parseChannelData(lastAddress, 0, chanOut)
     if address & 0x3fff == 0:
@@ -247,15 +251,16 @@ for ptr in channelPointers:
 
     for i in ptr.indices:
         if not startLabelsDefined[i]:
-            chanOut.write('sound' + myhex(i,2) + 'Start:\n')
+            chanOut.write('\nsound' + myhex(i,2) + 'Start:\n')
             startLabelsDefined[i] = True
 
-    chanOut.write('; @addr{' + myhex(ptr.address,4) + '}\n')
+    #chanOut.write('; @addr{' + myhex(ptr.address,4) + '}\n')
+    chanOut.write('\n')
     for l in ptr.labels:
         chanOut.write(l + ':\n')
     parseChannelData(address, ptr.channel, tmpOut)
     address = parseChannelData(address, ptr.channel, chanOut)
-    chanOut.write('; ' + wlahex(address) + '\n')
+    #chanOut.write('; ' + wlahex(address) + '\n')
     lastAddress = address
 
 pointerOutput.seek(0)

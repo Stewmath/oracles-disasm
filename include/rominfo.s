@@ -12,12 +12,19 @@
 .banksize $4000
 .rombanks 128
 .ramsize $02 ; 1 RAM bank
+.romsize $05
 
 .nintendologo
 .romgbconly
 .licenseecodenew "01"
 .cartridgetype $1b
-.countrycode 1
+
+.ifdef REGION_JP
+	.countrycode 0
+.else
+	.countrycode 1
+.endif
+
 .computegbcomplementcheck
 .computegbchecksum
 
