@@ -216,7 +216,7 @@ if '-t' in args:
                     if tilemapData[pos] & 7 == 6:
                         tilemapData[pos] &= 0xf8 # Switch to palette 0
 
-        outFile = open('tileset_layouts/' + game + '/tilesetMappings' + myhex(tileset, 2) + '.bin', 'wb')
+        outFile = open('tileset_layouts_expanded/' + game + '/tilesetMappings' + myhex(tileset, 2) + '.bin', 'wb')
         outFile.write(tilemapData)
         outFile.close()
 
