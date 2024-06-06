@@ -12,7 +12,7 @@
 .banksize $4000
 .rombanks 128
 .ramsize $02 ; 1 RAM bank
-.romsize $05
+.romsize $06
 
 .nintendologo
 .romgbconly
