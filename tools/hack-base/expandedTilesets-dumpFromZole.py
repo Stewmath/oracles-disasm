@@ -1,6 +1,12 @@
 #!/usr/bin/python3
 import sys, os
+
+# Import directories for common.py, gfx.py, png.py
+sys.path.append(os.path.dirname(__file__) + '/..')
+sys.path.append(os.path.dirname(__file__) + '/../gfx')
+
 import gfx, png
+
 from common import *
 
 if len(sys.argv) < 3:
