@@ -3968,9 +3968,9 @@ func_131f:
 	ld a,(wTilesetPalette)
 	ld (wLoadedTilesetPalette),a
 
-	; HACK-BASE: Removed for expanded tilesets patch
-	;ld a,(wTilesetUniqueGfx)
-	;ld (wLoadedTilesetUniqueGfx),a
+	; HACK-BASE: This is done in the "loadTilesetGfx" function instead
+	;ld a,(wTilesetIndex)
+	;ld (wLoadedTilesetIndex),a
 
 	pop af
 	setrombank
@@ -12136,7 +12136,7 @@ clearScreenVariables:
 	ld b,wScreenVariables.size
 	call clearMemory
 	ld a,$ff
-	ld (wLoadedTilesetUniqueGfx),a
+	ld (wLoadedTilesetIndex),a
 	ld (wLoadedTilesetLayout),a
 	ld (wLoadedTilesetAnimation),a
 	ret
@@ -12567,9 +12567,9 @@ loadTilesetGraphics:
 	callab        roomGfxChanges.checkLoadPastSignAndChestGfx
 .endif
 
-	; HACK-BASE: Removed for expanded tilesets patch
-	;ld a,(wTilesetUniqueGfx)
-	;ld (wLoadedTilesetUniqueGfx),a
+	; HACK-BASE: This is done in the "loadTilesetGfx" function instead
+	;ld a,(wTilesetIndex)
+	;ld (wLoadedTilesetIndex),a
 
 	ld a,(wTilesetPalette)
 	ld (wLoadedTilesetPalette),a
@@ -12603,6 +12603,25 @@ updateTilesetUniqueGfx:
 ; @param	a	Unique gfx header index
 uniqueGfxFunc_380b:
 	jp panic
+
+
+;;
+; HACK-BASE: This function used exclusively for reloading tileset graphics during screen-scroll
+; transitions.
+;
+; It's important not to reload the tileset on every single screen transition, otherwise dungeon
+; toggle blocks in Ages will be reverted to their original state (graphically).
+;
+; On the other hand, this function can't be used when closing a menu, because even though the
+; tileset won't have changed, a full gfx reload is required.
+loadTilesetGfxIfChanged:
+	ld a,(wTilesetIndex)
+	and $7f
+	ld b,a
+	ld a,(wLoadedTilesetIndex)
+	cp b
+	ret z
+	; Fall through
 
 ;;
 ; HACK-BASE: The "loadTilesetUniqueGfx" function has been replaced with a function that reloads all
@@ -12666,6 +12685,10 @@ loadTilesetGfx:
 	; better safe than sorry, I guess.
 	call c,resumeThreadNextFrame
 
+	ld a,(wTilesetIndex)
+	and $7f
+	ld (wLoadedTilesetIndex),a
+
 	pop af
 	setrombank
 	ret
@@ -12690,7 +12713,9 @@ loadTilesetAndRoomLayout:
 	; Reload tileset if necessary
 	ld a,(wLoadedTilesetLayout)
 	ld b,a
-	ld a,(wTilesetLayout)
+	; HACK-BASE: "wTilesetLayout" variable is no longer used, so check
+	; "wTilesetIndex" instead.
+	ld a,(wTilesetIndex)
 	cp b
 	ld (wLoadedTilesetLayout),a
 	call nz,loadTilesetLayout

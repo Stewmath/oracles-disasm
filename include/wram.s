@@ -2501,9 +2501,10 @@ wObjectTileIndex: ; $cd1f
 	db
 
 wTilesetIndex: ; $cd20
-; New variable or the expanded-tilesets branch. This is the index of the loaded area.
+; HACK-BASE: New variable for this branch. This is the index of the loaded tileset.
 ; Replaces "wTilesetUniqueGfx".
-; Bit 7 is set if (?) (just like "wTilesetUniqueGfx").
+; Bit 7 determines whether graphics should be loaded before or after the screen transition (just
+; like "wTilesetUniqueGfx"). Ignore bit 7 to get the true tileset index.
 	db
 wTilesetGfx: ; $cd21
 	db
@@ -2522,7 +2523,9 @@ wcd26: ; $cd26
 wcd27: ; $cd27
 	db
 
-wLoadedTilesetUniqueGfx: ; $cd28
+wLoadedTilesetIndex: ; $cd28
+; HACK-BASE: Renamed from "wLoadedTilesetUniqueGfx" to "wLoadedTilesetGfx". Similar to before, this
+; is used to check whether graphics actually need to be reloaded or not when a tileset is loaded.
 	db
 wLoadedTilesetPalette: ; $cd29
 	db
