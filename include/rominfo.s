@@ -10,9 +10,21 @@
 .endme
 
 .banksize $4000
-.rombanks 128
 .ramsize $02 ; 1 RAM bank
+
+; HACK-BASE: Ages is expanded to 2MB, Seasons to 4MB to accommodate expanded tilesets.
+; Seasons takes more space due to the extra deduplication from each of the season tilesets.
+.ifdef ROM_AGES
+
+.rombanks 128
 .romsize $06
+
+.else ; Seasons
+
+.rombanks 256
+.romsize $07
+
+.endif
 
 .nintendologo
 .romgbconly

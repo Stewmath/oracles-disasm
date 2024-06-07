@@ -47,20 +47,39 @@ rom = bytearray(romFile.read())
 
 
 FIX_PAST_CLIFFS = True
+seasonNames = ['spring', 'summer', 'autumn', 'winter']
 
 if romIsAges(rom):
     NUM_TILESETS = 0x67
-    NUM_TILEMAPS = 0x2c
+    #NUM_TILEMAPS = 0x2c
+
     tilesetDataAddr = 0x10f9c
     tilesetIdAddr = 0x112d4
     musicTable = 0x1095c
+
+    gfxHeaderTable = 0x69da
+    gfxHeaderBank = 1
+
+    uniqueTilesetHeaderTable = 0x11b28
+    uniqueTilesetHeaderBank = 4
+
     dungeonLayoutAddr = 0x4fce
     game = 'ages'
+
 elif romIsSeasons(rom):
-    NUM_TILESETS = 0xcf # TODO: handle seasonal tilesets properly
+    NUM_TILESETS = 0x63
+
     tilesetDataAddr = 0x10c84
+    tilesetDataBank = 4
+
+    gfxHeaderTable = 0x6926
+    gfxHeaderBank = 1
+
+    uniqueTilesetHeaderTable = 0x1195e
+    uniqueTilesetHeaderBank = 4
+
     game = 'seasons'
-    print('WARNING: Seasons support is preliminary. -r flag works, others might not.')
+    print('WARNING: Seasons support is preliminary. -r, -t, -g flags work, others might not.')
 else:
     print('Unknown ROM.')
     sys.exit(1)
@@ -84,6 +103,102 @@ if '-a' in args:
     args.append('-r')
     args.append('-t')
 
+
+
+def gfxDataToFile(gfxData, filename):
+    result = gfx.convert_2bpp_to_png(gfxData)
+    width, height, palette, greyscale, bitdepth, px_map, padding = result
+
+    w = png.Writer(
+        width,
+        height,
+        palette=palette,
+        compression=9,
+        bitdepth=bitdepth,
+        #transparent=0
+    )
+    with open(filename + ".png", 'wb') as f:
+        w.write(f, px_map)
+
+# Read GFX data while generating expanded output. ZOLE roms already expand Ages,
+# so this is only needed for Seasons.
+def expandGfx():
+    def parseGfxHeader(gfxHeaderAddr, vramData):
+        while gfxHeaderAddr != -1:
+            if rom[gfxHeaderAddr] == 0:
+                # "Unique gfx headers" can reference palettes instead of graphics data.
+                palette = rom[gfxHeaderAddr + 1]
+                print("WARNING: Palette reference: " + wlahex(palette, 2))
+                break
+            else:
+                # Referencing actual graphics data
+                src = read16BE(rom, gfxHeaderAddr+1)
+                bank = rom[gfxHeaderAddr] & 0x3f
+                dest = read16BE(rom, gfxHeaderAddr+3)
+                dest = dest & 0xfff0 # Strip out dest bank number
+                size = rom[gfxHeaderAddr+5]&0x7f
+
+                if not (dest >= 0x8800 and dest < 0xa000):
+                    print('WARNING: Invalid destination: ' + wlahex(dest))
+                elif src >= 0x4000 and src < 0x8000:
+                    mode = rom[gfxHeaderAddr]>>6
+                    src = bankedAddress(bank, src)
+
+                    decompressed = decompressGfxData(rom, src, size, mode)[1]
+
+                    for i in range(len(decompressed)):
+                        d = dest + i - 0x8000
+                        assert d < 0x2000, "Invalid destination"
+                        vramData[d] = decompressed[i]
+                else:
+                    print("WARNING: Source from RAM? " + wlahex(src, 4))
+
+            if not (rom[gfxHeaderAddr+5]&0x80 == 0x80): # More data follows?
+                break
+
+            gfxHeaderAddr += 6
+
+    def dumpTilesetGraphics(tilesetAddr):
+        tilesetData = rom[tilesetAddr : tilesetAddr + 8]
+        uniqueIndex = tilesetData[2]
+        gfxIndex = tilesetData[3]
+        mainAddr = bankedAddress(gfxHeaderBank, read16(rom, gfxHeaderTable + gfxIndex * 2))
+        uniqueAddr = bankedAddress(uniqueTilesetHeaderBank,
+                                   read16(rom, uniqueTilesetHeaderTable + uniqueIndex * 2))
+
+        vramData = bytearray(0x2000)
+
+        parseGfxHeader(mainAddr, vramData)
+        if uniqueIndex != 0:
+            parseGfxHeader(uniqueAddr, vramData)
+
+        return vramData
+
+    for tileset in range(0x00, NUM_TILESETS):
+        print("Dumping tileset: " + wlahex(tileset, 2))
+        tilesetAddr = tilesetDataAddr + tileset*8
+
+        if rom[tilesetAddr] == 0xff: # Seasonal tileset
+            assert romIsSeasons(rom), "Seasonal tileset in Ages???"
+
+            for season in range(4):
+                print(seasonNames[season])
+                seasonTilesetAddr = bankedAddress(tilesetDataBank, read16(rom, tilesetAddr + 1))
+                seasonTilesetAddr += season * 8
+                vramData = dumpTilesetGraphics(seasonTilesetAddr)
+                gfxDataToFile(vramData[0x800:0x1800], 'gfx/' + game + '/gfx_tileset'
+                              + myhex(tileset, 2) + '_' + seasonNames[season])
+
+        else:
+            vramData = dumpTilesetGraphics(tilesetAddr)
+            gfxDataToFile(vramData[0x800:0x1800], 'gfx/' + game + '/gfx_tileset' + myhex(tileset, 2))
+
+    # Placeholder tilesets
+    for tileset in range(NUM_TILESETS,0x80):
+        gfxData = [0] * 4096
+        gfxDataToFile(gfxData, 'gfx/' + game + '/gfx_tileset' + myhex(tileset, 2))
+
+
 if '-d' in args:
     print('Dumping dungeon layouts.')
     data = rom[dungeonLayoutAddr : dungeonLayoutAddr+0x680]
@@ -93,39 +208,22 @@ if '-d' in args:
 
 if '-g' in args:
     print('Dumping tileset graphics.')
-    for tileset in range(0,NUM_TILESETS):
-        gfxAddr = 0x181000 + tileset * 0x1000
-        gfxData = rom[gfxAddr:gfxAddr+0x1000]
 
-        result = gfx.convert_2bpp_to_png(gfxData)
-        width, height, palette, greyscale, bitdepth, px_map, padding = result
+    # ZOLE Ages roms already have expanded tilesets.
+    if romIsAges(rom):
+        for tileset in range(0,NUM_TILESETS):
+            gfxAddr = 0x181000 + tileset * 0x1000
+            gfxData = rom[gfxAddr:gfxAddr+0x1000]
+            gfxDataToFile(gfxData, 'gfx/' + game + '/gfx_tileset' + myhex(tileset, 2))
 
-        w = png.Writer(
-            width,
-            height,
-            palette=palette,
-            compression=9,
-            bitdepth=bitdepth,
-            #transparent=0
-        )
-        with open('gfx/' + game + '/gfx_tileset' + myhex(tileset, 2) + ".png", 'wb') as f:
-            w.write(f, px_map)
+        # Placeholder tilesets
+        for tileset in range(NUM_TILESETS,0x80):
+            gfxData = [0] * 4096
+            gfxDataToFile(gfxData, 'gfx/' + game + '/gfx_tileset' + myhex(tileset, 2))
 
-    # Placeholder tilesets
-    for tileset in range(NUM_TILESETS,0x80):
-        gfxData = [0] * 4096
-        result = gfx.convert_2bpp_to_png(gfxData)
-        width, height, palette, greyscale, bitdepth, px_map, padding = result
-
-        w = png.Writer(
-            width,
-            height,
-            palette=palette,
-            compression=9,
-            bitdepth=bitdepth,
-        )
-        with open('gfx/' + game + '/gfx_tileset' + myhex(tileset, 2) + ".png", 'wb') as f:
-            w.write(f, px_map)
+    # ZOLE Seasons roms don't have expanded tilesets, we must do that ourselves.
+    else:
+        expandGfx()
 
 if '-i' in args:
     print('Dumping Tileset IDs.')
@@ -199,46 +297,47 @@ if '-t' in args:
     # ZOLE's tilemaps aren't actually fully separated by tileset ID, for some reason. So we do this
     # ourselves.
     print('Dumping tilemaps.')
-    tilemapAddr = 0x201000
-    for tileset in range(0,NUM_TILESETS):
-        tilesetData = rom[tilesetDataAddr + tileset*8 : tilesetDataAddr + tileset*8 + 8]
-        tilemap = tilesetData[5]
-        tilemapAddr = 0x201000 + tilemap * 0x800
-        tilemapData = rom[tilemapAddr:tilemapAddr+0x800]
 
-        # Cliffs in the past are hardcoded to have their palettes changed from blue to red, so that
-        # the tile attributes can be reused in the past and present. Instead, we bake this into the
-        # dumped tiles so they can be edited freely.
-        if FIX_PAST_CLIFFS and romIsAges(rom):
-            if tilesetData[0] >> 4 != 0: # Collisions 0 (overworld)
-                continue
-            if tilesetData[1] & 0x80 != 0x80: # "In the past" flag
-                continue
-            if tileset == 0x26: # Maku tree screen is an exception
-                continue
-            for t in range(0x40, 0x80):
-                for i in range(0,4):
-                    pos = t * 8 + 4 + i
-                    if tilemapData[pos] & 7 == 6:
-                        tilemapData[pos] &= 0xf8 # Switch to palette 0
+    targetPath = 'tileset_layouts_expanded/%s/' % game
 
-        outFile = open('tileset_layouts_expanded/' + game + '/tilesetMappings' + myhex(tileset, 2) + '.bin', 'wb')
-        outFile.write(tilemapData)
-        outFile.close()
+    # Placeholder mapping files
+    # Filled with "00" for tile values and "08" for flag values
+    # TODO: Seasons
+    def placeholderMapping(tileset):
+        targetFile = targetPath + 'tilesetMappings%s.bin' % myhex(tileset, 2)
+        os.system(f'truncate --size 0 {targetFile}')
+        for i in range(256):
+            os.system(f"printf '\\x00\\x00\\x00\\x00\\x08\\x08\\x08\\x08' >> {targetFile}")
 
-    # Dump collisions.
-    # ZOLE actually has no support for this, so as a shortcut, we just use copies of files we've already
-    # dumped from other dumper scripts.
-    # This is commented because it only needed to be run once, for the hack-base branch initial
-    # setup.
-    #for tileset in range(0,NUM_TILESETS):
-    #    tilemap = rom[tilesetDataAddr + tileset*8 + 5]
-    #    path = 'tilesets/%s/' % game
-    #    if game == 'ages': # Hardcoded stuff: some indices don't have their own files
-    #        if tilemap == 0x20:
-    #            tilemap = 0x1b
-    #        elif tilemap == 0x32:
-    #            tilemap = 0x2b
-    #    origFile = path + 'tilesetCollisions-Orig%s.bin' % myhex(tilemap, 2)
-    #    targetFile = path + 'tilesetCollisions%s.bin' % myhex(tileset, 2)
-    #    os.system('cp %s %s' % (origFile, targetFile))
+    if romIsAges(rom):
+        tilemapAddr = 0x201000
+
+        for tileset in range(0,NUM_TILESETS):
+            tilesetData = rom[tilesetDataAddr + tileset*8 : tilesetDataAddr + tileset*8 + 8]
+            tilemap = tilesetData[5]
+            tilemapAddr = 0x201000 + tilemap * 0x800
+            tilemapData = rom[tilemapAddr:tilemapAddr+0x800]
+
+            # Cliffs in the past are hardcoded to have their palettes changed from blue to red, so that
+            # the tile attributes can be reused in the past and present. Instead, we bake this into the
+            # dumped tiles so they can be edited freely.
+            if FIX_PAST_CLIFFS and romIsAges(rom):
+                if tilesetData[0] >> 4 != 0: # Collisions 0 (overworld)
+                    continue
+                if tilesetData[1] & 0x80 != 0x80: # "In the past" flag
+                    continue
+                if tileset == 0x26: # Maku tree screen is an exception
+                    continue
+                for t in range(0x40, 0x80):
+                    for i in range(0,4):
+                        pos = t * 8 + 4 + i
+                        if tilemapData[pos] & 7 == 6:
+                            tilemapData[pos] &= 0xf8 # Switch to palette 0
+
+            targetFile = targetPath + 'tilesetMappings%s.bin' % myhex(tileset, 2)
+            outFile = open(targetFile, 'wb')
+            outFile.write(tilemapData)
+            outFile.close()
+
+        for tileset in range(NUM_TILESETS, 0x80):
+            placeholderMapping(tileset)

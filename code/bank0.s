@@ -12581,44 +12581,19 @@ loadTilesetLayout:
 	ld a,:w3TileMappingData
 	ldh (<R_SVBK),a
 
-	; Load mappings
-	ld a,:expandedTilesetMappingsTable
-	setrombank
-	ld a,(wTilesetIndex)
-	and $7f
-	ld b,a
+	; Get address of expanded tileset mappings + collisions
 	ld hl,expandedTilesetMappingsTable
-	rst_addDoubleIndex
-	ld a,b
-	rst_addAToHl
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
+	ld a,:expandedTilesetMappingsTable
+	call lookupExpandedTilesetTable
+
+	; Copy tile mapping data
 	ld a,c
 	setrombank
 	ld de,w3TileMappingData
 	ld bc,$0800
 	call copyMemoryBc
 
-	; Load collisions
-	ld a,:expandedTilesetMappingsTable
-	setrombank
-	ld a,(wTilesetIndex)
-	and $7f
-	ld b,a
-	ld hl,expandedTilesetCollisionsTable
-	rst_addDoubleIndex
-	ld a,b
-	rst_addAToHl
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
-	ld a,c
-	setrombank
+	; Copy collision data (stored immediately after mapping data)
 	ld de,w3TileCollisions
 	ld b,$00
 	call copyMemory
@@ -12627,6 +12602,46 @@ loadTilesetLayout:
 	ld ($ff00+R_SVBK),a
 	ret
 
+
+;;
+; HACK-BASE: Helper function for looking up data in expandedTilesets.s based on current tileset and
+; season.
+;
+; @param	a	Bank of table
+; @param	hl	Address of table
+; @param[out]	c	Bank of data
+; @param[out]	hl	Address of data
+lookupExpandedTilesetTable:
+	setrombank
+	ld a,(wTilesetIndex)
+	and $7f
+	ld b,a
+	rst_addDoubleIndex
+	ld a,b
+	rst_addAToHl
+	ldi a,(hl)
+	cp $ff
+	ld d,a
+	ldi a,(hl)
+	ld c,(hl) ; Bank
+	ld h,d
+	ld l,a
+	ret nz
+
+	; Seasonal tileset, do another table lookup
+	ld h,c
+	ld a,(wRoomStateModifier)
+	ld b,a
+	rst_addDoubleIndex
+	ld a,b
+	rst_addAToHl
+	ldi a,(hl)
+	ld d,a
+	ldi a,(hl)
+	ld c,(hl) ; Bank
+	ld h,d
+	ld l,a
+	ret
 
 ;;
 ; Loads the address of unique header gfx (a&$7f) into wUniqueGfxHeaderAddress.
@@ -12721,24 +12736,9 @@ loadTilesetGfx:
 	ldh a,(<hRomBank)
 	push af
 
-	; Get tileset index (annoyingly it's not stored in ram anywhere, so we had to add it
-	; ourselves by replacing the "wTilesetUniqueGfx" variable)
-	ld a,(wTilesetIndex)
-	and $7f
 	ld hl,expandedTilesetGfxTable
-	ld b,a
-	rst_addDoubleIndex
-	ld a,b
-	rst_addAToHl
 	ld a,:expandedTilesetGfxTable
-	setrombank
-
-	; Get address of expanded tileset graphics
-	ldi a,(hl)
-	ld c,a
-	ldi a,(hl)
-	ld h,(hl)
-	ld l,a
+	call lookupExpandedTilesetTable
 
 	; We do the DMA transfer in 3 goes. A single transfer can take $80 tiles, so 2 goes is
 	; possible. But using the full capacity in a single frame causes small graphical artifacts,

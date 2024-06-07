@@ -200,6 +200,9 @@ $(BUILD_DIR)/$(GAME).o: rooms/$(GAME)/*.bin
 $(BUILD_DIR)/audio.o: $(AUDIO_FILES)
 $(BUILD_DIR)/*.o: $(COMMON_INCLUDE_FILES) Makefile
 
+# HACK-BASE: $(GAME).o depends on new expanded tileset layout files.
+$(BUILD_DIR)/$(GAME).o: tileset_layouts_expanded/$(GAME)/*.bin
+
 $(BUILD_DIR)/$(GAME).o: $(GAME).s $(BUILD_DIR)/textData.s $(BUILD_DIR)/textDefines.s Makefile | $(BUILD_DIR)
 	$(CC) -o $@ $(CFLAGS) $<
 

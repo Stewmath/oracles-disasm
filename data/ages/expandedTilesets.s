@@ -1,414 +1,288 @@
 ; HACK-BASE: Expanded GFX, tilemap, and collision data for tilesets are stored here.
 
-.BANK $18 SLOT 1
-.ORG 0
 
-; Bank $18 used to store tileset-related things, but the handling has changed. Now it just stores
-; pointers to the real data.
+; Not using the "3BytePointer" macro here because we want the 1st byte "$ff" to mean "is a seasonal
+; tileset". (Technically bank "$ff" could end up in use when ROM is expanded.)
+.macro m_TilesetGfxPointer
+	dwbe \1
+	.db :\1
+.endm
 
+.SLOT 1
+.section ExpandedTilesetPointers SUPERFREE
 
 expandedTilesetGfxTable:
-	3BytePointer gfx_tileset00
-	3BytePointer gfx_tileset01
-	3BytePointer gfx_tileset02
-	3BytePointer gfx_tileset03
-	3BytePointer gfx_tileset04
-	3BytePointer gfx_tileset05
-	3BytePointer gfx_tileset06
-	3BytePointer gfx_tileset07
-	3BytePointer gfx_tileset08
-	3BytePointer gfx_tileset09
-	3BytePointer gfx_tileset0a
-	3BytePointer gfx_tileset0b
-	3BytePointer gfx_tileset0c
-	3BytePointer gfx_tileset0d
-	3BytePointer gfx_tileset0e
-	3BytePointer gfx_tileset0f
-	3BytePointer gfx_tileset10
-	3BytePointer gfx_tileset11
-	3BytePointer gfx_tileset12
-	3BytePointer gfx_tileset13
-	3BytePointer gfx_tileset14
-	3BytePointer gfx_tileset15
-	3BytePointer gfx_tileset16
-	3BytePointer gfx_tileset17
-	3BytePointer gfx_tileset18
-	3BytePointer gfx_tileset19
-	3BytePointer gfx_tileset1a
-	3BytePointer gfx_tileset1b
-	3BytePointer gfx_tileset1c
-	3BytePointer gfx_tileset1d
-	3BytePointer gfx_tileset1e
-	3BytePointer gfx_tileset1f
-	3BytePointer gfx_tileset20
-	3BytePointer gfx_tileset21
-	3BytePointer gfx_tileset22
-	3BytePointer gfx_tileset23
-	3BytePointer gfx_tileset24
-	3BytePointer gfx_tileset25
-	3BytePointer gfx_tileset26
-	3BytePointer gfx_tileset27
-	3BytePointer gfx_tileset28
-	3BytePointer gfx_tileset29
-	3BytePointer gfx_tileset2a
-	3BytePointer gfx_tileset2b
-	3BytePointer gfx_tileset2c
-	3BytePointer gfx_tileset2d
-	3BytePointer gfx_tileset2e
-	3BytePointer gfx_tileset2f
-	3BytePointer gfx_tileset30
-	3BytePointer gfx_tileset31
-	3BytePointer gfx_tileset32
-	3BytePointer gfx_tileset33
-	3BytePointer gfx_tileset34
-	3BytePointer gfx_tileset35
-	3BytePointer gfx_tileset36
-	3BytePointer gfx_tileset37
-	3BytePointer gfx_tileset38
-	3BytePointer gfx_tileset39
-	3BytePointer gfx_tileset3a
-	3BytePointer gfx_tileset3b
-	3BytePointer gfx_tileset3c
-	3BytePointer gfx_tileset3d
-	3BytePointer gfx_tileset3e
-	3BytePointer gfx_tileset3f
-	3BytePointer gfx_tileset40
-	3BytePointer gfx_tileset41
-	3BytePointer gfx_tileset42
-	3BytePointer gfx_tileset43
-	3BytePointer gfx_tileset44
-	3BytePointer gfx_tileset45
-	3BytePointer gfx_tileset46
-	3BytePointer gfx_tileset47
-	3BytePointer gfx_tileset48
-	3BytePointer gfx_tileset49
-	3BytePointer gfx_tileset4a
-	3BytePointer gfx_tileset4b
-	3BytePointer gfx_tileset4c
-	3BytePointer gfx_tileset4d
-	3BytePointer gfx_tileset4e
-	3BytePointer gfx_tileset4f
-	3BytePointer gfx_tileset50
-	3BytePointer gfx_tileset51
-	3BytePointer gfx_tileset52
-	3BytePointer gfx_tileset53
-	3BytePointer gfx_tileset54
-	3BytePointer gfx_tileset55
-	3BytePointer gfx_tileset56
-	3BytePointer gfx_tileset57
-	3BytePointer gfx_tileset58
-	3BytePointer gfx_tileset59
-	3BytePointer gfx_tileset5a
-	3BytePointer gfx_tileset5b
-	3BytePointer gfx_tileset5c
-	3BytePointer gfx_tileset5d
-	3BytePointer gfx_tileset5e
-	3BytePointer gfx_tileset5f
-	3BytePointer gfx_tileset60
-	3BytePointer gfx_tileset61
-	3BytePointer gfx_tileset62
-	3BytePointer gfx_tileset63
-	3BytePointer gfx_tileset64
-	3BytePointer gfx_tileset65
-	3BytePointer gfx_tileset66
-	3BytePointer gfx_tileset67
-	3BytePointer gfx_tileset68
-	3BytePointer gfx_tileset69
-	3BytePointer gfx_tileset6a
-	3BytePointer gfx_tileset6b
-	3BytePointer gfx_tileset6c
-	3BytePointer gfx_tileset6d
-	3BytePointer gfx_tileset6e
-	3BytePointer gfx_tileset6f
-	3BytePointer gfx_tileset70
-	3BytePointer gfx_tileset71
-	3BytePointer gfx_tileset72
-	3BytePointer gfx_tileset73
-	3BytePointer gfx_tileset74
-	3BytePointer gfx_tileset75
-	3BytePointer gfx_tileset76
-	3BytePointer gfx_tileset77
-	3BytePointer gfx_tileset78
-	3BytePointer gfx_tileset79
-	3BytePointer gfx_tileset7a
-	3BytePointer gfx_tileset7b
-	3BytePointer gfx_tileset7c
-	3BytePointer gfx_tileset7d
-	3BytePointer gfx_tileset7e
-	3BytePointer gfx_tileset7f
+	m_TilesetGfxPointer gfx_tileset00
+	m_TilesetGfxPointer gfx_tileset01
+	m_TilesetGfxPointer gfx_tileset02
+	m_TilesetGfxPointer gfx_tileset03
+	m_TilesetGfxPointer gfx_tileset04
+	m_TilesetGfxPointer gfx_tileset05
+	m_TilesetGfxPointer gfx_tileset06
+	m_TilesetGfxPointer gfx_tileset07
+	m_TilesetGfxPointer gfx_tileset08
+	m_TilesetGfxPointer gfx_tileset09
+	m_TilesetGfxPointer gfx_tileset0a
+	m_TilesetGfxPointer gfx_tileset0b
+	m_TilesetGfxPointer gfx_tileset0c
+	m_TilesetGfxPointer gfx_tileset0d
+	m_TilesetGfxPointer gfx_tileset0e
+	m_TilesetGfxPointer gfx_tileset0f
+	m_TilesetGfxPointer gfx_tileset10
+	m_TilesetGfxPointer gfx_tileset11
+	m_TilesetGfxPointer gfx_tileset12
+	m_TilesetGfxPointer gfx_tileset13
+	m_TilesetGfxPointer gfx_tileset14
+	m_TilesetGfxPointer gfx_tileset15
+	m_TilesetGfxPointer gfx_tileset16
+	m_TilesetGfxPointer gfx_tileset17
+	m_TilesetGfxPointer gfx_tileset18
+	m_TilesetGfxPointer gfx_tileset19
+	m_TilesetGfxPointer gfx_tileset1a
+	m_TilesetGfxPointer gfx_tileset1b
+	m_TilesetGfxPointer gfx_tileset1c
+	m_TilesetGfxPointer gfx_tileset1d
+	m_TilesetGfxPointer gfx_tileset1e
+	m_TilesetGfxPointer gfx_tileset1f
+	m_TilesetGfxPointer gfx_tileset20
+	m_TilesetGfxPointer gfx_tileset21
+	m_TilesetGfxPointer gfx_tileset22
+	m_TilesetGfxPointer gfx_tileset23
+	m_TilesetGfxPointer gfx_tileset24
+	m_TilesetGfxPointer gfx_tileset25
+	m_TilesetGfxPointer gfx_tileset26
+	m_TilesetGfxPointer gfx_tileset27
+	m_TilesetGfxPointer gfx_tileset28
+	m_TilesetGfxPointer gfx_tileset29
+	m_TilesetGfxPointer gfx_tileset2a
+	m_TilesetGfxPointer gfx_tileset2b
+	m_TilesetGfxPointer gfx_tileset2c
+	m_TilesetGfxPointer gfx_tileset2d
+	m_TilesetGfxPointer gfx_tileset2e
+	m_TilesetGfxPointer gfx_tileset2f
+	m_TilesetGfxPointer gfx_tileset30
+	m_TilesetGfxPointer gfx_tileset31
+	m_TilesetGfxPointer gfx_tileset32
+	m_TilesetGfxPointer gfx_tileset33
+	m_TilesetGfxPointer gfx_tileset34
+	m_TilesetGfxPointer gfx_tileset35
+	m_TilesetGfxPointer gfx_tileset36
+	m_TilesetGfxPointer gfx_tileset37
+	m_TilesetGfxPointer gfx_tileset38
+	m_TilesetGfxPointer gfx_tileset39
+	m_TilesetGfxPointer gfx_tileset3a
+	m_TilesetGfxPointer gfx_tileset3b
+	m_TilesetGfxPointer gfx_tileset3c
+	m_TilesetGfxPointer gfx_tileset3d
+	m_TilesetGfxPointer gfx_tileset3e
+	m_TilesetGfxPointer gfx_tileset3f
+	m_TilesetGfxPointer gfx_tileset40
+	m_TilesetGfxPointer gfx_tileset41
+	m_TilesetGfxPointer gfx_tileset42
+	m_TilesetGfxPointer gfx_tileset43
+	m_TilesetGfxPointer gfx_tileset44
+	m_TilesetGfxPointer gfx_tileset45
+	m_TilesetGfxPointer gfx_tileset46
+	m_TilesetGfxPointer gfx_tileset47
+	m_TilesetGfxPointer gfx_tileset48
+	m_TilesetGfxPointer gfx_tileset49
+	m_TilesetGfxPointer gfx_tileset4a
+	m_TilesetGfxPointer gfx_tileset4b
+	m_TilesetGfxPointer gfx_tileset4c
+	m_TilesetGfxPointer gfx_tileset4d
+	m_TilesetGfxPointer gfx_tileset4e
+	m_TilesetGfxPointer gfx_tileset4f
+	m_TilesetGfxPointer gfx_tileset50
+	m_TilesetGfxPointer gfx_tileset51
+	m_TilesetGfxPointer gfx_tileset52
+	m_TilesetGfxPointer gfx_tileset53
+	m_TilesetGfxPointer gfx_tileset54
+	m_TilesetGfxPointer gfx_tileset55
+	m_TilesetGfxPointer gfx_tileset56
+	m_TilesetGfxPointer gfx_tileset57
+	m_TilesetGfxPointer gfx_tileset58
+	m_TilesetGfxPointer gfx_tileset59
+	m_TilesetGfxPointer gfx_tileset5a
+	m_TilesetGfxPointer gfx_tileset5b
+	m_TilesetGfxPointer gfx_tileset5c
+	m_TilesetGfxPointer gfx_tileset5d
+	m_TilesetGfxPointer gfx_tileset5e
+	m_TilesetGfxPointer gfx_tileset5f
+	m_TilesetGfxPointer gfx_tileset60
+	m_TilesetGfxPointer gfx_tileset61
+	m_TilesetGfxPointer gfx_tileset62
+	m_TilesetGfxPointer gfx_tileset63
+	m_TilesetGfxPointer gfx_tileset64
+	m_TilesetGfxPointer gfx_tileset65
+	m_TilesetGfxPointer gfx_tileset66
+	m_TilesetGfxPointer gfx_tileset67
+	m_TilesetGfxPointer gfx_tileset68
+	m_TilesetGfxPointer gfx_tileset69
+	m_TilesetGfxPointer gfx_tileset6a
+	m_TilesetGfxPointer gfx_tileset6b
+	m_TilesetGfxPointer gfx_tileset6c
+	m_TilesetGfxPointer gfx_tileset6d
+	m_TilesetGfxPointer gfx_tileset6e
+	m_TilesetGfxPointer gfx_tileset6f
+	m_TilesetGfxPointer gfx_tileset70
+	m_TilesetGfxPointer gfx_tileset71
+	m_TilesetGfxPointer gfx_tileset72
+	m_TilesetGfxPointer gfx_tileset73
+	m_TilesetGfxPointer gfx_tileset74
+	m_TilesetGfxPointer gfx_tileset75
+	m_TilesetGfxPointer gfx_tileset76
+	m_TilesetGfxPointer gfx_tileset77
+	m_TilesetGfxPointer gfx_tileset78
+	m_TilesetGfxPointer gfx_tileset79
+	m_TilesetGfxPointer gfx_tileset7a
+	m_TilesetGfxPointer gfx_tileset7b
+	m_TilesetGfxPointer gfx_tileset7c
+	m_TilesetGfxPointer gfx_tileset7d
+	m_TilesetGfxPointer gfx_tileset7e
+	m_TilesetGfxPointer gfx_tileset7f
 
 
 expandedTilesetMappingsTable:
-	3BytePointer tilesetMappings00
-	3BytePointer tilesetMappings01
-	3BytePointer tilesetMappings02
-	3BytePointer tilesetMappings03
-	3BytePointer tilesetMappings04
-	3BytePointer tilesetMappings05
-	3BytePointer tilesetMappings06
-	3BytePointer tilesetMappings07
-	3BytePointer tilesetMappings08
-	3BytePointer tilesetMappings09
-	3BytePointer tilesetMappings0a
-	3BytePointer tilesetMappings0b
-	3BytePointer tilesetMappings0c
-	3BytePointer tilesetMappings0d
-	3BytePointer tilesetMappings0e
-	3BytePointer tilesetMappings0f
-	3BytePointer tilesetMappings10
-	3BytePointer tilesetMappings11
-	3BytePointer tilesetMappings12
-	3BytePointer tilesetMappings13
-	3BytePointer tilesetMappings14
-	3BytePointer tilesetMappings15
-	3BytePointer tilesetMappings16
-	3BytePointer tilesetMappings17
-	3BytePointer tilesetMappings18
-	3BytePointer tilesetMappings19
-	3BytePointer tilesetMappings1a
-	3BytePointer tilesetMappings1b
-	3BytePointer tilesetMappings1c
-	3BytePointer tilesetMappings1d
-	3BytePointer tilesetMappings1e
-	3BytePointer tilesetMappings1f
-	3BytePointer tilesetMappings20
-	3BytePointer tilesetMappings21
-	3BytePointer tilesetMappings22
-	3BytePointer tilesetMappings23
-	3BytePointer tilesetMappings24
-	3BytePointer tilesetMappings25
-	3BytePointer tilesetMappings26
-	3BytePointer tilesetMappings27
-	3BytePointer tilesetMappings28
-	3BytePointer tilesetMappings29
-	3BytePointer tilesetMappings2a
-	3BytePointer tilesetMappings2b
-	3BytePointer tilesetMappings2c
-	3BytePointer tilesetMappings2d
-	3BytePointer tilesetMappings2e
-	3BytePointer tilesetMappings2f
-	3BytePointer tilesetMappings30
-	3BytePointer tilesetMappings31
-	3BytePointer tilesetMappings32
-	3BytePointer tilesetMappings33
-	3BytePointer tilesetMappings34
-	3BytePointer tilesetMappings35
-	3BytePointer tilesetMappings36
-	3BytePointer tilesetMappings37
-	3BytePointer tilesetMappings38
-	3BytePointer tilesetMappings39
-	3BytePointer tilesetMappings3a
-	3BytePointer tilesetMappings3b
-	3BytePointer tilesetMappings3c
-	3BytePointer tilesetMappings3d
-	3BytePointer tilesetMappings3e
-	3BytePointer tilesetMappings3f
-	3BytePointer tilesetMappings40
-	3BytePointer tilesetMappings41
-	3BytePointer tilesetMappings42
-	3BytePointer tilesetMappings43
-	3BytePointer tilesetMappings44
-	3BytePointer tilesetMappings45
-	3BytePointer tilesetMappings46
-	3BytePointer tilesetMappings47
-	3BytePointer tilesetMappings48
-	3BytePointer tilesetMappings49
-	3BytePointer tilesetMappings4a
-	3BytePointer tilesetMappings4b
-	3BytePointer tilesetMappings4c
-	3BytePointer tilesetMappings4d
-	3BytePointer tilesetMappings4e
-	3BytePointer tilesetMappings4f
-	3BytePointer tilesetMappings50
-	3BytePointer tilesetMappings51
-	3BytePointer tilesetMappings52
-	3BytePointer tilesetMappings53
-	3BytePointer tilesetMappings54
-	3BytePointer tilesetMappings55
-	3BytePointer tilesetMappings56
-	3BytePointer tilesetMappings57
-	3BytePointer tilesetMappings58
-	3BytePointer tilesetMappings59
-	3BytePointer tilesetMappings5a
-	3BytePointer tilesetMappings5b
-	3BytePointer tilesetMappings5c
-	3BytePointer tilesetMappings5d
-	3BytePointer tilesetMappings5e
-	3BytePointer tilesetMappings5f
-	3BytePointer tilesetMappings60
-	3BytePointer tilesetMappings61
-	3BytePointer tilesetMappings62
-	3BytePointer tilesetMappings63
-	3BytePointer tilesetMappings64
-	3BytePointer tilesetMappings65
-	3BytePointer tilesetMappings66
-	3BytePointer tilesetMappings67
-	3BytePointer tilesetMappings68
-	3BytePointer tilesetMappings69
-	3BytePointer tilesetMappings6a
-	3BytePointer tilesetMappings6b
-	3BytePointer tilesetMappings6c
-	3BytePointer tilesetMappings6d
-	3BytePointer tilesetMappings6e
-	3BytePointer tilesetMappings6f
-	3BytePointer tilesetMappings70
-	3BytePointer tilesetMappings71
-	3BytePointer tilesetMappings72
-	3BytePointer tilesetMappings73
-	3BytePointer tilesetMappings74
-	3BytePointer tilesetMappings75
-	3BytePointer tilesetMappings76
-	3BytePointer tilesetMappings77
-	3BytePointer tilesetMappings78
-	3BytePointer tilesetMappings79
-	3BytePointer tilesetMappings7a
-	3BytePointer tilesetMappings7b
-	3BytePointer tilesetMappings7c
-	3BytePointer tilesetMappings7d
-	3BytePointer tilesetMappings7e
-	3BytePointer tilesetMappings7f
-
-
-expandedTilesetCollisionsTable:
-	3BytePointer tilesetCollisions00
-	3BytePointer tilesetCollisions01
-	3BytePointer tilesetCollisions02
-	3BytePointer tilesetCollisions03
-	3BytePointer tilesetCollisions04
-	3BytePointer tilesetCollisions05
-	3BytePointer tilesetCollisions06
-	3BytePointer tilesetCollisions07
-	3BytePointer tilesetCollisions08
-	3BytePointer tilesetCollisions09
-	3BytePointer tilesetCollisions0a
-	3BytePointer tilesetCollisions0b
-	3BytePointer tilesetCollisions0c
-	3BytePointer tilesetCollisions0d
-	3BytePointer tilesetCollisions0e
-	3BytePointer tilesetCollisions0f
-	3BytePointer tilesetCollisions10
-	3BytePointer tilesetCollisions11
-	3BytePointer tilesetCollisions12
-	3BytePointer tilesetCollisions13
-	3BytePointer tilesetCollisions14
-	3BytePointer tilesetCollisions15
-	3BytePointer tilesetCollisions16
-	3BytePointer tilesetCollisions17
-	3BytePointer tilesetCollisions18
-	3BytePointer tilesetCollisions19
-	3BytePointer tilesetCollisions1a
-	3BytePointer tilesetCollisions1b
-	3BytePointer tilesetCollisions1c
-	3BytePointer tilesetCollisions1d
-	3BytePointer tilesetCollisions1e
-	3BytePointer tilesetCollisions1f
-	3BytePointer tilesetCollisions20
-	3BytePointer tilesetCollisions21
-	3BytePointer tilesetCollisions22
-	3BytePointer tilesetCollisions23
-	3BytePointer tilesetCollisions24
-	3BytePointer tilesetCollisions25
-	3BytePointer tilesetCollisions26
-	3BytePointer tilesetCollisions27
-	3BytePointer tilesetCollisions28
-	3BytePointer tilesetCollisions29
-	3BytePointer tilesetCollisions2a
-	3BytePointer tilesetCollisions2b
-	3BytePointer tilesetCollisions2c
-	3BytePointer tilesetCollisions2d
-	3BytePointer tilesetCollisions2e
-	3BytePointer tilesetCollisions2f
-	3BytePointer tilesetCollisions30
-	3BytePointer tilesetCollisions31
-	3BytePointer tilesetCollisions32
-	3BytePointer tilesetCollisions33
-	3BytePointer tilesetCollisions34
-	3BytePointer tilesetCollisions35
-	3BytePointer tilesetCollisions36
-	3BytePointer tilesetCollisions37
-	3BytePointer tilesetCollisions38
-	3BytePointer tilesetCollisions39
-	3BytePointer tilesetCollisions3a
-	3BytePointer tilesetCollisions3b
-	3BytePointer tilesetCollisions3c
-	3BytePointer tilesetCollisions3d
-	3BytePointer tilesetCollisions3e
-	3BytePointer tilesetCollisions3f
-	3BytePointer tilesetCollisions40
-	3BytePointer tilesetCollisions41
-	3BytePointer tilesetCollisions42
-	3BytePointer tilesetCollisions43
-	3BytePointer tilesetCollisions44
-	3BytePointer tilesetCollisions45
-	3BytePointer tilesetCollisions46
-	3BytePointer tilesetCollisions47
-	3BytePointer tilesetCollisions48
-	3BytePointer tilesetCollisions49
-	3BytePointer tilesetCollisions4a
-	3BytePointer tilesetCollisions4b
-	3BytePointer tilesetCollisions4c
-	3BytePointer tilesetCollisions4d
-	3BytePointer tilesetCollisions4e
-	3BytePointer tilesetCollisions4f
-	3BytePointer tilesetCollisions50
-	3BytePointer tilesetCollisions51
-	3BytePointer tilesetCollisions52
-	3BytePointer tilesetCollisions53
-	3BytePointer tilesetCollisions54
-	3BytePointer tilesetCollisions55
-	3BytePointer tilesetCollisions56
-	3BytePointer tilesetCollisions57
-	3BytePointer tilesetCollisions58
-	3BytePointer tilesetCollisions59
-	3BytePointer tilesetCollisions5a
-	3BytePointer tilesetCollisions5b
-	3BytePointer tilesetCollisions5c
-	3BytePointer tilesetCollisions5d
-	3BytePointer tilesetCollisions5e
-	3BytePointer tilesetCollisions5f
-	3BytePointer tilesetCollisions60
-	3BytePointer tilesetCollisions61
-	3BytePointer tilesetCollisions62
-	3BytePointer tilesetCollisions63
-	3BytePointer tilesetCollisions64
-	3BytePointer tilesetCollisions65
-	3BytePointer tilesetCollisions66
-	3BytePointer tilesetCollisions67
-	3BytePointer tilesetCollisions68
-	3BytePointer tilesetCollisions69
-	3BytePointer tilesetCollisions6a
-	3BytePointer tilesetCollisions6b
-	3BytePointer tilesetCollisions6c
-	3BytePointer tilesetCollisions6d
-	3BytePointer tilesetCollisions6e
-	3BytePointer tilesetCollisions6f
-	3BytePointer tilesetCollisions70
-	3BytePointer tilesetCollisions71
-	3BytePointer tilesetCollisions72
-	3BytePointer tilesetCollisions73
-	3BytePointer tilesetCollisions74
-	3BytePointer tilesetCollisions75
-	3BytePointer tilesetCollisions76
-	3BytePointer tilesetCollisions77
-	3BytePointer tilesetCollisions78
-	3BytePointer tilesetCollisions79
-	3BytePointer tilesetCollisions7a
-	3BytePointer tilesetCollisions7b
-	3BytePointer tilesetCollisions7c
-	3BytePointer tilesetCollisions7d
-	3BytePointer tilesetCollisions7e
-	3BytePointer tilesetCollisions7f
+	m_TilesetGfxPointer tilesetMappings00
+	m_TilesetGfxPointer tilesetMappings01
+	m_TilesetGfxPointer tilesetMappings02
+	m_TilesetGfxPointer tilesetMappings03
+	m_TilesetGfxPointer tilesetMappings04
+	m_TilesetGfxPointer tilesetMappings05
+	m_TilesetGfxPointer tilesetMappings06
+	m_TilesetGfxPointer tilesetMappings07
+	m_TilesetGfxPointer tilesetMappings08
+	m_TilesetGfxPointer tilesetMappings09
+	m_TilesetGfxPointer tilesetMappings0a
+	m_TilesetGfxPointer tilesetMappings0b
+	m_TilesetGfxPointer tilesetMappings0c
+	m_TilesetGfxPointer tilesetMappings0d
+	m_TilesetGfxPointer tilesetMappings0e
+	m_TilesetGfxPointer tilesetMappings0f
+	m_TilesetGfxPointer tilesetMappings10
+	m_TilesetGfxPointer tilesetMappings11
+	m_TilesetGfxPointer tilesetMappings12
+	m_TilesetGfxPointer tilesetMappings13
+	m_TilesetGfxPointer tilesetMappings14
+	m_TilesetGfxPointer tilesetMappings15
+	m_TilesetGfxPointer tilesetMappings16
+	m_TilesetGfxPointer tilesetMappings17
+	m_TilesetGfxPointer tilesetMappings18
+	m_TilesetGfxPointer tilesetMappings19
+	m_TilesetGfxPointer tilesetMappings1a
+	m_TilesetGfxPointer tilesetMappings1b
+	m_TilesetGfxPointer tilesetMappings1c
+	m_TilesetGfxPointer tilesetMappings1d
+	m_TilesetGfxPointer tilesetMappings1e
+	m_TilesetGfxPointer tilesetMappings1f
+	m_TilesetGfxPointer tilesetMappings20
+	m_TilesetGfxPointer tilesetMappings21
+	m_TilesetGfxPointer tilesetMappings22
+	m_TilesetGfxPointer tilesetMappings23
+	m_TilesetGfxPointer tilesetMappings24
+	m_TilesetGfxPointer tilesetMappings25
+	m_TilesetGfxPointer tilesetMappings26
+	m_TilesetGfxPointer tilesetMappings27
+	m_TilesetGfxPointer tilesetMappings28
+	m_TilesetGfxPointer tilesetMappings29
+	m_TilesetGfxPointer tilesetMappings2a
+	m_TilesetGfxPointer tilesetMappings2b
+	m_TilesetGfxPointer tilesetMappings2c
+	m_TilesetGfxPointer tilesetMappings2d
+	m_TilesetGfxPointer tilesetMappings2e
+	m_TilesetGfxPointer tilesetMappings2f
+	m_TilesetGfxPointer tilesetMappings30
+	m_TilesetGfxPointer tilesetMappings31
+	m_TilesetGfxPointer tilesetMappings32
+	m_TilesetGfxPointer tilesetMappings33
+	m_TilesetGfxPointer tilesetMappings34
+	m_TilesetGfxPointer tilesetMappings35
+	m_TilesetGfxPointer tilesetMappings36
+	m_TilesetGfxPointer tilesetMappings37
+	m_TilesetGfxPointer tilesetMappings38
+	m_TilesetGfxPointer tilesetMappings39
+	m_TilesetGfxPointer tilesetMappings3a
+	m_TilesetGfxPointer tilesetMappings3b
+	m_TilesetGfxPointer tilesetMappings3c
+	m_TilesetGfxPointer tilesetMappings3d
+	m_TilesetGfxPointer tilesetMappings3e
+	m_TilesetGfxPointer tilesetMappings3f
+	m_TilesetGfxPointer tilesetMappings40
+	m_TilesetGfxPointer tilesetMappings41
+	m_TilesetGfxPointer tilesetMappings42
+	m_TilesetGfxPointer tilesetMappings43
+	m_TilesetGfxPointer tilesetMappings44
+	m_TilesetGfxPointer tilesetMappings45
+	m_TilesetGfxPointer tilesetMappings46
+	m_TilesetGfxPointer tilesetMappings47
+	m_TilesetGfxPointer tilesetMappings48
+	m_TilesetGfxPointer tilesetMappings49
+	m_TilesetGfxPointer tilesetMappings4a
+	m_TilesetGfxPointer tilesetMappings4b
+	m_TilesetGfxPointer tilesetMappings4c
+	m_TilesetGfxPointer tilesetMappings4d
+	m_TilesetGfxPointer tilesetMappings4e
+	m_TilesetGfxPointer tilesetMappings4f
+	m_TilesetGfxPointer tilesetMappings50
+	m_TilesetGfxPointer tilesetMappings51
+	m_TilesetGfxPointer tilesetMappings52
+	m_TilesetGfxPointer tilesetMappings53
+	m_TilesetGfxPointer tilesetMappings54
+	m_TilesetGfxPointer tilesetMappings55
+	m_TilesetGfxPointer tilesetMappings56
+	m_TilesetGfxPointer tilesetMappings57
+	m_TilesetGfxPointer tilesetMappings58
+	m_TilesetGfxPointer tilesetMappings59
+	m_TilesetGfxPointer tilesetMappings5a
+	m_TilesetGfxPointer tilesetMappings5b
+	m_TilesetGfxPointer tilesetMappings5c
+	m_TilesetGfxPointer tilesetMappings5d
+	m_TilesetGfxPointer tilesetMappings5e
+	m_TilesetGfxPointer tilesetMappings5f
+	m_TilesetGfxPointer tilesetMappings60
+	m_TilesetGfxPointer tilesetMappings61
+	m_TilesetGfxPointer tilesetMappings62
+	m_TilesetGfxPointer tilesetMappings63
+	m_TilesetGfxPointer tilesetMappings64
+	m_TilesetGfxPointer tilesetMappings65
+	m_TilesetGfxPointer tilesetMappings66
+	m_TilesetGfxPointer tilesetMappings67
+	m_TilesetGfxPointer tilesetMappings68
+	m_TilesetGfxPointer tilesetMappings69
+	m_TilesetGfxPointer tilesetMappings6a
+	m_TilesetGfxPointer tilesetMappings6b
+	m_TilesetGfxPointer tilesetMappings6c
+	m_TilesetGfxPointer tilesetMappings6d
+	m_TilesetGfxPointer tilesetMappings6e
+	m_TilesetGfxPointer tilesetMappings6f
+	m_TilesetGfxPointer tilesetMappings70
+	m_TilesetGfxPointer tilesetMappings71
+	m_TilesetGfxPointer tilesetMappings72
+	m_TilesetGfxPointer tilesetMappings73
+	m_TilesetGfxPointer tilesetMappings74
+	m_TilesetGfxPointer tilesetMappings75
+	m_TilesetGfxPointer tilesetMappings76
+	m_TilesetGfxPointer tilesetMappings77
+	m_TilesetGfxPointer tilesetMappings78
+	m_TilesetGfxPointer tilesetMappings79
+	m_TilesetGfxPointer tilesetMappings7a
+	m_TilesetGfxPointer tilesetMappings7b
+	m_TilesetGfxPointer tilesetMappings7c
+	m_TilesetGfxPointer tilesetMappings7d
+	m_TilesetGfxPointer tilesetMappings7e
+	m_TilesetGfxPointer tilesetMappings7f
+.ends
 
 
 .BANK $40 SLOT 1
-.ORG 0
+.ORGA $4000
 
 .redefine DATA_ADDR $4000
 .redefine DATA_BANK $40
 
-	; For simplicity I'm using the "m_GfxData" macro, which crosses banks.
-	; But since each tileset is exactly 0x1000 bytes (and is uncompressed) I don't need to deal
-	; with bank crossing.
+	; For simplicity I'm using the "m_GfxData" macro, which can handle data crossing banks.
+	; But since each tileset is exactly 0x1000 bytes (and is uncompressed) it doesn't actually
+	; cross over any banks.
 	m_GfxData gfx_tileset00
 	m_GfxData gfx_tileset01
 	m_GfxData gfx_tileset02
@@ -538,586 +412,770 @@ expandedTilesetCollisionsTable:
 	m_GfxData gfx_tileset7e
 	m_GfxData gfx_tileset7f
 
-.BANK $60 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_00 SUPERFREE
 tilesetMappings00:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings00.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions00.bin"
+.ends
+
+.section expanded_tileset_mappings_01 SUPERFREE
 tilesetMappings01:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings01.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions01.bin"
+.ends
+
+.section expanded_tileset_mappings_02 SUPERFREE
 tilesetMappings02:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings02.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions02.bin"
+.ends
+
+.section expanded_tileset_mappings_03 SUPERFREE
 tilesetMappings03:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings03.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions03.bin"
+.ends
+
+.section expanded_tileset_mappings_04 SUPERFREE
 tilesetMappings04:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings04.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions04.bin"
+.ends
+
+.section expanded_tileset_mappings_05 SUPERFREE
 tilesetMappings05:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings05.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions05.bin"
+.ends
+
+.section expanded_tileset_mappings_06 SUPERFREE
 tilesetMappings06:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings06.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions06.bin"
+.ends
+
+.section expanded_tileset_mappings_07 SUPERFREE
 tilesetMappings07:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings07.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions07.bin"
+.ends
 
-.BANK $61 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_08 SUPERFREE
 tilesetMappings08:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings08.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions08.bin"
+.ends
+
+.section expanded_tileset_mappings_09 SUPERFREE
 tilesetMappings09:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings09.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions09.bin"
+.ends
+
+.section expanded_tileset_mappings_0a SUPERFREE
 tilesetMappings0a:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings0a.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0a.bin"
+.ends
+
+.section expanded_tileset_mappings_0b SUPERFREE
 tilesetMappings0b:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings0b.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0b.bin"
+.ends
+
+.section expanded_tileset_mappings_0c SUPERFREE
 tilesetMappings0c:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings0c.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0c.bin"
+.ends
+
+.section expanded_tileset_mappings_0d SUPERFREE
 tilesetMappings0d:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings0d.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0d.bin"
+.ends
+
+.section expanded_tileset_mappings_0e SUPERFREE
 tilesetMappings0e:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings0e.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0e.bin"
+.ends
+
+.section expanded_tileset_mappings_0f SUPERFREE
 tilesetMappings0f:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings0f.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0f.bin"
+.ends
 
-.BANK $62 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_10 SUPERFREE
 tilesetMappings10:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings10.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions10.bin"
+.ends
+
+.section expanded_tileset_mappings_11 SUPERFREE
 tilesetMappings11:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings11.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions11.bin"
+.ends
+
+.section expanded_tileset_mappings_12 SUPERFREE
 tilesetMappings12:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings12.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions12.bin"
+.ends
+
+.section expanded_tileset_mappings_13 SUPERFREE
 tilesetMappings13:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings13.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions13.bin"
+.ends
+
+.section expanded_tileset_mappings_14 SUPERFREE
 tilesetMappings14:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings14.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions14.bin"
+.ends
+
+.section expanded_tileset_mappings_15 SUPERFREE
 tilesetMappings15:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings15.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions15.bin"
+.ends
+
+.section expanded_tileset_mappings_16 SUPERFREE
 tilesetMappings16:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings16.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions16.bin"
+.ends
+
+.section expanded_tileset_mappings_17 SUPERFREE
 tilesetMappings17:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings17.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions17.bin"
+.ends
 
-.BANK $63 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_18 SUPERFREE
 tilesetMappings18:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings18.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions18.bin"
+.ends
+
+.section expanded_tileset_mappings_19 SUPERFREE
 tilesetMappings19:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings19.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions19.bin"
+.ends
+
+.section expanded_tileset_mappings_1a SUPERFREE
 tilesetMappings1a:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings1a.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1a.bin"
+.ends
+
+.section expanded_tileset_mappings_1b SUPERFREE
 tilesetMappings1b:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings1b.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1b.bin"
+.ends
+
+.section expanded_tileset_mappings_1c SUPERFREE
 tilesetMappings1c:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings1c.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1c.bin"
+.ends
+
+.section expanded_tileset_mappings_1d SUPERFREE
 tilesetMappings1d:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings1d.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1d.bin"
+.ends
+
+.section expanded_tileset_mappings_1e SUPERFREE
 tilesetMappings1e:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings1e.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1e.bin"
+.ends
+
+.section expanded_tileset_mappings_1f SUPERFREE
 tilesetMappings1f:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings1f.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1f.bin"
+.ends
 
-.BANK $64 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_20 SUPERFREE
 tilesetMappings20:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings20.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions20.bin"
+.ends
+
+.section expanded_tileset_mappings_21 SUPERFREE
 tilesetMappings21:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings21.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions21.bin"
+.ends
+
+.section expanded_tileset_mappings_22 SUPERFREE
 tilesetMappings22:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings22.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions22.bin"
+.ends
+
+.section expanded_tileset_mappings_23 SUPERFREE
 tilesetMappings23:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings23.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions23.bin"
+.ends
+
+.section expanded_tileset_mappings_24 SUPERFREE
 tilesetMappings24:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings24.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions24.bin"
+.ends
+
+.section expanded_tileset_mappings_25 SUPERFREE
 tilesetMappings25:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings25.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions25.bin"
+.ends
+
+.section expanded_tileset_mappings_26 SUPERFREE
 tilesetMappings26:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings26.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions26.bin"
+.ends
+
+.section expanded_tileset_mappings_27 SUPERFREE
 tilesetMappings27:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings27.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions27.bin"
+.ends
 
-.BANK $65 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_28 SUPERFREE
 tilesetMappings28:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings28.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions28.bin"
+.ends
+
+.section expanded_tileset_mappings_29 SUPERFREE
 tilesetMappings29:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings29.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions29.bin"
+.ends
+
+.section expanded_tileset_mappings_2a SUPERFREE
 tilesetMappings2a:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings2a.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2a.bin"
+.ends
+
+.section expanded_tileset_mappings_2b SUPERFREE
 tilesetMappings2b:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings2b.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2b.bin"
+.ends
+
+.section expanded_tileset_mappings_2c SUPERFREE
 tilesetMappings2c:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings2c.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2c.bin"
+.ends
+
+.section expanded_tileset_mappings_2d SUPERFREE
 tilesetMappings2d:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings2d.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2d.bin"
+.ends
+
+.section expanded_tileset_mappings_2e SUPERFREE
 tilesetMappings2e:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings2e.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2e.bin"
+.ends
+
+.section expanded_tileset_mappings_2f SUPERFREE
 tilesetMappings2f:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings2f.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2f.bin"
+.ends
 
-.BANK $66 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_30 SUPERFREE
 tilesetMappings30:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings30.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions30.bin"
+.ends
+
+.section expanded_tileset_mappings_31 SUPERFREE
 tilesetMappings31:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings31.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions31.bin"
+.ends
+
+.section expanded_tileset_mappings_32 SUPERFREE
 tilesetMappings32:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings32.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions32.bin"
+.ends
+
+.section expanded_tileset_mappings_33 SUPERFREE
 tilesetMappings33:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings33.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions33.bin"
+.ends
+
+.section expanded_tileset_mappings_34 SUPERFREE
 tilesetMappings34:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings34.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions34.bin"
+.ends
+
+.section expanded_tileset_mappings_35 SUPERFREE
 tilesetMappings35:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings35.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions35.bin"
+.ends
+
+.section expanded_tileset_mappings_36 SUPERFREE
 tilesetMappings36:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings36.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions36.bin"
+.ends
+
+.section expanded_tileset_mappings_37 SUPERFREE
 tilesetMappings37:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings37.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions37.bin"
+.ends
 
-.BANK $67 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_38 SUPERFREE
 tilesetMappings38:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings38.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions38.bin"
+.ends
+
+.section expanded_tileset_mappings_39 SUPERFREE
 tilesetMappings39:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings39.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions39.bin"
+.ends
+
+.section expanded_tileset_mappings_3a SUPERFREE
 tilesetMappings3a:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings3a.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3a.bin"
+.ends
+
+.section expanded_tileset_mappings_3b SUPERFREE
 tilesetMappings3b:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings3b.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3b.bin"
+.ends
+
+.section expanded_tileset_mappings_3c SUPERFREE
 tilesetMappings3c:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings3c.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3c.bin"
+.ends
+
+.section expanded_tileset_mappings_3d SUPERFREE
 tilesetMappings3d:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings3d.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3d.bin"
+.ends
+
+.section expanded_tileset_mappings_3e SUPERFREE
 tilesetMappings3e:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings3e.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3e.bin"
+.ends
+
+.section expanded_tileset_mappings_3f SUPERFREE
 tilesetMappings3f:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings3f.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3f.bin"
+.ends
 
-.BANK $68 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_40 SUPERFREE
 tilesetMappings40:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings40.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions40.bin"
+.ends
+
+.section expanded_tileset_mappings_41 SUPERFREE
 tilesetMappings41:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings41.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions41.bin"
+.ends
+
+.section expanded_tileset_mappings_42 SUPERFREE
 tilesetMappings42:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings42.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions42.bin"
+.ends
+
+.section expanded_tileset_mappings_43 SUPERFREE
 tilesetMappings43:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings43.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions43.bin"
+.ends
+
+.section expanded_tileset_mappings_44 SUPERFREE
 tilesetMappings44:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings44.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions44.bin"
+.ends
+
+.section expanded_tileset_mappings_45 SUPERFREE
 tilesetMappings45:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings45.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions45.bin"
+.ends
+
+.section expanded_tileset_mappings_46 SUPERFREE
 tilesetMappings46:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings46.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions46.bin"
+.ends
+
+.section expanded_tileset_mappings_47 SUPERFREE
 tilesetMappings47:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings47.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions47.bin"
+.ends
 
-.BANK $69 SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_48 SUPERFREE
 tilesetMappings48:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings48.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions48.bin"
+.ends
+
+.section expanded_tileset_mappings_49 SUPERFREE
 tilesetMappings49:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings49.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions49.bin"
+.ends
+
+.section expanded_tileset_mappings_4a SUPERFREE
 tilesetMappings4a:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings4a.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4a.bin"
+.ends
+
+.section expanded_tileset_mappings_4b SUPERFREE
 tilesetMappings4b:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings4b.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4b.bin"
+.ends
+
+.section expanded_tileset_mappings_4c SUPERFREE
 tilesetMappings4c:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings4c.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4c.bin"
+.ends
+
+.section expanded_tileset_mappings_4d SUPERFREE
 tilesetMappings4d:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings4d.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4d.bin"
+.ends
+
+.section expanded_tileset_mappings_4e SUPERFREE
 tilesetMappings4e:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings4e.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4e.bin"
+.ends
+
+.section expanded_tileset_mappings_4f SUPERFREE
 tilesetMappings4f:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings4f.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4f.bin"
+.ends
 
-.BANK $6a SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_50 SUPERFREE
 tilesetMappings50:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings50.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions50.bin"
+.ends
+
+.section expanded_tileset_mappings_51 SUPERFREE
 tilesetMappings51:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings51.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions51.bin"
+.ends
+
+.section expanded_tileset_mappings_52 SUPERFREE
 tilesetMappings52:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings52.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions52.bin"
+.ends
+
+.section expanded_tileset_mappings_53 SUPERFREE
 tilesetMappings53:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings53.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions53.bin"
+.ends
+
+.section expanded_tileset_mappings_54 SUPERFREE
 tilesetMappings54:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings54.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions54.bin"
+.ends
+
+.section expanded_tileset_mappings_55 SUPERFREE
 tilesetMappings55:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings55.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions55.bin"
+.ends
+
+.section expanded_tileset_mappings_56 SUPERFREE
 tilesetMappings56:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings56.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions56.bin"
+.ends
+
+.section expanded_tileset_mappings_57 SUPERFREE
 tilesetMappings57:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings57.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions57.bin"
+.ends
 
-.BANK $6b SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_58 SUPERFREE
 tilesetMappings58:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings58.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions58.bin"
+.ends
+
+.section expanded_tileset_mappings_59 SUPERFREE
 tilesetMappings59:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings59.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions59.bin"
+.ends
+
+.section expanded_tileset_mappings_5a SUPERFREE
 tilesetMappings5a:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings5a.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5a.bin"
+.ends
+
+.section expanded_tileset_mappings_5b SUPERFREE
 tilesetMappings5b:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings5b.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5b.bin"
+.ends
+
+.section expanded_tileset_mappings_5c SUPERFREE
 tilesetMappings5c:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings5c.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5c.bin"
+.ends
+
+.section expanded_tileset_mappings_5d SUPERFREE
 tilesetMappings5d:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings5d.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5d.bin"
+.ends
+
+.section expanded_tileset_mappings_5e SUPERFREE
 tilesetMappings5e:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings5e.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5e.bin"
+.ends
+
+.section expanded_tileset_mappings_5f SUPERFREE
 tilesetMappings5f:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings5f.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5f.bin"
+.ends
 
-.BANK $6c SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_60 SUPERFREE
 tilesetMappings60:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings60.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions60.bin"
+.ends
+
+.section expanded_tileset_mappings_61 SUPERFREE
 tilesetMappings61:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings61.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions61.bin"
+.ends
+
+.section expanded_tileset_mappings_62 SUPERFREE
 tilesetMappings62:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings62.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions62.bin"
+.ends
+
+.section expanded_tileset_mappings_63 SUPERFREE
 tilesetMappings63:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings63.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions63.bin"
+.ends
+
+.section expanded_tileset_mappings_64 SUPERFREE
 tilesetMappings64:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings64.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions64.bin"
+.ends
+
+.section expanded_tileset_mappings_65 SUPERFREE
 tilesetMappings65:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings65.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions65.bin"
+.ends
+
+.section expanded_tileset_mappings_66 SUPERFREE
 tilesetMappings66:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings66.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions66.bin"
+.ends
+
+.section expanded_tileset_mappings_67 SUPERFREE
  tilesetMappings67:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings67.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions67.bin"
+.ends
 
-.BANK $6d SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_68 SUPERFREE
 tilesetMappings68:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings68.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions68.bin"
+.ends
+
+.section expanded_tileset_mappings_69 SUPERFREE
 tilesetMappings69:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings69.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions69.bin"
+.ends
+
+.section expanded_tileset_mappings_6a SUPERFREE
 tilesetMappings6a:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings6a.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6a.bin"
+.ends
+
+.section expanded_tileset_mappings_6b SUPERFREE
 tilesetMappings6b:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings6b.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6b.bin"
+.ends
+
+.section expanded_tileset_mappings_6c SUPERFREE
 tilesetMappings6c:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings6c.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6c.bin"
+.ends
+
+.section expanded_tileset_mappings_6d SUPERFREE
 tilesetMappings6d:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings6d.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6d.bin"
+.ends
+
+.section expanded_tileset_mappings_6e SUPERFREE
 tilesetMappings6e:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings6e.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6e.bin"
+.ends
+
+.section expanded_tileset_mappings_6f SUPERFREE
 tilesetMappings6f:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings6f.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6f.bin"
+.ends
 
-.BANK $6e SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_70 SUPERFREE
 tilesetMappings70:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings70.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions70.bin"
+.ends
+
+.section expanded_tileset_mappings_71 SUPERFREE
 tilesetMappings71:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings71.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions71.bin"
+.ends
+
+.section expanded_tileset_mappings_72 SUPERFREE
 tilesetMappings72:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings72.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions72.bin"
+.ends
+
+.section expanded_tileset_mappings_73 SUPERFREE
 tilesetMappings73:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings73.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions73.bin"
+.ends
+
+.section expanded_tileset_mappings_74 SUPERFREE
 tilesetMappings74:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings74.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions74.bin"
+.ends
+
+.section expanded_tileset_mappings_75 SUPERFREE
 tilesetMappings75:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings75.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions75.bin"
+.ends
+
+.section expanded_tileset_mappings_76 SUPERFREE
 tilesetMappings76:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings76.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions76.bin"
+.ends
+
+.section expanded_tileset_mappings_77 SUPERFREE
 tilesetMappings77:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings77.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions77.bin"
+.ends
 
-.BANK $6f SLOT 1
-.ORG 0
-
+.section expanded_tileset_mappings_78 SUPERFREE
 tilesetMappings78:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings78.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions78.bin"
+.ends
+
+.section expanded_tileset_mappings_79 SUPERFREE
 tilesetMappings79:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings79.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions79.bin"
+.ends
+
+.section expanded_tileset_mappings_7a SUPERFREE
 tilesetMappings7a:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings7a.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7a.bin"
+.ends
+
+.section expanded_tileset_mappings_7b SUPERFREE
 tilesetMappings7b:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings7b.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7b.bin"
+.ends
+
+.section expanded_tileset_mappings_7c SUPERFREE
 tilesetMappings7c:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings7c.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7c.bin"
+.ends
+
+.section expanded_tileset_mappings_7d SUPERFREE
 tilesetMappings7d:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings7d.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7d.bin"
+.ends
+
+.section expanded_tileset_mappings_7e SUPERFREE
 tilesetMappings7e:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings7e.bin"
+	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7e.bin"
+.ends
+
+.section expanded_tileset_mappings_7f SUPERFREE
 tilesetMappings7f:
 	.incbin "tileset_layouts_expanded/ages/tilesetMappings7f.bin"
-
-.BANK $70 SLOT 1
-.ORG 0
-
-tilesetCollisions00:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions00.bin"
-tilesetCollisions01:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions01.bin"
-tilesetCollisions02:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions02.bin"
-tilesetCollisions03:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions03.bin"
-tilesetCollisions04:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions04.bin"
-tilesetCollisions05:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions05.bin"
-tilesetCollisions06:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions06.bin"
-tilesetCollisions07:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions07.bin"
-tilesetCollisions08:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions08.bin"
-tilesetCollisions09:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions09.bin"
-tilesetCollisions0a:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0a.bin"
-tilesetCollisions0b:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0b.bin"
-tilesetCollisions0c:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0c.bin"
-tilesetCollisions0d:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0d.bin"
-tilesetCollisions0e:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0e.bin"
-tilesetCollisions0f:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions0f.bin"
-tilesetCollisions10:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions10.bin"
-tilesetCollisions11:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions11.bin"
-tilesetCollisions12:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions12.bin"
-tilesetCollisions13:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions13.bin"
-tilesetCollisions14:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions14.bin"
-tilesetCollisions15:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions15.bin"
-tilesetCollisions16:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions16.bin"
-tilesetCollisions17:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions17.bin"
-tilesetCollisions18:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions18.bin"
-tilesetCollisions19:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions19.bin"
-tilesetCollisions1a:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1a.bin"
-tilesetCollisions1b:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1b.bin"
-tilesetCollisions1c:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1c.bin"
-tilesetCollisions1d:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1d.bin"
-tilesetCollisions1e:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1e.bin"
-tilesetCollisions1f:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions1f.bin"
-tilesetCollisions20:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions20.bin"
-tilesetCollisions21:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions21.bin"
-tilesetCollisions22:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions22.bin"
-tilesetCollisions23:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions23.bin"
-tilesetCollisions24:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions24.bin"
-tilesetCollisions25:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions25.bin"
-tilesetCollisions26:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions26.bin"
-tilesetCollisions27:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions27.bin"
-tilesetCollisions28:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions28.bin"
-tilesetCollisions29:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions29.bin"
-tilesetCollisions2a:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2a.bin"
-tilesetCollisions2b:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2b.bin"
-tilesetCollisions2c:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2c.bin"
-tilesetCollisions2d:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2d.bin"
-tilesetCollisions2e:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2e.bin"
-tilesetCollisions2f:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions2f.bin"
-tilesetCollisions30:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions30.bin"
-tilesetCollisions31:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions31.bin"
-tilesetCollisions32:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions32.bin"
-tilesetCollisions33:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions33.bin"
-tilesetCollisions34:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions34.bin"
-tilesetCollisions35:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions35.bin"
-tilesetCollisions36:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions36.bin"
-tilesetCollisions37:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions37.bin"
-tilesetCollisions38:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions38.bin"
-tilesetCollisions39:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions39.bin"
-tilesetCollisions3a:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3a.bin"
-tilesetCollisions3b:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3b.bin"
-tilesetCollisions3c:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3c.bin"
-tilesetCollisions3d:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3d.bin"
-tilesetCollisions3e:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3e.bin"
-tilesetCollisions3f:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions3f.bin"
-
-.BANK $71 SLOT 1
-.ORG 0
-
-tilesetCollisions40:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions40.bin"
-tilesetCollisions41:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions41.bin"
-tilesetCollisions42:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions42.bin"
-tilesetCollisions43:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions43.bin"
-tilesetCollisions44:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions44.bin"
-tilesetCollisions45:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions45.bin"
-tilesetCollisions46:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions46.bin"
-tilesetCollisions47:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions47.bin"
-tilesetCollisions48:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions48.bin"
-tilesetCollisions49:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions49.bin"
-tilesetCollisions4a:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4a.bin"
-tilesetCollisions4b:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4b.bin"
-tilesetCollisions4c:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4c.bin"
-tilesetCollisions4d:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4d.bin"
-tilesetCollisions4e:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4e.bin"
-tilesetCollisions4f:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions4f.bin"
-tilesetCollisions50:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions50.bin"
-tilesetCollisions51:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions51.bin"
-tilesetCollisions52:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions52.bin"
-tilesetCollisions53:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions53.bin"
-tilesetCollisions54:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions54.bin"
-tilesetCollisions55:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions55.bin"
-tilesetCollisions56:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions56.bin"
-tilesetCollisions57:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions57.bin"
-tilesetCollisions58:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions58.bin"
-tilesetCollisions59:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions59.bin"
-tilesetCollisions5a:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5a.bin"
-tilesetCollisions5b:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5b.bin"
-tilesetCollisions5c:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5c.bin"
-tilesetCollisions5d:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5d.bin"
-tilesetCollisions5e:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5e.bin"
-tilesetCollisions5f:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions5f.bin"
-tilesetCollisions60:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions60.bin"
-tilesetCollisions61:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions61.bin"
-tilesetCollisions62:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions62.bin"
-tilesetCollisions63:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions63.bin"
-tilesetCollisions64:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions64.bin"
-tilesetCollisions65:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions65.bin"
-tilesetCollisions66:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions66.bin"
-tilesetCollisions67:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions67.bin"
-tilesetCollisions68:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions68.bin"
-tilesetCollisions69:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions69.bin"
-tilesetCollisions6a:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6a.bin"
-tilesetCollisions6b:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6b.bin"
-tilesetCollisions6c:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6c.bin"
-tilesetCollisions6d:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6d.bin"
-tilesetCollisions6e:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6e.bin"
-tilesetCollisions6f:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions6f.bin"
-tilesetCollisions70:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions70.bin"
-tilesetCollisions71:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions71.bin"
-tilesetCollisions72:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions72.bin"
-tilesetCollisions73:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions73.bin"
-tilesetCollisions74:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions74.bin"
-tilesetCollisions75:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions75.bin"
-tilesetCollisions76:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions76.bin"
-tilesetCollisions77:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions77.bin"
-tilesetCollisions78:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions78.bin"
-tilesetCollisions79:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions79.bin"
-tilesetCollisions7a:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7a.bin"
-tilesetCollisions7b:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7b.bin"
-tilesetCollisions7c:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7c.bin"
-tilesetCollisions7d:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7d.bin"
-tilesetCollisions7e:
-	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7e.bin"
-tilesetCollisions7f:
 	.incbin "tileset_layouts_expanded/ages/tilesetCollisions7f.bin"
+.ends

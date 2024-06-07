@@ -423,27 +423,14 @@ oamData_15_4e0c:
 .ORG 0
 
 	.include {"{GAME_DATA_DIR}/paletteData.s"}
-	.include {"{GAME_DATA_DIR}/tilesetCollisions.s"}
+
+	; HACK-BASE: Removed for expanded tilesets patch
+	;.include {"{GAME_DATA_DIR}/tilesetCollisions.s"}
+
 	.include {"{GAME_DATA_DIR}/smallRoomLayoutTables.s"}
 
 
-.BANK $17 SLOT 1
-.ORG 0
-
- m_section_free Tile_Mappings
-
-	tileMappingIndexDataPointer:
-		.dw tileMappingIndexData
-	tileMappingAttributeDataPointer:
-		.dw tileMappingAttributeData
-
-	tileMappingTable:
-		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingTable.bin"}
-	tileMappingIndexData:
-		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingIndexData.bin"}
-	tileMappingAttributeData:
-		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingAttributeData.bin"}
-.ends
+; HACK-BASE: TODO: Bank $17 removed
 
 .BANK $18 SLOT 1
 .ORG 0
@@ -459,12 +446,7 @@ oamData_15_4e0c:
 	m_GfxDataSimple spr_credits_sprites_2
 
 
-.BANK $19 SLOT 1
-.ORG 0
-
- m_section_superfree Tile_mappings
-	.include {"{GAME_DATA_DIR}/tilesetMappings.s"}
-.ends
+; HACK-BASE: Deleted tileMappings.s include from bank $19 for expanded tilesets patch.
 
 
 .BANK $1a SLOT 1
@@ -505,6 +487,11 @@ oamData_15_4e0c:
 	.include {"{GAME_DATA_DIR}/roomLayoutData.s"}
 	.include {"{GAME_DATA_DIR}/gfxDataMain.s"}
 
+	; HACK-BASE: Normally audio code would start in bank $39. But to give more space for the
+	; data in the above includes, it's been relocated. So now, banks all the way up to and
+	; including bank $3e could be used for the above data (text, room layouts, graphics).
+
+
 .BANK $3f SLOT 1
 .ORG 0
 
@@ -529,3 +516,7 @@ oamData_15_4e0c:
 	.include {"{GAME_DATA_DIR}/treasureDisplayData.s"}
 
 .ends
+
+
+; HACK-BASE: Expanded tileset data
+.include {"{GAME_DATA_DIR}/expandedTilesets.s"}

@@ -1,0 +1,1888 @@
+; HACK-BASE: Expanded GFX, tilemap, and collision data for tilesets are stored here.
+
+
+; Not using the "3BytePointer" macro here because we want the 1st byte "$ff" to mean "is a seasonal
+; tileset". (Technically bank "$ff" could end up in use when ROM is expanded.)
+.macro m_TilesetGfxPointer
+	dwbe \1
+	.db :\1
+.endm
+
+.macro m_SeasonalTilesetGfxPointer
+	.db $ff
+	.dw \1_season_table
+.endm
+
+.SLOT 1
+.section ExpandedTilesetPointers SUPERFREE
+
+expandedTilesetGfxTable:
+	m_SeasonalTilesetGfxPointer gfx_tileset00
+	m_SeasonalTilesetGfxPointer gfx_tileset01
+	m_SeasonalTilesetGfxPointer gfx_tileset02
+	m_SeasonalTilesetGfxPointer gfx_tileset03
+	m_SeasonalTilesetGfxPointer gfx_tileset04
+	m_SeasonalTilesetGfxPointer gfx_tileset05
+	m_SeasonalTilesetGfxPointer gfx_tileset06
+	m_SeasonalTilesetGfxPointer gfx_tileset07
+	m_SeasonalTilesetGfxPointer gfx_tileset08
+	m_SeasonalTilesetGfxPointer gfx_tileset09
+	m_SeasonalTilesetGfxPointer gfx_tileset0a
+	m_SeasonalTilesetGfxPointer gfx_tileset0b
+	m_SeasonalTilesetGfxPointer gfx_tileset0c
+	m_SeasonalTilesetGfxPointer gfx_tileset0d
+	m_SeasonalTilesetGfxPointer gfx_tileset0e
+	m_SeasonalTilesetGfxPointer gfx_tileset0f
+	m_SeasonalTilesetGfxPointer gfx_tileset10
+	m_SeasonalTilesetGfxPointer gfx_tileset11
+	m_SeasonalTilesetGfxPointer gfx_tileset12
+	m_SeasonalTilesetGfxPointer gfx_tileset13
+	m_SeasonalTilesetGfxPointer gfx_tileset14
+	m_SeasonalTilesetGfxPointer gfx_tileset15
+	m_SeasonalTilesetGfxPointer gfx_tileset16
+	m_SeasonalTilesetGfxPointer gfx_tileset17
+	m_SeasonalTilesetGfxPointer gfx_tileset18
+	m_SeasonalTilesetGfxPointer gfx_tileset19
+	m_SeasonalTilesetGfxPointer gfx_tileset1a
+	m_TilesetGfxPointer gfx_tileset1b
+	m_TilesetGfxPointer gfx_tileset1c
+	m_TilesetGfxPointer gfx_tileset1d
+	m_TilesetGfxPointer gfx_tileset1e
+	m_TilesetGfxPointer gfx_tileset1f
+	m_TilesetGfxPointer gfx_tileset20
+	m_TilesetGfxPointer gfx_tileset21
+	m_TilesetGfxPointer gfx_tileset22
+	m_TilesetGfxPointer gfx_tileset23
+	m_TilesetGfxPointer gfx_tileset24
+	m_TilesetGfxPointer gfx_tileset25
+	m_TilesetGfxPointer gfx_tileset26
+	m_TilesetGfxPointer gfx_tileset27
+	m_TilesetGfxPointer gfx_tileset28
+	m_TilesetGfxPointer gfx_tileset29
+	m_TilesetGfxPointer gfx_tileset2a
+	m_TilesetGfxPointer gfx_tileset2b
+	m_TilesetGfxPointer gfx_tileset2c
+	m_TilesetGfxPointer gfx_tileset2d
+	m_TilesetGfxPointer gfx_tileset2e
+	m_TilesetGfxPointer gfx_tileset2f
+	m_TilesetGfxPointer gfx_tileset30
+	m_TilesetGfxPointer gfx_tileset31
+	m_TilesetGfxPointer gfx_tileset32
+	m_TilesetGfxPointer gfx_tileset33
+	m_TilesetGfxPointer gfx_tileset34
+	m_TilesetGfxPointer gfx_tileset35
+	m_TilesetGfxPointer gfx_tileset36
+	m_TilesetGfxPointer gfx_tileset37
+	m_TilesetGfxPointer gfx_tileset38
+	m_TilesetGfxPointer gfx_tileset39
+	m_TilesetGfxPointer gfx_tileset3a
+	m_TilesetGfxPointer gfx_tileset3b
+	m_TilesetGfxPointer gfx_tileset3c
+	m_TilesetGfxPointer gfx_tileset3d
+	m_TilesetGfxPointer gfx_tileset3e
+	m_TilesetGfxPointer gfx_tileset3f
+	m_TilesetGfxPointer gfx_tileset40
+	m_TilesetGfxPointer gfx_tileset41
+	m_TilesetGfxPointer gfx_tileset42
+	m_TilesetGfxPointer gfx_tileset43
+	m_TilesetGfxPointer gfx_tileset44
+	m_TilesetGfxPointer gfx_tileset45
+	m_TilesetGfxPointer gfx_tileset46
+	m_TilesetGfxPointer gfx_tileset47
+	m_TilesetGfxPointer gfx_tileset48
+	m_TilesetGfxPointer gfx_tileset49
+	m_TilesetGfxPointer gfx_tileset4a
+	m_TilesetGfxPointer gfx_tileset4b
+	m_TilesetGfxPointer gfx_tileset4c
+	m_TilesetGfxPointer gfx_tileset4d
+	m_TilesetGfxPointer gfx_tileset4e
+	m_TilesetGfxPointer gfx_tileset4f
+	m_TilesetGfxPointer gfx_tileset50
+	m_TilesetGfxPointer gfx_tileset51
+	m_TilesetGfxPointer gfx_tileset52
+	m_TilesetGfxPointer gfx_tileset53
+	m_TilesetGfxPointer gfx_tileset54
+	m_TilesetGfxPointer gfx_tileset55
+	m_TilesetGfxPointer gfx_tileset56
+	m_TilesetGfxPointer gfx_tileset57
+	m_TilesetGfxPointer gfx_tileset58
+	m_TilesetGfxPointer gfx_tileset59
+	m_TilesetGfxPointer gfx_tileset5a
+	m_TilesetGfxPointer gfx_tileset5b
+	m_TilesetGfxPointer gfx_tileset5c
+	m_TilesetGfxPointer gfx_tileset5d
+	m_TilesetGfxPointer gfx_tileset5e
+	m_TilesetGfxPointer gfx_tileset5f
+	m_TilesetGfxPointer gfx_tileset60
+	m_TilesetGfxPointer gfx_tileset61
+	m_TilesetGfxPointer gfx_tileset62
+	m_TilesetGfxPointer gfx_tileset63
+	m_TilesetGfxPointer gfx_tileset64
+	m_TilesetGfxPointer gfx_tileset65
+	m_TilesetGfxPointer gfx_tileset66
+	m_TilesetGfxPointer gfx_tileset67
+	m_TilesetGfxPointer gfx_tileset68
+	m_TilesetGfxPointer gfx_tileset69
+	m_TilesetGfxPointer gfx_tileset6a
+	m_TilesetGfxPointer gfx_tileset6b
+	m_TilesetGfxPointer gfx_tileset6c
+	m_TilesetGfxPointer gfx_tileset6d
+	m_TilesetGfxPointer gfx_tileset6e
+	m_TilesetGfxPointer gfx_tileset6f
+	m_TilesetGfxPointer gfx_tileset70
+	m_TilesetGfxPointer gfx_tileset71
+	m_TilesetGfxPointer gfx_tileset72
+	m_TilesetGfxPointer gfx_tileset73
+	m_TilesetGfxPointer gfx_tileset74
+	m_TilesetGfxPointer gfx_tileset75
+	m_TilesetGfxPointer gfx_tileset76
+	m_TilesetGfxPointer gfx_tileset77
+	m_TilesetGfxPointer gfx_tileset78
+	m_TilesetGfxPointer gfx_tileset79
+	m_TilesetGfxPointer gfx_tileset7a
+	m_TilesetGfxPointer gfx_tileset7b
+	m_TilesetGfxPointer gfx_tileset7c
+	m_TilesetGfxPointer gfx_tileset7d
+	m_TilesetGfxPointer gfx_tileset7e
+	m_TilesetGfxPointer gfx_tileset7f
+
+gfx_tileset00_season_table:
+	m_TilesetGfxPointer gfx_tileset00_spring
+	m_TilesetGfxPointer gfx_tileset00_summer
+	m_TilesetGfxPointer gfx_tileset00_autumn
+	m_TilesetGfxPointer gfx_tileset00_winter
+
+gfx_tileset01_season_table:
+	m_TilesetGfxPointer gfx_tileset01_spring
+	m_TilesetGfxPointer gfx_tileset01_summer
+	m_TilesetGfxPointer gfx_tileset01_autumn
+	m_TilesetGfxPointer gfx_tileset01_winter
+
+gfx_tileset02_season_table:
+	m_TilesetGfxPointer gfx_tileset02_spring
+	m_TilesetGfxPointer gfx_tileset02_summer
+	m_TilesetGfxPointer gfx_tileset02_autumn
+	m_TilesetGfxPointer gfx_tileset02_winter
+
+gfx_tileset03_season_table:
+	m_TilesetGfxPointer gfx_tileset03_spring
+	m_TilesetGfxPointer gfx_tileset03_summer
+	m_TilesetGfxPointer gfx_tileset03_autumn
+	m_TilesetGfxPointer gfx_tileset03_winter
+
+gfx_tileset04_season_table:
+	m_TilesetGfxPointer gfx_tileset04_spring
+	m_TilesetGfxPointer gfx_tileset04_summer
+	m_TilesetGfxPointer gfx_tileset04_autumn
+	m_TilesetGfxPointer gfx_tileset04_winter
+
+gfx_tileset05_season_table:
+	m_TilesetGfxPointer gfx_tileset05_spring
+	m_TilesetGfxPointer gfx_tileset05_summer
+	m_TilesetGfxPointer gfx_tileset05_autumn
+	m_TilesetGfxPointer gfx_tileset05_winter
+
+gfx_tileset06_season_table:
+	m_TilesetGfxPointer gfx_tileset06_spring
+	m_TilesetGfxPointer gfx_tileset06_summer
+	m_TilesetGfxPointer gfx_tileset06_autumn
+	m_TilesetGfxPointer gfx_tileset06_winter
+
+gfx_tileset07_season_table:
+	m_TilesetGfxPointer gfx_tileset07_spring
+	m_TilesetGfxPointer gfx_tileset07_summer
+	m_TilesetGfxPointer gfx_tileset07_autumn
+	m_TilesetGfxPointer gfx_tileset07_winter
+
+gfx_tileset08_season_table:
+	m_TilesetGfxPointer gfx_tileset08_spring
+	m_TilesetGfxPointer gfx_tileset08_summer
+	m_TilesetGfxPointer gfx_tileset08_autumn
+	m_TilesetGfxPointer gfx_tileset08_winter
+
+gfx_tileset09_season_table:
+	m_TilesetGfxPointer gfx_tileset09_spring
+	m_TilesetGfxPointer gfx_tileset09_summer
+	m_TilesetGfxPointer gfx_tileset09_autumn
+	m_TilesetGfxPointer gfx_tileset09_winter
+
+gfx_tileset0a_season_table:
+	m_TilesetGfxPointer gfx_tileset0a_spring
+	m_TilesetGfxPointer gfx_tileset0a_summer
+	m_TilesetGfxPointer gfx_tileset0a_autumn
+	m_TilesetGfxPointer gfx_tileset0a_winter
+
+gfx_tileset0b_season_table:
+	m_TilesetGfxPointer gfx_tileset0b_spring
+	m_TilesetGfxPointer gfx_tileset0b_summer
+	m_TilesetGfxPointer gfx_tileset0b_autumn
+	m_TilesetGfxPointer gfx_tileset0b_winter
+
+gfx_tileset0c_season_table:
+	m_TilesetGfxPointer gfx_tileset0c_spring
+	m_TilesetGfxPointer gfx_tileset0c_summer
+	m_TilesetGfxPointer gfx_tileset0c_autumn
+	m_TilesetGfxPointer gfx_tileset0c_winter
+
+gfx_tileset0d_season_table:
+	m_TilesetGfxPointer gfx_tileset0d_spring
+	m_TilesetGfxPointer gfx_tileset0d_summer
+	m_TilesetGfxPointer gfx_tileset0d_autumn
+	m_TilesetGfxPointer gfx_tileset0d_winter
+
+gfx_tileset0e_season_table:
+	m_TilesetGfxPointer gfx_tileset0e_spring
+	m_TilesetGfxPointer gfx_tileset0e_summer
+	m_TilesetGfxPointer gfx_tileset0e_autumn
+	m_TilesetGfxPointer gfx_tileset0e_winter
+
+gfx_tileset0f_season_table:
+	m_TilesetGfxPointer gfx_tileset0f_spring
+	m_TilesetGfxPointer gfx_tileset0f_summer
+	m_TilesetGfxPointer gfx_tileset0f_autumn
+	m_TilesetGfxPointer gfx_tileset0f_winter
+
+gfx_tileset10_season_table:
+	m_TilesetGfxPointer gfx_tileset10_spring
+	m_TilesetGfxPointer gfx_tileset10_summer
+	m_TilesetGfxPointer gfx_tileset10_autumn
+	m_TilesetGfxPointer gfx_tileset10_winter
+
+gfx_tileset11_season_table:
+	m_TilesetGfxPointer gfx_tileset11_spring
+	m_TilesetGfxPointer gfx_tileset11_summer
+	m_TilesetGfxPointer gfx_tileset11_autumn
+	m_TilesetGfxPointer gfx_tileset11_winter
+
+gfx_tileset12_season_table:
+	m_TilesetGfxPointer gfx_tileset12_spring
+	m_TilesetGfxPointer gfx_tileset12_summer
+	m_TilesetGfxPointer gfx_tileset12_autumn
+	m_TilesetGfxPointer gfx_tileset12_winter
+
+gfx_tileset13_season_table:
+	m_TilesetGfxPointer gfx_tileset13_spring
+	m_TilesetGfxPointer gfx_tileset13_summer
+	m_TilesetGfxPointer gfx_tileset13_autumn
+	m_TilesetGfxPointer gfx_tileset13_winter
+
+gfx_tileset14_season_table:
+	m_TilesetGfxPointer gfx_tileset14_spring
+	m_TilesetGfxPointer gfx_tileset14_summer
+	m_TilesetGfxPointer gfx_tileset14_autumn
+	m_TilesetGfxPointer gfx_tileset14_winter
+
+gfx_tileset15_season_table:
+	m_TilesetGfxPointer gfx_tileset15_spring
+	m_TilesetGfxPointer gfx_tileset15_summer
+	m_TilesetGfxPointer gfx_tileset15_autumn
+	m_TilesetGfxPointer gfx_tileset15_winter
+
+gfx_tileset16_season_table:
+	m_TilesetGfxPointer gfx_tileset16_spring
+	m_TilesetGfxPointer gfx_tileset16_summer
+	m_TilesetGfxPointer gfx_tileset16_autumn
+	m_TilesetGfxPointer gfx_tileset16_winter
+
+gfx_tileset17_season_table:
+	m_TilesetGfxPointer gfx_tileset17_spring
+	m_TilesetGfxPointer gfx_tileset17_summer
+	m_TilesetGfxPointer gfx_tileset17_autumn
+	m_TilesetGfxPointer gfx_tileset17_winter
+
+gfx_tileset18_season_table:
+	m_TilesetGfxPointer gfx_tileset18_spring
+	m_TilesetGfxPointer gfx_tileset18_summer
+	m_TilesetGfxPointer gfx_tileset18_autumn
+	m_TilesetGfxPointer gfx_tileset18_winter
+
+gfx_tileset19_season_table:
+	m_TilesetGfxPointer gfx_tileset19_spring
+	m_TilesetGfxPointer gfx_tileset19_summer
+	m_TilesetGfxPointer gfx_tileset19_autumn
+	m_TilesetGfxPointer gfx_tileset19_winter
+
+gfx_tileset1a_season_table:
+	m_TilesetGfxPointer gfx_tileset1a_spring
+	m_TilesetGfxPointer gfx_tileset1a_summer
+	m_TilesetGfxPointer gfx_tileset1a_autumn
+	m_TilesetGfxPointer gfx_tileset1a_winter
+
+expandedTilesetMappingsTable:
+	m_SeasonalTilesetGfxPointer tilesetMappings00
+	m_SeasonalTilesetGfxPointer tilesetMappings01
+	m_SeasonalTilesetGfxPointer tilesetMappings02
+	m_SeasonalTilesetGfxPointer tilesetMappings03
+	m_SeasonalTilesetGfxPointer tilesetMappings04
+	m_SeasonalTilesetGfxPointer tilesetMappings05
+	m_SeasonalTilesetGfxPointer tilesetMappings06
+	m_SeasonalTilesetGfxPointer tilesetMappings07
+	m_SeasonalTilesetGfxPointer tilesetMappings08
+	m_SeasonalTilesetGfxPointer tilesetMappings09
+	m_SeasonalTilesetGfxPointer tilesetMappings0a
+	m_SeasonalTilesetGfxPointer tilesetMappings0b
+	m_SeasonalTilesetGfxPointer tilesetMappings0c
+	m_SeasonalTilesetGfxPointer tilesetMappings0d
+	m_SeasonalTilesetGfxPointer tilesetMappings0e
+	m_SeasonalTilesetGfxPointer tilesetMappings0f
+	m_SeasonalTilesetGfxPointer tilesetMappings10
+	m_SeasonalTilesetGfxPointer tilesetMappings11
+	m_SeasonalTilesetGfxPointer tilesetMappings12
+	m_SeasonalTilesetGfxPointer tilesetMappings13
+	m_SeasonalTilesetGfxPointer tilesetMappings14
+	m_SeasonalTilesetGfxPointer tilesetMappings15
+	m_SeasonalTilesetGfxPointer tilesetMappings16
+	m_SeasonalTilesetGfxPointer tilesetMappings17
+	m_SeasonalTilesetGfxPointer tilesetMappings18
+	m_SeasonalTilesetGfxPointer tilesetMappings19
+	m_SeasonalTilesetGfxPointer tilesetMappings1a
+	m_TilesetGfxPointer tilesetMappings1b
+	m_TilesetGfxPointer tilesetMappings1c
+	m_TilesetGfxPointer tilesetMappings1d
+	m_TilesetGfxPointer tilesetMappings1e
+	m_TilesetGfxPointer tilesetMappings1f
+	m_TilesetGfxPointer tilesetMappings20
+	m_TilesetGfxPointer tilesetMappings21
+	m_TilesetGfxPointer tilesetMappings22
+	m_TilesetGfxPointer tilesetMappings23
+	m_TilesetGfxPointer tilesetMappings24
+	m_TilesetGfxPointer tilesetMappings25
+	m_TilesetGfxPointer tilesetMappings26
+	m_TilesetGfxPointer tilesetMappings27
+	m_TilesetGfxPointer tilesetMappings28
+	m_TilesetGfxPointer tilesetMappings29
+	m_TilesetGfxPointer tilesetMappings2a
+	m_TilesetGfxPointer tilesetMappings2b
+	m_TilesetGfxPointer tilesetMappings2c
+	m_TilesetGfxPointer tilesetMappings2d
+	m_TilesetGfxPointer tilesetMappings2e
+	m_TilesetGfxPointer tilesetMappings2f
+	m_TilesetGfxPointer tilesetMappings30
+	m_TilesetGfxPointer tilesetMappings31
+	m_TilesetGfxPointer tilesetMappings32
+	m_TilesetGfxPointer tilesetMappings33
+	m_TilesetGfxPointer tilesetMappings34
+	m_TilesetGfxPointer tilesetMappings35
+	m_TilesetGfxPointer tilesetMappings36
+	m_TilesetGfxPointer tilesetMappings37
+	m_TilesetGfxPointer tilesetMappings38
+	m_TilesetGfxPointer tilesetMappings39
+	m_TilesetGfxPointer tilesetMappings3a
+	m_TilesetGfxPointer tilesetMappings3b
+	m_TilesetGfxPointer tilesetMappings3c
+	m_TilesetGfxPointer tilesetMappings3d
+	m_TilesetGfxPointer tilesetMappings3e
+	m_TilesetGfxPointer tilesetMappings3f
+	m_TilesetGfxPointer tilesetMappings40
+	m_TilesetGfxPointer tilesetMappings41
+	m_TilesetGfxPointer tilesetMappings42
+	m_TilesetGfxPointer tilesetMappings43
+	m_TilesetGfxPointer tilesetMappings44
+	m_TilesetGfxPointer tilesetMappings45
+	m_TilesetGfxPointer tilesetMappings46
+	m_TilesetGfxPointer tilesetMappings47
+	m_TilesetGfxPointer tilesetMappings48
+	m_TilesetGfxPointer tilesetMappings49
+	m_TilesetGfxPointer tilesetMappings4a
+	m_TilesetGfxPointer tilesetMappings4b
+	m_TilesetGfxPointer tilesetMappings4c
+	m_TilesetGfxPointer tilesetMappings4d
+	m_TilesetGfxPointer tilesetMappings4e
+	m_TilesetGfxPointer tilesetMappings4f
+	m_TilesetGfxPointer tilesetMappings50
+	m_TilesetGfxPointer tilesetMappings51
+	m_TilesetGfxPointer tilesetMappings52
+	m_TilesetGfxPointer tilesetMappings53
+	m_TilesetGfxPointer tilesetMappings54
+	m_TilesetGfxPointer tilesetMappings55
+	m_TilesetGfxPointer tilesetMappings56
+	m_TilesetGfxPointer tilesetMappings57
+	m_TilesetGfxPointer tilesetMappings58
+	m_TilesetGfxPointer tilesetMappings59
+	m_TilesetGfxPointer tilesetMappings5a
+	m_TilesetGfxPointer tilesetMappings5b
+	m_TilesetGfxPointer tilesetMappings5c
+	m_TilesetGfxPointer tilesetMappings5d
+	m_TilesetGfxPointer tilesetMappings5e
+	m_TilesetGfxPointer tilesetMappings5f
+	m_TilesetGfxPointer tilesetMappings60
+	m_TilesetGfxPointer tilesetMappings61
+	m_TilesetGfxPointer tilesetMappings62
+	m_TilesetGfxPointer tilesetMappings63
+	m_TilesetGfxPointer tilesetMappings64
+	m_TilesetGfxPointer tilesetMappings65
+	m_TilesetGfxPointer tilesetMappings66
+	m_TilesetGfxPointer tilesetMappings67
+	m_TilesetGfxPointer tilesetMappings68
+	m_TilesetGfxPointer tilesetMappings69
+	m_TilesetGfxPointer tilesetMappings6a
+	m_TilesetGfxPointer tilesetMappings6b
+	m_TilesetGfxPointer tilesetMappings6c
+	m_TilesetGfxPointer tilesetMappings6d
+	m_TilesetGfxPointer tilesetMappings6e
+	m_TilesetGfxPointer tilesetMappings6f
+	m_TilesetGfxPointer tilesetMappings70
+	m_TilesetGfxPointer tilesetMappings71
+	m_TilesetGfxPointer tilesetMappings72
+	m_TilesetGfxPointer tilesetMappings73
+	m_TilesetGfxPointer tilesetMappings74
+	m_TilesetGfxPointer tilesetMappings75
+	m_TilesetGfxPointer tilesetMappings76
+	m_TilesetGfxPointer tilesetMappings77
+	m_TilesetGfxPointer tilesetMappings78
+	m_TilesetGfxPointer tilesetMappings79
+	m_TilesetGfxPointer tilesetMappings7a
+	m_TilesetGfxPointer tilesetMappings7b
+	m_TilesetGfxPointer tilesetMappings7c
+	m_TilesetGfxPointer tilesetMappings7d
+	m_TilesetGfxPointer tilesetMappings7e
+	m_TilesetGfxPointer tilesetMappings7f
+
+tilesetMappings00_season_table:
+	m_TilesetGfxPointer tilesetMappings00_spring
+	m_TilesetGfxPointer tilesetMappings00_summer
+	m_TilesetGfxPointer tilesetMappings00_autumn
+	m_TilesetGfxPointer tilesetMappings00_winter
+
+tilesetMappings01_season_table:
+	m_TilesetGfxPointer tilesetMappings01_spring
+	m_TilesetGfxPointer tilesetMappings01_summer
+	m_TilesetGfxPointer tilesetMappings01_autumn
+	m_TilesetGfxPointer tilesetMappings01_winter
+
+tilesetMappings02_season_table:
+	m_TilesetGfxPointer tilesetMappings02_spring
+	m_TilesetGfxPointer tilesetMappings02_summer
+	m_TilesetGfxPointer tilesetMappings02_autumn
+	m_TilesetGfxPointer tilesetMappings02_winter
+
+tilesetMappings03_season_table:
+	m_TilesetGfxPointer tilesetMappings03_spring
+	m_TilesetGfxPointer tilesetMappings03_summer
+	m_TilesetGfxPointer tilesetMappings03_autumn
+	m_TilesetGfxPointer tilesetMappings03_winter
+
+tilesetMappings04_season_table:
+	m_TilesetGfxPointer tilesetMappings04_spring
+	m_TilesetGfxPointer tilesetMappings04_summer
+	m_TilesetGfxPointer tilesetMappings04_autumn
+	m_TilesetGfxPointer tilesetMappings04_winter
+
+tilesetMappings05_season_table:
+	m_TilesetGfxPointer tilesetMappings05_spring
+	m_TilesetGfxPointer tilesetMappings05_summer
+	m_TilesetGfxPointer tilesetMappings05_autumn
+	m_TilesetGfxPointer tilesetMappings05_winter
+
+tilesetMappings06_season_table:
+	m_TilesetGfxPointer tilesetMappings06_spring
+	m_TilesetGfxPointer tilesetMappings06_summer
+	m_TilesetGfxPointer tilesetMappings06_autumn
+	m_TilesetGfxPointer tilesetMappings06_winter
+
+tilesetMappings07_season_table:
+	m_TilesetGfxPointer tilesetMappings07_spring
+	m_TilesetGfxPointer tilesetMappings07_summer
+	m_TilesetGfxPointer tilesetMappings07_autumn
+	m_TilesetGfxPointer tilesetMappings07_winter
+
+tilesetMappings08_season_table:
+	m_TilesetGfxPointer tilesetMappings08_spring
+	m_TilesetGfxPointer tilesetMappings08_summer
+	m_TilesetGfxPointer tilesetMappings08_autumn
+	m_TilesetGfxPointer tilesetMappings08_winter
+
+tilesetMappings09_season_table:
+	m_TilesetGfxPointer tilesetMappings09_spring
+	m_TilesetGfxPointer tilesetMappings09_summer
+	m_TilesetGfxPointer tilesetMappings09_autumn
+	m_TilesetGfxPointer tilesetMappings09_winter
+
+tilesetMappings0a_season_table:
+	m_TilesetGfxPointer tilesetMappings0a_spring
+	m_TilesetGfxPointer tilesetMappings0a_summer
+	m_TilesetGfxPointer tilesetMappings0a_autumn
+	m_TilesetGfxPointer tilesetMappings0a_winter
+
+tilesetMappings0b_season_table:
+	m_TilesetGfxPointer tilesetMappings0b_spring
+	m_TilesetGfxPointer tilesetMappings0b_summer
+	m_TilesetGfxPointer tilesetMappings0b_autumn
+	m_TilesetGfxPointer tilesetMappings0b_winter
+
+tilesetMappings0c_season_table:
+	m_TilesetGfxPointer tilesetMappings0c_spring
+	m_TilesetGfxPointer tilesetMappings0c_summer
+	m_TilesetGfxPointer tilesetMappings0c_autumn
+	m_TilesetGfxPointer tilesetMappings0c_winter
+
+tilesetMappings0d_season_table:
+	m_TilesetGfxPointer tilesetMappings0d_spring
+	m_TilesetGfxPointer tilesetMappings0d_summer
+	m_TilesetGfxPointer tilesetMappings0d_autumn
+	m_TilesetGfxPointer tilesetMappings0d_winter
+
+tilesetMappings0e_season_table:
+	m_TilesetGfxPointer tilesetMappings0e_spring
+	m_TilesetGfxPointer tilesetMappings0e_summer
+	m_TilesetGfxPointer tilesetMappings0e_autumn
+	m_TilesetGfxPointer tilesetMappings0e_winter
+
+tilesetMappings0f_season_table:
+	m_TilesetGfxPointer tilesetMappings0f_spring
+	m_TilesetGfxPointer tilesetMappings0f_summer
+	m_TilesetGfxPointer tilesetMappings0f_autumn
+	m_TilesetGfxPointer tilesetMappings0f_winter
+
+tilesetMappings10_season_table:
+	m_TilesetGfxPointer tilesetMappings10_spring
+	m_TilesetGfxPointer tilesetMappings10_summer
+	m_TilesetGfxPointer tilesetMappings10_autumn
+	m_TilesetGfxPointer tilesetMappings10_winter
+
+tilesetMappings11_season_table:
+	m_TilesetGfxPointer tilesetMappings11_spring
+	m_TilesetGfxPointer tilesetMappings11_summer
+	m_TilesetGfxPointer tilesetMappings11_autumn
+	m_TilesetGfxPointer tilesetMappings11_winter
+
+tilesetMappings12_season_table:
+	m_TilesetGfxPointer tilesetMappings12_spring
+	m_TilesetGfxPointer tilesetMappings12_summer
+	m_TilesetGfxPointer tilesetMappings12_autumn
+	m_TilesetGfxPointer tilesetMappings12_winter
+
+tilesetMappings13_season_table:
+	m_TilesetGfxPointer tilesetMappings13_spring
+	m_TilesetGfxPointer tilesetMappings13_summer
+	m_TilesetGfxPointer tilesetMappings13_autumn
+	m_TilesetGfxPointer tilesetMappings13_winter
+
+tilesetMappings14_season_table:
+	m_TilesetGfxPointer tilesetMappings14_spring
+	m_TilesetGfxPointer tilesetMappings14_summer
+	m_TilesetGfxPointer tilesetMappings14_autumn
+	m_TilesetGfxPointer tilesetMappings14_winter
+
+tilesetMappings15_season_table:
+	m_TilesetGfxPointer tilesetMappings15_spring
+	m_TilesetGfxPointer tilesetMappings15_summer
+	m_TilesetGfxPointer tilesetMappings15_autumn
+	m_TilesetGfxPointer tilesetMappings15_winter
+
+tilesetMappings16_season_table:
+	m_TilesetGfxPointer tilesetMappings16_spring
+	m_TilesetGfxPointer tilesetMappings16_summer
+	m_TilesetGfxPointer tilesetMappings16_autumn
+	m_TilesetGfxPointer tilesetMappings16_winter
+
+tilesetMappings17_season_table:
+	m_TilesetGfxPointer tilesetMappings17_spring
+	m_TilesetGfxPointer tilesetMappings17_summer
+	m_TilesetGfxPointer tilesetMappings17_autumn
+	m_TilesetGfxPointer tilesetMappings17_winter
+
+tilesetMappings18_season_table:
+	m_TilesetGfxPointer tilesetMappings18_spring
+	m_TilesetGfxPointer tilesetMappings18_summer
+	m_TilesetGfxPointer tilesetMappings18_autumn
+	m_TilesetGfxPointer tilesetMappings18_winter
+
+tilesetMappings19_season_table:
+	m_TilesetGfxPointer tilesetMappings19_spring
+	m_TilesetGfxPointer tilesetMappings19_summer
+	m_TilesetGfxPointer tilesetMappings19_autumn
+	m_TilesetGfxPointer tilesetMappings19_winter
+
+tilesetMappings1a_season_table:
+	m_TilesetGfxPointer tilesetMappings1a_spring
+	m_TilesetGfxPointer tilesetMappings1a_summer
+	m_TilesetGfxPointer tilesetMappings1a_autumn
+	m_TilesetGfxPointer tilesetMappings1a_winter
+.ends
+
+
+.section expanded_tileset_mappings_seasonal_00 SUPERFREE
+
+tilesetMappings00_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings00_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions00_spring.bin"
+tilesetMappings00_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings00_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions00_summer.bin"
+tilesetMappings00_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings00_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions00_autumn.bin"
+tilesetMappings00_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings00_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions00_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_01 SUPERFREE
+
+tilesetMappings01_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings01_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions01_spring.bin"
+tilesetMappings01_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings01_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions01_summer.bin"
+tilesetMappings01_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings01_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions01_autumn.bin"
+tilesetMappings01_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings01_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions01_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_02 SUPERFREE
+
+tilesetMappings02_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings02_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions02_spring.bin"
+tilesetMappings02_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings02_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions02_summer.bin"
+tilesetMappings02_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings02_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions02_autumn.bin"
+tilesetMappings02_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings02_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions02_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_03 SUPERFREE
+
+tilesetMappings03_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings03_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions03_spring.bin"
+tilesetMappings03_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings03_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions03_summer.bin"
+tilesetMappings03_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings03_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions03_autumn.bin"
+tilesetMappings03_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings03_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions03_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_04 SUPERFREE
+
+tilesetMappings04_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings04_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions04_spring.bin"
+tilesetMappings04_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings04_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions04_summer.bin"
+tilesetMappings04_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings04_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions04_autumn.bin"
+tilesetMappings04_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings04_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions04_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_05 SUPERFREE
+
+tilesetMappings05_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings05_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions05_spring.bin"
+tilesetMappings05_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings05_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions05_summer.bin"
+tilesetMappings05_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings05_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions05_autumn.bin"
+tilesetMappings05_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings05_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions05_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_06 SUPERFREE
+
+tilesetMappings06_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings06_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions06_spring.bin"
+tilesetMappings06_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings06_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions06_summer.bin"
+tilesetMappings06_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings06_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions06_autumn.bin"
+tilesetMappings06_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings06_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions06_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_07 SUPERFREE
+
+tilesetMappings07_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings07_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions07_spring.bin"
+tilesetMappings07_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings07_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions07_summer.bin"
+tilesetMappings07_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings07_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions07_autumn.bin"
+tilesetMappings07_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings07_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions07_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_08 SUPERFREE
+
+tilesetMappings08_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings08_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions08_spring.bin"
+tilesetMappings08_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings08_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions08_summer.bin"
+tilesetMappings08_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings08_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions08_autumn.bin"
+tilesetMappings08_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings08_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions08_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_09 SUPERFREE
+
+tilesetMappings09_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings09_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions09_spring.bin"
+tilesetMappings09_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings09_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions09_summer.bin"
+tilesetMappings09_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings09_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions09_autumn.bin"
+tilesetMappings09_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings09_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions09_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_0a SUPERFREE
+
+tilesetMappings0a_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0a_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0a_spring.bin"
+tilesetMappings0a_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0a_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0a_summer.bin"
+tilesetMappings0a_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0a_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0a_autumn.bin"
+tilesetMappings0a_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0a_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0a_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_0b SUPERFREE
+
+tilesetMappings0b_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0b_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0b_spring.bin"
+tilesetMappings0b_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0b_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0b_summer.bin"
+tilesetMappings0b_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0b_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0b_autumn.bin"
+tilesetMappings0b_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0b_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0b_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_0c SUPERFREE
+
+tilesetMappings0c_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0c_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0c_spring.bin"
+tilesetMappings0c_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0c_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0c_summer.bin"
+tilesetMappings0c_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0c_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0c_autumn.bin"
+tilesetMappings0c_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0c_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0c_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_0d SUPERFREE
+
+tilesetMappings0d_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0d_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0d_spring.bin"
+tilesetMappings0d_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0d_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0d_summer.bin"
+tilesetMappings0d_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0d_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0d_autumn.bin"
+tilesetMappings0d_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0d_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0d_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_0e SUPERFREE
+
+tilesetMappings0e_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0e_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0e_spring.bin"
+tilesetMappings0e_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0e_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0e_summer.bin"
+tilesetMappings0e_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0e_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0e_autumn.bin"
+tilesetMappings0e_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0e_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0e_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_0f SUPERFREE
+
+tilesetMappings0f_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0f_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0f_spring.bin"
+tilesetMappings0f_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0f_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0f_summer.bin"
+tilesetMappings0f_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0f_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0f_autumn.bin"
+tilesetMappings0f_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings0f_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions0f_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_10 SUPERFREE
+
+tilesetMappings10_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings10_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions10_spring.bin"
+tilesetMappings10_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings10_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions10_summer.bin"
+tilesetMappings10_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings10_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions10_autumn.bin"
+tilesetMappings10_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings10_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions10_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_11 SUPERFREE
+
+tilesetMappings11_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings11_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions11_spring.bin"
+tilesetMappings11_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings11_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions11_summer.bin"
+tilesetMappings11_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings11_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions11_autumn.bin"
+tilesetMappings11_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings11_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions11_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_12 SUPERFREE
+
+tilesetMappings12_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings12_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions12_spring.bin"
+tilesetMappings12_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings12_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions12_summer.bin"
+tilesetMappings12_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings12_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions12_autumn.bin"
+tilesetMappings12_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings12_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions12_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_13 SUPERFREE
+
+tilesetMappings13_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings13_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions13_spring.bin"
+tilesetMappings13_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings13_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions13_summer.bin"
+tilesetMappings13_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings13_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions13_autumn.bin"
+tilesetMappings13_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings13_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions13_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_14 SUPERFREE
+
+tilesetMappings14_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings14_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions14_spring.bin"
+tilesetMappings14_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings14_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions14_summer.bin"
+tilesetMappings14_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings14_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions14_autumn.bin"
+tilesetMappings14_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings14_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions14_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_15 SUPERFREE
+
+tilesetMappings15_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings15_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions15_spring.bin"
+tilesetMappings15_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings15_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions15_summer.bin"
+tilesetMappings15_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings15_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions15_autumn.bin"
+tilesetMappings15_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings15_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions15_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_16 SUPERFREE
+
+tilesetMappings16_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings16_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions16_spring.bin"
+tilesetMappings16_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings16_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions16_summer.bin"
+tilesetMappings16_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings16_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions16_autumn.bin"
+tilesetMappings16_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings16_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions16_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_17 SUPERFREE
+
+tilesetMappings17_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings17_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions17_spring.bin"
+tilesetMappings17_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings17_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions17_summer.bin"
+tilesetMappings17_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings17_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions17_autumn.bin"
+tilesetMappings17_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings17_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions17_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_18 SUPERFREE
+
+tilesetMappings18_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings18_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions18_spring.bin"
+tilesetMappings18_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings18_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions18_summer.bin"
+tilesetMappings18_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings18_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions18_autumn.bin"
+tilesetMappings18_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings18_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions18_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_19 SUPERFREE
+
+tilesetMappings19_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings19_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions19_spring.bin"
+tilesetMappings19_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings19_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions19_summer.bin"
+tilesetMappings19_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings19_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions19_autumn.bin"
+tilesetMappings19_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings19_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions19_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_seasonal_1a SUPERFREE
+
+tilesetMappings1a_spring:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1a_spring.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1a_spring.bin"
+tilesetMappings1a_summer:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1a_summer.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1a_summer.bin"
+tilesetMappings1a_autumn:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1a_autumn.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1a_autumn.bin"
+tilesetMappings1a_winter:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1a_winter.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1a_winter.bin"
+
+.ends
+
+.section expanded_tileset_mappings_1b SUPERFREE
+tilesetMappings1b:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1b.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1b.bin"
+.ends
+
+.section expanded_tileset_mappings_1c SUPERFREE
+tilesetMappings1c:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1c.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1c.bin"
+.ends
+
+.section expanded_tileset_mappings_1d SUPERFREE
+tilesetMappings1d:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1d.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1d.bin"
+.ends
+
+.section expanded_tileset_mappings_1e SUPERFREE
+tilesetMappings1e:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1e.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1e.bin"
+.ends
+
+.section expanded_tileset_mappings_1f SUPERFREE
+tilesetMappings1f:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings1f.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions1f.bin"
+.ends
+
+.section expanded_tileset_mappings_20 SUPERFREE
+tilesetMappings20:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings20.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions20.bin"
+.ends
+
+.section expanded_tileset_mappings_21 SUPERFREE
+tilesetMappings21:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings21.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions21.bin"
+.ends
+
+.section expanded_tileset_mappings_22 SUPERFREE
+tilesetMappings22:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings22.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions22.bin"
+.ends
+
+.section expanded_tileset_mappings_23 SUPERFREE
+tilesetMappings23:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings23.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions23.bin"
+.ends
+
+.section expanded_tileset_mappings_24 SUPERFREE
+tilesetMappings24:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings24.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions24.bin"
+.ends
+
+.section expanded_tileset_mappings_25 SUPERFREE
+tilesetMappings25:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings25.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions25.bin"
+.ends
+
+.section expanded_tileset_mappings_26 SUPERFREE
+tilesetMappings26:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings26.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions26.bin"
+.ends
+
+.section expanded_tileset_mappings_27 SUPERFREE
+tilesetMappings27:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings27.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions27.bin"
+.ends
+
+.section expanded_tileset_mappings_28 SUPERFREE
+tilesetMappings28:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings28.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions28.bin"
+.ends
+
+.section expanded_tileset_mappings_29 SUPERFREE
+tilesetMappings29:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings29.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions29.bin"
+.ends
+
+.section expanded_tileset_mappings_2a SUPERFREE
+tilesetMappings2a:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings2a.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions2a.bin"
+.ends
+
+.section expanded_tileset_mappings_2b SUPERFREE
+tilesetMappings2b:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings2b.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions2b.bin"
+.ends
+
+.section expanded_tileset_mappings_2c SUPERFREE
+tilesetMappings2c:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings2c.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions2c.bin"
+.ends
+
+.section expanded_tileset_mappings_2d SUPERFREE
+tilesetMappings2d:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings2d.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions2d.bin"
+.ends
+
+.section expanded_tileset_mappings_2e SUPERFREE
+tilesetMappings2e:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings2e.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions2e.bin"
+.ends
+
+.section expanded_tileset_mappings_2f SUPERFREE
+tilesetMappings2f:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings2f.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions2f.bin"
+.ends
+
+.section expanded_tileset_mappings_30 SUPERFREE
+tilesetMappings30:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings30.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions30.bin"
+.ends
+
+.section expanded_tileset_mappings_31 SUPERFREE
+tilesetMappings31:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings31.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions31.bin"
+.ends
+
+.section expanded_tileset_mappings_32 SUPERFREE
+tilesetMappings32:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings32.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions32.bin"
+.ends
+
+.section expanded_tileset_mappings_33 SUPERFREE
+tilesetMappings33:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings33.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions33.bin"
+.ends
+
+.section expanded_tileset_mappings_34 SUPERFREE
+tilesetMappings34:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings34.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions34.bin"
+.ends
+
+.section expanded_tileset_mappings_35 SUPERFREE
+tilesetMappings35:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings35.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions35.bin"
+.ends
+
+.section expanded_tileset_mappings_36 SUPERFREE
+tilesetMappings36:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings36.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions36.bin"
+.ends
+
+.section expanded_tileset_mappings_37 SUPERFREE
+tilesetMappings37:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings37.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions37.bin"
+.ends
+
+.section expanded_tileset_mappings_38 SUPERFREE
+tilesetMappings38:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings38.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions38.bin"
+.ends
+
+.section expanded_tileset_mappings_39 SUPERFREE
+tilesetMappings39:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings39.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions39.bin"
+.ends
+
+.section expanded_tileset_mappings_3a SUPERFREE
+tilesetMappings3a:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings3a.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions3a.bin"
+.ends
+
+.section expanded_tileset_mappings_3b SUPERFREE
+tilesetMappings3b:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings3b.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions3b.bin"
+.ends
+
+.section expanded_tileset_mappings_3c SUPERFREE
+tilesetMappings3c:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings3c.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions3c.bin"
+.ends
+
+.section expanded_tileset_mappings_3d SUPERFREE
+tilesetMappings3d:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings3d.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions3d.bin"
+.ends
+
+.section expanded_tileset_mappings_3e SUPERFREE
+tilesetMappings3e:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings3e.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions3e.bin"
+.ends
+
+.section expanded_tileset_mappings_3f SUPERFREE
+tilesetMappings3f:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings3f.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions3f.bin"
+.ends
+
+.section expanded_tileset_mappings_40 SUPERFREE
+tilesetMappings40:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings40.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions40.bin"
+.ends
+
+.section expanded_tileset_mappings_41 SUPERFREE
+tilesetMappings41:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings41.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions41.bin"
+.ends
+
+.section expanded_tileset_mappings_42 SUPERFREE
+tilesetMappings42:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings42.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions42.bin"
+.ends
+
+.section expanded_tileset_mappings_43 SUPERFREE
+tilesetMappings43:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings43.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions43.bin"
+.ends
+
+.section expanded_tileset_mappings_44 SUPERFREE
+tilesetMappings44:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings44.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions44.bin"
+.ends
+
+.section expanded_tileset_mappings_45 SUPERFREE
+tilesetMappings45:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings45.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions45.bin"
+.ends
+
+.section expanded_tileset_mappings_46 SUPERFREE
+tilesetMappings46:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings46.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions46.bin"
+.ends
+
+.section expanded_tileset_mappings_47 SUPERFREE
+tilesetMappings47:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings47.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions47.bin"
+.ends
+
+.section expanded_tileset_mappings_48 SUPERFREE
+tilesetMappings48:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings48.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions48.bin"
+.ends
+
+.section expanded_tileset_mappings_49 SUPERFREE
+tilesetMappings49:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings49.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions49.bin"
+.ends
+
+.section expanded_tileset_mappings_4a SUPERFREE
+tilesetMappings4a:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings4a.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions4a.bin"
+.ends
+
+.section expanded_tileset_mappings_4b SUPERFREE
+tilesetMappings4b:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings4b.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions4b.bin"
+.ends
+
+.section expanded_tileset_mappings_4c SUPERFREE
+tilesetMappings4c:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings4c.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions4c.bin"
+.ends
+
+.section expanded_tileset_mappings_4d SUPERFREE
+tilesetMappings4d:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings4d.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions4d.bin"
+.ends
+
+.section expanded_tileset_mappings_4e SUPERFREE
+tilesetMappings4e:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings4e.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions4e.bin"
+.ends
+
+.section expanded_tileset_mappings_4f SUPERFREE
+tilesetMappings4f:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings4f.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions4f.bin"
+.ends
+
+.section expanded_tileset_mappings_50 SUPERFREE
+tilesetMappings50:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings50.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions50.bin"
+.ends
+
+.section expanded_tileset_mappings_51 SUPERFREE
+tilesetMappings51:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings51.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions51.bin"
+.ends
+
+.section expanded_tileset_mappings_52 SUPERFREE
+tilesetMappings52:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings52.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions52.bin"
+.ends
+
+.section expanded_tileset_mappings_53 SUPERFREE
+tilesetMappings53:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings53.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions53.bin"
+.ends
+
+.section expanded_tileset_mappings_54 SUPERFREE
+tilesetMappings54:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings54.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions54.bin"
+.ends
+
+.section expanded_tileset_mappings_55 SUPERFREE
+tilesetMappings55:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings55.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions55.bin"
+.ends
+
+.section expanded_tileset_mappings_56 SUPERFREE
+tilesetMappings56:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings56.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions56.bin"
+.ends
+
+.section expanded_tileset_mappings_57 SUPERFREE
+tilesetMappings57:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings57.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions57.bin"
+.ends
+
+.section expanded_tileset_mappings_58 SUPERFREE
+tilesetMappings58:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings58.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions58.bin"
+.ends
+
+.section expanded_tileset_mappings_59 SUPERFREE
+tilesetMappings59:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings59.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions59.bin"
+.ends
+
+.section expanded_tileset_mappings_5a SUPERFREE
+tilesetMappings5a:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings5a.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions5a.bin"
+.ends
+
+.section expanded_tileset_mappings_5b SUPERFREE
+tilesetMappings5b:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings5b.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions5b.bin"
+.ends
+
+.section expanded_tileset_mappings_5c SUPERFREE
+tilesetMappings5c:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings5c.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions5c.bin"
+.ends
+
+.section expanded_tileset_mappings_5d SUPERFREE
+tilesetMappings5d:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings5d.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions5d.bin"
+.ends
+
+.section expanded_tileset_mappings_5e SUPERFREE
+tilesetMappings5e:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings5e.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions5e.bin"
+.ends
+
+.section expanded_tileset_mappings_5f SUPERFREE
+tilesetMappings5f:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings5f.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions5f.bin"
+.ends
+
+.section expanded_tileset_mappings_60 SUPERFREE
+tilesetMappings60:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings60.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions60.bin"
+.ends
+
+.section expanded_tileset_mappings_61 SUPERFREE
+tilesetMappings61:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings61.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions61.bin"
+.ends
+
+.section expanded_tileset_mappings_62 SUPERFREE
+tilesetMappings62:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings62.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions62.bin"
+.ends
+
+.section expanded_tileset_mappings_63 SUPERFREE
+tilesetMappings63:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings63.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions63.bin"
+.ends
+
+.section expanded_tileset_mappings_64 SUPERFREE
+tilesetMappings64:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings64.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions64.bin"
+.ends
+
+.section expanded_tileset_mappings_65 SUPERFREE
+tilesetMappings65:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings65.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions65.bin"
+.ends
+
+.section expanded_tileset_mappings_66 SUPERFREE
+tilesetMappings66:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings66.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions66.bin"
+.ends
+
+.section expanded_tileset_mappings_67 SUPERFREE
+tilesetMappings67:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings67.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions67.bin"
+.ends
+
+.section expanded_tileset_mappings_68 SUPERFREE
+tilesetMappings68:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings68.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions68.bin"
+.ends
+
+.section expanded_tileset_mappings_69 SUPERFREE
+tilesetMappings69:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings69.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions69.bin"
+.ends
+
+.section expanded_tileset_mappings_6a SUPERFREE
+tilesetMappings6a:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings6a.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions6a.bin"
+.ends
+
+.section expanded_tileset_mappings_6b SUPERFREE
+tilesetMappings6b:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings6b.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions6b.bin"
+.ends
+
+.section expanded_tileset_mappings_6c SUPERFREE
+tilesetMappings6c:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings6c.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions6c.bin"
+.ends
+
+.section expanded_tileset_mappings_6d SUPERFREE
+tilesetMappings6d:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings6d.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions6d.bin"
+.ends
+
+.section expanded_tileset_mappings_6e SUPERFREE
+tilesetMappings6e:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings6e.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions6e.bin"
+.ends
+
+.section expanded_tileset_mappings_6f SUPERFREE
+tilesetMappings6f:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings6f.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions6f.bin"
+.ends
+
+.section expanded_tileset_mappings_70 SUPERFREE
+tilesetMappings70:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings70.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions70.bin"
+.ends
+
+.section expanded_tileset_mappings_71 SUPERFREE
+tilesetMappings71:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings71.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions71.bin"
+.ends
+
+.section expanded_tileset_mappings_72 SUPERFREE
+tilesetMappings72:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings72.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions72.bin"
+.ends
+
+.section expanded_tileset_mappings_73 SUPERFREE
+tilesetMappings73:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings73.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions73.bin"
+.ends
+
+.section expanded_tileset_mappings_74 SUPERFREE
+tilesetMappings74:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings74.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions74.bin"
+.ends
+
+.section expanded_tileset_mappings_75 SUPERFREE
+tilesetMappings75:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings75.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions75.bin"
+.ends
+
+.section expanded_tileset_mappings_76 SUPERFREE
+tilesetMappings76:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings76.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions76.bin"
+.ends
+
+.section expanded_tileset_mappings_77 SUPERFREE
+tilesetMappings77:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings77.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions77.bin"
+.ends
+
+.section expanded_tileset_mappings_78 SUPERFREE
+tilesetMappings78:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings78.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions78.bin"
+.ends
+
+.section expanded_tileset_mappings_79 SUPERFREE
+tilesetMappings79:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings79.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions79.bin"
+.ends
+
+.section expanded_tileset_mappings_7a SUPERFREE
+tilesetMappings7a:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings7a.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions7a.bin"
+.ends
+
+.section expanded_tileset_mappings_7b SUPERFREE
+tilesetMappings7b:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings7b.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions7b.bin"
+.ends
+
+.section expanded_tileset_mappings_7c SUPERFREE
+tilesetMappings7c:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings7c.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions7c.bin"
+.ends
+
+.section expanded_tileset_mappings_7d SUPERFREE
+tilesetMappings7d:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings7d.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions7d.bin"
+.ends
+
+.section expanded_tileset_mappings_7e SUPERFREE
+tilesetMappings7e:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings7e.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions7e.bin"
+.ends
+
+.section expanded_tileset_mappings_7f SUPERFREE
+tilesetMappings7f:
+	.incbin "tileset_layouts_expanded/seasons/tilesetMappings7f.bin"
+	.incbin "tileset_layouts_expanded/seasons/tilesetCollisions7f.bin"
+.ends
+
+
+.BANK $80 SLOT 1
+.ORGA $4000
+
+.redefine DATA_ADDR $4000
+.redefine DATA_BANK $80
+
+	; For simplicity I'm using the "m_GfxData" macro, which can handle data crossing banks.
+	; But since each tileset is exactly 0x1000 bytes (and is uncompressed) it doesn't actually
+	; cross over any banks.
+	m_GfxData gfx_tileset00_spring
+	m_GfxData gfx_tileset00_summer
+	m_GfxData gfx_tileset00_autumn
+	m_GfxData gfx_tileset00_winter
+	m_GfxData gfx_tileset01_spring
+	m_GfxData gfx_tileset01_summer
+	m_GfxData gfx_tileset01_autumn
+	m_GfxData gfx_tileset01_winter
+	m_GfxData gfx_tileset02_spring
+	m_GfxData gfx_tileset02_summer
+	m_GfxData gfx_tileset02_autumn
+	m_GfxData gfx_tileset02_winter
+	m_GfxData gfx_tileset03_spring
+	m_GfxData gfx_tileset03_summer
+	m_GfxData gfx_tileset03_autumn
+	m_GfxData gfx_tileset03_winter
+	m_GfxData gfx_tileset04_spring
+	m_GfxData gfx_tileset04_summer
+	m_GfxData gfx_tileset04_autumn
+	m_GfxData gfx_tileset04_winter
+	m_GfxData gfx_tileset05_spring
+	m_GfxData gfx_tileset05_summer
+	m_GfxData gfx_tileset05_autumn
+	m_GfxData gfx_tileset05_winter
+	m_GfxData gfx_tileset06_spring
+	m_GfxData gfx_tileset06_summer
+	m_GfxData gfx_tileset06_autumn
+	m_GfxData gfx_tileset06_winter
+	m_GfxData gfx_tileset07_spring
+	m_GfxData gfx_tileset07_summer
+	m_GfxData gfx_tileset07_autumn
+	m_GfxData gfx_tileset07_winter
+	m_GfxData gfx_tileset08_spring
+	m_GfxData gfx_tileset08_summer
+	m_GfxData gfx_tileset08_autumn
+	m_GfxData gfx_tileset08_winter
+	m_GfxData gfx_tileset09_spring
+	m_GfxData gfx_tileset09_summer
+	m_GfxData gfx_tileset09_autumn
+	m_GfxData gfx_tileset09_winter
+	m_GfxData gfx_tileset0a_spring
+	m_GfxData gfx_tileset0a_summer
+	m_GfxData gfx_tileset0a_autumn
+	m_GfxData gfx_tileset0a_winter
+	m_GfxData gfx_tileset0b_spring
+	m_GfxData gfx_tileset0b_summer
+	m_GfxData gfx_tileset0b_autumn
+	m_GfxData gfx_tileset0b_winter
+	m_GfxData gfx_tileset0c_spring
+	m_GfxData gfx_tileset0c_summer
+	m_GfxData gfx_tileset0c_autumn
+	m_GfxData gfx_tileset0c_winter
+	m_GfxData gfx_tileset0d_spring
+	m_GfxData gfx_tileset0d_summer
+	m_GfxData gfx_tileset0d_autumn
+	m_GfxData gfx_tileset0d_winter
+	m_GfxData gfx_tileset0e_spring
+	m_GfxData gfx_tileset0e_summer
+	m_GfxData gfx_tileset0e_autumn
+	m_GfxData gfx_tileset0e_winter
+	m_GfxData gfx_tileset0f_spring
+	m_GfxData gfx_tileset0f_summer
+	m_GfxData gfx_tileset0f_autumn
+	m_GfxData gfx_tileset0f_winter
+	m_GfxData gfx_tileset10_spring
+	m_GfxData gfx_tileset10_summer
+	m_GfxData gfx_tileset10_autumn
+	m_GfxData gfx_tileset10_winter
+	m_GfxData gfx_tileset11_spring
+	m_GfxData gfx_tileset11_summer
+	m_GfxData gfx_tileset11_autumn
+	m_GfxData gfx_tileset11_winter
+	m_GfxData gfx_tileset12_spring
+	m_GfxData gfx_tileset12_summer
+	m_GfxData gfx_tileset12_autumn
+	m_GfxData gfx_tileset12_winter
+	m_GfxData gfx_tileset13_spring
+	m_GfxData gfx_tileset13_summer
+	m_GfxData gfx_tileset13_autumn
+	m_GfxData gfx_tileset13_winter
+	m_GfxData gfx_tileset14_spring
+	m_GfxData gfx_tileset14_summer
+	m_GfxData gfx_tileset14_autumn
+	m_GfxData gfx_tileset14_winter
+	m_GfxData gfx_tileset15_spring
+	m_GfxData gfx_tileset15_summer
+	m_GfxData gfx_tileset15_autumn
+	m_GfxData gfx_tileset15_winter
+	m_GfxData gfx_tileset16_spring
+	m_GfxData gfx_tileset16_summer
+	m_GfxData gfx_tileset16_autumn
+	m_GfxData gfx_tileset16_winter
+	m_GfxData gfx_tileset17_spring
+	m_GfxData gfx_tileset17_summer
+	m_GfxData gfx_tileset17_autumn
+	m_GfxData gfx_tileset17_winter
+	m_GfxData gfx_tileset18_spring
+	m_GfxData gfx_tileset18_summer
+	m_GfxData gfx_tileset18_autumn
+	m_GfxData gfx_tileset18_winter
+	m_GfxData gfx_tileset19_spring
+	m_GfxData gfx_tileset19_summer
+	m_GfxData gfx_tileset19_autumn
+	m_GfxData gfx_tileset19_winter
+	m_GfxData gfx_tileset1a_spring
+	m_GfxData gfx_tileset1a_summer
+	m_GfxData gfx_tileset1a_autumn
+	m_GfxData gfx_tileset1a_winter
+	m_GfxData gfx_tileset1b
+	m_GfxData gfx_tileset1c
+	m_GfxData gfx_tileset1d
+	m_GfxData gfx_tileset1e
+	m_GfxData gfx_tileset1f
+	m_GfxData gfx_tileset20
+	m_GfxData gfx_tileset21
+	m_GfxData gfx_tileset22
+	m_GfxData gfx_tileset23
+	m_GfxData gfx_tileset24
+	m_GfxData gfx_tileset25
+	m_GfxData gfx_tileset26
+	m_GfxData gfx_tileset27
+	m_GfxData gfx_tileset28
+	m_GfxData gfx_tileset29
+	m_GfxData gfx_tileset2a
+	m_GfxData gfx_tileset2b
+	m_GfxData gfx_tileset2c
+	m_GfxData gfx_tileset2d
+	m_GfxData gfx_tileset2e
+	m_GfxData gfx_tileset2f
+	m_GfxData gfx_tileset30
+	m_GfxData gfx_tileset31
+	m_GfxData gfx_tileset32
+	m_GfxData gfx_tileset33
+	m_GfxData gfx_tileset34
+	m_GfxData gfx_tileset35
+	m_GfxData gfx_tileset36
+	m_GfxData gfx_tileset37
+	m_GfxData gfx_tileset38
+	m_GfxData gfx_tileset39
+	m_GfxData gfx_tileset3a
+	m_GfxData gfx_tileset3b
+	m_GfxData gfx_tileset3c
+	m_GfxData gfx_tileset3d
+	m_GfxData gfx_tileset3e
+	m_GfxData gfx_tileset3f
+	m_GfxData gfx_tileset40
+	m_GfxData gfx_tileset41
+	m_GfxData gfx_tileset42
+	m_GfxData gfx_tileset43
+	m_GfxData gfx_tileset44
+	m_GfxData gfx_tileset45
+	m_GfxData gfx_tileset46
+	m_GfxData gfx_tileset47
+	m_GfxData gfx_tileset48
+	m_GfxData gfx_tileset49
+	m_GfxData gfx_tileset4a
+	m_GfxData gfx_tileset4b
+	m_GfxData gfx_tileset4c
+	m_GfxData gfx_tileset4d
+	m_GfxData gfx_tileset4e
+	m_GfxData gfx_tileset4f
+	m_GfxData gfx_tileset50
+	m_GfxData gfx_tileset51
+	m_GfxData gfx_tileset52
+	m_GfxData gfx_tileset53
+	m_GfxData gfx_tileset54
+	m_GfxData gfx_tileset55
+	m_GfxData gfx_tileset56
+	m_GfxData gfx_tileset57
+	m_GfxData gfx_tileset58
+	m_GfxData gfx_tileset59
+	m_GfxData gfx_tileset5a
+	m_GfxData gfx_tileset5b
+	m_GfxData gfx_tileset5c
+	m_GfxData gfx_tileset5d
+	m_GfxData gfx_tileset5e
+	m_GfxData gfx_tileset5f
+	m_GfxData gfx_tileset60
+	m_GfxData gfx_tileset61
+	m_GfxData gfx_tileset62
+	m_GfxData gfx_tileset63
+	m_GfxData gfx_tileset64
+	m_GfxData gfx_tileset65
+	m_GfxData gfx_tileset66
+	m_GfxData gfx_tileset67
+	m_GfxData gfx_tileset68
+	m_GfxData gfx_tileset69
+	m_GfxData gfx_tileset6a
+	m_GfxData gfx_tileset6b
+	m_GfxData gfx_tileset6c
+	m_GfxData gfx_tileset6d
+	m_GfxData gfx_tileset6e
+	m_GfxData gfx_tileset6f
+	m_GfxData gfx_tileset70
+	m_GfxData gfx_tileset71
+	m_GfxData gfx_tileset72
+	m_GfxData gfx_tileset73
+	m_GfxData gfx_tileset74
+	m_GfxData gfx_tileset75
+	m_GfxData gfx_tileset76
+	m_GfxData gfx_tileset77
+	m_GfxData gfx_tileset78
+	m_GfxData gfx_tileset79
+	m_GfxData gfx_tileset7a
+	m_GfxData gfx_tileset7b
+	m_GfxData gfx_tileset7c
+	m_GfxData gfx_tileset7d
+	m_GfxData gfx_tileset7e
+	m_GfxData gfx_tileset7f

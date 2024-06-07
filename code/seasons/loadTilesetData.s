@@ -1,5 +1,7 @@
 ;;
 ; Called from loadTilesetData in bank 0. Function differs substantially in Ages and Seasons.
+;
+; HACK-BASE: This has been modified for the expanded tilesets patch.
 loadTilesetData_body:
 	call getTempleRemainsSeasonsTilesetData
 	jr c,@gotTilesetData
@@ -15,10 +17,7 @@ loadTilesetData_body:
 	ld a,(wActiveRoom)
 	rst_addAToHl
 	ld a,(hl)
-	and $80
 	ldh (<hFF8B),a
-	ld a,(hl)
-
 	and $7f
 	call multiplyABy8
 	ld hl,tilesetData
@@ -54,7 +53,7 @@ loadTilesetData_body:
 	ld (wTilesetFlags),a
 
 	ld b,$06
-	ld de,wTilesetUniqueGfx
+	ld de,wTilesetIndex
 @copyloop:
 	ldi a,(hl)
 	ld (de),a
@@ -62,25 +61,23 @@ loadTilesetData_body:
 	dec b
 	jr nz,@copyloop
 
-	ld e,<wTilesetUniqueGfx
-	ld a,(de)
-	ld b,a
+	ld e,<wTilesetIndex
 	ldh a,(<hFF8B)
-	or b
 	ld (de),a
 
 	; For gnarled root dungeon entrance: load "unique graphics" when opened
-	ld a,(wActiveGroup)
-	or a
-	ret nz
-	ld a,(wActiveRoom)
-	cp <ROOM_SEASONS_096
-	ret nz
-	call getThisRoomFlags
-	and $80
-	ret nz
-	ld a,$20
-	ld (wTilesetUniqueGfx),a
+	; HACK-BASE: TODO TODO TODO FIXME FIXME FIXME
+	;; ld a,(wActiveGroup)
+	;; or a
+	;; ret nz
+	;; ld a,(wActiveRoom)
+	;; cp <ROOM_SEASONS_096
+	;; ret nz
+	;; call getThisRoomFlags
+	;; and $80
+	;; ret nz
+	;; ld a,$20
+	;; ld (wTilesetUniqueGfx),a
 	ret
 
 getTempleRemainsSeasonsTilesetData:
