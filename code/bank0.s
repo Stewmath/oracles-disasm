@@ -1706,6 +1706,24 @@ _nextThread:
 	ld ($ff00+R_SVBK),a
 	jr _mainLoop_nextThread
 
+
+; DEBUG: Data for quickstart spawn location
+.ifdef QUICKSTART_ENABLE
+
+quickstartSpawn:
+	.db QUICKSTART_GROUP
+	.db QUICKSTART_ROOM
+.ifdef ROM_SEASONS
+	.db QUICKSTART_SEASON
+.else
+	.db $ff
+.endif
+	.db DIR_DOWN
+	.db QUICKSTART_Y
+	.db QUICKSTART_X
+.endif
+
+
 ;;
 ; Called just after basic initialization
 startGame:
@@ -1720,6 +1738,31 @@ startGame:
 	inc e
 	dec b
 	jr nz,-
+
+	; DEBUG: Quickstart boots directly into the game at a specified location.
+.ifdef QUICKSTART_ENABLE
+	; hActiveFileSlot should default to 0
+	call loadFile
+
+	; Seems like this variable is only ever set to its required value in disableLcd, which is
+	; never called when quickstart is active, so we must do it here
+	ld a,$02
+	ldh (<hNextLcdInterruptBehaviour),a
+
+	; Override spawn position
+	ld hl,quickstartSpawn
+	ld de,wDeathRespawnBuffer.group
+	ld b,6
+@quickstartLoop:
+	ldi a,(hl)
+	cp $ff
+	jr z,+
+	ld (de),a
++
+	inc de
+	dec b
+	jr nz,@quickstartLoop
+.endif
 
 ;;
 _mainLoop:
@@ -1827,8 +1870,14 @@ _initializeThread:
 	ret
 
 _initialThreadStates:
+
+.ifdef QUICKSTART_ENABLE
+	m_ThreadState $02 $00 wThread0StackTop stubThreadStart
+	m_ThreadState $02 $00 wThread1StackTop mainThreadStart
+.else
 	m_ThreadState $02 $00 wThread0StackTop introThreadStart
 	m_ThreadState $02 $00 wThread1StackTop stubThreadStart
+.endif
 	m_ThreadState $02 $00 wThread2StackTop stubThreadStart
 	m_ThreadState $02 $00 wThread3StackTop paletteFadeThreadStart
 

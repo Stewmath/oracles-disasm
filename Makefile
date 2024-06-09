@@ -69,7 +69,7 @@ seasons:
 ifneq ($(filter 1, $(ROM_AGES) $(ROM_SEASONS)),)
 
 # defines for wla-gb
-DEFINES =
+DEFINES = $(ORACLE_EXTRA_DEFINES) # Can specify this on commandline
 CFLAGS =
 
 ifeq ($(BUILD_VANILLA), true)
@@ -102,6 +102,11 @@ else # ROM_AGES
 	TEXT_INSERT_ADDRESS = 0x74000
 	BUILD_DIR = $(AGES_BUILD_DIR)
 	GAME_COLOR = $(BLUE)
+endif
+
+# Can use ORACLE_FORCE_REBUILD environment variable to force the assembler to rerun
+ifeq ($(ORACLE_FORCE_REBUILD), 1)
+    $(shell rm $(BUILD_DIR)/*.o)
 endif
 
 # HACK-BASE: Enable bugfixes.
