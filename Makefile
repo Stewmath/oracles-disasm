@@ -80,8 +80,8 @@ ifeq ($(BUILD_VANILLA), true)
 	AGES_BUILD_DIR = build_ages_v
 	SEASONS_BUILD_DIR = build_seasons_v
 else
-	AGES_BUILD_DIR = build_ages_e
-	SEASONS_BUILD_DIR = build_seasons_e
+	AGES_BUILD_DIR = build_ages_h
+	SEASONS_BUILD_DIR = build_seasons_h
 endif
 
 ifdef FORCE_SECTIONS
