@@ -370,7 +370,7 @@ endif # End of check for either ROM_AGES or ROM_SEASONS being defined
 
 
 clean:
-	-rm -R build build_ages_v/ build_ages_e/ build_seasons_v/ build_seasons_e/ \
+	-rm -R build build_ages_* build_seasons_* \
 		ages.gbc ages.sym seasons.gbc seasons.sym
 
 # --------------------------------------------------------------------------------
