@@ -1711,16 +1711,15 @@ _nextThread:
 .ifdef QUICKSTART_ENABLE
 
 quickstartSpawn:
-	.db QUICKSTART_GROUP
-	.db QUICKSTART_ROOM
+	.db <wDeathRespawnBuffer.group,     QUICKSTART_GROUP
+	.db <wDeathRespawnBuffer.room,      QUICKSTART_ROOM
 .ifdef ROM_SEASONS
-	.db QUICKSTART_SEASON
-.else
-	.db $ff
+	.db <wDeathRespawnBuffer.stateModifier, QUICKSTART_SEASON
 .endif
-	.db DIR_DOWN
-	.db QUICKSTART_Y
-	.db QUICKSTART_X
+	.db <wDeathRespawnBuffer.facingDir, DIR_DOWN
+	.db <wDeathRespawnBuffer.y,         QUICKSTART_Y
+	.db <wDeathRespawnBuffer.x,         QUICKSTART_X
+	.db $ff
 .endif
 
 
@@ -1751,17 +1750,15 @@ startGame:
 
 	; Override spawn position
 	ld hl,quickstartSpawn
-	ld de,wDeathRespawnBuffer.group
-	ld b,6
+	ld d,>wc600Block
 @quickstartLoop:
 	ldi a,(hl)
 	cp $ff
-	jr z,+
+	jr z,_mainLoop
+	ld e,a
+	ldi a,(hl)
 	ld (de),a
-+
-	inc de
-	dec b
-	jr nz,@quickstartLoop
+	jr @quickstartLoop
 .endif
 
 ;;
