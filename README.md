@@ -34,6 +34,43 @@ However there is still work to be done:
   we could get rid of the whole precompressed asset nonsense!
 
 
+## Branches
+
+I've been extensively (ab)using branches in the main repository
+(https://github.com/stewmath/oracles-disasm) for various features and
+experiments. Most of these are stale branches for one-off experiments or hacks
+that I didn't bother creating separate repositories for.
+
+The following branches are maintained (or at least updated every once in a
+while):
+
+- master: Builds vanilla ROMs.
+- hack-base: Has some tweaks to make hacking with LynnaLab easier, mainly
+  deduplicated tilesets.
+- rando/ng: Contains patches used by the
+  [randomizer](https://github.com/stewmath/oracles-randomizer-webui). Tracked as
+  a submodule.
+- hack/crossitems: Ages items available in Seasons and vice-versa. Merged into
+  rando/ng (and hack-base eventually).
+
+Other notable branches (not necessarily maintained):
+
+- vwf: Variable-width font hack
+
+In order to keep track of which patches are applied to a particular branch I'm
+using certain "tags" prefixed to each commit name, for example:
+
+- HACK-BASE: Patches for hack-base branch
+- CROSSITEMS: Patches for hack/crossitems branch
+- RANDO: Patches for rando/ng branch
+- DEBUG: Debugging features (could be cherry-picked to other branches)
+- MUSIC: Music-related patches, mostly new tracks in rando/ng branch
+
+These tags also used in comments for the corresponding commits, which helps to
+understand when the code you're looking at has been modified from the master
+branch (without needing to use fancy git-fu).
+
+
 ## Required tools to build
 
 * Python 3
