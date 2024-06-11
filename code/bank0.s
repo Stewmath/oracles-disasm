@@ -12976,7 +12976,7 @@ loadTilesetAndRoomLayout:
 	call nz,loadTilesetLayout
 
 .ifdef ROM_SEASONS
-	call seasonsFunc_3870
+	call @adjustLoadingRoomForTempleRemains
 .endif
 	; Load the room layout and apply any dynamic changes necessary
 	call          loadRoomLayout
@@ -12999,7 +12999,9 @@ loadTilesetAndRoomLayout:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_3870:
+; Layouts for the lava-filled version of Temple Remains, for all 4 seasons, are stored out of bounds
+; on the Subrosia map.
+@adjustLoadingRoomForTempleRemains:
 	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
 	call checkGlobalFlag
 	ret z
@@ -13007,14 +13009,14 @@ seasonsFunc_3870:
 	callfrombank0 tilesets.checkIsTempleRemains
 	ret nc
 	ld a,(wRoomStateModifier)
-	ld hl,@data
+	ld hl,@seasonOffsets
 	rst_addAToHl
 	ld a,(wActiveRoom)
 	add (hl)
 	ld (wLoadingRoom),a
 	ret
 
-@data:
+@seasonOffsets:
 	.db $bc $c0 $c4 $c8
 
 .endif
