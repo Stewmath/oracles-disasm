@@ -2243,7 +2243,7 @@ wTwinrovaTileReplacementMode: ; $cca9/$ccc4
 ; 0: Do nothing
 ; 1: Fill room with lava
 ; 2: Fill room with ice
-; 3: ?
+; 3: Return to normal empty layout
 ; 4+: Use "seizure tiles" (when controls are reversed in ganon fight)
 	db
 wccaa: ; $ccaa/$ccc5

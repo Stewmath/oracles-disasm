@@ -1,4 +1,6 @@
-objectGfxHeaderTable: ; $fdafb
+; See data/ages/objectGfxHeaders.s for documentation.
+
+objectGfxHeaderTable:
 	/* $00 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
 	/* $01 */ m_ObjectGfxHeader gfx_pirate_ship_tiles_1 $00
 	/* $02 */ m_ObjectGfxHeader gfx_pirate_ship_tiles_2 $00
@@ -111,7 +113,7 @@ objectGfxHeaderTable: ; $fdafb
 	/* $6d */ m_ObjectGfxHeader spr_onox_1 $00
 	/* $6e */ m_ObjectGfxHeader spr_flame $00
 	/* $6f */ m_ObjectGfxHeader spr_evilflame $00
-	/* $70 */ m_ObjectGfxHeader spr_0dedc0 $00
+	/* $70 */ m_ObjectGfxHeader spr_boat_theend $00
 	/* $71 */ m_ObjectGfxHeader spr_hostilescrub $00
 	/* $72 */ m_ObjectGfxHeader spr_polsvoice_hardhatbeetle_spikedbeetle_beamon $00
 	/* $73 */ m_ObjectGfxHeader spr_projectiles_1 $00
@@ -143,7 +145,7 @@ objectGfxHeaderTable: ; $fdafb
 	/* $8d */ m_ObjectGfxHeader spr_fireball_cheepcheep $00
 	/* $8e */ m_ObjectGfxHeader spr_projectiles_2 $00
 	/* $8f */ m_ObjectGfxHeader spr_projectiles_3 $00
-	/* $90 */ m_ObjectGfxHeader spr_0ab0a2 $00
+	/* $90 */ m_ObjectGfxHeader spr_gleeok_flames $00
 	/* $91 */ m_ObjectGfxHeader spr_kingmoblin_2 $00
 	/* $92 */ m_ObjectGfxHeader spr_kingmoblin_3 $00
 	/* $93 */ m_ObjectGfxHeader spr_kingmoblin_4 $00

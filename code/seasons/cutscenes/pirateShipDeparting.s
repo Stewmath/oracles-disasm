@@ -46,9 +46,9 @@ cutsceneHandler_0c_stage1:
 	ld ($cbb8),a
 	ld a,$04
 	ld ($cbb4),a
-	ld a,$51
+	ld a,GFXH_PIRATE_SHIP_LEAVING_SUBROSIA_LAYOUT
 	call loadGfxHeader
-	ld a,$54
+	ld a,GFXH_PIRATE_SHIP_MOVING_EXTRA_TILES
 	call loadGfxHeader
 	ld a,$04
 	ldh (<hNextLcdInterruptBehaviour),a
@@ -270,7 +270,7 @@ cutsceneHandler_0c_stage3:
 	call @state0Func2
 	ld e,$0c
 	call loadObjectGfxHeaderToSlot4
-	ld a,$52
+	ld a,GFXH_PIRATE_SHIP_LEAVING_DESERT_LAYOUT
 	call loadGfxHeader
 	ld hl,objectData.objectData_leavingSamasaDesert
 	call parseGivenObjectData
@@ -427,9 +427,9 @@ cutsceneHandler_0c_stage5:
 	ld ($cd25),a
 	ld e,$00
 	call loadObjectGfxHeaderToSlot4
-	ld a,$53
+	ld a,GFXH_PIRATE_SHIP_ARRIVING_LAYOUT
 	call loadGfxHeader
-	ld a,$54
+	ld a,GFXH_PIRATE_SHIP_MOVING_EXTRA_TILES
 	call loadGfxHeader
 	ld hl,objectData.objectData_pirateShipEnteringWestCoast
 	call parseGivenObjectData

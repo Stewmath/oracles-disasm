@@ -302,7 +302,7 @@ roomTileChangesAfterLoad00:
 ;;
 drawCollapsedWingDungeon:
 	; Load the tile data for the cave to 2:$d000
-	ld a,GFXH_53
+	ld a,GFXH_WING_DUNGEON_COLLAPSED
 	call loadGfxHeader
 
 	ld hl,@tileReplacement

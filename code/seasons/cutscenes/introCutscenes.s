@@ -54,7 +54,7 @@ cutscene06Func1:
 	ld hl,$d01a
 	res 7,(hl)
 	call saveGraphicsOnEnterMenu
-	ld a,GFXH_0c
+	ld a,GFXH_DIN_DANCING_CUTSCENE
 	call loadGfxHeader
 	ld a,SEASONS_PALH_95
 	call loadPaletteHeader
@@ -485,7 +485,7 @@ cutsceneDinImprisoned:
 	xor a
 	ld (wScreenOffsetY),a
 	ld (wScreenOffsetX),a
-	ld a,GFXH_2e
+	ld a,GFXH_SCENE_INSIDE_ONOX_CASTLE
 	call loadGfxHeader
 	ld a,SEASONS_PALH_97
 	call loadPaletteHeader
@@ -658,7 +658,7 @@ cutscene08Func0:
 	jr nz,-
 +
 	call disableLcd
-	ld a,GFXH_24
+	ld a,GFXH_TEMPLEFALL_SCENE1
 	call loadGfxHeader
 	ld a,SEASONS_PALH_98
 	call loadPaletteHeader
@@ -738,7 +738,7 @@ cutscene08Func3:
 	jp seasonsFunc_03_7917
 +
 	call disableLcd
-	ld a,GFXH_24
+	ld a,GFXH_TEMPLEFALL_SCENE1
 	call loadGfxHeader
 	ld a,SEASONS_PALH_98
 	call loadPaletteHeader
@@ -851,7 +851,7 @@ seasonsFunc_03_7917:
 	call loadUncompressedGfxHeader
 	ld a,($cbbb)
 ++
-	add $25
+	add GFXH_TEMPLEFALL_SCENE2
 	call loadGfxHeader
 	ld a,($cbbb)
 	ld hl,seasonsTable_03_7972
@@ -1073,7 +1073,7 @@ seasonsFunc_03_7aa9:
 	ld e,a
 	call disableLcd
 	push de
-	ld a,GFXH_2f
+	ld a,GFXH_SCENE_OUTSIDE_ONOX_CASTLE
 	call loadGfxHeader
 	ld a,PALH_0f
 	call loadPaletteHeader
@@ -1300,7 +1300,7 @@ cutscene0eFunc2:
 	xor a
 	ld (wScreenOffsetY),a
 	ld (wScreenOffsetX),a
-	ld a,GFXH_2e
+	ld a,GFXH_SCENE_INSIDE_ONOX_CASTLE
 	call loadGfxHeader
 	ld a,SEASONS_PALH_97
 	call loadPaletteHeader

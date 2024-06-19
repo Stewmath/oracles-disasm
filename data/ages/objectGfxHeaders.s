@@ -1,3 +1,6 @@
+; To find which objects are using which of these graphics, look in the files "interactionData.s",
+; "enemyData.s", and "partData.s".
+
 objectGfxHeaderTable:
 	/* $00 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
 	/* $01 */ m_ObjectGfxHeader gfx_capcom_nintendo $00
@@ -138,7 +141,7 @@ objectGfxHeaderTable:
 	/* $88 */ m_ObjectGfxHeader spr_twinrova_4 $00
 	/* $89 */ m_ObjectGfxHeader spr_flame $00
 	/* $8a */ m_ObjectGfxHeader spr_evilflame $00
-	/* $8b */ m_ObjectGfxHeader spr_0dedc0 $00
+	/* $8b */ m_ObjectGfxHeader spr_boat_theend $00
 	/* $8c */ m_ObjectGfxHeader spr_polsvoice_hardhatbeetle_spikedbeetle_beamon $00
 	/* $8d */ m_ObjectGfxHeader spr_hostilescrub $00
 	/* $8e */ m_ObjectGfxHeader spr_projectiles_1 $00

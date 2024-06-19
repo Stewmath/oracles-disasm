@@ -5,7 +5,7 @@ treeGfxHeaderTable:
 	/* $03 */ m_ObjectGfxHeader gfx_inventory_hud_1 $00
 	/* $04 */ m_ObjectGfxHeader spr_grass_tuft $00
 	/* $05 */ m_ObjectGfxHeader gfx_sand $00
-	/* $06 */ m_ObjectGfxHeader gfx_path $00
+	/* $06 */ m_ObjectGfxHeader gfx_dirt $00
 	/* $07 */ m_ObjectGfxHeader gfx_scent_tree $00
 	/* $08 */ m_ObjectGfxHeader gfx_pegasus_tree $00
 	/* $09 */ m_ObjectGfxHeader gfx_gale_tree $00

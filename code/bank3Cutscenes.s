@@ -427,7 +427,7 @@ intro_japaneseOnlyScreen:
 	call clearVram
 	call restartSound
 
-	ld a,GFXH_04
+	ld a,GFXH_JAPANESE_INTRO_SCREEN
 	call loadGfxHeader
 	ld a,PALH_00
 	call loadPaletteHeader
@@ -473,7 +473,7 @@ intro_capcomScreen:
 	call restartSound
 
 	call clearVram
-	ld a,GFXH_01
+	ld a,GFXH_NINTENDO_CAPCOM_SCREEN
 	call loadGfxHeader
 	ld a,PALH_01
 	call loadPaletteHeader
@@ -567,7 +567,7 @@ intro_titlescreen_state0:
 	call stopTextThread
 
 	call disableLcd
-	ld a,GFXH_02
+	ld a,GFXH_TITLESCREEN
 	call loadGfxHeader
 	ld a,PALH_03
 	call loadPaletteHeader
@@ -724,7 +724,7 @@ introCinematic_ridingHorse_state0:
 	ld a,<wOam+$10
 	ldh (<hOamTail),a
 
-	ld a,GFXH_9b
+	ld a,GFXH_INTRO_LINK_RIDING_HORSE
 	call loadGfxHeader
 	ld a,PALH_90
 	call loadPaletteHeader
@@ -963,7 +963,7 @@ introCinematic_ridingHorse_state6:
 	call disableLcd
 	ld a,PALH_92
 	call loadPaletteHeader
-	ld a,GFXH_9c
+	ld a,GFXH_INTRO_LINK_ON_HORSE_CLOSEUP
 	call loadGfxHeader
 	call clearDynamicInteractions
 	ld a,$0a
@@ -998,7 +998,7 @@ introCinematic_ridingHorse_state0:
 
 	ld a,$10
 	ldh (<hOamTail),a
-	ld a,GFXH_9b
+	ld a,GFXH_INTRO_LINK_RIDING_HORSE
 	call loadGfxHeader
 	ld a,SEASONS_PALH_90
 	call loadPaletteHeader
@@ -1070,7 +1070,7 @@ introCinematic_ridingHorse_state2:
 	call disableLcd
 	ld a,SEASONS_PALH_92
 	call loadPaletteHeader
-	ld a,GFXH_9c
+	ld a,GFXH_INTRO_LINK_ON_HORSE_CLOSEUP
 	call loadGfxHeader
 	ld a,$0a
 	call loadGfxRegisterStateIndex
@@ -1152,7 +1152,7 @@ introCinematic_ridingHorse_state8:
 	call clearOam
 	ld a,$10
 	ldh (<hOamTail),a
-	ld a,GFXH_9d
+	ld a,GFXH_INTRO_OUTSIDE_CASTLE
 	call loadGfxHeader
 
 	; Screen should be shifted a pixel every 5 frames next state
@@ -1325,7 +1325,7 @@ introCinematic_inTemple_state0:
 	ld a,$10
 	ldh (<hOamTail),a
 
-	ld a,GFXH_9e
+	ld a,GFXH_INTRO_TEMPLE_SCENE
 	call loadGfxHeader
 .ifdef ROM_AGES
 	ld a,PALH_91
@@ -1702,7 +1702,7 @@ introCinematic_preTitlescreen_state0:
 
 	ld a,$ff
 	ld (wTilesetAnimation),a
-	ld a,GFXH_9f
+	ld a,GFXH_TITLESCREEN_TREE_SCROLL
 	call loadGfxHeader
 .ifdef ROM_AGES
 	ld a,PALH_94

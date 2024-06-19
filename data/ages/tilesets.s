@@ -46,17 +46,17 @@ tilesetData:
 	.db $0f, $81, $0e, GFXH_41, PALH_1d, $0a, $02, $03 ; 0x1f
 	.db $0f, $81, $0f, GFXH_41, PALH_1f, $0b, $02, $05 ; 0x20
 	.db $0f, $81, $11, GFXH_41, PALH_27, $0e, $02, $01 ; 0x21
-	.db $0f, $02, $00, GFXH_70, PALH_30, $11, $00, $07 ; 0x22
-	.db $0f, $02, $00, GFXH_70, PALH_30, $11, $01, $07 ; 0x23
-	.db $0f, $02, $00, GFXH_70, PALH_30, $11, $03, $07 ; 0x24
-	.db $0f, $02, $00, GFXH_71, PALH_31, $12, $00, $ff ; 0x25
-	.db $0f, $82, $00, GFXH_70, PALH_30, $11, $02, $07 ; 0x26
-	.db $af, $18, $00, GFXH_6e, PALH_60, $13, $04, $ff ; 0x27
-	.db $1f, $04, $00, GFXH_7b, PALH_70, $15, $01, $10 ; 0x28
-	.db $1f, $04, $00, GFXH_7b, PALH_71, $15, $01, $10 ; 0x29
-	.db $1f, $84, $00, GFXH_7b, PALH_72, $15, $01, $10 ; 0x2a
-	.db $1f, $04, $00, GFXH_7b, PALH_70, $15, $03, $10 ; 0x2b
-	.db $1f, $04, $00, GFXH_7b, PALH_72, $15, $03, $10 ; 0x2c
+	.db $0f, $02, $00, GFXH_TILESET_MAKU_TREE, PALH_30, $11, $00, $07 ; 0x22
+	.db $0f, $02, $00, GFXH_TILESET_MAKU_TREE, PALH_30, $11, $01, $07 ; 0x23
+	.db $0f, $02, $00, GFXH_TILESET_MAKU_TREE, PALH_30, $11, $03, $07 ; 0x24
+	.db $0f, $02, $00, GFXH_TILESET_MAKU_TREE_TOP, PALH_31, $12, $00, $ff ; 0x25
+	.db $0f, $82, $00, GFXH_TILESET_MAKU_TREE, PALH_30, $11, $02, $07 ; 0x26
+	.db $af, $18, $00, GFXH_TILESET_BLACK_TOWER, PALH_60, $13, $04, $ff ; 0x27
+	.db $1f, $04, $00, GFXH_TILESET_INDOORS_1, PALH_70, $15, $01, $10 ; 0x28
+	.db $1f, $04, $00, GFXH_TILESET_INDOORS_1, PALH_71, $15, $01, $10 ; 0x29
+	.db $1f, $84, $00, GFXH_TILESET_INDOORS_1, PALH_72, $15, $01, $10 ; 0x2a
+	.db $1f, $04, $00, GFXH_TILESET_INDOORS_1, PALH_70, $15, $03, $10 ; 0x2b
+	.db $1f, $04, $00, GFXH_TILESET_INDOORS_1, PALH_72, $15, $03, $10 ; 0x2c
 	.db $1f, $04, $00, GFXH_7c, PALH_73, $16, $01, $10 ; 0x2d
 	.db $1f, $04, $00, GFXH_7c, PALH_73, $16, $03, $10 ; 0x2e
 	.db $1f, $04, $00, GFXH_7d, PALH_73, $16, $03, $10 ; 0x2f
@@ -87,26 +87,26 @@ tilesetData:
 	.db $2b, $08, $00, GFXH_60, PALH_4b, $20, $04, $10 ; 0x48
 	.db $2b, $08, $00, GFXH_60, PALH_66, $20, $04, $10 ; 0x49
 	.db $2b, $48, $00, GFXH_60, PALH_65, $20, $04, $11 ; 0x4a
-	.db $3d, $a8, $00, GFXH_6d, PALH_52, $32, $04, $ff ; 0x4b
-	.db $31, $28, $00, GFXH_6d, PALH_51, $32, $04, $12 ; 0x4c
-	.db $32, $28, $00, GFXH_6d, PALH_52, $32, $04, $12 ; 0x4d
-	.db $34, $28, $00, GFXH_6d, PALH_53, $32, $04, $12 ; 0x4e
-	.db $35, $28, $00, GFXH_6d, PALH_53, $32, $04, $12 ; 0x4f
-	.db $36, $28, $00, GFXH_6d, PALH_50, $32, $05, $12 ; 0x50
-	.db $3c, $a8, $00, GFXH_6d, PALH_56, $32, $05, $12 ; 0x51
-	.db $37, $a8, $00, GFXH_6d, PALH_54, $32, $05, $12 ; 0x52
-	.db $38, $a8, $00, GFXH_6d, PALH_55, $32, $05, $12 ; 0x53
-	.db $3b, $28, $00, GFXH_6d, PALH_52, $32, $04, $ff ; 0x54
-	.db $2e, $18, $00, GFXH_7b, PALH_70, $15, $05, $10 ; 0x55
-	.db $2f, $10, $00, GFXH_7b, PALH_70, $15, $05, $10 ; 0x56
-	.db $2f, $12, $00, GFXH_7b, PALH_77, $15, $05, $10 ; 0x57
+	.db $3d, $a8, $00, GFXH_TILESET_SIDESCROLL, PALH_52, $32, $04, $ff ; 0x4b
+	.db $31, $28, $00, GFXH_TILESET_SIDESCROLL, PALH_51, $32, $04, $12 ; 0x4c
+	.db $32, $28, $00, GFXH_TILESET_SIDESCROLL, PALH_52, $32, $04, $12 ; 0x4d
+	.db $34, $28, $00, GFXH_TILESET_SIDESCROLL, PALH_53, $32, $04, $12 ; 0x4e
+	.db $35, $28, $00, GFXH_TILESET_SIDESCROLL, PALH_53, $32, $04, $12 ; 0x4f
+	.db $36, $28, $00, GFXH_TILESET_SIDESCROLL, PALH_50, $32, $05, $12 ; 0x50
+	.db $3c, $a8, $00, GFXH_TILESET_SIDESCROLL, PALH_56, $32, $05, $12 ; 0x51
+	.db $37, $a8, $00, GFXH_TILESET_SIDESCROLL, PALH_54, $32, $05, $12 ; 0x52
+	.db $38, $a8, $00, GFXH_TILESET_SIDESCROLL, PALH_55, $32, $05, $12 ; 0x53
+	.db $3b, $28, $00, GFXH_TILESET_SIDESCROLL, PALH_52, $32, $04, $ff ; 0x54
+	.db $2e, $18, $00, GFXH_TILESET_INDOORS_1, PALH_70, $15, $05, $10 ; 0x55
+	.db $2f, $10, $00, GFXH_TILESET_INDOORS_1, PALH_70, $15, $05, $10 ; 0x56
+	.db $2f, $12, $00, GFXH_TILESET_INDOORS_1, PALH_77, $15, $05, $10 ; 0x57
 	.db $2e, $18, $00, GFXH_7c, PALH_73, $16, $05, $10 ; 0x58
 	.db $2f, $10, $00, GFXH_7c, PALH_73, $16, $05, $10 ; 0x59
 	.db $2e, $18, $00, GFXH_7e, PALH_74, $17, $05, $10 ; 0x5a
 	.db $2f, $50, $00, GFXH_7f, PALH_76, $18, $05, $10 ; 0x5b
-	.db $3f, $30, $00, GFXH_6d, PALH_57, $32, $05, $12 ; 0x5c
-	.db $3f, $30, $00, GFXH_6d, PALH_58, $32, $05, $12 ; 0x5d
-	.db $3e, $38, $00, GFXH_6d, PALH_57, $32, $05, $12 ; 0x5e
+	.db $3f, $30, $00, GFXH_TILESET_SIDESCROLL, PALH_57, $32, $05, $12 ; 0x5c
+	.db $3f, $30, $00, GFXH_TILESET_SIDESCROLL, PALH_58, $32, $05, $12 ; 0x5d
+	.db $3e, $38, $00, GFXH_TILESET_SIDESCROLL, PALH_57, $32, $05, $12 ; 0x5e
 	.db $4f, $41, $13, GFXH_42, PALH_2b, $10, $01, $08 ; 0x5f
 	.db $4f, $c1, $00, GFXH_43, PALH_2c, $10, $03, $08 ; 0x60
 	.db $4f, $d1, $13, GFXH_42, PALH_2c, $10, $03, $08 ; 0x61

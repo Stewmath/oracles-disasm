@@ -5344,7 +5344,7 @@ interactionCode75:
 	ret z
 	ld (hl),$00
 	dec a
-	add $30
+	add GFXH_INTRO_LINK_MID_FRAME_1
 	push de
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_0c

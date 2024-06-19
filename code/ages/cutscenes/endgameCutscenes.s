@@ -333,7 +333,7 @@ endgameCutsceneHandler_09_stage0:
 	ld (wTilesetAnimation),a
 	call disableLcd
 
-	ld a,GFXH_2b
+	ld a,GFXH_LINK_WITH_ORACLE_END_SCENE
 	call loadGfxHeader
 	ld a,PALH_9d
 	call loadPaletteHeader
@@ -425,7 +425,7 @@ endgameCutsceneHandler_09_stage1:
 
 	call disableLcd
 	call clearOam
-	ld a,GFXH_2c
+	ld a,GFXH_LINK_WITH_ORACLE_AND_TWINROVA_END_SCENE
 	call loadGfxHeader
 	ld a,PALH_9e
 	call loadPaletteHeader
@@ -563,7 +563,7 @@ endgameCutsceneHandler_09_stage1:
 	ld bc,$0400
 	call clearMemoryBc
 
-	ld a,GFXH_2d
+	ld a,GFXH_TWINROVA_CLOSEUP
 	call loadGfxHeader
 	ld a,PALH_9c
 	call loadPaletteHeader
@@ -1293,7 +1293,7 @@ endgameCutsceneHandler_0f:
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
 	call hideStatusBar
-	ld a,$3c
+	ld a,GFXH_SCENE_CREDITS_MAKUTREE
 	call loadGfxHeader
 	ld a,PALH_c9
 	call loadPaletteHeader
@@ -1443,7 +1443,7 @@ endgameCutsceneHandler_0a:
 +
 	ld a,($cfde)
 	add a
-	add $85
+	add GFXH_CREDITS_SCENE1
 	call loadGfxHeader
 	ld a,PALH_0f
 	call loadPaletteHeader
@@ -1512,7 +1512,7 @@ endgameCutsceneHandler_0a:
 	call clearWramBank1
 	ld a,($cfde)
 	add a
-	add $86
+	add GFXH_CREDITS_IMAGE1
 	call loadGfxHeader
 	ld hl,wTmpcbb3
 	ld (hl),$5a
