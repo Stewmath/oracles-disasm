@@ -1434,7 +1434,7 @@ endgameCutsceneHandler_0a:
 	inc hl
 	ld c,(hl)
 	ld a,$00
-	call func_36f6
+	call forceLoadRoom
 	ld a,($cfde)
 	ld hl,@@table_5f24
 	rst_addAToHl
@@ -1477,10 +1477,10 @@ endgameCutsceneHandler_0a:
 	jp fadeinFromWhite
 
 @@table_5f1c:
-	.db $00 $38
-	.db $00 $3a
-	.db $00 $4a
-	.db $01 $16
+	dwbe ROOM_AGES_038
+	dwbe ROOM_AGES_03a
+	dwbe ROOM_AGES_04a
+	dwbe ROOM_AGES_116
 
 @@table_5f24:
 	.db $2d $0f

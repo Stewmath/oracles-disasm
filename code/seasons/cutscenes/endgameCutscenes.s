@@ -1361,7 +1361,7 @@ endgameCutsceneHandler_0a_stage1:
 	jr z,++
 	ld c,a
 	ld a,$00
-	call func_36f6
+	call forceLoadRoom
 	ld b,$2d
 	ld a,($cbb4)
 	cp $04
@@ -1420,15 +1420,16 @@ endgameCutsceneHandler_0a_stage1:
 	ld a,$04
 	call loadGfxRegisterStateIndex
 	jp fadeinFromWhite
+
 @state0Table0:
-	.db $00 $c6
-	.db $01 $2b
-	.db $00 $b6
-	.db $00 $d6
-	.db $00 $00
-	.db $01 $2b
-	.db $00 $00
-	.db $00 $00
+	dwbe ROOM_SEASONS_0c6
+	dwbe ROOM_SEASONS_12b
+	dwbe ROOM_SEASONS_0b6
+	dwbe ROOM_SEASONS_0d6
+	dwbe $0000
+	dwbe ROOM_SEASONS_12b
+	dwbe $0000
+	dwbe $0000
 
 @state1:
 	ld a,(wPaletteThread_mode)

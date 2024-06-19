@@ -12651,12 +12651,13 @@ vramBgMapTable:
 	.dw $9b00 $9b40 $9b80 $9bc0
 
 ;;
-; Force-load a room?
+; Force-load a room? This isn't the typical mechanism used to load a room, it's only used in
+; cutscenes.
 ;
 ; @param	a	Value for wRoomStateModifier (only lower 2 bits are used)
 ; @param	b	Value for wActiveGroup
 ; @param	c	Value for wActiveRoom
-func_36f6:
+forceLoadRoom:
 	and $03
 	ld (wRoomStateModifier),a
 	ld a,b

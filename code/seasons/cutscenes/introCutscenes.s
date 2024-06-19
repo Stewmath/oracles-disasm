@@ -840,7 +840,7 @@ seasonsFunc_03_7917:
 	ld b,$00
 	ldi a,(hl)
 	ld c,(hl)
-	call func_36f6
+	call forceLoadRoom
 	ld b,$31
 	ld a,($cbbb)
 	cp $05
@@ -879,7 +879,9 @@ seasonsTable_03_7978:
 	.db $02 $03 $01
 
 seasonsTable_03_797b:
-	.db $01 $b8 $02 $c6 $02 $c8
+	.db SEASON_SUMMER, <ROOM_SEASONS_0b8
+	.db SEASON_AUTUMN, <ROOM_SEASONS_0c6
+	.db SEASON_AUTUMN, <ROOM_SEASONS_0c8
 
 seasonsFunc_03_7981:
 	call seasonsFunc_03_79bb

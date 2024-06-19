@@ -2648,7 +2648,7 @@ func_03_7493:
 	call stopTextThread
 	xor a
 	ld bc, ROOM_AGES_127
-	call func_36f6
+	call forceLoadRoom
 	call loadRoomCollisions
 	call func_131f
 	call loadCommonGraphics
@@ -2870,7 +2870,7 @@ func_03_7619:
 	ld (wMenuDisabled),a
 	xor a
 	pop bc
-	call func_36f6
+	call forceLoadRoom
 	call func_131f
 	call loadCommonGraphics
 	ld a,$02
