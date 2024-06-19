@@ -213,6 +213,9 @@ tileReplacement_group4Map1b:
 	; The programmers forgot a "ret" here! This causes a bug where chests
 	; are inserted into dungeon 1 after buying everything from the secret
 	; shop.
+.ifdef ENABLE_BUGFIXES
+	ret
+.endif
 
 ;;
 ; Secret shop: replace item area with blank floor and 2 chests, if you've
