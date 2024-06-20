@@ -14,8 +14,8 @@ objectGfxHeaderTable:
 	/* $0a */ m_ObjectGfxHeader spr_kingmoblin_2 $00
 	/* $0b */ m_ObjectGfxHeader spr_kingmoblin_3 $00
 	/* $0c */ m_ObjectGfxHeader spr_kingmoblin_4 $80
-	/* $0d */ m_ObjectGfxHeader gfx_tileset_0bd327 $00
-	/* $0e */ m_ObjectGfxHeader gfx_tileset_0bd455 $80
+	/* $0d */ m_ObjectGfxHeader gfx_tileset_subrosia_pirate_ship_1 $00
+	/* $0e */ m_ObjectGfxHeader gfx_tileset_subrosia_pirate_ship_2 $80
 	/* $0f */ m_ObjectGfxHeader spr_impa $00
 	/* $10 */ m_ObjectGfxHeader spr_blank $80
 	/* $11 */ m_ObjectGfxHeader spr_zelda_1 $00

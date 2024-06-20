@@ -323,11 +323,11 @@ gfxHeader24:
 	m_GfxHeader map_templefall_main_scene_2, $9c00, $11|$80
 	m_GfxHeader flg_templefall_main_scene_2, $9c01, $11
 gfxHeader25:
-	m_GfxHeader gfx_tileset_0bb3eb, $9001, $2f|$80
-	m_GfxHeader gfx_tileset_0bb679, $9301, $2f|$80
-	m_GfxHeader gfx_tileset_0bb91c, $9601, $1f|$80
-	m_GfxHeader gfx_tileset_0bbae4, $8801, $3f|$80
-	m_GfxHeader gfx_tileset_0bbe5a, $8c01, $3f|$80
+	m_GfxHeader gfx_tileset_subrosia_1, $9001, $2f|$80
+	m_GfxHeader gfx_tileset_temple_of_seasons_outside_1, $9301, $2f|$80
+	m_GfxHeader gfx_tileset_temple_of_seasons_outside_2, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_temple_of_seasons_outside_3, $8801, $3f|$80
+	m_GfxHeader gfx_tileset_temple_of_seasons_outside_4, $8c01, $3f|$80
 	m_GfxHeader map_templefall_scene2, $9800, $25|$80
 	m_GfxHeader flg_templefall_scene2, $9801, $25
 gfxHeader26:
@@ -337,25 +337,25 @@ gfxHeader27:
 	m_GfxHeader map_templefall_scene4, $9800, $25|$80
 	m_GfxHeader flg_templefall_scene4, $9801, $25
 gfxHeader28:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b62af, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_summer_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f|$80
 	m_GfxHeader map_templefall_scene5, $9800, $05|$80
 	m_GfxHeader flg_templefall_scene5, $9801, $05
 gfxHeader29:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b683b, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f|$80
-	m_GfxHeader gfx_tileset_0b6bf1, $9701, $0f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_winter_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_winter_tree_replacement, $9701, $0f|$80
 	m_GfxHeader map_templefall_scene6, $9800, $05|$80
 	m_GfxHeader flg_templefall_scene6, $9801, $05
 gfxHeader2a:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b6595, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b8a90, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_autumn_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_clock_house, $9601, $1f|$80
 	m_GfxHeader map_templefall_scene7, $9a00, $05|$80
 	m_GfxHeader flg_templefall_scene7, $9a01, $05
 gfxHeader2b:
@@ -387,18 +387,18 @@ gfxHeader2d:
 	m_GfxHeader map_credits_gametitle, $9c40, $1b|$80
 	m_GfxHeader flg_credits_gametitle, $9c41, $1b
 gfxHeader2e:
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0be402, $9401, $32|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_snakes_remains, $9401, $32|$80
 	m_GfxHeader map_inside_onox_castle, $9800, $2b|$80
 	m_GfxHeader flg_inside_onox_castle, $9801, $2b|$80
 	m_GfxHeader map_inside_onox_castle, $d803, $2b|$80
 	m_GfxHeader flg_inside_onox_castle, $dc03, $2b
 gfxHeader2f:
-	m_GfxHeader gfx_tileset_0b88c3, $8e01, $1f|$80
-	m_GfxHeader gfx_tileset_0b555d, $9001, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $8801, $1f|$80
-	m_GfxHeader gfx_tileset_0b851f, $8a01, $3f|$80
+	m_GfxHeader gfx_tileset_onox_castle_outside_2, $8e01, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $9001, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $8801, $1f|$80
+	m_GfxHeader gfx_tileset_onox_castle_outside_1, $8a01, $3f|$80
 	m_GfxHeader map_outside_onox_castle, $9800, $3f|$80
 	m_GfxHeader flg_outside_onox_castle, $9801, $3f|$80
 	m_GfxHeader map_outside_onox_castle, $d803, $3f|$80
@@ -454,82 +454,82 @@ gfxHeader3e:
 gfxHeader3f:
 	m_GfxHeader gfx_dirt, $dc57, $03
 gfxHeader40:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b5e91, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_spring_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f
 gfxHeader41:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b62af, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_summer_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f
 gfxHeader42:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b6595, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_autumn_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f
 gfxHeader43:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b683b, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6bf1, $8f01, $0f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_winter_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_winter_tree_replacement, $8f01, $0f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f
 gfxHeader44:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b683b, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6bf1, $8f01, $0f|$80
-	m_GfxHeader gfx_tileset_0b9837, $9401, $3f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_winter_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_winter_tree_replacement, $8f01, $0f|$80
+	m_GfxHeader gfx_tileset_biggoron, $9401, $3f
 gfxHeader45:
 gfxHeader46:
 gfxHeader47:
 gfxHeader48:
-	m_GfxHeader gfx_tileset_0b6cc6, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b746c, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b7621, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b78e4, $9601, $1f
+	m_GfxHeader gfx_tileset_castle_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_castle_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_castle_spring, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_temple_remains, $9601, $1f
 gfxHeader49:
-	m_GfxHeader gfx_tileset_0b6cc6, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b746c, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b7aaa, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b78e4, $9601, $1f
+	m_GfxHeader gfx_tileset_castle_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_castle_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_castle_summer, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_temple_remains, $9601, $1f
 gfxHeader4a:
-	m_GfxHeader gfx_tileset_0b6cc6, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b746c, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b7da8, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b78e4, $9601, $1f
+	m_GfxHeader gfx_tileset_castle_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_castle_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_castle_autumn, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_temple_remains, $9601, $1f
 gfxHeader4b:
-	m_GfxHeader gfx_tileset_0b6cc6, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b746c, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b808e, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b844a, $8f01, $0f|$80
-	m_GfxHeader gfx_tileset_0b78e4, $9601, $1f
+	m_GfxHeader gfx_tileset_castle_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_castle_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_castle_winter, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_castle_winter_tree_replacement, $8f01, $0f|$80
+	m_GfxHeader gfx_tileset_temple_remains, $9601, $1f
 gfxHeader4c:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b4f9a, $9301, $0f|$80
-	m_GfxHeader gfx_tileset_0b51e4, $9401, $3f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_natzu_prairie, $9301, $0f|$80
+	m_GfxHeader gfx_tileset_natzu, $9401, $3f
 gfxHeader4d:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b5021, $9301, $0f|$80
-	m_GfxHeader gfx_tileset_0b51e4, $9401, $3f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_natzu_river, $9301, $0f|$80
+	m_GfxHeader gfx_tileset_natzu, $9401, $3f
 gfxHeader4e:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b50e4, $9301, $0f|$80
-	m_GfxHeader gfx_tileset_0b51e4, $9401, $3f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_natzu_wasteland, $9301, $0f|$80
+	m_GfxHeader gfx_tileset_natzu, $9401, $3f
 gfxHeader4f:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b62af, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b9eb5, $9601, $1f
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_summer_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_tarm_ruins_south, $9601, $1f
 gfxHeader50:
-	m_GfxHeader gfx_tileset_0bb3eb, $8801, $2f|$80
-	m_GfxHeader gfx_tileset_0bc189, $8b01, $2f|$80
-	m_GfxHeader gfx_tileset_0bc466, $8e01, $1f|$80
-	m_GfxHeader gfx_tileset_0bc647, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0bc81d, $9401, $24
+	m_GfxHeader gfx_tileset_subrosia_1, $8801, $2f|$80
+	m_GfxHeader gfx_tileset_subrosia_2, $8b01, $2f|$80
+	m_GfxHeader gfx_tileset_subrosia_3, $8e01, $1f|$80
+	m_GfxHeader gfx_tileset_subrosia_4, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_subrosia_5, $9401, $24
 gfxHeader51:
 	m_GfxHeader map_pirate_ship_leaving_subrosia, $d002, $18|$80
 	m_GfxHeader flg_pirate_ship_leaving_subrosia, $d402, $18
@@ -544,7 +544,7 @@ gfxHeader56:
 	m_GfxHeader map_pirate_ship_body, $d002, $33|$80
 	m_GfxHeader flg_pirate_ship_body, $d402, $33
 gfxHeader54:
-	m_GfxHeader gfx_tileset_0bb028, $d802, $13
+	m_GfxHeader gfx_tileset_pirate_ship_moving_extra_tiles, $d802, $13
 gfxHeader55:
 	m_GfxHeader map_pirate_ship_bow, $d002, $13|$80
 	m_GfxHeader flg_pirate_ship_bow, $d402, $13
@@ -558,66 +558,66 @@ gfxHeader5d:
 gfxHeader5e:
 gfxHeader5f:
 gfxHeader60:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0bd5d8, $9401, $2c
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_heros_cave_unlinked, $9401, $2c
 gfxHeader61:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0be226, $9401, $21
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_gnarled_root_dungeon, $9401, $21
 gfxHeader62:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0be402, $9401, $32
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_snakes_remains, $9401, $32
 gfxHeader63:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0be6ce, $9401, $26
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_poison_moths_lair, $9401, $26
 gfxHeader64:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0be8ec, $9401, $21
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_dancing_dragon_dungeon, $9401, $21
 gfxHeader65:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0beac9, $9401, $39
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_unicorns_cave, $9401, $39
 gfxHeader66:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0bedea, $9401, $28
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_tarm_ruins, $9401, $28
 gfxHeader67:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0bf020, $9401, $26
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_explorers_crypt, $9401, $26
 gfxHeader68:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0bf252, $9401, $33
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_sword_and_shield_maze_ice, $9401, $33
 gfxHeader69:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0bf8e8, $9401, $37
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_onox_castle, $9401, $37
 gfxHeader6a:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
 	m_GfxHeader gfx_tileset_room_of_rites, $9401, $3f
 gfxHeader6b:
 gfxHeader6c:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0bf558, $9401, $3d
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_sword_and_shield_maze_fire, $9401, $3d
 gfxHeader6d:
-	m_GfxHeader gfx_tileset_0bffef, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0c0644, $9001, $5f
+	m_GfxHeader gfx_tileset_sidescroll_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_sidescroll_2, $9001, $5f
 gfxHeader6e:
 gfxHeader6f:
 gfxHeader70:
-	m_GfxHeader gfx_tileset_0b3150, $8801, $2f|$80
-	m_GfxHeader gfx_tileset_0b3411, $8c41, $3b
+	m_GfxHeader gfx_tileset_maku_tree_background, $8801, $2f|$80
+	m_GfxHeader gfx_tileset_maku_tree_1, $8c41, $3b
 gfxHeader71:
-	m_GfxHeader gfx_tileset_0b3150, $8801, $2f|$80
-	m_GfxHeader gfx_tileset_0b445e, $8b01, $7f|$80
-	m_GfxHeader gfx_tileset_0b4b4e, $9301, $4f
+	m_GfxHeader gfx_tileset_maku_tree_background, $8801, $2f|$80
+	m_GfxHeader gfx_tileset_maku_tree_small_1, $8b01, $7f|$80
+	m_GfxHeader gfx_tileset_maku_tree_small_2, $9301, $4f
 gfxHeader72:
 gfxHeader73:
 gfxHeader74:
@@ -629,21 +629,21 @@ gfxHeader79:
 gfxHeader7a:
 gfxHeader7b:
 gfxHeader7c:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $1f|$80
-	m_GfxHeader gfx_tileset_0c0b45, $8a01, $5f|$80
-	m_GfxHeader gfx_tileset_0c102d, $9001, $7f|$80
-	m_GfxHeader gfx_tileset_0c1622, $8861, $05
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f|$80
+	m_GfxHeader gfx_tileset_indoors_a_1, $8a01, $5f|$80
+	m_GfxHeader gfx_tileset_indoors_a_2, $9001, $7f|$80
+	m_GfxHeader gfx_tileset_vases, $8861, $05
 gfxHeader7d:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $1f|$80
-	m_GfxHeader gfx_tileset_0c1682, $8a01, $5f|$80
-	m_GfxHeader gfx_tileset_0c1be6, $9001, $7f|$80
-	m_GfxHeader gfx_tileset_0c22a5, $8861, $05
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f|$80
+	m_GfxHeader gfx_tileset_indoors_b_1, $8a01, $5f|$80
+	m_GfxHeader gfx_tileset_indoors_b_2, $9001, $7f|$80
+	m_GfxHeader gfx_tileset_indoors_b_replacement, $8861, $05
 gfxHeader7e:
 gfxHeader7f:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $1f|$80
-	m_GfxHeader gfx_tileset_0c2305, $8a01, $5f|$80
-	m_GfxHeader gfx_tileset_0c283e, $9001, $6f|$80
-	m_GfxHeader gfx_tileset_0c2ddd, $8861, $05
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f|$80
+	m_GfxHeader gfx_tileset_indoors_c_1, $8a01, $5f|$80
+	m_GfxHeader gfx_tileset_indoors_c_2, $9001, $6f|$80
+	m_GfxHeader gfx_tileset_indoors_c_replacement, $8861, $05
 gfxHeader80:
 gfxHeader81:
 gfxHeader82:
@@ -655,10 +655,10 @@ gfxHeader83:
 gfxHeader84:
 	m_GfxHeader gfx_herossecret, $8801, $1f
 gfxHeader85:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b5e91, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_spring_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f|$80
 	m_GfxHeader map_credits_scene1_top_rows, $9a00, $03|$80
 	m_GfxHeader flg_credits_scene1_top_rows, $9a01, $03
 gfxHeader86:
@@ -669,8 +669,8 @@ gfxHeader86:
 	m_GfxHeader map_credits_image1, $9800, $23|$80
 	m_GfxHeader flg_credits_image1, $9801, $23
 gfxHeader87:
-	m_GfxHeader gfx_tileset_0b3150, $8801, $2f|$80
-	m_GfxHeader gfx_tileset_0b3411, $8c41, $3b|$80
+	m_GfxHeader gfx_tileset_maku_tree_background, $8801, $2f|$80
+	m_GfxHeader gfx_tileset_maku_tree_1, $8c41, $3b|$80
 	m_GfxHeader map_credits_scene2, $9800, $23|$80
 	m_GfxHeader flg_credits_scene2, $9801, $23
 gfxHeader88:
@@ -686,10 +686,10 @@ gfxHeader88:
 	m_GfxHeader map_credits_image2, $9800, $23|$80
 	m_GfxHeader flg_credits_image2, $9801, $23
 gfxHeader89:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b5e91, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b8a90, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_spring_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_clock_house, $9601, $1f|$80
 	m_GfxHeader map_credits_scene3_top_rows, $9800, $03|$80
 	m_GfxHeader flg_credits_scene3_top_rows, $9801, $03
 gfxHeader8a:
@@ -704,10 +704,10 @@ gfxHeader8a:
 	m_GfxHeader map_credits_image3, $9800, $23|$80
 	m_GfxHeader flg_credits_image3, $9801, $23
 gfxHeader8b:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b5e91, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_spring_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f|$80
 	m_GfxHeader map_credits_scene4_top_rows, $9800, $03|$80
 	m_GfxHeader flg_credits_scene4_top_rows, $9801, $03
 gfxHeader8c:
@@ -722,10 +722,10 @@ gfxHeader8c:
 	m_GfxHeader map_credits_image4, $9800, $23|$80
 	m_GfxHeader flg_credits_image4, $9801, $23
 gfxHeader8d:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b5e91, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_spring_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f|$80
 	m_GfxHeader map_credits_linked_scene1, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_scene1, $9801, $23
 gfxHeader8e:
@@ -736,10 +736,10 @@ gfxHeader8e:
 	m_GfxHeader map_credits_linked_image2, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_image2, $9801, $23
 gfxHeader8f:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b5e91, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b6152, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_spring_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_horon_village, $9601, $1f|$80
 	m_GfxHeader map_credits_linked_scene2, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_scene2, $9801, $23
 gfxHeader90:
@@ -755,10 +755,10 @@ gfxHeader90:
 	m_GfxHeader map_credits_linked_image1, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_image1, $9801, $23
 gfxHeader91:
-	m_GfxHeader gfx_tileset_0b555d, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0b5cd1, $9001, $1f|$80
-	m_GfxHeader gfx_tileset_0b5e91, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_0b8a90, $9601, $1f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
+	m_GfxHeader gfx_tileset_spring_standard, $9201, $3f|$80
+	m_GfxHeader gfx_tileset_clock_house, $9601, $1f|$80
 	m_GfxHeader map_credits_linked_scene3, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_scene3, $9801, $23
 gfxHeader92:
@@ -773,9 +773,9 @@ gfxHeader92:
 	m_GfxHeader map_credits_linked_image3, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_image3, $9801, $23
 gfxHeader93:
-	m_GfxHeader gfx_tileset_0b3150, $8801, $2f|$80
-	m_GfxHeader gfx_tileset_0b445e, $8b01, $7f|$80
-	m_GfxHeader gfx_tileset_0b4b4e, $9301, $4f|$80
+	m_GfxHeader gfx_tileset_maku_tree_background, $8801, $2f|$80
+	m_GfxHeader gfx_tileset_maku_tree_small_1, $8b01, $7f|$80
+	m_GfxHeader gfx_tileset_maku_tree_small_2, $9301, $4f|$80
 	m_GfxHeader map_credits_linked_scene4, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_scene4, $9801, $23
 gfxHeader94:
@@ -867,9 +867,9 @@ gfxHeader9d:
 	m_GfxHeader map_intro_outside_castle, $9c00, $23|$80
 	m_GfxHeader flg_intro_outside_castle, $9c01, $23
 gfxHeader9e:
-	m_GfxHeader gfx_tileset_0bd84f, $8801, $7f|$80
-	m_GfxHeader gfx_tileset_0bdee6, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_0bedea, $9401, $28|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
+	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
+	m_GfxHeader gfx_tileset_tarm_ruins, $9401, $28|$80
 	m_GfxHeader gfx_hud, $9000, $07|$80
 	m_GfxHeader map_intro_triforce_room, $9800, $3f|$80
 	m_GfxHeader flg_intro_triforce_room, $9801, $3f|$80

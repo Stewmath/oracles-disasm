@@ -227,69 +227,69 @@
 	m_GfxData spr_ganon_8 ; $0b1f19
 	m_GfxData spr_ganon_9 ; $0b210d
 	m_GfxData spr_ganon_10 ; $0b230d
-	m_GfxData gfx_tileset_0b24e1 ; $0b24e1
-	m_GfxData gfx_tileset_0b2646 ; $0b2646
-	m_GfxData gfx_tileset_0b27a5 ; $0b27a5
-	m_GfxData gfx_tileset_0b2911 ; $0b2911
-	m_GfxData gfx_tileset_0b2ab5 ; $0b2ab5
+	m_GfxData gfx_tileset_gnarled_root_entrance_closed ; $0b24e1
+	m_GfxData gfx_tileset_gnarled_root_entrance_opening_1 ; $0b2646
+	m_GfxData gfx_tileset_gnarled_root_entrance_opening_2 ; $0b27a5
+	m_GfxData gfx_tileset_gnarled_root_entrance_opening_3 ; $0b2911
+	m_GfxData gfx_tileset_gnarled_root_entrance_opened ; $0b2ab5
 	m_GfxData gfx_gasha_tree ; $0b2cb5
 	m_GfxData spr_grass_tuft ; $0b30ee
 	m_GfxData gfx_sand ; $0b3110
 	m_GfxData gfx_dirt ; $0b313b
-	m_GfxData gfx_tileset_0b3150 ; $0b3150
-	m_GfxData gfx_tileset_0b3411 ; $0b3411
-	m_GfxData gfx_tileset_0b373d ; $0b373d
-	m_GfxData gfx_tileset_0b3b03 ; $0b3b03
-	m_GfxData gfx_tileset_0b3e8f ; $0b3e8f
-	m_GfxData gfx_tileset_0b3ed4 ; $0b3ed4
-	m_GfxData gfx_tileset_0b41b6 ; $0b41b6
-	m_GfxData gfx_tileset_0b445e ; $0b445e
-	m_GfxData gfx_tileset_0b4b4e ; $0b4b4e
-	m_GfxData gfx_tileset_0b4f9a ; $0b4f9a
-	m_GfxData gfx_tileset_0b5021 ; $0b5021
-	m_GfxData gfx_tileset_0b50e4 ; $0b50e4
-	m_GfxData gfx_tileset_0b51e4 ; $0b51e4
-	m_GfxData gfx_tileset_0b555d ; $0b555d
-	m_GfxData gfx_tileset_0b5cd1 ; $0b5cd1
-	m_GfxData gfx_tileset_0b5e91 ; $0b5e91
-	m_GfxData gfx_tileset_0b6152 ; $0b6152
-	m_GfxData gfx_tileset_0b62af ; $0b62af
-	m_GfxData gfx_tileset_0b6595 ; $0b6595
-	m_GfxData gfx_tileset_0b683b ; $0b683b
-	m_GfxData gfx_tileset_0b6bf1 ; $0b6bf1
-	m_GfxData gfx_tileset_0b6cc6 ; $0b6cc6
-	m_GfxData gfx_tileset_0b746c ; $0b746c
-	m_GfxData gfx_tileset_0b7621 ; $0b7621
-	m_GfxData gfx_tileset_0b78e4 ; $0b78e4
-	m_GfxData gfx_tileset_0b7aaa ; $0b7aaa
-	m_GfxData gfx_tileset_0b7da8 ; $0b7da8
-	m_GfxData gfx_tileset_0b808e ; $0b808e
-	m_GfxData gfx_tileset_0b844a ; $0b844a
-	m_GfxData gfx_tileset_0b851f ; $0b851f
-	m_GfxData gfx_tileset_0b88c3 ; $0b88c3
-	m_GfxData gfx_tileset_0b8a90 ; $0b8a90
-	m_GfxData gfx_tileset_0b8c32 ; $0b8c32
-	m_GfxData gfx_tileset_0b8e29 ; $0b8e29
-	m_GfxData gfx_tileset_0b8fcf ; $0b8fcf
-	m_GfxData gfx_tileset_0b9184 ; $0b9184
-	m_GfxData gfx_tileset_0b9368 ; $0b9368
-	m_GfxData gfx_tileset_0b94a3 ; $0b94a3
-	m_GfxData gfx_tileset_0b9664 ; $0b9664
-	m_GfxData gfx_tileset_0b9837 ; $0b9837
-	m_GfxData gfx_tileset_0b9ad3 ; $0b9ad3
-	m_GfxData gfx_tileset_0b9cb7 ; $0b9cb7
-	m_GfxData gfx_tileset_0b9eb5 ; $0b9eb5
-	m_GfxData gfx_tileset_0ba017 ; $0ba017
-	m_GfxData gfx_tileset_0ba154 ; $0ba154
-	m_GfxData gfx_tileset_0ba336 ; $0ba336
-	m_GfxData gfx_tileset_0ba523 ; $0ba523
-	m_GfxData gfx_tileset_0ba6e7 ; $0ba6e7
-	m_GfxData gfx_tileset_0ba8be ; $0ba8be
-	m_GfxData gfx_tileset_0baaa4 ; $0baaa4
+	m_GfxData gfx_tileset_maku_tree_background ; $0b3150
+	m_GfxData gfx_tileset_maku_tree_1 ; $0b3411
+	m_GfxData gfx_tileset_maku_tree_2 ; $0b373d
+	m_GfxData gfx_tileset_maku_tree_3 ; $0b3b03
+	m_GfxData gfx_tileset_maku_tree_top_1 ; $0b3e8f
+	m_GfxData gfx_tileset_maku_tree_top_2 ; $0b3ed4
+	m_GfxData gfx_tileset_maku_tree_top_3 ; $0b41b6
+	m_GfxData gfx_tileset_maku_tree_small_1 ; $0b445e
+	m_GfxData gfx_tileset_maku_tree_small_2 ; $0b4b4e
+	m_GfxData gfx_tileset_natzu_prairie ; $0b4f9a
+	m_GfxData gfx_tileset_natzu_river ; $0b5021
+	m_GfxData gfx_tileset_natzu_wasteland ; $0b50e4
+	m_GfxData gfx_tileset_natzu ; $0b51e4
+	m_GfxData gfx_tileset_overworld_standard_1 ; $0b555d
+	m_GfxData gfx_tileset_overworld_standard_2 ; $0b5cd1
+	m_GfxData gfx_tileset_spring_standard ; $0b5e91
+	m_GfxData gfx_tileset_horon_village ; $0b6152
+	m_GfxData gfx_tileset_summer_standard ; $0b62af
+	m_GfxData gfx_tileset_autumn_standard ; $0b6595
+	m_GfxData gfx_tileset_winter_standard ; $0b683b
+	m_GfxData gfx_tileset_winter_tree_replacement ; $0b6bf1
+	m_GfxData gfx_tileset_castle_1 ; $0b6cc6
+	m_GfxData gfx_tileset_castle_2 ; $0b746c
+	m_GfxData gfx_tileset_castle_spring ; $0b7621
+	m_GfxData gfx_tileset_temple_remains ; $0b78e4
+	m_GfxData gfx_tileset_castle_summer ; $0b7aaa
+	m_GfxData gfx_tileset_castle_autumn ; $0b7da8
+	m_GfxData gfx_tileset_castle_winter ; $0b808e
+	m_GfxData gfx_tileset_castle_winter_tree_replacement ; $0b844a
+	m_GfxData gfx_tileset_onox_castle_outside_1 ; $0b851f
+	m_GfxData gfx_tileset_onox_castle_outside_2 ; $0b88c3
+	m_GfxData gfx_tileset_clock_house ; $0b8a90
+	m_GfxData gfx_tileset_maku_tree_gate ; $0b8c32
+	m_GfxData gfx_tileset_snakes_remains_entrance ; $0b8e29
+	m_GfxData gfx_tileset_poison_moths_lair_entrance ; $0b8fcf
+	m_GfxData gfx_tileset_spool_swamp_south ; $0b9184
+	m_GfxData gfx_tileset_tarm_ruins_entrance ; $0b9368
+	m_GfxData gfx_tileset_dancing_dragon_dungeon_entrance ; $0b94a3
+	m_GfxData gfx_tileset_sunken_city ; $0b9664
+	m_GfxData gfx_tileset_biggoron ; $0b9837
+	m_GfxData gfx_tileset_syrups_hut ; $0b9ad3
+	m_GfxData gfx_tileset_unicorns_cave_entrance ; $0b9cb7
+	m_GfxData gfx_tileset_tarm_ruins_south ; $0b9eb5
+	m_GfxData gfx_tileset_tarm_ruins_north ; $0ba017
+	m_GfxData gfx_tileset_ancient_ruins_entrance ; $0ba154
+	m_GfxData gfx_tileset_samasa_desert ; $0ba336
+	m_GfxData gfx_tileset_samasa_desert_pirate_ship ; $0ba523
+	m_GfxData gfx_tileset_western_coast ; $0ba6e7
+	m_GfxData gfx_tileset_explorers_crypt_entrance ; $0ba8be
+	m_GfxData gfx_tileset_black_beast ; $0baaa4
 	m_GfxData gfx_pirate_ship_tiles_1 ; $0baca4
 	m_GfxData gfx_pirate_ship_tiles_2 ; $0bae0d
 	m_GfxData gfx_pirate_ship_tiles_3 ; $0baf8b
-	m_GfxData gfx_tileset_0bb028 ; $0bb028
+	m_GfxData gfx_tileset_pirate_ship_moving_extra_tiles ; $0bb028
 	m_GfxData map_pirate_ship_leaving_subrosia ; $0bb0a9
 	m_GfxData flg_pirate_ship_leaving_subrosia ; $0bb129
 	m_GfxData map_pirate_ship_leaving_desert ; $0bb14f
@@ -298,45 +298,45 @@
 	m_GfxData flg_pirate_ship_body ; $0bb2e7
 	m_GfxData map_pirate_ship_bow ; $0bb33e
 	m_GfxData flg_pirate_ship_bow ; $0bb3ad
-	m_GfxData gfx_tileset_0bb3eb ; $0bb3eb
-	m_GfxData gfx_tileset_0bb679 ; $0bb679
-	m_GfxData gfx_tileset_0bb91c ; $0bb91c
-	m_GfxData gfx_tileset_0bbae4 ; $0bbae4
-	m_GfxData gfx_tileset_0bbe5a ; $0bbe5a
-	m_GfxData gfx_tileset_0bc189 ; $0bc189
-	m_GfxData gfx_tileset_0bc466 ; $0bc466
-	m_GfxData gfx_tileset_0bc647 ; $0bc647
-	m_GfxData gfx_tileset_0bc81d ; $0bc81d
-	m_GfxData gfx_tileset_0bca48 ; $0bca48
-	m_GfxData gfx_tileset_0bcdaa ; $0bcdaa
-	m_GfxData gfx_tileset_0bd050 ; $0bd050
-	m_GfxData gfx_tileset_0bd327 ; $0bd327
-	m_GfxData gfx_tileset_0bd455 ; $0bd455
-	m_GfxData gfx_tileset_0bd5d8 ; $0bd5d8
-	m_GfxData gfx_tileset_0bd84f ; $0bd84f
-	m_GfxData gfx_tileset_0bdee6 ; $0bdee6
-	m_GfxData gfx_tileset_0be226 ; $0be226
-	m_GfxData gfx_tileset_0be402 ; $0be402
-	m_GfxData gfx_tileset_0be6ce ; $0be6ce
-	m_GfxData gfx_tileset_0be8ec ; $0be8ec
-	m_GfxData gfx_tileset_0beac9 ; $0beac9
-	m_GfxData gfx_tileset_0bedea ; $0bedea
-	m_GfxData gfx_tileset_0bf020 ; $0bf020
-	m_GfxData gfx_tileset_0bf252 ; $0bf252
-	m_GfxData gfx_tileset_0bf558 ; $0bf558
-	m_GfxData gfx_tileset_0bf8e8 ; $0bf8e8
+	m_GfxData gfx_tileset_subrosia_1 ; $0bb3eb
+	m_GfxData gfx_tileset_temple_of_seasons_outside_1 ; $0bb679
+	m_GfxData gfx_tileset_temple_of_seasons_outside_2 ; $0bb91c
+	m_GfxData gfx_tileset_temple_of_seasons_outside_3 ; $0bbae4
+	m_GfxData gfx_tileset_temple_of_seasons_outside_4 ; $0bbe5a
+	m_GfxData gfx_tileset_subrosia_2 ; $0bc189
+	m_GfxData gfx_tileset_subrosia_3 ; $0bc466
+	m_GfxData gfx_tileset_subrosia_4 ; $0bc647
+	m_GfxData gfx_tileset_subrosia_5 ; $0bc81d
+	m_GfxData gfx_tileset_subrosia_village ; $0bca48
+	m_GfxData gfx_tileset_subrosian_smithy_outside ; $0bcdaa
+	m_GfxData gfx_tileset_subrosian_market_outside ; $0bd050
+	m_GfxData gfx_tileset_subrosia_pirate_ship_1 ; $0bd327
+	m_GfxData gfx_tileset_subrosia_pirate_ship_2 ; $0bd455
+	m_GfxData gfx_tileset_heros_cave_unlinked ; $0bd5d8
+	m_GfxData gfx_tileset_dungeon_standard_1 ; $0bd84f
+	m_GfxData gfx_tileset_dungeon_standard_2 ; $0bdee6
+	m_GfxData gfx_tileset_gnarled_root_dungeon ; $0be226
+	m_GfxData gfx_tileset_snakes_remains ; $0be402
+	m_GfxData gfx_tileset_poison_moths_lair ; $0be6ce
+	m_GfxData gfx_tileset_dancing_dragon_dungeon ; $0be8ec
+	m_GfxData gfx_tileset_unicorns_cave ; $0beac9
+	m_GfxData gfx_tileset_tarm_ruins ; $0bedea
+	m_GfxData gfx_tileset_explorers_crypt ; $0bf020
+	m_GfxData gfx_tileset_sword_and_shield_maze_ice ; $0bf252
+	m_GfxData gfx_tileset_sword_and_shield_maze_fire ; $0bf558
+	m_GfxData gfx_tileset_onox_castle ; $0bf8e8
 	m_GfxData gfx_tileset_room_of_rites ; $0bfc19
-	m_GfxData gfx_tileset_0bffef ; $0bffef
-	m_GfxData gfx_tileset_0c0644 ; $0c0644
-	m_GfxData gfx_tileset_0c0b45 ; $0c0b45
-	m_GfxData gfx_tileset_0c102d ; $0c102d
-	m_GfxData gfx_tileset_0c1622 ; $0c1622
-	m_GfxData gfx_tileset_0c1682 ; $0c1682
-	m_GfxData gfx_tileset_0c1be6 ; $0c1be6
-	m_GfxData gfx_tileset_0c22a5 ; $0c22a5
-	m_GfxData gfx_tileset_0c2305 ; $0c2305
-	m_GfxData gfx_tileset_0c283e ; $0c283e
-	m_GfxData gfx_tileset_0c2ddd ; $0c2ddd
+	m_GfxData gfx_tileset_sidescroll_1 ; $0bffef
+	m_GfxData gfx_tileset_sidescroll_2 ; $0c0644
+	m_GfxData gfx_tileset_indoors_a_1 ; $0c0b45
+	m_GfxData gfx_tileset_indoors_a_2 ; $0c102d
+	m_GfxData gfx_tileset_vases ; $0c1622
+	m_GfxData gfx_tileset_indoors_b_1 ; $0c1682
+	m_GfxData gfx_tileset_indoors_b_2 ; $0c1be6
+	m_GfxData gfx_tileset_indoors_b_replacement ; $0c22a5
+	m_GfxData gfx_tileset_indoors_c_1 ; $0c2305
+	m_GfxData gfx_tileset_indoors_c_2 ; $0c283e
+	m_GfxData gfx_tileset_indoors_c_replacement ; $0c2ddd
 	m_GfxData gfx_dmg_text ; $0c2e3d
 	m_GfxData gfx_dmg_gametitle ; $0c2f19
 	m_GfxData map_dmg_message ; $0c3199
@@ -600,5 +600,5 @@
 	m_GfxData flg_dragononox_2 ; $0e3b39
 	m_GfxData oth_twinrova_lava_layout ; $0e3b65
 	m_GfxData oth_twinrova_normal_layout ; $0e3b9a
-	m_GfxData gfx_tileset_0e3baf ; $0e3baf
+	m_GfxData gfx_tileset_blaino_gym_outside ; $0e3baf
 	m_GfxData spr_caravan ; $0e3ca0
