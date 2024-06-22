@@ -71,6 +71,22 @@
 	GFX_HEADER_MODE_FORCE:	db
 .ende
 
+; Helper macro, defines the size/continue byte for gfx headers. The value for the "continue bit" is
+; defined later, either when this is invoked again or when m_GfxHeaderEnd is invoked.
+;
+; As it's using a define with "\@" in its name, which is the number of times the current macro has
+; been called, it's important to not copy/paste this into multiple macros.
+.macro m_GfxHeaderContinueHelper
+	; Mark "continue" bit on last defined gfx header entry
+	.ifdef CURRENT_GFX_HEADER_INDEX
+		.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT $80
+	.endif
+
+	; Define size/continue byte for current gfx header entry
+	.redefine CURRENT_GFX_HEADER_INDEX \@
+	.db (\1) | GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT
+.endm
+
 ; Helper macro used for defining other macros with slightly different parameters. See the other
 ; macros (ie. m_GfxHeader) for descriptions.
 .macro m_GfxHeaderHelper
@@ -93,6 +109,8 @@
 		dwbe \1
 	.endif
 
+	; If arg 2 (destination) isn't a label, we'll just assume that the bank number is already
+	; baked into the parameter being passed.
 	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
 		dwbe (\2)|(:\2)
 	.else
@@ -100,14 +118,7 @@
 	.endif
 
 	.if m_GfxHeaderMode == GFX_HEADER_MODE_NORMAL
-		; Mark "continue" bit on last defined gfx header entry
-		.ifdef CURRENT_GFX_HEADER_INDEX
-			.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT $80
-		.endif
-
-		.redefine CURRENT_GFX_HEADER_INDEX \@
-
-		.db (\3) | GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT
+		m_GfxHeaderContinueHelper \3
 	.else
 		.db \3
 	.endif
@@ -159,14 +170,14 @@
 	.if NARGS == 4
 		.db \1
 		dwbe \2
-		dwbe \3
-		.db \4
+		.shift
 	.else
 		.db :\1
 		dwbe \1
-		dwbe \2
-		.db \3
 	.endif
+
+	dwbe \2
+	m_GfxHeaderContinueHelper \3
 .endm
 
 ; Define object gfx header entry
