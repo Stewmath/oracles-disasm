@@ -180,22 +180,32 @@
 	m_GfxHeaderContinueHelper \3
 .endm
 
-; Define object gfx header entry
-; 1st argument name
-; 2nd argument is 7th bit of address indicating "continuation" (when object specifically
-;   request for extra data)
-; Optional 3rd argument skips into part of the graphics
+; Define object gfx header entry.
+;
+; Arguments:
+;   \1: filename
+;   \2 (optional): Set to "1" if this is the end of a "chain" of ObjectGfxHeaders to be loaded.
+;                  Defaults to 0.
+;   \3 (optional): Skips into part of the graphics (only works if uncompressed)
 .macro m_ObjectGfxHeader
-	.FOPEN {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
-	.FREAD m_GfxHeaderFile mode
+	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
+	.fread m_GfxHeaderFile mode ; First byte of .cmp file is compression mode
+	.fclose m_GfxHeaderFile
 
 	.db (:\1) | (mode<<6)
-	.IF NARGS >= 3
-		dwbe ((\1)+(\3)) | ((\2)<<8)
-	.ELSE
-		dwbe (\1) | ((\2)<<8)
-	.ENDIF
+
+	.if NARGS == 1
+		.define m_ObjectGfxHeader_Cont 0
+	.else
+		.define m_ObjectGfxHeader_Cont (\2) & 1
+	.endif
+
+	.if NARGS >= 3
+		dwbe ((\1)+(\3)) | ((m_ObjectGfxHeader_Cont)<<15)
+	.else
+		dwbe (\1) | ((m_ObjectGfxHeader_Cont)<<15)
+	.endif
 
 	.undefine mode
-	.FCLOSE m_GfxHeaderFile
+	.undefine m_ObjectGfxHeader_Cont
 .endm
