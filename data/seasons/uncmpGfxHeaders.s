@@ -124,22 +124,39 @@ uncmpGfxHeader16:
 	m_GfxHeaderRam w4StatusBarAttributeMap, $9dc1, $09
 uncmpGfxHeader17:
 	m_GfxHeaderRam w7TextGfxBuffer, $9201, $1f
+
 uncmpGfxHeader18:
 	m_GfxHeader spr_boomerang, $84e1, $03
+	m_GfxHeaderEnd
+
 uncmpGfxHeader19:
 	m_GfxHeader spr_boomerang, $84e1, $03, $40
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1a:
 	m_GfxHeader spr_swords, $8521, $09
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1b:
 	m_GfxHeader spr_swords, $8521, $0d, $a0
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1c:
 	m_GfxHeader spr_rod_of_seasons, $8521, $09
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1d:
 	m_GfxHeader spr_slingshot, $8521, $07
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1e:
 	m_GfxHeader spr_magnet_gloves, $8521, $07
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1f:
 	m_GfxHeader spr_item_icons_2, $8521, $01, $140
+	m_GfxHeaderEnd
+
 uncmpGfxHeader20:
 	m_GfxHeaderRam w7d800+$000, $9200, $0f
 uncmpGfxHeader21:

@@ -136,18 +136,30 @@ uncmpGfxHeader17:
 	m_GfxHeaderRam w7TextGfxBuffer, $9201, $1f
 uncmpGfxHeader18:
 	m_GfxHeader spr_boomerang, $84e1, $03
+	m_GfxHeaderEnd
+
 uncmpGfxHeader19:
 uncmpGfxHeader1a:
 	m_GfxHeader spr_swords, $8521, $09
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1b:
 	m_GfxHeader spr_swords, $8521, $0d, $a0
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1c:
 	m_GfxHeader spr_cane_of_somaria, $8521, $09
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1d:
 	m_GfxHeader spr_seed_shooter, $8521, $09
+	m_GfxHeaderEnd
+
 uncmpGfxHeader1e:
 uncmpGfxHeader1f:
 	m_GfxHeader spr_switch_hook, $8521, $0b
+	m_GfxHeaderEnd
+
 uncmpGfxHeader20:
 	m_GfxHeaderRam w7d800+$000, $9200, $0f
 uncmpGfxHeader21:
@@ -201,21 +213,33 @@ uncmpGfxHeader36:
 	m_GfxHeaderRam w4TileMap,      $9c00, $11|$80
 	m_GfxHeaderRam w4AttributeMap, $9c01, $11
 uncmpGfxHeader37:
-	m_GfxHeader gfx_past_chest, $8a91, $02|$80
+	m_GfxHeader gfx_past_chest, $8a91, $02
 	m_GfxHeader gfx_past_sign,  $8dc1, $03
+	m_GfxHeaderEnd
+
 uncmpGfxHeader38:
 	m_GfxHeaderRam w3VramTiles,          $9c00, $09|$80
 	m_GfxHeaderRam w3TileMappingIndices, $9c01, $09
+
 uncmpGfxHeader39:
 uncmpGfxHeader3a:
 	m_GfxHeader spr_impa_fainted, $8601, $03
+	m_GfxHeaderEnd
+
 uncmpGfxHeader3b:
 	m_GfxHeader spr_raft, $8601, $07
+	m_GfxHeaderEnd
+
 uncmpGfxHeader3c:
 	m_GfxHeaderRam w3VramTiles, $9800, $0b
 uncmpGfxHeader3d:
 	m_GfxHeader gfx_animations_2, $8cc1, $03, $740
+	m_GfxHeaderEnd
+
 uncmpGfxHeader3e:
 	m_GfxHeader gfx_animations_2, $8cc1, $03, $780
+	m_GfxHeaderEnd
+
 uncmpGfxHeader3f:
 	m_GfxHeader gfx_animations_2, $8cc1, $03, $7c0
+	m_GfxHeaderEnd

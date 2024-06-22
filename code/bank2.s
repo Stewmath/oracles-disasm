@@ -10,7 +10,7 @@ checkDisplayDmgModeScreen:
 
 	call disableLcd
 
-	lda GFXH_DMG_SCREEN
+	xor a ; GFXH_DMG_SCREEN
 	call loadGfxHeader
 
 .ifdef REGION_JP

@@ -8,7 +8,6 @@
 .include "constants/enemyCollisionModes.s"
 .include "constants/enemyStates.s"
 .include "constants/enemyTypes.s"
-.include "constants/gfxHeaders.s"
 .include "constants/globalFlags.s"
 .include "constants/hardware.s"
 .include "constants/interactionTypes.s"

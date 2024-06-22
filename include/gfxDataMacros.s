@@ -33,11 +33,110 @@
 	.ENDIF
 .endm
 
-; Define graphics header, arguments: name, dest, size (and continue bit)
-; Optional 4th argument overrides the compression mode
+; Start of a gfx header. Creates a label at the current position (ie. gfxHeader00:) and an exported
+; definition.
+; Arguments:
+;   \1: Index of gfx header
+;   \2: Name of gfx header, resolves to the index when used in code
+.macro m_GfxHeaderStart
+	.define \2 (\1) EXPORT
+	gfxHeader{%.2x{\1}}:
+.endm
+
+; Use this at the end of a gfx header definition.
+;
+; Its actual effect is to ensure the "continue" bit of the previous gfx header entry remains unset,
+; so it does not attempt to read any data after this.
+;
+; Optionally, a gfx header can end with a palette header (see constants/paletteHeaders.s). So this
+; macro takes one optional parameter for that. (Unique GFX headers only?)
+.macro m_GfxHeaderEnd
+	.ifdef CURRENT_GFX_HEADER_INDEX
+		.if NARGS >= 1 ; Set last entry's continue bit
+			.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT, $80
+		.else ; Unset last entry's continue bit
+			.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT, $00
+		.endif
+		.undefine CURRENT_GFX_HEADER_INDEX
+	.endif
+	.if NARGS >= 1
+		.db $00
+		.db \1 ; Palette header index
+	.endif
+.endm
+
+; Define gfx header entry with optional 4th argument to skip into part of the graphics.
+;
+; Whenever this is used, you MUST also use m_GfxHeaderEnd at some point after it!
+;
+; Arg 1: gfx file (without extension)
+; Arg 2: destination (usually vram)
+; Arg 3: Size (byte; divided by 16, minus 1)
+;        If bit 7 is set, there's another gfx header after this to be read.
+; Arg 4: Skip first X bytes of graphics file (optional).
+;        Will only work with uncompressed graphics.
+.macro m_GfxHeader
+	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
+	.fread m_GfxHeaderFile mode ; First byte of .cmp file is compression mode
+	.fclose m_GfxHeaderFile
+
+	.db (:\1) | (mode<<6)
+	.if NARGS >= 4
+		dwbe (\1)+(\4)
+	.else
+		dwbe \1
+	.endif
+
+	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
+		dwbe (\2)|(:\2)
+	.else
+		dwbe \2
+	.endif
+
+	; Mark "continue" bit on last defined gfx header entry
+	.ifdef CURRENT_GFX_HEADER_INDEX
+		.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT $80
+	.endif
+
+	.redefine CURRENT_GFX_HEADER_INDEX \@
+
+	.db (\3) | GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT
+
+	.undefine mode
+.endm
+
+; Identical to above except continue bit is never set. Bypasses the weird system for that which
+; makes it simpler in general (and m_GfxHeaderEnd is not required when using it).
+.macro m_GfxHeaderAnim
+	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
+	.fread m_GfxHeaderFile mode
+	.fclose m_GfxHeaderFile
+
+	.db (:\1) | (mode<<6)
+	.if NARGS >= 4
+		dwbe (\1)+(\4)
+	.else
+		dwbe \1
+	.endif
+
+	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
+		dwbe (\2)|(:\2)
+	.else
+		dwbe \2
+	.endif
+
+	.db \3
+
+	.undefine mode
+.endm
+
+; Same as m_GfxHeaderAnim but has a compression mode override as the optional 4th argument. This
+; really isn't important, there's just an unusable gfx header in ages that needs the mode override
+; to be able to define it. Obviously, it doesn't do anything useful.
 .macro m_GfxHeaderForceMode
-	.FOPEN {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
-	.FREAD m_GfxHeaderFile mode
+	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
+	.fread m_GfxHeaderFile mode
+	.fclose m_GfxHeaderFile
 
 	.IF NARGS == 4
 		; Mode override
@@ -48,9 +147,7 @@
 
 	dwbe \1
 
-	; If given bank number 0 for an address in d000-dfff, assume that
-	; a label was passed (since bank 0 in that area is basically invalid)
-	.if (\2&$f00f) == $d000
+	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
 		dwbe (\2)|(:\2)
 	.else
 		dwbe \2
@@ -59,46 +156,11 @@
 	.db \3
 
 	.undefine mode
-	.FCLOSE m_GfxHeaderFile
-.endm
-
-; Define graphics header with optional 4th argument to skip into part of the graphics
-; Arg 1: gfx file (without extension)
-; Arg 2: destination (usually vram)
-; Arg 3: Size (byte; divided by 16, minus 1)
-;        If bit 7 is set, there's another gfx header after this to be read.
-; Arg 4: Skip first X bytes of graphics file (optional).
-;        Will only work with uncompressed graphics.
-.macro m_GfxHeader
-	.FOPEN {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
-	.FREAD m_GfxHeaderFile mode
-
-	.db (:\1) | (mode<<6)
-	.IF NARGS >= 4
-		dwbe (\1)+(\4)
-	.ELSE
-		dwbe \1
-	.ENDIF
-
-	; If given bank number 0 for an address in d000-dfff, assume that
-	; a label was passed (since bank 0 in that area is basically invalid)
-	; Note: this won't work if the label was defined in a ramsection. In that case,
-	; use m_GfxHeaderDestRam instead.
-	.if (\2&$f00f) == $d000
-		dwbe (\2)|(:\2)
-	.else
-		dwbe \2
-	.endif
-
-	.db \3
-
-	.undefine mode
-	.FCLOSE m_GfxHeaderFile
 .endm
 
 ; Define graphics header with the source being from RAM
 ; Arg 1: RAM bank
-; Arg 2: Source
+; Arg 2: Source (can combine args 1/2 as a label)
 ; Arg 3: Destination
 ; Arg 4: Size
 .macro m_GfxHeaderRam
@@ -115,27 +177,7 @@
 	.endif
 .endm
 
-; Define graphics header with the destination being to RAM
-.macro m_GfxHeaderDestRam
-	.FOPEN {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
-	.FREAD m_GfxHeaderFile mode
-
-	.db :\1 | (mode<<6)
-	.IF NARGS >= 4
-		dwbe (\1)+(\4)
-	.ELSE
-		dwbe \1
-	.ENDIF
-
-	dwbe (\2)|(:\2)
-
-	.db \3
-
-	.undefine mode
-	.FCLOSE m_GfxHeaderFile
-.endm
-
-; Define object header
+; Define object gfx header entry
 ; 1st argument name
 ; 2nd argument is 7th bit of address indicating "continuation" (when object specifically
 ;   request for extra data)
@@ -146,7 +188,7 @@
 
 	.db (:\1) | (mode<<6)
 	.IF NARGS >= 3
-		dwbe (\1)+(\3) | ((\2)<<8)
+		dwbe ((\1)+(\3)) | ((\2)<<8)
 	.ELSE
 		dwbe (\1) | ((\2)<<8)
 	.ENDIF
