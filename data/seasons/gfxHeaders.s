@@ -1,3 +1,5 @@
+; See constants/gfxHeaders.s for more info.
+
 gfxHeaderTable:
 	.dw gfxHeader00
 	.dw gfxHeader01
@@ -523,7 +525,7 @@ gfxHeader4f:
 	m_GfxHeader gfx_tileset_overworld_standard_1, $8801, $7f|$80
 	m_GfxHeader gfx_tileset_overworld_standard_2, $9001, $1f|$80
 	m_GfxHeader gfx_tileset_summer_standard, $9201, $3f|$80
-	m_GfxHeader gfx_tileset_tarm_ruins_south, $9601, $1f
+	m_GfxHeader gfx_tileset_tarm_ruins_pedestal, $9601, $1f
 gfxHeader50:
 	m_GfxHeader gfx_tileset_subrosia_1, $8801, $2f|$80
 	m_GfxHeader gfx_tileset_subrosia_2, $8b01, $2f|$80
@@ -560,7 +562,7 @@ gfxHeader5f:
 gfxHeader60:
 	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
 	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
-	m_GfxHeader gfx_tileset_heros_cave_unlinked, $9401, $2c
+	m_GfxHeader gfx_tileset_heros_cave, $9401, $2c
 gfxHeader61:
 	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $7f|$80
 	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001, $3f|$80
@@ -630,20 +632,20 @@ gfxHeader7a:
 gfxHeader7b:
 gfxHeader7c:
 	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f|$80
-	m_GfxHeader gfx_tileset_indoors_a_1, $8a01, $5f|$80
-	m_GfxHeader gfx_tileset_indoors_a_2, $9001, $7f|$80
+	m_GfxHeader gfx_tileset_indoors_1, $8a01, $5f|$80
+	m_GfxHeader gfx_tileset_indoors_2, $9001, $7f|$80
 	m_GfxHeader gfx_tileset_vases, $8861, $05
 gfxHeader7d:
 	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f|$80
-	m_GfxHeader gfx_tileset_indoors_b_1, $8a01, $5f|$80
-	m_GfxHeader gfx_tileset_indoors_b_2, $9001, $7f|$80
-	m_GfxHeader gfx_tileset_indoors_b_replacement, $8861, $05
+	m_GfxHeader gfx_tileset_cave_1, $8a01, $5f|$80
+	m_GfxHeader gfx_tileset_cave_2, $9001, $7f|$80
+	m_GfxHeader gfx_tileset_cave_replacement, $8861, $05
 gfxHeader7e:
 gfxHeader7f:
 	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f|$80
-	m_GfxHeader gfx_tileset_indoors_c_1, $8a01, $5f|$80
-	m_GfxHeader gfx_tileset_indoors_c_2, $9001, $6f|$80
-	m_GfxHeader gfx_tileset_indoors_c_replacement, $8861, $05
+	m_GfxHeader gfx_tileset_subrosia_indoors_1, $8a01, $5f|$80
+	m_GfxHeader gfx_tileset_subrosia_indoors_2, $9001, $6f|$80
+	m_GfxHeader gfx_tileset_subrosia_indoors_replacement, $8861, $05
 gfxHeader80:
 gfxHeader81:
 gfxHeader82:

@@ -131,28 +131,26 @@
 	GFXH_GASHA_TREE_DISAPPEARED_DIRT:                  db ; $3f
 
 .ifdef ROM_SEASONS
-	; Tilesets
-	GFXH_40:                  db ; $40
-	GFXH_41:                  db ; $41
-	GFXH_42:                  db ; $42
-	GFXH_43:                  db ; $43
-	GFXH_44:                  db ; $44
+	GFXH_TILESET_OVERWORLD_SPRING:                  db ; $40
+	GFXH_TILESET_OVERWORLD_SUMMER:                  db ; $41
+	GFXH_TILESET_OVERWORLD_AUTUMN:                  db ; $42
+	GFXH_TILESET_OVERWORLD_WINTER:                  db ; $43
+	GFXH_TILESET_BIGGORON:                  db ; $44
 
 	; Unused
 	GFXH_45:                  db ; $45
 	GFXH_46:                  db ; $46
 	GFXH_47:                  db ; $47
 
-	; Tilesets
-	GFXH_48:                  db ; $48
-	GFXH_49:                  db ; $49
-	GFXH_4a:                  db ; $4a
-	GFXH_4b:                  db ; $4b
-	GFXH_4c:                  db ; $4c
-	GFXH_4d:                  db ; $4d
-	GFXH_4e:                  db ; $4e
-	GFXH_4f:                  db ; $4f
-	GFXH_50:                  db ; $50
+	GFXH_TILESET_CASTLE_SPRING:                  db ; $48
+	GFXH_TILESET_CASTLE_SUMMER:                  db ; $49
+	GFXH_TILESET_CASTLE_AUTUMN:                  db ; $4a
+	GFXH_TILESET_CASTLE_WINTER:                  db ; $4b
+	GFXH_TILESET_NATZU_PRAIRIE:                  db ; $4c
+	GFXH_TILESET_NATZU_RIVER:                  db ; $4d
+	GFXH_TILESET_NATZU_WASTELAND:                  db ; $4e
+	GFXH_TILESET_TARM_RUINS_PEDESTAL:                  db ; $4f
+	GFXH_TILESET_SUBROSIA:                  db ; $50
 
 	; For pirate ship cutscenes
 	GFXH_PIRATE_SHIP_LEAVING_SUBROSIA_LAYOUT:                  db ; $51
@@ -175,33 +173,30 @@
 	GFXH_5e:                  db ; $5e
 	GFXH_5f:                  db ; $5f
 
-	; Tilesets
-	GFXH_60:                  db ; $60
-	GFXH_61:                  db ; $61
-	GFXH_62:                  db ; $62
-	GFXH_63:                  db ; $63
-	GFXH_64:                  db ; $64
-	GFXH_65:                  db ; $65
-	GFXH_66:                  db ; $66
-	GFXH_67:                  db ; $67
-	GFXH_68:                  db ; $68
-	GFXH_69:                  db ; $69
-	GFXH_6a:                  db ; $6a
+	GFXH_TILESET_HEROS_CAVE:                  db ; $60
+	GFXH_TILESET_GNARLED_ROOT_DUNGEON:                  db ; $61
+	GFXH_TILESET_SNAKES_REMAINS:                  db ; $62
+	GFXH_TILESET_POISON_MOTHS_LAIR:                  db ; $63
+	GFXH_TILESET_DANCING_DRAGON_DUNGEON:                  db ; $64
+	GFXH_TILESET_UNICORNS_CAVE:                  db ; $65
+	GFXH_TILESET_ANCIENT_RUINS:                  db ; $66
+	GFXH_TILESET_EXPLORERS_CRYPT:                  db ; $67
+	GFXH_TILESET_SWORD_AND_SHIELD_MAZE_ICE:                  db ; $68
+	GFXH_TILESET_ONOX_CASTLE:                  db ; $69
+	GFXH_TILESET_ROOM_OF_RITES:                  db ; $6a
 
 	; Unused
 	GFXH_6b:                  db ; $6b
 
-	; Tilesets
-	GFXH_6c:                  db ; $6c
-	GFXH_6d:                  db ; $6d
+	GFXH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE:                  db ; $6c
+	GFXH_TILESET_SIDESCROLL:                  db ; $6d
 
 	; Unused
 	GFXH_6e:                  db ; $6e
 	GFXH_6f:                  db ; $6f
 
-	; Tilesets
-	GFXH_70:                  db ; $70
-	GFXH_71:                  db ; $71
+	GFXH_TILESET_MAKU_TREE:                  db ; $70
+	GFXH_TILESET_MAKU_TREE_SMALL:                  db ; $71
 
 	; Unused
 	GFXH_72:                  db ; $72
@@ -215,15 +210,13 @@
 	GFXH_7a:                  db ; $7a
 	GFXH_7b:                  db ; $7b
 
-	; Tilesets
-	GFXH_7c:                  db ; $7c
-	GFXH_7d:                  db ; $7d
+	GFXH_TILESET_INDOORS:                  db ; $7c
+	GFXH_TILESET_CAVE:                  db ; $7d
 
 	; Unused
 	GFXH_7e:                  db ; $7e
 
-	; Tileset
-	GFXH_7f:                  db ; $7f
+	GFXH_TILESET_SUBROSIA_INDOORS:                  db ; $7f
 
 	; Unused
 	GFXH_80:                  db ; $80
@@ -232,11 +225,10 @@
 	GFXH_TO_BE_CONTINUED:                  db ; $82
 
 .else ;ROM_AGES
-	; Tilesets
-	GFXH_40:                  db ; $40
-	GFXH_41:                  db ; $41
-	GFXH_42:                  db ; $42
-	GFXH_43:                  db ; $43
+	GFXH_TILESET_OVERWORLD_PRESENT:                  db ; $40
+	GFXH_TILESET_OVERWORLD_PAST:                  db ; $41
+	GFXH_TILESET_UNDERWATER_PRESENT:                  db ; $42
+	GFXH_TILESET_UNDERWATER_PAST:                  db ; $43
 
 	GFXH_SEAWEED_CUT:         db ; $44
 
@@ -272,18 +264,17 @@
 	GFXH_5e:                  db ; $5e
 	GFXH_5f:                  db ; $5f
 
-	; Tilesets
-	GFXH_60:                  db ; $60
-	GFXH_61:                  db ; $61
-	GFXH_62:                  db ; $62
-	GFXH_63:                  db ; $63
-	GFXH_64:                  db ; $64
-	GFXH_65:                  db ; $65
-	GFXH_66:                  db ; $66
-	GFXH_67:                  db ; $67
-	GFXH_68:                  db ; $68
-	GFXH_69:                  db ; $69
-	GFXH_6a:                  db ; $6a
+	GFXH_TILESET_MAKU_PATH:                  db ; $60
+	GFXH_TILESET_SPIRITS_GRAVE:                  db ; $61
+	GFXH_TILESET_WING_DUNGEON:                  db ; $62
+	GFXH_TILESET_MOONLIT_GROTTO:                  db ; $63
+	GFXH_TILESET_SKULL_DUNGEON:                  db ; $64
+	GFXH_TILESET_CROWN_DUNGEON:                  db ; $65
+	GFXH_TILESET_MERMAIDS_CAVE:                  db ; $66
+	GFXH_TILESET_JABU_JABUS_BELLY:                  db ; $67
+	GFXH_TILESET_ANCIENT_TOMB:                  db ; $68
+	GFXH_TILESET_BLACK_TOWER_TOP:                  db ; $69
+	GFXH_TILESET_ROOM_OF_RITES:                  db ; $6a
 
 	; Unused
 	GFXH_6b:                  db ; $6b
@@ -307,12 +298,11 @@
 	GFXH_79:                  db ; $79
 	GFXH_7a:                  db ; $7a
 
-	; Tilesets
-	GFXH_TILESET_INDOORS_1:                  db ; $7b
-	GFXH_7c:                  db ; $7c
-	GFXH_7d:                  db ; $7d
-	GFXH_7e:                  db ; $7e
-	GFXH_7f:                  db ; $7f
+	GFXH_TILESET_INDOORS:                  db ; $7b
+	GFXH_TILESET_CAVE:                  db ; $7c
+	GFXH_TILESET_GORON_CAVE:                  db ; $7d
+	GFXH_TILESET_MOBLIN_FORTRESS:                  db ; $7e
+	GFXH_TILESET_ZORA_PALACE:                  db ; $7f
 
 	GFXH_BLACK_TOWER_STAGE_3_LAYOUT:                  db ; $80
 	GFXH_BLACK_TOWER_STAGE_2_LAYOUT:                  db ; $81

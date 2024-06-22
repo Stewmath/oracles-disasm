@@ -278,7 +278,7 @@
 	m_GfxData gfx_tileset_biggoron ; $0b9837
 	m_GfxData gfx_tileset_syrups_hut ; $0b9ad3
 	m_GfxData gfx_tileset_unicorns_cave_entrance ; $0b9cb7
-	m_GfxData gfx_tileset_tarm_ruins_south ; $0b9eb5
+	m_GfxData gfx_tileset_tarm_ruins_pedestal ; $0b9eb5
 	m_GfxData gfx_tileset_tarm_ruins_north ; $0ba017
 	m_GfxData gfx_tileset_ancient_ruins_entrance ; $0ba154
 	m_GfxData gfx_tileset_samasa_desert ; $0ba336
@@ -312,7 +312,7 @@
 	m_GfxData gfx_tileset_subrosian_market_outside ; $0bd050
 	m_GfxData gfx_tileset_subrosia_pirate_ship_1 ; $0bd327
 	m_GfxData gfx_tileset_subrosia_pirate_ship_2 ; $0bd455
-	m_GfxData gfx_tileset_heros_cave_unlinked ; $0bd5d8
+	m_GfxData gfx_tileset_heros_cave ; $0bd5d8
 	m_GfxData gfx_tileset_dungeon_standard_1 ; $0bd84f
 	m_GfxData gfx_tileset_dungeon_standard_2 ; $0bdee6
 	m_GfxData gfx_tileset_gnarled_root_dungeon ; $0be226
@@ -328,15 +328,15 @@
 	m_GfxData gfx_tileset_room_of_rites ; $0bfc19
 	m_GfxData gfx_tileset_sidescroll_1 ; $0bffef
 	m_GfxData gfx_tileset_sidescroll_2 ; $0c0644
-	m_GfxData gfx_tileset_indoors_a_1 ; $0c0b45
-	m_GfxData gfx_tileset_indoors_a_2 ; $0c102d
+	m_GfxData gfx_tileset_indoors_1 ; $0c0b45
+	m_GfxData gfx_tileset_indoors_2 ; $0c102d
 	m_GfxData gfx_tileset_vases ; $0c1622
-	m_GfxData gfx_tileset_indoors_b_1 ; $0c1682
-	m_GfxData gfx_tileset_indoors_b_2 ; $0c1be6
-	m_GfxData gfx_tileset_indoors_b_replacement ; $0c22a5
-	m_GfxData gfx_tileset_indoors_c_1 ; $0c2305
-	m_GfxData gfx_tileset_indoors_c_2 ; $0c283e
-	m_GfxData gfx_tileset_indoors_c_replacement ; $0c2ddd
+	m_GfxData gfx_tileset_cave_1 ; $0c1682
+	m_GfxData gfx_tileset_cave_2 ; $0c1be6
+	m_GfxData gfx_tileset_cave_replacement ; $0c22a5
+	m_GfxData gfx_tileset_subrosia_indoors_1 ; $0c2305
+	m_GfxData gfx_tileset_subrosia_indoors_2 ; $0c283e
+	m_GfxData gfx_tileset_subrosia_indoors_replacement ; $0c2ddd
 	m_GfxData gfx_dmg_text ; $0c2e3d
 	m_GfxData gfx_dmg_gametitle ; $0c2f19
 	m_GfxData map_dmg_message ; $0c3199

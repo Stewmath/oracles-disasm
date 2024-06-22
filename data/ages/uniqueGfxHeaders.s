@@ -74,9 +74,9 @@ uniqueGfxHeader12:
 	m_GfxHeader gfx_tileset_jabu_jabu_outside_2, $9501, $1f|$80
 	m_GfxHeader gfx_tileset_jabu_jabu_outside_3, $9701, $0f
 uniqueGfxHeader13:
-	m_GfxHeader gfx_tileset_underwater_2, $9301, $1f|$80
-	m_GfxHeader gfx_tileset_underwater_3, $9501, $1f|$80
-	m_GfxHeader gfx_tileset_underwater_4, $9701, $0f
+	m_GfxHeader gfx_tileset_underwater_common_1, $9301, $1f|$80
+	m_GfxHeader gfx_tileset_underwater_common_2, $9501, $1f|$80
+	m_GfxHeader gfx_tileset_underwater_common_3, $9701, $0f
 uniqueGfxHeader14: ; This actually references a palette
 	.db $00
 	.db PALH_63

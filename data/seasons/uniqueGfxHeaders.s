@@ -28,7 +28,7 @@ uniqueGfxHeader0b:
 uniqueGfxHeader0c:
 	m_GfxHeader gfx_tileset_unicorns_cave_entrance, $9601, $1f
 uniqueGfxHeader0d:
-	m_GfxHeader gfx_tileset_tarm_ruins_south, $9601, $1f
+	m_GfxHeader gfx_tileset_tarm_ruins_pedestal, $9601, $1f
 uniqueGfxHeader0e:
 	m_GfxHeader gfx_tileset_tarm_ruins_north, $9601, $1f
 uniqueGfxHeader0f:

@@ -1,3 +1,5 @@
+; See constants/gfxHeaders.s for more info.
+
 gfxHeaderTable:
 	.dw gfxHeader00
 	.dw gfxHeader01
@@ -428,28 +430,28 @@ gfxHeader3f:
 	m_GfxHeader gfx_dirt, $dc57, $03
 gfxHeader40:
 	m_GfxHeader gfx_tileset_overworld_standard, $8801, $5f|$80
-	m_GfxHeader gfx_tileset_overworld_present_city, $8e01, $4f|$80
+	m_GfxHeader gfx_tileset_overworld_present, $8e01, $4f|$80
 	m_GfxHeader gfx_tileset_lynna_city_1, $9301, $1f|$80
 	m_GfxHeader gfx_tileset_lynna_city_2, $9501, $1f|$80
 	m_GfxHeader gfx_tileset_lynna_city_3, $9701, $0f
 gfxHeader41:
 	m_GfxHeader gfx_tileset_overworld_standard, $8801, $5f|$80
-	m_GfxHeader gfx_tileset_overworld_forest, $8e01, $4f|$80
+	m_GfxHeader gfx_tileset_overworld_past, $8e01, $4f|$80
 	m_GfxHeader gfx_tileset_lynna_city_1, $9301, $1f|$80
 	m_GfxHeader gfx_tileset_lynna_city_2, $9501, $1f|$80
 	m_GfxHeader gfx_tileset_lynna_city_3, $9701, $0f
 gfxHeader42:
 	m_GfxHeader gfx_tileset_overworld_standard, $8801, $5f|$80
-	m_GfxHeader gfx_tileset_underwater_1, $8e01, $4f|$80
-	m_GfxHeader gfx_tileset_underwater_2, $9301, $1f|$80
-	m_GfxHeader gfx_tileset_underwater_3, $9501, $1f|$80
-	m_GfxHeader gfx_tileset_underwater_4, $9701, $0f
+	m_GfxHeader gfx_tileset_underwater_present, $8e01, $4f|$80
+	m_GfxHeader gfx_tileset_underwater_common_1, $9301, $1f|$80
+	m_GfxHeader gfx_tileset_underwater_common_2, $9501, $1f|$80
+	m_GfxHeader gfx_tileset_underwater_common_3, $9701, $0f
 gfxHeader43:
 	m_GfxHeader gfx_tileset_overworld_standard, $8801, $5f|$80
-	m_GfxHeader gfx_tileset_underwater_5, $8e01, $4f|$80
-	m_GfxHeader gfx_tileset_underwater_2, $9301, $1f|$80
-	m_GfxHeader gfx_tileset_underwater_3, $9501, $1f|$80
-	m_GfxHeader gfx_tileset_underwater_4, $9701, $0f
+	m_GfxHeader gfx_tileset_underwater_past, $8e01, $4f|$80
+	m_GfxHeader gfx_tileset_underwater_common_1, $9301, $1f|$80
+	m_GfxHeader gfx_tileset_underwater_common_2, $9501, $1f|$80
+	m_GfxHeader gfx_tileset_underwater_common_3, $9701, $0f
 gfxHeader44:
 	m_GfxHeader spr_seaweed_cut, $8001, $01
 gfxHeader45:
@@ -658,7 +660,7 @@ gfxHeader8c:
 	m_GfxHeader flg_credits_image4, $9801, $23
 gfxHeader8d:
 	m_GfxHeader gfx_tileset_overworld_standard, $8801, $5f|$80
-	m_GfxHeader gfx_tileset_overworld_present_city, $8e01, $4f|$80
+	m_GfxHeader gfx_tileset_overworld_present, $8e01, $4f|$80
 	m_GfxHeader gfx_tileset_credits, $9301, $3f|$80
 	m_GfxHeader map_credits_linked_scene1, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_scene1, $9801, $23
@@ -671,7 +673,7 @@ gfxHeader8e:
 	m_GfxHeader flg_credits_linked_image1, $9801, $23
 gfxHeader8f:
 	m_GfxHeader gfx_tileset_overworld_standard, $8801, $5f|$80
-	m_GfxHeader gfx_tileset_overworld_present_city, $8e01, $4f|$80
+	m_GfxHeader gfx_tileset_overworld_present, $8e01, $4f|$80
 	m_GfxHeader gfx_tileset_credits, $9301, $3f|$80
 	m_GfxHeader map_credits_linked_scene2, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_scene2, $9801, $23
@@ -689,7 +691,7 @@ gfxHeader90:
 	m_GfxHeader flg_credits_linked_image2, $9801, $23
 gfxHeader91:
 	m_GfxHeader gfx_tileset_overworld_standard, $8801, $5f|$80
-	m_GfxHeader gfx_tileset_overworld_present_city, $8e01, $4f|$80
+	m_GfxHeader gfx_tileset_overworld_present, $8e01, $4f|$80
 	m_GfxHeader gfx_tileset_credits, $9301, $3f|$80
 	m_GfxHeader map_credits_linked_scene3, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_scene3, $9801, $23
@@ -706,7 +708,7 @@ gfxHeader92:
 	m_GfxHeader flg_credits_linked_image3, $9801, $23
 gfxHeader93:
 	m_GfxHeader gfx_tileset_overworld_standard, $8801, $5f|$80
-	m_GfxHeader gfx_tileset_overworld_present_city, $8e01, $4f|$80
+	m_GfxHeader gfx_tileset_overworld_present, $8e01, $4f|$80
 	m_GfxHeader gfx_tileset_credits, $9301, $3f|$80
 	m_GfxHeader map_credits_linked_scene4, $9800, $23|$80
 	m_GfxHeader flg_credits_linked_scene4, $9801, $23

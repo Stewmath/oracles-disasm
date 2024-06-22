@@ -241,8 +241,8 @@
 	m_GfxData gfx_tileset_maku_tree_bottom ; $0b779a
 	m_GfxData gfx_tileset_maku_tree_top ; $0b7df4
 	m_GfxData gfx_tileset_overworld_standard ; $0b8283
-	m_GfxData gfx_tileset_overworld_present_city ; $0b8837
-	m_GfxData gfx_tileset_overworld_forest ; $0b8cc7
+	m_GfxData gfx_tileset_overworld_present ; $0b8837
+	m_GfxData gfx_tileset_overworld_past ; $0b8cc7
 	m_GfxData gfx_tileset_lynna_city_1 ; $0b91b3
 	m_GfxData gfx_tileset_lynna_city_2 ; $0b9330
 	m_GfxData gfx_tileset_lynna_city_3 ; $0b94e2
@@ -285,11 +285,11 @@
 	m_GfxData gfx_tileset_sea_of_no_return_1 ; $0bc02e
 	m_GfxData gfx_tileset_sea_of_no_return_2 ; $0bc035
 	m_GfxData gfx_tileset_sea_of_no_return_3 ; $0bc0f7
-	m_GfxData gfx_tileset_underwater_1 ; $0bc1ae
-	m_GfxData gfx_tileset_underwater_5 ; $0bc666
-	m_GfxData gfx_tileset_underwater_2 ; $0bcb51
-	m_GfxData gfx_tileset_underwater_3 ; $0bcd33
-	m_GfxData gfx_tileset_underwater_4 ; $0bcf33
+	m_GfxData gfx_tileset_underwater_present ; $0bc1ae
+	m_GfxData gfx_tileset_underwater_past ; $0bc666
+	m_GfxData gfx_tileset_underwater_common_1 ; $0bcb51
+	m_GfxData gfx_tileset_underwater_common_2 ; $0bcd33
+	m_GfxData gfx_tileset_underwater_common_3 ; $0bcf33
 	m_GfxData gfx_tileset_jabu_jabu_outside_1 ; $0bd033
 	m_GfxData gfx_tileset_jabu_jabu_outside_2 ; $0bd1cf
 	m_GfxData gfx_tileset_jabu_jabu_outside_3 ; $0bd351
