@@ -245,6 +245,7 @@ gfxHeader08:
 	m_GfxHeader spr_quest_items_4, $8e01, $1f|$80
 	m_GfxHeader map_inventory_textbar, $d1e4, $05|$80
 	m_GfxHeader flg_inventory_textbar, $d5e4, $05|$80
+	; Fall through
 gfxHeader09:
 	m_GfxHeader map_inventory_screen_1, $d044, $19|$80
 	m_GfxHeader flg_inventory_screen_1, $d444, $19
@@ -916,6 +917,7 @@ gfxHeaderae:
 	m_GfxHeader map_file_menu_bottom, $d1e4, $05|$80
 	m_GfxHeader flg_file_menu_bottom, $d5e4, $05|$80
 	m_GfxHeader gfx_linking, $8801, $1f|$80
+	; Fall through
 gfxHeaderaf:
 	m_GfxHeader gfx_quit, $8a01, $13
 gfxHeaderb0:
