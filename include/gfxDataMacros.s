@@ -65,6 +65,56 @@
 	.endif
 .endm
 
+.enum 0
+	GFX_HEADER_MODE_NORMAL:	 db
+	GFX_HEADER_MODE_ANIM:	db
+	GFX_HEADER_MODE_FORCE:	db
+.ende
+
+; Helper macro used for defining other macros with slightly different parameters. See the other
+; macros (ie. m_GfxHeader) for descriptions.
+.macro m_GfxHeaderHelper
+	.define m_GfxHeaderMode \1
+	.shift
+
+	.if m_GfxHeaderMode == GFX_HEADER_MODE_FORCE
+		.db (:\1) | ((\4)<<6)
+	.else
+		.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
+		.fread m_GfxHeaderFile mode ; First byte of .cmp file is compression mode
+		.fclose m_GfxHeaderFile
+		.db (:\1) | (mode<<6)
+		.undefine mode
+	.endif
+
+	.if m_GfxHeaderMode != GFX_HEADER_MODE_FORCE && NARGS >= 4
+		dwbe (\1)+(\4)
+	.else
+		dwbe \1
+	.endif
+
+	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
+		dwbe (\2)|(:\2)
+	.else
+		dwbe \2
+	.endif
+
+	.if m_GfxHeaderMode == GFX_HEADER_MODE_NORMAL
+		; Mark "continue" bit on last defined gfx header entry
+		.ifdef CURRENT_GFX_HEADER_INDEX
+			.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT $80
+		.endif
+
+		.redefine CURRENT_GFX_HEADER_INDEX \@
+
+		.db (\3) | GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT
+	.else
+		.db \3
+	.endif
+
+	.undefine m_GfxHeaderMode
+.endm
+
 ; Define gfx header entry with optional 4th argument to skip into part of the graphics.
 ;
 ; Whenever this is used, you MUST also use m_GfxHeaderEnd at some point after it!
@@ -76,86 +126,28 @@
 ; Arg 4: Skip first X bytes of graphics file (optional).
 ;        Will only work with uncompressed graphics.
 .macro m_GfxHeader
-	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
-	.fread m_GfxHeaderFile mode ; First byte of .cmp file is compression mode
-	.fclose m_GfxHeaderFile
-
-	.db (:\1) | (mode<<6)
-	.if NARGS >= 4
-		dwbe (\1)+(\4)
+	.if NARGS == 4
+		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2,\3,\4
 	.else
-		dwbe \1
+		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2,\3
 	.endif
-
-	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
-		dwbe (\2)|(:\2)
-	.else
-		dwbe \2
-	.endif
-
-	; Mark "continue" bit on last defined gfx header entry
-	.ifdef CURRENT_GFX_HEADER_INDEX
-		.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT $80
-	.endif
-
-	.redefine CURRENT_GFX_HEADER_INDEX \@
-
-	.db (\3) | GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT
-
-	.undefine mode
 .endm
 
 ; Identical to above except continue bit is never set. Bypasses the weird system for that which
 ; makes it simpler in general (and m_GfxHeaderEnd is not required when using it).
 .macro m_GfxHeaderAnim
-	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
-	.fread m_GfxHeaderFile mode
-	.fclose m_GfxHeaderFile
-
-	.db (:\1) | (mode<<6)
-	.if NARGS >= 4
-		dwbe (\1)+(\4)
+	.if NARGS == 4
+		m_GfxHeaderHelper GFX_HEADER_MODE_ANIM,\1,\2,\3,\4
 	.else
-		dwbe \1
+		m_GfxHeaderHelper GFX_HEADER_MODE_ANIM,\1,\2,\3
 	.endif
-
-	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
-		dwbe (\2)|(:\2)
-	.else
-		dwbe \2
-	.endif
-
-	.db \3
-
-	.undefine mode
 .endm
 
-; Same as m_GfxHeaderAnim but has a compression mode override as the optional 4th argument. This
-; really isn't important, there's just an unusable gfx header in ages that needs the mode override
-; to be able to define it. Obviously, it doesn't do anything useful.
+; Same as m_GfxHeaderAnim but has a compression mode override as the 4th argument. This really isn't
+; important, there's just an unusable gfx header in ages that needs the mode override to be able to
+; define it. Obviously, it doesn't do anything useful.
 .macro m_GfxHeaderForceMode
-	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
-	.fread m_GfxHeaderFile mode
-	.fclose m_GfxHeaderFile
-
-	.IF NARGS == 4
-		; Mode override
-		.db :\1 | (\4<<6)
-	.ELSE
-		.db :\1 | (mode<<6)
-	.ENDIF
-
-	dwbe \1
-
-	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
-		dwbe (\2)|(:\2)
-	.else
-		dwbe \2
-	.endif
-
-	.db \3
-
-	.undefine mode
+	m_GfxHeaderHelper GFX_HEADER_MODE_FORCE,\1,\2,\3,\4
 .endm
 
 ; Define graphics header with the source being from RAM
