@@ -58,6 +58,8 @@
 ; As it's using a define with "\@" in its name, which is the number of times the current macro has
 ; been called, it's important to not copy/paste this into multiple macros.
 .macro m_GfxHeaderContinueHelper
+	.assert \1 >= 0 && \1 <= $7f
+
 	; Mark "continue" bit on last defined gfx header entry
 	.ifdef CURRENT_GFX_HEADER_INDEX
 		.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT $80
@@ -108,11 +110,17 @@
 	; If size parameter is not passed, infer it from the file
 	.if NARGS < 3
 		.define size_byte (decompressed_size / 16) - 1
+		.if size_byte < 0 || size_byte >= 0x80
+			.fail "GFX file \1 is too large?"
+		.endif
 	.elif m_GfxHeaderMode == GFX_HEADER_MODE_FORCE
 		; Just set the continue bit on these. They're malformed, they're only used once, we
 		; don't need to implement this properly.
 		.define size_byte ((\3) - 1) | $80
 	.else
+		.if !((\3) >= 1 && (\3) <= $80)
+			.fail "\1: GFX Header size byte must be between $01 and $80, inclusive."
+		.endif
 		.define size_byte (\3) - 1
 	.endif
 
@@ -138,9 +146,10 @@
 ; Arg 1: gfx file (without extension)
 ; Arg 2: destination (usually vram).
 ;        Address MUST be a multiple of 16. The lower 4 bits, if present, are the bank number.
-; Arg 3 (optional): Size byte. If omitted, include the entire file.
+; Arg 3 (optional): Size byte. This many bytes times 16 are loaded. Valid values: $01-$80.
+;                   If omitted, include the entire file.
 ; Arg 4 (optional): Skip first X bytes of graphics file.
-;        Will only work with uncompressed graphics.
+;                   Will only work with uncompressed graphics.
 .macro m_GfxHeader
 	.if NARGS == 4
 		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2,\3,\4
