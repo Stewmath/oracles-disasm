@@ -302,40 +302,52 @@
 	.dw ((\1) - (\2)&$ffff
 .ENDM
 
-; Macro which allows data to cross over banks, used for map layout data.
-; Doesn't support more than 1 bank crossing at a time
-; Must have DATA_ADDR and DATA_BANK defined before use.
-; ARG 1: name
-.macro m_RoomLayoutData
-	.fopen {"{BUILD_DIR}/rooms/\1.cmp"} m_DataFile
-	.fsize m_DataFile SIZE
-	.fclose m_DataFile
+; Macro to .incbin data while allowing it to cross over banks. This depends on the use of .BANK and
+; .ORG to precisely set the address, therefore this will not work in sections.
+;
+; Must define DATA_ADDR and DATA_BANK, corresponding to the current address, prior to using this
+; (the linker gets no say in its placement).
+;
+; Arguments:
+;   \1: Filename (should be a ".cmp" file)
+;   \2: Number of bytes in ".cmp" file header (these bytes are not included)
+.macro m_IncbinCrossBankData
+	.fopen \1 file
+	.fsize file SIZE
+	.fclose file
 
-	.redefine SIZE SIZE-1 ; Skip .cmp file "header"
+	.redefine SIZE SIZE-\2 ; Skip .cmp file "header"
 
-	\1:
-
-	.if SIZE >= 1 && DATA_ADDR + SIZE >= $8000
+	.if SIZE >= 1
+	.if DATA_ADDR + SIZE >= $8000
 		.define DATA_READAMOUNT $8000-DATA_ADDR
 
-		.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP 1 READ DATA_READAMOUNT
+		.incbin \1 SKIP \2 READ DATA_READAMOUNT
 
 		.redefine DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
 
 		.if DATA_READAMOUNT < SIZE
-			.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP DATA_READAMOUNT+1
+			.incbin \1 SKIP DATA_READAMOUNT+\2
 		.endif
 
 		.redefine DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
 		.undefine DATA_READAMOUNT
 	.else
-		.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP 1
+		.incbin \1 SKIP \2
 		.redefine DATA_ADDR DATA_ADDR + SIZE
+	.endif
 	.endif
 
 	.undefine SIZE
+.endm
+
+; Incbin room layout data, can cross over banks.
+; ARG 1: name
+.macro m_RoomLayoutData
+	\1:
+	m_IncbinCrossBankData {"{BUILD_DIR}/rooms/\1.cmp"}, 1
 .endm
 
 ; Pointer to room data defined with m_RoomLayoutData

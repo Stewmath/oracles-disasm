@@ -1,33 +1,7 @@
-; Macro to .incbin gfx data while allowing it to cross over banks.
-; Must define DATA_ADDR and DATA_BANK prior to use (linker gets no say in its placement).
+; Incbin gfx data, can cross over banks. Pass filename without extension as parameter.
 .macro m_GfxData
-	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxDataFile
-	.fsize m_GfxDataFile SIZE
-	.fclose m_GfxDataFile
-
-	.redefine SIZE SIZE-3 ; Skip .cmp file "header"
-
-	.if DATA_ADDR + SIZE >= $8000
-		.define DATA_READAMOUNT $8000-DATA_ADDR
-
-		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3 READ DATA_READAMOUNT
-
-		.redefine DATA_BANK DATA_BANK+1
-		.BANK DATA_BANK SLOT 1
-		.ORGA $4000
-
-		.if DATA_READAMOUNT < SIZE
-			.incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP DATA_READAMOUNT+3
-		.endif
-
-		.redefine DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
-		.undefine DATA_READAMOUNT
-	.else
-		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3
-		.redefine DATA_ADDR DATA_ADDR + SIZE
-	.endif
-
-	.undefine SIZE
+	\1:
+	m_IncbinCrossBankData {"{BUILD_DIR}/gfx/\1.cmp"}, 3
 .endm
 
 ; Same as last, but doesn't support inter-bank stuff, so DATA_ADDR and DATA_BANK
