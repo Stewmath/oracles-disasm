@@ -1,36 +1,43 @@
-; Macro which allows graphics data to cross over banks
+; Macro to .incbin gfx data while allowing it to cross over banks.
+; Must define DATA_ADDR and DATA_BANK prior to use (linker gets no say in its placement).
 .macro m_GfxData
-	.FOPEN {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxDataFile
-	.FSIZE m_GfxDataFile SIZE
-	.FCLOSE m_GfxDataFile
-	.REDEFINE SIZE SIZE-1
+	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxDataFile
+	.fsize m_GfxDataFile SIZE
+	.fclose m_GfxDataFile
 
-	.IF DATA_ADDR + SIZE >= $8000
-		.REDEFINE DATA_READAMOUNT $8000-DATA_ADDR
-		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 1 READ DATA_READAMOUNT
-		.REDEFINE DATA_BANK DATA_BANK+1
+	.redefine SIZE SIZE-3 ; Skip .cmp file "header"
+
+	.if DATA_ADDR + SIZE >= $8000
+		.define DATA_READAMOUNT $8000-DATA_ADDR
+
+		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3 READ DATA_READAMOUNT
+
+		.redefine DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
-		.IF DATA_READAMOUNT < SIZE
-			.incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP DATA_READAMOUNT+1
-		.ENDIF
-		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
-	.ELSE
-		\1: .incbin {"{BUILD_DIR}/gfx//\1.cmp"} SKIP 1
-		.REDEFINE DATA_ADDR DATA_ADDR + SIZE
-	.ENDIF
 
-	.UNDEFINE SIZE
+		.if DATA_READAMOUNT < SIZE
+			.incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP DATA_READAMOUNT+3
+		.endif
+
+		.redefine DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
+		.undefine DATA_READAMOUNT
+	.else
+		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3
+		.redefine DATA_ADDR DATA_ADDR + SIZE
+	.endif
+
+	.undefine SIZE
 .endm
 
 ; Same as last, but doesn't support inter-bank stuff, so DATA_ADDR and DATA_BANK
 ; don't need to be defined beforehand.
 .macro m_GfxDataSimple
-	.IF NARGS == 2
-		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 1+(\2)
-	.ELSE
-		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 1
-	.ENDIF
+	.if NARGS == 2
+		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3+(\2)
+	.else
+		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3
+	.endif
 .endm
 
 ; Start of a gfx header. Creates a label at the current position (ie. gfxHeader00:) and an exported
@@ -87,28 +94,35 @@
 	.db (\1) | GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT
 .endm
 
-; Helper macro used for defining other macros with slightly different parameters. See the other
-; macros (ie. m_GfxHeader) for descriptions.
+; Helper macro used for defining other macros with slightly varying parameters. See the other macros
+; (ie. m_GfxHeader) for descriptions.
 .macro m_GfxHeaderHelper
 	.define m_GfxHeaderMode \1
 	.shift
 
+	; Read metadata from .cmp file
+	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
+	.fread m_GfxHeaderFile cmp_mode ; First byte of .cmp file is compression mode
+	.fread m_GfxHeaderFile decompressed_size_l ; Bytes 2-3 are the decompressed size
+	.fread m_GfxHeaderFile decompressed_size_h
+	.fclose m_GfxHeaderFile
+	.define decompressed_size (decompressed_size_l | (decompressed_size_h<<8))
+
+	; Byte 1: Source bank number & compression mode
 	.if m_GfxHeaderMode == GFX_HEADER_MODE_FORCE
 		.db (:\1) | ((\4)<<6)
 	.else
-		.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
-		.fread m_GfxHeaderFile mode ; First byte of .cmp file is compression mode
-		.fclose m_GfxHeaderFile
-		.db (:\1) | (mode<<6)
-		.undefine mode
+		.db (:\1) | (cmp_mode<<6)
 	.endif
 
+	; Bytes 2-3: Source address
 	.if m_GfxHeaderMode != GFX_HEADER_MODE_FORCE && NARGS >= 4
 		dwbe (\1)+(\4)
 	.else
 		dwbe \1
 	.endif
 
+	; Bytes 4-5: Destination address & destination bank
 	; If arg 2 (destination) isn't a label, we'll just assume that the bank number is already
 	; baked into the parameter being passed.
 	.if \?2 == ARG_LABEL || \?2 == ARG_PENDING_CALCULATION
@@ -117,30 +131,44 @@
 		dwbe \2
 	.endif
 
-	.if m_GfxHeaderMode == GFX_HEADER_MODE_NORMAL
-		m_GfxHeaderContinueHelper \3
+	; If size parameter is not passed, infer it from the file
+	.if NARGS < 3
+		.define size_byte (decompressed_size / 16) - 1
 	.else
-		.db \3
+		.define size_byte \3
+	.endif
+
+	; Byte 6: Size / continue bit
+	.if m_GfxHeaderMode == GFX_HEADER_MODE_NORMAL
+		m_GfxHeaderContinueHelper size_byte
+	.else
+		.db size_byte
 	.endif
 
 	.undefine m_GfxHeaderMode
+	.undefine cmp_mode
+	.undefine decompressed_size_l
+	.undefine decompressed_size_h
+	.undefine decompressed_size
+	.undefine size_byte
 .endm
 
-; Define gfx header entry with optional 4th argument to skip into part of the graphics.
+; Define a gfx header entry (a reference to graphics paired with a destination to load it to).
 ;
 ; Whenever this is used, you MUST also use m_GfxHeaderEnd at some point after it!
 ;
 ; Arg 1: gfx file (without extension)
 ; Arg 2: destination (usually vram)
-; Arg 3: Size (byte; divided by 16, minus 1)
-;        If bit 7 is set, there's another gfx header after this to be read.
-; Arg 4: Skip first X bytes of graphics file (optional).
+; Arg 3 (optional): Size byte. If omitted, include the entire file.
+; Arg 4 (optional): Skip first X bytes of graphics file.
 ;        Will only work with uncompressed graphics.
 .macro m_GfxHeader
 	.if NARGS == 4
 		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2,\3,\4
-	.else
+	.elif NARGS == 3
 		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2,\3
+	.else
+		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2
 	.endif
 .endm
 

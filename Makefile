@@ -250,7 +250,7 @@ endef
 define define_uncmp_gfx_rules
 $(BUILD_DIR)/gfx/$(basename $(notdir $(1))).cmp: $(BUILD_DIR)/gfx/$(basename $(notdir $(1))).bin
 	@echo "Converting $$<..."
-	@printf '\x00' | cat - $$< > $$@
+	@$$(PYTHON) tools/build/compressGfx.py --mode 0 $$< $$@
 endef
 
 # Rule for handling compressible files

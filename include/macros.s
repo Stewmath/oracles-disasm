@@ -307,31 +307,35 @@
 ; Must have DATA_ADDR and DATA_BANK defined before use.
 ; ARG 1: name
 .macro m_RoomLayoutData
-	.FOPEN {"{BUILD_DIR}/rooms/\1.cmp"} m_DataFile
-	.FSIZE m_DataFile SIZE
-	.FCLOSE m_DataFile
-	.REDEFINE SIZE SIZE-1
+	.fopen {"{BUILD_DIR}/rooms/\1.cmp"} m_DataFile
+	.fsize m_DataFile SIZE
+	.fclose m_DataFile
+
+	.redefine SIZE SIZE-1 ; Skip .cmp file "header"
 
 	\1:
 
-	.IF SIZE >= 1
-	.IF DATA_ADDR + SIZE >= $8000
-		.REDEFINE DATA_READAMOUNT $8000-DATA_ADDR
+	.if SIZE >= 1 && DATA_ADDR + SIZE >= $8000
+		.define DATA_READAMOUNT $8000-DATA_ADDR
+
 		.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP 1 READ DATA_READAMOUNT
-		.REDEFINE DATA_BANK DATA_BANK+1
+
+		.redefine DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
-		.IF DATA_READAMOUNT < SIZE
-			.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP DATA_READAMOUNT+1
-		.ENDIF
-		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
-	.ELSE
-		.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP 1
-		.REDEFINE DATA_ADDR DATA_ADDR + SIZE
-	.ENDIF
-	.ENDIF
 
-	.UNDEFINE SIZE
+		.if DATA_READAMOUNT < SIZE
+			.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP DATA_READAMOUNT+1
+		.endif
+
+		.redefine DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
+		.undefine DATA_READAMOUNT
+	.else
+		.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP 1
+		.redefine DATA_ADDR DATA_ADDR + SIZE
+	.endif
+
+	.undefine SIZE
 .endm
 
 ; Pointer to room data defined with m_RoomLayoutData
