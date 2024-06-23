@@ -140,15 +140,15 @@ uncmpGfxHeader1b:
 	m_GfxHeaderEnd
 
 uncmpGfxHeader1c:
-	m_GfxHeader spr_rod_of_seasons, $8521, $09
+	m_GfxHeader spr_rod_of_seasons, $8521
 	m_GfxHeaderEnd
 
 uncmpGfxHeader1d:
-	m_GfxHeader spr_slingshot, $8521, $07
+	m_GfxHeader spr_slingshot, $8521
 	m_GfxHeaderEnd
 
 uncmpGfxHeader1e:
-	m_GfxHeader spr_magnet_gloves, $8521, $07
+	m_GfxHeader spr_magnet_gloves, $8521
 	m_GfxHeaderEnd
 
 uncmpGfxHeader1f:

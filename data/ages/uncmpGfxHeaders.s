@@ -143,17 +143,17 @@ uncmpGfxHeader1b:
 	m_GfxHeaderEnd
 
 uncmpGfxHeader1c:
-	m_GfxHeader spr_cane_of_somaria, $8521, $09
+	m_GfxHeader spr_cane_of_somaria, $8521
 	m_GfxHeaderEnd
 
 uncmpGfxHeader1d:
-	m_GfxHeader spr_seed_shooter, $8521, $09
+	m_GfxHeader spr_seed_shooter, $8521
 	m_GfxHeaderEnd
 
 uncmpGfxHeader1e:
 
 uncmpGfxHeader1f:
-	m_GfxHeader spr_switch_hook, $8521, $0b
+	m_GfxHeader spr_switch_hook, $8521
 	m_GfxHeaderEnd
 
 uncmpGfxHeader20:
@@ -251,8 +251,8 @@ uncmpGfxHeader36:
 	m_GfxHeaderEnd
 
 uncmpGfxHeader37:
-	m_GfxHeader gfx_past_chest, $8a91, $02
-	m_GfxHeader gfx_past_sign,  $8dc1, $03
+	m_GfxHeader gfx_past_chest, $8a91
+	m_GfxHeader gfx_past_sign,  $8dc1
 	m_GfxHeaderEnd
 
 uncmpGfxHeader38:
@@ -263,11 +263,11 @@ uncmpGfxHeader38:
 uncmpGfxHeader39:
 
 uncmpGfxHeader3a:
-	m_GfxHeader spr_impa_fainted, $8601, $03
+	m_GfxHeader spr_impa_fainted, $8601
 	m_GfxHeaderEnd
 
 uncmpGfxHeader3b:
-	m_GfxHeader spr_raft, $8601, $07
+	m_GfxHeader spr_raft, $8601
 	m_GfxHeaderEnd
 
 uncmpGfxHeader3c:
