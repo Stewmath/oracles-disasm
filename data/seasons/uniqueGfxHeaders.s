@@ -71,12 +71,12 @@ uniqueGfxHeader11:
 
 uniqueGfxHeader12:
 	m_GfxHeader gfx_tileset_western_coast, $9601
-	m_GfxHeader gfx_animations_2, $88c1, $03
+	m_GfxHeader gfx_animations_2, $88c1, $04
 	m_GfxHeaderEnd
 
 uniqueGfxHeader13:
 	m_GfxHeader gfx_tileset_explorers_crypt_entrance, $9601
-	m_GfxHeader gfx_animations_2, $88c1, $03
+	m_GfxHeader gfx_animations_2, $88c1, $04
 	m_GfxHeaderEnd
 
 uniqueGfxHeader14:
@@ -136,7 +136,7 @@ uniqueGfxHeader1e:
 	m_GfxHeaderEnd SEASONS_PALH_52
 
 uniqueGfxHeader1f:
-	m_GfxHeader gfx_animations_1, $8881, $07, $40
+	m_GfxHeader gfx_animations_1, $8881, $08, $40
 	m_GfxHeaderEnd
 
 uniqueGfxHeader20:

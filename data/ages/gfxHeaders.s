@@ -65,13 +65,13 @@ m_GfxHeaderStart $04, GFXH_JAPANESE_INTRO_SCREEN
 	; This used to be the data for the japanese intro graphics, but now it points to
 	; gfx_capcom_nintendo with the wrong compression mode. Who knows what would happen if you
 	; tried to load it.
-	m_GfxHeaderForceMode gfx_capcom_nintendo, $9801, $7f|$80, $00
-	m_GfxHeaderForceMode gfx_capcom_nintendo, $9800, $7f|$80, $00
-	m_GfxHeaderForceMode gfx_capcom_nintendo, $8800, $7f|$80, $00
-	m_GfxHeaderForceMode gfx_capcom_nintendo, $9000, $7f|$80, $00
+	m_GfxHeaderForceMode gfx_capcom_nintendo, $9801, $80, $00
+	m_GfxHeaderForceMode gfx_capcom_nintendo, $9800, $80, $00
+	m_GfxHeaderForceMode gfx_capcom_nintendo, $8800, $80, $00
+	m_GfxHeaderForceMode gfx_capcom_nintendo, $9000, $80, $00
 
 m_GfxHeaderStart $05, GFXH_SECRET_LIST_MENU
-	m_GfxHeader spr_minimap_icons, $8000, $1f
+	m_GfxHeader spr_minimap_icons, $8000, $20
 	m_GfxHeader gfx_secret_list_menu, $8700
 	m_GfxHeader map_secret_list_menu, $9c00
 	m_GfxHeader flg_secret_list_menu, $9c01
@@ -813,7 +813,7 @@ m_GfxHeaderStart $96, GFXH_TO_BE_CONTINUED
 
 m_GfxHeaderStart $97, GFXH_SECRET_FOR_LINKED_GAME
 	m_GfxHeader spr_fileselect_decorations, $8200
-	m_GfxHeader gfx_hud, $9000, $07
+	m_GfxHeader gfx_hud, $9000, $08
 	m_GfxHeader gfx_hud, $9001
 	m_GfxHeader gfx_fileselect, $9201
 	m_GfxHeader gfx_secrettoholodrum, $8801
@@ -896,7 +896,7 @@ m_GfxHeaderStart $9e, GFXH_INTRO_TEMPLE_SCENE
 	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801
 	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001
 	m_GfxHeader gfx_tileset_maku_path, $9401
-	m_GfxHeader gfx_hud, $9000, $07
+	m_GfxHeader gfx_hud, $9000, $08
 	m_GfxHeader map_intro_triforce_room, $9800
 	m_GfxHeader flg_intro_triforce_room, $9801
 	m_GfxHeader map_intro_triforce_room, w3VramTiles
@@ -917,8 +917,8 @@ m_GfxHeaderStart $9f, GFXH_TITLESCREEN_TREE_SCROLL
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $a0, GFXH_FILE_MENU_GFX
-	m_GfxHeader spr_link, $8000, $1f, $200
-	m_GfxHeader spr_rod_of_seasons, $81a0, $03
+	m_GfxHeader spr_link, $8000, $20, $200
+	m_GfxHeader spr_rod_of_seasons, $81a0, $04
 	m_GfxHeader gfx_hud, $9000
 	m_GfxHeader gfx_hud, $9001
 	m_GfxHeader spr_fileselect_decorations, $8200
@@ -930,8 +930,8 @@ m_GfxHeaderStart $ba, GFXH_FILE_MENU_WITH_MESSAGE_SPEED
 	m_GfxHeader flg_file_menu_message_speed, w4AttributeMap+$240
 	; Fall through
 m_GfxHeaderStart $a1, GFXH_FILE_MENU
-	m_GfxHeader spr_din_1, $8001, $05
-	m_GfxHeader spr_nayru_1, $8061, $03
+	m_GfxHeader spr_din_1, $8001, $06
+	m_GfxHeader spr_nayru_1, $8061, $04
 	m_GfxHeader gfx_messagespeed, $9200
 	m_GfxHeader gfx_pickafile_2, $8801
 	m_GfxHeader gfx_copy, $8a01

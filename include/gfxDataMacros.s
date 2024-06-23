@@ -108,8 +108,12 @@
 	; If size parameter is not passed, infer it from the file
 	.if NARGS < 3
 		.define size_byte (decompressed_size / 16) - 1
+	.elif m_GfxHeaderMode == GFX_HEADER_MODE_FORCE
+		; Just set the continue bit on these. They're malformed, they're only used once, we
+		; don't need to implement this properly.
+		.define size_byte ((\3) - 1) | $80
 	.else
-		.define size_byte \3
+		.define size_byte (\3) - 1
 	.endif
 
 	; Byte 6: Size / continue bit
@@ -180,7 +184,7 @@
 	.endif
 
 	dwbe \2
-	m_GfxHeaderContinueHelper \3
+	m_GfxHeaderContinueHelper (\3) - 1
 .endm
 
 ; Define object gfx header entry.

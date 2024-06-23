@@ -44,7 +44,7 @@ m_GfxHeaderStart $04, GFXH_JAPANESE_INTRO_SCREEN
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $05, GFXH_SECRET_LIST_MENU
-	m_GfxHeader spr_minimap_icons, $8000, $1f
+	m_GfxHeader spr_minimap_icons, $8000, $20
 	m_GfxHeader gfx_secret_list_menu, $8700
 	m_GfxHeader map_secret_list_menu, $9c00
 	m_GfxHeader flg_secret_list_menu, $9c01
@@ -645,14 +645,14 @@ m_GfxHeaderStart $7a, GFXH_7a
 m_GfxHeaderStart $7b, GFXH_7b
 
 m_GfxHeaderStart $7c, GFXH_TILESET_INDOORS
-	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $20
 	m_GfxHeader gfx_tileset_indoors_1, $8a01
 	m_GfxHeader gfx_tileset_indoors_2, $9001
 	m_GfxHeader gfx_tileset_vases, $8861
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $7d, GFXH_TILESET_CAVE
-	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $20
 	m_GfxHeader gfx_tileset_cave_1, $8a01
 	m_GfxHeader gfx_tileset_cave_2, $9001
 	m_GfxHeader gfx_tileset_cave_replacement, $8861
@@ -661,7 +661,7 @@ m_GfxHeaderStart $7d, GFXH_TILESET_CAVE
 m_GfxHeaderStart $7e, GFXH_7e
 
 m_GfxHeaderStart $7f, GFXH_TILESET_SUBROSIA_INDOORS
-	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $1f
+	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801, $20
 	m_GfxHeader gfx_tileset_subrosia_indoors_1, $8a01
 	m_GfxHeader gfx_tileset_subrosia_indoors_2, $9001
 	m_GfxHeader gfx_tileset_subrosia_indoors_replacement, $8861
@@ -803,7 +803,7 @@ m_GfxHeaderStart $90, GFXH_CREDITS_LINKED_IMAGE2
 	m_GfxHeader spr_credits_font_nakanowatari, $8400
 	m_GfxHeader spr_credits_font_programmers, $8600
 	m_GfxHeader gfx_credits_linked_image1_1, $8800
-	m_GfxHeader gfx_credits_linked_image1_2, $9000, $60
+	m_GfxHeader gfx_credits_linked_image1_2, $9000, $61
 	m_GfxHeader map_credits_linked_image1, $9800
 	m_GfxHeader flg_credits_linked_image1, $9801
 	m_GfxHeaderEnd
@@ -874,7 +874,7 @@ m_GfxHeaderStart $96, GFXH_DRAGON_ONOX
 
 m_GfxHeaderStart $97, GFXH_SECRET_FOR_LINKED_GAME
 	m_GfxHeader spr_fileselect_decorations, $8200
-	m_GfxHeader gfx_hud, $9000, $07
+	m_GfxHeader gfx_hud, $9000, $08
 	m_GfxHeader gfx_hud, $9001
 	m_GfxHeader gfx_fileselect, $9201
 	m_GfxHeader gfx_secrettolabrynna, $8801
@@ -950,7 +950,7 @@ m_GfxHeaderStart $9e, GFXH_INTRO_TEMPLE_SCENE
 	m_GfxHeader gfx_tileset_dungeon_standard_1, $8801
 	m_GfxHeader gfx_tileset_dungeon_standard_2, $9001
 	m_GfxHeader gfx_tileset_tarm_ruins, $9401
-	m_GfxHeader gfx_hud, $9000, $07
+	m_GfxHeader gfx_hud, $9000, $08
 	m_GfxHeader map_intro_triforce_room, $9800
 	m_GfxHeader flg_intro_triforce_room, $9801
 	m_GfxHeader map_intro_triforce_room, w3VramTiles
@@ -971,8 +971,8 @@ m_GfxHeaderStart $9f, GFXH_TITLESCREEN_TREE_SCROLL
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $a0, GFXH_FILE_MENU_GFX
-	m_GfxHeader spr_link, $8000, $1f, $200
-	m_GfxHeader spr_rod_of_seasons, $81a0, $03
+	m_GfxHeader spr_link, $8000, $20, $200
+	m_GfxHeader spr_rod_of_seasons, $81a0, $04
 	m_GfxHeader gfx_hud, $9000
 	m_GfxHeader gfx_hud, $9001
 	m_GfxHeader spr_fileselect_decorations, $8200
@@ -984,8 +984,8 @@ m_GfxHeaderStart $ba, GFXH_FILE_MENU_WITH_MESSAGE_SPEED
 	m_GfxHeader flg_file_menu_message_speed, w4AttributeMap+$240
 	; Fall through
 m_GfxHeaderStart $a1, GFXH_FILE_MENU
-	m_GfxHeader spr_din_1, $8001, $05
-	m_GfxHeader spr_nayru, $8061, $03
+	m_GfxHeader spr_din_1, $8001, $06
+	m_GfxHeader spr_nayru, $8061, $04
 	m_GfxHeader gfx_messagespeed, $9200
 	m_GfxHeader gfx_pickafile_2, $8801
 	m_GfxHeader gfx_copy, $8a01
