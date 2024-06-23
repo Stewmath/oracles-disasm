@@ -132,7 +132,8 @@
 ; Whenever this is used, you MUST also use m_GfxHeaderEnd at some point after it!
 ;
 ; Arg 1: gfx file (without extension)
-; Arg 2: destination (usually vram)
+; Arg 2: destination (usually vram).
+;        Address MUST be a multiple of 16. The lower 4 bits, if present, are the bank number.
 ; Arg 3 (optional): Size byte. If omitted, include the entire file.
 ; Arg 4 (optional): Skip first X bytes of graphics file.
 ;        Will only work with uncompressed graphics.

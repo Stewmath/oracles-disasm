@@ -102,22 +102,22 @@ m_GfxHeaderStart $08, GFXH_INVENTORY_SCREEN
 	m_GfxHeader spr_quest_items_2, $8a01
 	m_GfxHeader spr_quest_items_3, $8c01
 	m_GfxHeader spr_quest_items_4, $8e01
-	m_GfxHeader map_inventory_textbar, w4TileMap+$1e4
-	m_GfxHeader flg_inventory_textbar, w4AttributeMap+$1e4
+	m_GfxHeader map_inventory_textbar, w4TileMap+$1e0
+	m_GfxHeader flg_inventory_textbar, w4AttributeMap+$1e0
 	; Fall through
 m_GfxHeaderStart $09, GFXH_INVENTORY_SUBSCREEN_1
-	m_GfxHeader map_inventory_screen_1, w4TileMap+$044
-	m_GfxHeader flg_inventory_screen_1, w4AttributeMap+$044
+	m_GfxHeader map_inventory_screen_1, w4TileMap+$040
+	m_GfxHeader flg_inventory_screen_1, w4AttributeMap+$040
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $0a, GFXH_INVENTORY_SUBSCREEN_2
-	m_GfxHeader map_inventory_screen_2, w4TileMap+$064
-	m_GfxHeader flg_inventory_screen_2, w4AttributeMap+$064
+	m_GfxHeader map_inventory_screen_2, w4TileMap+$060
+	m_GfxHeader flg_inventory_screen_2, w4AttributeMap+$060
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $0b, GFXH_INVENTORY_SUBSCREEN_3
-	m_GfxHeader map_inventory_screen_3, w4TileMap+$044
-	m_GfxHeader flg_inventory_screen_3, w4AttributeMap+$044
+	m_GfxHeader map_inventory_screen_3, w4TileMap+$040
+	m_GfxHeader flg_inventory_screen_3, w4AttributeMap+$040
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $0c, GFXH_NAYRU_SINGING_CUTSCENE
@@ -235,8 +235,8 @@ m_GfxHeaderStart $22, GFXH_HUD_LAYOUT_EXTRA_HEARTS
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $23, GFXH_HUD_LAYOUT_BIGGORON_SWORD
-	m_GfxHeader map_hud_biggoron_sword, w4TileMap+$244
-	m_GfxHeader flg_hud_biggoron_sword, w4AttributeMap+$244
+	m_GfxHeader map_hud_biggoron_sword, w4TileMap+$240
+	m_GfxHeader flg_hud_biggoron_sword, w4AttributeMap+$240
 	m_GfxHeader spr_biggoron_sword_icon, w4ItemIconGfx
 	m_GfxHeaderEnd
 
@@ -255,8 +255,8 @@ m_GfxHeaderStart $2b, GFXH_LINK_WITH_ORACLE_END_SCENE
 	m_GfxHeader gfx_link_with_oracle_3, $9001
 	m_GfxHeader map_link_with_oracle, $9800
 	m_GfxHeader flg_link_with_oracle, $9801
-	m_GfxHeader map_link_with_oracle, w3VramTiles+$003
-	m_GfxHeader flg_link_with_oracle, w3VramAttributes+$003
+	m_GfxHeader map_link_with_oracle, w3VramTiles
+	m_GfxHeader flg_link_with_oracle, w3VramAttributes
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $2c, GFXH_LINK_WITH_ORACLE_AND_TWINROVA_END_SCENE
@@ -266,10 +266,10 @@ m_GfxHeaderStart $2c, GFXH_LINK_WITH_ORACLE_AND_TWINROVA_END_SCENE
 	m_GfxHeader gfx_link_with_oracle_and_twinrova_3, $9001
 	m_GfxHeader map_link_with_oracle_and_twinrova_1, $9800
 	m_GfxHeader flg_link_with_oracle_and_twinrova_1, $9801
-	m_GfxHeader map_link_with_oracle_and_twinrova_1, w3VramTiles+$003
-	m_GfxHeader flg_link_with_oracle_and_twinrova_1, w3VramAttributes+$003
-	m_GfxHeader map_link_with_oracle_and_twinrova_2, w4TileMap+$004
-	m_GfxHeader flg_link_with_oracle_and_twinrova_2, w4AttributeMap+$004
+	m_GfxHeader map_link_with_oracle_and_twinrova_1, w3VramTiles
+	m_GfxHeader flg_link_with_oracle_and_twinrova_1, w3VramAttributes
+	m_GfxHeader map_link_with_oracle_and_twinrova_2, w4TileMap
+	m_GfxHeader flg_link_with_oracle_and_twinrova_2, w4AttributeMap
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $2d, GFXH_TWINROVA_CLOSEUP
@@ -285,14 +285,14 @@ m_GfxHeaderStart $2d, GFXH_TWINROVA_CLOSEUP
 m_GfxHeaderStart $2e, GFXH_BLACK_TOWER_MIDDLE
 	m_GfxHeader map_black_tower_middle, $99e0
 	m_GfxHeader flg_black_tower_middle, $99e1
-	m_GfxHeader map_black_tower_middle, w3VramTiles+$023
-	m_GfxHeader flg_black_tower_middle, w3VramAttributes+$023
+	m_GfxHeader map_black_tower_middle, w3VramTiles+$020
+	m_GfxHeader flg_black_tower_middle, w3VramAttributes+$020
 	; Fall through
 m_GfxHeaderStart $2f, GFXH_BLACK_TOWER_BASE
 	m_GfxHeader map_black_tower_base, $9b40
 	m_GfxHeader flg_black_tower_base, $9b41
-	m_GfxHeader map_black_tower_base, w3VramTiles+$183
-	m_GfxHeader flg_black_tower_base, w3VramAttributes+$183
+	m_GfxHeader map_black_tower_base, w3VramTiles+$180
+	m_GfxHeader flg_black_tower_base, w3VramAttributes+$180
 	m_GfxHeader spr_black_tower_scene, $8001
 	m_GfxHeader gfx_black_tower_scene_1, $8800
 	m_GfxHeader gfx_black_tower_scene_2, $9000
@@ -342,8 +342,8 @@ m_GfxHeaderStart $39, GFXH_INTRO_LINK_CLOSE_FRAME_5
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $3a, GFXH_UNAPPRAISED_RING_LIST
-	m_GfxHeader map_unappraised_ring_list, w4TileMap+$004
-	m_GfxHeader flg_unappraised_ring_list, w4AttributeMap+$004
+	m_GfxHeader map_unappraised_ring_list, w4TileMap
+	m_GfxHeader flg_unappraised_ring_list, w4AttributeMap
 	m_GfxHeader gfx_inventory_hud_1, $8000
 	m_GfxHeader gfx_rings, $8a00
 	m_GfxHeader gfx_inventory_hud_2, $8e00
@@ -351,8 +351,8 @@ m_GfxHeaderStart $3a, GFXH_UNAPPRAISED_RING_LIST
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $3b, GFXH_APPRAISED_RING_LIST
-	m_GfxHeader map_appraised_ring_list, w4TileMap+$004
-	m_GfxHeader flg_appraised_ring_list, w4AttributeMap+$004
+	m_GfxHeader map_appraised_ring_list, w4TileMap
+	m_GfxHeader flg_appraised_ring_list, w4AttributeMap
 	m_GfxHeader gfx_inventory_hud_1, $8000
 	m_GfxHeader spr_quest_items_5, $8400
 	m_GfxHeader gfx_rings, $8a00
@@ -372,16 +372,16 @@ m_GfxHeaderStart $3c, GFXH_SCENE_CREDITS_MAKUTREE
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $3d, GFXH_GASHA_TREE_DISAPPEARED
-	m_GfxHeader gfx_gasha_tree, w7d800+$007
-	m_GfxHeader spr_grass_tuft, w7d800+$457
+	m_GfxHeader gfx_gasha_tree, w7d800
+	m_GfxHeader spr_grass_tuft, w7d800+$450
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $3e, GFXH_GASHA_TREE_DISAPPEARED_SAND
-	m_GfxHeader gfx_sand, w7d800+$457
+	m_GfxHeader gfx_sand, w7d800+$450
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $3f, GFXH_GASHA_TREE_DISAPPEARED_DIRT
-	m_GfxHeader gfx_dirt, w7d800+$457
+	m_GfxHeader gfx_dirt, w7d800+$450
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $40, GFXH_TILESET_OVERWORLD_PRESENT
@@ -565,13 +565,13 @@ m_GfxHeaderStart $73, GFXH_ANCIENT_TOMB_WALL_RETRACTION
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $74, GFXH_JABU_OPENING_1
-	m_GfxHeader map_jabu_opening_1, w3VramTiles+$0e3
-	m_GfxHeader flg_jabu_opening_1, w3VramAttributes+$0e3
+	m_GfxHeader map_jabu_opening_1, w3VramTiles+$0e0
+	m_GfxHeader flg_jabu_opening_1, w3VramAttributes+$0e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $75, GFXH_JABU_OPENING_2
-	m_GfxHeader map_jabu_opening_2, w3VramTiles+$0e3
-	m_GfxHeader flg_jabu_opening_2, w3VramAttributes+$0e3
+	m_GfxHeader map_jabu_opening_2, w3VramTiles+$0e0
+	m_GfxHeader flg_jabu_opening_2, w3VramAttributes+$0e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $76, GFXH_76
@@ -616,8 +616,8 @@ m_GfxHeaderStart $7f, GFXH_TILESET_ZORA_PALACE
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $80, GFXH_BLACK_TOWER_STAGE_3_LAYOUT
-	m_GfxHeader map_black_tower_stage_3_top, w4TileMap+$004
-	m_GfxHeader flg_black_tower_stage_3_top, w4AttributeMap+$004
+	m_GfxHeader map_black_tower_stage_3_top, w4TileMap
+	m_GfxHeader flg_black_tower_stage_3_top, w4AttributeMap
 	m_GfxHeader map_black_tower_stage_3_middle, $9800
 	m_GfxHeader flg_black_tower_stage_3_middle, $9801
 	m_GfxHeaderEnd
@@ -630,8 +630,8 @@ m_GfxHeaderStart $81, GFXH_BLACK_TOWER_STAGE_2_LAYOUT
 m_GfxHeaderStart $82, GFXH_BLACK_TOWER_STAGE_1_LAYOUT
 	m_GfxHeader map_black_tower_stage_1, $99c0
 	m_GfxHeader flg_black_tower_stage_1, $99c1
-	m_GfxHeader map_black_tower_stage_1, w3VramTiles+$003
-	m_GfxHeader flg_black_tower_stage_1, w3VramAttributes+$003
+	m_GfxHeader map_black_tower_stage_1, w3VramTiles
+	m_GfxHeader flg_black_tower_stage_1, w3VramAttributes
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $83, GFXH_COMMON_SPRITES
@@ -664,10 +664,10 @@ m_GfxHeaderStart $87, GFXH_CREDITS_SCENE2
 
 m_GfxHeaderStart $88, GFXH_CREDITS_IMAGE2
 	m_GfxHeader spr_credits_font, $8000
-	m_GfxHeader spr_credits_font, w4TileMap+$004
-	m_GfxHeader spr_credits_font_nakanowatari, w4AttributeMap+$004
-	m_GfxHeader spr_credits_font, w3VramTiles+$003
-	m_GfxHeader spr_credits_font_nakanowatari, w3VramAttributes+$003
+	m_GfxHeader spr_credits_font, w4TileMap
+	m_GfxHeader spr_credits_font_nakanowatari, w4AttributeMap
+	m_GfxHeader spr_credits_font, w3VramTiles
+	m_GfxHeader spr_credits_font_nakanowatari, w3VramAttributes
 	m_GfxHeader spr_credits_font_nakanowatari, $8400
 	m_GfxHeader spr_credits_font_programmers, $8600
 	m_GfxHeader gfx_credits_image2_1, $8800
@@ -683,10 +683,10 @@ m_GfxHeaderStart $89, GFXH_CREDITS_SCENE3
 
 m_GfxHeaderStart $8a, GFXH_CREDITS_IMAGE3
 	m_GfxHeader spr_credits_font, $8000
-	m_GfxHeader spr_credits_font, w4TileMap+$004
-	m_GfxHeader spr_credits_font_object_designers, w4AttributeMap+$004
-	m_GfxHeader spr_credits_font, w3VramTiles+$003
-	m_GfxHeader spr_credits_font_object_designers, w3VramAttributes+$003
+	m_GfxHeader spr_credits_font, w4TileMap
+	m_GfxHeader spr_credits_font_object_designers, w4AttributeMap
+	m_GfxHeader spr_credits_font, w3VramTiles
+	m_GfxHeader spr_credits_font_object_designers, w3VramAttributes
 	m_GfxHeader spr_credits_font_object_designers, $8400
 	m_GfxHeader gfx_credits_image3_1, $8800
 	m_GfxHeader gfx_credits_image3_2, $9000
@@ -701,10 +701,10 @@ m_GfxHeaderStart $8b, GFXH_CREDITS_SCENE4
 
 m_GfxHeaderStart $8c, GFXH_CREDITS_IMAGE4
 	m_GfxHeader spr_credits_font, $8000
-	m_GfxHeader spr_credits_font, w4TileMap+$004
-	m_GfxHeader spr_credits_font_music, w4AttributeMap+$004
-	m_GfxHeader spr_credits_font, w3VramTiles+$003
-	m_GfxHeader spr_credits_font_music, w3VramAttributes+$003
+	m_GfxHeader spr_credits_font, w4TileMap
+	m_GfxHeader spr_credits_font_music, w4AttributeMap
+	m_GfxHeader spr_credits_font, w3VramTiles
+	m_GfxHeader spr_credits_font_music, w3VramAttributes
 	m_GfxHeader spr_credits_font_music, $8400
 	m_GfxHeader gfx_credits_image4_1, $8800
 	m_GfxHeader gfx_credits_image4_2, $9000
@@ -739,10 +739,10 @@ m_GfxHeaderStart $8f, GFXH_CREDITS_LINKED_SCENE2
 
 m_GfxHeaderStart $90, GFXH_CREDITS_LINKED_IMAGE2
 	m_GfxHeader spr_credits_font, $8000
-	m_GfxHeader spr_credits_font, w4TileMap+$004
-	m_GfxHeader spr_credits_font_nakanowatari, w4AttributeMap+$004
-	m_GfxHeader spr_credits_font, w3VramTiles+$003
-	m_GfxHeader spr_credits_font_nakanowatari, w3VramAttributes+$003
+	m_GfxHeader spr_credits_font, w4TileMap
+	m_GfxHeader spr_credits_font_nakanowatari, w4AttributeMap
+	m_GfxHeader spr_credits_font, w3VramTiles
+	m_GfxHeader spr_credits_font_nakanowatari, w3VramAttributes
 	m_GfxHeader spr_credits_font_nakanowatari, $8400
 	m_GfxHeader spr_credits_font_programmers, $8600
 	m_GfxHeader gfx_credits_linked_image2_1, $8800
@@ -761,10 +761,10 @@ m_GfxHeaderStart $91, GFXH_CREDITS_LINKED_SCENE3
 
 m_GfxHeaderStart $92, GFXH_CREDITS_LINKED_IMAGE3
 	m_GfxHeader spr_credits_font, $8000
-	m_GfxHeader spr_credits_font, w4TileMap+$004
-	m_GfxHeader spr_credits_font_object_designers, w4AttributeMap+$004
-	m_GfxHeader spr_credits_font, w3VramTiles+$003
-	m_GfxHeader spr_credits_font_object_designers, w3VramAttributes+$003
+	m_GfxHeader spr_credits_font, w4TileMap
+	m_GfxHeader spr_credits_font_object_designers, w4AttributeMap
+	m_GfxHeader spr_credits_font, w3VramTiles
+	m_GfxHeader spr_credits_font_object_designers, w3VramAttributes
 	m_GfxHeader spr_credits_font_object_designers, $8400
 	m_GfxHeader gfx_credits_linked_image3_1, $8800
 	m_GfxHeader gfx_credits_linked_image3_2, $9000
@@ -782,10 +782,10 @@ m_GfxHeaderStart $93, GFXH_CREDITS_LINKED_SCENE4
 
 m_GfxHeaderStart $94, GFXH_CREDITS_LINKED_IMAGE4
 	m_GfxHeader spr_credits_font, $8000
-	m_GfxHeader spr_credits_font, w4TileMap+$004
-	m_GfxHeader spr_credits_font_music, w4AttributeMap+$004
-	m_GfxHeader spr_credits_font, w3VramTiles+$003
-	m_GfxHeader spr_credits_font_music, w3VramAttributes+$003
+	m_GfxHeader spr_credits_font, w4TileMap
+	m_GfxHeader spr_credits_font_music, w4AttributeMap
+	m_GfxHeader spr_credits_font, w3VramTiles
+	m_GfxHeader spr_credits_font_music, w3VramAttributes
 	m_GfxHeader spr_credits_font_music, $8400
 	m_GfxHeader gfx_credits_linked_image4_1, $8800
 	m_GfxHeader gfx_credits_linked_image4_2, $9000
@@ -797,7 +797,7 @@ m_GfxHeaderStart $95, GFXH_CREDITS_SCROLL
 	m_GfxHeader spr_credits_font, $8000
 	m_GfxHeader spr_credits_sprites_1, $8400
 	m_GfxHeader spr_credits_sprites_2, $8001
-	m_GfxHeader spr_triforce_sparkle_vineseed_bookofseals, w4TileMap+$004
+	m_GfxHeader spr_triforce_sparkle_vineseed_bookofseals, w4TileMap
 	m_GfxHeader gfx_credits_bg_1, $8800
 	m_GfxHeader gfx_credits_bg_2, $9000
 	m_GfxHeader gfx_credits_bg_3, $8801
@@ -817,12 +817,12 @@ m_GfxHeaderStart $97, GFXH_SECRET_FOR_LINKED_GAME
 	m_GfxHeader gfx_hud, $9001
 	m_GfxHeader gfx_fileselect, $9201
 	m_GfxHeader gfx_secrettoholodrum, $8801
-	m_GfxHeader map_file_menu_top, w3VramTiles+$003
-	m_GfxHeader flg_file_menu_top, w3VramAttributes+$003
-	m_GfxHeader map_secret_for_linked_game, w3VramTiles+$0a3
-	m_GfxHeader flg_secret_for_linked_game, w3VramAttributes+$0a3
-	m_GfxHeader map_save_menu_bottom, w3VramTiles+$1e3
-	m_GfxHeader flg_save_menu_bottom, w3VramAttributes+$1e3
+	m_GfxHeader map_file_menu_top, w3VramTiles
+	m_GfxHeader flg_file_menu_top, w3VramAttributes
+	m_GfxHeader map_secret_for_linked_game, w3VramTiles+$0a0
+	m_GfxHeader flg_secret_for_linked_game, w3VramAttributes+$0a0
+	m_GfxHeader map_save_menu_bottom, w3VramTiles+$1e0
+	m_GfxHeader flg_save_menu_bottom, w3VramAttributes+$1e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $98, GFXH_CREDITS_THE_END
@@ -847,8 +847,8 @@ m_GfxHeaderStart $9a, GFXH_CREDITS_LINKED_WAVING_GOODBYE
 	m_GfxHeader gfx_credits_linked_waving_goodbye_4, $9001
 	m_GfxHeader map_credits_linked_waving_goodbye_1, $9800
 	m_GfxHeader flg_credits_linked_waving_goodbye_1, $9801
-	m_GfxHeader map_credits_linked_waving_goodbye_2, w4TileMap+$004
-	m_GfxHeader flg_credits_linked_waving_goodbye_2, w4AttributeMap+$004
+	m_GfxHeader map_credits_linked_waving_goodbye_2, w4TileMap
+	m_GfxHeader flg_credits_linked_waving_goodbye_2, w4AttributeMap
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $9b, GFXH_INTRO_LINK_RIDING_HORSE
@@ -865,8 +865,8 @@ m_GfxHeaderStart $9b, GFXH_INTRO_LINK_RIDING_HORSE
 	m_GfxHeader flg_intro_link_face_shot, $9b21
 	m_GfxHeader map_intro_bar, $9c00
 	m_GfxHeader flg_intro_bar, $9c01
-	m_GfxHeader map_intro_link_on_horse_front_ground, w3VramTiles+$003
-	m_GfxHeader flg_intro_link_on_horse_front_ground, w3VramAttributes+$003
+	m_GfxHeader map_intro_link_on_horse_front_ground, w3VramTiles
+	m_GfxHeader flg_intro_link_on_horse_front_ground, w3VramAttributes
 	m_GfxHeader map_intro_bar, $9e60
 	m_GfxHeader flg_intro_bar, $9e61
 	m_GfxHeader map_intro_link_on_horse_front_bg, $9ec0
@@ -899,8 +899,8 @@ m_GfxHeaderStart $9e, GFXH_INTRO_TEMPLE_SCENE
 	m_GfxHeader gfx_hud, $9000, $07
 	m_GfxHeader map_intro_triforce_room, $9800
 	m_GfxHeader flg_intro_triforce_room, $9801
-	m_GfxHeader map_intro_triforce_room, w3VramTiles+$003
-	m_GfxHeader flg_intro_triforce_room, w3VramAttributes+$003
+	m_GfxHeader map_intro_triforce_room, w3VramTiles
+	m_GfxHeader flg_intro_triforce_room, w3VramAttributes
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $9f, GFXH_TITLESCREEN_TREE_SCROLL
@@ -910,8 +910,8 @@ m_GfxHeaderStart $9f, GFXH_TITLESCREEN_TREE_SCROLL
 	m_GfxHeader gfx_titlescreen_4, $9400
 	m_GfxHeader gfx_titlescreen_tree_1, $8801
 	m_GfxHeader gfx_titlescreen_tree_2, $9001
-	m_GfxHeader map_titlescreen_scroll_2, w4TileMap+$004
-	m_GfxHeader flg_titlescreen_scroll_2, w4AttributeMap+$004
+	m_GfxHeader map_titlescreen_scroll_2, w4TileMap
+	m_GfxHeader flg_titlescreen_scroll_2, w4AttributeMap
 	m_GfxHeader map_titlescreen_scroll_1, $9c00
 	m_GfxHeader flg_titlescreen_scroll_1, $9c01
 	m_GfxHeaderEnd
@@ -926,8 +926,8 @@ m_GfxHeaderStart $a0, GFXH_FILE_MENU_GFX
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $ba, GFXH_FILE_MENU_WITH_MESSAGE_SPEED
-	m_GfxHeader map_file_menu_message_speed, w4TileMap+$244
-	m_GfxHeader flg_file_menu_message_speed, w4AttributeMap+$244
+	m_GfxHeader map_file_menu_message_speed, w4TileMap+$240
+	m_GfxHeader flg_file_menu_message_speed, w4AttributeMap+$240
 	; Fall through
 m_GfxHeaderStart $a1, GFXH_FILE_MENU
 	m_GfxHeader spr_din_1, $8001, $05
@@ -938,24 +938,24 @@ m_GfxHeaderStart $a1, GFXH_FILE_MENU
 	m_GfxHeader gfx_erase, $8aa1
 	; Fall through
 m_GfxHeaderStart $a2, GFXH_FILE_MENU_LAYOUT
-	m_GfxHeader map_file_menu_top, w4TileMap+$004
-	m_GfxHeader flg_file_menu_top, w4AttributeMap+$004
-	m_GfxHeader map_file_menu_middle, w4TileMap+$0a4
-	m_GfxHeader flg_file_menu_middle, w4AttributeMap+$0a4
-	m_GfxHeader map_file_menu_bottom, w4TileMap+$1e4
-	m_GfxHeader flg_file_menu_bottom, w4AttributeMap+$1e4
+	m_GfxHeader map_file_menu_top, w4TileMap
+	m_GfxHeader flg_file_menu_top, w4AttributeMap
+	m_GfxHeader map_file_menu_middle, w4TileMap+$0a0
+	m_GfxHeader flg_file_menu_middle, w4AttributeMap+$0a0
+	m_GfxHeader map_file_menu_bottom, w4TileMap+$1e0
+	m_GfxHeader flg_file_menu_bottom, w4AttributeMap+$1e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $a3, GFXH_FILE_MENU_COPY
 	m_GfxHeader gfx_copywhatwhere, $8801
 	m_GfxHeader gfx_quit_2, $8a01
 	m_GfxHeader gfx_copy, $8aa1
-	m_GfxHeader map_file_menu_top, w4TileMap+$004
-	m_GfxHeader flg_file_menu_top, w4AttributeMap+$004
-	m_GfxHeader map_file_menu_copy, w4TileMap+$0a4
-	m_GfxHeader flg_file_menu_copy, w4AttributeMap+$0a4
-	m_GfxHeader map_file_menu_bottom, w4TileMap+$1e4
-	m_GfxHeader flg_file_menu_bottom, w4AttributeMap+$1e4
+	m_GfxHeader map_file_menu_top, w4TileMap
+	m_GfxHeader flg_file_menu_top, w4AttributeMap
+	m_GfxHeader map_file_menu_copy, w4TileMap+$0a0
+	m_GfxHeader flg_file_menu_copy, w4AttributeMap+$0a0
+	m_GfxHeader map_file_menu_bottom, w4TileMap+$1e0
+	m_GfxHeader flg_file_menu_bottom, w4AttributeMap+$1e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $a4, GFXH_FILE_MENU_ERASE
@@ -966,21 +966,21 @@ m_GfxHeaderStart $a4, GFXH_FILE_MENU_ERASE
 
 m_GfxHeaderStart $a5, GFXH_NAME_ENTRY
 	m_GfxHeader gfx_name, $8801
-	m_GfxHeader map_name_entry_top, w4TileMap+$004
-	m_GfxHeader flg_name_entry_top, w4AttributeMap+$004
-	m_GfxHeader map_name_entry_middle, w4TileMap+$0a4
-	m_GfxHeader flg_name_entry_middle, w4AttributeMap+$0a4
-	m_GfxHeader map_name_entry_bottom, w4TileMap+$1e4
-	m_GfxHeader flg_name_entry_bottom, w4AttributeMap+$1e4
+	m_GfxHeader map_name_entry_top, w4TileMap
+	m_GfxHeader flg_name_entry_top, w4AttributeMap
+	m_GfxHeader map_name_entry_middle, w4TileMap+$0a0
+	m_GfxHeader flg_name_entry_middle, w4AttributeMap+$0a0
+	m_GfxHeader map_name_entry_bottom, w4TileMap+$1e0
+	m_GfxHeader flg_name_entry_bottom, w4AttributeMap+$1e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $a6, GFXH_SAVE_MENU_LAYOUT
-	m_GfxHeader map_file_menu_top, w4TileMap+$004
-	m_GfxHeader flg_file_menu_top, w4AttributeMap+$004
-	m_GfxHeader map_save_menu_middle, w4TileMap+$0a4
-	m_GfxHeader flg_save_menu_middle, w4AttributeMap+$0a4
-	m_GfxHeader map_save_menu_bottom, w4TileMap+$1e4
-	m_GfxHeader flg_save_menu_bottom, w4AttributeMap+$1e4
+	m_GfxHeader map_file_menu_top, w4TileMap
+	m_GfxHeader flg_file_menu_top, w4AttributeMap
+	m_GfxHeader map_save_menu_middle, w4TileMap+$0a0
+	m_GfxHeader flg_save_menu_middle, w4AttributeMap+$0a0
+	m_GfxHeader map_save_menu_bottom, w4TileMap+$1e0
+	m_GfxHeader flg_save_menu_bottom, w4AttributeMap+$1e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $a7, GFXH_NEW_FILE_OPTIONS
@@ -1002,26 +1002,26 @@ m_GfxHeaderStart $aa, GFXH_SECRET_ENTRY_GFX
 ; Unused(?): A smaller version of GFXH_SECRET_ENTRY_LAYOUT, could be more suitable for short
 ; 5-letter secrets, but apparently not used.
 m_GfxHeaderStart $ab, GFXH_SECRET_ENTRY_LAYOUT_SMALL
-	m_GfxHeader map_name_entry_top, w4TileMap+$004
-	m_GfxHeader flg_name_entry_top, w4AttributeMap+$004
-	m_GfxHeader map_secret_entry_middle, w4TileMap+$0a4
-	m_GfxHeader flg_secret_entry_middle, w4AttributeMap+$0a4
-	m_GfxHeader map_secret_entry_bottom, w4TileMap+$1e4
-	m_GfxHeader flg_secret_entry_bottom, w4AttributeMap+$1e4
+	m_GfxHeader map_name_entry_top, w4TileMap
+	m_GfxHeader flg_name_entry_top, w4AttributeMap
+	m_GfxHeader map_secret_entry_middle, w4TileMap+$0a0
+	m_GfxHeader flg_secret_entry_middle, w4AttributeMap+$0a0
+	m_GfxHeader map_secret_entry_bottom, w4TileMap+$1e0
+	m_GfxHeader flg_secret_entry_bottom, w4AttributeMap+$1e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $ac, GFXH_SECRET_ENTRY_LAYOUT
-	m_GfxHeader map_secret_entry_top, w4TileMap+$004
-	m_GfxHeader flg_secret_entry_top, w4AttributeMap+$004
-	m_GfxHeader map_secret_entry_middle, w4TileMap+$0a4
-	m_GfxHeader flg_secret_entry_middle, w4AttributeMap+$0a4
-	m_GfxHeader map_secret_entry_bottom, w4TileMap+$1e4
-	m_GfxHeader flg_secret_entry_bottom, w4AttributeMap+$1e4
+	m_GfxHeader map_secret_entry_top, w4TileMap
+	m_GfxHeader flg_secret_entry_top, w4AttributeMap
+	m_GfxHeader map_secret_entry_middle, w4TileMap+$0a0
+	m_GfxHeader flg_secret_entry_middle, w4AttributeMap+$0a0
+	m_GfxHeader map_secret_entry_bottom, w4TileMap+$1e0
+	m_GfxHeader flg_secret_entry_bottom, w4AttributeMap+$1e0
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $ad, GFXH_SECRET_ENTRY_ERROR_LAYOUT
-	m_GfxHeader map_secret_entry_error, w4TileMap+$144
-	m_GfxHeader flg_secret_entry_error, w4AttributeMap+$144
+	m_GfxHeader map_secret_entry_error, w4TileMap+$140
+	m_GfxHeader flg_secret_entry_error, w4AttributeMap+$140
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $ae, GFXH_GAME_LINK
@@ -1029,12 +1029,12 @@ m_GfxHeaderStart $ae, GFXH_GAME_LINK
 	m_GfxHeader gfx_pickafile_2, $8801
 	m_GfxHeader gfx_copy, $8a01
 	m_GfxHeader gfx_erase, $8aa1
-	m_GfxHeader map_file_menu_top, w4TileMap+$004
-	m_GfxHeader flg_file_menu_top, w4AttributeMap+$004
-	m_GfxHeader map_file_menu_middle, w4TileMap+$0a4
-	m_GfxHeader flg_file_menu_middle, w4AttributeMap+$0a4
-	m_GfxHeader map_file_menu_bottom, w4TileMap+$1e4
-	m_GfxHeader flg_file_menu_bottom, w4AttributeMap+$1e4
+	m_GfxHeader map_file_menu_top, w4TileMap
+	m_GfxHeader flg_file_menu_top, w4AttributeMap
+	m_GfxHeader map_file_menu_middle, w4TileMap+$0a0
+	m_GfxHeader flg_file_menu_middle, w4AttributeMap+$0a0
+	m_GfxHeader map_file_menu_bottom, w4TileMap+$1e0
+	m_GfxHeader flg_file_menu_bottom, w4AttributeMap+$1e0
 	m_GfxHeader gfx_linking, $8801
 	; Fall through
 m_GfxHeaderStart $af, GFXH_QUIT_GFX
