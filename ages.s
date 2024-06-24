@@ -84,7 +84,6 @@
 		.include "code/animations.s"
 
 		.include {"{GAME_DATA_DIR}/uniqueGfxHeaders.s"}
-		.include {"{GAME_DATA_DIR}/uniqueGfxHeaderPointers.s"}
 		.include {"{GAME_DATA_DIR}/animationGroups.s"}
 		.include {"{GAME_DATA_DIR}/animationGfxHeaders.s"}
 		.include {"{GAME_DATA_DIR}/animationData.s"}

@@ -24,6 +24,12 @@
 	gfxHeader{%.2x{\1}}:
 .endm
 
+; Same as above but for a unique gfx header.
+.macro m_UniqueGfxHeaderStart
+	.define \2 (\1) EXPORT
+	uniqueGfxHeader{%.2x{\1}}:
+.endm
+
 ; Use this at the end of a gfx header definition.
 ;
 ; Its actual effect is to ensure the "continue" bit of the previous gfx header entry remains unset,

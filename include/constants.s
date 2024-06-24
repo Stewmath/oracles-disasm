@@ -40,7 +40,6 @@
 .include "constants/treasureSpawnModes.s"
 .include "constants/treeGfxHeaders.s"
 .include "constants/uncmpGfxHeaders.s"
-.include "constants/uniqueGfxHeaders.s"
 
 .ifdef ROM_SEASONS
 .include "constants/seasons.s"
