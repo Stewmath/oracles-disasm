@@ -9,7 +9,7 @@
 
 uniqueGfxHeadersStart:
 
-m_UniqueGfxHeaderStart $00, UNIQUE_GFXH_00
+m_UniqueGfxHeaderStart $00, UNIQUE_GFXH_NONE
 
 m_UniqueGfxHeaderStart $01, UNIQUE_GFXH_LYNNA_CITY_1
 	m_GfxHeader gfx_tileset_lynna_city_1, $9301

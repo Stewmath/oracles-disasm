@@ -4,7 +4,7 @@
 
 uniqueGfxHeadersStart:
 
-m_UniqueGfxHeaderStart $00, UNIQUE_GFXH_00
+m_UniqueGfxHeaderStart $00, UNIQUE_GFXH_NONE
 
 m_UniqueGfxHeaderStart $01, UNIQUE_GFXH_HORON_VILLAGE
 	m_GfxHeader gfx_tileset_horon_village, $9601
