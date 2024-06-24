@@ -125,7 +125,7 @@ m_UniqueGfxHeaderStart $13, UNIQUE_GFXH_UNDERWATER
 	m_GfxHeader gfx_tileset_underwater_common_3, $9701
 	m_GfxHeaderEnd
 
-m_UniqueGfxHeaderStart $14, UNIQUE_GFXH_14
+m_UniqueGfxHeaderStart $14, UNIQUE_GFXH_ANCIENT_TOMB_BOSS
 	m_GfxHeaderEnd PALH_63
 
 

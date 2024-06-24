@@ -469,7 +469,7 @@ tilesetData:
 
 	; 0x41
 	.db $28, $88
-	.db UNIQUE_GFXH_14
+	.db UNIQUE_GFXH_ANCIENT_TOMB_BOSS
 	.db GFXH_TILESET_ANCIENT_TOMB
 	.db PALH_63
 	.db $28, $05, $10

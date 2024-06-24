@@ -140,7 +140,7 @@ m_UniqueGfxHeaderStart $1e, UNIQUE_GFXH_MAKU_TREE_TOP
 	m_GfxHeader gfx_tileset_maku_tree_top_3, $9401
 	m_GfxHeaderEnd SEASONS_PALH_52
 
-m_UniqueGfxHeaderStart $1f, UNIQUE_GFXH_1f
+m_UniqueGfxHeaderStart $1f, UNIQUE_GFXH_BIGGORON
 	m_GfxHeader gfx_animations_1, $8881, $08, $40
 	m_GfxHeaderEnd
 
@@ -166,13 +166,13 @@ m_UniqueGfxHeaderStart $24, UNIQUE_GFXH_24
 m_UniqueGfxHeaderStart $25, UNIQUE_GFXH_25
 	m_GfxHeaderEnd SEASONS_PALH_4e
 
-m_UniqueGfxHeaderStart $26, UNIQUE_GFXH_26
+m_UniqueGfxHeaderStart $26, UNIQUE_GFXH_SWORD_AND_SHIELD_MAZE_FIRE_MINIBOSS
 	m_GfxHeaderEnd SEASONS_PALH_4f
 
-m_UniqueGfxHeaderStart $27, UNIQUE_GFXH_27
+m_UniqueGfxHeaderStart $27, UNIQUE_GFXH_EXPLORERS_CRYPT_PALETTE_A
 	m_GfxHeaderEnd SEASONS_PALH_47
 
-m_UniqueGfxHeaderStart $28, UNIQUE_GFXH_28
+m_UniqueGfxHeaderStart $28, UNIQUE_GFXH_EXPLORERS_CRYPT_PALETTE_B
 	m_GfxHeaderEnd SEASONS_PALH_4d
 
 
