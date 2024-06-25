@@ -7288,7 +7288,7 @@ seasonsFunc_09_7f17:
 	ret
 
 seasonsTable_09_7f28:
-	.db SEASONS_PALH_3b
+	.db PALH_TILESET_ONOX_CASTLE_OUTSIDE_WINTER
 	.db SEASONS_PALH_99
 	.db SEASONS_PALH_9a
 

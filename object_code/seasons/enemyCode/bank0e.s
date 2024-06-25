@@ -5335,7 +5335,7 @@ aquamentus_state_uninitialized:
 	ld l,e
 	inc (hl) ; [state] = 1
 	ld a,ENEMYID_AQUAMENTUS
-	ld b,SEASONS_PALH_80
+	ld b,PALH_SPR_AQUAMENTUS
 	jp enemyBoss_initializeRoom
 
 

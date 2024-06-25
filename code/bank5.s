@@ -4109,11 +4109,7 @@ linkState13:
 	ldi (hl),a
 	ld (hl),a
 
-.ifdef ROM_AGES
-	ld a,PALH_7f
-.else
-	ld a,SEASONS_PALH_7f
-.endif
+	ld a,PALH_SPR_LINK_STONE
 	call loadPaletteHeader
 
 	xor a

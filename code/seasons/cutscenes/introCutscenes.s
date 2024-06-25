@@ -1077,7 +1077,7 @@ seasonsFunc_03_7aa9:
 	call loadGfxHeader
 	ld a,PALH_0f
 	call loadPaletteHeader
-	ld a,SEASONS_PALH_3b
+	ld a,PALH_TILESET_ONOX_CASTLE_OUTSIDE_WINTER
 	call loadPaletteHeader
 	pop de
 	call getFreeInteractionSlot

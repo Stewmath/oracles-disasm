@@ -36,7 +36,7 @@ m_UniqueGfxHeaderStart $07, UNIQUE_GFXH_SPOOL_SWAMP_SOUTH
 
 m_UniqueGfxHeaderStart $08, UNIQUE_GFXH_TARM_RUINS_ENTRANCE
 	m_GfxHeader gfx_tileset_tarm_ruins_entrance, $9601
-	m_GfxHeaderEnd SEASONS_PALH_55
+	m_GfxHeaderEnd PALH_SPR_ANCIENT_RUINS_ENTRANCE
 
 m_UniqueGfxHeaderStart $09, UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
 	m_GfxHeader gfx_tileset_dancing_dragon_dungeon_entrance, $9601
@@ -132,13 +132,13 @@ m_UniqueGfxHeaderStart $1d, UNIQUE_GFXH_MAKU_TREE_BOTTOM
 	m_GfxHeader gfx_tileset_maku_tree_1, $8c41
 	m_GfxHeader gfx_tileset_maku_tree_2, $9001
 	m_GfxHeader gfx_tileset_maku_tree_3, $9401
-	m_GfxHeaderEnd SEASONS_PALH_52
+	m_GfxHeaderEnd PALH_SPR_MAKU_TREE
 
 m_UniqueGfxHeaderStart $1e, UNIQUE_GFXH_MAKU_TREE_TOP
 	m_GfxHeader gfx_tileset_maku_tree_top_1, $8f01
 	m_GfxHeader gfx_tileset_maku_tree_top_2, $9001
 	m_GfxHeader gfx_tileset_maku_tree_top_3, $9401
-	m_GfxHeaderEnd SEASONS_PALH_52
+	m_GfxHeaderEnd PALH_SPR_MAKU_TREE
 
 m_UniqueGfxHeaderStart $1f, UNIQUE_GFXH_BIGGORON
 	m_GfxHeader gfx_animations_1, $8881, $08, $40
@@ -161,19 +161,19 @@ m_UniqueGfxHeaderStart $23, UNIQUE_GFXH_GNARLED_ROOT_ENTRANCE_OPENING_3
 	m_GfxHeaderEnd
 
 m_UniqueGfxHeaderStart $24, UNIQUE_GFXH_24
-	m_GfxHeaderEnd SEASONS_PALH_48
+	m_GfxHeaderEnd PALH_TILESET_SWORD_AND_SHIELD_MAZE_ICE
 
 m_UniqueGfxHeaderStart $25, UNIQUE_GFXH_25
-	m_GfxHeaderEnd SEASONS_PALH_4e
+	m_GfxHeaderEnd PALH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE
 
 m_UniqueGfxHeaderStart $26, UNIQUE_GFXH_SWORD_AND_SHIELD_MAZE_FIRE_MINIBOSS
-	m_GfxHeaderEnd SEASONS_PALH_4f
+	m_GfxHeaderEnd PALH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE_MINIBOSS
 
 m_UniqueGfxHeaderStart $27, UNIQUE_GFXH_EXPLORERS_CRYPT_PALETTE_A
-	m_GfxHeaderEnd SEASONS_PALH_47
+	m_GfxHeaderEnd PALH_TILESET_EXPLORERS_CRYPT_A
 
 m_UniqueGfxHeaderStart $28, UNIQUE_GFXH_EXPLORERS_CRYPT_PALETTE_B
-	m_GfxHeaderEnd SEASONS_PALH_4d
+	m_GfxHeaderEnd PALH_TILESET_EXPLORERS_CRYPT_B
 
 
 uniqueGfxHeaderTable:

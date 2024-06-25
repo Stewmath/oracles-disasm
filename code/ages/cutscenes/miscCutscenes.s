@@ -584,7 +584,7 @@ nayruSingingState11:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	ld a,PALH_10
+	ld a,PALH_TILESET_LYNNA_CITY
 	call loadPaletteHeader
 	ld a,$1f
 	ld ($cfd0),a

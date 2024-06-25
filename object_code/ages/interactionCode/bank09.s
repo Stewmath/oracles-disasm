@@ -5380,7 +5380,7 @@ interactionCode57:
 
 	ld a,UNCMP_GFXH_2d
 	call loadUncompressedGfxHeader
-	ld a,PALH_30
+	ld a,PALH_TILESET_MAKU_TREE
 	call loadPaletteHeader
 	ld a,GFXH_CREDITS_SCENE_MAKU_TREE_PAST
 	call loadGfxHeader

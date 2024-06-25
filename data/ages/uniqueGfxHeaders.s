@@ -47,7 +47,7 @@ m_UniqueGfxHeaderStart $06, UNIQUE_GFXH_FAIRY_FOREST
 	m_GfxHeader gfx_tileset_fairy_forest_3, $9701
 	m_GfxHeaderEnd
 
-m_UniqueGfxHeaderStart $07, UNIQUE_GFXH_TOKAY_ISLAND
+m_UniqueGfxHeaderStart $07, UNIQUE_GFXH_CRESCENT_ISLAND
 	m_GfxHeader gfx_tileset_tokay_island_1, $9301
 	m_GfxHeader gfx_tileset_tokay_island_2, $9501
 	m_GfxHeader gfx_tileset_tokay_island_3, $9701
@@ -89,7 +89,7 @@ m_UniqueGfxHeaderStart $0d, UNIQUE_GFXH_ROLLING_RIDGE_PAST
 	m_GfxHeader gfx_tileset_rolling_ridge_past_3, $9701
 	m_GfxHeaderEnd
 
-m_UniqueGfxHeaderStart $0e, UNIQUE_GFXH_EYEGLASS_LIBRARY
+m_UniqueGfxHeaderStart $0e, UNIQUE_GFXH_EYEGLASS_LIBRARY_OUTSIDE
 	m_GfxHeader gfx_tileset_eyeglass_library_1, $9301
 	m_GfxHeader gfx_tileset_eyeglass_library_2, $9501
 	m_GfxHeader gfx_tileset_eyeglass_library_3, $9701
@@ -107,7 +107,7 @@ m_UniqueGfxHeaderStart $10, UNIQUE_GFXH_NUUN_HIGHLANDS
 	m_GfxHeader gfx_tileset_nuun_highlands_3, $9701
 	m_GfxHeaderEnd
 
-m_UniqueGfxHeaderStart $11, UNIQUE_GFXH_AMBIS_PALACE
+m_UniqueGfxHeaderStart $11, UNIQUE_GFXH_AMBIS_PALACE_OUTSIDE
 	m_GfxHeader gfx_tileset_ambis_palace_1, $9301
 	m_GfxHeader gfx_tileset_ambis_palace_2, $9501
 	m_GfxHeader gfx_tileset_ambis_palace_3, $9701
@@ -126,7 +126,7 @@ m_UniqueGfxHeaderStart $13, UNIQUE_GFXH_UNDERWATER
 	m_GfxHeaderEnd
 
 m_UniqueGfxHeaderStart $14, UNIQUE_GFXH_ANCIENT_TOMB_BOSS
-	m_GfxHeaderEnd PALH_63
+	m_GfxHeaderEnd PALH_TILESET_ANCIENT_TOMB_BOSS
 
 
 uniqueGfxHeaderTable:
