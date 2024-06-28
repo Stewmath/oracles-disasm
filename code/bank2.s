@@ -10,7 +10,7 @@ checkDisplayDmgModeScreen:
 
 	call disableLcd
 
-	lda GFXH_00
+	xor a ; GFXH_DMG_SCREEN
 	call loadGfxHeader
 
 .ifdef REGION_JP
@@ -81,7 +81,7 @@ updateTilesetFlagsForIndoorRoomInAltWorld:
 	ret
 
 
-.include "build/data/roomsInAltWorld.s"
+.include {"{GAME_DATA_DIR}/roomsInAltWorld.s"}
 
 
 ;;
@@ -220,7 +220,7 @@ fileSelectMode0:
 	ld b,$10
 	call clearMemory
 	call disableLcd
-	ld a,GFXH_a0
+	ld a,GFXH_FILE_MENU_GFX
 	call loadGfxHeader
 	ld a,MUS_FILE_SELECT
 	call playSound
@@ -250,7 +250,7 @@ fileSelectMode1:
 	xor a
 	call func_02_4149
 	call disableLcd
-	ld a,GFXH_ba
+	ld a,GFXH_FILE_MENU_WITH_MESSAGE_SPEED
 	call loadGfxHeader
 	ld a,PALH_05
 	call loadPaletteHeader
@@ -395,9 +395,9 @@ fileSelectMode5:
 ;;
 @state0:
 	call disableLcd
-	ld a,GFXH_a7
+	ld a,GFXH_NEW_FILE_OPTIONS
 	call loadGfxHeader
-	ld a,GFXH_a6
+	ld a,GFXH_SAVE_MENU_LAYOUT
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_08
 	call loadUncompressedGfxHeader
@@ -472,7 +472,7 @@ fileSelectMode3:
 	ld a,$03
 	call func_02_4149
 	call disableLcd
-	ld a,GFXH_a3
+	ld a,GFXH_FILE_MENU_COPY
 	call loadGfxHeader
 	call loadFileDisplayVariables
 	call textInput_updateEntryCursor
@@ -611,7 +611,7 @@ fileSelectMode4:
 	ld a,$03
 	call func_02_4149
 	call disableLcd
-	ld a,GFXH_a4
+	ld a,GFXH_FILE_MENU_ERASE
 	call loadGfxHeader
 	ld a,PALH_06
 	call loadPaletteHeader
@@ -776,7 +776,7 @@ runKidNameEntryMenu:
 	.dw @mode2
 
 @mode0:
-	ld a,GFXH_a0
+	ld a,GFXH_FILE_MENU_GFX
 	call loadGfxHeader
 	ld a,$01
 	call copyNameToW4NameBuffer
@@ -869,7 +869,7 @@ runSecretEntryMenu:
 	.dw textInput_waitForInput
 
 @mode0:
-	ld a,GFXH_a0
+	ld a,GFXH_FILE_MENU_GFX
 	call loadGfxHeader
 	call func_02_465c
 	jp fadeinFromWhite
@@ -954,7 +954,7 @@ fileSelect_printError:
 	ld (wFileSelect.linkTimer),a
 	ld a,$04
 	ld (wFileSelect.mode2),a
-	ld a,GFXH_ad
+	ld a,GFXH_SECRET_ENTRY_ERROR_LAYOUT
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_08
 	jp loadUncompressedGfxHeader
@@ -978,7 +978,7 @@ textInput_waitForInput:
 	ld (wFileSelect.mode2),a
 ;;
 func_02_461c:
-	ld a,GFXH_ac
+	ld a,GFXH_SECRET_ENTRY_LAYOUT
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_08
 	jp loadUncompressedGfxHeader
@@ -1064,7 +1064,7 @@ label_02_038:
 
 ; Entering a name for the player or the kid
 
-	ld a,GFXH_a5
+	ld a,GFXH_NAME_ENTRY
 	call loadGfxHeader
 	ld a,(wFileSelect.textInputMode)
 	rrca
@@ -1090,7 +1090,7 @@ label_02_038:
 	ld b,$20
 	ld a,$20
 	call nz,fillMemory
-	ld a,GFXH_aa
+	ld a,GFXH_SECRET_ENTRY_GFX
 	call loadGfxHeader
 	call func_02_461c
 @end:
@@ -1993,7 +1993,7 @@ fileSelectDrawHeartsAndDeathCounter:
 	cp $03
 	ret z
 
-	ld a,GFXH_a2
+	ld a,GFXH_FILE_MENU_LAYOUT
 	call loadGfxHeader
 
 	; Jump if cursor isn't on a file
@@ -2187,9 +2187,9 @@ fileSelectMode7:
 ; State 0: initialization
 @state0:
 	call disableLcd
-	ld a,GFXH_a0
+	ld a,GFXH_FILE_MENU_GFX
 	call loadGfxHeader
-	ld a,GFXH_ae
+	ld a,GFXH_GAME_LINK
 	call loadGfxHeader
 	ld a,PALH_05
 	call loadPaletteHeader
@@ -2287,9 +2287,9 @@ fileSelectMode7:
 	xor a
 	call func_02_4149
 	call disableLcd
-	ld a,GFXH_a1
+	ld a,GFXH_FILE_MENU
 	call loadGfxHeader
-	ld a,GFXH_af
+	ld a,GFXH_QUIT_GFX
 	call loadGfxHeader
 	call textInput_updateEntryCursor
 	call fileSelectDrawHeartsAndDeathCounter
@@ -2370,7 +2370,7 @@ fileSelectMode7:
 ;;
 @func_02_4c55:
 	call disableLcd
-	ld a,GFXH_07
+	ld a,GFXH_ERROR_TEXT
 	call loadGfxHeader
 	call loadGfxRegisterState5AndIncFileSelectMode2
 	ld a,$08
@@ -3105,7 +3105,7 @@ menuStateFadeIntoMenu:
 ;;
 saveGraphicsOnEnterMenu_body:
 	ldh a,(<hCameraY)
-	ld hl,$cbe1
+	ld hl,wcbe1
 	ldi (hl),a
 	ldh a,(<hCameraX)
 	ld (hl),a
@@ -3152,7 +3152,7 @@ menuStateFadeOutOfMenu:
 ;;
 ; Called when exiting menus
 reloadGraphicsOnExitMenu_body:
-	ld hl,$cbe1
+	ld hl,wcbe1
 	ldi a,(hl)
 	ldh (<hCameraY),a
 	ld a,(hl)
@@ -4287,13 +4287,15 @@ loadStatusBarMap:
 	ld b,$0a
 	call clearMemory
 	bit 7,c
-	ld a,GFXH_23
+	ld a,GFXH_HUD_LAYOUT_BIGGORON_SWORD
 	jr nz,+
 
-	; GFXH_21 is for <14 hearts, GFXH_22 for >=14 hearts
+	; Load one of:
+	; - GFXH_HUD_LAYOUT_NORMAL (<14 hearts)
+	; - GFXH_HUD_LAYOUT_EXTRA_HEARTS (>=14 hearts)
 	ld a,c
 	and $01
-	add GFXH_21
+	add GFXH_HUD_LAYOUT_NORMAL
 +
 	jp loadGfxHeader
 
@@ -4390,7 +4392,7 @@ inventoryMenuState0:
 .endif
 
 	call loadCommonGraphics
-	ld a,GFXH_08
+	ld a,GFXH_INVENTORY_SCREEN
 	call loadGfxHeader
 
 	; CROSSITEMS: Overwrite L-1 boomerang sprite with L-2 sprite if applicable. (This was
@@ -4448,18 +4450,18 @@ func_02_55b2:
 @subScreen0:
 	ld a,$ff
 	ld (wStatusBarNeedsRefresh),a
-	ld a,GFXH_09
+	ld a,GFXH_INVENTORY_SUBSCREEN_1
 	call loadGfxHeader
 	jp inventorySubscreen0_drawStoredItems
 
 ;;
 @subScreen1:
-	ld a,GFXH_0a
+	ld a,GFXH_INVENTORY_SUBSCREEN_2
 	call loadGfxHeader
 	jp inventorySubscreen1_drawTreasures
 ;;
 @subScreen2:
-	ld a,GFXH_0b
+	ld a,GFXH_INVENTORY_SUBSCREEN_3
 	call loadGfxHeader
 	jp inventorySubscreen2_drawTreasures
 
@@ -5930,14 +5932,14 @@ itemSubmenu2HeartPieceDisplayData:
 .ifdef ROM_AGES
 ; Text for essences and the options on the right side in item submenu 2.
 itemSubmenu2TextIndices:
-	.db <TX_0901 <TX_0902 <TX_0903 <TX_0904 <TX_0905 <TX_0906 <TX_0907 <TX_0908
-	.db <TX_0965 <TX_0961 <TX_0960
+	.db <TX_0901, <TX_0902, <TX_0903, <TX_0904, <TX_0905, <TX_0906, <TX_0907, <TX_0908
+	.db <TX_0965, <TX_0961, <TX_0960
 
 .else; ROM_SEASONS
 
 itemSubmenu2TextIndices:
-	.db <TX_0901 <TX_0902 <TX_0903 <TX_0904 <TX_0905 <TX_0906 <TX_0907 <TX_0908
-	.db <TX_0956 <TX_0952 <TX_0951
+	.db <TX_0901, <TX_0902, <TX_0903, <TX_0904, <TX_0905, <TX_0906, <TX_0907, <TX_0908
+	.db <TX_0956, <TX_0952, <TX_0951
 .endif
 
 ;;
@@ -6626,8 +6628,13 @@ mapMenu_state0:
 	ld ($ff00+R_SVBK),a
 
 	call loadMinimapDisplayRoom
+
+	; Load one of:
+	; - GFXH_OVERWORLD_MAP
+	; - GFXH_PAST_MAP (ages) / GFXH_SUBROSIA_MAP (seasons)
+	; - GFXH_DUNGEON_MAP
 	ld a,(wMapMenu.mode)
-	add GFXH_0d
+	add GFXH_OVERWORLD_MAP
 	call loadGfxHeader
 
 	ld a,(wMapMenu.mode)
@@ -6728,7 +6735,7 @@ mapMenu_state0:
 	call dungeonMap_calculateVisitedFloorsAndLinkPosition
 
 	ld a,(wDungeonIndex)
-	add GFXH_10
+	add GFXH_DUNGEON_0_BLURB
 	call loadGfxHeader
 	call dungeonMap_drawSmallKeyCount
 	call dungeonMap_generateScrollableTilemap
@@ -9412,52 +9419,52 @@ mapIconOamTable:
 .endif; ROM_SEASONS
 
 
-.include "build/data/mapTextAndPopups.s"
+.include {"{GAME_DATA_DIR}/mapTextAndPopups.s"}
 
 
-; This table changes the text of a tile on a map depending on if a dungeon has been
-; entered.
-; b0: Room index (if Link's visited this room, use the dungeon's name as the text)
+; This table changes the text of a tile on a map depending on if a dungeon has been entered.
+; b0: Room index; if Link's visited this room, use the dungeon's name as the text. Group number is
+;     determined by bit 7 of b1 (see below).
 ; b1: Bits 0-6: Text index to use if the dungeon hasn't been entered.
-;               If it HAS been entered, the index will be $02XX, where XX is the index
-;               used for this table's lookup (a dungeon index).
-;     Bit 7: 0=group 4, 1=group 5
+;               If it HAS been entered, the index will be $02XX, where XX is the index used for this
+;               table's lookup (a dungeon index).
+;     Bit 7: 0=group 5, 1=group 4 (reversed from what you might expect)
 mapMenu_dungeonEntranceText:
 
 	.ifdef ROM_AGES
-		.db $04  $80|(<TX_0307)
-		.db $24  $80|(<TX_0309)
-		.db $46  $80|(<TX_0337)
-		.db $66  $80|(<TX_0311)
-		.db $91  $80|(<TX_0303)
-		.db $bb  $80|(<TX_0305)
-		.db $26      (<TX_0306)
-		.db $56      (<TX_030a)
-		.db $aa      (<TX_0336)
-		.db $01  $80|(<TX_0332)
-		.db $f4      (<TX_0332)
-		.db $ce  $80|(<TX_0332)
-		.db $44      (<TX_0306)
-		.db $0d  $80|(<TX_0332)
-		.db $01      (<TX_0332)
-		.db $01  $80|(<TX_0332)
+		.db $04, $80|(<TX_0307)
+		.db $24, $80|(<TX_0309)
+		.db $46, $80|(<TX_0337)
+		.db $66, $80|(<TX_0311)
+		.db $91, $80|(<TX_0303)
+		.db $bb, $80|(<TX_0305)
+		.db $26,     (<TX_0306)
+		.db $56,     (<TX_030a)
+		.db $aa,     (<TX_0336)
+		.db $01, $80|(<TX_0332)
+		.db $f4,     (<TX_0332)
+		.db $ce, $80|(<TX_0332)
+		.db $44,     (<TX_0306)
+		.db $0d, $80|(<TX_0332)
+		.db $01,     (<TX_0332)
+		.db $01, $80|(<TX_0332)
 
 	.else; ROM_SEASONS
 
-		.db $04  $80|(<TX_0313)
-		.db $1c  $80|(<TX_030f)
-		.db $39  $80|(<TX_0311)
-		.db $4b  $80|(<TX_030e)
-		.db $81  $80|(<TX_0305)
-		.db $a7  $80|(<TX_0310)
-		.db $ba  $80|(<TX_032b)
-		.db $5b      (<TX_0312)
-		.db $87      (<TX_0330)
-		.db $97      (<TX_0302)
+		.db $04, $80|(<TX_0313)
+		.db $1c, $80|(<TX_030f)
+		.db $39, $80|(<TX_0311)
+		.db $4b, $80|(<TX_030e)
+		.db $81, $80|(<TX_0305)
+		.db $a7, $80|(<TX_0310)
+		.db $ba, $80|(<TX_032b)
+		.db $5b,     (<TX_0312)
+		.db $87,     (<TX_0330)
+		.db $97,     (<TX_0302)
 	.endif
 
 
-.include "build/data/treeWarps.s"
+.include {"{GAME_DATA_DIR}/treeWarps.s"}
 
 
 ;;
@@ -9502,7 +9509,7 @@ ringMenu_state0:
 	ld (wRingMenu.boxCursorFlickerCounter),a
 
 	ld a,(wRingMenu_mode)
-	add GFXH_3a
+	add GFXH_UNAPPRAISED_RING_LIST
 	call loadGfxHeader
 	ld a,PALH_0a
 	call loadPaletteHeader
@@ -10678,11 +10685,11 @@ saveQuitMenu_state0:
 	call disableLcd
 	call stopTextThread
 
-	ld a,GFXH_a0
+	ld a,GFXH_FILE_MENU_GFX
 	call loadGfxHeader
-	ld a,GFXH_a6
+	ld a,GFXH_SAVE_MENU_LAYOUT
 	call loadGfxHeader
-	ld a,GFXH_a8
+	ld a,GFXH_SAVE_MENU_GFX
 	call loadGfxHeader
 
 	call saveQuitMenu_checkIsGameOver
@@ -10702,7 +10709,7 @@ saveQuitMenu_state0:
 	inc l
 	ld (hl),$09
 +
-	ld a,GFXH_a9
+	ld a,GFXH_GAME_OVER_GFX
 	call loadGfxHeader
 
 	ld a,MUS_GAMEOVER
@@ -10850,7 +10857,7 @@ secretListMenu_state0:
 	xor a
 	call @clearVramBank
 
-	ld a,GFXH_05
+	ld a,GFXH_SECRET_LIST_MENU
 	call loadGfxHeader
 	ld a,PALH_SECRET_LIST_MENU
 	call loadPaletteHeader
@@ -11192,7 +11199,7 @@ runFakeReset:
 	ld a,SNDCTRL_DISABLE
 	call playSound
 
-	ld a,GFXH_01
+	ld a,GFXH_NINTENDO_CAPCOM_SCREEN
 	call loadGfxHeader
 	ld a,PALH_01
 	call loadPaletteHeader

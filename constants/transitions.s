@@ -31,7 +31,7 @@
 .define TRANSITION_DEST_DONT_SET_RESPAWN	$4
 
 ;;
-; Fall onto the screen. Doesn't update respawn. Might be minorly bugged in Ages.
+; Fall onto the screen. Doesn't update respawn.
 .define TRANSITION_DEST_FALL		$5
 
 

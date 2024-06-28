@@ -907,16 +907,16 @@ label_01_037:
 
 @positionOffsets:
 	; Large rooms
-	.db LARGE_ROOM_HEIGHT*16        $00                  ; DIR_UP
-	.db $00                      <(-LARGE_ROOM_WIDTH*16) ; DIR_RIGHT
-	.db <(-LARGE_ROOM_HEIGHT*16)    $00                  ; DIR_DOWN
-	.db $00                         LARGE_ROOM_WIDTH*16  ; DIR_LEFT
+	.db LARGE_ROOM_HEIGHT*16,        $00                  ; DIR_UP
+	.db $00,                      <(-LARGE_ROOM_WIDTH*16) ; DIR_RIGHT
+	.db <(-LARGE_ROOM_HEIGHT*16),    $00                  ; DIR_DOWN
+	.db $00,                         LARGE_ROOM_WIDTH*16  ; DIR_LEFT
 
 	; Small rooms
-	.db SMALL_ROOM_HEIGHT*16        $00                  ; DIR_UP
-	.db $00                      <(-SMALL_ROOM_WIDTH*16) ; DIR_RIGHT
-	.db <(-SMALL_ROOM_HEIGHT*16)    $00                  ; DIR_DOWN
-	.db $00                         SMALL_ROOM_WIDTH*16  ; DIR_LEFT
+	.db SMALL_ROOM_HEIGHT*16,        $00                  ; DIR_UP
+	.db $00,                      <(-SMALL_ROOM_WIDTH*16) ; DIR_RIGHT
+	.db <(-SMALL_ROOM_HEIGHT*16),    $00                  ; DIR_DOWN
+	.db $00,                         SMALL_ROOM_WIDTH*16  ; DIR_LEFT
 
 ;;
 func_4493:
@@ -1337,12 +1337,12 @@ screenTransitionState5Substate1:
 
 @offsetVariables: ; DIR_UP
 	; Large rooms
-	.db (LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16   <(-LARGE_ROOM_HEIGHT*16) ; DIR_UP
-	.db $00                                       LARGE_ROOM_HEIGHT*16  ; DIR_DOWN
+	.db (LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16,   <(-LARGE_ROOM_HEIGHT*16) ; DIR_UP
+	.db $00,                                       LARGE_ROOM_HEIGHT*16  ; DIR_DOWN
 
 	; Small rooms
-	.db $00                                    <(-SMALL_ROOM_HEIGHT*16) ; DIR_UP
-	.db $00                                       SMALL_ROOM_HEIGHT*16  ; DIR_DOWN
+	.db $00,                                    <(-SMALL_ROOM_HEIGHT*16) ; DIR_UP
+	.db $00,                                       SMALL_ROOM_HEIGHT*16  ; DIR_DOWN
 
 ;;
 @drawNextRow:
@@ -1841,7 +1841,7 @@ applyPaletteFadeTransitionData:
 
 .endif ; ROM_SEASONS
 
-.include "build/data/paletteTransitions.s"
+.include {"{GAME_DATA_DIR}/paletteTransitions.s"}
 
 
 ;;
@@ -2034,7 +2034,7 @@ setObjectsEnabledTo2:
 
 ;;
 setItemsEnabledTo2:
-	ld hl,FIRST_ITEM_INDEX<<8 + $00
+	ld hl,(FIRST_ITEM_INDEX<<8) + $00
 	ld c,$e0
 	jr setObjectsEnabledTo2_hlpr
 ;;
@@ -2081,7 +2081,7 @@ clearObjectsWithEnabled2:
 
 ;;
 clearItemsWithEnabled2:
-	ld hl,FIRST_ITEM_INDEX<<8 + $00
+	ld hl,(FIRST_ITEM_INDEX<<8) + $00
 	ld c,$e0
 	jr clearObjectsWithEnabled2_hlpr
 
@@ -2252,7 +2252,7 @@ cutscene17:
 	call reloadTileMap
 	ld a,$01
 	ld (wCutsceneState),a
-	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 + Interaction.enabled
+	ld hl,(FIRST_DYNAMIC_INTERACTION_INDEX<<8) + Interaction.enabled
 --
 	ld l,Interaction.enabled
 	ldi a,(hl)
@@ -2584,9 +2584,9 @@ cutscene19:
 
  m_section_free Bank_1_Data_1 NAMESPACE bank1
 
-.include "build/data/dungeonData.s"
+.include {"{GAME_DATA_DIR}/dungeonData.s"}
 .include "data/dungeonProperties.s"
-.include "build/data/dungeonLayouts.s"
+.include {"{GAME_DATA_DIR}/dungeonLayouts.s"}
 
 .ends
 
@@ -4809,7 +4809,7 @@ updateSeedTreeRefillData:
 	ld ($ff00+R_SVBK),a
 	ret
 
-.include "build/data/seedTreeRefillData.s"
+.include {"{GAME_DATA_DIR}/seedTreeRefillData.s"}
 
 ;;
 ; Season's implementation of this function is quite different. It appears that they
@@ -5428,10 +5428,10 @@ warpTileTable:
 ; This is superfree (bank can change) so namespace should be different from the others
  m_section_superfree Bank_1_Data_2 NAMESPACE bank1Moveable
 
-	.include "build/data/paletteHeaders.s"
-	.include "build/data/uncmpGfxHeaders.s"
-	.include "build/data/gfxHeaders.s"
-	.include "build/data/tilesetHeaders.s"
+	.include {"{GAME_DATA_DIR}/paletteHeaders.s"}
+	.include {"{GAME_DATA_DIR}/uncmpGfxHeaders.s"}
+	.include {"{GAME_DATA_DIR}/gfxHeaders.s"}
+	.include {"{GAME_DATA_DIR}/tilesetHeaders.s"}
 
 .ends
 

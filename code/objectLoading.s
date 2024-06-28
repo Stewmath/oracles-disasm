@@ -43,6 +43,18 @@ parseObjectData:
 ;;
 ; @param de Address of object data to parse
 parseGivenObjectData:
+	; BUG(?): Not initializing the $cec0 memory block!
+	;
+	; I've seen this affect the target carts minigame, where because wEnemyPlacement.numEnemies
+	; is uninitialized, it writes to an address in the $cfxx memory range and messes up the
+	; room's collisions after loading the crystals. But that was in rando, not sure if it can
+	; happen in vanilla.
+	;
+	; However, it could be dangerous to add such a memory clear call here; there could be some
+	; poorly designed code that's using that memory region for something else even while it's
+	; used for object loading here. Would need to do some testing to make sure it doesn't break
+	; anything.
+
 	ld a,(de)
 	cp $fe
 	jr nz,+
@@ -327,7 +339,7 @@ objectDataOp6:
 	call assignRandomPositionToEnemy
 	pop de
 
-.ifdef REGION_JP
+.ifndef ENABLE_US_BUGFIXES
 	; JP BUG: 'h' register not restored to point to the enemy object. This is only a problem
 	; when a random-position enemy fails to be placed somewhere.
 	; In this case, "hl" will point to wEnemyPlacement.randomPlacementAttemptCounter. This won't
@@ -340,9 +352,9 @@ objectDataOp6:
 	ld (hl),$00
 	jr +++
 .else
-	; US BUG(?): If the enemy is not successfully placed, this does not clear the ID/SubID
-	; values. This shouldn't matter in most cases because they will usually be overwritten when
-	; an enemy is spawned. But, supposing there is a case where the game expects the subid to be
+	; US BUG: If the enemy is not successfully placed, this does not clear the ID/SubID values.
+	; This shouldn't matter in most cases because they will usually be overwritten when an enemy
+	; is spawned. But, supposing there is a case where the game expects the subid to be
 	; 0 and doesn't write the value explicitly, maybe this could affect something?
 	;
 	; ALSO (and this appies to both regions), this does not decrement "wNumEnemies", which could

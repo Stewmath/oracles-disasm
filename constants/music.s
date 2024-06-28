@@ -248,7 +248,7 @@
 	SND_TEXT_2              db ; $89
 	SND_PIECE_OF_POWER      db ; $8a ; Again no PoP in this game, but a similar sound
 	SND_FILLED_HEART_CONTAINER db ; $8b ; Plays after getting 4 heart pieces
-	SND_UNKNOWN7            db ; $8c
+	SND_FAIRY_HEAL          db ; $8c
 	SND_TELEPORT            db ; $8d
 
 .ifdef ROM_AGES

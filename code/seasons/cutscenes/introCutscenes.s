@@ -54,9 +54,9 @@ cutscene06Func1:
 	ld hl,$d01a
 	res 7,(hl)
 	call saveGraphicsOnEnterMenu
-	ld a,GFXH_0c
+	ld a,GFXH_DIN_DANCING_CUTSCENE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_95
+	ld a,PALH_SEASONS_95
 	call loadPaletteHeader
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -485,9 +485,9 @@ cutsceneDinImprisoned:
 	xor a
 	ld (wScreenOffsetY),a
 	ld (wScreenOffsetX),a
-	ld a,GFXH_2e
+	ld a,GFXH_SCENE_INSIDE_ONOX_CASTLE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_97
+	ld a,PALH_SEASONS_97
 	call loadPaletteHeader
 	ld a,$01
 	ld (wScrollMode),a
@@ -658,9 +658,9 @@ cutscene08Func0:
 	jr nz,-
 +
 	call disableLcd
-	ld a,GFXH_24
+	ld a,GFXH_TEMPLEFALL_SCENE1
 	call loadGfxHeader
-	ld a,SEASONS_PALH_98
+	ld a,PALH_SEASONS_98
 	call loadPaletteHeader
 	ld a,$0e
 	call loadGfxRegisterStateIndex
@@ -738,9 +738,9 @@ cutscene08Func3:
 	jp seasonsFunc_03_7917
 +
 	call disableLcd
-	ld a,GFXH_24
+	ld a,GFXH_TEMPLEFALL_SCENE1
 	call loadGfxHeader
-	ld a,SEASONS_PALH_98
+	ld a,PALH_SEASONS_98
 	call loadPaletteHeader
 	call seasonsFunc_03_7a17
 	ld hl,$cbb3
@@ -840,7 +840,7 @@ seasonsFunc_03_7917:
 	ld b,$00
 	ldi a,(hl)
 	ld c,(hl)
-	call func_36f6
+	call forceLoadRoom
 	ld b,$31
 	ld a,($cbbb)
 	cp $05
@@ -851,7 +851,7 @@ seasonsFunc_03_7917:
 	call loadUncompressedGfxHeader
 	ld a,($cbbb)
 ++
-	add $25
+	add GFXH_TEMPLEFALL_SCENE2
 	call loadGfxHeader
 	ld a,($cbbb)
 	ld hl,seasonsTable_03_7972
@@ -879,7 +879,9 @@ seasonsTable_03_7978:
 	.db $02 $03 $01
 
 seasonsTable_03_797b:
-	.db $01 $b8 $02 $c6 $02 $c8
+	.db SEASON_SUMMER, <ROOM_SEASONS_0b8
+	.db SEASON_AUTUMN, <ROOM_SEASONS_0c6
+	.db SEASON_AUTUMN, <ROOM_SEASONS_0c8
 
 seasonsFunc_03_7981:
 	call seasonsFunc_03_79bb
@@ -1071,11 +1073,11 @@ seasonsFunc_03_7aa9:
 	ld e,a
 	call disableLcd
 	push de
-	ld a,GFXH_2f
+	ld a,GFXH_SCENE_OUTSIDE_ONOX_CASTLE
 	call loadGfxHeader
 	ld a,PALH_0f
 	call loadPaletteHeader
-	ld a,SEASONS_PALH_3b
+	ld a,PALH_TILESET_ONOX_CASTLE_OUTSIDE_WINTER
 	call loadPaletteHeader
 	pop de
 	call getFreeInteractionSlot
@@ -1298,9 +1300,9 @@ cutscene0eFunc2:
 	xor a
 	ld (wScreenOffsetY),a
 	ld (wScreenOffsetX),a
-	ld a,GFXH_2e
+	ld a,GFXH_SCENE_INSIDE_ONOX_CASTLE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_97
+	ld a,PALH_SEASONS_97
 	call loadPaletteHeader
 	ld a,$01
 	ld (wScrollMode),a

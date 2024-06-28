@@ -3,6 +3,9 @@
 # compression mode (so not the format of ".cmp" files).
 
 import sys
+import os
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 4:

@@ -182,7 +182,7 @@ seasonsFunc_0f_704d:
 	jr --
 
 seasonsFunc_0f_70b4_swapGraphics:
-	ld a,SEASONS_PALH_8d
+	ld a,PALH_BG_DRAGON_ONOX
 	call loadPaletteHeader
 	xor a
 	ld ($ff00+R_VBK),a
@@ -217,7 +217,7 @@ seasonsFunc_0f_70b4_swapGraphics:
 	ld a,$0d
 	call fillMemoryBc
 
-	ld a,GFXH_96
+	ld a,GFXH_DRAGON_ONOX
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_30
 	jp loadUncompressedGfxHeader

@@ -3,13 +3,15 @@
 # This is the program which parses text.yaml.
 #
 # TODOS:
-# - "index: auto"
 # - Don't hardcode address in the makefile; use DATA_ADDR value in disassembly along with macros
 #   that allow for cross-bank data.
 
 import sys
+import os
 import io
 import yaml
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 5:
@@ -30,6 +32,8 @@ outFilename = sys.argv[argIndex]
 argIndex+=1
 startAddress = int(sys.argv[argIndex])
 argIndex+=1
+
+build_dir = os.path.dirname(outFilename)
 
 useVwf = False
 
@@ -647,12 +651,12 @@ def parseTextFile(textFile, isDictionary):
                             textStruct.data.append(parseVal(param))
                         elif token == 'speed':
                             p = parseVal(param)
-                            assert p >= 0 and p < 4, '"\speed" takes parameters from 0-3'
+                            assert p >= 0 and p < 4, '"\\speed" takes parameters from 0-3'
                             textStruct.data.append(0x0c)
                             textStruct.data.append(p)
                         elif token == 'pos':
                             p = parseVal(param)
-                            assert p >= 0 and p < 4, '"\pos" takes parameters from 0-3'
+                            assert p >= 0 and p < 4, '"\\pos" takes parameters from 0-3'
                             textStruct.data.append(0x0c)
                             textStruct.data.append((4<<3) | p)
                         elif token == 'wait':
@@ -805,7 +809,7 @@ textOffset2 = groupDict[textOffsetSplitIndex].textStructs[0]
 
 # Print defines
 
-definesFile = open('build/textDefines.s', 'w')
+definesFile = open(build_dir + '/textDefines.s', 'w')
 
 definesFile.write('.define TEXT_OFFSET_SPLIT_INDEX ' + wlahex(textOffsetSplitIndex, 2) + '\n\n')
 

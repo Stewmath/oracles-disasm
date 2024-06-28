@@ -8,7 +8,7 @@ replaceShutterForLinkEntering:
 	inc a
 	ret z
 .endif
-	ldbc >wRoomLayout, (LARGE_ROOM_HEIGHT-1)<<4 + (LARGE_ROOM_WIDTH-1)
+	ldbc >wRoomLayout, ((LARGE_ROOM_HEIGHT-1)<<4) + (LARGE_ROOM_WIDTH-1)
 --
 	ld a,(bc)
 	push bc

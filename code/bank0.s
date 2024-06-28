@@ -2011,10 +2011,10 @@ _initialThreadStates:
 
 ; Upper bytes of addresses of flags for each group
 flagLocationGroupTable:
-	.db >wPresentRoomFlags >wPastRoomFlags
-	.db >wGroup2Flags >wPastRoomFlags
-	.db >wGroup4Flags >wGroup5Flags
-	.db >wGroup4Flags >wGroup5Flags
+	.db >wPresentRoomFlags, >wPastRoomFlags
+	.db >wGroup2Flags, >wPastRoomFlags
+	.db >wGroup4Flags, >wGroup5Flags
+	.db >wGroup4Flags, >wGroup5Flags
 
 ;;
 ; @param	hActiveFileSlot	File index
@@ -4980,7 +4980,7 @@ loadObjectGfx2:
 	ld c,:w4GfxBuf1
 	ld a,$01
 	ld ($ff00+R_SVBK),a
-	ld a,$3f
+	ld a,BANK_3f
 	setrombank
 	ld b,$1f
 	jp queueDmaTransfer
@@ -4998,7 +4998,7 @@ loadObjectGfx2:
 	call decompressGraphics
 	ld a,$01
 	ld ($ff00+R_SVBK),a
-	ld a,$3f
+	ld a,BANK_3f
 	setrombank
 	ret
 .endif
@@ -5418,7 +5418,8 @@ textThreadStart:
 	jr -
 
 ;;
-; Can only be called from bank $3f.
+; Can only be called from bank $3f. See also "copyTextCharacterGfx" which is similar but is used by
+; file select code instead of textbox code.
 ;
 ; @param	[w7TextGfxSource]	Table to use
 ; @param	a			Character
@@ -5664,6 +5665,8 @@ clearAllItemsAndPutLinkOnGround:
 	jp putLinkOnGround
 
 ;;
+; See also "retrieveTextCharacter" which is similar.
+;
 ; @param	a			Character index
 ; @param	c			0 to use jp font, 1 to use english font
 ; @param	de			Where to write the character to
@@ -12675,12 +12678,13 @@ vramBgMapTable:
 	.dw $9b00 $9b40 $9b80 $9bc0
 
 ;;
-; Force-load a room?
+; Force-load a room? This isn't the typical mechanism used to load a room, it's only used in
+; cutscenes.
 ;
 ; @param	a	Value for wRoomStateModifier (only lower 2 bits are used)
 ; @param	b	Value for wActiveGroup
 ; @param	c	Value for wActiveRoom
-func_36f6:
+forceLoadRoom:
 	and $03
 	ld (wRoomStateModifier),a
 	ld a,b
@@ -12999,7 +13003,7 @@ loadTilesetAndRoomLayout:
 	call nz,loadTilesetLayout
 
 .ifdef ROM_SEASONS
-	call seasonsFunc_3870
+	call @adjustLoadingRoomForTempleRemains
 .endif
 	; Load the room layout and apply any dynamic changes necessary
 	call          loadRoomLayout
@@ -13022,7 +13026,9 @@ loadTilesetAndRoomLayout:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_3870:
+; Layouts for the lava-filled version of Temple Remains, for all 4 seasons, are stored out of bounds
+; on the Subrosia map.
+@adjustLoadingRoomForTempleRemains:
 	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
 	call checkGlobalFlag
 	ret z
@@ -13030,14 +13036,14 @@ seasonsFunc_3870:
 	callfrombank0 tilesets.checkIsTempleRemains
 	ret nc
 	ld a,(wRoomStateModifier)
-	ld hl,@data
+	ld hl,@seasonOffsets
 	rst_addAToHl
 	ld a,(wActiveRoom)
 	add (hl)
 	ld (wLoadingRoom),a
 	ret
 
-@data:
+@seasonOffsets:
 	.db $bc $c0 $c4 $c8
 
 .endif
@@ -13564,7 +13570,7 @@ checkRoomPackAfterWarp:
 ; @param[out]	hl	Address of a free interaction slot (on the id byte)
 ; @param[out]	zflag	Set if a free slot was found
 getFreeInteractionSlot:
-	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 | $40
+	ld hl,(FIRST_DYNAMIC_INTERACTION_INDEX<<8) | $40
 --
 	ld a,(hl)
 	or a

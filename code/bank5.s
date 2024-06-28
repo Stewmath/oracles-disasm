@@ -2558,13 +2558,20 @@ warpTransition5_01:
 	call objectUpdateSpeedZ_paramC
 	ret nz
 
-	; BUG(?): the "objectGetTileAtPosition" function should not have been removed in Ages?
-	; Regardless this transition type appears to be unused in Ages anyway.
+	; BUG(?): the "objectGetTileAtPosition" function call was removed in Ages, but this seems to
+	; have been a mistake, since the value of the "a" register from that call is needed for the
+	; "lookupCollisionTable" function call below.
+	; Despite this, there don't seem to be any particular problems when using this transition
+	; type in Ages, but it may look a bit weird if used on top of a water tile.
 
 .ifdef ROM_SEASONS
 	call objectGetTileAtPosition
 	cp TILEINDEX_TRAMPOLINE
 	jr z,@trampoline
+.else; ROM_AGES
+.ifdef ENABLE_BUGFIXES
+	call objectGetTileAtPosition
+.endif
 .endif
 
 	; If he didn't fall into a hazard, make link "collapse" when he lands.
@@ -4102,11 +4109,7 @@ linkState13:
 	ldi (hl),a
 	ld (hl),a
 
-.ifdef ROM_AGES
-	ld a,PALH_7f
-.else
-	ld a,SEASONS_PALH_7f
-.endif
+	ld a,PALH_SPR_LINK_STONE
 	call loadPaletteHeader
 
 	xor a
@@ -8755,7 +8758,7 @@ mapleState5:
 ; One of these pieces of text is chosen at random when bumping into maple between the 2nd
 ; and 4th encounters (inclusive).
 @normalEncounterText:
-	.db <TX_0701 <TX_0702 <TX_0703 <TX_0704
+	.db <TX_0701, <TX_0702, <TX_0703, <TX_0704
 
 
 ; Values for collisionRadiusY/X for maple's various forms.

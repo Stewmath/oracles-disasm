@@ -225,7 +225,7 @@ roomTileChangesAfterLoad00:
 	call loadObjectGfxHeaderToSlot4
 
 	; Load new tilemaps
-	ld a,GFXH_PIRATE_SHIP_BOW_TILEMAP
+	ld a,GFXH_PIRATE_SHIP_BOW_LAYOUT
 	call loadGfxHeader
 
 	ld hl,@vramTiles
@@ -266,7 +266,7 @@ roomTileChangesAfterLoad01:
 	call loadObjectGfxHeaderToSlot4
 
 	; Load new tilemaps
-	ld a,GFXH_PIRATE_SHIP_BODY_TILEMAP
+	ld a,GFXH_PIRATE_SHIP_BODY_LAYOUT
 	call loadGfxHeader
 
 	ld hl,@vramTiles

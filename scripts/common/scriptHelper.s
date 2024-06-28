@@ -443,7 +443,7 @@ movingPlatform_setScript:
 	ld (de),a
 	ret
 
-.include "build/data/movingPlatformScriptTable.s"
+.include {"{GAME_DATA_DIR}/movingPlatformScriptTable.s"}
 
 ; ==============================================================================
 ; INTERACID_ESSENCE

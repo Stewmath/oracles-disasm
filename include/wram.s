@@ -1762,7 +1762,7 @@ wActiveCollisions: ; $cc33/$cc4f
 	db
 
 wTilesetFlags: ; $cc34/$cc50
-; See constants/areaFlags.
+; See constants/tilesetFlags.s.
 	db
 
 wActiveMusic: ; $cc35/$cc51
@@ -2247,9 +2247,23 @@ wEyePuzzleCorrectDirection: ; $cca5/$ccbe
 wBlockPushAngle: ; $cca6/$ccc0
 ; The angle a block is being pushed toward? bit 7 does something?
 	db
-wcca7: ; $cca7
+
+.ifdef ROM_SEASONS
+
+wPirateSkullRandomNumber: ; -/$ccc1
+; Set to a random number from $01-$04 from var38 of INTERACID_PIRATE_SKULL.
+; Bit 7 set if INTERACID_QUICKSAND subid matches.
+; Used to determine whether the right quicksand pit has been found (for the bell)
 	db
-wcca8: ; $cca8/$ccc2
+
+.else ; ROM_AGES
+
+wcca7: ; $cca7
+; Probably unused
+	db
+.endif
+
+wUpgradesObtained: ; $cca8/$ccc2
 	db
 
 .ifdef ROM_SEASONS ; TODO: related to springbloom flower state
@@ -2261,7 +2275,7 @@ wTwinrovaTileReplacementMode: ; $cca9/$ccc4
 ; 0: Do nothing
 ; 1: Fill room with lava
 ; 2: Fill room with ice
-; 3: ?
+; 3: Return to normal empty layout
 ; 4+: Use "seizure tiles" (when controls are reversed in ganon fight)
 	db
 wccaa: ; $ccaa/$ccc5
@@ -3317,26 +3331,36 @@ wRoomLayoutEnd: ; $cfc0
 
 .RAMSECTION RAM_2 BANK 2 SLOT 3
 
-; $d000 used as part of the routine for redrawing the collapsed d2 cave in the present
-w2TmpGfxBuffer:			dsb $0800
+; $d000 used as part of the routine for redrawing the collapsed d2 cave in the present, and some
+; other things. Sometimes used for gfx data, sometimes for mapping/attribute data.
+w2TmpGfxBuffer:			dsb $0400
+w2TmpAttrBuffer:		dsb $0400
+
+
+; Memory layout of this part differs a fair bit between games, as Seasons uses a chunk of this
+; memory for the pirate ship escape cutscene. With that not being present in Ages,
+; "wxSeedTreeRefillData" was moved to the space it was occupying in Ages.
+.ifdef ROM_SEASONS
+
+	.union
+	w2WaveScrollValues:	dsb $80		; $d800/$d800
+	.nextu
+	w2PirateShipBgTiles:	dsb $180	; -/$d800
+	.endu
+
+.else ;ROM_AGES
 
 ; This is a list of values for scrollX or scrollY registers to make the screen turn all
-; wavy (ie. in underwater areas).
+; wavy (ie. in underwater areas). Exists in both games (see above for seasons definition).
 w2WaveScrollValues:		dsb $80	; $d800/$d800
 
 w2Filler7:			dsb $80
-
-.ifdef ROM_SEASONS
-
-w2Filler9:			dsb $80
-
-.else; ROM_AGES
 
 ; Tree refill data also used for child and an event in room $2f7.
 ; Located elsewhere in seasons.
 wxSeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; 2:d900/3:dfc0
 
-.endif
+.endif ;ROM_AGES
 
 ; Bitset of positions where objects (mostly npcs) are residing. When one of these bits is
 ; set, this will prevent Link from time-warping onto the corresponding tile.
@@ -3505,6 +3529,7 @@ w4GfxBuf2:			dsb $200	; $de00
 
 .RAMSECTION Ram_5 BANK 5 SLOT 3
 
+; Also used for seasons intro scene
 w5NameEntryCharacterGfx:	dsb $800 ; $d000
 
 .ENDS
@@ -3515,11 +3540,12 @@ w5NameEntryCharacterGfx:	dsb $800 ; $d000
 
 .RAMSECTION Ram_6 BANK 6 SLOT 3
 
-w6Filler1:                      dsb $3c0
+; This appears to be used for another purpose in ages, maybe it should be given another name
+w6DragonOnoxTileMap1:           dsb $3c0 ; $d000
 
 w6d3c0:                         dsb $40  ; $d3c0
 
-w6Filler2:                      dsb $200
+w6DragonOnoxTileAttr1:          dsb $200 ; $d400
 
 w6SpecialObjectGfxBuffer:       dsb $100 ; $d600
 
@@ -3527,7 +3553,8 @@ w6Filler3:                      dsb $c0
 
 w6d7c0:                         dsb $40 ; $d7c0
 
-w6Filler4:                      dsb $400
+w6DragonOnoxTileMap2:           dsb $300 ; $d800
+w6DragonOnoxTileAttr2:          dsb $100 ; $db00
 
 w6TileBuffer:                   dsb $200 ; $dc00
 w6AttributeBuffer:              dsb $200 ; $de00

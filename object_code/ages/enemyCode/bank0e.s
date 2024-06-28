@@ -3753,7 +3753,7 @@ vineSprout_getDefaultPosition:
 	ret
 
 @defaultVinePositions:
-	.include "build/data/defaultVinePositions.s"
+	.include {"{GAME_DATA_DIR}/defaultVinePositions.s"}
 
 
 .ifndef REGION_JP

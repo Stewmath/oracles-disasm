@@ -403,13 +403,13 @@ interactionCode12:
 ; Text shown on entering a dungeon. One byte per dungeon.
 @dungeonTextIndices:
 	.ifdef ROM_AGES
-		.db <TX_0200 <TX_0201 <TX_0202 <TX_0203 <TX_0204 <TX_0205 <TX_0206 <TX_0207
-		.db <TX_0208 <TX_0209 <TX_020a <TX_020b <TX_020c <TX_020d <TX_020e <TX_020f
+		.db <TX_0200, <TX_0201, <TX_0202, <TX_0203, <TX_0204, <TX_0205, <TX_0206, <TX_0207
+		.db <TX_0208, <TX_0209, <TX_020a, <TX_020b, <TX_020c, <TX_020d, <TX_020e, <TX_020f
 
 	.else; ROM_SEASONS
 
-		.db <TX_0200 <TX_0201 <TX_0202 <TX_0203 <TX_0204 <TX_0205 <TX_0206 <TX_0207
-		.db <TX_0208 <TX_0209 <TX_020a <TX_0200 <TX_0200 <TX_0200 <TX_0200 <TX_0200
+		.db <TX_0200, <TX_0201, <TX_0202, <TX_0203, <TX_0204, <TX_0205, <TX_0206, <TX_0207
+		.db <TX_0208, <TX_0209, <TX_020a, <TX_0200, <TX_0200, <TX_0200, <TX_0200, <TX_0200
 	.endif
 
 

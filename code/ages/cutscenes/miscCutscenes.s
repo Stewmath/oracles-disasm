@@ -334,7 +334,7 @@ nayruSingingCutsceneHandler:
 	ld hl,$d01a
 	res 7,(hl)
 	call saveGraphicsOnEnterMenu
-	ld a,$0c
+	ld a,GFXH_NAYRU_SINGING_CUTSCENE
 	call loadGfxHeader
 	ld a,PALH_95
 	call loadPaletteHeader
@@ -584,7 +584,7 @@ nayruSingingState11:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	ld a,PALH_10
+	ld a,PALH_TILESET_LYNNA_CITY
 	call loadPaletteHeader
 	ld a,$1f
 	ld ($cfd0),a
@@ -700,9 +700,9 @@ blackTowerExplanationCutsceneHandler:
 	jp loadGfxRegisterStateIndex
 
 @@table_6625:
-	.db $82 $2f
-	.db $81 $2e
-	.db $80 $2e
+	.db GFXH_BLACK_TOWER_STAGE_1_LAYOUT, GFXH_BLACK_TOWER_BASE
+	.db GFXH_BLACK_TOWER_STAGE_2_LAYOUT, GFXH_BLACK_TOWER_MIDDLE
+	.db GFXH_BLACK_TOWER_STAGE_3_LAYOUT, GFXH_BLACK_TOWER_MIDDLE
 
 @@state1:
 	call func_6ef7
@@ -2006,13 +2006,15 @@ func_701d:
 	ld a,(wDungeonIndex)
 	cp $08
 	jp z,wallRetraction_dungeon8
+
+	; D6 wall retraction
 	ld a,(wCutsceneState)
 	rst_jumpTable
 	.dw @state0
 	.dw @state1
 
 @state0:
-	ld a,$72
+	ld a,GFXH_MERMAIDS_CAVE_WALL_RETRACTION
 @func_702f:
 	call loadGfxHeader
 	ld b,$10
@@ -2081,7 +2083,7 @@ wallRetraction_dungeon8:
 	.dw @state0
 	.dw @state1
 @state0:
-	ld a,$73
+	ld a,GFXH_ANCIENT_TOMB_WALL_RETRACTION
 	jp func_701d@func_702f
 @state1:
 	ld a,(wTmpcbb3)
@@ -2223,7 +2225,7 @@ func_7168:
 	ld l,Interaction.xh
 	ld (hl),$58
 +
-	ld a,GFXH_50
+	ld a,GFXH_WING_DUNGEON_COLLAPSING_1
 	jp loadGfxHeader
 @state2:
 	ld a,$0f
@@ -2248,7 +2250,7 @@ func_7168:
 	ld (wTmpcbb4),a
 	jp d2Collapse_incCBB3
 @cbb3_01:
-	ld b,$51
+	ld b,GFXH_WING_DUNGEON_COLLAPSING_2
 --
 	call d2Collapse_decCBB4
 	ret nz
@@ -2257,7 +2259,7 @@ func_7168:
 	call loadGfxHeader
 	jr @cbb3_00
 @cbb3_02:
-	ld b,$52
+	ld b,GFXH_WING_DUNGEON_COLLAPSING_3
 	jr --
 @cbb3_03:
 	call d2Collapse_decCBB4
@@ -2334,7 +2336,7 @@ func_03_7244:
 	ld ($cbb7),a
 	callab bank3f.agesFunc_3f_4133
 	callab bank6.specialObjectLoadAnimationFrameToBuffer
-	ld a,$6f
+	ld a,GFXH_COMMON_SPRITES_TO_WRAM
 	call loadGfxHeader
 	call fastFadeoutToBlack
 	xor a
@@ -2648,7 +2650,7 @@ func_03_7493:
 	call stopTextThread
 	xor a
 	ld bc, ROOM_AGES_127
-	call func_36f6
+	call forceLoadRoom
 	call loadRoomCollisions
 	call func_131f
 	call loadCommonGraphics
@@ -2783,7 +2785,7 @@ func_03_7565:
 	call jabuOpen_incCBB3
 	ldbc, INTERACID_97 $01
 	call objectCreateInteraction
-	ld a,$74
+	ld a,GFXH_JABU_OPENING_1
 --
 	call loadGfxHeader
 	call reloadTileMap
@@ -2796,7 +2798,7 @@ func_03_7565:
 	ret nz
 	ld (hl),$3c
 	call jabuOpen_incState
-	ld a,$75
+	ld a,GFXH_JABU_OPENING_2
 	jr --
 @state2:
 	call jabuOpen_decCBB4
@@ -2870,7 +2872,7 @@ func_03_7619:
 	ld (wMenuDisabled),a
 	xor a
 	pop bc
-	call func_36f6
+	call forceLoadRoom
 	call func_131f
 	call loadCommonGraphics
 	ld a,$02

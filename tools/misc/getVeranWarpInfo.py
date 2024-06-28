@@ -3,7 +3,10 @@
 # glitch. (See my findings here: http://wiki.zeldahacking.net/oracle/Veran_Warp)
 
 import sys
+import os
 import io
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 2:

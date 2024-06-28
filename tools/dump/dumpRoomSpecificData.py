@@ -3,6 +3,9 @@
 # The name of this is a bit misleading, but it was originally used for tables of "rooms".
 
 import sys
+import os
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 4:

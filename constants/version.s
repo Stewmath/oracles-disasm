@@ -1,3 +1,7 @@
+; This file should be the first thing included in any of the main code files
+; (ages.s, seasons.s, and audio.s). It is included at the top of "constants.s"
+; for this reason.
+
 ; Pick one. (For now, the regions other than "US" only activate code changes, not asset changes, and
 ; they aren't complete.)
 ;.define REGION_JP
@@ -13,3 +17,37 @@
 	.define AGES_ENGINE
 .endif
 
+
+; Uncomment this to enable bugfixes (even some that weren't in any release).
+;.define ENABLE_BUGFIXES
+
+
+; US/EU versions had many bugfixes. Enable them with either the "REGION_US"/REGION_EU" defines, or
+; the "ENABLE_BUGFIXES" define. "ENABLE_BUGFIXES" will also enable bugfixes that were not present
+; in any release.
+.ifdef REGION_US
+	.define ENABLE_US_BUGFIXES
+.endif
+.ifdef REGION_EU
+	.define ENABLE_EU_BUGFIXES
+.endif
+.ifdef ENABLE_BUGFIXES
+	.ifndef ENABLE_US_BUGFIXES
+		.define ENABLE_US_BUGFIXES
+	.endif
+	.ifndef ENABLE_EU_BUGFIXES
+		.define ENABLE_EU_BUGFIXES
+	.endif
+.endif
+
+
+
+; Define to help with building directory strings, maybe other stuff
+.ifdef ROM_SEASONS
+	.define GAME "seasons"
+.else
+	.define GAME "ages"
+.endif
+
+; Game-specific data directory location
+.define GAME_DATA_DIR "data/" GAME "/"

@@ -1895,7 +1895,9 @@ enemyCode36:
 	cp $80|ITEMCOLLISION_MYSTERY_SEED
 	jp z,cucco_hitWithMysterySeed
 
-.ifdef REGION_JP
+	; BUG: In JP version, attacking cuccos with gale seeds will put them into a glitched state
+	; where they cannot take damage. In the US version they get blown away like normal enemies.
+.ifndef ENABLE_US_BUGFIXES
 	jp cucco_attacked
 .else
 	cp $80|ITEMCOLLISION_GALE_SEED
@@ -2646,7 +2648,7 @@ greatFairy_playSoundEvery8Frames:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-	ld a,SND_UNKNOWN7
+	ld a,SND_FAIRY_HEAL
 	jp playSound
 
 
@@ -3337,7 +3339,7 @@ fireKeese_moveTowardCenterIfOutOfBounds:
 	ld a,(de)
 	ldh (<hFF8E),a
 
-	ldbc (LARGE_ROOM_HEIGHT/2)<<4 + 8, (LARGE_ROOM_WIDTH/2)<<4 + 8
+	ldbc ((LARGE_ROOM_HEIGHT/2)<<4) + 8, ((LARGE_ROOM_WIDTH/2)<<4) + 8
 	call objectGetRelativeAngleWithTempVars
 	ld c,a
 	ld b,SPEED_100
@@ -5190,11 +5192,11 @@ crow_setAnimationFromAngle:
 crow_subid0_checkWithinScreenBounds:
 	ld e,Enemy.yh
 	ld a,(de)
-	cp SMALL_ROOM_HEIGHT<<4 + 8
+	cp (SMALL_ROOM_HEIGHT<<4) + 8
 	ret nc
 	ld e,Enemy.xh
 	ld a,(de)
-	cp SMALL_ROOM_WIDTH<<4 + 8
+	cp (SMALL_ROOM_WIDTH<<4) + 8
 	ret
 
 ;;
@@ -5247,11 +5249,11 @@ crow_updateSpeed:
 crow_subid1_checkWithinScreenBounds:
 	ld e,Enemy.yh
 	ld a,(de)
-	cp SCREEN_HEIGHT<<4 + 8
+	cp (SCREEN_HEIGHT<<4) + 8
 	ret nc
 	ld e,Enemy.xh
 	ld a,(de)
-	cp SCREEN_WIDTH<<4 + 8
+	cp (SCREEN_WIDTH<<4) + 8
 	ret
 
 
@@ -6314,15 +6316,39 @@ enemyCode4f:
 	dec a
 	jp nz,moldorm_tail_delete
 
-	; Head only; kill the tails.
+	; Following code is for moldorm head only.
+
+	; BUG: The following code is supposed to kill the moldorm's tails. However, in the JP/US
+	; versions, it fails to specify the "l" parameter which would tell it which object type it's
+	; supposed to kill. Therefore, the type of object that gets killed will depend on what the
+	; value of the "l" register happens to be here!
+	;
+	; The value of the "l" register depends on the address of "enemyConveyorTilesTable"
+	; (specifically which sub-table it read depending on the collision types). In the JP/US
+	; versions this always ends up being in the range between C0-FF, meaning it will always
+	; end up trying to kill a "part" object instead of an enemy object.
+	;
+	; It can result in stuff like this happening:
+	; https://clips.twitch.tv/DepressedSmilingChoughBatChest-7PttcCvmsts5H_EU
+	;
+	; Anyway, this code is mostly unnecessary because moldorm tails will delete themselves if
+	; their parent goes missing. It could still prevent an edge-case where a moldorm tail could
+	; get attached to another enemy that spawned in during the exact moment where a moldorm
+	; died; but this is a purely theoretical scenario (and could only occur if the enemy was
+	; spawned by another enemy ie. a red zol, positioned between the moldorm head and tail in
+	; memory).
 	ld e,Enemy.var30
 	ld a,(de)
 	ld h,a
+.ifdef ENABLE_EU_BUGFIXES
+	ld l,e
+.endif
 	call ecom_killObjectH
 	inc e
 	ld a,(de)
 	ld h,a
 	call ecom_killObjectH
+
 .ifdef ROM_SEASONS
 	; moldorm guarding jewel
 	ld a,(wActiveRoom)
