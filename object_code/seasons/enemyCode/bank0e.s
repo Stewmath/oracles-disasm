@@ -6088,7 +6088,7 @@ dodongo_state_uninitialized:
 	ret nz
 
 	ld a,ENEMYID_DODONGO
-	ld b,SEASONS_PALH_81
+	ld b,PALH_SEASONS_81
 	call enemyBoss_initializeRoom
 
 	ld e,Enemy.var33
@@ -6799,7 +6799,7 @@ enemyCode7a:
 
 mothula_state_uninitialized:
 	ld a,ENEMYID_MOTHULA
-	ld b,SEASONS_PALH_82
+	ld b,PALH_SEASONS_82
 	call enemyBoss_initializeRoom
 
 	ld bc,$0108

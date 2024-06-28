@@ -56,7 +56,7 @@ cutscene06Func1:
 	call saveGraphicsOnEnterMenu
 	ld a,GFXH_DIN_DANCING_CUTSCENE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_95
+	ld a,PALH_SEASONS_95
 	call loadPaletteHeader
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -487,7 +487,7 @@ cutsceneDinImprisoned:
 	ld (wScreenOffsetX),a
 	ld a,GFXH_SCENE_INSIDE_ONOX_CASTLE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_97
+	ld a,PALH_SEASONS_97
 	call loadPaletteHeader
 	ld a,$01
 	ld (wScrollMode),a
@@ -660,7 +660,7 @@ cutscene08Func0:
 	call disableLcd
 	ld a,GFXH_TEMPLEFALL_SCENE1
 	call loadGfxHeader
-	ld a,SEASONS_PALH_98
+	ld a,PALH_SEASONS_98
 	call loadPaletteHeader
 	ld a,$0e
 	call loadGfxRegisterStateIndex
@@ -740,7 +740,7 @@ cutscene08Func3:
 	call disableLcd
 	ld a,GFXH_TEMPLEFALL_SCENE1
 	call loadGfxHeader
-	ld a,SEASONS_PALH_98
+	ld a,PALH_SEASONS_98
 	call loadPaletteHeader
 	call seasonsFunc_03_7a17
 	ld hl,$cbb3
@@ -1302,7 +1302,7 @@ cutscene0eFunc2:
 	ld (wScreenOffsetX),a
 	ld a,GFXH_SCENE_INSIDE_ONOX_CASTLE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_97
+	ld a,PALH_SEASONS_97
 	call loadPaletteHeader
 	ld a,$01
 	ld (wScrollMode),a

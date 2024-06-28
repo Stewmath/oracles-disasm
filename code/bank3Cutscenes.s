@@ -215,7 +215,7 @@ twinrovaCutscene_loadAngryFlames:
 .ifdef ROM_AGES
 	ld a,PALH_af
 .else
-	ld a,SEASONS_PALH_af
+	ld a,PALH_SEASONS_af
 .endif
 	call loadPaletteHeader
 	ld hl,objectData.objectData402f
@@ -1000,7 +1000,7 @@ introCinematic_ridingHorse_state0:
 	ldh (<hOamTail),a
 	ld a,GFXH_INTRO_LINK_RIDING_HORSE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_90
+	ld a,PALH_SEASONS_90
 	call loadPaletteHeader
 
 	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x37e=894 frames
@@ -1045,7 +1045,7 @@ introCinematic_ridingHorse_state1:
 	ret nz
 
 	call clearPaletteFadeVariablesAndRefreshPalettes
-	ld a,SEASONS_PALH_96
+	ld a,PALH_SEASONS_96
 	call loadPaletteHeader
 	ld a,$0c
 	call loadGfxRegisterStateIndex
@@ -1068,7 +1068,7 @@ introCinematic_ridingHorse_state2:
 	jr nz,++
 
 	call disableLcd
-	ld a,SEASONS_PALH_92
+	ld a,PALH_SEASONS_92
 	call loadPaletteHeader
 	ld a,GFXH_INTRO_LINK_ON_HORSE_CLOSEUP
 	call loadGfxHeader
@@ -1145,7 +1145,7 @@ introCinematic_ridingHorse_state8:
 .ifdef ROM_AGES
 	ld a,PALH_93
 .else
-	ld a,SEASONS_PALH_93
+	ld a,PALH_SEASONS_93
 .endif
 	call loadPaletteHeader
 	call disableLcd
@@ -1330,7 +1330,7 @@ introCinematic_inTemple_state0:
 .ifdef ROM_AGES
 	ld a,PALH_91
 .else
-	ld a,SEASONS_PALH_91
+	ld a,PALH_SEASONS_91
 .endif
 	call loadPaletteHeader
 
@@ -1707,7 +1707,7 @@ introCinematic_preTitlescreen_state0:
 .ifdef ROM_AGES
 	ld a,PALH_94
 .else
-	ld a,SEASONS_PALH_94
+	ld a,PALH_SEASONS_94
 .endif
 	call loadPaletteHeader
 	call refreshObjectGfx

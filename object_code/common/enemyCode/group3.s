@@ -2363,13 +2363,13 @@ ganon_state_uninitialized:
 .ifdef ROM_AGES
 	ld a,PALH_8b
 .else
-	ld a,SEASONS_PALH_8b
+	ld a,PALH_SEASONS_8b
 .endif
 	call loadPaletteHeader
 .ifdef ROM_AGES
 	ld a,PALH_b1
 .else
-	ld a,SEASONS_PALH_b1
+	ld a,PALH_SEASONS_b1
 .endif
 	ld (wExtraBgPaletteHeader),a
 	ld a,GFXH_GANON_REVIVAL
@@ -3210,7 +3210,7 @@ ganon_stateC_substate9:
 .ifdef ROM_AGES
 	ld a,PALH_b1
 .else
-	ld a,SEASONS_PALH_b1
+	ld a,PALH_SEASONS_b1
 .endif
 	ld (wExtraBgPaletteHeader),a
 	jp loadPaletteHeader
@@ -3586,7 +3586,7 @@ ganon_updateSeizurePalette:
 .ifdef ROM_AGES
 	add a,PALH_b1
 .else
-	add a,SEASONS_PALH_b1
+	add a,PALH_SEASONS_b1
 .endif
 	ld (wExtraBgPaletteHeader),a
 	jp loadPaletteHeader

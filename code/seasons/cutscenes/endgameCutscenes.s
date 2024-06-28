@@ -722,7 +722,7 @@ endgameCutsceneHandler_09_stage1_body:
 	call clearOam
 	ld a,GFXH_LINK_WITH_ORACLE_AND_TWINROVA_END_SCENE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9e
+	ld a,PALH_SEASONS_9e
 	call loadPaletteHeader
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -853,7 +853,7 @@ endgameCutsceneHandler_09_stage1_body:
 	call clearMemoryBc
 	ld a,GFXH_TWINROVA_CLOSEUP
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9c
+	ld a,PALH_SEASONS_9c
 	call loadPaletteHeader
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -1219,7 +1219,7 @@ endgameCutsceneHandler_0f_stage1_body:
 	call hideStatusBar
 	ld a,GFXH_SCENE_CREDITS_MAKUTREE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_ad
+	ld a,PALH_SEASONS_ad
 	call loadPaletteHeader
 	ld hl,$cbb3
 	ld (hl),$f0
@@ -1562,7 +1562,7 @@ endgameCutsceneHandler_0a_stage2:
 	ld ($cfde),a
 	ld a,GFXH_CREDITS_SCROLL
 	call loadGfxHeader
-	ld a,SEASONS_PALH_a0
+	ld a,PALH_SEASONS_a0
 	call loadPaletteHeader
 	ld a,$09
 	call loadGfxRegisterStateIndex
@@ -1653,7 +1653,7 @@ endgameCutsceneHandler_0a_stage2:
 	call disableLcd
 	ld a,GFXH_CREDITS_LINKED_WAVING_GOODBYE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9f
+	ld a,PALH_SEASONS_9f
 	call loadPaletteHeader
 	call clearDynamicInteractions
 	ld b,$03
@@ -1789,7 +1789,7 @@ endgameCutsceneHandler_0a_stage3:
 @state0Func0:
 	ld a,GFXH_CREDITS_THE_END
 	call loadGfxHeader
-	ld a,SEASONS_PALH_a9
+	ld a,PALH_SEASONS_a9
 	call loadPaletteHeader
 +
 	ld a,$04
@@ -1953,7 +1953,7 @@ endgameCutsceneHandler_0a_stage3:
 	call incCbc2
 	ld a,GFXH_TO_BE_CONTINUED
 	call loadGfxHeader
-	ld a,SEASONS_PALH_8f
+	ld a,PALH_SEASONS_8f
 	call loadPaletteHeader
 	call fadeinFromWhite
 	ld a,$04

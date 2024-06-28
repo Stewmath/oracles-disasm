@@ -947,7 +947,7 @@ initTextboxStuff:
 .ifdef ROM_AGES
 	ld a,PALH_bd
 .else
-	ld a,SEASONS_PALH_bd
+	ld a,PALH_SEASONS_bd
 .endif
 	jr nz,+
 
