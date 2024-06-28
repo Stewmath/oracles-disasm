@@ -20,7 +20,6 @@
 .include "constants/objectGfxHeaders.s"
 .include "constants/objectSpeeds.s"
 .include "constants/other.s"
-.include "constants/paletteHeaders.s"
 .include "constants/partTypes.s"
 .include "constants/rings.s"
 .include "constants/roomFlags.s"

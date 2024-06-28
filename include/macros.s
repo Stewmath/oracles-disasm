@@ -376,26 +376,6 @@
 	.dw (((:\1)*$4000)+(\1&$3fff) - (((:\2)*$4000)+((\2)&$3fff))) + $200
 .ENDM
 
-; Macro to define palette headers for the background
-; ARG 1: index of first palette to load the data into
-; ARG 2: number of palettes to load
-; ARG 3: address of palette data
-; ARG 4: $80 to continue reading palette headers, $00 to stop
-.macro m_PaletteHeaderBg
-	.db ((\2)-1) | ((\1)<<3) | (\4)
-	.dw \3
-.ENDM
-
-; Macro to define palette headers for sprites
-; ARG 1: index of first palette to load the data into
-; ARG 2: number of palettes to load
-; ARG 3: address of palette data
-; ARG 4: $80 to continue reading palette headers
-.macro m_PaletteHeaderSpr
-	.db ((\2)-1) | ((\1)<<3) | (\4) | $40
-	.dw \3
-.ENDM
-
 ; Args:
 ; 1 - Label: name
 ; 2 - Byte: Compression mode ($00 or $80)

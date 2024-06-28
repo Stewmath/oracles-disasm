@@ -231,3 +231,52 @@
 	.undefine mode
 	.undefine m_ObjectGfxHeader_Cont
 .endm
+
+; ================================================================================
+; Palette macros. Continue bit handled similarly to gfx header macros above.
+; ================================================================================
+
+.macro m_PaletteHeaderStart
+	.define \2 (\1) EXPORT
+	paletteHeader{%.2x{\1}}:
+.endm
+
+.macro m_PaletteHeaderHelper
+	; Mark "continue" bit on last defined gfx header entry
+	.ifdef CURRENT_PALETTE_HEADER_INDEX
+		.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT $80
+	.endif
+
+	; Define size/continue byte for current gfx header entry
+	.redefine CURRENT_PALETTE_HEADER_INDEX \@
+	.db (\1) | PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT
+.endm
+
+; Macro to define palette headers for the background
+; ARG 1: index of first palette to load the data into
+; ARG 2: number of palettes to load
+; ARG 3: address of palette data
+.macro m_PaletteHeaderBg
+	m_PaletteHeaderHelper ((\2)-1) | ((\1)<<3)
+	.dw \3
+.endm
+
+; Macro to define palette headers for sprites
+; ARG 1: index of first palette to load the data into
+; ARG 2: number of palettes to load
+; ARG 3: address of palette data
+.macro m_PaletteHeaderSpr
+	m_PaletteHeaderHelper ((\2)-1) | ((\1)<<3) | $40
+	.dw \3
+.endm
+
+.macro m_PaletteHeaderEnd
+	.ifdef CURRENT_PALETTE_HEADER_INDEX
+		.if NARGS >= 1 ; Set last entry's continue bit
+			.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT, $80
+		.else ; Unset last entry's continue bit
+			.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT, $00
+		.endif
+		.undefine CURRENT_PALETTE_HEADER_INDEX
+	.endif
+.endm
