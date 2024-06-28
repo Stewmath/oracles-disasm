@@ -62,25 +62,25 @@ treasureObjectData:
 	/* $01 */ m_TreasurePointer treasureObjectData01
 	/* $02 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_PUNCH_00
 	/* $03 */ m_TreasurePointer treasureObjectData03
-	/* $04 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_CANE_OF_SOMARIA_00
+	/* $04 */ m_TreasureSubid   $38, $00, <TX_00_GET_CANE, $7e, TREASURE_OBJECT_CANE_OF_SOMARIA_00
 	/* $05 */ m_TreasurePointer treasureObjectData05
 	/* $06 */ m_TreasurePointer treasureObjectData06
 	/* $07 */ m_TreasurePointer treasureObjectData07
 	/* $08 */ m_TreasureSubid   $38, $00, $30, $18, TREASURE_OBJECT_MAGNET_GLOVES_00
 	/* $09 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_HELPER_00
-	/* $0a */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_00
+	/* $0a */ m_TreasurePointer treasureObjectData0a
 	/* $0b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_CHAIN_00
 	/* $0c */ m_TreasurePointer treasureObjectData0c
 	/* $0d */ m_TreasurePointer treasureObjectData0d
 	/* $0e */ m_TreasureSubid   $0a, $0c, $3b, $23, TREASURE_OBJECT_FLUTE_00
-	/* $0f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SHOOTER_00
+	/* $0f */ m_TreasureSubid   $38, $01, <TX_00_GET_SEEDSHOOTER, $80, TREASURE_OBJECT_SHOOTER_00
 	/* $10 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_10_00
-	/* $11 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_HARP_00
+	/* $11 */ m_TreasureSubid   $38, $00, <TX_00_GET_HARP, $81, TREASURE_OBJECT_HARP_00
 	/* $12 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_12_00
 	/* $13 */ m_TreasurePointer treasureObjectData13
 	/* $14 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_14_00
 	/* $15 */ m_TreasureSubid   $0a, $00, $25, $1b, TREASURE_OBJECT_SHOVEL_00
-	/* $16 */ m_TreasureSubid   $38, $00, $26, $19, TREASURE_OBJECT_BRACELET_00
+	/* $16 */ m_TreasurePointer treasureObjectData16
 	/* $17 */ m_TreasurePointer treasureObjectData17
 	/* $18 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_18_00
 	/* $19 */ m_TreasurePointer treasureObjectData19
@@ -95,9 +95,9 @@ treasureObjectData:
 	/* $22 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_PEGASUS_SEEDS_00
 	/* $23 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_GALE_SEEDS_00
 	/* $24 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MYSTERY_SEEDS_00
-	/* $25 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_TUNE_OF_ECHOES_00
-	/* $26 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_TUNE_OF_CURRENTS_00
-	/* $27 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_TUNE_OF_AGES_00
+	/* $25 */ m_TreasureSubid   $38, $00, <TX_00_GET_ECHOES,   $82, TREASURE_OBJECT_TUNE_OF_ECHOES_00
+	/* $26 */ m_TreasureSubid   $38, $00, <TX_00_GET_CURRENTS, $83, TREASURE_OBJECT_TUNE_OF_CURRENTS_00
+	/* $27 */ m_TreasureSubid   $38, $00, <TX_00_GET_AGES,     $84, TREASURE_OBJECT_TUNE_OF_AGES_00
 	/* $28 */ m_TreasurePointer treasureObjectData28
 	/* $29 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_HEART_REFILL_00
 	/* $2a */ m_TreasurePointer treasureObjectData2a
@@ -147,7 +147,7 @@ treasureObjectData:
 	/* $56 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_56_00
 	/* $57 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_57_00
 	/* $58 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_BOMB_FLOWER_LOWER_HALF_00
-	/* $59 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_59_00
+	/* $59 */ m_TreasureSubid   $38, $00, <TX_00_GET_MERMAIDSUIT, $7c, TREASURE_OBJECT_MERMAID_SUIT_00
 	/* $5a */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5a_00
 	/* $5b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5b_00
 	/* $5c */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_5c_00
@@ -158,6 +158,11 @@ treasureObjectData:
 	/* $61 */ m_TreasureSubid   $02, $00, $6e, $05, TREASURE_OBJECT_BOMB_UPGRADE_00
 	/* $62 */ m_TreasureSubid   $02, $00, $46, $20, TREASURE_OBJECT_SATCHEL_UPGRADE_00
 
+
+treasureObjectData16:
+	m_BeginTreasureSubids TREASURE_BRACELET
+	m_TreasureSubid $38, $01, $26, $19, TREASURE_OBJECT_BRACELET_00
+	m_TreasureSubid $38, $02, <TX_00_GET_POWERGLOVE, $7d, TREASURE_OBJECT_BRACELET_01
 
 treasureObjectData19:
 	m_BeginTreasureSubids TREASURE_SEED_SATCHEL
@@ -200,6 +205,11 @@ treasureObjectData07:
 	m_TreasureSubid $09, $02, $0c, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_04
 	m_TreasureSubid $09, $03, $0a, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_05
 	m_TreasureSubid $09, $07, $71, $1e, TREASURE_OBJECT_ROD_OF_SEASONS_06
+
+treasureObjectData0a:
+	m_BeginTreasureSubids TREASURE_SWITCH_HOOK
+	m_TreasureSubid $38, $01, <TX_00_GET_SWITCHHOOK, $7f, TREASURE_OBJECT_SWITCH_HOOK_00
+	m_TreasureSubid $38, $02, <TX_00_GET_LONGHOOK,   $7f, TREASURE_OBJECT_SWITCH_HOOK_01
 
 treasureObjectData0c:
 	m_BeginTreasureSubids TREASURE_BIGGORON_SWORD

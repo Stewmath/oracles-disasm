@@ -1018,6 +1018,76 @@ groups:
       carry more
       \col(1)seeds\col(0)!
 
+  # CROSSITEMS: Text for obtaining Seasons items.
+  - name: TX_00_GET_MAGNETGLOVES
+    index: auto
+    text: |-
+      You got the
+      \col(1)Magnetic Gloves\col(0)!
+      Their magnetic
+      might attracts
+      and repels.
+      Press the button
+      to reverse
+      polarity.
+
+  - name: TX_00_GET_SLINGSHOT
+    index: auto
+    text: |-
+      You got the
+      \col(1)Slingshot\col(0)!
+      Choose your
+      \col(1)seeds\col(0) and
+      take aim!
+
+  - name: TX_00_GET_HYPERSLINGSHOT
+    index: auto
+    text: |-
+      You got the
+      \col(1)Hyper Slingshot\col(0)!
+      It shoots three
+      seeds at a time!
+
+  - name: TX_00_GET_MAGICBOOMERANG
+    index: auto
+    text: |-
+      It's the \col(1)Magical
+      Boomerang\col(0)!
+      Press \col(0x84)\item(0x00)\col(0)
+      while holding
+      the button to
+      control its
+      flight path!
+
+  - name: TX_00_GET_ROCSCAPE
+    index: auto
+    text: |-
+      You got \col(1)Roc's
+      Cape\col(0)! Press and
+      hold the button
+      to do a double
+      jump!
+
+  - name: TX_00_GET_RODOFSEASONS
+    index: auto
+    text: |-
+      You got the
+      \col(1)Rod of Seasons\col(0)!
+      With the powers
+      of the \col(3)Season
+      Spirits\col(0), it can
+      change the
+      seasons!
+
+  - name: TX_00_GET_FOOLSORE
+    index: auto
+    text: |-
+      You got
+      \col(1)Fool's Ore\col(0)!\stop
+      But that's no
+      good! Get your
+      \col(1)feather\col(0) back!
+
 - group: 0x01
   data:
   - name: TX_0100
@@ -4539,6 +4609,56 @@ groups:
     text: |-
       The current age
       is the past.
+
+  # CROSSITEMS: Text for Seasons items on the subscreen.
+  - name: TX_09_MAGNETGLOVES
+    index: auto
+    text: |-
+      Magnetic Gloves
+      Magnetically
+      attractive!
+
+  - name: TX_09_SLINGSHOT
+    index: auto
+    text: |-
+      Slingshot
+      Used to shoot
+      seeds.
+
+  - name: TX_09_HYPERSLINGSHOT
+    index: auto
+    text: |-
+      Hyper Slingshot
+      Shoots in three
+      directions.
+
+  - name: TX_09_MAGICBOOMERANG
+    index: auto
+    text: |-
+      Magic Boomerang
+      A remote-control
+      weapon.
+
+  - name: TX_09_ROCSCAPE
+    index: auto
+    text: |-
+      Roc's Cape
+      A wind-riding
+      cape.
+
+  - name: TX_09_RODOFSEASONS
+    index: auto
+    text: |-
+      Rod of Seasons
+      Best used from
+      atop a stump.
+
+  - name: TX_09_FOOLSORE
+    index: auto
+    text: |-
+      Traded Ore
+      Not as useful
+      as a feather.
 
 - group: 0x0a
   data:

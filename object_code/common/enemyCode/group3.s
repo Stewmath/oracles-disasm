@@ -2249,7 +2249,7 @@ enemyCode04:
 	ld a,SND_BOSS_DEAD
 	call playSound
 
-	ld a,GFXH_b4
+	ld a,GFXH_GANON_D
 	call ganon_loadGfxHeader
 
 	ld a,$0e
@@ -2363,16 +2363,16 @@ ganon_state_uninitialized:
 .ifdef ROM_AGES
 	ld a,PALH_8b
 .else
-	ld a,SEASONS_PALH_8b
+	ld a,PALH_SEASONS_8b
 .endif
 	call loadPaletteHeader
 .ifdef ROM_AGES
 	ld a,PALH_b1
 .else
-	ld a,SEASONS_PALH_b1
+	ld a,PALH_SEASONS_b1
 .endif
 	ld (wExtraBgPaletteHeader),a
-	ld a,GFXH_b0
+	ld a,GFXH_GANON_REVIVAL
 	call loadGfxHeader
 	ld a,$02
 	call loadGfxRegisterStateIndex
@@ -2452,7 +2452,7 @@ ganon_state4:
 	ld l,Enemy.counter1
 	ld (hl),15
 
-	ld a,GFXH_b1
+	ld a,GFXH_GANON_A
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_32
 	call loadUncompressedGfxHeader
@@ -2589,7 +2589,7 @@ ganon_state8_substate4:
 	ld (hl),$02
 	ld l,e
 	inc (hl) ; [substate]
-	ld a,GFXH_b3
+	ld a,GFXH_GANON_C
 	jp ganon_loadGfxHeader
 
 ganon_state8_substate5:
@@ -2691,7 +2691,7 @@ ganon_state9_substate4:
 	ld (hl),40 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
-	ld a,GFXH_b6
+	ld a,GFXH_GANON_F
 	call ganon_loadGfxHeader
 	ld a,$09
 	call enemySetAnimation
@@ -2723,7 +2723,7 @@ ganon_state9_substate5:
 	ld (hl),40 ; [counter1]
 	ld l,e
 	inc (hl)
-	ld a,GFXH_b2
+	ld a,GFXH_GANON_B
 	call ganon_loadGfxHeader
 	ld a,$07
 	jp enemySetAnimation
@@ -2794,7 +2794,7 @@ ganon_stateA_substate2:
 	dec l
 	ld (hl),a ; [yh]
 
-	ld a,GFXH_b2
+	ld a,GFXH_GANON_B
 	call ganon_loadGfxHeader
 	ld e,Enemy.var32
 	ld a,(de)
@@ -2823,7 +2823,7 @@ ganon_stateA_substate4:
 	ld (hl),$04
 	ld l,e
 	inc (hl) ; [substate]
-	ld a,Enemy.var37
+	ld a,GFXH_GANON_G
 	call ganon_loadGfxHeader
 	ld e,Enemy.var32
 	ld a,(de)
@@ -2836,7 +2836,7 @@ ganon_stateA_substate5:
 	ld (hl),16
 	ld l,e
 	inc (hl) ; [substate]
-	ld a,GFXH_b6
+	ld a,GFXH_GANON_F
 	call ganon_loadGfxHeader
 	ld e,Enemy.var32
 	ld a,(de)
@@ -2906,7 +2906,7 @@ ganon_stateB_substate2:
 	ld (hl),$28
 	ld l,Enemy.xh
 	ld (hl),$78
-	ld a,GFXH_b2
+	ld a,GFXH_GANON_B
 	call ganon_loadGfxHeader
 	ld a,$04
 	call enemySetAnimation
@@ -2936,7 +2936,7 @@ ganon_stateB_substate4:
 	ld a,<(-$1c0)
 	ldi (hl),a
 	ld (hl),>(-$1c0)
-	ld a,GFXH_b3
+	ld a,GFXH_GANON_C
 	call ganon_loadGfxHeader
 	ld a,$05
 	jp enemySetAnimation
@@ -2951,7 +2951,7 @@ ganon_stateB_substate5:
 	ld a,(hl)
 	cp $c0
 	ret nz
-	ld a,GFXH_b5
+	ld a,GFXH_GANON_E
 	call ganon_loadGfxHeader
 	ld a,$06
 	jp enemySetAnimation
@@ -2983,7 +2983,7 @@ ganon_stateB_substate6:
 	ld (hl),$04
 	ld l,e
 	inc (hl)
-	ld a,GFXH_b2
+	ld a,GFXH_GANON_B
 	call ganon_loadGfxHeader
 	ld a,$04
 	jp enemySetAnimation
@@ -3009,7 +3009,7 @@ ganon_stateB_substate8:
 	ld l,e
 	inc (hl) ; [substate]
 	call objectCreatePuff
-	ld a,GFXH_b3
+	ld a,GFXH_GANON_C
 	call ganon_loadGfxHeader
 	ld a,$05
 	jp enemySetAnimation
@@ -3159,7 +3159,7 @@ ganon_stateC_substate7:
 	inc (hl) ; [substate] = 8
 	ld l,Enemy.counter1
 	ld (hl),80
-	ld a,GFXH_b3
+	ld a,GFXH_GANON_C
 	jp ganon_loadGfxHeader
 ++
 	call ecom_updateAngleTowardTarget
@@ -3210,7 +3210,7 @@ ganon_stateC_substate9:
 .ifdef ROM_AGES
 	ld a,PALH_b1
 .else
-	ld a,SEASONS_PALH_b1
+	ld a,PALH_SEASONS_b1
 .endif
 	ld (wExtraBgPaletteHeader),a
 	jp loadPaletteHeader
@@ -3328,7 +3328,7 @@ ganon_loadGfxHeader:
 	ld a,UNCMP_GFXH_33
 	call loadUncompressedGfxHeader
 	pop af
-	sub GFXH_b2
+	sub GFXH_GANON_B
 	add OBJ_GFXH_1e
 	ld hl,wLoadedObjectGfx+4
 	ldi (hl),a
@@ -3586,7 +3586,7 @@ ganon_updateSeizurePalette:
 .ifdef ROM_AGES
 	add a,PALH_b1
 .else
-	add a,SEASONS_PALH_b1
+	add a,PALH_SEASONS_b1
 .endif
 	ld (wExtraBgPaletteHeader),a
 	jp loadPaletteHeader

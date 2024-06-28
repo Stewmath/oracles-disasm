@@ -2,7 +2,6 @@
 ; ITEMID_SLINGSHOT ($13)
 ; @snaddr{4d25}
 parentItemCode_slingshot:
-.ifdef ROM_SEASONS
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -27,11 +26,24 @@ parentItemCode_slingshot:
 	cp c
 	jp c,clearParentItem
 
-	ld a,$01
+	ld a,$02
 	call clearSelfIfNoSeeds
 	; b = seed ID after above call
 	push bc
 	call parentItemLoadAnimationAndIncState
+
+.ifdef ROM_AGES
+	; CROSSITEMS: If underwater, use a different animation. (Implemented kind of hackily by
+	; checking how the seed shooter does it, but it seems to work)
+	call isLinkUnderwater
+	jr z,@notUnderwater
+	ld a,(w1Link.direction)
+	add a
+	add $48
+	ld e,Item.var31
+	ld (de),a
+@notUnderwater:
+.endif
 
 	; Create the slingshot
 	call itemCreateChild
@@ -54,13 +66,10 @@ parentItemCode_slingshot:
 	ld a,b
 	jp decNumActiveSeeds
 
-.endif ; ROM_SEASONS
-
 
 ;;
 ; ITEMID_SHOOTER ($0f)
 parentItemCode_shooter:
-.ifdef ROM_AGES
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -107,6 +116,7 @@ parentItemCode_shooter:
 	; Note: here, 'c' = the "behaviour" value from the "itemUsageParameterTable" for
 	; button B, and this will become the subid for the new item? (The only important
 	; thing is that it's nonzero, to indicate the seed came from the shooter.)
+	ld c,$63 ; CROSSITEMS: Set it to some fixed value explicitly. (01-03 are for slingshot.)
 	push bc
 	ld e,$01
 	call itemCreateChildWithID
@@ -187,9 +197,11 @@ parentItemCode_shooter:
 	ld (hl),$10
 
 @determineBaseAnimation:
+.ifdef ROM_AGES
 	call isLinkUnderwater
 	ld a,$48
 	jr nz,++
+.endif
 	ld a,(w1Companion.id)
 	cp SPECIALOBJECTID_MINECART
 	ld a,$40
@@ -204,8 +216,6 @@ parentItemCode_shooter:
 	ld l,Item.var3f
 	ld (hl),$04
 	ret
-
-.endif ; ROM_AGES
 
 
 ;;
@@ -272,7 +282,7 @@ parentItemCode_satchel:
 ;;
 ; Gets the number of seeds available, or returns from caller if none are available.
 ;
-; @param	a	0 for satchel, 1 for shooter/slingshot
+; @param	a	0 for satchel, 1 for shooter, 2 for slingshot
 ; @param[out]	a	# of seeds of that type
 ; @param[out]	b	Item ID for seed type (value between $20-$24)
 ; @param[out]	hl	Address of "wNum*Seeds" variable

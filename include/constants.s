@@ -8,7 +8,6 @@
 .include "constants/enemyCollisionModes.s"
 .include "constants/enemyStates.s"
 .include "constants/enemyTypes.s"
-.include "constants/gfxHeaders.s"
 .include "constants/globalFlags.s"
 .include "constants/hardware.s"
 .include "constants/interactionTypes.s"
@@ -21,7 +20,6 @@
 .include "constants/objectGfxHeaders.s"
 .include "constants/objectSpeeds.s"
 .include "constants/other.s"
-.include "constants/paletteHeaders.s"
 .include "constants/partTypes.s"
 .include "constants/rings.s"
 .include "constants/roomFlags.s"
@@ -41,7 +39,6 @@
 .include "constants/treasureSpawnModes.s"
 .include "constants/treeGfxHeaders.s"
 .include "constants/uncmpGfxHeaders.s"
-.include "constants/uniqueGfxHeaders.s"
 
 .ifdef ROM_SEASONS
 .include "constants/seasons.s"

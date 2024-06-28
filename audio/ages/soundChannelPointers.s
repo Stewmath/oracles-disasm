@@ -1507,9 +1507,9 @@ sndAges:
 	.dw sndAgesChannel7
 	.db $ff
 
-snd7a:
+sndMagnetGloves: ; CROSSITEMS: Replaced snd7a with this
 	.db $02
-	.dw snd7aChannel2
+	.dw sndMagnetGlovesChannel2
 	.db $ff
 
 sndSwitch2:

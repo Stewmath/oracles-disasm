@@ -7,18 +7,16 @@ parentItemCode_boomerang:
 
 	.dw @state0
 	.dw @state1
-.ifdef ROM_SEASONS
 	.dw @state2
-.endif
 
 @state0:
 .ifdef ROM_AGES
 	call isLinkUnderwater
 	jp nz,clearParentItem
+.endif
 	ld a,(w1ParentItem2.id)
 	cp ITEMID_SWITCH_HOOK
 	jp z,clearParentItem
-.endif
 
 	ld a,(wLinkSwimmingState)
 	or a
@@ -26,17 +24,12 @@ parentItemCode_boomerang:
 
 	call parentItemLoadAnimationAndIncState
 
-.ifdef ROM_SEASONS
 	ld a,(wBoomerangLevel)
 	cp $02
 	ld a,$01
 	jr nz,+
 	inc a
 +
-.else; ROM_AGES
-	ld a,$01
-.endif
-
 	ld e,Item.state
 	ld (de),a
 
@@ -63,8 +56,6 @@ parentItemCode_boomerang:
 	ld l,Item.var34
 	ld (hl),a
 	ret
-
-.ifdef ROM_SEASONS
 
 @state2:
 	call parentItemCheckButtonPressed
@@ -102,8 +93,6 @@ parentItemCode_boomerang:
 	ld a,$01
 	ld (de),a
 	; Fall through to @state1
-
-.endif ; ROM_SEASONS
 
 
 @state1:

@@ -19,21 +19,21 @@
 	m_GfxData flg_inventory_screen_1 ; $0a5728
 	m_GfxData map_inventory_textbar ; $0a5737
 	m_GfxData flg_inventory_textbar ; $0a576c
-	m_GfxData map_0e ; $0a577b
-	m_GfxData map_0f ; $0a578b
-	m_GfxData map_14 ; $0a5798
-	m_GfxData map_04 ; $0a57a8
-	m_GfxData map_05 ; $0a57b3
-	m_GfxData map_06 ; $0a57c2
+	m_GfxData map_hud_normal ; $0a577b
+	m_GfxData flg_hud_normal ; $0a578b
+	m_GfxData map_hud_extra_hearts ; $0a5798
+	m_GfxData flg_hud_extra_hearts ; $0a57a8
+	m_GfxData map_hud_biggoron_sword ; $0a57b3
+	m_GfxData flg_hud_biggoron_sword ; $0a57c2
 	m_GfxData map_inventory_screen_2 ; $0a57cf
 	m_GfxData flg_inventory_screen_2 ; $0a57e2
 	m_GfxData map_inventory_screen_3 ; $0a57f1
 	m_GfxData flg_inventory_screen_3 ; $0a5884
 	m_GfxData spr_biggoron_sword_icon ; $0a58cb
-	m_GfxData map_16 ; $0a5915
-	m_GfxData map_17 ; $0a5934
-	m_GfxData map_10 ; $0a594c
-	m_GfxData map_0a ; $0a59af
+	m_GfxData map_unappraised_ring_list ; $0a5915
+	m_GfxData flg_unappraised_ring_list ; $0a5934
+	m_GfxData map_appraised_ring_list ; $0a594c
+	m_GfxData flg_appraised_ring_list ; $0a59af
 	m_GfxData map_dungeon_minimap ; $0a59e5
 	m_GfxData flg_dungeon_minimap ; $0a5a37
 	m_GfxData gfx_blurb_makupath ; $0a5a51
@@ -236,16 +236,16 @@
 	m_GfxData gfx_gasha_tree ; $0b7102
 	m_GfxData spr_grass_tuft ; $0b753b
 	m_GfxData gfx_sand ; $0b755d
-	m_GfxData gfx_path ; $0b7588
+	m_GfxData gfx_dirt ; $0b7588
 
 	; HACK-BASE: Deleted tileset graphics for expanded tilesets patch (except these ones which
 	; are used for other things too)
-	m_GfxData gfx_tileset_0b8283
-	m_GfxData gfx_tileset_0b8837
-	m_GfxData gfx_tileset_0bd8ee
-	m_GfxData gfx_tileset_0bde39
-	m_GfxData gfx_tileset_0be4b9
-	m_GfxData gfx_tileset_0be7fe
+	m_GfxData gfx_tileset_overworld_standard ; $0b8283
+	m_GfxData gfx_tileset_overworld_present ; $0b8837
+	m_GfxData gfx_tileset_black_tower ; $0bd8ee
+	m_GfxData gfx_tileset_dungeon_standard_1 ; $0bde39
+	m_GfxData gfx_tileset_dungeon_standard_2 ; $0be4b9
+	m_GfxData gfx_tileset_maku_path ; $0be7fe
 
 	m_GfxData gfx_dmg_text ; $0c2dec
 	m_GfxData gfx_dmg_gametitle ; $0c2ec8
@@ -259,28 +259,28 @@
 	m_GfxData gfx_titlescreen_6 ; $0c3c38
 	m_GfxData map_titlescreen ; $0c3c7a
 	m_GfxData flg_titlescreen ; $0c3de1
-	m_GfxData unk_0c3e4b ; $0c3e4b
-	m_GfxData unk_0c3f45 ; $0c3f45
-	m_GfxData spr_0c3fcf ; $0c3fcf
-	m_GfxData gfx_0c442c ; $0c442c
-	m_GfxData gfx_0c469d ; $0c469d
-	m_GfxData unk_0c47bb ; $0c47bb
-	m_GfxData unk_0c47bf ; $0c47bf
-	m_GfxData unk_0c486e ; $0c486e
-	m_GfxData unk_0c4899 ; $0c4899
-	m_GfxData unk_0c489d ; $0c489d
-	m_GfxData unk_0c48d2 ; $0c48d2
-	m_GfxData spr_0c48e9 ; $0c48e9
-	m_GfxData gfx_0c4dbf ; $0c4dbf
-	m_GfxData unk_0c518b ; $0c518b
-	m_GfxData unk_0c520f ; $0c520f
-	m_GfxData gfx_0c5239 ; $0c5239
-	m_GfxData spr_0c571e ; $0c571e
-	m_GfxData spr_link_on_horse_sprites ; $0c58df
-	m_GfxData gfx_link_on_horse_1 ; $0c5b3b
-	m_GfxData gfx_link_on_horse_2 ; $0c616f
-	m_GfxData gfx_link_on_horse_3 ; $0c6733
-	m_GfxData gfx_link_on_horse_4 ; $0c6c75
+	m_GfxData map_intro_link_on_horse_far ; $0c3e4b
+	m_GfxData flg_intro_link_on_horse_far ; $0c3f45
+	m_GfxData spr_intro_link_on_horse_far ; $0c3fcf
+	m_GfxData gfx_intro_link_on_horse_far_bg_1 ; $0c442c
+	m_GfxData gfx_intro_link_on_horse_far_bg_2 ; $0c469d
+	m_GfxData map_intro_bar ; $0c47bb
+	m_GfxData map_intro_link_on_horse_front_bg ; $0c47bf
+	m_GfxData map_intro_link_on_horse_front_ground ; $0c486e
+	m_GfxData flg_intro_bar ; $0c4899
+	m_GfxData flg_intro_link_on_horse_front_bg ; $0c489d
+	m_GfxData flg_intro_link_on_horse_front_ground ; $0c48d2
+	m_GfxData spr_intro_link_on_horse_front ; $0c48e9
+	m_GfxData gfx_intro_link_on_horse_front_bg ; $0c4dbf
+	m_GfxData map_intro_link_face_shot ; $0c518b
+	m_GfxData flg_intro_link_face_shot ; $0c520f
+	m_GfxData gfx_intro_link_face_shot ; $0c5239
+	m_GfxData spr_intro_link_face_shot_sparkle ; $0c571e
+	m_GfxData spr_link_on_horse_closeup ; $0c58df
+	m_GfxData gfx_link_on_horse_closeup_1 ; $0c5b3b
+	m_GfxData gfx_link_on_horse_closeup_2 ; $0c616f
+	m_GfxData gfx_link_on_horse_closeup_3 ; $0c6733
+	m_GfxData gfx_link_on_horse_closeup_4 ; $0c6c75
 	m_GfxData spr_obj_intro_tree ; $0c6e75
 	m_GfxData spr_obj_intro_clouds ; $0c7001
 	m_GfxData gfx_titlescreen_5 ; $0c7163
@@ -295,11 +295,11 @@
 	m_GfxData flg_titlescreen_scroll_2 ; $0c8d4e
 	m_GfxData map_titlescreen_scroll_1 ; $0c8d77
 	m_GfxData flg_titlescreen_scroll_1 ; $0c8fbc
-	m_GfxData map_link_on_horse ; $0c9070
-	m_GfxData flg_link_on_horse ; $0c92b7
+	m_GfxData map_link_on_horse_closeup ; $0c9070
+	m_GfxData flg_link_on_horse_closeup ; $0c92b7
 
 	; Unused gfx map? (compressed with mode 1?)
-	; Similar to Season's "map_intro_topbar.bin"? Attempts to decompress it yields
+	; Similar to Season's "map_intro_bar.bin"? Attempts to decompress it yields
 	; strange file sizes.
 .ifdef BUILD_VANILLA
 	; $0c93a4
@@ -327,80 +327,80 @@
 	m_GfxData gfx_intro_outside_castle_2 ; $0caaf2
 	m_GfxData gfx_intro_outside_castle_3 ; $0cb146
 	m_GfxData spr_triforcestone ; $0cb5d9
-	m_GfxData spr_0cb62e ; $0cb62e
-	m_GfxData gfx_0cb866 ; $0cb866
-	m_GfxData gfx_0cbec1 ; $0cbec1
-	m_GfxData gfx_0cc412 ; $0cc412
-	m_GfxData unk_0cc630 ; $0cc630
-	m_GfxData unk_0cc7eb ; $0cc7eb
-	m_GfxData gfx_0cc8aa ; $0cc8aa
-	m_GfxData gfx_0ccf44 ; $0ccf44
-	m_GfxData spr_0cd225 ; $0cd225
-	m_GfxData gfx_0cd466 ; $0cd466
-	m_GfxData gfx_0cdb76 ; $0cdb76
-	m_GfxData unk_0ce1b4 ; $0ce1b4
-	m_GfxData unk_0ce29b ; $0ce29b
-	m_GfxData unk_0ce2ff ; $0ce2ff
-	m_GfxData unk_0ce338 ; $0ce338
-	m_GfxData unk_0ce374 ; $0ce374
-	m_GfxData unk_0ce43f ; $0ce43f
-	m_GfxData unk_0ce50a ; $0ce50a
-	m_GfxData unk_0ce555 ; $0ce555
-	m_GfxData unk_0ce599 ; $0ce599
-	m_GfxData unk_0ce6a1 ; $0ce6a1
-	m_GfxData unk_0ce700 ; $0ce700
-	m_GfxData unk_0ce731 ; $0ce731
-	m_GfxData spr_0ce74f ; $0ce74f
-	m_GfxData gfx_0ce9d4 ; $0ce9d4
-	m_GfxData gfx_0cf09d ; $0cf09d
-	m_GfxData gfx_0cf5d5 ; $0cf5d5
-	m_GfxData unk_0cf804 ; $0cf804
-	m_GfxData unk_0cf98e ; $0cf98e
-	m_GfxData gfx_0cfa28 ; $0cfa28
-	m_GfxData spr_0cfd18 ; $0cfd18
-	m_GfxData gfx_0d0053 ; $0d0053
-	m_GfxData gfx_0d0754 ; $0d0754
-	m_GfxData unk_0d0e3c ; $0d0e3c
-	m_GfxData unk_0d0fa2 ; $0d0fa2
-	m_GfxData unk_0d1061 ; $0d1061
-	m_GfxData unk_0d11f2 ; $0d11f2
+	m_GfxData spr_nayru_singing_cutscene ; $0cb62e
+	m_GfxData gfx_nayru_singing_cutscene_1 ; $0cb866
+	m_GfxData gfx_nayru_singing_cutscene_2 ; $0cbec1
+	m_GfxData gfx_nayru_singing_cutscene_3 ; $0cc412
+	m_GfxData map_nayru_singing_cutscene ; $0cc630
+	m_GfxData flg_nayru_singing_cutscene ; $0cc7eb
+	m_GfxData gfx_black_tower_scene_1 ; $0cc8aa
+	m_GfxData gfx_black_tower_scene_2 ; $0ccf44
+	m_GfxData spr_black_tower_scene ; $0cd225
+	m_GfxData gfx_black_tower_scene_3 ; $0cd466
+	m_GfxData gfx_black_tower_scene_4 ; $0cdb76
+	m_GfxData map_black_tower_stage_1 ; $0ce1b4
+	m_GfxData map_black_tower_base ; $0ce29b
+	m_GfxData flg_black_tower_stage_1 ; $0ce2ff
+	m_GfxData flg_black_tower_base ; $0ce338
+	m_GfxData map_black_tower_stage_2 ; $0ce374
+	m_GfxData map_black_tower_middle ; $0ce43f
+	m_GfxData flg_black_tower_stage_2 ; $0ce50a
+	m_GfxData flg_black_tower_middle ; $0ce555
+	m_GfxData map_black_tower_stage_3_middle ; $0ce599
+	m_GfxData flg_black_tower_stage_3_middle ; $0ce6a1
+	m_GfxData map_black_tower_stage_3_top ; $0ce700
+	m_GfxData flg_black_tower_stage_3_top ; $0ce731
+	m_GfxData spr_link_with_oracle ; $0ce74f
+	m_GfxData gfx_link_with_oracle_1 ; $0ce9d4
+	m_GfxData gfx_link_with_oracle_2 ; $0cf09d
+	m_GfxData gfx_link_with_oracle_3 ; $0cf5d5
+	m_GfxData map_link_with_oracle ; $0cf804
+	m_GfxData flg_link_with_oracle ; $0cf98e
+	m_GfxData gfx_link_with_oracle_and_twinrova_1 ; $0cfa28
+	m_GfxData spr_link_with_oracle_and_twinrova ; $0cfd18
+	m_GfxData gfx_link_with_oracle_and_twinrova_2 ; $0d0053
+	m_GfxData gfx_link_with_oracle_and_twinrova_3 ; $0d0754
+	m_GfxData map_link_with_oracle_and_twinrova_1 ; $0d0e3c
+	m_GfxData flg_link_with_oracle_and_twinrova_1 ; $0d0fa2
+	m_GfxData map_link_with_oracle_and_twinrova_2 ; $0d1061
+	m_GfxData flg_link_with_oracle_and_twinrova_2 ; $0d11f2
 	m_GfxData gfx_twinrova_closeup_1 ; $0d12ab
 	m_GfxData gfx_twinrova_closeup_2 ; $0d1824
 	m_GfxData map_twinrova_closeup ; $0d1a90
 	m_GfxData flg_twinrova_closeup ; $0d1bc0
-	m_GfxData spr_0d1c03 ; $0d1c03
-	m_GfxData gfx_0d1da4 ; $0d1da4
-	m_GfxData gfx_0d2448 ; $0d2448
-	m_GfxData unk_0d2b9d ; $0d2b9d
-	m_GfxData unk_0d2cf8 ; $0d2cf8
+	m_GfxData spr_credits_makutree ; $0d1c03
+	m_GfxData gfx_credits_makutree_1 ; $0d1da4
+	m_GfxData gfx_credits_makutree_2 ; $0d2448
+	m_GfxData map_credits_makutree ; $0d2b9d
+	m_GfxData flg_credits_makutree ; $0d2cf8
 	m_GfxData map_credits_gametitle ; $0d2d67
 	m_GfxData flg_credits_gametitle ; $0d2e02
 	m_GfxData gfx_credits_gametitle ; $0d2e0d
 	m_GfxData spr_credits_font ; $0d321a
-	m_GfxData map_credits_maku_top_rows ; $0d33c1
-	m_GfxData flg_credits_maku_top_rows ; $0d33e9
+	m_GfxData map_credits_scene1_top_rows ; $0d33c1
+	m_GfxData flg_credits_scene1_top_rows ; $0d33e9
 	m_GfxData map_credits_image1 ; $0d33f9
 	m_GfxData flg_credits_image1 ; $0d351c
 	m_GfxData spr_credits_font_planners ; $0d3535
 	m_GfxData gfx_credits_image1_1 ; $0d365e
 	m_GfxData gfx_credits_image1_2 ; $0d3dad
-	m_GfxData map_credits_nayruhouse_top_rows ; $0d42a2
-	m_GfxData flg_credits_nayruhouse_top_rows ; $0d42c2
+	m_GfxData map_credits_scene2 ; $0d42a2
+	m_GfxData flg_credits_scene2 ; $0d42c2
 	m_GfxData map_credits_image2 ; $0d42dc
 	m_GfxData flg_credits_image2 ; $0d4400
 	m_GfxData spr_credits_font_nakanowatari ; $0d4430
 	m_GfxData spr_credits_font_programmers ; $0d4518
 	m_GfxData gfx_credits_image2_1 ; $0d45b0
 	m_GfxData gfx_credits_image2_2 ; $0d4d08
-	m_GfxData map_credits_map3_top_rows ; $0d51da
-	m_GfxData flg_credits_map3_top_rows ; $0d51fa
+	m_GfxData map_credits_scene3_top_rows ; $0d51da
+	m_GfxData flg_credits_scene3_top_rows ; $0d51fa
 	m_GfxData map_credits_image3 ; $0d520c
 	m_GfxData flg_credits_image3 ; $0d5330
 	m_GfxData spr_credits_font_object_designers ; $0d5365
 	m_GfxData gfx_credits_image3_1 ; $0d5488
 	m_GfxData gfx_credits_image3_2 ; $0d5b56
-	m_GfxData map_credits_map4_top_rows ; $0d6047
-	m_GfxData flg_credits_map4_top_rows ; $0d606b
+	m_GfxData map_credits_scene4_top_rows ; $0d6047
+	m_GfxData flg_credits_scene4_top_rows ; $0d606b
 	m_GfxData map_credits_image4 ; $0d6086
 	m_GfxData flg_credits_image4 ; $0d61a5
 	m_GfxData spr_credits_font_music ; $0d61db
@@ -408,31 +408,31 @@
 	m_GfxData gfx_credits_image4_2 ; $0d698c
 	m_GfxData map_credits_maku_past_top_rows ; $0d6e1f
 	m_GfxData flg_credits_maku_past_top_rows ; $0d6e32
-	m_GfxData gfx_tileset_0d6e3e ; $0d6e3e
-	m_GfxData unk_0d717a ; $0d717a
-	m_GfxData unk_0d729e ; $0d729e
-	m_GfxData unk_0d7365 ; $0d7365
-	m_GfxData unk_0d7489 ; $0d7489
-	m_GfxData gfx_0d74b8 ; $0d74b8
-	m_GfxData gfx_0d7c23 ; $0d7c23
-	m_GfxData unk_0d8162 ; $0d8162
-	m_GfxData unk_0d8225 ; $0d8225
-	m_GfxData unk_0d82a4 ; $0d82a4
-	m_GfxData unk_0d83c8 ; $0d83c8
-	m_GfxData gfx_0d83ec ; $0d83ec
-	m_GfxData gfx_0d8b0f ; $0d8b0f
-	m_GfxData unk_0d90bd ; $0d90bd
-	m_GfxData unk_0d916c ; $0d916c
-	m_GfxData unk_0d91ce ; $0d91ce
-	m_GfxData unk_0d92f1 ; $0d92f1
-	m_GfxData gfx_0d930d ; $0d930d
-	m_GfxData gfx_0d9894 ; $0d9894
-	m_GfxData unk_0d9c86 ; $0d9c86
-	m_GfxData unk_0d9d83 ; $0d9d83
-	m_GfxData unk_0d9e3d ; $0d9e3d
-	m_GfxData unk_0d9f61 ; $0d9f61
-	m_GfxData gfx_0d9f87 ; $0d9f87
-	m_GfxData gfx_0da68b ; $0da68b
+	m_GfxData gfx_tileset_credits ; $0d6e3e
+	m_GfxData map_credits_linked_scene2 ; $0d717a
+	m_GfxData flg_credits_linked_scene2 ; $0d729e
+	m_GfxData map_credits_linked_image2 ; $0d7365
+	m_GfxData flg_credits_linked_image2 ; $0d7489
+	m_GfxData gfx_credits_linked_image2_1 ; $0d74b8
+	m_GfxData gfx_credits_linked_image2_2 ; $0d7c23
+	m_GfxData map_credits_linked_scene1 ; $0d8162
+	m_GfxData flg_credits_linked_scene1 ; $0d8225
+	m_GfxData map_credits_linked_image1 ; $0d82a4
+	m_GfxData flg_credits_linked_image1 ; $0d83c8
+	m_GfxData gfx_credits_linked_image1_1 ; $0d83ec
+	m_GfxData gfx_credits_linked_image1_2 ; $0d8b0f
+	m_GfxData map_credits_linked_scene4 ; $0d90bd
+	m_GfxData flg_credits_linked_scene4 ; $0d916c
+	m_GfxData map_credits_linked_image4 ; $0d91ce
+	m_GfxData flg_credits_linked_image4 ; $0d92f1
+	m_GfxData gfx_credits_linked_image4_1 ; $0d930d
+	m_GfxData gfx_credits_linked_image4_2 ; $0d9894
+	m_GfxData map_credits_linked_scene3 ; $0d9c86
+	m_GfxData flg_credits_linked_scene3 ; $0d9d83
+	m_GfxData map_credits_linked_image3 ; $0d9e3d
+	m_GfxData flg_credits_linked_image3 ; $0d9f61
+	m_GfxData gfx_credits_linked_image3_1 ; $0d9f87
+	m_GfxData gfx_credits_linked_image3_2 ; $0da68b
 	m_GfxData map_credits_bg ; $0dab8f
 	m_GfxData flg_credits_bg ; $0dad97
 	m_GfxData spr_credits_sprites_1 ; $0dae14
@@ -444,20 +444,20 @@
 	m_GfxData flg_credits_theend ; $0dc924
 	m_GfxData gfx_credits_theend_1 ; $0dc96d
 	m_GfxData gfx_credits_theend_2 ; $0dcf5d
-	m_GfxData unk_0dd291 ; $0dd291
-	m_GfxData unk_0dd49e ; $0dd49e
-	m_GfxData unk_0dd548 ; $0dd548
-	m_GfxData unk_0dd5a7 ; $0dd5a7
-	m_GfxData spr_0dd5c9 ; $0dd5c9
-	m_GfxData gfx_0dd758 ; $0dd758
-	m_GfxData gfx_0ddd26 ; $0ddd26
-	m_GfxData gfx_0ddde4 ; $0ddde4
-	m_GfxData gfx_0de538 ; $0de538
-	m_GfxData unk_0dec54 ; $0dec54
-	m_GfxData unk_0ded74 ; $0ded74
-	m_GfxData spr_0dedc0 ; $0dedc0
-	m_GfxData gfx_0def24 ; $0def24
-	m_GfxData gfx_0df2b9 ; $0df2b9
+	m_GfxData map_credits_linked_waving_goodbye_1 ; $0dd291
+	m_GfxData flg_credits_linked_waving_goodbye_1 ; $0dd49e
+	m_GfxData map_credits_linked_waving_goodbye_2 ; $0dd548
+	m_GfxData flg_credits_linked_waving_goodbye_2 ; $0dd5a7
+	m_GfxData spr_credits_linked_waving_goodbye ; $0dd5c9
+	m_GfxData gfx_credits_linked_waving_goodbye_1 ; $0dd758
+	m_GfxData gfx_credits_linked_waving_goodbye_2 ; $0ddd26
+	m_GfxData gfx_credits_linked_waving_goodbye_3 ; $0ddde4
+	m_GfxData gfx_credits_linked_waving_goodbye_4 ; $0de538
+	m_GfxData map_credits_linked_theend ; $0dec54
+	m_GfxData flg_credits_linked_theend ; $0ded74
+	m_GfxData spr_boat_theend ; $0dedc0
+	m_GfxData gfx_credits_linked_theend_1 ; $0def24
+	m_GfxData gfx_credits_linked_theend_2 ; $0df2b9
 	m_GfxData gfx_tobecontinued ; $0df544
 	m_GfxData map_tobecontinued ; $0dfb1a
 	m_GfxData flg_tobecontinued ; $0dfbb9
@@ -483,36 +483,36 @@
 	m_GfxData gfx_error ; $0e1d07
 	m_GfxData map_file_menu_top ; $0e1e91
 	m_GfxData flg_file_menu_top ; $0e1efe
-	m_GfxData unk_0e1f19 ; $0e1f19
-	m_GfxData unk_0e1f98 ; $0e1f98
-	m_GfxData unk_0e1fca ; $0e1fca
-	m_GfxData unk_0e1fff ; $0e1fff
-	m_GfxData unk_0e200c ; $0e200c
-	m_GfxData unk_0e205d ; $0e205d
-	m_GfxData unk_0e2076 ; $0e2076
-	m_GfxData unk_0e20ee ; $0e20ee
+	m_GfxData map_file_menu_middle ; $0e1f19
+	m_GfxData flg_file_menu_middle ; $0e1f98
+	m_GfxData map_file_menu_bottom ; $0e1fca
+	m_GfxData flg_file_menu_bottom ; $0e1fff
+	m_GfxData map_file_menu_message_speed ; $0e200c
+	m_GfxData flg_file_menu_message_speed ; $0e205d
+	m_GfxData map_file_menu_copy ; $0e2076
+	m_GfxData flg_file_menu_copy ; $0e20ee
 	m_GfxData map_save_menu_middle ; $0e2113
 	m_GfxData flg_save_menu_middle ; $0e21b0
 	m_GfxData map_save_menu_bottom ; $0e21c8
 	m_GfxData flg_save_menu_bottom ; $0e21ea
-	m_GfxData unk_0e21ee ; $0e21ee
-	m_GfxData unk_0e2260 ; $0e2260
-	m_GfxData unk_0e227d ; $0e227d
-	m_GfxData unk_0e236d ; $0e236d
-	m_GfxData unk_0e2390 ; $0e2390
-	m_GfxData unk_0e23c0 ; $0e23c0
-	m_GfxData unk_0e23cf ; $0e23cf
-	m_GfxData unk_0e23fb ; $0e23fb
-	m_GfxData unk_0e2409 ; $0e2409
-	m_GfxData unk_0e246d ; $0e246d
-	m_GfxData unk_0e248d ; $0e248d
-	m_GfxData unk_0e24b8 ; $0e24b8
-	m_GfxData unk_0e24c9 ; $0e24c9
-	m_GfxData unk_0e2589 ; $0e2589
-	m_GfxData unk_0e25a4 ; $0e25a4
-	m_GfxData unk_0e262f ; $0e262f
-	m_GfxData gfx_0e264f ; $0e264f
-	m_GfxData unk_0e28a8 ; $0e28a8
-	m_GfxData unk_0e2a57 ; $0e2a57
-	m_GfxData unk_0e2aa2 ; $0e2aa2
-	m_GfxData unk_0e2ad7 ; $0e2ad7
+	m_GfxData map_secret_entry_top ; $0e21ee
+	m_GfxData flg_secret_entry_top ; $0e2260
+	m_GfxData map_secret_entry_middle ; $0e227d
+	m_GfxData flg_secret_entry_middle ; $0e236d
+	m_GfxData map_secret_entry_bottom ; $0e2390
+	m_GfxData flg_secret_entry_bottom ; $0e23c0
+	m_GfxData map_secret_entry_error ; $0e23cf
+	m_GfxData flg_secret_entry_error ; $0e23fb
+	m_GfxData map_name_entry_top ; $0e2409
+	m_GfxData flg_name_entry_top ; $0e246d
+	m_GfxData map_name_entry_bottom ; $0e248d
+	m_GfxData flg_name_entry_bottom ; $0e24b8
+	m_GfxData map_name_entry_middle ; $0e24c9
+	m_GfxData flg_name_entry_middle ; $0e2589
+	m_GfxData map_secret_for_linked_game ; $0e25a4
+	m_GfxData flg_secret_for_linked_game ; $0e262f
+	m_GfxData gfx_secret_list_menu ; $0e264f
+	m_GfxData map_secret_list_menu ; $0e28a8
+	m_GfxData flg_secret_list_menu ; $0e2a57
+	m_GfxData oth_twinrova_lava_layout ; $0e2aa2
+	m_GfxData oth_twinrova_normal_layout ; $0e2ad7

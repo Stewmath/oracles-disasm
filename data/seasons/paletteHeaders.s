@@ -1,618 +1,818 @@
-paletteHeaderTable:
-	.dw paletteHeader00
-	.dw paletteHeader01
-	.dw paletteHeader02
-	.dw paletteHeader03
-	.dw paletteHeader04
-	.dw paletteHeader05
-	.dw paletteHeader06
-	.dw paletteHeader07
-	.dw paletteHeader08
-	.dw paletteHeader09
-	.dw paletteHeader0a
-	.dw paletteHeader0b
-	.dw paletteHeader0c
-	.dw paletteHeader0d
-	.dw paletteHeader0e
-	.dw paletteHeader0f
-	.dw paletteHeader10
-	.dw paletteHeader11
-	.dw paletteHeader12
-	.dw paletteHeader13
-	.dw paletteHeader14
-	.dw paletteHeader15
-	.dw paletteHeader16
-	.dw paletteHeader17
-	.dw paletteHeader18
-	.dw paletteHeader19
-	.dw paletteHeader1a
-	.dw paletteHeader1b
-	.dw paletteHeader1c
-	.dw paletteHeader1d
-	.dw paletteHeader1e
-	.dw paletteHeader1f
-	.dw paletteHeader20
-	.dw paletteHeader21
-	.dw paletteHeader22
-	.dw paletteHeader23
-	.dw paletteHeader24
-	.dw paletteHeader25
-	.dw paletteHeader26
-	.dw paletteHeader27
-	.dw paletteHeader28
-	.dw paletteHeader29
-	.dw paletteHeader2a
-	.dw paletteHeader2b
-	.dw paletteHeader2c
-	.dw paletteHeader2d
-	.dw paletteHeader2e
-	.dw paletteHeader2f
-	.dw paletteHeader30
-	.dw paletteHeader31
-	.dw paletteHeader32
-	.dw paletteHeader33
-	.dw paletteHeader34
-	.dw paletteHeader35
-	.dw paletteHeader36
-	.dw paletteHeader37
-	.dw paletteHeader38
-	.dw paletteHeader39
-	.dw paletteHeader3a
-	.dw paletteHeader3b
-	.dw paletteHeader3c
-	.dw paletteHeader3d
-	.dw paletteHeader3e
-	.dw paletteHeader3f
-	.dw paletteHeader40
-	.dw paletteHeader41
-	.dw paletteHeader42
-	.dw paletteHeader43
-	.dw paletteHeader44
-	.dw paletteHeader45
-	.dw paletteHeader46
-	.dw paletteHeader47
-	.dw paletteHeader48
-	.dw paletteHeader49
-	.dw paletteHeader4a
-	.dw paletteHeader4b
-	.dw paletteHeader4c
-	.dw paletteHeader4d
-	.dw paletteHeader4e
-	.dw paletteHeader4f
-	.dw paletteHeader50
-	.dw paletteHeader51
-	.dw paletteHeader52
-	.dw paletteHeader53
-	.dw paletteHeader54
-	.dw paletteHeader55
-	.dw paletteHeader56
-	.dw paletteHeader57
-	.dw paletteHeader58
-	.dw paletteHeader59
-	.dw paletteHeader5a
-	.dw paletteHeader5b
-	.dw paletteHeader5c
-	.dw paletteHeader5d
-	.dw paletteHeader5e
-	.dw paletteHeader5f
-	.dw paletteHeader60
-	.dw paletteHeader61
-	.dw paletteHeader62
-	.dw paletteHeader63
-	.dw paletteHeader64
-	.dw paletteHeader65
-	.dw paletteHeader66
-	.dw paletteHeader67
-	.dw paletteHeader68
-	.dw paletteHeader69
-	.dw paletteHeader6a
-	.dw paletteHeader6b
-	.dw paletteHeader6c
-	.dw paletteHeader6d
-	.dw paletteHeader6e
-	.dw paletteHeader6f
-	.dw paletteHeader70
-	.dw paletteHeader71
-	.dw paletteHeader72
-	.dw paletteHeader73
-	.dw paletteHeader74
-	.dw paletteHeader75
-	.dw paletteHeader76
-	.dw paletteHeader77
-	.dw paletteHeader78
-	.dw paletteHeader79
-	.dw paletteHeader7a
-	.dw paletteHeader7b
-	.dw paletteHeader7c
-	.dw paletteHeader7d
-	.dw paletteHeader7e
-	.dw paletteHeader7f
-	.dw paletteHeader80
-	.dw paletteHeader81
-	.dw paletteHeader82
-	.dw paletteHeader83
-	.dw paletteHeader84
-	.dw paletteHeader85
-	.dw paletteHeader86
-	.dw paletteHeader87
-	.dw paletteHeader88
-	.dw paletteHeader89
-	.dw paletteHeader8a
-	.dw paletteHeader8b
-	.dw paletteHeader8c
-	.dw paletteHeader8d
-	.dw paletteHeader8e
-	.dw paletteHeader8f
-	.dw paletteHeader90
-	.dw paletteHeader91
-	.dw paletteHeader92
-	.dw paletteHeader93
-	.dw paletteHeader94
-	.dw paletteHeader95
-	.dw paletteHeader96
-	.dw paletteHeader97
-	.dw paletteHeader98
-	.dw paletteHeader99
-	.dw paletteHeader9a
-	.dw paletteHeader9b
-	.dw paletteHeader9c
-	.dw paletteHeader9d
-	.dw paletteHeader9e
-	.dw paletteHeader9f
-	.dw paletteHeadera0
-	.dw paletteHeadera1
-	.dw paletteHeadera2
-	.dw paletteHeadera3
-	.dw paletteHeadera4
-	.dw paletteHeadera5
-	.dw paletteHeadera6
-	.dw paletteHeadera7
-	.dw paletteHeadera8
-	.dw paletteHeadera9
-	.dw paletteHeaderaa
-	.dw paletteHeaderab
-	.dw paletteHeaderac
-	.dw paletteHeaderad
-	.dw paletteHeaderae
-	.dw paletteHeaderaf
-	.dw paletteHeaderb0
-	.dw paletteHeaderb1
-	.dw paletteHeaderb2
-	.dw paletteHeaderb3
-	.dw paletteHeaderb4
-	.dw paletteHeaderb5
-	.dw paletteHeaderb6
-	.dw paletteHeaderb7
-	.dw paletteHeaderb8
-	.dw paletteHeaderb9
-	.dw paletteHeaderba
-	.dw paletteHeaderbb
-	.dw paletteHeaderbc
-	.dw paletteHeaderbd
+; See data/ages/paletteHeaders.s for documentation.
+; TODO: Finish labelling these
+;
+; Naming conventions:
+; - PALH_TILESET: Palettes used by tilesets, should load bg palettes 2-7.
+;                 May also load a sprite palette or two (ie. PALH_TILESET_BIGGORON)
+; - PALH_BG:      Loads bg palettes only (not used for tilesets)
+; - PALH_SPR:     Loads sprite palettes only
+; - PALH:         If none of the above, could load both sprite & bg palettes (or not yet categorized)
 
-paletteHeader00:
-	m_PaletteHeaderBg  0, 1, paletteData4000, $00
-paletteHeader01:
-	m_PaletteHeaderBg  0, 2, paletteData4008, $00
-paletteHeader02:
-	m_PaletteHeaderBg  0, 1, paletteData5e50, $80
-	m_PaletteHeaderSpr 0, 1, paletteData5e50, $00
-paletteHeader03:
-	m_PaletteHeaderBg  0, 8, paletteData4018, $80
-	m_PaletteHeaderSpr 0, 8, paletteData4058, $00
-paletteHeader04:
-	m_PaletteHeaderBg  0, 4, paletteData45b0, $00
-paletteHeader05:
-	m_PaletteHeaderBg  0, 1, paletteData4830, $80
-	m_PaletteHeaderBg  2, 5, paletteData5db8, $80
-	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData, $80
-	m_PaletteHeaderSpr 4, 3, paletteData5d98, $00
-paletteHeader06:
-	m_PaletteHeaderBg  0, 1, paletteData4830, $80
-	m_PaletteHeaderBg  2, 5, paletteData5de0, $80
-	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData, $80
-	m_PaletteHeaderSpr 4, 3, paletteData5d98, $00
-paletteHeader07:
-	m_PaletteHeaderBg  0, 8, paletteData4098, $80
-	m_PaletteHeaderSpr 0, 8, paletteData40d8, $00
-paletteHeader08:
-	m_PaletteHeaderBg  0, 8, paletteData4118, $80
-	m_PaletteHeaderSpr 0, 8, paletteData4158, $00
-paletteHeader09:
-	m_PaletteHeaderBg  2, 4, paletteData4198, $80
-	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData, $00
-paletteHeader0a:
-	m_PaletteHeaderBg  0, 2, paletteData4830, $80
-	m_PaletteHeaderBg  2, 6, standardSpritePaletteData, $80
-	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData, $80
-	m_PaletteHeaderSpr 7, 1, paletteData5e48, $00
-paletteHeader0b:
-	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData, $80
-	m_PaletteHeaderSpr 2, 1, paletteData4468, $80
-	m_PaletteHeaderSpr 4, 3, paletteData46f8, $00
-paletteHeader0c:
-	m_PaletteHeaderBg  0, 8, paletteData4930, $80
-	m_PaletteHeaderSpr 0, 8, paletteData4970, $00
-paletteHeader0d:
-	m_PaletteHeaderBg  1, 1, paletteData4878, $00
-paletteHeader0e:
-	m_PaletteHeaderBg  1, 1, paletteData4870, $00
-paletteHeader0f:
-	m_PaletteHeaderBg  0, 1, paletteData4830, $80
-	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData, $00
-paletteHeader10:
-	m_PaletteHeaderBg  2, 6, paletteData49b0, $00
-paletteHeader11:
-	m_PaletteHeaderBg  2, 6, paletteData49e0, $00
-paletteHeader12:
-	m_PaletteHeaderBg  2, 6, paletteData4a10, $00
-paletteHeader13:
-	m_PaletteHeaderBg  2, 6, paletteData4a40, $00
-paletteHeader14:
-	m_PaletteHeaderBg  2, 6, paletteData4a70, $00
-paletteHeader15:
-	m_PaletteHeaderBg  2, 6, paletteData4aa0, $00
-paletteHeader16:
-	m_PaletteHeaderBg  2, 6, paletteData4ad0, $00
-paletteHeader17:
-	m_PaletteHeaderBg  2, 6, paletteData4b00, $00
-paletteHeader18:
-	m_PaletteHeaderBg  2, 6, paletteData4b30, $00
-paletteHeader19:
-	m_PaletteHeaderBg  2, 6, paletteData4b60, $00
-paletteHeader1a:
-	m_PaletteHeaderBg  2, 6, paletteData4b90, $00
-paletteHeader1b:
-	m_PaletteHeaderBg  2, 6, paletteData4bc0, $00
-paletteHeader1c:
-	m_PaletteHeaderBg  2, 6, paletteData4bf0, $00
-paletteHeader1d:
-	m_PaletteHeaderBg  2, 6, paletteData4c20, $00
-paletteHeader1e:
-	m_PaletteHeaderBg  2, 6, paletteData4c50, $00
-paletteHeader1f:
-	m_PaletteHeaderBg  2, 6, paletteData4c80, $00
-paletteHeader20:
-	m_PaletteHeaderBg  2, 6, paletteData4cb0, $00
-paletteHeader21:
-	m_PaletteHeaderBg  2, 6, paletteData4ce0, $00
-paletteHeader22:
-	m_PaletteHeaderBg  2, 6, paletteData4d10, $00
-paletteHeader23:
-	m_PaletteHeaderBg  2, 6, paletteData4d40, $00
-paletteHeader24:
-	m_PaletteHeaderBg  2, 6, paletteData4da0, $00
-paletteHeader25:
-	m_PaletteHeaderBg  2, 6, paletteData4dd0, $00
-paletteHeader26:
-	m_PaletteHeaderBg  2, 6, paletteData4e00, $00
-paletteHeader27:
-	m_PaletteHeaderBg  2, 6, paletteData4e30, $00
-paletteHeader28:
-	m_PaletteHeaderBg  2, 6, paletteData4e60, $00
-paletteHeader29:
-	m_PaletteHeaderBg  2, 6, paletteData4e90, $00
-paletteHeader2a:
-	m_PaletteHeaderBg  2, 6, paletteData4ec0, $00
-paletteHeader2b:
-	m_PaletteHeaderBg  2, 6, paletteData4ef0, $00
-paletteHeader2c:
-	m_PaletteHeaderBg  2, 6, paletteData4f20, $00
-paletteHeader2d:
-	m_PaletteHeaderBg  2, 6, paletteData4f50, $00
-paletteHeader2e:
-	m_PaletteHeaderBg  2, 6, paletteData4f80, $00
-paletteHeader2f:
-	m_PaletteHeaderBg  2, 6, paletteData4fb0, $00
-paletteHeader30:
-	m_PaletteHeaderBg  2, 6, paletteData4fe0, $00
-paletteHeader31:
-	m_PaletteHeaderBg  2, 6, paletteData5010, $00
-paletteHeader32:
-	m_PaletteHeaderBg  2, 6, paletteData5040, $00
-paletteHeader33:
-	m_PaletteHeaderBg  2, 6, paletteData5070, $00
-paletteHeader34:
-	m_PaletteHeaderBg  2, 6, paletteData50a0, $00
-paletteHeader35:
-	m_PaletteHeaderBg  2, 6, paletteData50d0, $00
-paletteHeader36:
-	m_PaletteHeaderBg  2, 6, paletteData5100, $00
-paletteHeader37:
-	m_PaletteHeaderBg  2, 6, paletteData5130, $00
-paletteHeader38:
-	m_PaletteHeaderBg  2, 6, paletteData5160, $00
-paletteHeader39:
-	m_PaletteHeaderBg  2, 6, paletteData5190, $00
-paletteHeader3a:
-	m_PaletteHeaderBg  2, 6, paletteData51c0, $00
-paletteHeader3b:
-	m_PaletteHeaderBg  2, 6, paletteData51f0, $00
-paletteHeader3c:
-	m_PaletteHeaderBg  2, 6, paletteData59d0, $00
-paletteHeader3d:
-	m_PaletteHeaderBg  2, 6, paletteData5a00, $00
-paletteHeader3e:
-	m_PaletteHeaderBg  2, 6, paletteData5a60, $00
-paletteHeader3f:
-	m_PaletteHeaderBg  2, 4, paletteData5e08, $80
-	m_PaletteHeaderSpr 0, 8, paletteData41b8, $00
-paletteHeader40:
-	m_PaletteHeaderBg  2, 6, paletteData5460, $00
-paletteHeader41:
-	m_PaletteHeaderBg  2, 6, paletteData5490, $00
-paletteHeader42:
-	m_PaletteHeaderBg  2, 6, paletteData54c0, $00
-paletteHeader43:
-	m_PaletteHeaderBg  2, 6, paletteData54f0, $00
-paletteHeader44:
-	m_PaletteHeaderBg  2, 6, paletteData5520, $00
-paletteHeader45:
-	m_PaletteHeaderBg  2, 6, paletteData5550, $00
-paletteHeader46:
-	m_PaletteHeaderBg  2, 6, paletteData5580, $00
-paletteHeader47:
-	m_PaletteHeaderBg  2, 6, paletteData55b0, $00
-paletteHeader48:
-	m_PaletteHeaderBg  2, 6, paletteData5610, $00
-paletteHeader49:
-	m_PaletteHeaderBg  2, 6, paletteData56a0, $00
-paletteHeader4a:
-	m_PaletteHeaderBg  2, 6, paletteData56d0, $00
-paletteHeader4b:
-paletteHeader4c:
-paletteHeader4d:
-	m_PaletteHeaderBg  2, 6, paletteData55e0, $00
-paletteHeader4e:
-	m_PaletteHeaderBg  2, 6, paletteData5640, $00
-paletteHeader4f:
-	m_PaletteHeaderBg  2, 6, paletteData5670, $00
-paletteHeader50:
-	m_PaletteHeaderBg  2, 6, paletteData5c10, $00
-paletteHeader51:
-	m_PaletteHeaderBg  2, 6, paletteData5c40, $00
-paletteHeader52:
-	m_PaletteHeaderSpr 6, 1, paletteData5c70, $00
-paletteHeader53:
-paletteHeader54:
-	m_PaletteHeaderBg  2, 6, paletteData4d70, $80
-	m_PaletteHeaderSpr 6, 1, paletteData5c88, $00
-paletteHeader55:
-	m_PaletteHeaderSpr 6, 1, paletteData5c80, $00
-paletteHeader56:
-	m_PaletteHeaderBg  2, 6, paletteData4dd0, $80
-	m_PaletteHeaderSpr 6, 1, paletteData5c90, $00
-paletteHeader57:
-	m_PaletteHeaderSpr 6, 1, $dea0, $00
-paletteHeader58:
-	m_PaletteHeaderBg  2, 6, paletteData5310, $00
-paletteHeader59:
-	m_PaletteHeaderBg  2, 6, paletteData52e0, $00
-paletteHeader5a:
-	m_PaletteHeaderBg  2, 6, paletteData5340, $00
-paletteHeader5b:
-	m_PaletteHeaderBg  2, 6, paletteData5370, $00
-paletteHeader5c:
-	m_PaletteHeaderBg  2, 6, paletteData53a0, $00
-paletteHeader5d:
-	m_PaletteHeaderBg  2, 6, paletteData53d0, $00
-paletteHeader5e:
-	m_PaletteHeaderBg  2, 6, paletteData5400, $00
-paletteHeader5f:
-	m_PaletteHeaderBg  2, 6, paletteData5430, $00
-paletteHeader60:
-	m_PaletteHeaderBg  2, 6, paletteData5ca8, $00
-paletteHeader61:
-	m_PaletteHeaderBg  2, 6, paletteData5cd8, $00
-paletteHeader62:
-	m_PaletteHeaderBg  2, 6, paletteData5d08, $00
-paletteHeader63:
-	m_PaletteHeaderBg  2, 6, paletteData5d38, $00
-paletteHeader64:
-	m_PaletteHeaderBg  2, 6, paletteData5250, $00
-paletteHeader65:
-	m_PaletteHeaderBg  2, 6, paletteData5280, $00
-paletteHeader66:
-	m_PaletteHeaderBg  2, 6, paletteData52b0, $00
-paletteHeader67:
-paletteHeader68:
-	m_PaletteHeaderBg  2, 6, paletteData5a30, $00
-paletteHeader69:
-	m_PaletteHeaderBg  2, 6, paletteData5a90, $00
-paletteHeader6a:
-	m_PaletteHeaderBg  2, 6, paletteData5ac0, $00
-paletteHeader6b:
-	m_PaletteHeaderBg  2, 6, paletteData5af0, $00
-paletteHeader6c:
-	m_PaletteHeaderBg  2, 6, paletteData5b20, $00
-paletteHeader6d:
-	m_PaletteHeaderBg  2, 6, paletteData5b80, $00
-paletteHeader6e:
-	m_PaletteHeaderBg  2, 6, paletteData5bb0, $00
-paletteHeader6f:
-	m_PaletteHeaderBg  2, 6, paletteData5be0, $00
-paletteHeader70:
-	m_PaletteHeaderBg  2, 6, paletteData5760, $00
-paletteHeader71:
-	m_PaletteHeaderBg  2, 6, paletteData5790, $00
-paletteHeader72:
-	m_PaletteHeaderBg  2, 6, paletteData57c0, $00
-paletteHeader73:
-	m_PaletteHeaderBg  2, 6, paletteData57f0, $00
-paletteHeader74:
-	m_PaletteHeaderBg  2, 6, paletteData5d68, $00
-paletteHeader75:
-	m_PaletteHeaderBg  2, 6, paletteData5820, $00
-paletteHeader76:
-	m_PaletteHeaderBg  2, 6, paletteData5850, $00
-paletteHeader77:
-	m_PaletteHeaderBg  2, 6, paletteData5880, $00
-paletteHeader78:
-	m_PaletteHeaderBg  2, 6, paletteData58b0, $00
-paletteHeader79:
-	m_PaletteHeaderBg  2, 6, paletteData58e0, $00
-paletteHeader7a:
-	m_PaletteHeaderBg  2, 6, paletteData5910, $00
-paletteHeader7b:
-	m_PaletteHeaderBg  2, 6, paletteData5940, $00
-paletteHeader7c:
-	m_PaletteHeaderBg  2, 6, paletteData5970, $00
-paletteHeader7d:
-	m_PaletteHeaderBg  2, 6, paletteData59a0, $00
-paletteHeader7e:
-paletteHeader7f:
-	m_PaletteHeaderSpr 7, 1, paletteData4888, $00
-paletteHeader80:
-	m_PaletteHeaderSpr 6, 1, paletteData4890, $00
-paletteHeader81:
-	m_PaletteHeaderSpr 6, 1, paletteData4898, $00
-paletteHeader82:
-	m_PaletteHeaderSpr 6, 1, paletteData48a0, $00
-paletteHeader83:
-paletteHeader84:
-	m_PaletteHeaderSpr 6, 1, paletteData48a8, $00
-paletteHeader85:
-	m_PaletteHeaderSpr 6, 1, paletteData48b0, $00
-paletteHeader86:
-	m_PaletteHeaderSpr 6, 1, $deb0, $00
-paletteHeader87:
-	m_PaletteHeaderSpr 6, 1, paletteData48b8, $00
-paletteHeader88:
-	m_PaletteHeaderSpr 6, 1, paletteData48c0, $00
-paletteHeader89:
-	m_PaletteHeaderSpr 6, 1, paletteData48c8, $00
-paletteHeader8a:
-	m_PaletteHeaderSpr 6, 1, paletteData48d0, $00
-paletteHeader8b:
-	m_PaletteHeaderSpr 6, 1, paletteData48d8, $80
-	m_PaletteHeaderBg  7, 1, paletteData5700, $00
-paletteHeader8c:
-	m_PaletteHeaderSpr 6, 1, paletteData48e0, $00
-paletteHeader8d:
-	m_PaletteHeaderBg  0, 8, paletteData48e8, $00
-paletteHeader8e:
-	m_PaletteHeaderBg  2, 6, paletteData56d0, $80
-	m_PaletteHeaderBg  6, 1, paletteData4928, $00
-paletteHeader8f:
-	m_PaletteHeaderBg  0, 6, paletteData4800, $80
-	m_PaletteHeaderSpr 0, 6, paletteData4800, $00
-paletteHeader90:
-	m_PaletteHeaderBg  0, 8, paletteData41f8, $80
-	m_PaletteHeaderSpr 0, 8, paletteData4238, $00
-paletteHeader91:
-	m_PaletteHeaderBg  0, 1, paletteData4830, $80
-	m_PaletteHeaderBg  2, 6, paletteData56a0, $80
-	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData, $80
-	m_PaletteHeaderSpr 6, 1, paletteData4468, $00
-paletteHeader92:
-	m_PaletteHeaderBg  0, 8, paletteData4278, $80
-	m_PaletteHeaderSpr 0, 8, paletteData4378, $00
-paletteHeader93:
-	m_PaletteHeaderBg  0, 8, paletteData42b8, $80
-	m_PaletteHeaderSpr 0, 8, paletteData43b8, $00
-paletteHeader94:
-	m_PaletteHeaderBg  0, 8, paletteData4338, $80
-	m_PaletteHeaderSpr 2, 3, paletteData43f8, $00
-paletteHeader95:
-	m_PaletteHeaderBg  0, 8, paletteData4470, $80
-	m_PaletteHeaderSpr 0, 7, paletteData44b0, $00
-paletteHeader96:
-	m_PaletteHeaderBg  0, 8, paletteData42f8, $80
-	m_PaletteHeaderSpr 0, 8, paletteData42f8, $00
-paletteHeader97:
-	m_PaletteHeaderBg  2, 6, paletteData54c0, $80
-	m_PaletteHeaderSpr 6, 1, paletteData48c8, $00
-paletteHeader98:
-	m_PaletteHeaderBg  1, 7, paletteData4410, $80
-	m_PaletteHeaderSpr 1, 4, paletteData4448, $00
-paletteHeader99:
-	m_PaletteHeaderBg  5, 2, paletteData5220, $80
-	m_PaletteHeaderBg  3, 1, paletteData5230, $00
-paletteHeader9a:
-	m_PaletteHeaderBg  5, 2, paletteData5238, $80
-	m_PaletteHeaderBg  3, 1, paletteData5248, $80
-	m_PaletteHeaderSpr 7, 1, paletteData5ca0, $00
-paletteHeader9b:
-	m_PaletteHeaderSpr 6, 1, paletteData5c78, $00
-paletteHeader9c:
-	m_PaletteHeaderBg  0, 4, paletteData45b0, $00
-paletteHeader9d:
-	m_PaletteHeaderBg  1, 7, paletteData4508, $80
-	m_PaletteHeaderSpr 1, 6, paletteData4578, $00
-paletteHeader9e:
-	m_PaletteHeaderBg  1, 7, paletteData4540, $80
-	m_PaletteHeaderSpr 1, 1, paletteData45a8, $00
-paletteHeader9f:
-	m_PaletteHeaderBg  0, 8, paletteData4740, $80
-	m_PaletteHeaderSpr 0, 8, paletteData4780, $00
-paletteHeadera0:
-	m_PaletteHeaderBg  0, 5, paletteData46c0, $80
-	m_PaletteHeaderSpr 0, 2, paletteData46e8, $00
-paletteHeadera1:
-	m_PaletteHeaderBg  0, 4, paletteData4620, $80
-	m_PaletteHeaderSpr 0, 2, paletteData4640, $00
-paletteHeadera2:
-	m_PaletteHeaderBg  0, 4, paletteData4620, $80
-	m_PaletteHeaderSpr 0, 2, paletteData4650, $00
-paletteHeadera3:
-	m_PaletteHeaderBg  0, 4, paletteData4620, $80
-	m_PaletteHeaderSpr 0, 2, paletteData4660, $00
-paletteHeadera4:
-	m_PaletteHeaderBg  0, 4, paletteData4620, $80
-	m_PaletteHeaderSpr 0, 2, paletteData4670, $00
-paletteHeadera5:
-	m_PaletteHeaderBg  0, 4, paletteData4620, $80
-	m_PaletteHeaderSpr 0, 2, paletteData4640, $00
-paletteHeadera6:
-	m_PaletteHeaderBg  0, 4, paletteData4620, $80
-	m_PaletteHeaderSpr 0, 2, paletteData4650, $00
-paletteHeadera7:
-	m_PaletteHeaderBg  0, 4, paletteData4620, $80
-	m_PaletteHeaderSpr 0, 2, paletteData4660, $00
-paletteHeadera8:
-	m_PaletteHeaderBg  0, 4, paletteData4620, $80
-	m_PaletteHeaderSpr 0, 2, paletteData4670, $00
-paletteHeadera9:
-	m_PaletteHeaderBg  2, 6, paletteData4710, $00
-paletteHeaderaa:
-	m_PaletteHeaderBg  0, 6, paletteData47c0, $80
-	m_PaletteHeaderSpr 4, 4, paletteData47e0, $00
-paletteHeaderab:
-	m_PaletteHeaderSpr 7, 1, paletteData5e48, $00
-paletteHeaderac:
-	m_PaletteHeaderSpr 6, 2, paletteData5e30, $00
-paletteHeaderad:
-	m_PaletteHeaderBg  0, 8, paletteData45d0, $80
-	m_PaletteHeaderSpr 0, 8, paletteData45d0, $00
-paletteHeaderae:
-	m_PaletteHeaderBg  0, 8, paletteData4680, $00
-paletteHeaderaf:
-	m_PaletteHeaderSpr 7, 1, paletteData5e40, $00
-paletteHeaderb0:
-	m_PaletteHeaderSpr 6, 1, paletteData5e28, $00
-paletteHeaderb1:
-	m_PaletteHeaderBg  7, 1, paletteData5700, $00
-paletteHeaderb2:
-	m_PaletteHeaderBg  7, 1, paletteData5708, $00
-paletteHeaderb3:
-	m_PaletteHeaderBg  7, 1, paletteData5710, $00
-paletteHeaderb4:
-	m_PaletteHeaderBg  7, 1, paletteData5718, $00
-paletteHeaderb5:
-	m_PaletteHeaderBg  7, 1, paletteData5720, $00
-paletteHeaderb6:
-	m_PaletteHeaderBg  7, 1, paletteData5728, $00
-paletteHeaderb7:
-	m_PaletteHeaderBg  7, 1, paletteData5730, $00
-paletteHeaderb8:
-	m_PaletteHeaderBg  7, 1, paletteData5738, $00
-paletteHeaderb9:
-	m_PaletteHeaderBg  7, 1, paletteData5740, $00
-paletteHeaderba:
-	m_PaletteHeaderBg  7, 1, paletteData5748, $00
-paletteHeaderbb:
-	m_PaletteHeaderBg  7, 1, paletteData5750, $00
-paletteHeaderbc:
-	m_PaletteHeaderBg  7, 1, paletteData5758, $00
-paletteHeaderbd:
-	m_PaletteHeaderBg  1, 1, paletteData4880, $00
+.define NUM_PALETTE_HEADERS $be
+
+paletteHeaderTable:
+	.repeat NUM_PALETTE_HEADERS index COUNT
+		.dw paletteHeader{%.2x{COUNT}}
+	.endr
+
+
+m_PaletteHeaderStart $00, PALH_00
+	m_PaletteHeaderBg  0, 1, paletteData4000
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $01, PALH_01
+	m_PaletteHeaderBg  0, 2, paletteData4008
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $02, PALH_02
+	m_PaletteHeaderBg  0, 1, paletteData5e50
+	m_PaletteHeaderSpr 0, 1, paletteData5e50
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $03, PALH_03
+	m_PaletteHeaderBg  0, 8, paletteData4018
+	m_PaletteHeaderSpr 0, 8, paletteData4058
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $04, PALH_04
+	m_PaletteHeaderBg  0, 4, paletteData45b0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $05, PALH_05
+	m_PaletteHeaderBg  0, 1, paletteData4830
+	m_PaletteHeaderBg  2, 5, paletteData5db8
+	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData
+	m_PaletteHeaderSpr 4, 3, paletteData5d98
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $06, PALH_06
+	m_PaletteHeaderBg  0, 1, paletteData4830
+	m_PaletteHeaderBg  2, 5, paletteData5de0
+	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData
+	m_PaletteHeaderSpr 4, 3, paletteData5d98
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $07, PALH_07
+	m_PaletteHeaderBg  0, 8, paletteData4098
+	m_PaletteHeaderSpr 0, 8, paletteData40d8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $08, PALH_08
+	m_PaletteHeaderBg  0, 8, paletteData4118
+	m_PaletteHeaderSpr 0, 8, paletteData4158
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $09, PALH_09
+	m_PaletteHeaderBg  2, 4, paletteData4198
+	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $0a, PALH_0a
+	m_PaletteHeaderBg  0, 2, paletteData4830
+	m_PaletteHeaderBg  2, 6, standardSpritePaletteData
+	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData
+	m_PaletteHeaderSpr 6, 1, paletteData4830+2, $80 ; CROSSITEMS: for "blank sprites" covering harp
+	m_PaletteHeaderSpr 7, 1, paletteData5e48
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $0b, PALH_0b
+	m_PaletteHeaderSpr 0, 4, standardSpritePaletteData
+	m_PaletteHeaderSpr 2, 1, paletteData4468
+	m_PaletteHeaderSpr 4, 3, paletteData46f8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $0c, PALH_0c
+	m_PaletteHeaderBg  0, 8, paletteData4930
+	m_PaletteHeaderSpr 0, 8, paletteData4970
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $0d, PALH_0d
+	m_PaletteHeaderBg  1, 1, paletteData4878
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $0e, PALH_0e
+	m_PaletteHeaderBg  1, 1, paletteData4870
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $0f, PALH_0f
+	m_PaletteHeaderBg  0, 1, paletteData4830
+	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $10, PALH_TILESET_OVERWORLD_SPRING_A
+	m_PaletteHeaderBg  2, 6, paletteData49b0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $11, PALH_TILESET_OVERWORLD_SUMMER_A
+	m_PaletteHeaderBg  2, 6, paletteData49e0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $12, PALH_TILESET_OVERWORLD_AUTUMN_A
+	m_PaletteHeaderBg  2, 6, paletteData4a10
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $13, PALH_TILESET_OVERWORLD_WINTER_A
+	m_PaletteHeaderBg  2, 6, paletteData4a40
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $14, PALH_TILESET_OVERWORLD_SPRING_B
+	m_PaletteHeaderBg  2, 6, paletteData4a70
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $15, PALH_TILESET_OVERWORLD_SUMMER_B
+	m_PaletteHeaderBg  2, 6, paletteData4aa0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $16, PALH_TILESET_OVERWORLD_AUTUMN_B
+	m_PaletteHeaderBg  2, 6, paletteData4ad0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $17, PALH_TILESET_OVERWORLD_WINTER_B
+	m_PaletteHeaderBg  2, 6, paletteData4b00
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $18, PALH_TILESET_OVERWORLD_SPRING_C
+	m_PaletteHeaderBg  2, 6, paletteData4b30
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $19, PALH_TILESET_OVERWORLD_SUMMER_C
+	m_PaletteHeaderBg  2, 6, paletteData4b60
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $1a, PALH_TILESET_OVERWORLD_AUTUMN_C
+	m_PaletteHeaderBg  2, 6, paletteData4b90
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $1b, PALH_TILESET_OVERWORLD_WINTER_C
+	m_PaletteHeaderBg  2, 6, paletteData4bc0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $1c, PALH_TILESET_SUNKEN_CITY_UNUSED_SPRING
+	m_PaletteHeaderBg  2, 6, paletteData4bf0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $1d, PALH_TILESET_SUNKEN_CITY_UNUSED_SUMMER
+	m_PaletteHeaderBg  2, 6, paletteData4c20
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $1e, PALH_TILESET_SUNKEN_CITY_UNUSED_AUTUMN
+	m_PaletteHeaderBg  2, 6, paletteData4c50
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $1f, PALH_TILESET_SUNKEN_CITY_UNUSED_WINTER
+	m_PaletteHeaderBg  2, 6, paletteData4c80
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $20, PALH_TILESET_OVERWORLD_SPRING_D
+	m_PaletteHeaderBg  2, 6, paletteData4cb0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $21, PALH_TILESET_OVERWORLD_SUMMER_D
+	m_PaletteHeaderBg  2, 6, paletteData4ce0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $22, PALH_TILESET_OVERWORLD_AUTUMN_D
+	m_PaletteHeaderBg  2, 6, paletteData4d10
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $23, PALH_TILESET_OVERWORLD_WINTER_D
+	m_PaletteHeaderBg  2, 6, paletteData4d40
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $24, PALH_TILESET_TARM_RUINS_SPRING
+	m_PaletteHeaderBg  2, 6, paletteData4da0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $25, PALH_TILESET_TARM_RUINS_SUMMER
+	m_PaletteHeaderBg  2, 6, paletteData4dd0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $26, PALH_TILESET_TARM_RUINS_AUTUMN
+	m_PaletteHeaderBg  2, 6, paletteData4e00
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $27, PALH_TILESET_TARM_RUINS_WINTER
+	m_PaletteHeaderBg  2, 6, paletteData4e30
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $28, PALH_TILESET_ANCIENT_RUINS_ENTRANCE_SPRING
+	m_PaletteHeaderBg  2, 6, paletteData4e60
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $29, PALH_TILESET_ANCIENT_RUINS_ENTRANCE_SUMMER
+	m_PaletteHeaderBg  2, 6, paletteData4e90
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $2a, PALH_TILESET_ANCIENT_RUINS_ENTRANCE_AUTUMN
+	m_PaletteHeaderBg  2, 6, paletteData4ec0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $2b, PALH_TILESET_ANCIENT_RUINS_ENTRANCE_WINTER
+	m_PaletteHeaderBg  2, 6, paletteData4ef0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $2c, PALH_TILESET_GRAVEYARD_SPRING
+	m_PaletteHeaderBg  2, 6, paletteData4f20
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $2d, PALH_TILESET_GRAVEYARD_SUMMER
+	m_PaletteHeaderBg  2, 6, paletteData4f50
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $2e, PALH_TILESET_GRAVEYARD_AUTUMN
+	m_PaletteHeaderBg  2, 6, paletteData4f80
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $2f, PALH_TILESET_GRAVEYARD_WINTER
+	m_PaletteHeaderBg  2, 6, paletteData4fb0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $30, PALH_TILESET_TEMPLE_REMAINS_SPRING_A
+	m_PaletteHeaderBg  2, 6, paletteData4fe0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $31, PALH_TILESET_TEMPLE_REMAINS_SUMMER_A
+	m_PaletteHeaderBg  2, 6, paletteData5010
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $32, PALH_TILESET_TEMPLE_REMAINS_AUTUMN_A
+	m_PaletteHeaderBg  2, 6, paletteData5040
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $33, PALH_TILESET_TEMPLE_REMAINS_WINTER_A
+	m_PaletteHeaderBg  2, 6, paletteData5070
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $34, PALH_TILESET_TEMPLE_REMAINS_SPRING_B
+	m_PaletteHeaderBg  2, 6, paletteData50a0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $35, PALH_TILESET_TEMPLE_REMAINS_SUMMER_B
+	m_PaletteHeaderBg  2, 6, paletteData50d0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $36, PALH_TILESET_TEMPLE_REMAINS_AUTUMN_B
+	m_PaletteHeaderBg  2, 6, paletteData5100
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $37, PALH_TILESET_TEMPLE_REMAINS_WINTER_B
+	m_PaletteHeaderBg  2, 6, paletteData5130
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $38, PALH_TILESET_ONOX_CASTLE_OUTSIDE_SPRING
+	m_PaletteHeaderBg  2, 6, paletteData5160
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $39, PALH_TILESET_ONOX_CASTLE_OUTSIDE_SUMMER
+	m_PaletteHeaderBg  2, 6, paletteData5190
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $3a, PALH_TILESET_ONOX_CASTLE_OUTSIDE_AUTUMN
+	m_PaletteHeaderBg  2, 6, paletteData51c0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $3b, PALH_TILESET_ONOX_CASTLE_OUTSIDE_WINTER
+	m_PaletteHeaderBg  2, 6, paletteData51f0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $3c, PALH_TILESET_SIDESCROLL_HEROS_CAVE
+	m_PaletteHeaderBg  2, 6, paletteData59d0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $3d, PALH_TILESET_SIDESCROLL_GNARLED_ROOT_DUNGEON
+	m_PaletteHeaderBg  2, 6, paletteData5a00
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $3e, PALH_TILESET_SIDESCROLL_POISON_MOTHS_LAIR
+	m_PaletteHeaderBg  2, 6, paletteData5a60
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $3f, PALH_SECRET_LIST_MENU
+	m_PaletteHeaderBg  2, 4, paletteData5e08
+	m_PaletteHeaderSpr 0, 8, paletteData41b8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $40, PALH_TILESET_HEROS_CAVE
+	m_PaletteHeaderBg  2, 6, paletteData5460
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $41, PALH_TILESET_GNARLED_ROOT_DUNGEON
+	m_PaletteHeaderBg  2, 6, paletteData5490
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $42, PALH_TILESET_SNAKES_REMAINS
+	m_PaletteHeaderBg  2, 6, paletteData54c0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $43, PALH_TILESET_POISON_MOTHS_LAIR
+	m_PaletteHeaderBg  2, 6, paletteData54f0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $44, PALH_TILESET_DANCING_DRAGON_DUNGEON
+	m_PaletteHeaderBg  2, 6, paletteData5520
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $45, PALH_TILESET_UNICORNS_CAVE
+	m_PaletteHeaderBg  2, 6, paletteData5550
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $46, PALH_TILESET_ANCIENT_RUINS
+	m_PaletteHeaderBg  2, 6, paletteData5580
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $47, PALH_TILESET_EXPLORERS_CRYPT_A
+	m_PaletteHeaderBg  2, 6, paletteData55b0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $48, PALH_TILESET_SWORD_AND_SHIELD_MAZE_ICE
+	m_PaletteHeaderBg  2, 6, paletteData5610
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $49, PALH_TILESET_ONOX_CASTLE
+	m_PaletteHeaderBg  2, 6, paletteData56a0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $4a, PALH_TILESET_ROOM_OF_RITES
+	m_PaletteHeaderBg  2, 6, paletteData56d0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $4b, PALH_4b
+
+m_PaletteHeaderStart $4c, PALH_4c
+
+m_PaletteHeaderStart $4d, PALH_TILESET_EXPLORERS_CRYPT_B
+	m_PaletteHeaderBg  2, 6, paletteData55e0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $4e, PALH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE
+	m_PaletteHeaderBg  2, 6, paletteData5640
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $4f, PALH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE_MINIBOSS
+	m_PaletteHeaderBg  2, 6, paletteData5670
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $50, PALH_TILESET_MAKU_TREE
+	m_PaletteHeaderBg  2, 6, paletteData5c10
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $51, PALH_TILESET_MAKU_TREE_SMALL
+	m_PaletteHeaderBg  2, 6, paletteData5c40
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $52, PALH_SPR_MAKU_TREE
+	m_PaletteHeaderSpr 6, 1, paletteData5c70
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $53, PALH_53
+
+m_PaletteHeaderStart $54, PALH_TILESET_BIGGORON
+	m_PaletteHeaderBg  2, 6, paletteData4d70
+	m_PaletteHeaderSpr 6, 1, paletteData5c88
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $55, PALH_SPR_ANCIENT_RUINS_ENTRANCE
+	m_PaletteHeaderSpr 6, 1, paletteData5c80
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $56, PALH_TILESET_TARM_RUINS_PEDESTAL
+	m_PaletteHeaderBg  2, 6, paletteData4dd0
+	m_PaletteHeaderSpr 6, 1, paletteData5c90
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $57, PALH_57
+	m_PaletteHeaderSpr 6, 1, $dea0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $58, PALH_TILESET_SUBROSIA_TEMPLE_OUTSIDE_WEST
+	m_PaletteHeaderBg  2, 6, paletteData5310
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $59, PALH_TILESET_SUBROSIA_TEMPLE_OUTSIDE_EAST
+	m_PaletteHeaderBg  2, 6, paletteData52e0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $5a, PALH_TILESET_SUBROSIA_A
+	m_PaletteHeaderBg  2, 6, paletteData5340
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $5b, PALH_TILESET_SUBROSIA_B
+	m_PaletteHeaderBg  2, 6, paletteData5370
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $5c, PALH_TILESET_SUBROSIAN_SMITHY_OUTSIDE
+	m_PaletteHeaderBg  2, 6, paletteData53a0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $5d, PALH_TILESET_SUBROSIA_C
+	m_PaletteHeaderBg  2, 6, paletteData53d0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $5e, PALH_TILESET_SUBROSIA_BEACH
+	m_PaletteHeaderBg  2, 6, paletteData5400
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $5f, PALH_TILESET_SUBROSIA_TEMPLE_VARIANT_UNUSED
+	m_PaletteHeaderBg  2, 6, paletteData5430
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $60, PALH_TILESET_TEMPLE_SPRING
+	m_PaletteHeaderBg  2, 6, paletteData5ca8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $61, PALH_TILESET_TEMPLE_SUMMER
+	m_PaletteHeaderBg  2, 6, paletteData5cd8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $62, PALH_TILESET_TEMPLE_AUTUMN
+	m_PaletteHeaderBg  2, 6, paletteData5d08
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $63, PALH_TILESET_TEMPLE_WINTER
+	m_PaletteHeaderBg  2, 6, paletteData5d38
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $64, PALH_TILESET_NATZU_PRAIRIE
+	m_PaletteHeaderBg  2, 6, paletteData5250
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $65, PALH_TILESET_NATZU_RIVER
+	m_PaletteHeaderBg  2, 6, paletteData5280
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $66, PALH_TILESET_NATZU_WASTELAND
+	m_PaletteHeaderBg  2, 6, paletteData52b0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $67, PALH_67
+
+m_PaletteHeaderStart $68, PALH_TILESET_SIDESCROLL_SNAKES_REMAINS
+	m_PaletteHeaderBg  2, 6, paletteData5a30
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $69, PALH_TILESET_SIDESCROLL_DANCING_DRAGON_DUNGEON
+	m_PaletteHeaderBg  2, 6, paletteData5a90
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $6a, PALH_TILESET_SIDESCROLL_UNICORNS_CAVE
+	m_PaletteHeaderBg  2, 6, paletteData5ac0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $6b, PALH_TILESET_SIDESCROLL_SWORD_AND_SHIELD_MAZE_ICE
+	m_PaletteHeaderBg  2, 6, paletteData5af0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $6c, PALH_TILESET_SIDESCROLL_SWORD_AND_SHIELD_MAZE_FIRE
+	m_PaletteHeaderBg  2, 6, paletteData5b20
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $6d, PALH_TILESET_SIDESCROLL_UNUSED
+	m_PaletteHeaderBg  2, 6, paletteData5b80
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $6e, PALH_TILESET_SIDESCROLL_UNDERWATER
+	m_PaletteHeaderBg  2, 6, paletteData5bb0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $6f, PALH_TILESET_SIDESCROLL_SUBROSIA
+	m_PaletteHeaderBg  2, 6, paletteData5be0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $70, PALH_TILESET_INDOORS_A
+	m_PaletteHeaderBg  2, 6, paletteData5760
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $71, PALH_TILESET_INDOORS_B
+	m_PaletteHeaderBg  2, 6, paletteData5790
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $72, PALH_TILESET_SUBROSIA_FURNACE
+	m_PaletteHeaderBg  2, 6, paletteData57c0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $73, PALH_TILESET_OLD_MAN_CAVE
+	m_PaletteHeaderBg  2, 6, paletteData57f0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $74, PALH_TILESET_MOBLIN_HOUSE
+	m_PaletteHeaderBg  2, 6, paletteData5d68
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $75, PALH_TILESET_SUBROSIA_BOOMERANG_ROOM
+	m_PaletteHeaderBg  2, 6, paletteData5820
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $76, PALH_TILESET_VASE_HOUSE
+	m_PaletteHeaderBg  2, 6, paletteData5850
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $77, PALH_TILESET_CAVE
+	m_PaletteHeaderBg  2, 6, paletteData5880
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $78, PALH_TILESET_SUBROSIA_CAVE
+	m_PaletteHeaderBg  2, 6, paletteData58b0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $79, PALH_TILESET_MAKU_TREE_INSIDE
+	m_PaletteHeaderBg  2, 6, paletteData58e0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $7a, PALH_TILESET_MOBLIN_KEEP
+	m_PaletteHeaderBg  2, 6, paletteData5910
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $7b, PALH_TILESET_TEMPLE_OF_SEASONS
+	m_PaletteHeaderBg  2, 6, paletteData5940
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $7c, PALH_TILESET_SUBROSIA_INDOORS
+	m_PaletteHeaderBg  2, 6, paletteData5970
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $7d, PALH_7d
+	m_PaletteHeaderBg  2, 6, paletteData59a0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $7e, PALH_7e
+
+m_PaletteHeaderStart $7f, PALH_SPR_LINK_STONE
+	m_PaletteHeaderSpr 7, 1, paletteData4888
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $80, PALH_SPR_AQUAMENTUS
+	m_PaletteHeaderSpr 6, 1, paletteData4890
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $81, PALH_SEASONS_81
+	m_PaletteHeaderSpr 6, 1, paletteData4898
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $82, PALH_SEASONS_82
+	m_PaletteHeaderSpr 6, 1, paletteData48a0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $83, PALH_SEASONS_83
+
+m_PaletteHeaderStart $84, PALH_SEASONS_84
+	m_PaletteHeaderSpr 6, 1, paletteData48a8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $85, PALH_SEASONS_85
+	m_PaletteHeaderSpr 6, 1, paletteData48b0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $86, PALH_SEASONS_86
+	m_PaletteHeaderSpr 6, 1, $deb0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $87, PALH_SEASONS_87
+	m_PaletteHeaderSpr 6, 1, paletteData48b8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $88, PALH_SEASONS_88
+	m_PaletteHeaderSpr 6, 1, paletteData48c0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $89, PALH_SEASONS_89
+	m_PaletteHeaderSpr 6, 1, paletteData48c8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $8a, PALH_SEASONS_8a
+	m_PaletteHeaderSpr 6, 1, paletteData48d0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $8b, PALH_SEASONS_8b
+	m_PaletteHeaderSpr 6, 1, paletteData48d8
+	m_PaletteHeaderBg  7, 1, paletteData5700
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $8c, PALH_SEASONS_8c
+	m_PaletteHeaderSpr 6, 1, paletteData48e0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $8d, PALH_BG_DRAGON_ONOX
+	m_PaletteHeaderBg  0, 8, paletteData48e8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $8e, PALH_TILESET_ROOM_OF_RITES_ICE
+	m_PaletteHeaderBg  2, 6, paletteData56d0
+	m_PaletteHeaderBg  6, 1, paletteData4928
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $8f, PALH_SEASONS_8f
+	m_PaletteHeaderBg  0, 6, paletteData4800
+	m_PaletteHeaderSpr 0, 6, paletteData4800
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $90, PALH_SEASONS_90
+	m_PaletteHeaderBg  0, 8, paletteData41f8
+	m_PaletteHeaderSpr 0, 8, paletteData4238
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $91, PALH_SEASONS_91
+	m_PaletteHeaderBg  0, 1, paletteData4830
+	m_PaletteHeaderBg  2, 6, paletteData56a0
+	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData
+	m_PaletteHeaderSpr 6, 1, paletteData4468
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $92, PALH_SEASONS_92
+	m_PaletteHeaderBg  0, 8, paletteData4278
+	m_PaletteHeaderSpr 0, 8, paletteData4378
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $93, PALH_SEASONS_93
+	m_PaletteHeaderBg  0, 8, paletteData42b8
+	m_PaletteHeaderSpr 0, 8, paletteData43b8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $94, PALH_SEASONS_94
+	m_PaletteHeaderBg  0, 8, paletteData4338
+	m_PaletteHeaderSpr 2, 3, paletteData43f8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $95, PALH_SEASONS_95
+	m_PaletteHeaderBg  0, 8, paletteData4470
+	m_PaletteHeaderSpr 0, 7, paletteData44b0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $96, PALH_SEASONS_96
+	m_PaletteHeaderBg  0, 8, paletteData42f8
+	m_PaletteHeaderSpr 0, 8, paletteData42f8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $97, PALH_SEASONS_97
+	m_PaletteHeaderBg  2, 6, paletteData54c0
+	m_PaletteHeaderSpr 6, 1, paletteData48c8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $98, PALH_SEASONS_98
+	m_PaletteHeaderBg  1, 7, paletteData4410
+	m_PaletteHeaderSpr 1, 4, paletteData4448
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $99, PALH_SEASONS_99
+	m_PaletteHeaderBg  5, 2, paletteData5220
+	m_PaletteHeaderBg  3, 1, paletteData5230
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $9a, PALH_SEASONS_9a
+	m_PaletteHeaderBg  5, 2, paletteData5238
+	m_PaletteHeaderBg  3, 1, paletteData5248
+	m_PaletteHeaderSpr 7, 1, paletteData5ca0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $9b, PALH_SEASONS_9b
+	m_PaletteHeaderSpr 6, 1, paletteData5c78
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $9c, PALH_SEASONS_9c
+	m_PaletteHeaderBg  0, 4, paletteData45b0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $9d, PALH_SEASONS_9d
+	m_PaletteHeaderBg  1, 7, paletteData4508
+	m_PaletteHeaderSpr 1, 6, paletteData4578
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $9e, PALH_SEASONS_9e
+	m_PaletteHeaderBg  1, 7, paletteData4540
+	m_PaletteHeaderSpr 1, 1, paletteData45a8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $9f, PALH_SEASONS_9f
+	m_PaletteHeaderBg  0, 8, paletteData4740
+	m_PaletteHeaderSpr 0, 8, paletteData4780
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a0, PALH_SEASONS_a0
+	m_PaletteHeaderBg  0, 5, paletteData46c0
+	m_PaletteHeaderSpr 0, 2, paletteData46e8
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a1, PALH_SEASONS_a1
+	m_PaletteHeaderBg  0, 4, paletteData4620
+	m_PaletteHeaderSpr 0, 2, paletteData4640
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a2, PALH_SEASONS_a2
+	m_PaletteHeaderBg  0, 4, paletteData4620
+	m_PaletteHeaderSpr 0, 2, paletteData4650
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a3, PALH_SEASONS_a3
+	m_PaletteHeaderBg  0, 4, paletteData4620
+	m_PaletteHeaderSpr 0, 2, paletteData4660
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a4, PALH_SEASONS_a4
+	m_PaletteHeaderBg  0, 4, paletteData4620
+	m_PaletteHeaderSpr 0, 2, paletteData4670
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a5, PALH_SEASONS_a5
+	m_PaletteHeaderBg  0, 4, paletteData4620
+	m_PaletteHeaderSpr 0, 2, paletteData4640
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a6, PALH_SEASONS_a6
+	m_PaletteHeaderBg  0, 4, paletteData4620
+	m_PaletteHeaderSpr 0, 2, paletteData4650
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a7, PALH_SEASONS_a7
+	m_PaletteHeaderBg  0, 4, paletteData4620
+	m_PaletteHeaderSpr 0, 2, paletteData4660
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a8, PALH_SEASONS_a8
+	m_PaletteHeaderBg  0, 4, paletteData4620
+	m_PaletteHeaderSpr 0, 2, paletteData4670
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $a9, PALH_SEASONS_a9
+	m_PaletteHeaderBg  2, 6, paletteData4710
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $aa, PALH_SEASONS_aa
+	m_PaletteHeaderBg  0, 6, paletteData47c0
+	m_PaletteHeaderSpr 4, 4, paletteData47e0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $ab, PALH_SEASONS_ab
+	m_PaletteHeaderSpr 7, 1, paletteData5e48
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $ac, PALH_ac
+	m_PaletteHeaderSpr 6, 2, paletteData5e30
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $ad, PALH_SEASONS_ad
+	m_PaletteHeaderBg  0, 8, paletteData45d0
+	m_PaletteHeaderSpr 0, 8, paletteData45d0
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $ae, PALH_SEASONS_ae
+	m_PaletteHeaderBg  0, 8, paletteData4680
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $af, PALH_SEASONS_af
+	m_PaletteHeaderSpr 7, 1, paletteData5e40
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b0, PALH_SEASONS_b0
+	m_PaletteHeaderSpr 6, 1, paletteData5e28
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b1, PALH_SEASONS_b1
+	m_PaletteHeaderBg  7, 1, paletteData5700
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b2, PALH_SEASONS_b2
+	m_PaletteHeaderBg  7, 1, paletteData5708
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b3, PALH_SEASONS_b3
+	m_PaletteHeaderBg  7, 1, paletteData5710
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b4, PALH_SEASONS_b4
+	m_PaletteHeaderBg  7, 1, paletteData5718
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b5, PALH_SEASONS_b5
+	m_PaletteHeaderBg  7, 1, paletteData5720
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b6, PALH_SEASONS_b6
+	m_PaletteHeaderBg  7, 1, paletteData5728
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b7, PALH_SEASONS_b7
+	m_PaletteHeaderBg  7, 1, paletteData5730
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b8, PALH_SEASONS_b8
+	m_PaletteHeaderBg  7, 1, paletteData5738
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $b9, PALH_SEASONS_b9
+	m_PaletteHeaderBg  7, 1, paletteData5740
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $ba, PALH_SEASONS_ba
+	m_PaletteHeaderBg  7, 1, paletteData5748
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $bb, PALH_SEASONS_bb
+	m_PaletteHeaderBg  7, 1, paletteData5750
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $bc, PALH_SEASONS_bc
+	m_PaletteHeaderBg  7, 1, paletteData5758
+	m_PaletteHeaderEnd
+
+m_PaletteHeaderStart $bd, PALH_SEASONS_bd
+	m_PaletteHeaderBg  1, 1, paletteData4880
+	m_PaletteHeaderEnd

@@ -67,7 +67,6 @@ updateItems:
 	ld e,Item.id
 	ld a,(de)
 	rst_jumpTable
-.ifdef ROM_AGES
 	.dw itemCode00 ; 0x00
 	.dw itemDelete ; 0x01
 	.dw itemCode02 ; 0x02
@@ -75,8 +74,8 @@ updateItems:
 	.dw itemCode04 ; 0x04
 	.dw itemCode05 ; 0x05
 	.dw itemCode06 ; 0x06
-	.dw itemDelete ; 0x07
-	.dw itemDelete ; 0x08
+	.dw itemCode07 ; 0x07
+	.dw itemCode08 ; 0x08
 	.dw itemCode09 ; 0x09
 	.dw itemCode0a ; 0x0a
 	.dw itemCode0b ; 0x0b
@@ -112,52 +111,6 @@ updateItems:
 	.dw itemCode29 ; 0x29
 	.dw itemCode2a ; 0x2a
 	.dw itemCode2b ; 0x2b
-.else
-	.dw itemCode00 ; 0x00
-	.dw itemDelete ; 0x01
-	.dw itemCode02 ; 0x02
-	.dw itemCode03 ; 0x03
-	.dw itemDelete ; 0x04
-	.dw itemCode05 ; 0x05
-	.dw itemCode06 ; 0x06
-	.dw itemCode07 ; 0x07
-	.dw itemCode08 ; 0x08
-	.dw itemDelete ; 0x09
-	.dw itemDelete ; 0x0a
-	.dw itemDelete ; 0x0b
-	.dw itemCode0c ; 0x0c
-	.dw itemCode0d ; 0x0d
-	.dw itemDelete ; 0x0e
-	.dw itemDelete ; 0x0f
-	.dw itemDelete ; 0x10
-	.dw itemDelete ; 0x11
-	.dw itemDelete ; 0x12
-	.dw itemCode13 ; 0x13
-	.dw itemDelete ; 0x14
-	.dw itemCode15 ; 0x15
-	.dw itemCode16 ; 0x16
-	.dw itemDelete ; 0x17
-	.dw itemDelete ; 0x18
-	.dw itemDelete ; 0x19
-	.dw itemCode1a ; 0x1a
-	.dw itemDelete ; 0x1b
-	.dw itemDelete ; 0x1c
-	.dw itemCode1d ; 0x1d
-	.dw itemCode1e ; 0x1e
-	.dw itemDelete ; 0x1f
-	.dw itemCode20 ; 0x20
-	.dw itemCode21 ; 0x21
-	.dw itemCode22 ; 0x22
-	.dw itemCode23 ; 0x23
-	.dw itemCode24 ; 0x24
-	.dw itemDelete ; 0x25
-	.dw itemDelete ; 0x26
-	.dw itemCode27 ; 0x27
-	.dw itemCode28 ; 0x28
-	.dw itemCode29 ; 0x29
-	.dw itemCode2a ; 0x2a
-	.dw itemCode2b ; 0x2b
-.endif
 
 ;;
 ; The main difference between this and the above "updateItems" is that this is called
@@ -199,21 +152,12 @@ updateItemPost:
 	.dw itemCode07Post	; 0x07
 	.dw itemCode08Post	; 0x08
 	.dw itemCodeNilPost	; 0x09
-.ifdef ROM_AGES
 	.dw itemCode0aPost	; 0x0a
 	.dw itemCode0bPost	; 0x0b
 	.dw itemCode0cPost	; 0x0c
 	.dw itemCodeNilPost	; 0x0d
 	.dw itemCodeNilPost	; 0x0e
 	.dw itemCode0fPost	; 0x0f
-.else
-	.dw itemDelete		; 0x0a
-	.dw itemDelete		; 0x0b
-	.dw itemCode0cPost	; 0x0c
-	.dw itemCodeNilPost	; 0x0d
-	.dw itemCodeNilPost	; 0x0e
-	.dw itemDelete		; 0x0f
-.endif
 	.dw itemCodeNilPost	; 0x10
 	.dw itemCodeNilPost	; 0x11
 	.dw itemCodeNilPost	; 0x12

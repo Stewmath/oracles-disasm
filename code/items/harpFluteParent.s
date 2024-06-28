@@ -66,7 +66,6 @@ parentItemCode_harp:
 	call specialObjectAnimate_optimized
 	call @getSelectedSongAddr
 
-.ifdef ROM_AGES
 	ld a,$ff
 	jr z,+
 	ld a,(hl)
@@ -75,13 +74,6 @@ parentItemCode_harp:
 	ld (wLinkRidingObject),a
 	ld c,$80
 	jr nz,++
-
-.else; ROM_SEASONS
-	ld a,$ff
-	ld (wLinkPlayingInstrument),a
-	ld (wLinkRidingObject),a
-	ld c,$80
-.endif
 
 	ld a,(hl)
 	or a
@@ -98,10 +90,8 @@ parentItemCode_harp:
 	ld hl,w1Link.collisionType
 	set 7,(hl)
 
-.ifdef ROM_AGES
 	call @getSelectedSongAddr
 	jr nz,@harp
-.endif
 
 	; Flute: try to spawn companion
 	ldbc INTERACID_COMPANION_SPAWNER, $80
@@ -121,7 +111,12 @@ parentItemCode_harp:
 	call showText
 	jr @clearSelf
 
+.endif
+
 @harp:
+.ifdef ROM_SEASONS
+	jr @clearSelf
+.else
 	; Only allow harp playing on overworld, non-maku tree screens
 	ld a,(wTilesetFlags)
 	and (TILESETFLAG_UNDERWATER|TILESETFLAG_SIDESCROLL|TILESETFLAG_LARGE_INDOORS|TILESETFLAG_DUNGEON|TILESETFLAG_INDOORS|TILESETFLAG_MAKU)
@@ -158,8 +153,7 @@ parentItemCode_harp:
 	ld (wcde0),a
 	call clearAllItemsAndPutLinkOnGround
 	jp specialObjectAnimate_optimized
-
-.endif ; ROM_AGES
+.endif
 
 
 @sfxList:
@@ -171,6 +165,11 @@ parentItemCode_harp:
 	.db SND_TUNE_OF_ECHOES
 	.db SND_TUNE_OF_CURRENTS
 	.db SND_TUNE_OF_AGES
+.else
+	; CROSSITEMS: For now we're putting placeholder sounds for the harp songs in seasons
+	.db SND_FILLED_HEART_CONTAINER
+	.db SND_FILLED_HEART_CONTAINER
+	.db SND_FILLED_HEART_CONTAINER
 .endif
 
 ;;
@@ -182,8 +181,6 @@ parentItemCode_harp:
 	ld a,(de)
 	cp ITEMID_FLUTE
 
-.ifdef ROM_AGES
 	ret z
 	ld l,<wSelectedHarpSong
-.endif
 	ret

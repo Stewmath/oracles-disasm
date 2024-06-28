@@ -1,7 +1,6 @@
 ;;
 ; ITEMID_CANE_OF_SOMARIA ($04)
 parentItemCode_caneOfSomaria:
-.ifdef ROM_AGES
 	ld e,Item.state
 	ld a,(de)
 	rst_jumpTable
@@ -18,6 +17,5 @@ parentItemCode_caneOfSomaria:
 	ld e,Item.animParameter
 	ld a,(de)
 	rlca
-	jp nc,specialObjectAnimate_optimized
+	jp nc,specialObjectAnimate
 	jp clearParentItem
-.endif

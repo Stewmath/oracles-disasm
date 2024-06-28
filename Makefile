@@ -237,7 +237,7 @@ endef
 define define_uncmp_gfx_rules
 $(BUILD_DIR)/gfx/$(basename $(notdir $(1))).cmp: $(BUILD_DIR)/gfx/$(basename $(notdir $(1))).bin
 	@echo "Converting $$<..."
-	@printf '\x00' | cat - $$< > $$@
+	@$$(PYTHON) tools/build/compressGfx.py --mode 0 $$< $$@
 endef
 
 # Rule for handling compressible files
@@ -334,7 +334,7 @@ endif # End of check for either ROM_AGES or ROM_SEASONS being defined
 
 
 clean:
-	-rm -R build build_ages_v/ build_ages_e/ build_seasons_v/ build_seasons_e/ \
+	-rm -R build build_ages_* build_seasons_* \
 		ages.gbc ages.sym seasons.gbc seasons.sym
 
 # --------------------------------------------------------------------------------

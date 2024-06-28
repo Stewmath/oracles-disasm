@@ -1066,11 +1066,7 @@ moblin_state_9:
 ; ENEMYID_ARROW_DARKNUT
 ; ==============================================================================
 enemyCode21:
-.ifdef ROM_AGES
-	call ecom_checkHazards
-.else
 	call ecom_seasonsFunc_4446
-.endif
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH
 	ret c
@@ -2475,10 +2471,21 @@ enemyCode13:
 	ld e,Enemy.var2a
 	ld a,(de)
 	res 7,a
+
+.ifdef ROM_AGES
+	; CROSSITEMS: In Ages, the boomerang collisions aren't adjacent values, so this code must be
+	; changed.
+	cp ITEMCOLLISION_L1_BOOMERANG
+	jr z,@boomerangCollision
+	cp ITEMCOLLISION_L2_BOOMERANG
+	jr nz,@normalStatus
+.else
 	sub ITEMCOLLISION_L1_BOOMERANG
 	cp MAX_BOOMERANG_LEVEL
 	jr nc,@normalStatus
+.endif
 
+@boomerangCollision:
 	; Collision with boomerang occurred. Go to state 9.
 	ld e,Enemy.state
 	ld a,(de)
@@ -2568,10 +2575,21 @@ enemyCode19:
 	ld e,Enemy.var2a
 	ld a,(de)
 	res 7,a
+
+.ifdef ROM_AGES
+	; CROSSITEMS: In Ages, the boomerang collisions aren't adjacent values, so this code must be
+	; changed.
+	cp ITEMCOLLISION_L1_BOOMERANG
+	jr z,@boomerangCollision
+	cp ITEMCOLLISION_L2_BOOMERANG
+	jr nz,@normalStatus
+.else
 	sub ITEMCOLLISION_L1_BOOMERANG
 	cp MAX_BOOMERANG_LEVEL
 	jr nc,@normalStatus
+.endif
 
+@boomerangCollision:
 	; Hit with boomerang
 	ld e,Enemy.state
 	ld a,(de)
@@ -4659,11 +4677,7 @@ fish_subid00:
 	ld l,e
 	inc (hl)
 	ld l,Enemy.enemyCollisionMode
-.ifdef ROM_AGES
 	ld (hl),ENEMYCOLLISION_SWITCHHOOK_DAMAGE_ENEMY
-.else
-	ld (hl),ENEMYCOLLISION_STANDARD_ENEMY
-.endif
 	ld l,Enemy.zh
 	ld (hl),$00
 

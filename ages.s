@@ -13,6 +13,7 @@
 
 .include "objects/macros.s"
 .include "include/gfxDataMacros.s"
+.include "include/musicMacros.s"
 
 .include {"{BUILD_DIR}/textDefines.s"}
 
@@ -84,7 +85,6 @@
 		.include "code/animations.s"
 
 		.include {"{GAME_DATA_DIR}/uniqueGfxHeaders.s"}
-		.include {"{GAME_DATA_DIR}/uniqueGfxHeaderPointers.s"}
 		.include {"{GAME_DATA_DIR}/animationGroups.s"}
 		.include {"{GAME_DATA_DIR}/animationGfxHeaders.s"}
 		.include {"{GAME_DATA_DIR}/animationData.s"}

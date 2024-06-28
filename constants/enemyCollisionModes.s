@@ -238,6 +238,12 @@
 	ENEMYCOLLISION_TWINROVA_PROJECTILE		db ; $7a/-
 	ENEMYCOLLISION_GANON_TRIDENT			db ; $7b/-
 	ENEMYCOLLISION_VERAN_SPIDERWEB			db ; $7c/-
+
+	; Added for CROSSITEMS branch (undead enemies damaged by the rod)
+	ENEMYCOLLISION_UNDEAD				db ; $7d/-: Stalfos
+	ENEMYCOLLISION_BURNABLE_UNDEAD			db ; $7e/- (shrouded stalfos)
+	ENEMYCOLLISION_GIANT_GHINI			db ; $7f/-
+
 .else; ROM_SEASONS
 	ENEMYCOLLISION_POE_SISTER_FLAME			db ; -/$6c
 	ENEMYCOLLISION_KING_MOBLIN_BOMB			db ; -/$6d
@@ -246,6 +252,9 @@
 	ENEMYCOLLISION_GANON_TRIDENT			db ; -/$70
 	ENEMYCOLLISION_VIRE_PROJECTILE			db ; -/$71
 	ENEMYCOLLISION_POPPABLE_BUBBLE			db ; -/$72
+
+	; Added for CROSSITEMS branch
+	ENEMYCOLLISION_SWITCHHOOK_DAMAGE_ENEMY		db ; -/$73
 .endif
 
 ; Can't have values that are $80 or higher without changing how this works

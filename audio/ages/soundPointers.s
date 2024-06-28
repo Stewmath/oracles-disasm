@@ -124,7 +124,7 @@ soundPointers:
 	/* 0x77 */ m_soundPointer sndDropEssence
 	/* 0x78 */ m_soundPointer sndBoomerang
 	/* 0x79 */ m_soundPointer sndBigExplosion
-	/* 0x7a */ m_soundPointer snd7a
+	/* 0x7a */ m_soundPointer sndMagnetGloves ; CROSSITEMS
 	/* 0x7b */ m_soundPointer sndMysterySeed
 	/* 0x7c */ m_soundPointer sndAquamentusHover
 	/* 0x7d */ m_soundPointer sndOpenGate

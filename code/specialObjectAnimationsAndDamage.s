@@ -90,23 +90,41 @@ loadLinkAndCompanionAnimationFrame_body:
 	ld (wLinkPushingDirection),a
 	ld a,(w1Link.visible)
 	rlca
-	jr nc,++
+	jr nc,@doneSettingFrame
 
 	call func_4553
 	ld a,(w1Link.id)
 	ld hl,@data
 	rst_addAToHl
+
+.ifdef ROM_AGES
+	; CROSSITEMS: The cape animation was added at index 256. It must account for link's
+	; direction.
+	ld a,(w1Link.id)
+	cpa SPECIALOBJECTID_LINK
+	jr nz,+
+	ld a,(w1Link.animMode)
+	cp LINK_ANIM_MODE_ROCS_CAPE
+	jr nz,+
+	ld a,b
+	cp $04
+	jr c,@useDirection
++
+.endif
+
 	ld a,b
 	cp (hl)
-	jr c,+
+	jr c,@setFrame
 
+@useDirection:
 	ld a,(w1Link.direction)
 	add b
-+
+
+@setFrame:
 	ld h,LINK_OBJECT_INDEX
 	call @loadAnimationFrame
 
-++
+@doneSettingFrame:
 	; Companion / maple / whatever
 	ld hl,w1Companion.visible
 	bit 7,(hl)
@@ -166,10 +184,30 @@ loadLinkAndCompanionAnimationFrame_body:
 getSpecialObjectGraphicsFrame:
 	ld c,a
 	ld b,$00
+
 	ld d,h
 	ld l,<w1Link.id
 	ld a,(hl)
 	ld e,a
+
+.ifdef ROM_AGES
+	; CROSSITEMS: Because there are already 256 gfx definitions for Link in Ages, we need to
+	; manually handle this case for the added roc's cape animation to read animation 256 and
+	; beyond.
+	cpa SPECIALOBJECTID_LINK
+	jr nz,+
+	ld l,<w1Link.animMode
+	ld a,(hl)
+	cp LINK_ANIM_MODE_ROCS_CAPE
+	jr nz,+
+	ld a,c
+	cp $04
+	jr nc,+
+	inc b
++
+	ld a,e
+.endif
+
 	ld hl,specialObjectGraphicsTable
 	rst_addDoubleIndex
 	ldi a,(hl)
@@ -178,6 +216,7 @@ getSpecialObjectGraphicsFrame:
 	add hl,bc
 	add hl,bc
 	add hl,bc
+	ld b,$00
 
 	; Byte 0
 	ldi a,(hl)

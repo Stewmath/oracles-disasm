@@ -65,8 +65,8 @@ treasureObjectData:
 	/* $04 */ m_TreasureSubid   $38, $00, $73, $17, TREASURE_OBJECT_CANE_OF_SOMARIA_00
 	/* $05 */ m_TreasurePointer treasureObjectData05
 	/* $06 */ m_TreasurePointer treasureObjectData06
-	/* $07 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_ROD_OF_SEASONS_00
-	/* $08 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MAGNET_GLOVES_00
+	/* $07 */ m_TreasureSubid   $38, $07, <TX_00_GET_RODOFSEASONS, $81, TREASURE_OBJECT_ROD_OF_SEASONS_00
+	/* $08 */ m_TreasureSubid   $38, $00, <TX_00_GET_MAGNETGLOVES, $7c, TREASURE_OBJECT_MAGNET_GLOVES_00
 	/* $09 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_HELPER_00
 	/* $0a */ m_TreasurePointer treasureObjectData0a
 	/* $0b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SWITCH_HOOK_CHAIN_00
@@ -77,7 +77,7 @@ treasureObjectData:
 	/* $10 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_10_00
 	/* $11 */ m_TreasurePointer treasureObjectData11
 	/* $12 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_12_00
-	/* $13 */ m_TreasurePointer $0000
+	/* $13 */ m_TreasurePointer treasureObjectData13
 	/* $14 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_14_00
 	/* $15 */ m_TreasurePointer treasureObjectData15
 	/* $16 */ m_TreasurePointer treasureObjectData16
@@ -88,7 +88,7 @@ treasureObjectData:
 	/* $1b */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1b_00
 	/* $1c */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1c_00
 	/* $1d */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_MINECART_COLLISION_00
-	/* $1e */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_FOOLS_ORE_00
+	/* $1e */ m_TreasureSubid   $38, $00, <TX_00_GET_FOOLSORE, $82, TREASURE_OBJECT_FOOLS_ORE_00
 	/* $1f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_1f_00
 	/* $20 */ m_TreasurePointer treasureObjectData20
 	/* $21 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_SCENT_SEEDS_00
@@ -190,6 +190,7 @@ treasureObjectData06:
 	m_TreasureSubid $0a, $01, $22, $1c, TREASURE_OBJECT_BOOMERANG_00
 	m_TreasureSubid $10, $01, $22, $1c, TREASURE_OBJECT_BOOMERANG_01
 	m_TreasureSubid $02, $01, $22, $1c, TREASURE_OBJECT_BOOMERANG_02
+	m_TreasureSubid $38, $02, <TX_00_GET_MAGICBOOMERANG, $7f, TREASURE_OBJECT_BOOMERANG_03
 
 treasureObjectData0a:
 	m_BeginTreasureSubids TREASURE_SWITCH_HOOK
@@ -218,6 +219,11 @@ treasureObjectData11:
 	m_TreasureSubid $0a, $00, $71, $68, TREASURE_OBJECT_HARP_00
 	m_TreasureSubid $0a, $01, $78, $68, TREASURE_OBJECT_HARP_01
 
+treasureObjectData13:
+	m_BeginTreasureSubids TREASURE_SLINGSHOT
+	m_TreasureSubid $38, $01, <TX_00_GET_SLINGSHOT,      $7d, TREASURE_OBJECT_SLINGSHOT_00
+	m_TreasureSubid $38, $02, <TX_00_GET_HYPERSLINGSHOT, $7e, TREASURE_OBJECT_SLINGSHOT_01
+
 treasureObjectData15:
 	m_BeginTreasureSubids TREASURE_SHOVEL
 	m_TreasureSubid $0a, $00, $25, $1b, TREASURE_OBJECT_SHOVEL_00
@@ -236,6 +242,7 @@ treasureObjectData17:
 	m_TreasureSubid $0a, $01, $27, $16, TREASURE_OBJECT_FEATHER_00
 	m_TreasureSubid $0a, $01, $79, $16, TREASURE_OBJECT_FEATHER_01
 	m_TreasureSubid $0a, $01, $27, $16, TREASURE_OBJECT_FEATHER_02
+	m_TreasureSubid $38, $02, <TX_00_GET_ROCSCAPE, $80, TREASURE_OBJECT_FEATHER_03
 
 treasureObjectData19:
 	m_BeginTreasureSubids TREASURE_SEED_SATCHEL

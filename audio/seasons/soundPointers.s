@@ -163,7 +163,7 @@ soundPointers:
 	/* 0x9e */ m_soundPointer sndFluteDimitri
 	/* 0x9f */ m_soundPointer sndFluteMoosh
 	/* 0xa0 */ m_soundPointer sndChicken
-	/* 0xa1 */ m_soundPointer snda1
+	/* 0xa1 */ m_soundPointer sndSwitch2 ; CROSSITEMS
 	/* 0xa2 */ m_soundPointer sndCompass
 	/* 0xa3 */ m_soundPointer sndLand
 	/* 0xa4 */ m_soundPointer sndBeam

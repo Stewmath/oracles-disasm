@@ -10,14 +10,11 @@ snddeChannel6:
 
 
 snd97Start:
-snda1Start:
 sndadStart:
 sndb6Start:
 
 snd97Channel2:
 snd97Channel7:
-snda1Channel2:
-snda1Channel7:
 sndadChannel2:
 sndadChannel7:
 sndb6Channel2:
@@ -66,6 +63,8 @@ bank39ChannelFallback:
 .include "audio/mus/common/mapleGame.s"
 .include "audio/mus/common/finalBoss.s"
 .include "audio/mus/common/essence.s"
+
+.include "audio/sfx/ages/switch2.s" ; CROSSITEMS: Added this
 
 .ifdef BUILD_VANILLA
 	.dsb 13 $ff

@@ -27,7 +27,7 @@ enemyData:
 	/* 0x0d */ m_EnemyData $7a $92 enemy0dSubidData
 	/* 0x0e */ m_EnemyData $85 $93 enemy0eSubidData
 	/* 0x0f */ m_EnemyData $88 $93 $03 $18
-	/* 0x10 */ m_EnemyData $82 $10 $0a $06
+	/* 0x10 */ m_EnemyData $82 $73 $0a $06
 	/* 0x11 */ m_EnemyData $77 $94 $11 $07
 	/* 0x12 */ m_EnemyData $82 $95 $17 $20
 	/* 0x13 */ m_EnemyData $82 $96 $03 $0a
@@ -69,7 +69,7 @@ enemyData:
 	/* 0x37 */ m_EnemyData $3d $00 $00 $14
 	/* 0x38 */ m_EnemyData $3e $00 $00 $20
 	/* 0x39 */ m_EnemyData $84 $ac $09 $50
-	/* 0x3a */ m_EnemyData $7d $90 $0c $05
+	/* 0x3a */ m_EnemyData $7d $f3 $0c $05
 	/* 0x3b */ m_EnemyData $81 $ad $3e $20
 	/* 0x3c */ m_EnemyData $8b $9e $0e $00
 	/* 0x3d */ m_EnemyData $76 $91 enemy3dSubidData

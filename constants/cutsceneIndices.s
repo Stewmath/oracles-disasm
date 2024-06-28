@@ -15,7 +15,7 @@
 	CUTSCENE_05			db ; 0x05: Screen fadeout?
 	CUTSCENE_NAYRU_SINGING		db ; 0x06
 	CUTSCENE_MAKU_TREE_DISAPPEARING	db ; 0x07
-	CUTSCENE_BLACK_TOWER_EXPLANATION	db ; 0x08
+	CUTSCENE_BLACK_TOWER_EXPLANATION	db ; 0x08: Cutscenes for 3 stages of progress
 	CUTSCENE_BLACK_TOWER_ESCAPE	db ; 0x09: Plays after beating Veran
 	CUTSCENE_CREDITS		db ; 0x0a
 	CUTSCENE_WALL_RETRACTION	db ; 0x0b:  wall retracts (also used in D6)

@@ -5374,15 +5374,15 @@ interactionCode57:
 	push de
 
 	; Force-reload maku tree screen?
-	ld bc,$0138
+	ld bc,ROOM_AGES_138
 	ld a,$00
-	call func_36f6
+	call forceLoadRoom
 
 	ld a,UNCMP_GFXH_2d
 	call loadUncompressedGfxHeader
-	ld a,PALH_30
+	ld a,PALH_TILESET_MAKU_TREE
 	call loadPaletteHeader
-	ld a,GFXH_84
+	ld a,GFXH_CREDITS_SCENE_MAKU_TREE_PAST
 	call loadGfxHeader
 
 	ld a,$ff

@@ -302,36 +302,52 @@
 	.dw ((\1) - (\2)&$ffff
 .ENDM
 
-; Macro which allows data to cross over banks, used for map layout data.
-; Doesn't support more than 1 bank crossing at a time
-; Must have DATA_ADDR and DATA_BANK defined before use.
-; ARG 1: name
-.macro m_RoomLayoutData
-	.FOPEN {"{BUILD_DIR}/rooms/\1.cmp"} m_DataFile
-	.FSIZE m_DataFile SIZE
-	.FCLOSE m_DataFile
-	.REDEFINE SIZE SIZE-1
+; Macro to .incbin data while allowing it to cross over banks. This depends on the use of .BANK and
+; .ORG to precisely set the address, therefore this will not work in sections.
+;
+; Must define DATA_ADDR and DATA_BANK, corresponding to the current address, prior to using this
+; (the linker gets no say in its placement).
+;
+; Arguments:
+;   \1: Filename (should be a ".cmp" file)
+;   \2: Number of bytes in ".cmp" file header (these bytes are not included)
+.macro m_IncbinCrossBankData
+	.fopen \1 file
+	.fsize file SIZE
+	.fclose file
 
-	\1:
+	.redefine SIZE SIZE-\2 ; Skip .cmp file "header"
 
-	.IF SIZE >= 1
-	.IF DATA_ADDR + SIZE >= $8000
-		.REDEFINE DATA_READAMOUNT $8000-DATA_ADDR
-		.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP 1 READ DATA_READAMOUNT
-		.REDEFINE DATA_BANK DATA_BANK+1
+	.if SIZE >= 1
+	.if DATA_ADDR + SIZE >= $8000
+		.define DATA_READAMOUNT $8000-DATA_ADDR
+
+		.incbin \1 SKIP \2 READ DATA_READAMOUNT
+
+		.redefine DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
-		.IF DATA_READAMOUNT < SIZE
-			.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP DATA_READAMOUNT+1
-		.ENDIF
-		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
-	.ELSE
-		.incbin {"{BUILD_DIR}/rooms/\1.cmp"} SKIP 1
-		.REDEFINE DATA_ADDR DATA_ADDR + SIZE
-	.ENDIF
-	.ENDIF
 
-	.UNDEFINE SIZE
+		.if DATA_READAMOUNT < SIZE
+			.incbin \1 SKIP DATA_READAMOUNT+\2
+		.endif
+
+		.redefine DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
+		.undefine DATA_READAMOUNT
+	.else
+		.incbin \1 SKIP \2
+		.redefine DATA_ADDR DATA_ADDR + SIZE
+	.endif
+	.endif
+
+	.undefine SIZE
+.endm
+
+; Incbin room layout data, can cross over banks.
+; ARG 1: name
+.macro m_RoomLayoutData
+	\1:
+	m_IncbinCrossBankData {"{BUILD_DIR}/rooms/\1.cmp"}, 1
 .endm
 
 ; Pointer to room data defined with m_RoomLayoutData
@@ -358,26 +374,6 @@
 ; ARG 2: relative offset
 .macro m_RoomLayoutDictPointer
 	.dw (((:\1)*$4000)+(\1&$3fff) - (((:\2)*$4000)+((\2)&$3fff))) + $200
-.ENDM
-
-; Macro to define palette headers for the background
-; ARG 1: index of first palette to load the data into
-; ARG 2: number of palettes to load
-; ARG 3: address of palette data
-; ARG 4: $80 to continue reading palette headers, $00 to stop
-.macro m_PaletteHeaderBg
-	.db ((\2)-1) | ((\1)<<3) | (\4)
-	.dw \3
-.ENDM
-
-; Macro to define palette headers for sprites
-; ARG 1: index of first palette to load the data into
-; ARG 2: number of palettes to load
-; ARG 3: address of palette data
-; ARG 4: $80 to continue reading palette headers
-.macro m_PaletteHeaderSpr
-	.db ((\2)-1) | ((\1)<<3) | (\4) | $40
-	.dw \3
 .ENDM
 
 ; Args:

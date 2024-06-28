@@ -1094,7 +1094,7 @@ sndFreezeLava:
 	.db $ff
 
 sndMysterySeed:
-	.db $02
+	.db $32 ; CROSSITEMS: Changed sound priority to match ages
 	.dw sndMysterySeedChannel2
 	.db $ff
 
@@ -1311,11 +1311,9 @@ sndChicken:
 	.dw sndChickenChannel2
 	.db $ff
 
-snda1:
-	.db $02
-	.dw snda1Channel2
-	.db $07
-	.dw snda1Channel7
+sndSwitch2: ; CROSSITEMS: Replaced snda1 with this
+	.db $a2
+	.dw sndSwitch2Channel2
 	.db $ff
 
 sndCompass:

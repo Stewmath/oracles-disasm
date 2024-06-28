@@ -5344,7 +5344,7 @@ interactionCode75:
 	ret z
 	ld (hl),$00
 	dec a
-	add $30
+	add GFXH_INTRO_LINK_MID_FRAME_1
 	push de
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_0c
@@ -7288,9 +7288,9 @@ seasonsFunc_09_7f17:
 	ret
 
 seasonsTable_09_7f28:
-	.db SEASONS_PALH_3b
-	.db SEASONS_PALH_99
-	.db SEASONS_PALH_9a
+	.db PALH_TILESET_ONOX_CASTLE_OUTSIDE_WINTER
+	.db PALH_SEASONS_99
+	.db PALH_SEASONS_9a
 
 seasonsTable_09_7f2b:
 	.dw seasonsTable_09_7f33

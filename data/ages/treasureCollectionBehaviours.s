@@ -64,18 +64,18 @@ treasureCollectionBehaviourTable:
 	.db SND_GETITEM
 
 	; TREASURE_BOOMERANG (0x06)
-	.db $00
-	.db $00
+	.db <wBoomerangLevel
+	.db $08
 	.db SND_GETITEM
 
 	; TREASURE_ROD_OF_SEASONS (0x07)
-	.db $00
-	.db $00
-	.db SND_NONE
+	.db <wObtainedSeasons
+	.db $81
+	.db SND_GETITEM
 
 	; TREASURE_MAGNET_GLOVES (0x08)
-	.db $00
-	.db $00
+	.db <wMagnetGlovePolarity
+	.db $08
 	.db SND_GETSEED
 
 	; TREASURE_SWITCH_HOOK_HELPER (0x09)
@@ -129,8 +129,8 @@ treasureCollectionBehaviourTable:
 	.db SND_NONE
 
 	; TREASURE_SLINGSHOT (0x13)
-	.db $00
-	.db $00
+	.db <wSlingshotLevel
+	.db $08
 	.db SND_GETSEED
 
 	; TREASURE_14 (0x14)
@@ -149,8 +149,8 @@ treasureCollectionBehaviourTable:
 	.db SND_GETSEED
 
 	; TREASURE_FEATHER (0x17)
-	.db $00
-	.db $00
+	.db <wFeatherLevel
+	.db $08
 	.db SND_GETITEM
 
 	; TREASURE_18 (0x18)

@@ -1,7 +1,6 @@
 ; Variables:
 ;  var37: ?
 parentItemCode_magnetGloves:
-.ifdef ROM_SEASONS
 	ld a,(wLinkClimbingVine)
 	inc a
 	jr z,@deleteSelf
@@ -15,6 +14,12 @@ parentItemCode_magnetGloves:
 	ld a,(wLinkSwimmingState)
 	or a
 	jr nz,@deleteSelf
+
+.ifdef ROM_AGES
+	; CROSSITEMS: Don't allow using magnet gloves while underwater. (Animations look off.)
+	call isLinkUnderwater
+	jr nz,@deleteSelf
+.endif
 
 	call itemIncState
 	ld l,Item.var37
@@ -165,8 +170,16 @@ parentItemCode_magnetGloves:
 	.db $ff  $00 $00  $04 $00 ; DIR_LEFT
 
 
+.ifdef ROM_SEASONS
+
 ; Tile indices for magnet tiles (per group)
 @magnetTilesTable:
 	.db $00 $e3 $00 $3f $3f $3f $3f $3f
 
-.endif ; ROM_SEASONS
+.else; ROM_AGES
+
+; CROSSITEMS: For Ages, we just set TILEINDEX_SWITCH_DIAMOND to be magnetized.
+@magnetTilesTable:
+	.db $db $db $db $db $db $db $db $db
+
+.endif

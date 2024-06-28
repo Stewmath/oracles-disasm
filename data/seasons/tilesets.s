@@ -1,280 +1,1385 @@
+; See data/ages/tilesets.s for documentation.
+;
+; The only difference from ages is that there can be seasonal tilesets which are simply pointers to
+; a group of 4 tileset definitions for the 4 seasons. The data itself is the same.
+
 .macro m_SeasonalTileset ; Tilesets which use this have different data for each season
 	.db $ff
 	.dw \1
 	.dsb 5 0
 .endm
 
-tilesetData: ; $10c84
-	m_SeasonalTileset area00Seasons        ; 0x00
-	m_SeasonalTileset area01Seasons        ; 0x01
-	m_SeasonalTileset area02Seasons        ; 0x02
-	m_SeasonalTileset area03Seasons        ; 0x03
-	m_SeasonalTileset area04Seasons        ; 0x04
-	m_SeasonalTileset area05Seasons        ; 0x05
-	m_SeasonalTileset area06Seasons        ; 0x06
-	m_SeasonalTileset area07Seasons        ; 0x07
-	m_SeasonalTileset area08Seasons        ; 0x08
-	m_SeasonalTileset area09Seasons        ; 0x09
-	m_SeasonalTileset area0aSeasons        ; 0x0a
-	m_SeasonalTileset area0bSeasons        ; 0x0b
-	m_SeasonalTileset area0cSeasons        ; 0x0c
-	m_SeasonalTileset area0dSeasons        ; 0x0d
-	m_SeasonalTileset area0eSeasons        ; 0x0e
-	m_SeasonalTileset area0fSeasons        ; 0x0f
-	m_SeasonalTileset area10Seasons        ; 0x10
-	m_SeasonalTileset area11Seasons        ; 0x11
-	m_SeasonalTileset area12Seasons        ; 0x12
-	m_SeasonalTileset area13Seasons        ; 0x13
-	m_SeasonalTileset area14Seasons        ; 0x14
-	m_SeasonalTileset area15Seasons        ; 0x15
-	m_SeasonalTileset area16Seasons        ; 0x16
-	m_SeasonalTileset area17Seasons        ; 0x17
-	m_SeasonalTileset area18Seasons        ; 0x18
-	m_SeasonalTileset area19Seasons        ; 0x19
-	m_SeasonalTileset area1aSeasons        ; 0x1a
-	.db $0f $01 $10 $41 $10 $11 $01 $04 ; 0x1b
-	.db $0f $01 $11 $41 $10 $12 $01 $05 ; 0x1c
-	.db $0f $01 $10 $41 $10 $35 $01 $04 ; 0x1d
-	.db $0f $01 $00 $4f $56 $0e $01 $03 ; 0x1e
-	.db $0f $01 $1f $44 $54 $0b $03 $0d ; 0x1f
-	.db $1f $81 $00 $50 $5a $1c $04 $10 ; 0x20
-	.db $1f $81 $17 $50 $58 $1b $04 $10 ; 0x21
-	.db $1f $81 $17 $50 $59 $1b $04 $10 ; 0x22
-	.db $1f $81 $17 $50 $5f $1b $04 $10 ; 0x23
-	.db $1f $81 $18 $50 $5a $1c $04 $10 ; 0x24
-	.db $1f $81 $19 $50 $5b $1d $04 $10 ; 0x25
-	.db $1f $81 $1a $50 $5c $1e $04 $10 ; 0x26
-	.db $1f $81 $1b $50 $5d $1f $04 $10 ; 0x27
-	.db $1f $81 $1c $50 $5e $20 $04 $11 ; 0x28
-	.db $2f $02 $1d $70 $50 $33 $04 $ff ; 0x29
-	.db $2f $02 $1e $70 $50 $33 $04 $ff ; 0x2a
-	.db $2f $02 $00 $71 $51 $34 $04 $ff ; 0x2b
-	.db $3f $04 $00 $7c $70 $2e $04 $18 ; 0x2c
-	.db $3f $04 $00 $7c $71 $2e $04 $18 ; 0x2d
-	.db $3f $04 $00 $7c $72 $2e $04 $18 ; 0x2e
-	.db $3f $04 $00 $7c $74 $2e $04 $18 ; 0x2f
-	.db $3f $04 $00 $7c $76 $2e $04 $18 ; 0x30
-	.db $3f $04 $00 $7d $77 $2f $04 $18 ; 0x31
-	.db $3f $04 $00 $7d $7a $2f $04 $18 ; 0x32
-	.db $3f $04 $00 $7d $7b $2f $04 $18 ; 0x33
-	.db $3f $04 $00 $7f $7c $31 $04 $18 ; 0x34
-	.db $3f $04 $00 $7f $72 $31 $04 $18 ; 0x35
-	.db $40 $08 $00 $60 $40 $21 $05 $18 ; 0x36
-	.db $41 $08 $00 $61 $41 $22 $05 $18 ; 0x37
-	.db $42 $08 $00 $62 $42 $23 $05 $19 ; 0x38
-	.db $43 $08 $00 $63 $43 $24 $05 $18 ; 0x39
-	.db $44 $08 $00 $64 $44 $25 $05 $18 ; 0x3a
-	.db $45 $08 $00 $65 $45 $26 $05 $18 ; 0x3b
-	.db $46 $08 $00 $66 $46 $27 $05 $19 ; 0x3c
-	.db $36 $04 $0e $40 $10 $28 $04 $ff ; 0x3d
-	.db $47 $08 $00 $67 $47 $29 $06 $18 ; 0x3e
-	.db $47 $08 $27 $67 $47 $29 $06 $18 ; 0x3f
-	.db $47 $08 $28 $67 $4d $29 $06 $18 ; 0x40
-	.db $48 $08 $00 $68 $48 $2a $06 $18 ; 0x41
-	.db $48 $08 $00 $6c $4e $2a $06 $18 ; 0x42
-	.db $48 $08 $26 $6c $4f $2a $06 $18 ; 0x43
-	.db $49 $08 $00 $69 $49 $2b $06 $18 ; 0x44
-	.db $4a $08 $00 $6a $4a $2c $06 $18 ; 0x45
-	.db $4a $08 $00 $6a $8e $2c $06 $18 ; 0x46
-	.db $4b $08 $00 $60 $40 $21 $06 $18 ; 0x47
-	.db $4f $10 $00 $7d $77 $2f $05 $18 ; 0x48
-	.db $4f $10 $00 $7d $78 $2f $05 $18 ; 0x49
-	.db $4f $10 $00 $7d $79 $2f $05 $18 ; 0x4a
-	.db $4f $10 $00 $7c $75 $2e $05 $18 ; 0x4b
-	.db $4f $10 $00 $7f $7c $31 $05 $18 ; 0x4c
-	.db $4f $10 $00 $7c $70 $2e $06 $18 ; 0x4d
-	.db $4f $10 $00 $7c $73 $2e $06 $18 ; 0x4e
-	.db $4f $10 $00 $7d $77 $2f $06 $18 ; 0x4f
-	.db $4f $10 $00 $7d $79 $2f $06 $18 ; 0x50
-	.db $4f $10 $00 $7d $60 $2f $06 $18 ; 0x51
-	.db $4f $10 $00 $7d $61 $2f $06 $18 ; 0x52
-	.db $4f $10 $00 $7d $62 $2f $06 $18 ; 0x53
-	.db $4f $10 $00 $7d $63 $2f $06 $18 ; 0x54
-	.db $50 $28 $00 $6d $3c $32 $05 $1a ; 0x55
-	.db $51 $28 $00 $6d $3d $32 $05 $1a ; 0x56
-	.db $52 $28 $00 $6d $68 $32 $05 $1a ; 0x57
-	.db $53 $28 $00 $6d $3e $32 $05 $1a ; 0x58
-	.db $54 $28 $00 $6d $69 $32 $05 $1a ; 0x59
-	.db $55 $28 $00 $6d $6a $32 $05 $1a ; 0x5a
-	.db $58 $28 $00 $6d $6b $32 $06 $1a ; 0x5b
-	.db $58 $28 $00 $6d $6c $32 $06 $1a ; 0x5c
-	.db $59 $28 $00 $6d $8d $32 $06 $1a ; 0x5d
-	.db $5f $20 $00 $6d $6d $32 $06 $1a ; 0x5e
-	.db $5f $20 $00 $6d $6e $32 $06 $1a ; 0x5f
-	.db $5f $20 $00 $6d $6f $32 $06 $1a ; 0x60
-	.db $5f $20 $15 $48 $30 $16 $04 $00 ; 0x61
-	.db $59 $28 $00 $96 $8d $32 $06 $ff ; 0x62
+tilesetData:
+	m_SeasonalTileset tileset00Seasons ; 0x00
+	m_SeasonalTileset tileset01Seasons ; 0x01
+	m_SeasonalTileset tileset02Seasons ; 0x02
+	m_SeasonalTileset tileset03Seasons ; 0x03
+	m_SeasonalTileset tileset04Seasons ; 0x04
+	m_SeasonalTileset tileset05Seasons ; 0x05
+	m_SeasonalTileset tileset06Seasons ; 0x06
+	m_SeasonalTileset tileset07Seasons ; 0x07
+	m_SeasonalTileset tileset08Seasons ; 0x08
+	m_SeasonalTileset tileset09Seasons ; 0x09
+	m_SeasonalTileset tileset0aSeasons ; 0x0a
+	m_SeasonalTileset tileset0bSeasons ; 0x0b
+	m_SeasonalTileset tileset0cSeasons ; 0x0c
+	m_SeasonalTileset tileset0dSeasons ; 0x0d
+	m_SeasonalTileset tileset0eSeasons ; 0x0e
+	m_SeasonalTileset tileset0fSeasons ; 0x0f
+	m_SeasonalTileset tileset10Seasons ; 0x10
+	m_SeasonalTileset tileset11Seasons ; 0x11
+	m_SeasonalTileset tileset12Seasons ; 0x12
+	m_SeasonalTileset tileset13Seasons ; 0x13
+	m_SeasonalTileset tileset14Seasons ; 0x14
+	m_SeasonalTileset tileset15Seasons ; 0x15
+	m_SeasonalTileset tileset16Seasons ; 0x16
+	m_SeasonalTileset tileset17Seasons ; 0x17
+	m_SeasonalTileset tileset18Seasons ; 0x18
+	m_SeasonalTileset tileset19Seasons ; 0x19
+	m_SeasonalTileset tileset1aSeasons ; 0x1a
 
-area00Seasons:
-	.db $0f $01 $01 $40 $10 $00 $00 $00 ; 0x63
-	.db $0f $01 $01 $41 $11 $00 $01 $00 ; 0x64
-	.db $0f $01 $01 $42 $12 $00 $02 $00 ; 0x65
-	.db $0f $01 $01 $43 $13 $00 $03 $00 ; 0x66
+	; 0x1b
+	.db $0f, $01
+	.db UNIQUE_GFXH_SAMASA_DESERT
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $11, $01, $04
 
-area01Seasons:
-	.db $0f $01 $02 $40 $10 $01 $00 $00 ; 0x67
-	.db $0f $01 $02 $41 $11 $01 $01 $00 ; 0x68
-	.db $0f $01 $02 $42 $12 $01 $02 $00 ; 0x69
-	.db $0f $01 $02 $43 $13 $01 $03 $00 ; 0x6a
+	; 0x1c
+	.db $0f, $01
+	.db UNIQUE_GFXH_SAMASA_DESERT_PIRATE_SHIP
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $12, $01, $05
 
-area02Seasons:
-	.db $0f $01 $03 $40 $10 $02 $00 $00 ; 0x6b
-	.db $0f $01 $03 $41 $11 $02 $01 $00 ; 0x6c
-	.db $0f $01 $03 $42 $12 $02 $02 $00 ; 0x6d
-	.db $0f $01 $03 $43 $13 $02 $03 $00 ; 0x6e
+	; 0x1d
+	.db $0f, $01
+	.db UNIQUE_GFXH_SAMASA_DESERT
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $35, $01, $04
 
-area03Seasons:
-	.db $0f $01 $04 $40 $10 $03 $00 $00 ; 0x6f
-	.db $0f $01 $04 $41 $11 $03 $01 $00 ; 0x70
-	.db $0f $01 $04 $42 $12 $03 $02 $00 ; 0x71
-	.db $0f $01 $04 $43 $13 $03 $03 $00 ; 0x72
+	; 0x1e
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_TARM_RUINS_PEDESTAL
+	.db PALH_TILESET_TARM_RUINS_PEDESTAL
+	.db $0e, $01, $03
 
-area04Seasons:
-	.db $0f $01 $05 $40 $10 $05 $00 $00 ; 0x73
-	.db $0f $01 $05 $41 $11 $05 $01 $00 ; 0x74
-	.db $0f $01 $05 $42 $12 $05 $02 $00 ; 0x75
-	.db $0f $01 $05 $43 $13 $05 $03 $00 ; 0x76
+	; 0x1f
+	.db $0f, $01
+	.db UNIQUE_GFXH_BIGGORON
+	.db GFXH_TILESET_BIGGORON
+	.db PALH_TILESET_BIGGORON
+	.db $0b, $03, $0d
 
-area05Seasons:
-	.db $0f $01 $06 $40 $14 $06 $00 $02 ; 0x77
-	.db $0f $01 $06 $41 $15 $06 $01 $02 ; 0x78
-	.db $0f $01 $06 $42 $16 $06 $02 $02 ; 0x79
-	.db $0f $01 $06 $43 $17 $06 $03 $02 ; 0x7a
+	; 0x20
+	.db $1f, $81
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIA_A
+	.db $1c, $04, $10
 
-area06Seasons:
-	.db $0f $01 $07 $40 $14 $07 $00 $01 ; 0x7b
-	.db $0f $01 $07 $41 $15 $07 $01 $01 ; 0x7c
-	.db $0f $01 $07 $42 $16 $07 $02 $01 ; 0x7d
-	.db $0f $01 $07 $43 $17 $07 $03 $01 ; 0x7e
+	; 0x21
+	.db $1f, $81
+	.db UNIQUE_GFXH_TEMPLE_OF_SEASONS_OUTSIDE
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIA_TEMPLE_OUTSIDE_WEST
+	.db $1b, $04, $10
 
-area07Seasons:
-	.db $0f $01 $08 $40 $24 $08 $00 $00 ; 0x7f
-	.db $0f $01 $08 $41 $25 $08 $01 $00 ; 0x80
-	.db $0f $01 $08 $42 $26 $08 $02 $00 ; 0x81
-	.db $0f $01 $08 $43 $27 $08 $03 $00 ; 0x82
+	; 0x22
+	.db $1f, $81
+	.db UNIQUE_GFXH_TEMPLE_OF_SEASONS_OUTSIDE
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIA_TEMPLE_OUTSIDE_EAST
+	.db $1b, $04, $10
 
-area08Seasons:
-	.db $0f $01 $09 $40 $10 $09 $00 $02 ; 0x83
-	.db $0f $01 $09 $41 $11 $09 $01 $02 ; 0x84
-	.db $0f $01 $09 $42 $12 $09 $02 $02 ; 0x85
-	.db $0f $01 $09 $43 $13 $09 $03 $02 ; 0x86
+	; 0x23
+	.db $1f, $81
+	.db UNIQUE_GFXH_TEMPLE_OF_SEASONS_OUTSIDE
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIA_TEMPLE_VARIANT_UNUSED
+	.db $1b, $04, $10
 
-area09Seasons:
-	.db $0f $01 $09 $40 $18 $09 $00 $02 ; 0x87
-	.db $0f $01 $09 $41 $19 $09 $01 $02 ; 0x88
-	.db $0f $01 $09 $42 $1a $09 $02 $02 ; 0x89
-	.db $0f $01 $09 $43 $1b $09 $03 $02 ; 0x8a
+	; 0x24
+	.db $1f, $81
+	.db UNIQUE_GFXH_SUBROSIA
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIA_A
+	.db $1c, $04, $10
 
-area0aSeasons:
-	.db $0f $01 $0a $40 $10 $0a $00 $02 ; 0x8b
-	.db $0f $01 $0a $41 $11 $0a $01 $02 ; 0x8c
-	.db $0f $01 $0a $42 $12 $0a $02 $02 ; 0x8d
-	.db $0f $01 $0a $43 $13 $0a $03 $02 ; 0x8e
+	; 0x25
+	.db $1f, $81
+	.db UNIQUE_GFXH_SUBROSIA_VILLAGE
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIA_B
+	.db $1d, $04, $10
 
-area0bSeasons:
-	.db $0f $01 $0a $40 $1c $0a $00 $02 ; 0x8f
-	.db $0f $01 $0a $41 $1d $0a $01 $02 ; 0x90
-	.db $0f $01 $0a $42 $1e $0a $02 $02 ; 0x91
-	.db $0f $01 $0a $43 $1f $0a $03 $02 ; 0x92
+	; 0x26
+	.db $1f, $81
+	.db UNIQUE_GFXH_SUBROSIAN_SMITHY_OUTSIDE
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIAN_SMITHY_OUTSIDE
+	.db $1e, $04, $10
 
-area0cSeasons:
-	.db $0f $01 $0b $40 $10 $0c $00 $02 ; 0x93
-	.db $0f $01 $0b $41 $11 $0c $01 $02 ; 0x94
-	.db $0f $01 $0b $42 $12 $0c $02 $02 ; 0x95
-	.db $0f $01 $0b $43 $13 $0c $03 $02 ; 0x96
+	; 0x27
+	.db $1f, $81
+	.db UNIQUE_GFXH_SUBROSIAN_MARKET_OUTSIDE
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIA_C
+	.db $1f, $04, $10
 
-area0dSeasons:
-	.db $0f $01 $09 $40 $20 $09 $00 $02 ; 0x97
-	.db $0f $01 $09 $41 $21 $09 $01 $02 ; 0x98
-	.db $0f $01 $09 $42 $22 $09 $02 $02 ; 0x99
-	.db $0f $01 $09 $43 $23 $09 $03 $02 ; 0x9a
+	; 0x28
+	.db $1f, $81
+	.db UNIQUE_GFXH_SUBROSIA_PIRATE_SHIP
+	.db GFXH_TILESET_SUBROSIA
+	.db PALH_TILESET_SUBROSIA_BEACH
+	.db $20, $04, $11
 
-area0eSeasons:
-	.db $0f $01 $0c $40 $10 $0d $00 $00 ; 0x9b
-	.db $0f $01 $0c $41 $11 $0d $01 $00 ; 0x9c
-	.db $0f $01 $0c $42 $12 $0d $02 $00 ; 0x9d
-	.db $0f $01 $0c $43 $13 $0d $03 $00 ; 0x9e
+	; 0x29
+	.db $2f, $02
+	.db UNIQUE_GFXH_MAKU_TREE_BOTTOM
+	.db GFXH_TILESET_MAKU_TREE
+	.db PALH_TILESET_MAKU_TREE
+	.db $33, $04, $ff
 
-area0fSeasons:
-	.db $0f $01 $0d $40 $24 $0e $00 $03 ; 0x9f
-	.db $0f $01 $0d $41 $25 $0e $01 $03 ; 0xa0
-	.db $0f $01 $0d $42 $26 $0e $02 $03 ; 0xa1
-	.db $0f $01 $0d $43 $27 $0e $03 $03 ; 0xa2
+	; 0x2a
+	.db $2f, $02
+	.db UNIQUE_GFXH_MAKU_TREE_TOP
+	.db GFXH_TILESET_MAKU_TREE
+	.db PALH_TILESET_MAKU_TREE
+	.db $33, $04, $ff
 
-area10Seasons:
-	.db $0f $01 $0e $40 $10 $0f $00 $03 ; 0xa3
-	.db $0f $01 $0e $41 $11 $0f $01 $03 ; 0xa4
-	.db $0f $01 $0e $42 $12 $0f $02 $03 ; 0xa5
-	.db $0f $01 $0e $43 $13 $0f $03 $03 ; 0xa6
+	; 0x2b
+	.db $2f, $02
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_MAKU_TREE_SMALL
+	.db PALH_TILESET_MAKU_TREE_SMALL
+	.db $34, $04, $ff
 
-area11Seasons:
-	.db $0f $01 $0f $40 $28 $10 $00 $ff ; 0xa7
-	.db $0f $01 $0f $41 $29 $10 $01 $ff ; 0xa8
-	.db $0f $01 $0f $42 $2a $10 $02 $ff ; 0xa9
-	.db $0f $01 $0f $43 $2b $10 $03 $ff ; 0xaa
+	; 0x2c
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_INDOORS
+	.db PALH_TILESET_INDOORS_A
+	.db $2e, $04, $18
 
-area12Seasons:
-	.db $0f $01 $12 $40 $10 $13 $00 $06 ; 0xab
-	.db $0f $01 $12 $41 $11 $13 $01 $06 ; 0xac
-	.db $0f $01 $12 $42 $12 $13 $02 $06 ; 0xad
-	.db $0f $01 $12 $43 $13 $13 $03 $06 ; 0xae
+	; 0x2d
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_INDOORS
+	.db PALH_TILESET_INDOORS_B
+	.db $2e, $04, $18
 
-area13Seasons:
-	.db $0f $01 $13 $40 $2c $14 $00 $07 ; 0xaf
-	.db $0f $01 $13 $41 $2d $14 $01 $07 ; 0xb0
-	.db $0f $01 $13 $42 $2e $14 $02 $07 ; 0xb1
-	.db $0f $01 $13 $43 $2f $14 $03 $07 ; 0xb2
+	; 0x2e
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_INDOORS
+	.db PALH_TILESET_SUBROSIA_FURNACE
+	.db $2e, $04, $18
 
-area14Seasons:
-	.db $0f $01 $14 $40 $10 $15 $00 $06 ; 0xb3
-	.db $0f $01 $14 $41 $11 $15 $01 $06 ; 0xb4
-	.db $0f $01 $14 $42 $12 $15 $02 $06 ; 0xb5
-	.db $0f $01 $14 $43 $13 $15 $03 $06 ; 0xb6
+	; 0x2f
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_INDOORS
+	.db PALH_TILESET_MOBLIN_HOUSE
+	.db $2e, $04, $18
 
-area15Seasons:
-	.db $0f $01 $00 $48 $30 $16 $00 $00 ; 0xb7
-	.db $0f $01 $00 $49 $31 $16 $01 $00 ; 0xb8
-	.db $0f $01 $00 $4a $32 $16 $02 $00 ; 0xb9
-	.db $0f $01 $00 $4b $33 $16 $03 $00 ; 0xba
+	; 0x30
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_INDOORS
+	.db PALH_TILESET_VASE_HOUSE
+	.db $2e, $04, $18
 
-area16Seasons:
-	.db $0f $01 $15 $48 $30 $16 $00 $00 ; 0xbb
-	.db $0f $01 $15 $49 $31 $16 $01 $00 ; 0xbc
-	.db $0f $01 $15 $4a $32 $16 $02 $00 ; 0xbd
-	.db $0f $01 $15 $4b $33 $16 $03 $00 ; 0xbe
+	; 0x31
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_CAVE
+	.db $2f, $04, $18
 
-area17Seasons:
-	.db $0f $01 $15 $48 $30 $16 $00 $08 ; 0xbf
-	.db $0f $01 $15 $49 $31 $16 $01 $08 ; 0xc0
-	.db $0f $01 $15 $4a $32 $16 $02 $08 ; 0xc1
-	.db $0f $01 $15 $4b $33 $16 $03 $08 ; 0xc2
+	; 0x32
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_MOBLIN_KEEP
+	.db $2f, $04, $18
 
-area18Seasons:
-	.db $0f $01 $16 $48 $34 $17 $00 $00 ; 0xc3
-	.db $0f $01 $16 $49 $35 $17 $01 $00 ; 0xc4
-	.db $0f $01 $16 $4a $36 $17 $02 $00 ; 0xc5
-	.db $0f $01 $16 $4b $37 $17 $03 $00 ; 0xc6
+	; 0x33
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_TEMPLE_OF_SEASONS
+	.db $2f, $04, $18
 
-area19Seasons:
-	.db $0f $01 $16 $48 $38 $17 $00 $00 ; 0xc7
-	.db $0f $01 $16 $49 $39 $17 $01 $00 ; 0xc8
-	.db $0f $01 $16 $4a $3a $17 $02 $00 ; 0xc9
-	.db $0f $01 $16 $4b $3b $17 $03 $00 ; 0xca
+	; 0x34
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SUBROSIA_INDOORS
+	.db PALH_TILESET_SUBROSIA_INDOORS
+	.db $31, $04, $18
 
-area1aSeasons:
-	.db $0f $01 $00 $4c $64 $18 $00 $00 ; 0xcb
-	.db $0f $01 $00 $4c $64 $18 $00 $00 ; 0xcc
-	.db $0f $01 $00 $4d $65 $19 $01 $0a ; 0xcd
-	.db $0f $01 $00 $4e $66 $1a $02 $05 ; 0xce
+	; 0x35
+	.db $3f, $04
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SUBROSIA_INDOORS
+	.db PALH_TILESET_SUBROSIA_FURNACE
+	.db $31, $04, $18
+
+	; 0x36
+	.db $40, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_HEROS_CAVE
+	.db PALH_TILESET_HEROS_CAVE
+	.db $21, $05, $18
+
+	; 0x37
+	.db $41, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_GNARLED_ROOT_DUNGEON
+	.db PALH_TILESET_GNARLED_ROOT_DUNGEON
+	.db $22, $05, $18
+
+	; 0x38
+	.db $42, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SNAKES_REMAINS
+	.db PALH_TILESET_SNAKES_REMAINS
+	.db $23, $05, $19
+
+	; 0x39
+	.db $43, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_POISON_MOTHS_LAIR
+	.db PALH_TILESET_POISON_MOTHS_LAIR
+	.db $24, $05, $18
+
+	; 0x3a
+	.db $44, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_DANCING_DRAGON_DUNGEON
+	.db PALH_TILESET_DANCING_DRAGON_DUNGEON
+	.db $25, $05, $18
+
+	; 0x3b
+	.db $45, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_UNICORNS_CAVE
+	.db PALH_TILESET_UNICORNS_CAVE
+	.db $26, $05, $18
+
+	; 0x3c
+	.db $46, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_ANCIENT_RUINS
+	.db PALH_TILESET_ANCIENT_RUINS
+	.db $27, $05, $19
+
+	; 0x3d
+	.db $36, $04
+	.db UNIQUE_GFXH_TARM_RUINS_NORTH
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $28, $04, $ff
+
+	; 0x3e
+	.db $47, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_EXPLORERS_CRYPT
+	.db PALH_TILESET_EXPLORERS_CRYPT_A
+	.db $29, $06, $18
+
+	; 0x3f
+	.db $47, $08
+	.db UNIQUE_GFXH_EXPLORERS_CRYPT_PALETTE_A
+	.db GFXH_TILESET_EXPLORERS_CRYPT
+	.db PALH_TILESET_EXPLORERS_CRYPT_A
+	.db $29, $06, $18
+
+	; 0x40
+	.db $47, $08
+	.db UNIQUE_GFXH_EXPLORERS_CRYPT_PALETTE_B
+	.db GFXH_TILESET_EXPLORERS_CRYPT
+	.db PALH_TILESET_EXPLORERS_CRYPT_B
+	.db $29, $06, $18
+
+	; 0x41
+	.db $48, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SWORD_AND_SHIELD_MAZE_ICE
+	.db PALH_TILESET_SWORD_AND_SHIELD_MAZE_ICE
+	.db $2a, $06, $18
+
+	; 0x42
+	.db $48, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE
+	.db PALH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE
+	.db $2a, $06, $18
+
+	; 0x43
+	.db $48, $08
+	.db UNIQUE_GFXH_SWORD_AND_SHIELD_MAZE_FIRE_MINIBOSS
+	.db GFXH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE
+	.db PALH_TILESET_SWORD_AND_SHIELD_MAZE_FIRE_MINIBOSS
+	.db $2a, $06, $18
+
+	; 0x44
+	.db $49, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_ONOX_CASTLE
+	.db PALH_TILESET_ONOX_CASTLE
+	.db $2b, $06, $18
+
+	; 0x45
+	.db $4a, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_ROOM_OF_RITES
+	.db PALH_TILESET_ROOM_OF_RITES
+	.db $2c, $06, $18
+
+	; 0x46
+	.db $4a, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_ROOM_OF_RITES
+	.db PALH_TILESET_ROOM_OF_RITES_ICE
+	.db $2c, $06, $18
+
+	; 0x47
+	.db $4b, $08
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_HEROS_CAVE
+	.db PALH_TILESET_HEROS_CAVE
+	.db $21, $06, $18
+
+	; 0x48
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_CAVE
+	.db $2f, $05, $18
+
+	; 0x49
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_SUBROSIA_CAVE
+	.db $2f, $05, $18
+
+	; 0x4a
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_MAKU_TREE_INSIDE
+	.db $2f, $05, $18
+
+	; 0x4b
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_INDOORS
+	.db PALH_TILESET_SUBROSIA_BOOMERANG_ROOM
+	.db $2e, $05, $18
+
+	; 0x4c
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SUBROSIA_INDOORS
+	.db PALH_TILESET_SUBROSIA_INDOORS
+	.db $31, $05, $18
+
+	; 0x4d
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_INDOORS
+	.db PALH_TILESET_INDOORS_A
+	.db $2e, $06, $18
+
+	; 0x4e
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_INDOORS
+	.db PALH_TILESET_OLD_MAN_CAVE
+	.db $2e, $06, $18
+
+	; 0x4f
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_CAVE
+	.db $2f, $06, $18
+
+	; 0x50
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_MAKU_TREE_INSIDE
+	.db $2f, $06, $18
+
+	; 0x51
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_TEMPLE_SPRING
+	.db $2f, $06, $18
+
+	; 0x52
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_TEMPLE_SUMMER
+	.db $2f, $06, $18
+
+	; 0x53
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_TEMPLE_AUTUMN
+	.db $2f, $06, $18
+
+	; 0x54
+	.db $4f, $10
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CAVE
+	.db PALH_TILESET_TEMPLE_WINTER
+	.db $2f, $06, $18
+
+	; 0x55
+	.db $50, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_HEROS_CAVE
+	.db $32, $05, $1a
+
+	; 0x56
+	.db $51, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_GNARLED_ROOT_DUNGEON
+	.db $32, $05, $1a
+
+	; 0x57
+	.db $52, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_SNAKES_REMAINS
+	.db $32, $05, $1a
+
+	; 0x58
+	.db $53, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_POISON_MOTHS_LAIR
+	.db $32, $05, $1a
+
+	; 0x59
+	.db $54, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_DANCING_DRAGON_DUNGEON
+	.db $32, $05, $1a
+
+	; 0x5a
+	.db $55, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_UNICORNS_CAVE
+	.db $32, $05, $1a
+
+	; 0x5b
+	.db $58, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_SWORD_AND_SHIELD_MAZE_ICE
+	.db $32, $06, $1a
+
+	; 0x5c
+	.db $58, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_SWORD_AND_SHIELD_MAZE_FIRE
+	.db $32, $06, $1a
+
+	; 0x5d
+	.db $59, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_BG_DRAGON_ONOX
+	.db $32, $06, $1a
+
+	; 0x5e
+	.db $5f, $20
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_UNUSED
+	.db $32, $06, $1a
+
+	; 0x5f
+	.db $5f, $20
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_UNDERWATER
+	.db $32, $06, $1a
+
+	; 0x60
+	.db $5f, $20
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_SIDESCROLL
+	.db PALH_TILESET_SIDESCROLL_SUBROSIA
+	.db $32, $06, $1a
+
+	; 0x61
+	.db $5f, $20
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_SPRING
+	.db PALH_TILESET_TEMPLE_REMAINS_SPRING_A
+	.db $16, $04, $00
+
+	; 0x62
+	.db $59, $28
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_DRAGON_ONOX
+	.db PALH_BG_DRAGON_ONOX
+	.db $32, $06, $ff
+
+
+tileset00Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_HORON_VILLAGE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $00, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_HORON_VILLAGE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $00, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_HORON_VILLAGE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $00, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_HORON_VILLAGE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $00, $03, $00
+
+tileset01Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_CLOCK_HOUSE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $01, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_CLOCK_HOUSE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $01, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_CLOCK_HOUSE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $01, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_CLOCK_HOUSE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $01, $03, $00
+
+tileset02Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_MAKU_TREE_GATE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $02, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_MAKU_TREE_GATE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $02, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_MAKU_TREE_GATE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $02, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_MAKU_TREE_GATE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $02, $03, $00
+
+tileset03Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_GNARLED_ROOT_ENTRANCE_OPENED
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $03, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_GNARLED_ROOT_ENTRANCE_OPENED
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $03, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_GNARLED_ROOT_ENTRANCE_OPENED
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $03, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_GNARLED_ROOT_ENTRANCE_OPENED
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $03, $03, $00
+
+tileset04Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_SNAKES_REMAINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $05, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_SNAKES_REMAINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $05, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_SNAKES_REMAINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $05, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_SNAKES_REMAINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $05, $03, $00
+
+tileset05Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_POISON_MOTHS_LAIR_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_B
+	.db $06, $00, $02
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_POISON_MOTHS_LAIR_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_B
+	.db $06, $01, $02
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_POISON_MOTHS_LAIR_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_B
+	.db $06, $02, $02
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_POISON_MOTHS_LAIR_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_B
+	.db $06, $03, $02
+
+tileset06Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_SPOOL_SWAMP_SOUTH
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_B
+	.db $07, $00, $01
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_SPOOL_SWAMP_SOUTH
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_B
+	.db $07, $01, $01
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_SPOOL_SWAMP_SOUTH
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_B
+	.db $07, $02, $01
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_SPOOL_SWAMP_SOUTH
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_B
+	.db $07, $03, $01
+
+tileset07Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_TARM_RUINS_SPRING
+	.db $08, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_TARM_RUINS_SUMMER
+	.db $08, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_TARM_RUINS_AUTUMN
+	.db $08, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_TARM_RUINS_WINTER
+	.db $08, $03, $00
+
+tileset08Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $09, $00, $02
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $09, $01, $02
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $09, $02, $02
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $09, $03, $02
+
+tileset09Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_C
+	.db $09, $00, $02
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_C
+	.db $09, $01, $02
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_C
+	.db $09, $02, $02
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_C
+	.db $09, $03, $02
+
+tileset0aSeasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_SUNKEN_CITY
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $0a, $00, $02
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_SUNKEN_CITY
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $0a, $01, $02
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_SUNKEN_CITY
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $0a, $02, $02
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_SUNKEN_CITY
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $0a, $03, $02
+
+tileset0bSeasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_SUNKEN_CITY
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_SUNKEN_CITY_UNUSED_SPRING
+	.db $0a, $00, $02
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_SUNKEN_CITY
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_SUNKEN_CITY_UNUSED_SUMMER
+	.db $0a, $01, $02
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_SUNKEN_CITY
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_SUNKEN_CITY_UNUSED_AUTUMN
+	.db $0a, $02, $02
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_SUNKEN_CITY
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_SUNKEN_CITY_UNUSED_WINTER
+	.db $0a, $03, $02
+
+tileset0cSeasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_SYRUPS_HUT
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $0c, $00, $02
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_SYRUPS_HUT
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $0c, $01, $02
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_SYRUPS_HUT
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $0c, $02, $02
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_SYRUPS_HUT
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $0c, $03, $02
+
+tileset0dSeasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_D
+	.db $09, $00, $02
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_D
+	.db $09, $01, $02
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_D
+	.db $09, $02, $02
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_DANCING_DRAGON_DUNGEON_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_D
+	.db $09, $03, $02
+
+tileset0eSeasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_UNICORNS_CAVE_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $0d, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_UNICORNS_CAVE_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $0d, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_UNICORNS_CAVE_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $0d, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_UNICORNS_CAVE_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $0d, $03, $00
+
+tileset0fSeasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_PEDESTAL
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_TARM_RUINS_SPRING
+	.db $0e, $00, $03
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_PEDESTAL
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_TARM_RUINS_SUMMER
+	.db $0e, $01, $03
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_PEDESTAL
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_TARM_RUINS_AUTUMN
+	.db $0e, $02, $03
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_PEDESTAL
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_TARM_RUINS_WINTER
+	.db $0e, $03, $03
+
+tileset10Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_NORTH
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $0f, $00, $03
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_NORTH
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $0f, $01, $03
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_NORTH
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $0f, $02, $03
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_TARM_RUINS_NORTH
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $0f, $03, $03
+
+tileset11Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_ANCIENT_RUINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_ANCIENT_RUINS_ENTRANCE_SPRING
+	.db $10, $00, $ff
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_ANCIENT_RUINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_ANCIENT_RUINS_ENTRANCE_SUMMER
+	.db $10, $01, $ff
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_ANCIENT_RUINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_ANCIENT_RUINS_ENTRANCE_AUTUMN
+	.db $10, $02, $ff
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_ANCIENT_RUINS_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_ANCIENT_RUINS_ENTRANCE_WINTER
+	.db $10, $03, $ff
+
+tileset12Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_WESTERN_COAST
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $13, $00, $06
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_WESTERN_COAST
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $13, $01, $06
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_WESTERN_COAST
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $13, $02, $06
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_WESTERN_COAST
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $13, $03, $06
+
+tileset13Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_EXPLORERS_CRYPT_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_GRAVEYARD_SPRING
+	.db $14, $00, $07
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_EXPLORERS_CRYPT_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_GRAVEYARD_SUMMER
+	.db $14, $01, $07
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_EXPLORERS_CRYPT_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_GRAVEYARD_AUTUMN
+	.db $14, $02, $07
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_EXPLORERS_CRYPT_ENTRANCE
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_GRAVEYARD_WINTER
+	.db $14, $03, $07
+
+tileset14Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_BLACK_BEAST
+	.db GFXH_TILESET_OVERWORLD_SPRING
+	.db PALH_TILESET_OVERWORLD_SPRING_A
+	.db $15, $00, $06
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_BLACK_BEAST
+	.db GFXH_TILESET_OVERWORLD_SUMMER
+	.db PALH_TILESET_OVERWORLD_SUMMER_A
+	.db $15, $01, $06
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_BLACK_BEAST
+	.db GFXH_TILESET_OVERWORLD_AUTUMN
+	.db PALH_TILESET_OVERWORLD_AUTUMN_A
+	.db $15, $02, $06
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_BLACK_BEAST
+	.db GFXH_TILESET_OVERWORLD_WINTER
+	.db PALH_TILESET_OVERWORLD_WINTER_A
+	.db $15, $03, $06
+
+tileset15Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CASTLE_SPRING
+	.db PALH_TILESET_TEMPLE_REMAINS_SPRING_A
+	.db $16, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CASTLE_SUMMER
+	.db PALH_TILESET_TEMPLE_REMAINS_SUMMER_A
+	.db $16, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CASTLE_AUTUMN
+	.db PALH_TILESET_TEMPLE_REMAINS_AUTUMN_A
+	.db $16, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CASTLE_WINTER
+	.db PALH_TILESET_TEMPLE_REMAINS_WINTER_A
+	.db $16, $03, $00
+
+tileset16Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_SPRING
+	.db PALH_TILESET_TEMPLE_REMAINS_SPRING_A
+	.db $16, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_SUMMER
+	.db PALH_TILESET_TEMPLE_REMAINS_SUMMER_A
+	.db $16, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_AUTUMN
+	.db PALH_TILESET_TEMPLE_REMAINS_AUTUMN_A
+	.db $16, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_WINTER
+	.db PALH_TILESET_TEMPLE_REMAINS_WINTER_A
+	.db $16, $03, $00
+
+tileset17Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_SPRING
+	.db PALH_TILESET_TEMPLE_REMAINS_SPRING_A
+	.db $16, $00, $08
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_SUMMER
+	.db PALH_TILESET_TEMPLE_REMAINS_SUMMER_A
+	.db $16, $01, $08
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_AUTUMN
+	.db PALH_TILESET_TEMPLE_REMAINS_AUTUMN_A
+	.db $16, $02, $08
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_TEMPLE_REMAINS
+	.db GFXH_TILESET_CASTLE_WINTER
+	.db PALH_TILESET_TEMPLE_REMAINS_WINTER_A
+	.db $16, $03, $08
+
+tileset18Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_ONOX_CASTLE_OUTSIDE
+	.db GFXH_TILESET_CASTLE_SPRING
+	.db PALH_TILESET_TEMPLE_REMAINS_SPRING_B
+	.db $17, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_ONOX_CASTLE_OUTSIDE
+	.db GFXH_TILESET_CASTLE_SUMMER
+	.db PALH_TILESET_TEMPLE_REMAINS_SUMMER_B
+	.db $17, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_ONOX_CASTLE_OUTSIDE
+	.db GFXH_TILESET_CASTLE_AUTUMN
+	.db PALH_TILESET_TEMPLE_REMAINS_AUTUMN_B
+	.db $17, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_ONOX_CASTLE_OUTSIDE
+	.db GFXH_TILESET_CASTLE_WINTER
+	.db PALH_TILESET_TEMPLE_REMAINS_WINTER_B
+	.db $17, $03, $00
+
+tileset19Seasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_ONOX_CASTLE_OUTSIDE
+	.db GFXH_TILESET_CASTLE_SPRING
+	.db PALH_TILESET_ONOX_CASTLE_OUTSIDE_SPRING
+	.db $17, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_ONOX_CASTLE_OUTSIDE
+	.db GFXH_TILESET_CASTLE_SUMMER
+	.db PALH_TILESET_ONOX_CASTLE_OUTSIDE_SUMMER
+	.db $17, $01, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_ONOX_CASTLE_OUTSIDE
+	.db GFXH_TILESET_CASTLE_AUTUMN
+	.db PALH_TILESET_ONOX_CASTLE_OUTSIDE_AUTUMN
+	.db $17, $02, $00
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_ONOX_CASTLE_OUTSIDE
+	.db GFXH_TILESET_CASTLE_WINTER
+	.db PALH_TILESET_ONOX_CASTLE_OUTSIDE_WINTER
+	.db $17, $03, $00
+
+tileset1aSeasons:
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_NATZU_PRAIRIE
+	.db PALH_TILESET_NATZU_PRAIRIE
+	.db $18, $00, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_NATZU_PRAIRIE
+	.db PALH_TILESET_NATZU_PRAIRIE
+	.db $18, $00, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_NATZU_RIVER
+	.db PALH_TILESET_NATZU_RIVER
+	.db $19, $01, $0a
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_NATZU_WASTELAND
+	.db PALH_TILESET_NATZU_WASTELAND
+	.db $1a, $02, $05
 
 templeRemainsSeasons:
-	.db $0f $01 $00 $48 $30 $16 $04 $08 ; 0xcf
-	.db $0f $01 $00 $49 $31 $16 $04 $08 ; 0xd0
-	.db $0f $01 $00 $4a $32 $16 $04 $08 ; 0xd1
-	.db $0f $01 $00 $4b $33 $16 $04 $08 ; 0xd2
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CASTLE_SPRING
+	.db PALH_TILESET_TEMPLE_REMAINS_SPRING_A
+	.db $16, $04, $08
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CASTLE_SUMMER
+	.db PALH_TILESET_TEMPLE_REMAINS_SUMMER_A
+	.db $16, $04, $08
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CASTLE_AUTUMN
+	.db PALH_TILESET_TEMPLE_REMAINS_AUTUMN_A
+	.db $16, $04, $08
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_CASTLE_WINTER
+	.db PALH_TILESET_TEMPLE_REMAINS_WINTER_A
+	.db $16, $04, $08
 
 moblinKeepSeasons:
-	.db $0f $01 $00 $4c $64 $18 $03 $00 ; 0xd3
-	.db $0f $01 $00 $4c $64 $18 $03 $00 ; 0xd4
-	.db $0f $01 $00 $4d $65 $19 $03 $0a ; 0xd5
-	.db $0f $01 $00 $4e $66 $1a $03 $05 ; 0xd6
+	; Spring
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_NATZU_PRAIRIE
+	.db PALH_TILESET_NATZU_PRAIRIE
+	.db $18, $03, $00
+
+	; Summer
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_NATZU_PRAIRIE
+	.db PALH_TILESET_NATZU_PRAIRIE
+	.db $18, $03, $00
+
+	; Autumn
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_NATZU_RIVER
+	.db PALH_TILESET_NATZU_RIVER
+	.db $19, $03, $0a
+
+	; Winter
+	.db $0f, $01
+	.db UNIQUE_GFXH_NONE
+	.db GFXH_TILESET_NATZU_WASTELAND
+	.db PALH_TILESET_NATZU_WASTELAND
+	.db $1a, $03, $05

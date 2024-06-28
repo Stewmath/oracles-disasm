@@ -68,6 +68,8 @@ sndbdChannel2:
 .include "audio/mus/ages/underwater.s"
 .include "audio/mus/ages/makuTree.s"
 
+.include "audio/sfx/seasons/magnetGloves.s" ; CROSSITEMS: Added this
+
 .ifdef BUILD_VANILLA
 	.dsb 162 $ff
 .endif
@@ -155,12 +157,6 @@ sndcfChannel2:
 .include "audio/sfx/common/ricky.s"
 .include "audio/sfx/common/circling.s"
 .include "audio/sfx/common/dig.s"
-
-snd7aStart:
-snd7aChannel2:
-	cmdff
-	cmdff
-
 .include "audio/sfx/ages/switch2.s"
 .include "audio/sfx/ages/openGate.s"
 .include "audio/sfx/ages/moveBlock2.s"

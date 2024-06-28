@@ -247,7 +247,7 @@ endgameCutsceneHandler_09_stage0_body:
 	ld a,$ff
 	ld (wTilesetAnimation),a
 	call disableLcd
-	ld a,$2b
+	ld a,GFXH_LINK_WITH_ORACLE_END_SCENE
 	call loadGfxHeader
 	ld a,$9d
 	call loadPaletteHeader
@@ -720,9 +720,9 @@ endgameCutsceneHandler_09_stage1_body:
 	ld (hl),$3c
 	call disableLcd
 	call clearOam
-	ld a,GFXH_2c
+	ld a,GFXH_LINK_WITH_ORACLE_AND_TWINROVA_END_SCENE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9e
+	ld a,PALH_SEASONS_9e
 	call loadPaletteHeader
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -851,9 +851,9 @@ endgameCutsceneHandler_09_stage1_body:
 	ld hl,$9c00
 	ld bc,$0400
 	call clearMemoryBc
-	ld a,GFXH_2d
+	ld a,GFXH_TWINROVA_CLOSEUP
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9c
+	ld a,PALH_SEASONS_9c
 	call loadPaletteHeader
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -1217,9 +1217,9 @@ endgameCutsceneHandler_0f_stage1_body:
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
 	call hideStatusBar
-	ld a,GFXH_3c
+	ld a,GFXH_SCENE_CREDITS_MAKUTREE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_ad
+	ld a,PALH_SEASONS_ad
 	call loadPaletteHeader
 	ld hl,$cbb3
 	ld (hl),$f0
@@ -1361,7 +1361,7 @@ endgameCutsceneHandler_0a_stage1:
 	jr z,++
 	ld c,a
 	ld a,$00
-	call func_36f6
+	call forceLoadRoom
 	ld b,$2d
 	ld a,($cbb4)
 	cp $04
@@ -1374,7 +1374,7 @@ endgameCutsceneHandler_0a_stage1:
 	ld a,($cbb4)
 	sub $04
 	add a
-	add $85
+	add GFXH_CREDITS_SCENE1
 	call loadGfxHeader
 	ld a,PALH_0f
 	call loadPaletteHeader
@@ -1420,15 +1420,16 @@ endgameCutsceneHandler_0a_stage1:
 	ld a,$04
 	call loadGfxRegisterStateIndex
 	jp fadeinFromWhite
+
 @state0Table0:
-	.db $00 $c6
-	.db $01 $2b
-	.db $00 $b6
-	.db $00 $d6
-	.db $00 $00
-	.db $01 $2b
-	.db $00 $00
-	.db $00 $00
+	dwbe ROOM_SEASONS_0c6
+	dwbe ROOM_SEASONS_12b
+	dwbe ROOM_SEASONS_0b6
+	dwbe ROOM_SEASONS_0d6
+	dwbe $0000
+	dwbe ROOM_SEASONS_12b
+	dwbe $0000
+	dwbe $0000
 
 @state1:
 	ld a,(wPaletteThread_mode)
@@ -1452,7 +1453,7 @@ endgameCutsceneHandler_0a_stage1:
 	ld a,($cbb4)
 	sub $04
 	add a
-	add $86
+	add GFXH_CREDITS_IMAGE1
 	call loadGfxHeader
 	ld hl,$cbb3
 	ld (hl),$5a
@@ -1559,9 +1560,9 @@ endgameCutsceneHandler_0a_stage2:
 	call clearOam
 	xor a
 	ld ($cfde),a
-	ld a,GFXH_95
+	ld a,GFXH_CREDITS_SCROLL
 	call loadGfxHeader
-	ld a,SEASONS_PALH_a0
+	ld a,PALH_SEASONS_a0
 	call loadPaletteHeader
 	ld a,$09
 	call loadGfxRegisterStateIndex
@@ -1650,9 +1651,9 @@ endgameCutsceneHandler_0a_stage2:
 	call flashScreen
 	ret z
 	call disableLcd
-	ld a,GFXH_9a
+	ld a,GFXH_CREDITS_LINKED_WAVING_GOODBYE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9f
+	ld a,PALH_SEASONS_9f
 	call loadPaletteHeader
 	call clearDynamicInteractions
 	ld b,$03
@@ -1778,7 +1779,7 @@ endgameCutsceneHandler_0a_stage3:
 	call clearOam
 	call checkIsLinkedGame
 	jp z,@state0Func0
-	ld a,$99
+	ld a,GFXH_CREDITS_LINKED_THE_END
 	call loadGfxHeader
 	ld a,$aa
 	call loadPaletteHeader
@@ -1786,9 +1787,9 @@ endgameCutsceneHandler_0a_stage3:
 	call parseGivenObjectData
 	jr +
 @state0Func0:
-	ld a,GFXH_98
+	ld a,GFXH_CREDITS_THE_END
 	call loadGfxHeader
-	ld a,SEASONS_PALH_a9
+	ld a,PALH_SEASONS_a9
 	call loadPaletteHeader
 +
 	ld a,$04
@@ -1877,14 +1878,14 @@ endgameCutsceneHandler_0a_stage3:
 	jr nz,-
 	pop af
 	ld ($ff00+R_SVBK),a
-	ld a,GFXH_97
+	ld a,GFXH_SECRET_FOR_LINKED_GAME
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_2b
 	call loadUncompressedGfxHeader
 	ld a,PALH_05
 	call loadPaletteHeader
 	call checkIsLinkedGame
-	ld a,GFXH_84
+	ld a,GFXH_HEROS_SECRET_TEXT
 	call nz,loadGfxHeader
 	call clearDynamicInteractions
 	call clearOam
@@ -1950,9 +1951,9 @@ endgameCutsceneHandler_0a_stage3:
 	call disableLcd
 	call clearOam
 	call incCbc2
-	ld a,GFXH_82
+	ld a,GFXH_TO_BE_CONTINUED
 	call loadGfxHeader
-	ld a,SEASONS_PALH_8f
+	ld a,PALH_SEASONS_8f
 	call loadPaletteHeader
 	call fadeinFromWhite
 	ld a,$04

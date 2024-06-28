@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 3:
-    print('Usage: ' + sys.argv[0] + ' gfxFile outFile')
+    print('Usage: ' + sys.argv[0] + '[--mode 0-3] gfxFile outFile')
     sys.exit(1)
 
 
@@ -221,30 +221,48 @@ def compressMode2(data):
             retData[startPos+1] = repeatBits&0x00ff
     return retData
 
+argNumber = 1
+def nextArg():
+    global argNumber
+    argNumber = argNumber + 1
+    return sys.argv[argNumber - 1]
+
+def compressMode(inBuf, mode):
+    if mode == 0:
+        return inBuf
+    elif mode == 2:
+        return compressMode2(inBuf)
+    else:  # mode == 1 or mode == 3
+        return compressMode1Or3(inBuf, mode)
+
 # Main
 
-inFile = open(sys.argv[1], 'rb')
+forceMode = -1
+if sys.argv[1] == '--mode':
+    nextArg()
+    forceMode = int(nextArg())
+    sys.argv
+
+inFile = open(nextArg(), 'rb')
 inBuf = bytearray(inFile.read())
 
-# Try all modes, see which one yields best compression
-for i in range(0, 4):
-    if i == 0:
-        compressedData = inBuf
-    elif i == 2:
-        compressedData = compressMode2(inBuf)
-    else:  # i == 1 or i == 3
-        compressedData = compressMode1Or3(inBuf, i)
+if forceMode != -1:
+    outBuf = compressMode(inBuf, forceMode)
+    mode = forceMode
+else:
+    # Try all modes, see which one yields best compression
+    for i in range(0, 4):
+        compressedData = compressMode(inBuf, i)
 
-    if i == 0:
-        smallestBufferSize = len(compressedData)
-        outBuf = compressedData
-        mode = i
-    elif len(compressedData) < smallestBufferSize:
-        smallestBufferSize = len(compressedData)
-        outBuf = compressedData
-        mode = i
+        if i == 0 or len(compressedData) < smallestBufferSize:
+            smallestBufferSize = len(compressedData)
+            outBuf = compressedData
+            mode = i
 
-outFile = open(sys.argv[2], 'wb')
-outFile.write(bytes([mode]))
+length = len(inBuf)
+assert(length < 0x10000)
+
+outFile = open(nextArg(), 'wb')
+outFile.write(bytes([mode, length & 0xff, (length >> 8) & 0xff]))
 outFile.write(outBuf)
 outFile.close()

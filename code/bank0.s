@@ -3141,6 +3141,22 @@ _drawObjectTerrainEffects:
 	ld b,>wRoomLayout
 	ld a,(bc)
 
+.ifdef ROM_SEASONS
+	; CROSSITEMS: Cane of Somaria uses tile index $f9 indoors. It behaves like a grass tile, but
+	; it's never used indoors, so disable the grass animation on that tile.
+	; (Even though the somaria block is solid, the grass animation can be seen when item drops
+	; land on top of it, so this disables that.)
+	cp $f9
+	jr nz,+
+	ld b,a
+	ld a,(wActiveGroup)
+	or a
+	ld a,b
+	jr z,+
+	jr @end
++
+.endif
+
 .ifdef ROM_AGES
 	cp TILEINDEX_GRASS
 	jr z,@walkingInGrass
@@ -5666,11 +5682,22 @@ checkReloadStatusBarGraphics:
 ; @param	de	Destination
 ; @param	hl	Source
 copy20BytesFromBank:
+	ld c,$20
+
+;;
+; Copy 'c' bytes from bank b at hl to de. (CROSSITEMS: Added this function to help with magnet glove
+; polarity graphics.)
+;
+; @param	b	Bank
+; @param	c	Bytes to copy
+; @param	de	Destination
+; @param	hl	Source
+copyBytesFromBank:
 	ldh a,(<hRomBank)
 	push af
 	ld a,b
 	setrombank
-	ld b,$20
+	ld b,c
 	call copyMemory
 	pop af
 	setrombank
@@ -12524,12 +12551,13 @@ vramBgMapTable:
 	.dw $9b00 $9b40 $9b80 $9bc0
 
 ;;
-; Force-load a room?
+; Force-load a room? This isn't the typical mechanism used to load a room, it's only used in
+; cutscenes.
 ;
 ; @param	a	Value for wRoomStateModifier (only lower 2 bits are used)
 ; @param	b	Value for wActiveGroup
 ; @param	c	Value for wActiveRoom
-func_36f6:
+forceLoadRoom:
 	and $03
 	ld (wRoomStateModifier),a
 	ld a,b
@@ -12784,7 +12812,7 @@ loadTilesetAndRoomLayout:
 	call nz,loadTilesetLayout
 
 .ifdef ROM_SEASONS
-	call seasonsFunc_3870
+	call @adjustLoadingRoomForTempleRemains
 .endif
 	; Load the room layout and apply any dynamic changes necessary
 	call          loadRoomLayout
@@ -12807,7 +12835,9 @@ loadTilesetAndRoomLayout:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_3870:
+; Layouts for the lava-filled version of Temple Remains, for all 4 seasons, are stored out of bounds
+; on the Subrosia map.
+@adjustLoadingRoomForTempleRemains:
 	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
 	call checkGlobalFlag
 	ret z
@@ -12815,14 +12845,14 @@ seasonsFunc_3870:
 	callfrombank0 tilesets.checkIsTempleRemains
 	ret nc
 	ld a,(wRoomStateModifier)
-	ld hl,@data
+	ld hl,@seasonOffsets
 	rst_addAToHl
 	ld a,(wActiveRoom)
 	add (hl)
 	ld (wLoadingRoom),a
 	ret
 
-@data:
+@seasonOffsets:
 	.db $bc $c0 $c4 $c8
 
 .endif
@@ -14004,7 +14034,33 @@ func_3ee4:
 .endif
 
 
-.include "code/debug.s"
+.ifdef ROM_SEASONS
+;;
+; CROSSITEMS: For Seasons only, determine which tile index is the cane of somaria (varies based on
+; which group we're in).
+;
+; This is important for determining if the tile can be pushed and for making it disappear when
+; slashing it with the sword. The tile index should be something that is never used for anything
+; else.
+;
+; Tile index $f9 normally behaves like a grass tile, but since it's unused indoors, that
+; functionality is disabled.
+getSomariaBlockIndex:
+	ld a,(wActiveCollisions)
+	ld b,$3f ; Overworld
+	or a
+	ret z
 
+	dec a ; Subrosia
+	ld b,$ba
+	ret z
+
+	; Maku Tree (2), Indoors (3), Dungeon (4), Sidescrolling (5)
+	ld b,$f9
+	ret
+.endif
+
+
+.include "code/debug.s"
 
 .ENDS
