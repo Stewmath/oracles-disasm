@@ -1749,11 +1749,12 @@ wRoomPack: ; $cc31/$cc4d
 	db
 
 wRoomStateModifier: ; $cc32/$cc4e
-; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is
-; set.
-; Also set to $00-$02 depending on the animal companion region.
-; Used by interaction 0 for conditional interactions.
-; In seasons, this might determine the season?
+; In Seasons: This is the current season. Value from 00-03 (see constants/seasons.s).
+;
+; In Ages, this can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is
+; set. Also set to $00-$02 depending on the animal companion region.
+;
+; In either game, objects can be conditionally enabled depending on the value of this variable.
 	db
 
 wActiveCollisions: ; $cc33/$cc4f
