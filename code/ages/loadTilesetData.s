@@ -1,6 +1,12 @@
 ;;
 ; Called from loadTilesetData in bank 0. Function differs substantially in Ages and Seasons.
+;
+; HACK-BASE: This has been modified for the expanded tilesets patch.
 loadTilesetData_body:
+	; HACK-BASE: Use hFF8B to store the "layout group override"
+	ld a,$ff
+	ldh (<hFF8B),a
+
 	call getAdjustedRoomGroup
 
 	ld hl,roomTilesetsGroupTable
@@ -21,10 +27,7 @@ loadTilesetData_body:
 	ldh a,(<hFF8D)
 
 @loadTileset:
-	and $80
-	ldh (<hFF8B),a
-	ldh a,(<hFF8D)
-
+	ld (wTilesetIndex),a
 	and $7f
 	call multiplyABy8
 	ld hl,tilesetData
@@ -51,8 +54,9 @@ loadTilesetData_body:
 	ld (wActiveCollisions),a
 
 	; HACK-BASE: This has been modified for the expanded tilesets patch.
-	ld b,$06
-	ld de,wTilesetIndex
+	ld b,$05
+	ld de,wTilesetIndex + 1
+	inc hl
 @copyloop:
 	ldi a,(hl)
 	ld (de),a
@@ -60,9 +64,9 @@ loadTilesetData_body:
 	dec b
 	jr nz,@copyloop
 
-	ldh a,(<hFF8D)
-	ld e,<wTilesetIndex
-	ld (de),a
+	; HACK-BASE: Set wLayoutGroupOverride (usually $ff for no override)
+	ldh a,(<hFF8B)
+	ld (wLayoutGroupOverride),a
 	ret
 
 ;;
@@ -113,10 +117,19 @@ checkTilesetOverride:
 	; Tileset $0d = ricky (default) (layout group 0)
 	; Tileset $0e = dimitri         (layout group 1)
 	; Tileset $0f = moosh           (layout group 3)
-	ld b,a
-	ldh a,(<hFF8D)
-	add b
-	ldh (<hFF8D),a
+	;
+	; HACK-BASE: Instead of changing the tileset for dimitri/moosh, just change the layout group.
+
+	; Dimitri
+	dec a
+	ld a,$01
+	jr z,@@changed
+
+	; Moosh
+	ld a,$03
+
+@@changed:
+	ldh (<hFF8B),a
 	scf
 	ret
 
@@ -137,10 +150,9 @@ checkTilesetOverride:
 	and $01
 	ret z
 
-	; Saved: Use tileset $24 instead of $22 (will use layout group 3 / underwater past layout)
-	ld hl,hFF8D
-	inc (hl)
-	inc (hl)
+	; HACK-BASE: Instead of changing the tileset here, change only the layout group
+	ld a,$03
+	ldh (<hFF8B),a
 	scf
 	ret
 

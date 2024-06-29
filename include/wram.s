@@ -2590,7 +2590,10 @@ wTilesetPalette: ; $cd22
 	db
 wTilesetLayout: ; $cd23
 	db
-wTilesetLayoutGroup: ; $cd24
+wLayoutGroupOverride: ; $cd24
+; HACK-BASE: Replaced wTilesetLayoutGroup variable with wLayoutGroupOverride.
+; Instead of tilesets specifying the layout group, this is always set to value $ff unless some code
+; decides to override it. If left at $ff, the layout group is determined based on wActiveGroup.
 	db
 wTilesetAnimation: ; $cd25
 ; Note: intro cutscene hardcoded to use animation $10

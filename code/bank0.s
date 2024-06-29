@@ -12870,7 +12870,7 @@ loadRoomLayout:
 	call clearMemory
 	ld a,:roomLayouts.roomLayoutGroupTable
 	setrombank
-	ld a,(wTilesetLayoutGroup)
+	call @getLayoutGroup
 	add a
 	add a
 	ld hl,roomLayouts.roomLayoutGroupTable
@@ -12903,6 +12903,61 @@ loadRoomLayout:
 	rst_jumpTable
 	.dw @loadLargeRoomLayout
 	.dw @loadSmallRoomLayout
+
+
+; HACK-BASE: This function replaces the need for the wTilesetLayoutGroup variable.
+;
+; We do not allow tilesets to set the layout group themselves because it's incredibly confusing.
+; Instead, the layout group is determined based on wActiveGroup, which almost always works except
+; for a few cases where it needs to be overridden (temple remains filled with lava, etc).
+;
+; @param[out]	a	Layout group
+@getLayoutGroup:
+	ld a,(wLayoutGroupOverride)
+	cp $ff
+	ret nz
+
+.ifdef ROM_SEASONS
+	; Group 0: depends on season
+	ld a,(wActiveGroup)
+	ld b,a
+	or a
+	ld a,(wRoomStateModifier)
+	ret z
+
+	ld a,(wActiveGroup)
+
+.else ;ROM_AGES
+	; Ages only: if bit 0 of room flags is set, underwater version of the room gets loaded instead.
+	callab tilesets.getAdjustedRoomGroup
+	ld a,b
+.endif
+
+	ld hl,@layoutGroupTable
+	rst_addAToHl
+	ld a,(hl)
+	ret
+
+@layoutGroupTable:
+.ifdef ROM_AGES
+	.db $00
+	.db $02
+	.db $01
+	.db $03
+	.db $04
+	.db $05
+	.db $04
+	.db $05
+.else ;ROM_SEASONS
+	.db $ff
+	.db $04
+	.db $04
+	.db $04
+	.db $05
+	.db $06
+	.db $05
+	.db $06
+.endif
 
 ;;
 @loadLargeRoomLayoutHlpr:
