@@ -591,16 +591,15 @@ screenTransitionState3:
 	; reload before screen transition instead of after).
 	; Now, if necessary, graphics are loaded in a single function call and state 4 is always
 	; skipped.
-	ld b,$05
 	ld a,(wTilesetIndex)
 	bit 7,a
-	jr nz,+
-
+	jr nz,++
 	call loadTilesetGfxIfChanged
-	ld b,$05
-+
+	call func_47fc
+	call nc,updateTilesetPalette
+++
 	ld hl,wScreenTransitionState
-	ld a,b
+	ld a,$05
 	ldi (hl),a
 
 	; [wScreenTransitionState2] = 0
