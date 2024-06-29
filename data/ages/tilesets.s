@@ -2,14 +2,14 @@
 ;   b0: bits 4-7: Value for wActiveCollisions variable.
 ;                 Affects most collision properties other than basic solidity.
 ;       bits 0-3: Value for wDungeonIndex ($f = no dungeon)
-;   b1: Flags (see constants/tilesetFlags.s)
-;   b2: Unique GFX index (see data/{game}/uniqueGfxHeaders.s)
-;   b3: Main GFX index (see data/{game}/gfxHeaders.s)
-;   b4: Palette index (see data/{game}/paletteHeaders.s)
-;   b5: Tile mapping/collision data index (see data/{game}/tilesetMappings.s)
-;   b6: Layout group (will load room layout from rooms/.../roomXXYY.bin,
-;       where XX = layout group, YY = room index for current overworld)
-;   b7: Animation data index (see data/{game}/animationGroups.s)
+;   b1 (wTilesetFlags):       Flags (see constants/tilesetFlags.s)
+;   b2 (wTilesetUniqueGfx):   Unique GFX index (see data/{game}/uniqueGfxHeaders.s)
+;   b3 (wTilesetGfx):         Main GFX index (see data/{game}/gfxHeaders.s)
+;   b4 (wTilesetPalette):     Palette index (see data/{game}/paletteHeaders.s)
+;   b5 (wTilesetLayout):      Tile mapping/collision data index (see data/{game}/tilesetMappings.s)
+;   b6 (wTilesetLayoutGroup): Layout group (will load room layout from rooms/.../roomXXYY.bin,
+;                             where XX = layout group, YY = room index for current overworld)
+;   b7 (wTilesetAnimation):   Animation data index (see data/{game}/animationGroups.s)
 
 tilesetData:
 	; 0x00
