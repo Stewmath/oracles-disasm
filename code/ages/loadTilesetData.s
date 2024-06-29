@@ -12,11 +12,15 @@ loadTilesetData_body:
 	rst_addAToHl
 	ld a,(hl)
 	ldh (<hFF8D),a
-	call @func_6d94
-	call func_6de7
+	call @loadTileset
+
+	call checkTilesetOverride
 	ret nc
+
+	; Changed tileset to load, so load the new one (kinda wasteful to do it twice?)
 	ldh a,(<hFF8D)
-@func_6d94:
+
+@loadTileset:
 	and $80
 	ldh (<hFF8B),a
 	ldh a,(<hFF8D)
@@ -82,76 +86,89 @@ getAdjustedRoomGroup:
 	ret
 
 ;;
-; Modifies hFF8D to indicate changes to a room (ie. jabu flooding)?
-func_6de7:
-	call @func_04_6e0d
+; Checks if, due to an event occurring in this particular room or other special-case stuff, it
+; should load a different tileset from usual.
+;
+; @param[out]	hFF8D	Tileset index to load instead of the usual one
+; @param[out]	cflag	c if there is an override
+checkTilesetOverride:
+	call @checkMakuTreeSaved
 	ret c
 
 	call @checkJabuFlooded
 	ret c
 
+	; Check for Nuun Highlands
 	ld a,(wActiveGroup)
 	or a
-	jr nz,@xor
+	jr nz,@@noChange
 
 	ld a,(wLoadingRoomPack)
 	cp $7f
-	jr nz,@xor
+	jr nz,@@noChange
 
 	ld a,(wAnimalCompanion)
 	sub SPECIALOBJECTID_RICKY
-	jr z,@xor
+	jr z,@@noChange
 
+	; Change tileset for dimitri/moosh
+	; Tileset $0d = ricky (default) (layout group 0)
+	; Tileset $0e = dimitri         (layout group 1)
+	; Tileset $0f = moosh           (layout group 3)
 	ld b,a
 	ldh a,(<hFF8D)
 	add b
 	ldh (<hFF8D),a
 	scf
 	ret
-@xor:
+
+@@noChange:
 	xor a
 	ret
 
-;;
-@func_04_6e0d:
+@checkMakuTreeSaved:
 	ld a,(wActiveGroup)
 	or a
 	ret nz
 
 	ld a,(wActiveRoom)
-	cp $38
-	jr nz,+
+	cp <ROOM_AGES_038
+	jr nz,@@noChange
 
-	ld a,($c848)
+	ld a,(wPastRoomFlags + (<ROOM_AGES_148))
 	and $01
 	ret z
 
+	; Saved: Use tileset $24 instead of $22 (will use layout group 3 / underwater past layout)
 	ld hl,hFF8D
 	inc (hl)
 	inc (hl)
 	scf
 	ret
-+
+
+@@noChange:
 	xor a
 	ret
 
-;;
-; @param[out]	cflag	Set if the current room is flooded in jabu-jabu?
 @checkJabuFlooded:
 	ld a,(wDungeonIndex)
 	cp $07
-	jr nz,++
+	jr nz,@@noChange
 
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL
-	jr nz,++
+	jr nz,@@noChange
 
-	ld a,$11
+	; This all seems redundant, possibly it's doing these things because dungeon data hasn't
+	; been loaded yet
+	ld a, f_DungeonLayoutToIndex(dungeon07Layout)
 	ld (wDungeonFirstLayout),a
 	callab bank1.findActiveRoomInDungeonLayoutWithPointlessBankSwitch
+
+	; Check if this floor is considered underwater or not
 	ld a,(wJabuWaterLevel)
 	and $07
-	ld hl,@data
+	ld hl,@@jabuBitset
 	rst_addAToHl
 	ld a,(wDungeonFloor)
 	ld bc,bitTable
@@ -161,17 +178,22 @@ func_6de7:
 	and (hl)
 	ret z
 
+	; Is underwater; use tileset $3f (underwater) instead of $3e (not underwater)
 	ldh a,(<hFF8D)
 	inc a
 	ldh (<hFF8D),a
 	scf
 	ret
-++
+
+@@noChange:
 	xor a
 	ret
 
-@data:
-	.db $00 $01 $03
+; Bitset of floors that are considered "underwater" for each respective water level
+@@jabuBitset:
+	.db $00 ; Water level 0
+	.db $01 ; Water level 1
+	.db $03 ; Water level 2
 
 
 ; Remainder of functions maybe don't belong in this file, idk...
