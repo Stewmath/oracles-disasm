@@ -13,8 +13,8 @@
 ; @subid_07{Pegasus seeds}
 ; @subid_08{Gale seeds}
 ; @subid_09{Mystery seeds}
-; @subid_0a{Unused?}
-; @subid_0b{Unused?}
+; @subid_0a{Unused}
+; @subid_0b{Unused}
 ; @subid_0c{Blue ore chunk (1)}
 ; @subid_0d{Red ore chunk (10)}
 ; @subid_0e{Gold ore chunk (50)}

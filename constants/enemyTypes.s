@@ -565,7 +565,24 @@
 ; The reason this is an enemy is probably so it can use the "markEnemyAsKilledInRoom"
 ; function to prevent item drops from respawning for a while.
 ;
-; @subid{Corresponds to constants/itemDrops.s.}
+; Subid corresponds to constants/itemDrops.s.
+;
+; @subid_00{Fairy}
+; @subid_01{Heart}
+; @subid_02{1 rupee}
+; @subid_03{5 rupees}
+; @subid_04{Bombs}
+; @subid_05{Ember seeds}
+; @subid_06{Scent seeds}
+; @subid_07{Pegasus seeds}
+; @subid_08{Gale seeds}
+; @subid_09{Mystery seeds}
+; @subid_0a{Unused}
+; @subid_0b{Unused}
+; @subid_0c{Blue ore chunk (1)}
+; @subid_0d{Red ore chunk (10)}
+; @subid_0e{Gold ore chunk (50)}
+; @subid_0f{100 rupees (1/8 chance) or an enemy (rope or beetle, 7/8 chance)}
 .define ENEMYID_ITEM_DROP_PRODUCER		$59
 
 ;;
