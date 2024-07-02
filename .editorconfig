@@ -15,5 +15,9 @@ indent_style = tab
 # gradually increased my line length setting to 100. Let's keep it there.
 max_line_length = 100
 
+[*.yaml]
+
+max_line_length = 100
+
 [Dockerfile]
 indent_size = 4
