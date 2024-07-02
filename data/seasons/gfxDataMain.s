@@ -1,9 +1,3 @@
-; .BANK $27 SLOT 1
-; .ORGA $790d
-
-; .REDEFINE DATA_CURBANK $27
-; .REDEFINE DATA_ADDR $790d
-
 	m_GfxData gfx_scent_tree ; $09f90d
 	m_GfxData gfx_pegasus_tree ; $09f9cd
 	m_GfxData gfx_gale_tree ; $09fa8d

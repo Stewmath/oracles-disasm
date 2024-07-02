@@ -1718,8 +1718,6 @@
 ; Creates an object of the given type with the given ID at every position where there's
 ; a tile of the specified index, then deletes itself.
 ;
-; TODO: Better interface for this in LynnaLab (show the object being spawned).
-;
 ; @subid{Tile index; an object will be spawned at each tile with this index.}
 ; @Y{ID of object to spawn}
 ; @X{bits 0-3: Subid of object to spawn;\n
