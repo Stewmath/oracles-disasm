@@ -1727,7 +1727,12 @@ wRoomStateModifier: ; $cc32/$cc4e
 
 wActiveCollisions: ; $cc33/$cc4f
 ; wActiveCollisions should be a value from 0-5.
-; 0: overworld, 1: indoors, 2: dungeons, 3: sidescrolling, 4: underwater, 5?
+;
+; Ages values:
+; 0: overworld, 1: indoors, 2: dungeons, 3: sidescrolling, 4: underwater, 5: unused?
+;
+; Seasons values:
+; 0: overworld, 1: indoors, 2: maku tree, 3: indoors, 4: dungeons, 5: sidescrolling
 	db
 
 wTilesetFlags: ; $cc34/$cc50
