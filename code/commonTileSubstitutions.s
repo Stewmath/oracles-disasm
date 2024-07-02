@@ -3,7 +3,7 @@
 ;;
 ; Replaces a shutter link is about to walk on to with empty floor.
 replaceShutterForLinkEntering:
-.ifndef AGES_ENGINE
+.ifdef ROM_SEASONS
 	ld a,(wDungeonIndex)
 	inc a
 	ret z
