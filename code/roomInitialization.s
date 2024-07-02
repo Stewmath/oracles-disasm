@@ -427,7 +427,7 @@ checkPositionValidForEnemySpawn:
 
 @scrollingTransition:
 	ld a,(wActiveGroup)
-	and $04
+	and $04 ; Less than NUM_SMALL_GROUPS
 	ld hl,@smallRoom
 	jr z,+
 	ld hl,@largeRoom
@@ -651,7 +651,7 @@ getNextValueFromRandomBuffer:
 ; @param[out]	a	Candidate position for an enemy
 getCandidatePositionForEnemy:
 	ld a,(wActiveGroup)
-	and $04
+	and $04 ; Less than NUM_SMALL_GROUPS
 	jr nz,@dungeon
 
 @overworld:

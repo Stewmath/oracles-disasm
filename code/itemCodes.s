@@ -1896,11 +1896,12 @@ bombUpdateThrowingVerticallyAndCheckDelete:
 	call itemUpdateThrowingVerticallyAndCheckHazards
 	ret nc
 
+	; Check whether to trigger a special event when a bomb falls into a hazard (bomb upgrade in
+	; ages, or volcano trigger in seasons)
 .ifdef ROM_AGES
-	; Check if room $0050 (Present overworld, bomb upgrade screen)
-	ld bc,$0050
+	ld bc,ROOM_AGES_050
 .else
-	ld bc,$04ef
+	ld bc,ROOM_SEASONS_4ef
 .endif
 	ld a,(wActiveGroup)
 	cp b
@@ -1909,7 +1910,7 @@ bombUpdateThrowingVerticallyAndCheckDelete:
 	cp c
 	jr nz,@delete
 
-	; If so, trigger a cutscene?
+	; If so, trigger the cutscene
 	ld a,$01
 	ld (wTmpcfc0.bombUpgradeCutscene.state),a
 
@@ -3281,7 +3282,7 @@ itemCode29:
 	call itemSetAnimation
 	call objectSetVisiblec3
 
-    ; Room with the wall flame shooters
+	; Room with the wall flame shooters
 	ld a,(wActiveGroup)
 	cp >ROOM_SEASONS_494
 	jr nz,@mainState
@@ -4501,10 +4502,10 @@ itemCode18:
 @checkBlockCanAppear:
 	; Disallow cane of somaria usage if in patch's minigame room
 	ld a,(wActiveGroup)
-	cp $05
+	cp >ROOM_AGES_5e8
 	jr nz,+
 	ld a,(wActiveRoom)
-	cp $e8
+	cp <ROOM_AGES_5e8
 	jr z,@@disallow
 +
 	; Must be close to the ground

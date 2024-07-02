@@ -53,7 +53,7 @@ parentItemCode_feather:
 	; Jump higher in sidescrolling rooms
 	ld bc,$fe20
 	ld a,(wActiveGroup)
-	cp $06
+	cp FIRST_SIDESCROLL_GROUP
 	jr c,+
 	ld bc,$fdd0
 +

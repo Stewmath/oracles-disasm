@@ -3185,9 +3185,9 @@ reloadGraphicsOnExitMenu_body:
 	call nz,loadPaletteHeader
 
 .ifdef ROM_SEASONS
-	; Checking for room $07ff?
+	; Checking for ROOM_SEASONS_7ff (onox fight?)
 	ld a,(wActiveGroup)
-	cp $07
+	cp >ROOM_SEASONS_7ff
 	jr nz,++
 	ld a,(wActiveRoom)
 	inc a
@@ -6743,10 +6743,10 @@ loadMinimapDisplayRoom:
 @group4:
 	; Check for the top of dungeon 6; change the minimap to the overworld.
 	ld a,(wActiveGroup)
-	cp $03
+	cp >ROOM_SEASONS_398
 	jr nz,@setRoom
 	ld a,(wActiveRoom)
-	cp $98
+	cp <ROOM_SEASONS_398
 	jr nz,@setRoom
 	ld bc,$0000
 

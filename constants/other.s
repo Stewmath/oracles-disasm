@@ -65,7 +65,6 @@
 
 ; First 4 map groups are small
 .define NUM_SMALL_GROUPS	$04
-.define NUM_UNIQUE_GROUPS	$06
 .define FIRST_SIDESCROLL_GROUP	$06
 
 ; For wScrollMode

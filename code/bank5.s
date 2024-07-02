@@ -2301,7 +2301,7 @@ warpTransition1:
 ;;
 warpUpdateRespawnPoint:
 	ld a,(wActiveGroup)
-	cp NUM_UNIQUE_GROUPS ; Don't update respawn point in sidescrolling rooms?
+	cp FIRST_SIDESCROLL_GROUP ; Don't update respawn point in sidescrolling rooms?
 	jr nc,warpTransition0
 	call setDeathRespawnPoint
 	call updateLinkLocalRespawnPosition
@@ -3638,10 +3638,10 @@ linkState02:
 .ifdef ROM_AGES
 	; Check if the current room is the moblin keep with the crumbling floors
 	ld a,(wActiveGroup)
-	cp $02
+	cp >ROOM_AGES_29f
 	jr nz,+
 	ld a,(wActiveRoom)
-	cp $9f
+	cp <ROOM_AGES_29f
 	jr nz,+
 
 	jpab bank1.warpToMoblinKeepUnderground
@@ -7238,12 +7238,12 @@ checkLinkPushingAgainstBed:
 	cp $03
 	ret nz
 
-	; Check link is in room $9e, position $17, facing right
+	; Check link is in the room with the bed, and is next to it
 .ifdef ROM_AGES
-	ldbc $9e, $17
+	ldbc <ROOM_AGES_39e, $17
 	ld l,DIR_RIGHT
 .else
-	ldbc $82, $14
+	ldbc <ROOM_SEASONS_382, $14
 	ld l,DIR_LEFT
 .endif
 	ld a,(wActiveRoom)
