@@ -77,7 +77,7 @@ parseGivenObjectData:
 	.dw objectDataOp7
 	.dw objectDataOp8
 	.dw objectDataOp9
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	.dw objectDataOpA
 .endif
 
@@ -104,7 +104,7 @@ objectDataOpcodeSizes:
 	.db $02 $04
 	.db $01 $03
 	.db $01 $06
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	.db $02 $02 ; Item drop ($0a)
 .else
 	.db $00 $00
@@ -517,9 +517,10 @@ objectDataOp9:
 	.dw getFreePartSlot
 
 
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
+
 ;;
-; Item drops
+; Item drops. Seasons uses ENEMYID_ITEM_DROP_PRODUCER directly instead of this.
 objectDataOpA:
 	ld a,(de)
 	inc de

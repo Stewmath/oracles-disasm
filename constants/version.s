@@ -11,8 +11,10 @@
 
 ; "AGES_ENGINE" is like "ROM_AGES", but anything wrapped in this define could potentially be used in
 ; Seasons as well. Generally this enables extra engine features added in Ages. However, it could
-; also cause subtle differences in how certain things work.
-; I might enable this by default in the hack-base branch for seasons.
+; also cause subtle differences in how certain things work. In general though I'm trying to be
+; conservative with using this, so as not to risk breaking anything.
+;
+; This is enabled by default in the hack-base branch for seasons.
 .ifdef ROM_AGES
 	.define AGES_ENGINE
 .endif
