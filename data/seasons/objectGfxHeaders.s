@@ -53,10 +53,10 @@ objectGfxHeaderTable:
 	/* $31 */ m_ObjectGfxHeader spr_boy
 	/* $32 */ m_ObjectGfxHeader spr_sokra_masterdiver
 	/* $33 */ m_ObjectGfxHeader spr_shopkeeper_dekuscrub
-	/* $34 */ m_ObjectGfxHeader spr_talon_oldman
+	/* $34 */ m_ObjectGfxHeader spr_ruul_wiseman
 	/* $35 */ m_ObjectGfxHeader spr_oldshopkeeper_gardener_villager
 	/* $36 */ m_ObjectGfxHeader spr_mittens_malon
-	/* $37 */ m_ObjectGfxHeader spr_mrs_ruul_villagers
+	/* $37 */ m_ObjectGfxHeader spr_mrsruul_villagers
 	/* $38 */ m_ObjectGfxHeader spr_zz_bubble_exclamation_heart
 	/* $39 */ m_ObjectGfxHeader spr_bipin
 	/* $3a */ m_ObjectGfxHeader spr_blossom
@@ -70,7 +70,7 @@ objectGfxHeaderTable:
 	/* $42 */ m_ObjectGfxHeader spr_guruguru
 	/* $43 */ m_ObjectGfxHeader spr_vasu_floodgatekeeper
 	/* $44 */ m_ObjectGfxHeader spr_ingo
-	/* $45 */ m_ObjectGfxHeader spr_talon_lady
+	/* $45 */ m_ObjectGfxHeader spr_talon_sunkencitygirl
 	/* $46 */ m_ObjectGfxHeader spr_goron_parrot
 	/* $47 */ m_ObjectGfxHeader spr_piratians
 	/* $48 */ m_ObjectGfxHeader spr_troupe
@@ -80,14 +80,14 @@ objectGfxHeaderTable:
 	/* $4c */ m_ObjectGfxHeader spr_villagezora
 	/* $4d */ m_ObjectGfxHeader spr_bluecucco
 	/* $4e */ m_ObjectGfxHeader spr_windmill_l2sword
-	/* $4f */ m_ObjectGfxHeader spr_portal_unknown
+	/* $4f */ m_ObjectGfxHeader spr_biggoron_dustcloud_subrosiaportal
 	/* $50 */ m_ObjectGfxHeader spr_triforce_sparkle
 	/* $51 */ m_ObjectGfxHeader spr_springflower_makuleaf_farorebook
-	/* $52 */ m_ObjectGfxHeader spr_moblincannon_unknown
-	/* $53 */ m_ObjectGfxHeader spr_moblinflag_fountain_orb_unknown
+	/* $52 */ m_ObjectGfxHeader spr_lightning_moblincannon_makubranch
+	/* $53 */ m_ObjectGfxHeader spr_moblinflag_fountain_orb
 	/* $54 */ m_ObjectGfxHeader spr_pirate_ship
 	/* $55 */ m_ObjectGfxHeader spr_season_symbols
-	/* $56 */ m_ObjectGfxHeader spr_woodentunnel_seasons
+	/* $56 */ m_ObjectGfxHeader spr_woodentunnel_seasonsymbols
 	/* $57 */ m_ObjectGfxHeader spr_dungeon_sprites
 	/* $58 */ m_ObjectGfxHeader spr_spinner_trampoline
 	/* $59 */ m_ObjectGfxHeader spr_roller_owl_magnetspinner
@@ -108,7 +108,7 @@ objectGfxHeaderTable:
 	/* $68 */ m_ObjectGfxHeader spr_obj_intro_tree
 	/* $69 */ m_ObjectGfxHeader spr_obj_intro_clouds
 	/* $6a */ m_ObjectGfxHeader spr_onox_3
-	/* $6b */ m_ObjectGfxHeader spr_circlethingsunknown
+	/* $6b */ m_ObjectGfxHeader spr_circlebeads
 	/* $6c */ m_ObjectGfxHeader spr_twinrova_4
 	/* $6d */ m_ObjectGfxHeader spr_onox_1
 	/* $6e */ m_ObjectGfxHeader spr_flame
@@ -132,7 +132,7 @@ objectGfxHeaderTable:
 	/* $80 */ m_ObjectGfxHeader spr_blaino_tornado
 	/* $81 */ m_ObjectGfxHeader spr_giantcucco
 	/* $82 */ m_ObjectGfxHeader spr_gibdo_stalfos_rope_whisp_spark_bubble_beetle
-	/* $83 */ m_ObjectGfxHeader spr_shroudedstalfos_tile
+	/* $83 */ m_ObjectGfxHeader spr_shroudedstalfos_floortile
 	/* $84 */ m_ObjectGfxHeader spr_keese_firekeese_unknownbeams
 	/* $85 */ m_ObjectGfxHeader spr_bladetraps
 	/* $86 */ m_ObjectGfxHeader spr_wizzrobe
