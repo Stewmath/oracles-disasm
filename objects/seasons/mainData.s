@@ -1634,10 +1634,25 @@ group4MapeaObjectData:
 	obj_End
 
 group4MapebObjectData:
+	obj_Pointer group4MapebEnemyObjectData
+	obj_End
+
 group4MapedObjectData:
+	obj_Pointer group4MapedEnemyObjectData
+	obj_End
+
 group4MapfcObjectData:
+	obj_Pointer group4MapfcEnemyObjectData
+	obj_End
+
 group5Map09ObjectData:
+	obj_Pointer group5Map09EnemyObjectData
+	obj_End
+
 group5Map0aObjectData:
+	obj_Pointer group5Map0aEnemyObjectData
+	obj_End
+
 group5Map10ObjectData:
 	obj_Pointer group5Map10EnemyObjectData
 	obj_End
