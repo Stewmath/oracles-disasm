@@ -59,7 +59,7 @@ endgameCutsceneHandler_09_stage0:
 	call clearAllParentItems
 	call dropLinkHeldItem
 
-	ld hl,objectData.blackTowerEscape_nayruAndRalph
+	ld hl,objectData.objectData_blackTowerEscape_nayruAndRalph
 	call parseGivenObjectData
 	ld hl,wGenericCutscene.cbb3
 	ld (hl),60
@@ -194,7 +194,7 @@ endgameCutsceneHandler_09_stage0:
 	ld a,$02
 	call loadGfxRegisterStateIndex
 
-	ld hl,objectData.blackTowerEscape_ambiAndGuards
+	ld hl,objectData.objectData_blackTowerEscape_ambiAndGuards
 	call parseGivenObjectData
 
 	ld hl,wTmpcbb3

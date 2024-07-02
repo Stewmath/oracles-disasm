@@ -48,7 +48,7 @@ interac11_subid00:
 	ld (hl),$30
 
 	; Create 8 "sparkles".
-	ld hl,objectData.faroreSparkleObjectData		; $41cd - $4000
+	ld hl,objectData.objectData_faroreSparkle		; $41cd - $4000
 	call parseGivenObjectData
 
 	jp interactionIncState
