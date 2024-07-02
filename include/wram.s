@@ -1732,7 +1732,7 @@ wActiveCollisions: ; $cc33/$cc4f
 ; 0: overworld, 1: indoors, 2: dungeons, 3: sidescrolling, 4: underwater, 5: unused?
 ;
 ; Seasons values:
-; 0: overworld, 1: indoors, 2: maku tree, 3: indoors, 4: dungeons, 5: sidescrolling
+; 0: overworld, 1: subrosia, 2: maku tree, 3: indoors, 4: dungeons, 5: sidescrolling
 	db
 
 wTilesetFlags: ; $cc34/$cc50

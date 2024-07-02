@@ -932,89 +932,7 @@ interactionCode14:
 	ld (de),a
 	ret
 
-
-pushableTilePropertiesTable:
-	.db @collisions0-CADDR
-	.db @collisions1-CADDR
-	.db @collisions2-CADDR
-	.db @collisions3-CADDR
-	.db @collisions4-CADDR
-	.db @collisions5-CADDR
-.ifdef ROM_SEASONS
-	.db @collisions6-CADDR
-	.db @collisions7-CADDR
-.endif
-
-; Data format:
-;   b0 (var31): tile index
-;   b1 (var32): the tile underneath it after being pushed
-;   b2 (var33): the tile it becomes after being pushed (ie. a pushable block may become
-;               unpushable)
-;   b3 (var34): bit 2: if set, the tile is symmetrical, and flips the left half of the
-;                      tile to get the right half.
-;               bit 5: if set, it's "heavy" and doesn't get pushed more quickly with L2
-;                      bracelet?
-;               bit 7: play secret discovery sound after moving, and set
-;               	"wDisabledObjects" to 0 (it would have been set to 1 previously
-;               	from the "interactableTilesTable".
-.ifdef ROM_AGES
-@collisions0:
-	.db $d3 $3a $02 $01
-	.db $d8 $3a $02 $05
-	.db $d9 $dc $02 $85
-	.db $02 $3a $02 $05
-
-@collisions4:
-@collisions5:
-	.db $00
-
-@collisions1:
-@collisions2:
-	.db $18 $a0 $1d $01
-	.db $19 $a0 $1d $01
-	.db $1a $a0 $1d $01
-	.db $1b $a0 $1d $01
-	.db $1c $a0 $1d $01
-	.db $2a $a0 $2a $01
-	.db $2c $a0 $2c $01
-	.db $2d $a0 $2d $01
-	.db $2e $a0 $2e $01
-	.db $10 $a0 $10 $01
-	.db $11 $a0 $10 $01
-	.db $12 $a0 $10 $01
-	.db $13 $0d $10 $01
-	.db $25 $a0 $25 $01
-	.db $07 $a0 $06 $01
-
-@collisions3:
-	.db $00
-.else
-@collisions0:
-@collisions1:
-	.db $d6 $04 $9c $01
-@collisions2:
-	.db $00
-@collisions3:
-@collisions4:
-@collisions5:
-	.db $18 $a0 $1d $01
-	.db $19 $a0 $1d $01
-	.db $1a $a0 $1d $01
-	.db $1b $a0 $1d $01
-	.db $1c $a0 $1d $01
-	.db $2a $a0 $2a $01
-	.db $2c $a0 $2c $01
-	.db $2d $a0 $2d $01
-	.db $10 $a0 $10 $01
-	.db $11 $a0 $10 $01
-	.db $12 $a0 $10 $01
-	.db $13 $0d $10 $01
-	.db $25 $a0 $25 $01
-	.db $2f $8c $2f $02
-@collisions6:
-@collisions7:
-	.db $00
-.endif
+.include {"{GAME_DATA_DIR}/collisions/pushableTiles.s"}
 
 
 ; ==============================================================================
@@ -1170,7 +1088,7 @@ interactionCode17:
 	; subid which will determine the graphic to use.
 	ld l,Interaction.subid
 	ld a,(hl)
-	ld hl,@keyDoorGraphicTable
+	ld hl,keyDoorGraphicTable
 	call lookupCollisionTable
 	ld e,Interaction.subid
 	ld (de),a
@@ -1197,59 +1115,7 @@ interactionCode17:
 	jp interactionDelete
 
 
-@keyDoorGraphicTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-; Data format:
-;   b0: tile index
-;   b1: key type (0=small key, 1=boss key)
-
-.ifdef ROM_AGES
-@collisions0:
-@collisions1:
-@collisions3:
-@collisions4:
-	.db $00 $00
-
-@collisions2:
-@collisions5:
-	.db $1e $00 ; Keyblock
-	.db $70 $00 ; Small key doors
-	.db $71 $00
-	.db $72 $00
-	.db $73 $00
-	.db $74 $01 ; Boss key doors
-	.db $75 $01
-	.db $76 $01
-	.db $77 $01
-	.db $00
-.else
-@collisions0:
-	.db $00
-@collisions1:
-	.db $ec $00
-@collisions2:
-@collisions3:
-@collisions5:
-	.db $00
-@collisions4:
-	.db $1e $00
-	.db $70 $00
-	.db $71 $00
-	.db $72 $00
-	.db $73 $00
-	.db $74 $01
-	.db $75 $01
-	.db $76 $01
-	.db $77 $01
-	.db $00
-
-.endif
+.include {"{GAME_DATA_DIR}/collisions/keydoorTiles.s"}
 
 
 ; ==============================================================================

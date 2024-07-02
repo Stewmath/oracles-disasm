@@ -707,7 +707,7 @@ galeSeedTryToWarpLink:
 ; @param[out]	zflag	Unset when the seed's "effect" should be activated
 seedItemUpdateBouncing:
 	call objectGetTileAtPosition
-	ld hl,seedDontBounceTilesTable
+	ld hl,seedsDontBounceTilesTable
 	call findByteInCollisionTable
 	jr c,@unsetZFlag
 
@@ -830,7 +830,7 @@ seedItemCheckDiagonalCollision:
 ; Collision occurred; check whether it should bounce (set carry flag if so)
 
 	call getTileAtPosition
-	ld hl,seedDontBounceTilesTable
+	ld hl,seedsDontBounceTilesTable
 	call findByteInCollisionTable
 	ccf
 	jr nc,@next
@@ -916,29 +916,9 @@ data_5114:
 	.db $10 $18 $00 $08 $0c $14 $1c $04
 	.db $08 $10 $18 $00 $04 $0c $14 $1c
 
+.include {"{GAME_DATA_DIR}/collisions/seedsDontBounce.s"}
 
-; List of tiles which seeds don't bounce off of. (Burnable stuff.)
-seedDontBounceTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-@collisions0:
-	.db $ce $cf $c5 $c5 $c6 $c7 $c8 $c9 $ca
-@collisions1:
-@collisions3:
-@collisions4:
-	.db $00
-
-@collisions2:
-@collisions5:
-	.db TILEINDEX_UNLIT_TORCH
-	.db TILEINDEX_LIT_TORCH
-	.db $00
-.else
+.else ;ROM_SEASONS
 ;;
 ; @param[out]	zflag	z if no collision
 slingshotCheckCanPassSolidTile:
@@ -5372,7 +5352,7 @@ tryBreakTileWithSword:
 	ret c
 
 	; Check for bombable wall clink sound
-	ld hl,@clinkSoundTable
+	ld hl,clinkSoundTable
 	call findByteInCollisionTable
 	jr c,@bombableWallClink
 
@@ -5429,74 +5409,8 @@ tryBreakTileWithSword:
 	.db $00 $00 ; Center
 
 
-; 2 lists per entry:
-; * The first is a list of tiles which produce an alternate "clinking" sound indicating
-; they're bombable.
-; * The second is a list of tiles which don't produce clinks at all.
-;
-@clinkSoundTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+.include {"{GAME_DATA_DIR}/collisions/clinkSounds.s"}
 
-.ifdef ROM_AGES
-@collisions0:
-@collisions4:
-	.db $c1 $c2 $c4 $d1 $cf
-	.db $00
-
-	.db $fd $fe $ff
-	.db $00
-	.db $00
-
-@collisions1:
-@collisions2:
-@collisions5:
-	.db $1f $30 $31 $32 $33 $38 $39 $3a $3b $68 $69
-	.db $00
-
-	.db $0a $0b
-	.db $00
-
-@collisions3:
-	.db $12
-	.db $00
-
-	.db $00
-.else
-@collisions0:
-	.db $c1 $c2 $e2 $cb
-	.db $00
-
-	.db $fd $fe $ff $d9 $da $20 $d7
-
-@collisions1:
-	.db $00
-
-	.db $fd
-
-@collisions2:
-	.db $00
-	.db $00
-
-@collisions3:
-@collisions4:
-	.db $1f $30 $31 $32 $33 $38 $39 $3a $3b
-	.db $00
-
-	.db $0a $0b
-	.db $00
-
-
-@collisions5:
-	.db $12
-	.db $00
-
-	.db $00
-.endif
 
 ;;
 ; Calculates the value for Item.damage, accounting for ring modifiers.

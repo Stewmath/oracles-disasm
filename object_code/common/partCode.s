@@ -121,7 +121,7 @@ partCode01:
 	; On solid ground; check for conveyor tiles
 	ld bc,$0500
 	call objectGetRelativeTile
-	ld hl,itemDrop_conveyorTilesTable
+	ld hl,itemDropConveyorTilesTable
 	call lookupCollisionTable
 	ret nc
 	ld c,a
@@ -671,39 +671,7 @@ itemDrop_magnetGlovePullSpeed:
 	.db SPEED_100 SPEED_0c0 SPEED_080 SPEED_040
 .endif
 
-itemDrop_conveyorTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-.ifdef ROM_AGES
-@collisions2:
-@collisions5:
-	.db TILEINDEX_CONVEYOR_UP    $00
-	.db TILEINDEX_CONVEYOR_RIGHT $08
-	.db TILEINDEX_CONVEYOR_DOWN  $10
-	.db TILEINDEX_CONVEYOR_LEFT  $18
-@collisions0:
-@collisions1:
-@collisions3:
-@collisions4:
-	.db $00
-.else
-@collisions4:
-	.db TILEINDEX_CONVEYOR_UP    $00
-	.db TILEINDEX_CONVEYOR_RIGHT $08
-	.db TILEINDEX_CONVEYOR_DOWN  $10
-	.db TILEINDEX_CONVEYOR_LEFT  $18
-@collisions0:
-@collisions1:
-@collisions2:
-@collisions3:
-@collisions5:
-	.db $00
-.endif
+.include {"{GAME_DATA_DIR}/collisions/itemDropConveyorTiles.s"}
 
 
 ; ==============================================================================

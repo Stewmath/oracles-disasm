@@ -112,8 +112,8 @@
 	 m_section_free Bank_5 NAMESPACE bank5
 		.include "code/bank5.s"
 
-		.include {"{GAME_DATA_DIR}/tileTypeMappings.s"}
-		.include {"{GAME_DATA_DIR}/cliffTilesTable.s"}
+		.include {"{GAME_DATA_DIR}/collisions/tileTypeMappings.s"}
+		.include {"{GAME_DATA_DIR}/collisions/cliffTiles.s"}
 
 		.include "code/seasons/subrosiaDanceLink.s"
 	.ends
@@ -151,7 +151,7 @@
 	.include "code/seasons/cutscenes/companionCutscenes.s"
 	.include "code/seasons/cutscenes/linkCutscenes.s"
 	.include {"{GAME_DATA_DIR}/signText.s"}
-	.include {"{GAME_DATA_DIR}/breakableTileCollisionTable.s"}
+	.include {"{GAME_DATA_DIR}/collisions/breakableTiles.s"}
 
 .ends
 
@@ -172,9 +172,8 @@
 	 m_section_superfree Item_Code namespace itemCode
 		.include "code/updateItems.s"
 
-		.include {"{GAME_DATA_DIR}/itemConveyorTilesTable.s"}
-		.include {"{GAME_DATA_DIR}/itemPassableCliffTilesTable.s"}
-		.include {"{GAME_DATA_DIR}/itemPassableTilesTable.s"}
+		.include {"{GAME_DATA_DIR}/collisions/itemConveyorTiles.s"}
+		.include {"{GAME_DATA_DIR}/collisions/itemPassableTiles.s"}
 		.include "code/itemCodes.s"
 		.include {"{GAME_DATA_DIR}/itemAttributes.s"}
 		.include "data/itemAnimations.s"

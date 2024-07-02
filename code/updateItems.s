@@ -954,7 +954,6 @@ checkTileIsPassableFromDirection:
 ;
 ; Used by bombs, bombchus. Might not work well with other items due to assumptions about
 ; their size.
-;
 itemUpdateConveyorBelt:
 	; Return if in midair
 	ld e,Item.zh

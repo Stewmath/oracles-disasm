@@ -86,7 +86,7 @@ parentItemCode_magnetGloves:
 	ret z
 
 	ld a,(wActiveGroup)
-	ld hl,@magnetTilesTable
+	ld hl,magnetTilesTable
 	rst_addAToHl
 	ld a,(hl)
 	or a
@@ -165,8 +165,6 @@ parentItemCode_magnetGloves:
 	.db $ff  $00 $00  $04 $00 ; DIR_LEFT
 
 
-; Tile indices for magnet tiles (per group)
-@magnetTilesTable:
-	.db $00 $e3 $00 $3f $3f $3f $3f $3f
+.include {"{GAME_DATA_DIR}/collisions/magnetTiles.s"}
 
 .endif ; ROM_SEASONS
