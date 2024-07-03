@@ -184,7 +184,7 @@ breakableTileCollisionTable:
 ;    Bit 4:    If set, animation should flicker. (This sets the subid on the spawned interaction to 1.)
 ;    Bit 6:    Whether to play the discovery sound.
 ;    Bit 7:    Set if the game should call updateRoomFlagsForBrokenTile on breakage.
-;              Consult the "tileUpdateRoomFlagsOnBreak.s" file for details.
+;              Consult the "breakableTileRoomFlags.s" file for details.
 ;
 ;  6th parameter:
 ;    The tile it should turn into when broken, or $00 for no change.

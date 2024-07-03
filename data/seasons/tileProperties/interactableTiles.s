@@ -2,7 +2,7 @@
 ; tile of a particular type.
 ;
 ; Among other things, this determines which blocks are pushable. See also
-; data/{game}/collisions/pushableTiles.s for more properties of pushable tiles.
+; data/{game}/tileProperties/pushableTiles.s for more properties of pushable tiles.
 ;
 ; Data format:
 ;
@@ -26,27 +26,33 @@
 
 interactableTilesTable:
 	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
 	.dw @indoors
 	.dw @dungeons
 	.dw @sidescrolling
-	.dw @underwater
-	.dw @five
 
 @overworld:
-@underwater:
-	.db $d3 $80
+	.db $d6 $80
+	.db $c0 $03
+	.db $c1 $03
+	.db $c2 $03
+	.db $96 $43
 	.db $f1 $04
 	.db $f2 $05
-	.db $d8 $80
-	.db $d9 $80
 	.db $ec $06
-	.db $da $80
+	.db $d5 $08
+	.db $00
+
+@subrosia:
+	.db $f1 $04
+	.db $f2 $05
+	.db $ec $07
+@makutree:
 	.db $00
 
 @indoors:
-	.db $ae $06
 @dungeons:
-@five:
 	.db $18 $00
 	.db $19 $10
 	.db $1a $20
@@ -55,13 +61,12 @@ interactableTilesTable:
 	.db $2a $80
 	.db $2c $80
 	.db $2d $80
-	.db $2e $80
 	.db $10 $c0
 	.db $11 $c0
 	.db $12 $c0
 	.db $13 $c0
 	.db $25 $80
-	.db $07 $80
+	.db $2f $80
 	.db $1e $01
 	.db $70 $02
 	.db $71 $12
@@ -80,5 +85,4 @@ interactableTilesTable:
 	.db $f1 $04
 	.db $f2 $05
 @sidescrolling:
-	.db $da $80
 	.db $00

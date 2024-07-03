@@ -165,6 +165,6 @@ parentItemCode_magnetGloves:
 	.db $ff  $00 $00  $04 $00 ; DIR_LEFT
 
 
-.include {"{GAME_DATA_DIR}/collisions/magnetTiles.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/magnetTiles.s"}
 
 .endif ; ROM_SEASONS

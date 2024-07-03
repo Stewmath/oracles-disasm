@@ -496,7 +496,7 @@
 	.db \4, \5, \6, \7, \8
 .endm
 
-; See data/ages/collisions/breakableTiles.s for documentation of parameters to this.
+; See data/ages/tileProperties/breakableTiles.s for documentation of parameters to this.
 .macro m_BreakableTileData
 	.if \3 > $f
 	.fail

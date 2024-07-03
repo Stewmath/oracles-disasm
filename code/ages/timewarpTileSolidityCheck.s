@@ -56,4 +56,4 @@ checkLinkCanStandOnTile:
 	ld c,$01
 	ret
 
-.include {"{GAME_DATA_DIR}/collisions/timewarpInvalidTiles.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/timewarpInvalidTiles.s"}

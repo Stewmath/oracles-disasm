@@ -114,8 +114,8 @@
 	 m_section_free Bank_5 NAMESPACE bank5
 		.include "code/bank5.s"
 
-		.include {"{GAME_DATA_DIR}/collisions/tileTypeMappings.s"}
-		.include {"{GAME_DATA_DIR}/collisions/cliffTiles.s"}
+		.include {"{GAME_DATA_DIR}/tileProperties/tileTypeMappings.s"}
+		.include {"{GAME_DATA_DIR}/tileProperties/cliffTiles.s"}
 
 		.include "code/ages/garbage/bank05End.s"
 	.ends
@@ -156,7 +156,7 @@
 	.include "code/ages/cutscenes/companionCutscenes.s"
 	.include "code/ages/cutscenes/linkCutscenes.s"
 	.include {"{GAME_DATA_DIR}/signText.s"}
-	.include {"{GAME_DATA_DIR}/collisions/breakableTiles.s"}
+	.include {"{GAME_DATA_DIR}/tileProperties/breakableTiles.s"}
 
 ;;
 specialObjectLoadAnimationFrameToBuffer:
@@ -197,8 +197,8 @@ specialObjectLoadAnimationFrameToBuffer:
 	 m_section_superfree Item_Code namespace itemCode
 		.include "code/updateItems.s"
 
-		.include {"{GAME_DATA_DIR}/collisions/itemConveyorTiles.s"}
-		.include {"{GAME_DATA_DIR}/collisions/itemPassableTiles.s"}
+		.include {"{GAME_DATA_DIR}/tileProperties/conveyorItemTiles.s"}
+		.include {"{GAME_DATA_DIR}/tileProperties/itemPassableTiles.s"}
 		.include "code/itemCodes.s"
 		.include {"{GAME_DATA_DIR}/itemAttributes.s"}
 		.include "data/itemAnimations.s"

@@ -1,7 +1,7 @@
 ; This data is used by INTERACID_DUNGEON_KEY_SPRITE to determine what key sprite to use when opening
 ; locked doors.
 ;
-; This does not make doors unlockable. See data/{game}/collisions/interactableTiles.s for that.
+; This does not make doors unlockable. See data/{game}/tileProperties/interactableTiles.s for that.
 ;
 ; Data format:
 ;   b0: tile index
@@ -9,20 +9,24 @@
 
 keyDoorGraphicTable:
 	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
 	.dw @indoors
 	.dw @dungeons
 	.dw @sidescrolling
-	.dw @underwater
-	.dw @five
 
 @overworld:
+	.db $00
+
+@subrosia:
+	.db $ec $00 ; Subrosia key door
+
+@makutree:
 @indoors:
 @sidescrolling:
-@underwater:
-	.db $00 $00
+	.db $00
 
 @dungeons:
-@five:
 	.db $1e $00 ; Keyblock
 	.db $70 $00 ; Small key doors
 	.db $71 $00

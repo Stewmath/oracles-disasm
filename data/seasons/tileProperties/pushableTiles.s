@@ -1,6 +1,6 @@
 ; Table defining properties of pushable tiles, used by INTERACID_PUSHBLOCK.
 ;
-; Does not make tiles pushable by itself. See data/{game}/collisions/interactableTiles.s for where
+; Does not make tiles pushable by itself. See data/{game}/tileProperties/interactableTiles.s for where
 ; that happens.
 ;
 ; NOTE: In Ages this table is indexed by wActiveCollisions, but in Seasons it's indexed by

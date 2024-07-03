@@ -43,7 +43,7 @@ applyAllTileSubstitutions:
 	ld (bc),a
 	ret
 
-.include {"{GAME_DATA_DIR}/collisions/timewarpReturnTileReplacement.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/timewarpReturnTileReplacement.s"}
 
 ;;
 replaceBreakableTileOverPortal:
@@ -70,7 +70,7 @@ removeBreakableTileForTimeWarp:
 	ld (bc),a
 	ret
 
-.include {"{GAME_DATA_DIR}/collisions/timewarpEntryTileReplacement.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/timewarpEntryTileReplacement.s"}
 
 ;;
 replaceBreakableTileOverLinkTimeWarpingIn:
@@ -179,7 +179,7 @@ applyStandardTileSubstitutions:
 	jr replaceTiles
 
 
-.include {"{GAME_DATA_DIR}/collisions/standardTileSubstitutions.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/standardTileSubstitutions.s"}
 
 ;;
 ; Updates the toggleable blocks to the correct state when loading a room.

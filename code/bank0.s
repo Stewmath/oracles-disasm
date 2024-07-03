@@ -3764,8 +3764,8 @@ updateRoomFlagsForBrokenTile:
 	ret
 
 
-.include {"{GAME_DATA_DIR}/collisions/tileUpdateRoomFlagsOnBreak.s"}
-.include {"{GAME_DATA_DIR}/collisions/tileUpdateGashaMaturityOnBreak.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/breakableTileRoomFlags.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/breakableTileGashaMaturity.s"}
 
 
 ;;
@@ -8293,7 +8293,7 @@ checkInteractionSubstate:
 	ret
 
 
-.include {"{GAME_DATA_DIR}/collisions/hazards.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/hazards.s"}
 
 ; Takes an angle as an index.
 ;

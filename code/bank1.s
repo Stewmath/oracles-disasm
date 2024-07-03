@@ -5324,7 +5324,7 @@ checkTileIsWarpTile:
 	jp lookupCollisionTable
 
 
-.include {"{GAME_DATA_DIR}/collisions/warpTiles.s"}
+.include {"{GAME_DATA_DIR}/tileProperties/warpTiles.s"}
 
 
 .ifdef ROM_AGES
