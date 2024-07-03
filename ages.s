@@ -218,35 +218,252 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $08 SLOT 1
 .ORG 0
 
-	.include "object_code/common/interactionCode/group1.s"
-	.include "object_code/ages/interactionCode/bank08.s"
+ m_section_free Interaction_Code_Group1 NAMESPACE commonInteractions1
+	.include "object_code/common/interactionCode/breakTileDebris.s"
+	.include "object_code/common/interactionCode/fallDownHole.s"
+	.include "object_code/common/interactionCode/farore.s"
+	.include "object_code/common/interactionCode/dungeonStuff.s"
+	.include "object_code/common/interactionCode/pushblockTrigger.s"
+	.include "object_code/common/interactionCode/pushblock.s"
+	.include "object_code/common/interactionCode/minecart.s"
+	.include "object_code/common/interactionCode/dungeonKeySprite.s"
+	.include "object_code/common/interactionCode/overworldKeySprite.s"
+	.include "object_code/common/interactionCode/faroresMemory.s"
+	.include "object_code/common/interactionCode/doorController.s"
+.ends
+
+m_section_free Ages_Interactions_Bank8 NAMESPACE agesInteractionsBank08
+	.include "object_code/ages/interactionCode/toggleFloor.s"
+	.include "object_code/ages/interactionCode/coloredCube.s"
+	.include "object_code/ages/interactionCode/coloredCubeFlame.s"
+	.include "object_code/ages/interactionCode/minecartGate.s"
+	.include "object_code/ages/interactionCode/specialWarp.s"
+	.include "object_code/ages/interactionCode/dungeonScript.s"
+	.include "object_code/ages/interactionCode/dungeonEvents.s"
+	.include "object_code/ages/interactionCode/floorColorChanger.s"
+	.include "object_code/ages/interactionCode/extendableBridge.s"
+	.include "object_code/ages/interactionCode/triggerTranslator.s"
+	.include "object_code/ages/interactionCode/tileFiller.s"
+	.include "object_code/ages/interactionCode/bipin.s"
+	.include "object_code/ages/interactionCode/adlar.s"
+	.include "object_code/ages/interactionCode/librarian.s"
+	.include "object_code/ages/interactionCode/blossom.s"
+	.include "object_code/ages/interactionCode/veranCutsceneWallmaster.s"
+	.include "object_code/ages/interactionCode/veranCutsceneFace.s"
+	.include "object_code/ages/interactionCode/oldManWithRupees.s"
+	.include "object_code/ages/interactionCode/playNayruMusic.s"
+	.include "object_code/ages/interactionCode/shootingGallery.s"
+	.include "object_code/ages/interactionCode/impaInCutscene.s"
+	.include "object_code/ages/interactionCode/fakeOctorok.s"
+	.include "object_code/ages/interactionCode/smogBoss.s"
+	.include "object_code/ages/interactionCode/triforceStone.s"
+	.include "object_code/ages/interactionCode/child.s"
+	.include "object_code/ages/interactionCode/nayru.s"
+	.include "object_code/ages/interactionCode/ralph.s"
+	.include "object_code/ages/interactionCode/pastGirl.s"
+	.include "object_code/ages/interactionCode/monkey.s"
+	.include "object_code/ages/interactionCode/villager.s"
+	.include "object_code/ages/interactionCode/femaleVillager.s"
+	.include "object_code/ages/interactionCode/boy.s"
+	.include "object_code/ages/interactionCode/oldLady.s"
+.ends
 
 
 .BANK $09 SLOT 1
 .ORG 0
 
-	.include "object_code/common/interactionCode/group2.s"
-        .include "object_code/common/interactionCode/treasure.s"
-	.include "object_code/ages/interactionCode/bank09.s"
+ m_section_free Interaction_Code_Group2 NAMESPACE commonInteractions2
+	.include "object_code/common/interactionCode/shopkeeper.s"
+	.include "object_code/common/interactionCode/shopItem.s"
+	.include "object_code/common/interactionCode/introSprites1.s"
+	.include "object_code/common/interactionCode/seasonsFairy.s"
+	.include "object_code/common/interactionCode/explosion.s"
+.ends
+
+	.include "object_code/common/interactionCode/treasure.s"
+
+m_section_free Ages_Interactions_Bank9 NAMESPACE agesInteractionsBank09
+	.include "object_code/ages/interactionCode/ghostVeran.s"
+	.include "object_code/ages/interactionCode/boy2.s"
+	.include "object_code/ages/interactionCode/soldier.s"
+	.include "object_code/ages/interactionCode/miscMan.s"
+	.include "object_code/ages/interactionCode/mustacheMan.s"
+	.include "object_code/ages/interactionCode/pastGuy.s"
+	.include "object_code/ages/interactionCode/miscMan2.s"
+	.include "object_code/ages/interactionCode/pastOldLady.s"
+	.include "object_code/ages/interactionCode/tokay.s"
+	.include "object_code/ages/interactionCode/forestFairy.s"
+	.include "object_code/ages/interactionCode/rabbit.s"
+	.include "object_code/ages/interactionCode/bird.s"
+	.include "object_code/ages/interactionCode/ambi.s"
+	.include "object_code/ages/interactionCode/subrosian.s"
+	.include "object_code/ages/interactionCode/impaNpc.s"
+	.include "object_code/ages/interactionCode/dumbellMan.s"
+	.include "object_code/ages/interactionCode/oldMan.s"
+	.include "object_code/ages/interactionCode/mamamuYan.s"
+	.include "object_code/ages/interactionCode/mamamuDog.s"
+	.include "object_code/ages/interactionCode/postman.s"
+	.include "object_code/ages/interactionCode/pickaxeWorker.s"
+	.include "object_code/ages/interactionCode/hardhatWorker.s"
+	.include "object_code/ages/interactionCode/poe.s"
+	.include "object_code/ages/interactionCode/oldZora.s"
+	.include "object_code/ages/interactionCode/toiletHand.s"
+	.include "object_code/ages/interactionCode/maskSalesman.s"
+	.include "object_code/ages/interactionCode/bear.s"
+	.include "object_code/ages/interactionCode/sword.s"
+	.include "object_code/ages/interactionCode/syrup.s"
+	.include "object_code/ages/interactionCode/lever.s"
+	.include "object_code/ages/interactionCode/makuConfetti.s"
+	.include "object_code/ages/interactionCode/accessory.s"
+	.include "object_code/ages/interactionCode/raftwreckCutsceneHelper.s"
+	.include "object_code/ages/interactionCode/comedian.s"
+	.include "object_code/ages/interactionCode/goron.s"
+.ends
 
 
 .BANK $0a SLOT 1
 .ORG 0
 
+ m_section_free Interaction_Code_Group3 NAMESPACE commonInteractions3
+	.include "object_code/common/interactionCode/bombFlower.s"
+	.include "object_code/common/interactionCode/switchTileToggler.s"
+	.include "object_code/common/interactionCode/movingPlatform.s"
+	.include "object_code/common/interactionCode/roller.s"
+	.include "object_code/common/interactionCode/spinner.s"
+	.include "object_code/common/interactionCode/minibossPortal.s"
+	.include "object_code/common/interactionCode/essence.s"
+.ends
 
-	.include "object_code/common/interactionCode/group3.s"
-        .include "object_code/common/interactionCode/group4.s"
-	.include "object_code/ages/interactionCode/bank0a.s"
+ m_section_free Interaction_Code_Group4 NAMESPACE commonInteractions4
+	.include "object_code/common/interactionCode/vasu.s"
+	.include "object_code/common/interactionCode/bubble.s"
+.ends
+
+m_section_free Ages_Interactions_BankA NAMESPACE agesInteractionsBank0a
+	.include "object_code/common/interactionCode/companionSpawner.s"
+	.include "object_code/ages/interactionCode/rosa.s"
+	.include "object_code/ages/interactionCode/rafton.s"
+	.include "object_code/ages/interactionCode/cheval.s"
+	.include "object_code/ages/interactionCode/miscellaneous1.s"
+	.include "object_code/ages/interactionCode/fairyHidingMinigame.s"
+	.include "object_code/ages/interactionCode/possessedNayru.s"
+	.include "object_code/ages/interactionCode/nayruSavedCutscene.s"
+	.include "object_code/ages/interactionCode/wildTokayController.s"
+	.include "object_code/ages/interactionCode/companionScripts.s"
+	.include "object_code/ages/interactionCode/kingMoblinDefeated.s"
+	.include "object_code/ages/interactionCode/ghiniHarassingMoosh.s"
+	.include "object_code/ages/interactionCode/rickysGloveSpawner.s"
+	.include "object_code/ages/interactionCode/introSprite.s"
+	.include "object_code/ages/interactionCode/makuGateOpening.s"
+	.include "object_code/ages/interactionCode/smallKeyOnEnemy.s"
+	.include "object_code/ages/interactionCode/stonePanel.s"
+	.include "object_code/ages/interactionCode/screenDistortion.s"
+	.include "object_code/ages/interactionCode/decoration.s"
+	.include "object_code/ages/interactionCode/tokayShopItem.s"
+	.include "object_code/ages/interactionCode/sarcophagus.s"
+	.include "object_code/ages/interactionCode/bombUpgradeFairy.s"
+	.include "object_code/ages/interactionCode/sparkle.s"
+	.include "object_code/ages/interactionCode/makuFlower.s"
+	.include "object_code/ages/interactionCode/makuTree.s"
+	.include "object_code/ages/interactionCode/makuSprout.s"
+	.include "object_code/ages/interactionCode/remoteMakuCutscene.s"
+	.include "object_code/ages/interactionCode/goronElder.s"
+	.include "object_code/ages/interactionCode/tokayMeat.s"
+	.include "object_code/ages/interactionCode/cloakedTwinrova.s"
+	.include "object_code/ages/interactionCode/octogonSplash.s"
+	.include "object_code/ages/interactionCode/tokayCutsceneEmberSeed.s"
+	.include "object_code/ages/interactionCode/miscPuzzles.s"
+	.include "object_code/ages/interactionCode/fallingRock.s"
+	.include "object_code/ages/interactionCode/twinrova.s"
+	.include "object_code/ages/interactionCode/patch.s"
+	.include "object_code/ages/interactionCode/ball.s"
+	.include "object_code/ages/interactionCode/moblin.s"
+	.include "object_code/ages/interactionCode/97.s"
+.ends
 
 
 .BANK $0b SLOT 1
 .ORG 0
 
+ m_section_free Interaction_Code_Group5 NAMESPACE commonInteractions5
+	.include "object_code/common/interactionCode/woodenTunnel.s"
+	.include "object_code/common/interactionCode/exclamationMark.s"
+	.include "object_code/common/interactionCode/floatingImage.s"
+	.include "object_code/common/interactionCode/bipinBlossomFamilySpawner.s"
+	.include "object_code/common/interactionCode/gashaSpot.s"
+	.include "object_code/common/interactionCode/kissHeart.s"
+	.include "object_code/common/interactionCode/banana.s"
+	.include "object_code/common/interactionCode/createObjectAtEachTileindex.s"
+.ends
 
-	.include "object_code/common/interactionCode/group5.s"
-        .include "object_code/common/interactionCode/group6.s"
-        .include "object_code/common/interactionCode/group7.s"
-	.include "object_code/ages/interactionCode/bank0b.s"
+ m_section_free Interaction_Code_Group6 NAMESPACE commonInteractions6
+	.include "object_code/common/interactionCode/businessScrub.s"
+	.include "object_code/common/interactionCode/cf.s"
+	.include "object_code/common/interactionCode/companionTutorial.s"
+	.include "object_code/common/interactionCode/gameCompleteDialog.s"
+	.include "object_code/common/interactionCode/titlescreenClouds.s"
+	.include "object_code/common/interactionCode/introBird.s"
+	.include "object_code/common/interactionCode/linkShip.s"
+.ends
+
+ m_section_free Interaction_Code_Group7 NAMESPACE commonInteractions7
+	.include "object_code/common/interactionCode/faroreGiveItem.s"
+	.include "object_code/common/interactionCode/zeldaApproachTrigger.s"
+.ends
+
+m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
+	.include "object_code/ages/interactionCode/explosionWithDebris.s"
+	.include "object_code/ages/interactionCode/carpenter.s"
+	.include "object_code/ages/interactionCode/raftwreckCutscene.s"
+	.include "object_code/ages/interactionCode/kingZora.s"
+	.include "object_code/ages/interactionCode/tokkey.s"
+	.include "object_code/ages/interactionCode/waterPushblock.s"
+	.include "object_code/ages/interactionCode/movingSidescrollPlatform.s"
+	.include "object_code/ages/interactionCode/movingSidescrollConveyor.s"
+	.include "object_code/ages/interactionCode/disappearingSidescrollPlatform.s"
+	.include "object_code/ages/interactionCode/circularSidescrollPlatform.s"
+	.include "object_code/ages/interactionCode/touchingBook.s"
+	.include "object_code/ages/interactionCode/makuSeed.s"
+	.include "object_code/ages/interactionCode/endgameCutsceneBipsomFamily.s"
+	.include "object_code/ages/interactionCode/a8.s"
+	.include "object_code/ages/interactionCode/twinrovaFlame.s"
+	.include "object_code/ages/interactionCode/din.s"
+	.include "object_code/ages/interactionCode/zora.s"
+	.include "object_code/ages/interactionCode/zelda.s"
+	.include "object_code/ages/interactionCode/creditsTextHorizontal.s"
+	.include "object_code/ages/interactionCode/creditsTextVertical.s"
+	.include "object_code/ages/interactionCode/twinrovaInCutscene.s"
+	.include "object_code/ages/interactionCode/tuniNut.s"
+	.include "object_code/ages/interactionCode/volcanoHandler.s"
+	.include "object_code/ages/interactionCode/harpOfAgesSpawner.s"
+	.include "object_code/ages/interactionCode/bookOfSealsPodium.s"
+	.include "object_code/ages/interactionCode/finalDungeonEnergy.s"
+	.include "object_code/ages/interactionCode/vire.s"
+	.include "object_code/ages/interactionCode/horonDog.s"
+	.include "object_code/ages/interactionCode/childJabu.s"
+	.include "object_code/ages/interactionCode/humanVeran.s"
+	.include "object_code/ages/interactionCode/twinrova3.s"
+	.include "object_code/ages/interactionCode/pushblockSynchronizer.s"
+	.include "object_code/ages/interactionCode/ambisPalaceButton.s"
+	.include "object_code/ages/interactionCode/symmetryNpc.s"
+	.include "object_code/ages/interactionCode/c1.s"
+	.include "object_code/ages/interactionCode/pirateShip.s"
+	.include "object_code/ages/interactionCode/pirateCaptain.s"
+	.include "object_code/ages/interactionCode/pirate.s"
+	.include "object_code/ages/interactionCode/playHarpSong.s"
+	.include "object_code/ages/interactionCode/blackTowerDoorHandler.s"
+	.include "object_code/ages/interactionCode/tingle.s"
+	.include "object_code/ages/interactionCode/syrupCucco.s"
+	.include "object_code/ages/interactionCode/troy.s"
+	.include "object_code/ages/interactionCode/linkedGameGhini.s"
+	.include "object_code/ages/interactionCode/plen.s"
+	.include "object_code/ages/interactionCode/masterDiver.s"
+	.include "object_code/ages/interactionCode/greatFairy.s"
+	.include "object_code/ages/interactionCode/dekuScrub.s"
+	.include "object_code/ages/interactionCode/makuSeedAndEssences.s"
+	.include "object_code/ages/interactionCode/leverLavaFiller.s"
+	.include "object_code/ages/interactionCode/slateSlot.s"
+.ends
 
 	.include "code/ages/garbage/bank0bEnd.s"
 
@@ -267,8 +484,46 @@ specialObjectLoadAnimationFrameToBuffer:
  m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
 	.include "code/enemyCommon.s"
-	.include "object_code/common/enemyCode/group1.s"
-	.include "object_code/ages/enemyCode/bank0d.s"
+
+	.include "object_code/common/enemyCode/riverZora.s"
+	.include "object_code/common/enemyCode/octorok.s"
+	.include "object_code/common/enemyCode/boomerangMoblin.s"
+	.include "object_code/common/enemyCode/leever.s"
+	.include "object_code/common/enemyCode/moblinsAndShroudedStalfos.s"
+	.include "object_code/common/enemyCode/arrowDarknut.s"
+	.include "object_code/common/enemyCode/lynel.s"
+	.include "object_code/common/enemyCode/bladeAndFlameTrap.s"
+	.include "object_code/common/enemyCode/rope.s"
+	.include "object_code/common/enemyCode/gibdo.s"
+	.include "object_code/common/enemyCode/spark.s"
+	.include "object_code/common/enemyCode/whisp.s"
+	.include "object_code/common/enemyCode/spikedBeetle.s"
+	.include "object_code/common/enemyCode/bubble.s"
+	.include "object_code/common/enemyCode/beamos.s"
+	.include "object_code/common/enemyCode/ghini.s"
+	.include "object_code/common/enemyCode/buzzblob.s"
+	.include "object_code/common/enemyCode/sandCrab.s"
+	.include "object_code/common/enemyCode/spinyBeetle.s"
+	.include "object_code/common/enemyCode/armos.s"
+	.include "object_code/common/enemyCode/piranha.s"
+	.include "object_code/common/enemyCode/polsVoice.s"
+	.include "object_code/common/enemyCode/likelike.s"
+	.include "object_code/common/enemyCode/gopongaFlower.s"
+	.include "object_code/common/enemyCode/dekuScrub.s"
+	.include "object_code/common/enemyCode/wallmaster.s"
+	.include "object_code/common/enemyCode/podoboo.s"
+	.include "object_code/common/enemyCode/giantBladeTrap.s"
+	.include "object_code/common/enemyCode/cheepcheep.s"
+	.include "object_code/common/enemyCode/podobooTower.s"
+	.include "object_code/common/enemyCode/thwimp.s"
+	.include "object_code/common/enemyCode/thwomp.s"
+
+	.include "object_code/ages/enemyCode/veranSpider.s"
+	.include "object_code/ages/enemyCode/eyesoarChild.s"
+	.include "object_code/ages/enemyCode/ironMask.s"
+	.include "object_code/ages/enemyCode/veranChildBee.s"
+	.include "object_code/ages/enemyCode/anglerFishBubble.s"
+	.include "object_code/ages/enemyCode/enableSidescrollDownTransition.s"
 
 .ends
 
@@ -283,12 +538,56 @@ specialObjectLoadAnimationFrameToBuffer:
  m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 	.include "code/enemyCommon.s"
-	.include "object_code/common/enemyCode/group2.s"
 
-        .include {"{GAME_DATA_DIR}/orbMovementScript.s"}
-        .include "code/objectMovementScript.s"
+	.include "object_code/common/enemyCode/tektite.s"
+	.include "object_code/common/enemyCode/stalfos.s"
+	.include "object_code/common/enemyCode/keese.s"
+	.include "object_code/common/enemyCode/babyCucco.s"
+	.include "object_code/common/enemyCode/zol.s"
+	.include "object_code/common/enemyCode/floormaster.s"
+	.include "object_code/common/enemyCode/cucco.s"
+	.include "object_code/common/enemyCode/giantCucco.s"
+	.include "object_code/common/enemyCode/butterfly.s"
+	.include "object_code/common/enemyCode/greatFairy.s"
+	.include "object_code/common/enemyCode/fireKeese.s"
+	.include "object_code/common/enemyCode/waterTektite.s"
+	.include "object_code/common/enemyCode/swordMoblinsAndShroudedStalfos.s"
+	.include "object_code/common/enemyCode/swordDarknut.s"
+	.include "object_code/common/enemyCode/peahat.s"
+	.include "object_code/common/enemyCode/wizzrobe.s"
+	.include "object_code/common/enemyCode/crows.s"
+	.include "object_code/common/enemyCode/gel.s"
+	.include "object_code/common/enemyCode/pincer.s"
+	.include "object_code/common/enemyCode/ballAndChainSoldier.s"
+	.include "object_code/common/enemyCode/hardhatBeetle.s"
+	.include "object_code/ages/enemyCode/linkMimic.s"
+	.include "object_code/common/enemyCode/armMimic.s"
+	.include "object_code/common/enemyCode/moldorm.s"
+	.include "object_code/common/enemyCode/fireballShooter.s"
+	.include "object_code/common/enemyCode/beetle.s"
+	.include "object_code/common/enemyCode/flyingTile.s"
+	.include "object_code/common/enemyCode/dragonfly.s"
+	.include "object_code/common/enemyCode/bushOrRock.s"
+	.include "object_code/common/enemyCode/itemDropProducer.s"
+	.include "object_code/common/enemyCode/seedsOnTree.s"
+	.include "object_code/common/enemyCode/twinrovaIce.s"
+	.include "object_code/common/enemyCode/twinrovaBat.s"
+	.include "object_code/common/enemyCode/ganonRevivalCutscene.s"
 
-	.include "object_code/ages/enemyCode/bank0e.s"
+	.include {"{GAME_DATA_DIR}/orbMovementScript.s"}
+	.include "code/objectMovementScript.s"
+
+	.include "object_code/ages/enemyCode/bari.s"
+	.include "object_code/ages/enemyCode/giantGhiniChild.s"
+	.include "object_code/ages/enemyCode/shadowHagBug.s"
+	.include "object_code/ages/enemyCode/colorChangingGel.s"
+	.include "object_code/ages/enemyCode/ambiGuard.s"
+	.include "object_code/ages/enemyCode/candle.s"
+	.include "object_code/ages/enemyCode/kingMoblinMinion.s"
+	.include "object_code/ages/enemyCode/veranPossessionBoss.s"
+	.include "object_code/ages/enemyCode/vineSprout.s"
+	.include "object_code/ages/enemyCode/targetCartCrystal.s"
+
 	.include {"{GAME_DATA_DIR}/movingSidescrollPlatform.s"}
 
 	.include "code/ages/garbage/bank0eEnd.s"
@@ -302,7 +601,23 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
-	.include "object_code/ages/enemyCode/bank0f.s"
+
+	.include "object_code/ages/enemyCode/giantGhini.s"
+	.include "object_code/ages/enemyCode/swoop.s"
+	.include "object_code/ages/enemyCode/subterror.s"
+	.include "object_code/ages/enemyCode/armosWarrior.s"
+	.include "object_code/ages/enemyCode/smasher.s"
+	.include "object_code/ages/enemyCode/vire.s"
+	.include "object_code/ages/enemyCode/anglerFish.s"
+	.include "object_code/ages/enemyCode/blueStalfos.s"
+	.include "object_code/ages/enemyCode/pumpkinHead.s"
+	.include "object_code/ages/enemyCode/headThwomp.s"
+	.include "object_code/ages/enemyCode/shadowHag.s"
+	.include "object_code/ages/enemyCode/eyesoar.s"
+	.include "object_code/ages/enemyCode/smog.s"
+	.include "object_code/ages/enemyCode/octogon.s"
+	.include "object_code/ages/enemyCode/plasmarine.s"
+	.include "object_code/ages/enemyCode/kingMoblin.s"
 
 .ends
 
@@ -313,8 +628,17 @@ specialObjectLoadAnimationFrameToBuffer:
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
-	.include "object_code/common/enemyCode/group3.s"
-	.include "object_code/ages/enemyCode/bank10.s"
+
+	.include "object_code/common/enemyCode/mergedTwinrova.s"
+	.include "object_code/common/enemyCode/twinrova.s"
+	.include "object_code/common/enemyCode/ganon.s"
+	.include "object_code/common/enemyCode/none.s"
+
+	.include "object_code/ages/enemyCode/veranFinalForm.s"
+	.include "object_code/ages/enemyCode/ramrockArms.s"
+	.include "object_code/ages/enemyCode/veranFairy.s"
+	.include "object_code/ages/enemyCode/ramrock.s"
+	.include "object_code/ages/enemyCode/kingMoblinMinionMain.s"
 
 .ends
 
@@ -329,9 +653,23 @@ specialObjectLoadAnimationFrameToBuffer:
 .endif
 .endif
 
-	.include "object_code/common/interactionCode/group8.s"
+ m_section_free Interaction_Code_Group8 NAMESPACE commonInteractions8
+	.include "object_code/common/interactionCode/eraOrSeasonInfo.s"
+	.include "object_code/common/interactionCode/statueEyeball.s"
+	.include "object_code/common/interactionCode/ringHelpBook.s"
+.ends
+
 	.include "code/ages/cutscenes/bank10.s"
-	.include "object_code/ages/interactionCode/bank10.s"
+
+m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
+	.include "object_code/ages/interactionCode/miscellaneous2.s"
+	.include "object_code/ages/interactionCode/timewarp.s"
+	.include "object_code/ages/interactionCode/timeportal.s"
+	.include "object_code/ages/interactionCode/nayruRalphCredits.s"
+	.include "object_code/ages/interactionCode/timeportalSpawner.s"
+	.include "object_code/ages/interactionCode/knowItAllBird.s"
+	.include "object_code/ages/interactionCode/raft.s"
+.ends
 
 
 .BANK $11 SLOT 1
@@ -341,13 +679,99 @@ specialObjectLoadAnimationFrameToBuffer:
 	.export PART_BANK
 
  m_section_free Bank_11 NAMESPACE partCode
-
 	.include "code/partCommon.s"
-	.include "object_code/common/partCode.s"
-        .include "data/partCodeTable.s"
-	.include "object_code/ages/partCode.s"
-	.include "code/ages/garbage/bank11End.s"
 
+	.include "object_code/common/partCode/itemDrop.s"
+	.include "object_code/common/partCode/enemyDestroyed.s"
+	.include "object_code/common/partCode/orb.s"
+	.include "object_code/common/partCode/bossDeathExplosion.s"
+	.include "object_code/common/partCode/switch.s"
+	.include "object_code/common/partCode/lightableTorch.s"
+	.include "object_code/common/partCode/shadow.s"
+	.include "object_code/common/partCode/darkRoomHandler.s"
+	.include "object_code/common/partCode/button.s"
+	.include "object_code/common/partCode/movingOrb.s"
+	.include "object_code/common/partCode/bridgeSpawner.s"
+	.include "object_code/common/partCode/detectionHelper.s"
+	.include "object_code/common/partCode/respawnableBush.s"
+	.include "object_code/common/partCode/seedOnTree.s"
+	.include "object_code/common/partCode/volcanoRock.s"
+	.include "object_code/common/partCode/flame.s"
+	.include "object_code/common/partCode/owlStatue.s"
+	.include "object_code/common/partCode/itemFromMaple.s"
+	.include "object_code/common/partCode/gashaTree.s"
+	.include "object_code/common/partCode/octorokProjectile.s"
+	.include "object_code/common/partCode/fireProjectiles.s"
+	.include "object_code/common/partCode/enemyArrow.s"
+	.include "object_code/common/partCode/lynelBeam.s"
+	.include "object_code/common/partCode/stalfosBone.s"
+	.include "object_code/common/partCode/enemySword.s"
+	.include "object_code/common/partCode/dekuScrubProjectile.s"
+	.include "object_code/common/partCode/wizzrobeProjectile.s"
+	.include "object_code/common/partCode/fire.s"
+	.include "object_code/common/partCode/moblinBoomerang.s"
+	.include "object_code/common/partCode/cuccoAttacker.s"
+	.include "object_code/common/partCode/fallingFire.s"
+	.include "object_code/common/partCode/lighting.s"
+	.include "object_code/common/partCode/smallFairy.s"
+	.include "object_code/common/partCode/beam.s"
+	.include "object_code/common/partCode/spikedBall.s"
+	.include "object_code/common/partCode/greatFairyHeart.s"
+	.include "object_code/common/partCode/twinrovaProjectile.s"
+	.include "object_code/common/partCode/twinrovaFlame.s"
+	.include "object_code/common/partCode/twinrovaSnowball.s"
+	.include "object_code/common/partCode/ganonTrident.s"
+	.include "object_code/common/partCode/51.s"
+	.include "object_code/common/partCode/52.s"
+	.include "object_code/common/partCode/blueEnergyBead.s"
+
+	.include "object_code/common/partCode.s"
+	.include "data/partCodeTable.s"
+
+	.include "object_code/ages/partCode/jabuJabusBubbles.s"
+	.include "object_code/ages/partCode/grottoCrystal.s"
+	.include "object_code/ages/partCode/wallArrowShooter.s"
+	.include "object_code/ages/partCode/sparkle.s"
+	.include "object_code/ages/partCode/timewarpAnimation.s"
+	.include "object_code/ages/partCode/donkeyKongFlame.s"
+	.include "object_code/ages/partCode/veranFairyProjectile.s"
+	.include "object_code/ages/partCode/seaEffects.s"
+	.include "object_code/ages/partCode/babyBall.s"
+	.include "object_code/ages/partCode/subterrorDirt.s"
+	.include "object_code/ages/partCode/rotatableSeedThing.s"
+	.include "object_code/ages/partCode/ramrockSeedFormLaser.s"
+	.include "object_code/ages/partCode/ramrockGloveFormArm.s"
+	.include "object_code/ages/partCode/candleFlame.s"
+	.include "object_code/ages/partCode/veranProjectile.s"
+	.include "object_code/ages/partCode/ball.s"
+	.include "object_code/ages/partCode/headThwompFireball.s"
+	.include "object_code/ages/partCode/vireProjectile.s"
+	.include "object_code/ages/partCode/3b.s"
+	.include "object_code/ages/partCode/headThwompCircularProjectile.s"
+	.include "object_code/ages/partCode/blueStalfosProjectile.s"
+	.include "object_code/ages/partCode/3e.s"
+	.include "object_code/ages/partCode/kingMoblinBomb.s"
+	.include "object_code/ages/partCode/headThwompBombDropper.s"
+	.include "object_code/ages/partCode/shadowHagShadow.s"
+	.include "object_code/ages/partCode/pumpkinHeadProjectile.s"
+	.include "object_code/ages/partCode/plasmarineProjectile.s"
+	.include "object_code/ages/partCode/tingleBalloon.s"
+	.include "object_code/ages/partCode/fallingBoulderSpawner.s"
+	.include "object_code/ages/partCode/seedShooterEyeStatue.s"
+	.include "object_code/ages/partCode/bomb.s"
+	.include "object_code/ages/partCode/octogonDepthCharge.s"
+	.include "object_code/ages/partCode/bigBangBombSpawner.s"
+	.include "object_code/ages/partCode/smogProjectile.s"
+	.include "object_code/ages/partCode/ramrockSeedFormOrb.s"
+	.include "object_code/ages/partCode/roomOfRitesFallingBoulder.s"
+	.include "object_code/ages/partCode/octogonBubble.s"
+	.include "object_code/ages/partCode/veranSpiderweb.s"
+	.include "object_code/ages/partCode/veranAcidPool.s"
+	.include "object_code/ages/partCode/veranBeeProjectile.s"
+	.include "object_code/ages/partCode/blackTowerMovingFlames.s"
+	.include "object_code/ages/partCode/triforceStone.s"
+
+	.include "code/ages/garbage/bank11End.s"
 .ends
 
 
@@ -879,7 +1303,9 @@ oamData_7249:
 	.db $60 $40 $4c $00
 
 
-.include "object_code/ages/interactionCode/bank3f.s"
+.include "object_code/ages/interactionCode/monkeyMain.s"
+.include "object_code/ages/interactionCode/rabbitMain.s"
+.include "object_code/ages/interactionCode/tuniNutMain.s"
 
 .include "code/ages/garbage/bank3fEnd.s"
 

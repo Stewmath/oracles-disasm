@@ -1,5 +1,0 @@
-.include "object_code/ages/enemyCode/veranFinalForm.s"
-.include "object_code/ages/enemyCode/ramrockArms.s"
-.include "object_code/ages/enemyCode/veranFairy.s"
-.include "object_code/ages/enemyCode/ramrock.s"
-.include "object_code/ages/enemyCode/kingMoblinMinionMain.s"

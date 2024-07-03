@@ -191,25 +191,196 @@
 .BANK $08 SLOT 1
 .ORG 0
 
-	.include "object_code/common/interactionCode/group1.s"
-        .include "object_code/common/interactionCode/group2.s"
-	.include "object_code/seasons/interactionCode/bank08.s"
+ m_section_free Interaction_Code_Group1 NAMESPACE commonInteractions1
+	.include "object_code/common/interactionCode/breakTileDebris.s"
+	.include "object_code/common/interactionCode/fallDownHole.s"
+	.include "object_code/common/interactionCode/farore.s"
+	.include "object_code/common/interactionCode/dungeonStuff.s"
+	.include "object_code/common/interactionCode/pushblockTrigger.s"
+	.include "object_code/common/interactionCode/pushblock.s"
+	.include "object_code/common/interactionCode/minecart.s"
+	.include "object_code/common/interactionCode/dungeonKeySprite.s"
+	.include "object_code/common/interactionCode/overworldKeySprite.s"
+	.include "object_code/common/interactionCode/faroresMemory.s"
+	.include "object_code/seasons/interactionCode/rupeeRoomRupees.s" ; Unique to Seasons
+	.include "object_code/common/interactionCode/doorController.s"
+.ends
+
+ m_section_free Interaction_Code_Group2 NAMESPACE commonInteractions2
+	.include "object_code/common/interactionCode/shopkeeper.s"
+	.include "object_code/common/interactionCode/shopItem.s"
+	.include "object_code/common/interactionCode/introSprites1.s"
+	.include "object_code/common/interactionCode/seasonsFairy.s"
+	.include "object_code/common/interactionCode/explosion.s"
+.ends
+
+ m_section_free Seasons_Interactions_Bank08 NAMESPACE seasonsInteractionsBank08
+	.include "object_code/seasons/interactionCode/usedRodOfSeasons.s"
+	.include "object_code/seasons/interactionCode/specialWarp.s"
+	.include "object_code/seasons/interactionCode/dungeonScript.s"
+	.include "object_code/seasons/interactionCode/gnarledKeyhole.s"
+	.include "object_code/seasons/interactionCode/makuCutscenes.s"
+	.include "object_code/seasons/interactionCode/seasonSpiritsScripts.s"
+	.include "object_code/seasons/interactionCode/miscNpcs.s"
+	.include "object_code/seasons/interactionCode/mittensAndOwner.s"
+	.include "object_code/seasons/interactionCode/sokra.s"
+	.include "object_code/seasons/interactionCode/bipin.s"
+	.include "object_code/seasons/interactionCode/bird.s"
+	.include "object_code/seasons/interactionCode/blossom.s"
+	.include "object_code/seasons/interactionCode/fickleGirl.s"
+	.include "object_code/seasons/interactionCode/subrosian.s"
+	.include "object_code/seasons/interactionCode/datingRosaEvent.s"
+	.include "object_code/seasons/interactionCode/subrosianWithBuckets.s"
+	.include "object_code/seasons/interactionCode/subrosianSmiths.s"
+	.include "object_code/seasons/interactionCode/child.s"
+	.include "object_code/seasons/interactionCode/goron.s"
+	.include "object_code/seasons/interactionCode/miscBoyNpcs.s"
+	.include "object_code/seasons/interactionCode/piratian.s"
+	.include "object_code/seasons/interactionCode/pirateHouseSubrosian.s"
+	.include "object_code/seasons/interactionCode/syrup.s"
+	.include "object_code/seasons/interactionCode/zelda.s"
+	.include "object_code/seasons/interactionCode/talon.s"
+	.include "object_code/seasons/interactionCode/makuLeaf.s"
+	.include "object_code/seasons/interactionCode/syrupCucco.s"
+	.include "object_code/seasons/interactionCode/d1RisingStones.s"
+	.include "object_code/seasons/interactionCode/miscStatusObjects.s"
+	.include "object_code/seasons/interactionCode/pirateSkull.s"
+	.include "object_code/seasons/interactionCode/dinDancingEvent.s"
+	.include "object_code/seasons/interactionCode/dinImprisonedEvent.s"
+	.include "object_code/seasons/interactionCode/smallVolcano.s"
+	.include "object_code/seasons/interactionCode/biggoron.s"
+	.include "object_code/seasons/interactionCode/headSmelter.s"
+	.include "object_code/seasons/interactionCode/subrosianAtD8Items.s"
+	.include "object_code/seasons/interactionCode/subrosianAtD8.s"
+	.include "object_code/seasons/interactionCode/ingo.s"
+	.include "object_code/seasons/interactionCode/guruguru.s"
+	.include "object_code/seasons/interactionCode/lostWoodsSword.s"
+	.include "object_code/seasons/interactionCode/blainoScript.s"
+	.include "object_code/seasons/interactionCode/lostWoodsDekuScrub.s"
+	.include "object_code/seasons/interactionCode/lavaSoupSubrosian.s"
+	.include "object_code/seasons/interactionCode/tradeItem.s"
+.ends
 
 
 .BANK $09 SLOT 1
 .ORG 0
 
 	.include "object_code/common/interactionCode/treasure.s"
-        .include "object_code/common/interactionCode/group3.s"
-	.include "object_code/seasons/interactionCode/bank09.s"
+
+ m_section_free Interaction_Code_Group3 NAMESPACE commonInteractions3
+	.include "object_code/common/interactionCode/bombFlower.s"
+	.include "object_code/common/interactionCode/switchTileToggler.s"
+	.include "object_code/common/interactionCode/movingPlatform.s"
+	.include "object_code/common/interactionCode/roller.s"
+	.include "object_code/common/interactionCode/spinner.s"
+	.include "object_code/common/interactionCode/minibossPortal.s"
+	.include "object_code/common/interactionCode/essence.s"
+.ends
+
+ m_section_free Seasons_Interactions_Bank09 NAMESPACE seasonsInteractionsBank09
+	.include "object_code/seasons/interactionCode/quicksand.s"
+	.include "object_code/seasons/interactionCode/unicornsCave4ChestPuzzle.s"
+	.include "object_code/seasons/interactionCode/unicornsCaveReverseMovingArmos.s"
+	.include "object_code/seasons/interactionCode/unicornsCaveFallingMagnetBall.s"
+	.include "object_code/seasons/interactionCode/65.s"
+	.include "object_code/seasons/interactionCode/explorersCrypt4ArmosButtonPuzzle.s"
+	.include "object_code/seasons/interactionCode/swordShieldMazeArmosPatternPuzzle.s"
+	.include "object_code/seasons/interactionCode/swordShieldMazeGrabbableIce.s"
+	.include "object_code/seasons/interactionCode/swordShieldMazeFreezingLavaEvent.s"
+	.include "object_code/seasons/interactionCode/danceHallMinigame.s"
+	.include "object_code/seasons/interactionCode/miscellaneous1.s"
+	.include "object_code/seasons/interactionCode/subrosiansHiding.s"
+	.include "object_code/seasons/interactionCode/stealingFeather.s"
+	.include "object_code/seasons/interactionCode/holly.s"
+	.include "object_code/seasons/interactionCode/companionScripts.s"
+	.include "object_code/seasons/interactionCode/blaino.s"
+	.include "object_code/seasons/interactionCode/animalMoblinBullies.s"
+	.include "object_code/seasons/interactionCode/74.s"
+	.include "object_code/seasons/interactionCode/75.s"
+	.include "object_code/seasons/interactionCode/sunkenCityBullies.s"
+	.include "object_code/seasons/interactionCode/77.s"
+	.include "object_code/seasons/interactionCode/magnetSpinner.s"
+	.include "object_code/seasons/interactionCode/trampoline.s"
+	.include "object_code/seasons/interactionCode/fickleOldMan.s"
+	.include "object_code/seasons/interactionCode/subrosianShop.s"
+	.include "object_code/seasons/interactionCode/dogPlayingWithBoy.s"
+	.include "object_code/seasons/interactionCode/ballThrownToDog.s"
+	.include "object_code/seasons/interactionCode/sparkle.s"
+	.include "object_code/seasons/interactionCode/introSceneMusic.s"
+	.include "object_code/seasons/interactionCode/templeSinkingExplosion.s"
+	.include "object_code/seasons/interactionCode/makuTree.s"
+.ends
 
 
 .BANK $0a SLOT 1
 .ORG 0
 
-	.include "object_code/common/interactionCode/group4.s"
-        .include "object_code/common/interactionCode/group5.s"
-	.include "object_code/seasons/interactionCode/bank0a.s"
+ m_section_free Interaction_Code_Group4 NAMESPACE commonInteractions4
+	.include "object_code/common/interactionCode/vasu.s"
+	.include "object_code/common/interactionCode/bubble.s"
+.ends
+
+ m_section_free Interaction_Code_Group5 NAMESPACE commonInteractions5
+	.include "object_code/common/interactionCode/woodenTunnel.s"
+	.include "object_code/common/interactionCode/exclamationMark.s"
+	.include "object_code/common/interactionCode/floatingImage.s"
+	.include "object_code/common/interactionCode/bipinBlossomFamilySpawner.s"
+	.include "object_code/common/interactionCode/gashaSpot.s"
+	.include "object_code/common/interactionCode/kissHeart.s"
+	.include "object_code/common/interactionCode/banana.s"
+	.include "object_code/common/interactionCode/createObjectAtEachTileindex.s"
+.ends
+
+ m_section_free Seasons_Interactions_Bank0a NAMESPACE seasonsInteractionsBank0a
+	.include "object_code/seasons/interactionCode/sunkenCityNpcs.s"
+	.include "object_code/seasons/interactionCode/flyingRooster.s"
+	.include "object_code/seasons/interactionCode/8e.s"
+	.include "object_code/seasons/interactionCode/oldManWithJewel.s"
+	.include "object_code/seasons/interactionCode/jewelHelper.s"
+	.include "object_code/seasons/interactionCode/jewel.s"
+	.include "object_code/seasons/interactionCode/makuSeed.s"
+	.include "object_code/seasons/interactionCode/ghastlyDoll.s"
+	.include "object_code/seasons/interactionCode/kingMoblin.s"
+	.include "object_code/seasons/interactionCode/moblin.s"
+	.include "object_code/seasons/interactionCode/97.s"
+	.include "object_code/seasons/interactionCode/oldManWithRupees.s"
+	.include "object_code/seasons/interactionCode/9a.s"
+	.include "object_code/seasons/interactionCode/9b.s"
+	.include "object_code/seasons/interactionCode/springBloomFlower.s"
+	.include "object_code/seasons/interactionCode/impa.s"
+	.include "object_code/seasons/interactionCode/samasaDesertGate.s"
+	.include "object_code/seasons/interactionCode/movingSidescrollPlatform.s"
+	.include "object_code/seasons/interactionCode/movingSidescrollConveyor.s"
+	.include "object_code/seasons/interactionCode/disappearingSidescrollPlatform.s"
+	.include "object_code/seasons/interactionCode/subrosianSmithy.s"
+	.include "object_code/seasons/interactionCode/din.s"
+	.include "object_code/seasons/interactionCode/dinsCrystalFading.s"
+	.include "object_code/seasons/interactionCode/endgameCutsceneBipsomFamily.s"
+	.include "object_code/seasons/interactionCode/a8.s"
+	.include "object_code/seasons/interactionCode/a9.s"
+	.include "object_code/seasons/interactionCode/aa.s"
+	.include "object_code/seasons/interactionCode/moblinKeepScenes.s"
+	.include "object_code/seasons/interactionCode/ad.s"
+	.include "object_code/seasons/interactionCode/creditsTextHorizontal.s"
+	.include "object_code/seasons/interactionCode/af.s"
+	.include "object_code/seasons/interactionCode/twinrovaFlame.s"
+	.include "object_code/seasons/interactionCode/shipPiratian.s"
+	.include "object_code/seasons/interactionCode/linkedCutscene.s"
+	.include "object_code/seasons/interactionCode/b4.s"
+	.include "object_code/seasons/interactionCode/b5.s"
+	.include "object_code/seasons/interactionCode/ambi.s"
+	.include "object_code/seasons/interactionCode/b9.s"
+	.include "object_code/seasons/interactionCode/ba.s"
+	.include "object_code/seasons/interactionCode/bb.s"
+	.include "object_code/seasons/interactionCode/bc_bd_be.s"
+	.include "object_code/seasons/interactionCode/bf.s"
+	.include "object_code/seasons/interactionCode/c1.s"
+	.include "object_code/seasons/interactionCode/mayorsHouseUnlinkedGirl.s"
+	.include "object_code/seasons/interactionCode/zeldaKidnappedRoom.s"
+	.include "object_code/seasons/interactionCode/zeldaVillagersRoom.s"
+	.include "object_code/seasons/interactionCode/d4HolesFloortrapRoom.s"
+	.include "object_code/seasons/interactionCode/herosCaveSwordChest.s"
+.ends
 
 
 .BANK $0b SLOT 1
@@ -227,8 +398,43 @@
 m_section_free Enemy_Code_Bank0c NAMESPACE bank0c
 
 	.include "code/enemyCommon.s"
-	.include "object_code/common/enemyCode/group1.s"
-	.include "object_code/seasons/enemyCode/bank0c.s"
+
+	.include "object_code/common/enemyCode/riverZora.s"
+	.include "object_code/common/enemyCode/octorok.s"
+	.include "object_code/common/enemyCode/boomerangMoblin.s"
+	.include "object_code/common/enemyCode/leever.s"
+	.include "object_code/common/enemyCode/moblinsAndShroudedStalfos.s"
+	.include "object_code/common/enemyCode/arrowDarknut.s"
+	.include "object_code/common/enemyCode/lynel.s"
+	.include "object_code/common/enemyCode/bladeAndFlameTrap.s"
+	.include "object_code/common/enemyCode/rope.s"
+	.include "object_code/common/enemyCode/gibdo.s"
+	.include "object_code/common/enemyCode/spark.s"
+	.include "object_code/common/enemyCode/whisp.s"
+	.include "object_code/common/enemyCode/spikedBeetle.s"
+	.include "object_code/common/enemyCode/bubble.s"
+	.include "object_code/common/enemyCode/beamos.s"
+	.include "object_code/common/enemyCode/ghini.s"
+	.include "object_code/common/enemyCode/buzzblob.s"
+	.include "object_code/common/enemyCode/sandCrab.s"
+	.include "object_code/common/enemyCode/spinyBeetle.s"
+	.include "object_code/common/enemyCode/armos.s"
+	.include "object_code/common/enemyCode/piranha.s"
+	.include "object_code/common/enemyCode/polsVoice.s"
+	.include "object_code/common/enemyCode/likelike.s"
+	.include "object_code/common/enemyCode/gopongaFlower.s"
+	.include "object_code/common/enemyCode/dekuScrub.s"
+	.include "object_code/common/enemyCode/wallmaster.s"
+	.include "object_code/common/enemyCode/podoboo.s"
+	.include "object_code/common/enemyCode/giantBladeTrap.s"
+	.include "object_code/common/enemyCode/cheepcheep.s"
+	.include "object_code/common/enemyCode/podobooTower.s"
+	.include "object_code/common/enemyCode/thwimp.s"
+	.include "object_code/common/enemyCode/thwomp.s"
+
+	.include "object_code/seasons/enemyCode/rollingSpikeTrap.s"
+	.include "object_code/seasons/enemyCode/pokey.s"
+	.include "object_code/seasons/enemyCode/ironMask.s"
 .ends
 
 m_section_superfree Enemy_Animations
@@ -241,11 +447,53 @@ m_section_superfree Enemy_Animations
 m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
 	.include "code/enemyCommon.s"
-	.include "object_code/common/enemyCode/group2.s"
 
-        .include {"{GAME_DATA_DIR}/orbMovementScript.s"}
+	.include "object_code/common/enemyCode/tektite.s"
+	.include "object_code/common/enemyCode/stalfos.s"
+	.include "object_code/common/enemyCode/keese.s"
+	.include "object_code/common/enemyCode/babyCucco.s"
+	.include "object_code/common/enemyCode/zol.s"
+	.include "object_code/common/enemyCode/floormaster.s"
+	.include "object_code/common/enemyCode/cucco.s"
+	.include "object_code/common/enemyCode/giantCucco.s"
+	.include "object_code/common/enemyCode/butterfly.s"
+	.include "object_code/common/enemyCode/greatFairy.s"
+	.include "object_code/common/enemyCode/fireKeese.s"
+	.include "object_code/common/enemyCode/waterTektite.s"
+	.include "object_code/common/enemyCode/swordMoblinsAndShroudedStalfos.s"
+	.include "object_code/common/enemyCode/swordDarknut.s"
+	.include "object_code/common/enemyCode/peahat.s"
+	.include "object_code/common/enemyCode/wizzrobe.s"
+	.include "object_code/common/enemyCode/crows.s"
+	.include "object_code/common/enemyCode/gel.s"
+	.include "object_code/common/enemyCode/pincer.s"
+	.include "object_code/common/enemyCode/ballAndChainSoldier.s"
+	.include "object_code/common/enemyCode/hardhatBeetle.s"
+	.include "object_code/common/enemyCode/armMimic.s"
+	.include "object_code/common/enemyCode/moldorm.s"
+	.include "object_code/common/enemyCode/fireballShooter.s"
+	.include "object_code/common/enemyCode/beetle.s"
+	.include "object_code/common/enemyCode/flyingTile.s"
+	.include "object_code/common/enemyCode/dragonfly.s"
+	.include "object_code/common/enemyCode/bushOrRock.s"
+	.include "object_code/common/enemyCode/itemDropProducer.s"
+	.include "object_code/common/enemyCode/seedsOnTree.s"
+	.include "object_code/common/enemyCode/twinrovaIce.s"
+	.include "object_code/common/enemyCode/twinrovaBat.s"
+	.include "object_code/common/enemyCode/ganonRevivalCutscene.s"
 
-	.include "object_code/seasons/enemyCode/bank0d.s"
+	.include {"{GAME_DATA_DIR}/orbMovementScript.s"}
+
+	.include "object_code/seasons/enemyCode/magunesu.s"
+	.include "object_code/seasons/enemyCode/unusedTemplate.s"
+	.include "object_code/seasons/enemyCode/gohmaGel.s"
+	.include "object_code/seasons/enemyCode/mothulaChild.s"
+	.include "object_code/seasons/enemyCode/blaino.s"
+	.include "object_code/seasons/enemyCode/miniDigdogger.s"
+	.include "object_code/seasons/enemyCode/makuTreeBubble.s"
+	.include "object_code/seasons/enemyCode/sandPuff.s"
+	.include "object_code/seasons/enemyCode/wallFlameShooter.s"
+	.include "object_code/seasons/enemyCode/blainosGloves.s"
 
 	.include "code/objectMovementScript.s"
 	.include {"{GAME_DATA_DIR}/movingSidescrollPlatform.s"}
@@ -260,7 +508,23 @@ m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
-	.include "object_code/seasons/enemyCode/bank0e.s"
+
+	.include "object_code/seasons/enemyCode/brotherGoriyas.s"
+	.include "object_code/seasons/enemyCode/facade.s"
+	.include "object_code/seasons/enemyCode/omuai.s"
+	.include "object_code/seasons/enemyCode/agunima.s"
+	.include "object_code/seasons/enemyCode/syger.s"
+	.include "object_code/seasons/enemyCode/vire.s"
+	.include "object_code/seasons/enemyCode/poeSister2.s"
+	.include "object_code/seasons/enemyCode/poeSister1.s"
+	.include "object_code/seasons/enemyCode/frypolar.s"
+	.include "object_code/seasons/enemyCode/aquamentus.s"
+	.include "object_code/seasons/enemyCode/dodongo.s"
+	.include "object_code/seasons/enemyCode/mothula.s"
+	.include "object_code/seasons/enemyCode/gohma.s"
+	.include "object_code/seasons/enemyCode/digdogger.s"
+	.include "object_code/seasons/enemyCode/manhandla.s"
+	.include "object_code/seasons/enemyCode/medusaHead.s"
 
 .ends
 
@@ -271,8 +535,17 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
-	.include "object_code/common/enemyCode/group3.s"
-	.include "object_code/seasons/enemyCode/bank0f.s"
+
+	.include "object_code/common/enemyCode/mergedTwinrova.s"
+	.include "object_code/common/enemyCode/twinrova.s"
+	.include "object_code/common/enemyCode/ganon.s"
+	.include "object_code/common/enemyCode/none.s"
+
+	.include "object_code/seasons/enemyCode/generalOnox.s"
+	.include "object_code/seasons/enemyCode/dragonOnox.s"
+	.include "object_code/seasons/enemyCode/gleeok.s"
+	.include "object_code/seasons/enemyCode/kingMoblin.s"
+
 	.include "code/seasons/cutscenes/transitionToDragonOnox.s"
 
 .ends
@@ -283,8 +556,28 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 	.ENDR
 .endif
 
-	.include "object_code/common/interactionCode/group6.s"
-	.include "object_code/seasons/interactionCode/bank0f.s"
+ m_section_free Interaction_Code_Group6 NAMESPACE commonInteractions6
+	.include "object_code/common/interactionCode/businessScrub.s"
+	.include "object_code/common/interactionCode/cf.s"
+	.include "object_code/common/interactionCode/companionTutorial.s"
+	.include "object_code/common/interactionCode/gameCompleteDialog.s"
+	.include "object_code/common/interactionCode/titlescreenClouds.s"
+	.include "object_code/common/interactionCode/introBird.s"
+	.include "object_code/common/interactionCode/linkShip.s"
+.ends
+
+ m_section_free Seasons_Interactions_Bank0f NAMESPACE seasonsInteractionsBank0f
+	.include "object_code/seasons/interactionCode/boomerangSubrosian.s"
+	.include "object_code/seasons/interactionCode/boomerang.s"
+	.include "object_code/seasons/interactionCode/troy.s"
+	.include "object_code/seasons/interactionCode/linkedGameGhini.s"
+	.include "object_code/seasons/interactionCode/goldenCaveSubrosian.s"
+	.include "object_code/seasons/interactionCode/linkedMasterDiver.s"
+	.include "object_code/seasons/interactionCode/greatFairy.s"
+	.include "object_code/seasons/interactionCode/dekuScrub.s"
+	.include "object_code/seasons/interactionCode/d7.s"
+.ends
+
 
 .BANK $10 SLOT 1
 .ORG 0
@@ -293,12 +586,91 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 	.export PART_BANK
 
  m_section_free Part_Code NAMESPACE partCode
-
 	.include "code/partCommon.s"
-	.include "object_code/common/partCode.s" ; Note: closes and opens a new section (seasons only)
-        .include "data/partCodeTable.s"
-	.include "object_code/seasons/partCode.s"
 
+	.include "object_code/common/partCode/itemDrop.s"
+	.include "object_code/common/partCode/enemyDestroyed.s"
+	.include "object_code/common/partCode/orb.s"
+	.include "object_code/common/partCode/bossDeathExplosion.s"
+	.include "object_code/common/partCode/switch.s"
+	.include "object_code/common/partCode/lightableTorch.s"
+	.include "object_code/common/partCode/shadow.s"
+	.include "object_code/common/partCode/darkRoomHandler.s"
+	.include "object_code/common/partCode/button.s"
+	.include "object_code/common/partCode/movingOrb.s"
+	.include "object_code/common/partCode/bridgeSpawner.s"
+	.include "object_code/common/partCode/detectionHelper.s"
+	.include "object_code/common/partCode/respawnableBush.s"
+	.include "object_code/common/partCode/seedOnTree.s"
+	.include "object_code/common/partCode/volcanoRock.s"
+	.include "object_code/common/partCode/flame.s"
+	.include "object_code/common/partCode/owlStatue.s"
+	.include "object_code/common/partCode/itemFromMaple.s"
+	.include "object_code/common/partCode/gashaTree.s"
+	.include "object_code/common/partCode/octorokProjectile.s"
+	.include "object_code/common/partCode/fireProjectiles.s"
+	.include "object_code/common/partCode/enemyArrow.s"
+	.include "object_code/common/partCode/lynelBeam.s"
+	.include "object_code/common/partCode/stalfosBone.s"
+	.include "object_code/common/partCode/enemySword.s"
+	.include "object_code/common/partCode/dekuScrubProjectile.s"
+	.include "object_code/common/partCode/wizzrobeProjectile.s"
+	.include "object_code/common/partCode/fire.s"
+	.include "object_code/common/partCode/moblinBoomerang.s"
+	.include "object_code/common/partCode/cuccoAttacker.s"
+	.include "object_code/common/partCode/fallingFire.s"
+	.include "object_code/common/partCode/lighting.s"
+	.include "object_code/common/partCode/smallFairy.s"
+	.include "object_code/common/partCode/beam.s"
+	.include "object_code/common/partCode/spikedBall.s"
+	.include "object_code/common/partCode/greatFairyHeart.s"
+	.include "object_code/common/partCode/twinrovaProjectile.s"
+	.include "object_code/common/partCode/twinrovaFlame.s"
+	.include "object_code/common/partCode/twinrovaSnowball.s"
+	.include "object_code/common/partCode/ganonTrident.s"
+	.include "object_code/common/partCode/51.s"
+	.include "object_code/common/partCode/52.s"
+	.include "object_code/common/partCode/blueEnergyBead.s"
+.ends
+
+	.include "code/roomInitialization.s"
+
+ m_section_free Part_Code_2 NAMESPACE partCode
+	.include "object_code/common/partCode.s" ; Note: closes and opens a new section (seasons only)
+	.include "data/partCodeTable.s"
+
+	.include "object_code/seasons/partCode/holesFloortrap.s"
+	.include "object_code/seasons/partCode/slingshotEyeStatue.s"
+	.include "object_code/seasons/partCode/16.s"
+	.include "object_code/seasons/partCode/shootingDragonHead.s"
+	.include "object_code/seasons/partCode/arrowShooter.s"
+	.include "object_code/seasons/partCode/wallFlameShooterFlames.s"
+	.include "object_code/seasons/partCode/buriedMoldorm.s"
+	.include "object_code/seasons/partCode/kingMoblinsCannons.s"
+	.include "object_code/seasons/partCode/2e.s"
+	.include "object_code/seasons/partCode/2f.s"
+	.include "object_code/seasons/partCode/poppableBubble.s"
+	.include "object_code/seasons/partCode/33.s"
+	.include "object_code/seasons/partCode/38.s"
+	.include "object_code/seasons/partCode/39.s"
+	.include "object_code/seasons/partCode/3a.s"
+	.include "object_code/seasons/partCode/3b.s"
+	.include "object_code/seasons/partCode/3c.s"
+	.include "object_code/seasons/partCode/3d.s"
+	.include "object_code/seasons/partCode/3e.s"
+	.include "object_code/seasons/partCode/kingMoblinBomb.s"
+	.include "object_code/seasons/partCode/aquamentusProjectile.s"
+	.include "object_code/seasons/partCode/dodongoFireball.s"
+	.include "object_code/seasons/partCode/mothulaProjectile2.s"
+	.include "object_code/seasons/partCode/43.s"
+	.include "object_code/seasons/partCode/44.s"
+	.include "object_code/seasons/partCode/45.s"
+	.include "object_code/seasons/partCode/46.s"
+	.include "object_code/seasons/partCode/47.s"
+	.include "object_code/seasons/partCode/48.s"
+	.include "object_code/seasons/partCode/49.s"
+	.include "object_code/seasons/partCode/4a.s"
+	.include "object_code/seasons/partCode/dinCrystal.s"
 .ends
 
 
@@ -356,8 +728,16 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "scripts/common/scriptHelper.s"
 
-	.include "object_code/common/interactionCode/group7.s"
-	.include "object_code/common/interactionCode/group8.s"
+ m_section_free Interaction_Code_Group7 NAMESPACE commonInteractions7
+	.include "object_code/common/interactionCode/faroreGiveItem.s"
+	.include "object_code/common/interactionCode/zeldaApproachTrigger.s"
+.ends
+
+ m_section_free Interaction_Code_Group8 NAMESPACE commonInteractions8
+	.include "object_code/common/interactionCode/eraOrSeasonInfo.s"
+	.include "object_code/common/interactionCode/statueEyeball.s"
+	.include "object_code/common/interactionCode/ringHelpBook.s"
+.ends
 
 
 oamData_15_4da3:
@@ -413,7 +793,19 @@ oamData_15_4e0c:
 		.include "scripts/seasons/scriptHelper.s"
 	.ends
 
-	.include "object_code/seasons/interactionCode/bank15.s"
+ m_section_free Seasons_Interactions_Bank15 NAMESPACE seasonsInteractionsBank15
+	.include "object_code/seasons/interactionCode/linkedFountainLady.s"
+	.include "object_code/seasons/interactionCode/linkedSecredGivers.s"
+	.include "object_code/seasons/interactionCode/miscPuzzles.s"
+	.include "object_code/seasons/interactionCode/goldenBeastOldMan.s"
+	.include "object_code/seasons/interactionCode/makuSeedAndEssences.s"
+	.include "object_code/seasons/interactionCode/nayruRalphCredits.s"
+	.include "object_code/seasons/interactionCode/portalSpawner.s"
+	.include "object_code/seasons/interactionCode/vire.s"
+	.include "object_code/seasons/interactionCode/linkedHerosCaveOldMan.s"
+	.include "object_code/seasons/interactionCode/getRodOfSeasons.s"
+	.include "object_code/seasons/interactionCode/loneZora.s"
+.ends
 
 	.include {"{GAME_DATA_DIR}/partAnimations.s"}
 

@@ -1,6 +1,0 @@
-.include "object_code/ages/enemyCode/veranSpider.s"
-.include "object_code/ages/enemyCode/eyesoarChild.s"
-.include "object_code/ages/enemyCode/ironMask.s"
-.include "object_code/ages/enemyCode/veranChildBee.s"
-.include "object_code/ages/enemyCode/anglerFishBubble.s"
-.include "object_code/ages/enemyCode/enableSidescrollDownTransition.s"
