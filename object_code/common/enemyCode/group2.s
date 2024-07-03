@@ -5657,7 +5657,7 @@ pincer_head_stateA:
 	ld b,(hl)
 	ld l,Enemy.xh
 	ld c,(hl)
-	ld a,BREAKABLETILESOURCE_06
+	ld a,BREAKABLETILESOURCE_SHOVEL
 	call tryToBreakTile
 .ifdef ROM_AGES
 	; If in water, create a splash

@@ -917,7 +917,7 @@ companionTryToBreakTileFromMoving:
 	ld l,SpecialObject.xh
 	ld c,(hl)
 
-	ld a,BREAKABLETILESOURCE_13
+	ld a,BREAKABLETILESOURCE_COMPANION_MOVEMENT
 	jp tryToBreakTile
 
 ;;
@@ -2163,7 +2163,7 @@ specialObjectTryToBreakTile_source05:
 	ld c,(hl)
 	add $05
 	ld b,a
-	ld a,BREAKABLETILESOURCE_05
+	ld a,BREAKABLETILESOURCE_LANDED
 	jp tryToBreakTile
 
 ;;
@@ -7827,7 +7827,7 @@ linkState12:
 	jr nc,@noCollision
 
 	; If this tile is breakable, we can land here
-	ld a, $80 | BREAKABLETILESOURCE_05
+	ld a, $80 | BREAKABLETILESOURCE_LANDED
 	call tryToBreakTile
 	jr c,@landHere
 
@@ -11614,7 +11614,7 @@ rickyBreakTilesOnLanding:
 	ld a,(w1Companion.xh)
 	add c
 	ld c,a
-	ld a,BREAKABLETILESOURCE_10
+	ld a,BREAKABLETILESOURCE_RICKY_LANDED
 	call tryToBreakTile
 	pop hl
 	jr @next

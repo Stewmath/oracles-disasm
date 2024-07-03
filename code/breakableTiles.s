@@ -139,16 +139,16 @@ tryToBreakTile_body:
 +
 	ldh a,(<hFF8D)
 	or a
-	call nz,func_483d
+	call nz,decideItemDropForBrokenTile
 ++
 	ldh a,(<hFF8F)
-	or a
+	or a ; BREAKABLETILESOURCE_BRACELET
 	jr z,@done
-	cp $0c
+	cp BREAKABLETILESOURCE_EMBER_SEED
 	jr z,@done
-	cp $08
+	cp BREAKABLETILESOURCE_SWITCH_HOOK
 	jr z,@done
-	cp $12
+	cp BREAKABLETILESOURCE_DIMITRI_EAT
 	ldh a,(<hFF8E)
 	call nz,makeInteractionForBreakableTile
 @done:
@@ -227,39 +227,45 @@ makeInteractionForBreakableTile:
 	ret
 
 ;;
-; @param	a	Item drop type?
-func_483d:
+; Spawn an item drop for a broken tile if applicable.
+;
+; @param	a	Item drop type? (param 4 from m_BreakableTileData)
+decideItemDropForBrokenTile:
 	push hl
 	call decideItemDrop
 	jr z,@done
 
 	call getFreePartSlot
 	jr nz,@done
-
 	ld (hl),PARTID_ITEM_DROP
 	inc l
-	ld (hl),c
+	ld (hl),c ; [subid]
+
 	ld l,Part.yh
 	ldh a,(<hFF90)
 	ldi (hl),a
 	inc l
 	ldh a,(<hFF91)
 	ld (hl),a
+
+	; Copy link's direction to the item drop's, in case of shovel digs
 	ld a,(w1Link.direction)
 	swap a
 	rrca
 	ld l,Part.angle
 	ld (hl),a
+
 	ld l,Part.var03
 	ld a,c
-	cp $0f
+	cp ITEM_DROP_100_RUPEES_OR_ENEMY
 	jr nz,+
-	ld (hl),$02
+	ld (hl),$02 ; [var03]
 +
+	; Change value of var03 for shovel digs
 	ldh a,(<hFF8F)
-	cp $06
+	cp BREAKABLETILESOURCE_SHOVEL
 	jr nz,@done
-	inc (hl)
+	inc (hl) ; [var03]
 @done:
 	pop hl
 	ret

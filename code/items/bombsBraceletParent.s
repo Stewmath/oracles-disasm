@@ -236,7 +236,7 @@ parentItemCode_bracelet:
 	; Try to lift the tile, return if not possible
 	call @checkWallInFrontOfLink
 	jp nz,@dropAndDeleteSelf
-	lda BREAKABLETILESOURCE_00
+	lda BREAKABLETILESOURCE_BRACELET
 	call tryToBreakTile
 	ret nc
 

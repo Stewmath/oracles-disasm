@@ -311,7 +311,7 @@ seedItemState1:
 
 
 @breakTileWithGaleSeed:
-	ld a,BREAKABLETILESOURCE_0d
+	ld a,BREAKABLETILESOURCE_GALE_SEED
 	jp itemTryToBreakTile
 
 
@@ -462,7 +462,7 @@ emberSeedBurn:
 	ret
 
 @breakTile:
-	ld a,BREAKABLETILESOURCE_0c
+	ld a,BREAKABLETILESOURCE_EMBER_SEED
 	call itemTryToBreakTile
 @deleteSelf:
 	jp seedItemDelete
@@ -2185,7 +2185,7 @@ explosionTryToBreakNextTile:
 	adc e
 	ret nz
 
-	ld a,BREAKABLETILESOURCE_04
+	ld a,BREAKABLETILESOURCE_BOMB
 	jp tryToBreakTile
 
 ; The following is a list of offsets from the center of the bomb at which to try
@@ -4076,9 +4076,9 @@ itemCode28:
 	push hl
 	ld a,(w1Companion.id)
 	cp SPECIALOBJECTID_RICKY
-	ld a,BREAKABLETILESOURCE_0f
+	ld a,BREAKABLETILESOURCE_RICKY_PUNCH
 	jr z,+
-	ld a,BREAKABLETILESOURCE_11
+	ld a,BREAKABLETILESOURCE_MOOSH_BUTTSTOMP
 +
 	call tryToBreakTile
 	pop hl
@@ -4125,7 +4125,7 @@ itemCode15:
 	ld l,Item.counter1
 	ld (hl),$04
 
-	ld a,BREAKABLETILESOURCE_06
+	ld a,BREAKABLETILESOURCE_SHOVEL
 	call itemTryToBreakTile
 	ld a,SND_CLINK
 	jr nc,+
@@ -5315,7 +5315,7 @@ tryBreakTileWithExpertsRing:
 	ld a,(w1Link.direction)
 	add a
 	ld c,a
-	ld a,BREAKABLETILESOURCE_03
+	ld a,BREAKABLETILESOURCE_EXPERTS_RING
 	jr tryBreakTileWithSword
 
 ;;
