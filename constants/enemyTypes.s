@@ -6,6 +6,8 @@
 ; Enemies $00-$07, and $68-$7f, count as bosses. (These ID ranges are checked in
 ; enemyBossCommon.s.)
 
+.define ENEMYID_00	$00
+
 ;;
 .define ENEMYID_RIVER_ZORA			$08
 
