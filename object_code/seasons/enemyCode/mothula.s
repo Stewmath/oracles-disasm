@@ -262,7 +262,7 @@ mothula_stateF:
 ; @param	hl	var37 (counter to spawn projectile)
 mothula_spawnFireball:
 	ld (hl),$50
-	ld b,PART_MOTHULA_PROJECTILE_1
+	ld b,PART_GOPONGA_PROJECTILE
 	jp ecom_spawnProjectile
 
 ;;

@@ -1917,7 +1917,7 @@ endgameCutsceneHandler_0a_stage3:
 	jr nz,+
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERAC_d1
+	ld (hl),INTERAC_GAME_COMPLETE_DIALOG
 	xor a
 	ld ($cfde),a
 +

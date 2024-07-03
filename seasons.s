@@ -309,6 +309,7 @@
 	.include "object_code/seasons/interactionCode/introSceneMusic.s"
 	.include "object_code/seasons/interactionCode/templeSinkingExplosion.s"
 	.include "object_code/seasons/interactionCode/makuTree.s"
+	.include "object_code/seasons/interactionCode/88.s"
 .ends
 
 
@@ -355,7 +356,7 @@
 	.include "object_code/seasons/interactionCode/subrosianSmithy.s"
 	.include "object_code/seasons/interactionCode/din.s"
 	.include "object_code/seasons/interactionCode/dinsCrystalFading.s"
-	.include "object_code/seasons/interactionCode/endgameCutsceneBipsomFamily.s"
+	.include "object_code/common/interactionCode/endgameCutsceneBipsomFamily.s"
 	.include "object_code/seasons/interactionCode/a8.s"
 	.include "object_code/seasons/interactionCode/a9.s"
 	.include "object_code/seasons/interactionCode/aa.s"

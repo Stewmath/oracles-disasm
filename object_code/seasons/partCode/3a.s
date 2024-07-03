@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ?
+; PART_3a
 ; ==============================================================================
 partCode3a:
 	jr z,@normalStatus
@@ -53,7 +53,7 @@ partCode3a:
 	ld e,$01
 @func_6ab5:
 	call getFreePartSlot
-	ld (hl),PART_3a
+	ld (hl),PART_VIRE_PROJECTILE
 	inc l
 	ld (hl),e
 	inc l

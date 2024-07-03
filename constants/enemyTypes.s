@@ -1,12 +1,29 @@
 ; See interactionTypes.s for documentation on comment format.
 ;
+; Enemies $00-$07, and $68-$7f, count as bosses. (These ID ranges are checked in
+; enemyBossCommon.s.)
+;
 ; TODO: determine which enemies are supposed to count toward wNumEnemies, and which don't.
 
 
-; Enemies $00-$07, and $68-$7f, count as bosses. (These ID ranges are checked in
-; enemyBossCommon.s.)
+; ==============================================================================
+; Common enemies (exist in ages and seasons)
+; ==============================================================================
 
-.define ENEMY_00 $00
+;;
+.define ENEMY_STUB_00 $00
+
+;;
+.define ENEMY_MERGED_TWINROVA $01
+
+;;
+; @subid_00{Red twinrova}
+; @subid_01{Blue twinrova}
+.define ENEMY_TWINROVA $03
+
+;;
+; King of Evil
+.define ENEMY_GANON $04
 
 ;;
 .define ENEMY_RIVER_ZORA $08
@@ -64,14 +81,6 @@
 .define ENEMY_BLADE_TRAP $0e
 
 ;;
-; Spider that Veran spawns when fighting possessed Ambi. Spawns in a random position within
-; the screen boundary. If used in a small room, it could spawn off-screen...
-;
-; @palette{PALH_8a}
-; @postype{none}
-.define ENEMY_VERAN_SPIDER $0f
-
-;;
 ; Rope = snake
 ;
 ; @subid_00{Normal}
@@ -79,15 +88,6 @@
 ; @subid_02{Immediately charges Link upon spawning}
 ; @subid_03{Falls and bounces toward Link when it spawns}
 .define ENEMY_ROPE $10
-
-;;
-; Part of D4 boss (ENEMY_EYESOAR)
-;
-; @subid_00{Spawns above eyesoar}
-; @subid_01{Right of eyesoar}
-; @subid_02{Below eyesoar}
-; @subid_03{Left of eyesoar}
-.define ENEMY_EYESOAR_CHILD $11
 
 ;;
 .define ENEMY_GIBDO $12
@@ -164,14 +164,6 @@
 .define ENEMY_PIRANHA $1e
 
 ;;
-; Used by ENEMY_VERAN_FINAL_FORM. Flies at you, then despawns when off-screen.
-;
-; @subid_00{Moves down}
-; @subid_01{Moves down-left}
-; @subid_02{Moves up-right}
-.define ENEMY_VERAN_CHILD_BEE $1f
-
-;;
 ; The type of moblin you'd see in the Goron area, with white horns, shoots arrows
 ;
 ; @subid_00{Red}
@@ -207,10 +199,6 @@
 .define ENEMY_GOPONGA_FLOWER $25
 
 ;;
-; This object automatically deletes itself if [relatedObj1.id] != ENEMY_ANGLER_FISH.
-.define ENEMY_ANGLER_FISH_BUBBLE $26
-
-;;
 ; Deku scrub that shoots seeds at you. His "bush" graphic (ENEMY_BUSH_OR_ROCK) only
 ; works outdoors.
 ;
@@ -238,19 +226,12 @@
 ; @subid_01{Small flames that only act as decoration?}
 .define ENEMY_PODOBOO $29
 
-
 ;;
 ; @subid_00{Green, doesn't move}
 ; @subid_01{Blue, moves up, then clockwise when it hits a wall, slow constant speed}
 ; @subid_02{Red, like blue but faster, and it accelerates}
 ; @subid_03{Plain, same as Red but starts facing down, moves counterclockwise}
 .define ENEMY_GIANT_BLADE_TRAP $2a
-
-;;
-; This object allows down-transitions to work in the "donkey kong" sidescrolling area with
-; vire. In particular, it forces a transition to occur if Link falls onto the bottom
-; boundary of the screen, and is far enough to the right side of the screen.
-.define ENEMY_ENABLE_SIDESCROLL_DOWN_TRANSITION $2b
 
 ;;
 ; Fish in sidescrolling areas that moves back and forth.
@@ -334,12 +315,12 @@
 ;;
 ; Goddamned annoying bat enemy (on fire)
 ;
-; Doesn't work quite right in outdoor areas since it looks for unlit torches to light
-; itself back on fire (tile index $09, which is different outdoors). Also, it assumes that
-; it's in a large room for various things (ie. room boundary checking).
+; Doesn't work quite right in outdoor areas since it looks for torches to light itself back on fire
+; (tile index $09, which is different outdoors). Also, it assumes that it's in a large room for
+; various things (ie. room boundary checking).
 ;
-; @subid_00{Has "height", and moves in a circle (clockwise/counterclockwise chosen
-;           randomly) until Link approaches; it will attempt to divebomb him.}
+; @subid_00{Has "height", and moves in a circle (clockwise/counterclockwise chosen randomly) until
+;           Link approaches; it will attempt to divebomb him.}
 ; @subid_01{No height; very similar to a normal keese, except on fire.}
 .define ENEMY_FIRE_KEESE $39
 
@@ -357,21 +338,6 @@
 ; engine feature relating to this was added in Ages, which caused the bug?
 .define ENEMY_GIANT_CUCCO $3b
 
-.ifdef ROM_AGES
-;;
-; Jellyfish enemy that splits in two. The large ones always hover close to their spawn
-; position, the small ones move toward Link.
-;
-; @subid_00{Normal version}
-; @subid_01{Small version}
-.define ENEMY_BARI $3c
-
-.else; ROM_SEASONS
-
-;;
-.define ENEMY_MAGUNESU $3c
-
-.endif
 
 ;;
 ; Moblin with a sword.
@@ -383,11 +349,6 @@
 
 ;;
 .define ENEMY_PEAHAT $3e
-
-;;
-; Smaller enemies used in Giant Ghini fight
-; @subid{Value from $01-$03 or $81-$83. If bit 7 is set, the fight hasn't started yet.}
-.define ENEMY_GIANT_GHINI_CHILD $3f
 
 ;;
 ; @subid_00{Green, stationary}
@@ -405,14 +366,10 @@
 .define ENEMY_CROW $41
 
 ;;
-; Smaller enemies used in shadow hag fight
-.define ENEMY_SHADOW_HAG_BUG $42
-
-;;
 ; ENEMY_ZOL splits into ENEMY_GEL's after being attacked.
 .define ENEMY_GEL $43
 
-;;
+.define ENEMY_STUB_42 $42
 .define ENEMY_STUB_44 $44
 
 ;;
@@ -423,14 +380,6 @@
 ; @subid_03{Body part (1/2 extended)}
 ; @subid_04{Body part (1/4th extended)}
 .define ENEMY_PINCER $45
-
-;;
-.define ENEMY_STUB_46 $46
-
-;;
-; Enemies in floor-tile-changing puzzles in Ages only.
-; @palette{PALH_bf}
-.define ENEMY_COLOR_CHANGING_GEL $47
 
 ;;
 ; Darknut with a sword.
@@ -527,23 +476,6 @@
 .define ENEMY_DRAGONFLY $53
 
 ;;
-; Guard in Ambi's palace. Each guard has a preset patrol path. If bit 7 of the subid is
-; set, the guard attacks you; otherwise it kicks you out immediately.
-;
-; @subid_00-0c{Throws you out when seen}
-; @subid_80-8c{Attacks you when seen}
-.define ENEMY_AMBI_GUARD $54
-
-.define ENEMY_CANDLE $55
-
-;;
-; "Decorative" moblins that don't do anything? Subids 0-3 have various positions?
-;
-; @subid_00{Left side}
-; @subid_01{Right side}
-.define ENEMY_KING_MOBLIN_MINION $56
-
-;;
 .define ENEMY_STUB_57 $57
 
 ;;
@@ -595,13 +527,6 @@
 .define ENEMY_SEEDS_ON_TREE $5a
 
 ;;
-; Spawned during Seasons pirate ship departing cutscene when ship is burying under the sand
-.define ENEMY_SAND_PUFF $5b
-
-;;
-.define ENEMY_STUB_5c $5c
-
-;;
 ; Ice projectiles used in Twinrova battle
 .define ENEMY_TWINROVA_ICE $5d
 
@@ -610,17 +535,143 @@
 .define ENEMY_TWINROVA_BAT $5e
 
 ;;
-; Hardhat beetle that just pushes Link away. Has a purple tint.
-;
-; @palette{PALH_8d}
-.define ENEMY_HARMLESS_HARDHAT_BEETLE $5f
-
-;;
 ; Part of cutscene for Ganon revival; darkens screen, makes shadows come toward Twinrova.
 ;
 ; @subid_00{Cutscene controller}
 ; @subid_01{An individual shadow}
 .define ENEMY_GANON_REVIVAL_CUTSCENE $60
+
+.define ENEMY_STUB_65 $65
+.define ENEMY_STUB_66 $66
+.define ENEMY_STUB_67 $67
+.define ENEMY_STUB_68 $68
+.define ENEMY_STUB_69 $69
+.define ENEMY_STUB_6a $6a
+.define ENEMY_STUB_6b $6b
+.define ENEMY_STUB_6c $6c
+.define ENEMY_STUB_6d $6d
+.define ENEMY_STUB_6e $6e
+.define ENEMY_STUB_6f $6f
+
+;;
+; @subid_00{Main form}
+; @subid_01{Bat form}
+.define ENEMY_VIRE $75
+
+
+; ==============================================================================
+; Ages only
+; ==============================================================================
+
+.ifdef ROM_AGES
+
+;;
+; See also INTERAC_VERAN_CUTSCENE_FACE (triggers cutscene for this)
+.define ENEMY_VERAN_FINAL_FORM $02
+
+;;
+; Even subids appear on the left, while odd subids are on the right.
+; @subid_00-01{Fists}
+; @subid_02-03{Bomb chompers}
+; @subid_04-05{Grabbable balls}
+.define ENEMY_RAMROCK_ARMS $05
+
+;;
+.define ENEMY_VERAN_FAIRY $06
+
+;;
+; @palette{PALH_83}
+.define ENEMY_RAMROCK $07
+
+;;
+; Spider that Veran spawns when fighting possessed Ambi. Spawns in a random position within
+; the screen boundary. If used in a small room, it could spawn off-screen...
+;
+; @palette{PALH_8a}
+; @postype{none}
+.define ENEMY_VERAN_SPIDER $0f
+
+;;
+; Part of D4 boss (ENEMY_EYESOAR)
+;
+; @subid_00{Spawns above eyesoar}
+; @subid_01{Right of eyesoar}
+; @subid_02{Below eyesoar}
+; @subid_03{Left of eyesoar}
+.define ENEMY_EYESOAR_CHILD $11
+
+;;
+; Used by ENEMY_VERAN_FINAL_FORM. Flies at you, then despawns when off-screen.
+;
+; @subid_00{Moves down}
+; @subid_01{Moves down-left}
+; @subid_02{Moves up-right}
+.define ENEMY_VERAN_CHILD_BEE $1f
+
+;;
+; This object automatically deletes itself if [relatedObj1.id] != ENEMY_ANGLER_FISH.
+.define ENEMY_ANGLER_FISH_BUBBLE $26
+
+;;
+; This object allows down-transitions to work in the "donkey kong" sidescrolling area with
+; vire. In particular, it forces a transition to occur if Link falls onto the bottom
+; boundary of the screen, and is far enough to the right side of the screen.
+.define ENEMY_ENABLE_SIDESCROLL_DOWN_TRANSITION $2b
+
+;;
+; Jellyfish enemy that splits in two. The large ones always hover close to their spawn
+; position, the small ones move toward Link.
+;
+; @subid_00{Normal version}
+; @subid_01{Small version}
+.define ENEMY_BARI $3c
+
+;;
+; Smaller enemies used in Giant Ghini fight
+; @subid{Value from $01-$03 or $81-$83. If bit 7 is set, the fight hasn't started yet.}
+.define ENEMY_GIANT_GHINI_CHILD $3f
+
+;;
+; Smaller enemies used in shadow hag fight
+.define ENEMY_SHADOW_HAG_BUG $42
+
+;;
+.define ENEMY_STUB_46 $46
+
+;;
+; Enemies in floor-tile-changing puzzles in Ages only.
+; @palette{PALH_bf}
+.define ENEMY_COLOR_CHANGING_GEL $47
+
+;;
+; Guard in Ambi's palace. Each guard has a preset patrol path. If bit 7 of the subid is
+; set, the guard attacks you; otherwise it kicks you out immediately.
+;
+; @subid_00-0c{Throws you out when seen}
+; @subid_80-8c{Attacks you when seen}
+.define ENEMY_AMBI_GUARD $54
+
+;;
+.define ENEMY_CANDLE $55
+
+;;
+; "Decorative" moblins that don't do anything? Subids 0-3 have various positions?
+;
+; @subid_00{Left side}
+; @subid_01{Right side}
+.define ENEMY_KING_MOBLIN_MINION $56
+
+;;
+.define ENEMY_STUB_5b $5b
+
+;;
+.define ENEMY_STUB_5c $5c
+
+;;
+; Hardhat beetle that just pushes Link away. Has a purple tint.
+;
+; @palette{PALH_8d}
+.define ENEMY_HARMLESS_HARDHAT_BEETLE $5f
 
 ;;
 ; Fight either Nayru or Ambi possessed by Nayru.
@@ -665,36 +716,12 @@
 .define ENEMY_LINK_MIMIC $64
 
 ;;
-.define ENEMY_STUB_65 $65
-
-;;
-.define ENEMY_STUB_66 $66
-
-;;
-.define ENEMY_STUB_67 $67
-
-
-; Enemies $00-$07, and $68-$7f, count as bosses. (These ID ranges are checked in
-; enemyBossCommon.s.)
-
-.define ENEMY_STUB_68 $68
-.define ENEMY_STUB_69 $69
-.define ENEMY_STUB_6a $6a
-.define ENEMY_STUB_6b $6b
-.define ENEMY_STUB_6c $6c
-.define ENEMY_STUB_6d $6d
-.define ENEMY_STUB_6e $6e
-.define ENEMY_STUB_6f $6f
-
-
-; ================================================================================
-; Minibosses
-; ================================================================================
-
-.ifdef ROM_AGES
-
 .define ENEMY_GIANT_GHINI $70
+
+;;
 .define ENEMY_SWOOP $71
+
+;;
 .define ENEMY_SUBTERROR $72
 
 ;;
@@ -714,83 +741,12 @@
 ; @subid_01{His antenna (weak point)}
 .define ENEMY_ANGLER_FISH $76
 
-
 ;;
 ; @subid_00{Spawner (use this)}
 ; @subid_01{Main object}
 ; @subid_02{Sickle hitbox}
 ; @subid_03{"Afterimage" visible when moving}
 .define ENEMY_BLUE_STALFOS $77
-
-.else; ROM SEASONS
-
-.define ENEMY_BROTHER_GORIYAS $70
-.define ENEMY_FACADE $71
-.define ENEMY_OMUAI $72
-.define ENEMY_AGUNIMA $73
-.define ENEMY_SYGER $74
-
-;;
-; Second poe sister in D7.
-;
-; @subid_00{First encounter}
-; @subid_01{Second encounter (miniboss)}
-.define ENEMY_POE_SISTER_2 $76
-
-.define ENEMY_FRYPOLAR $77
-
-
-;;
-; First poe sister in D7.
-;
-; @subid_00{First encounter}
-; @subid_01{Second encounter (miniboss)}
-.define ENEMY_POE_SISTER_1 $7e
-
-.endif
-
-;;
-; @subid_00{Main form}
-; @subid_01{Bat form}
-.define ENEMY_VIRE $75
-
-
-; ================================================================================
-; Bosses
-; ================================================================================
-
-;;
-.define ENEMY_MERGED_TWINROVA $01
-
-;;
-; @subid_00{Red twinrova}
-; @subid_01{Blue twinrova}
-.define ENEMY_TWINROVA $03
-
-;;
-; King of Evil
-.define ENEMY_GANON $04
-
-
-.ifdef ROM_AGES
-
-;;
-; See also INTERAC_VERAN_CUTSCENE_FACE (triggers cutscene for this)
-.define ENEMY_VERAN_FINAL_FORM $02
-
-;;
-; Even subids appear on the left, while odd subids are on the right.
-; @subid_00-01{Fists}
-; @subid_02-03{Bomb chompers}
-; @subid_04-05{Grabbable balls}
-.define ENEMY_RAMROCK_ARMS $05
-
-;;
-.define ENEMY_VERAN_FAIRY $06
-
-;;
-; @palette{PALH_83}
-.define ENEMY_RAMROCK $07
 
 ;;
 ; @subid_00{Spawner (use this)}
@@ -838,13 +794,16 @@
 ;;
 .define ENEMY_KING_MOBLIN $7f
 
-; Also ramrock with ID 7.
-
 ; Can't have enemies with ID beyond $80, for various reasons.
 
 
+; ==============================================================================
+; Seasons only
+; ==============================================================================
+
 .else; ROM_SEASONS
 
+;;
 .define ENEMY_GENERAL_ONOX $02
 
 ;;
@@ -860,12 +819,31 @@
 ; @subid_08{Right arm part close to shoulder}
 .define ENEMY_DRAGON_ONOX $05
 
+;;
 .define ENEMY_GLEEOK $06
+
+;;
 .define ENEMY_KING_MOBLIN $07
+
+;;
 .define ENEMY_ROLLING_SPIKE_TRAP $0f
+
+;;
 .define ENEMY_POKEY $11
+
+.define ENEMY_STUB_1f $1f
+.define ENEMY_STUB_26 $26
+
+;;
 .define ENEMY_FLAME_TRAP $2b
 
+;;
+.define ENEMY_MAGUNESU $3c
+
+;;
+.define ENEMY_3f $3f
+
+;;
 .define ENEMY_GOHMA_GEL $46
 
 ;;
@@ -873,12 +851,54 @@
 ; @subid_81{}
 .define ENEMY_MOTHULA_CHILD $47
 
-
+;;
 .define ENEMY_BLAINO $54
+
+;;
 .define ENEMY_MINI_DIGDOGGER $55
+
+;;
 .define ENEMY_MAKU_TREE_BUBBLE $56
+
+;;
+; Spawned during Seasons pirate ship departing cutscene when ship is burying under the sand
+.define ENEMY_SAND_PUFF $5b
+
+;;
 .define ENEMY_WALL_FLAME_SHOOTER $5c
+
+;;
 .define ENEMY_BLAINOS_GLOVES $5f
+
+.define ENEMY_STUB_61 $61
+.define ENEMY_STUB_62 $62
+.define ENEMY_STUB_63 $63
+.define ENEMY_STUB_64 $64
+
+;;
+.define ENEMY_BROTHER_GORIYAS $70
+
+;;
+.define ENEMY_FACADE $71
+
+;;
+.define ENEMY_OMUAI $72
+
+;;
+.define ENEMY_AGUNIMA $73
+
+;;
+.define ENEMY_SYGER $74
+
+;;
+; Second poe sister in D7.
+;
+; @subid_00{First encounter}
+; @subid_01{Second encounter (miniboss)}
+.define ENEMY_POE_SISTER_2 $76
+
+;;
+.define ENEMY_FRYPOLAR $77
 
 ;;
 ; @subid_00{Spawner {use this})
@@ -907,6 +927,15 @@
 ; @subid_02{?}
 ; @subid_03-06{Heads}
 .define ENEMY_MANHANDLA $7d
+
+;;
+; First poe sister in D7.
+;
+; @subid_00{First encounter}
+; @subid_01{Second encounter (miniboss)}
+.define ENEMY_POE_SISTER_1 $7e
+
+;;
 .define ENEMY_MEDUSA_HEAD $7f
 
 .endif ; ROM_SEASONS

@@ -1,6 +1,6 @@
 ; ==============================================================================
 ; ENEMY_HARDHAT_BEETLE
-; ENEMY_HARMLESS_HARDHAT_BEETLE
+; ENEMY_HARMLESS_HARDHAT_BEETLE (ages only)
 ; ==============================================================================
 enemyCode4d:
 .ifdef ROM_AGES

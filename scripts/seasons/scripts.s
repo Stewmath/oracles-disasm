@@ -1798,7 +1798,7 @@ subrosianScript_signsGuy:
 
 
 ; ==============================================================================
-; INTERAC_DATING_ROSA_EVENT
+; INTERAC_ROSA
 ; ==============================================================================
 rosaScript_goOnDate:
 	initcollisions

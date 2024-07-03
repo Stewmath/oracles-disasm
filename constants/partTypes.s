@@ -1,3 +1,10 @@
+; Note: Part IDs can't be $80 or higher (would need to modify code in objectLoading.s, possibly
+; elsewhere to accomodate that)
+
+; ==============================================================================
+; Common parts (exist in ages and seasons)
+; ==============================================================================
+
 ;;
 ; Subids correspond to "constants/itemDrops.s".
 ;
@@ -39,7 +46,7 @@
 
 ;;
 ; A switch which flips a bit in wSwitchState. Mostly just for dungeons, but is also kinda-hardcoded
-; to work in the present overworld too for the switch to Nuun Highlands.
+; to work in ages' present overworld for the switch to Nuun Highlands.
 ;
 ; @subid{Bitmask for wSwitchState; xors that value when the switch is triggered.}
 .define PART_SWITCH $05
@@ -102,9 +109,9 @@
 .define PART_BRIDGE_SPAWNER $0c
 
 ;;
-; This is used by ENEMY_AMBI_GUARD to detect Link. This is an "invisible projectile"
-; which, when it hits Link, notifies the guard that Link has been seen. This object should
-; have its "relatedObj1" set to the guard it's working for.
+; This is used by ENEMY_AMBI_GUARD and subrosia hiding minigames to detect Link. This is an
+; "invisible projectile" which, when it hits Link, notifies the guard/subrosian that Link has been
+; seen. This object should have its "relatedObj1" set to the guard it's working for.
 ;
 ; @subid_00{"Controller"; spawns other subids as needed.}
 ; @subid_01{An "invisible projectile".}
@@ -115,9 +122,24 @@
 ;;
 ; Respawnable bush that drops something when cut. Used in Ages D3 and Ramrock boss.
 ;
-; TODO: make subid a dropdown in LynnaLab.
+; Subid corresponts to constants/itemDrops.s.
 ;
-; @subid{Item drop (see constants/itemDrops.s)}
+; @subid_00{Fairy}
+; @subid_01{Heart}
+; @subid_02{1 Rupee}
+; @subid_03{5 Rupees}
+; @subid_04{Bombs}
+; @subid_05{Ember}
+; @subid_06{Scent seeds}
+; @subid_07{Pegasus seeds}
+; @subid_08{Gale seeds}
+; @subid_09{Mystery seeds}
+; @subid_0a{Unused}
+; @subid_0b{Unused}
+; @subid_0c{Blue ore chunk (1)}
+; @subid_0d{Red ore chunk (10)}
+; @subid_0e{Gold ore chunk (50)}
+; @subid_0f{100 rupees (1/8 chance) or an enemy (rope or beetle, 7/8 chance)}
 .define PART_RESPAWNABLE_BUSH $0f
 
 ;;
@@ -142,7 +164,7 @@
 .define PART_OWL_STATUE $13
 
 ;;
-; Not sure if this applies to item drops outside of maple scramble?
+; Item drops from the maple scramble.
 ;
 ; Maple sets these to state 4 when being collected.
 ;
@@ -153,10 +175,6 @@
 ;;
 ; See PART_ITEM_FROM_MAPLE documentation.
 .define PART_ITEM_FROM_MAPLE_2 $15
-
-;;
-; Looks like a bubble
-.define PART_JABU_JABUS_BUBBLES $16
 
 ;;
 .define PART_GASHA_TREE $17
@@ -205,9 +223,6 @@
 .define PART_FALLING_FIRE $23
 
 ;;
-.define PART_GROTTO_CRYSTAL $24
-
-;;
 ; @subid_00{Shoots up}
 ; @subid_01{Shoots right}
 ; @subid_02{Shoots down}
@@ -215,8 +230,6 @@
 .define PART_WALL_ARROW_SHOOTER $25
 
 ;;
-.define PART_SPARKLE $26
-
 ; Lightning strikes a specified position
 .define PART_LIGHTNING $27
 
@@ -236,11 +249,77 @@
 .define PART_SPIKED_BALL $2a
 
 ;;
+; Decorative heart when Great Fairy is healing Link
+.define PART_GREAT_FAIRY_HEART $30
+
+;;
+; Also used by ENEMY_PODOBOO_TOWER, ENEMY_FIREBALL_SHOOTER, ENEMY_MAGUNESU, ENEMY_MANHANDLA
+.define PART_GOPONGA_PROJECTILE $31
+
+;;
+; relatedObj2 is ENEMY_VIRE
+; @subid_00-02{?}
+.define PART_VIRE_PROJECTILE $3a
+
+;;
+; @subid_00{Normal}
+; @subid_01{Has no special case for reducing speed when thrown onto king moblin's platform}
+.define PART_KING_MOBLIN_BOMB $3f
+
+;;
+.define PART_RED_TWINROVA_PROJECTILE $4b
+
+;;
+; Used by ENEMY_MERGED_TWINROVA
+.define PART_TWINROVA_FLAME $4c
+
+;;
+.define PART_BLUE_TWINROVA_PROJECTILE $4d
+
+;;
+.define PART_TWINROVA_SNOWBALL $4e
+
+;;
+; Used by Ganon. (Seems to be invisible, only there to provide collisions?)
+.define PART_GANON_TRIDENT $50
+
+;;
+; Used by Ganon
+.define PART_51 $51
+
+;;
+; Used by Ganon
+.define PART_52 $52
+
+;;
+; Used by "createEnergySwirl" functions
+.define PART_BLUE_ENERGY_BEAD $53
+
+
+; ==============================================================================
+; Ages only
+; ==============================================================================
+
+.ifdef ROM_AGES
+
+.define PART_STUB_0a $0a
+.define PART_STUB_0d $0d
+
+;;
+.define PART_JABU_JABUS_BUBBLES $16
+
+;;
+.define PART_GROTTO_CRYSTAL $24
+
+;;
+.define PART_SPARKLE $26
+
+;;
 ; Used by INTERAC_TIMEWARP
 .define PART_TIMEWARP_ANIMATION $2b
 
 ;;
-; Used by INTERAC_VIRE (flame used in "donkey kong" minigame?)
+; Used by INTERAC_VIRE (flame used in "donkey kong" minigame)
 ;
 ; subid determines movement pattern
 ; @subid_00{2nd screen with Zelda}
@@ -261,19 +340,11 @@
 .define PART_BABY_BALL $2f
 
 ;;
-; Decorative heart when Great Fairy is healing Link
-.define PART_GREAT_FAIRY_HEART $30
-
-;;
-; Also used by ENEMY_PODOBOO_TOWER, ENEMY_FIREBALL_SHOOTER, ENEMY_MAGUNESU, ENEMY_MANHANDLA
-.define PART_GOPONGA_PROJECTILE $31
-
-;;
 ; @palette(PALH_be}
 .define PART_SUBTERROR_DIRT $32
 
 ;;
-; Rotating things that you can shoot seeds off of (TODO: better name)
+; Rotating things that you can shoot seeds off of
 .define PART_ROTATABLE_SEED_THING $33
 
 ;;
@@ -309,10 +380,6 @@
 ; Projectile used by head thwomp?
 .define PART_HEAD_THWOMP_FIREBALL $39
 
-;;
-; relatedObj2 is ENEMY_VIRE
-; @subid_00-02{?}
-.define PART_VIRE_PROJECTILE $3a
 
 ;;
 ; Used by head thwomp (purple face); a boulder.
@@ -329,11 +396,6 @@
 ;;
 ; Part that affects PART_DETECTION_HELPER created by Ambi Guards
 .define PART_3e $3e
-
-;;
-; @subid_00{Normal}
-; @subid_01{Has no special case for reducing speed when thrown onto king moblin's platform}
-.define PART_KING_MOBLIN_BOMB $3f
 
 ;;
 ; Used with bomb drop with head thwomp.
@@ -398,37 +460,8 @@
 .define PART_SMOG_PROJECTILE $4a
 
 ;;
-.define PART_RED_TWINROVA_PROJECTILE $4b
-
-;;
-; Used by ENEMY_MERGED_TWINROVA
-.define PART_TWINROVA_FLAME $4c
-
-;;
-.define PART_BLUE_TWINROVA_PROJECTILE $4d
-
-;;
-.define PART_TWINROVA_SNOWBALL $4e
-
-;;
 ; Used by Ramrock (seed form)
 .define PART_RAMROCK_SEED_FORM_ORB $4f
-
-;;
-; Used by Ganon. (Seems to be invisible, only there to provide collisions?)
-.define PART_GANON_TRIDENT $50
-
-;;
-; Used by Ganon
-.define PART_51 $51
-
-;;
-; Used by Ganon
-.define PART_52 $52
-
-;;
-; Used by "createEnergySwirl" functions
-.define PART_BLUE_ENERGY_BEAD $53
 
 ;;
 .define PART_ROOM_OF_RITES_FALLING_BOULDER $54
@@ -461,14 +494,11 @@
 .define PART_TRIFORCE_STONE $5a
 
 
-; Can't have IDs higher than $80 (would need to modify code in objectLoading.s, possibly more)
+; ==============================================================================
+; Seasons only
+; ==============================================================================
 
-
-; TODO: Separate ages/seasons stuff properly.
-
-
-.ifdef ROM_SEASONS
-
+.else ;ROM_SEASONS
 
 ;;
 ; @subid_00{D3 hallway to miniboss room}
@@ -482,6 +512,7 @@
 ; @subid_80{Hit by any slingshot}
 .define PART_SLINGSHOT_EYE_STATUE $0d
 
+;;
 ; Part of object data, spawned by interaction $95, in Moblin's rest house
 .define PART_S_16 $16
 
@@ -511,11 +542,7 @@
 .define PART_2e $2e
 
 ;;
-; TODO: Is this the same as PART_GOPONGA_PROJECTILE?
-;
-; @subid_80{Normal}
-; @subid_81{Low health}
-.define PART_MOTHULA_PROJECTILE_1 $31
+.define PART_2f $2f
 
 ;;
 ; Bubble that can be popped, used primarily (only?) by the girl blowing bubbles in Sunken City
@@ -524,6 +551,11 @@
 ;;
 ; created by dragon onox
 .define PART_33 $33
+
+.define PART_STUB_34 $34
+.define PART_STUB_35 $35
+.define PART_STUB_36 $36
+.define PART_STUB_37 $37
 
 ;;
 ; created by goriya brothers
@@ -534,7 +566,7 @@
 .define PART_39 $39
 
 ;;
-.define PART_3a $3a
+.define PART_3b $3b
 
 ;;
 ; created by Poe sister 2
@@ -543,6 +575,9 @@
 ;;
 ; created by frypolar
 .define PART_3d $3d
+
+;;
+.define PART_3e $3e
 
 ;;
 .define PART_AQUAMENTUS_PROJECTILE $40
@@ -583,8 +618,8 @@
 ; created by dragon onox
 .define PART_4a $4a
 
+;;
 ; located in Onox's room
 .define PART_DIN_CRYSTAL $4f
 
-
-.endif
+.endif ; ROM_SEASONS

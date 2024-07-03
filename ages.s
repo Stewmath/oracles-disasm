@@ -424,7 +424,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 	.include "object_code/ages/interactionCode/circularSidescrollPlatform.s"
 	.include "object_code/ages/interactionCode/touchingBook.s"
 	.include "object_code/ages/interactionCode/makuSeed.s"
-	.include "object_code/ages/interactionCode/endgameCutsceneBipsomFamily.s"
+	.include "object_code/common/interactionCode/endgameCutsceneBipsomFamily.s"
 	.include "object_code/ages/interactionCode/a8.s"
 	.include "object_code/common/interactionCode/twinrovaFlame.s"
 	.include "object_code/ages/interactionCode/din.s"

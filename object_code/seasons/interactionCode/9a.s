@@ -1,5 +1,5 @@
 ; ==============================================================================
-; same room as moblin rest house - event when moblin house explodes?
+; INTERAC_9a
 ; ==============================================================================
 interactionCode9a:
 	ld e,$44
@@ -41,7 +41,7 @@ interactionCode9a:
 	ld de,@table_59e4
 	call @func_59ba
 	pop de
-	; INTERAC_9a
+
 	ld e,$42
 	ld a,$03
 	ld (de),a
