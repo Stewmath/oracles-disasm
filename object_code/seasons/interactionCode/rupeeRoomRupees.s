@@ -1,7 +1,3 @@
-.ifdef ROM_SEASONS
-
-; This is the only interaction in this file that is completely game-exclusive
-
 ; ==============================================================================
 ; INTERACID_RUPEE_ROOM_RUPEES
 ; ==============================================================================
@@ -97,5 +93,3 @@ interactionCode1d:
 	.db RUPEEVAL_005 RUPEEVAL_005 RUPEEVAL_005 RUPEEVAL_001
 	.db RUPEEVAL_001 RUPEEVAL_020 RUPEEVAL_001 RUPEEVAL_001
 	.db RUPEEVAL_001 RUPEEVAL_001 RUPEEVAL_001 RUPEEVAL_001
-
-.endif ; ROM_SEASONS

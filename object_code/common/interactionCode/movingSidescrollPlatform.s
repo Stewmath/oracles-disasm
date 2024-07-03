@@ -1,14 +1,12 @@
 ; ==============================================================================
-; INTERACID_MOVING_SIDESCROLL_CONVEYOR
+; INTERACID_MOVING_SIDESCROLL_PLATFORM
 ; ==============================================================================
-interactionCodea2:
-	call interactionAnimate
+interactionCodea1:
 	call sidescrollPlatform_checkLinkOnPlatform
-	call nz,sidescrollPlatform_updateLinkKnockbackForConveyor
-	call @updateState
+	call @updateSubid
 	jp sidescrollingPlatformCommon
 
-@updateState:
+@updateSubid:
 	ld e,Interaction.state
 	ld a,(de)
 	sub $08
@@ -22,21 +20,33 @@ interactionCodea2:
 
 @state0To7:
 .ifdef ROM_AGES
-	ld hl,bank0e.movingSidescrollConveyorScriptTable
+	ld hl,bank0e.movingSidescrollPlatformScriptTable
 .else
-	ld hl,movingSidescrollConveyorScriptTable
+	ld hl,bank0d.movingSidescrollPlatformScriptTable
 .endif
 	call objectLoadMovementScript
 	call interactionInitGraphics
-	ld h,d
-	ld l,Interaction.collisionRadiusY
-	ld (hl),$08
-	inc l
-	ld (hl),$0c
+	ld e,Interaction.direction
+	ld a,(de)
+	ld hl,@collisionRadii
+	rst_addDoubleIndex
+	ld e,Interaction.collisionRadiusY
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	ld a,(hl)
+	ld (de),a
 	ld e,Interaction.direction
 	ld a,(de)
 	call interactionSetAnimation
 	jp objectSetVisible82
+
+@collisionRadii:
+	.db $09 $0f
+	.db $09 $17
+	.db $19 $07
+	.db $19 $0f
+	.db $09 $07
 
 @state8:
 	ld e,Interaction.var32
@@ -44,7 +54,9 @@ interactionCodea2:
 	ld h,d
 	ld l,Interaction.yh
 	cp (hl)
-	jr c,@applySpeed
+	jr nc,+
+	jp objectApplySpeed
++
 	ld a,(de)
 	ld (hl),a
 	jp sidescrollPlatformFunc_5bfc
@@ -55,7 +67,15 @@ interactionCodea2:
 	ld h,d
 	ld l,Interaction.var33
 	cp (hl)
-	jr c,@applySpeed
+	jr nc,++
+	ld l,Interaction.speed
+	ld b,(hl)
+	ld c,ANGLE_RIGHT
+	ld a,(wLinkRidingObject)
+	cp d
+	call z,updateLinkPositionGivenVelocity
+	jp objectApplySpeed
+++
 	ld a,(hl)
 	ld (de),a
 	jp sidescrollPlatformFunc_5bfc
@@ -73,7 +93,7 @@ interactionCodea2:
 	ld a,(wLinkRidingObject)
 	cp d
 	call z,updateLinkPositionGivenVelocity
-	jr @applySpeed
+	jp objectApplySpeed
 ++
 	ld a,(hl)
 	ld (de),a
@@ -85,38 +105,21 @@ interactionCodea2:
 	ld h,d
 	ld l,Interaction.xh
 	cp (hl)
-	jr c,@applySpeed
+	jr nc,++
+	ld l,Interaction.speed
+	ld b,(hl)
+	ld c,ANGLE_LEFT
+	ld a,(wLinkRidingObject)
+	cp d
+	call z,updateLinkPositionGivenVelocity
+	jp objectApplySpeed
+++
 	ld a,(de)
 	ld (hl),a
 	jp sidescrollPlatformFunc_5bfc
 
-@applySpeed:
-	call objectApplySpeed
-	ld a,(wLinkRidingObject)
-	cp d
+
+movingPlatform_stateC:
+	call interactionDecCounter1
 	ret nz
-
-	ld e,Interaction.angle
-	ld a,(de)
-	rrca
-	rrca
-	ld b,a
-	ld e,Interaction.direction
-	ld a,(de)
-	add b
-	ld hl,@directions
-	rst_addDoubleIndex
-	ldi a,(hl)
-	ld c,a
-	ld b,(hl)
-	jp updateLinkPositionGivenVelocity
-
-@directions:
-	.db ANGLE_RIGHT, SPEED_080
-	.db ANGLE_LEFT,  SPEED_080
-	.db ANGLE_RIGHT, SPEED_100
-	.db ANGLE_LEFT,  SPEED_060
-	.db ANGLE_RIGHT, SPEED_080
-	.db ANGLE_LEFT,  SPEED_080
-	.db ANGLE_RIGHT, SPEED_060
-	.db ANGLE_LEFT,  SPEED_100
+	jp sidescrollPlatformFunc_5bfc

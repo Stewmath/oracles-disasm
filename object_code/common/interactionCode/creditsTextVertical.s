@@ -47,8 +47,14 @@ interactionCodeaf:
 	inc a
 	ret nz
 
+.ifdef ROM_AGES
 	ld hl,wTmpcfc0.genericCutscene.cfdf
 	ld (hl),$ff
+.else
+	ld hl,wTmpcfc0.genericCutscene.cfde
+	ld (hl),$01
+.endif
+
 	jp interactionDelete
 
 @spawnChild:
@@ -95,6 +101,8 @@ interactionCodeaf:
 	jp interactionFunc_3e6d
 
 @data_66bc:
+.ifdef ROM_AGES
+
 .ifdef REGION_JP
 	.dw $0020
 	.dw $00e0
@@ -109,7 +117,7 @@ interactionCodeaf:
 	.dw $0130
 	.dw $0180
 	.db $ff
-.else
+.else ; REGION_US
 	.dw $0020
 	.dw $00e0
 	.dw $0120
@@ -124,6 +132,26 @@ interactionCodeaf:
 	.dw $0140
 	.dw $0140
 	.dw $0160
+	.dw $0110
+	.dw $0160
+	.dw $01a0
+	.db $ff
+.endif
+
+.else ;ROM_SEASONS
+	.dw $0020
+	.dw $00e0
+	.dw $0120
+	.dw $0110
+	.dw $00f0
+	.dw $0160
+	.dw $00f0
+	.dw $0120
+	.dw $0170
+	.dw $0170
+	.dw $0160
+	.dw $0140
+	.dw $0150
 	.dw $0110
 	.dw $0160
 	.dw $01a0

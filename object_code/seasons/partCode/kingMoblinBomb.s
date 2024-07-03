@@ -73,11 +73,7 @@ kingMoblinBomb_state2:
 	ld (de),a ; [substate] = 1
 	xor a
 	ld (wLinkGrabState2),a
-.ifdef ROM_AGES
-	call objectSetVisiblec1
-.else
 	jp objectSetVisiblec1
-.endif
 
 @beingHeld:
 	call common_kingMoblinBomb_state1
@@ -284,10 +280,8 @@ kingMoblinBomb_explode:
 	ld l,Part.state
 	ld (hl),$05
 
-.ifdef ROM_SEASONS
 	ld l,Part.collisionType
 	res 7,(hl)
-.endif
 
 	ld l,Part.oamFlagsBackup
 	ld a,$0a

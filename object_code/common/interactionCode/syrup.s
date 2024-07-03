@@ -2,16 +2,16 @@
 ; INTERACID_SYRUP
 ;
 ; Variables:
-;   var38: Item being bought
-;   var39: Set to 0 if Link has enough rupees (instead of wShopHaveEnoughRupees)
-;   var3a: Set to 1 if Link can't purchase an item (because he has too many of it)
-;   var3b: "Return value" from purchase script (if $ff, the purchase failed)
-;   var3c: Object index of item that Link is holding
+;   var37: Item being bought
+;   var38: Set to 1 if Link can't purchase an item (because he has too many of it)
+;   var3a: "Return value" from purchase script (if $ff, the purchase failed)
+;   var3b: Object index of item that Link is holding
 ; ==============================================================================
-interactionCode43:
 .ifdef ROM_AGES
+interactionCode5f:
 	callab commonInteractions2.checkReloadShopItemTiles
 .else
+interactionCode43:
 	call commonInteractions2.checkReloadShopItemTiles
 .endif
 	call @runState
