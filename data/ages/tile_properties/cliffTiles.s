@@ -4,7 +4,7 @@
 ;   b0: Tile index ($00 for end of list)
 ;   b1: Angle value from which the tile can be jumped off of.
 ;
-; See also "itemPassibleTiles.s" which allows projectiles to pass through cliffs.
+; See also "itemPassableTiles.s" which allows projectiles to pass through cliffs.
 
 cliffTilesTable:
 	.dw @overworld

@@ -4,6 +4,9 @@
 ; NOTE: In Ages these tables are indexed with wActiveCollisions, but in Seasons, they're indexed
 ; with wActiveGroup.
 ;
+; For room-specific tile substitutions, see data/{game}/singleTileChanges.s, or
+; code/{game}/roomSpecificTileChanges.s.
+;
 ; Data format:
 ;   b0: New tile index to use ($00 for end of list)
 ;   b1: Tile index to replace with value "b0" when corresponding room flag bit is set
