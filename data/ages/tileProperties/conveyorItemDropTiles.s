@@ -1,3 +1,5 @@
+; Lists tiles that behave as conveyors when item drops (PARTID_ITEM_DROP) are on them.
+
 itemDropConveyorTilesTable:
 	.dw @overworld
 	.dw @indoors
