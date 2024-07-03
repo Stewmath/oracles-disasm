@@ -725,7 +725,7 @@ m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
 	.include "object_code/common/partCode/52.s"
 	.include "object_code/common/partCode/blueEnergyBead.s"
 
-	.include "object_code/common/partCode.s"
+	.include "code/updateParts.s"
 	.include "data/partCodeTable.s"
 
 	.include "object_code/ages/partCode/jabuJabusBubbles.s"

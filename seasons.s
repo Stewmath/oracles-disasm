@@ -636,7 +636,7 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 	.include "code/roomInitialization.s"
 
  m_section_free Part_Code_2 NAMESPACE partCode
-	.include "object_code/common/partCode.s" ; Note: closes and opens a new section (seasons only)
+	.include "code/updateParts.s"
 	.include "data/partCodeTable.s"
 
 	.include "object_code/seasons/partCode/holesFloortrap.s"
