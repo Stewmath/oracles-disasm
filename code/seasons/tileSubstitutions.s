@@ -95,5 +95,5 @@ applyStandardTileSubstitutions:
 	jr replaceTiles
 
 
-.include {"{GAME_DATA_DIR}/tileProperties/standardTileSubstitutions.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/standardTileSubstitutions.s"}
 .include "code/commonTileSubstitutions.s"

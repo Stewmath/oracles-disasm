@@ -671,7 +671,7 @@ itemDrop_magnetGlovePullSpeed:
 	.db SPEED_100 SPEED_0c0 SPEED_080 SPEED_040
 .endif
 
-.include {"{GAME_DATA_DIR}/tileProperties/conveyorItemDropTiles.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/conveyorItemDropTiles.s"}
 
 
 ; ==============================================================================

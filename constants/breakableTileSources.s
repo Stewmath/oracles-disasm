@@ -1,7 +1,7 @@
 ; List of sources from which a tile can be broken.
 ;
 ; Each value corresponds to a bit for the first 3 parameters in the m_BreakableTileModes macro in
-; data/{game}/tileProperties/breakableTiles.s
+; data/{game}/tile_properties/breakableTiles.s
 
 .ENUM 0
 	BREAKABLETILESOURCE_BRACELET:		db ; 0x00: power bracelet (both levels)

@@ -174,7 +174,7 @@ ecom_checkHazardsCommon:
 	jr c,ecom_fallingInHole
 	jr ecom_makeLavaSplashAndDelete
 
-.include {"{GAME_DATA_DIR}/tileProperties/conveyorEnemyTiles.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/conveyorEnemyTiles.s"}
 
 
 ecom_makeSplashAndDelete:

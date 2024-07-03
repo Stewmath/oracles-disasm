@@ -932,7 +932,7 @@ interactionCode14:
 	ld (de),a
 	ret
 
-.include {"{GAME_DATA_DIR}/tileProperties/pushableTiles.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/pushableTiles.s"}
 
 
 ; ==============================================================================
@@ -1115,7 +1115,7 @@ interactionCode17:
 	jp interactionDelete
 
 
-.include {"{GAME_DATA_DIR}/tileProperties/keydoorTiles.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/keydoorTiles.s"}
 
 
 ; ==============================================================================

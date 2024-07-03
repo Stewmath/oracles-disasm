@@ -884,4 +884,4 @@ checkTileAfterNext:
 	.db $00 $eb
 
 
-.include {"{GAME_DATA_DIR}/tileProperties/interactableTiles.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/interactableTiles.s"}

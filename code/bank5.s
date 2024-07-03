@@ -2329,7 +2329,7 @@ warpTransition_setLinkFacingDir:
 	ld (de),a
 	ret
 
-.include {"{GAME_DATA_DIR}/tileProperties/facingDirAfterWarp.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/facingDirAfterWarp.s"}
 
 ;;
 ; TRANSITION_SRC_FADEOUT
@@ -7828,7 +7828,7 @@ linkState12:
 	.db $08 $00 ; DIR_DOWN
 	.db $00 $f8 ; DIR_LEFT
 
-.include {"{GAME_DATA_DIR}/tileProperties/landableTilesFromCliffs.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/landableTilesFromCliffs.s"}
 
 
 ;;

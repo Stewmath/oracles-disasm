@@ -537,7 +537,7 @@ checkPositionValidForEnemySpawn:
 	ret
 
 
-.include {"{GAME_DATA_DIR}/tileProperties/enemyUnspawnableTiles.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/enemyUnspawnableTiles.s"}
 
 
 ;;
@@ -730,7 +730,7 @@ createSeaEffectsPartIfApplicable:
 	ld (hl),PARTID_SEA_EFFECTS
 	ret
 
-.include {"{GAME_DATA_DIR}/tileProperties/seaEffectTiles1.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/seaEffectTiles1.s"}
 
 ;;
 func_02_7a3a:

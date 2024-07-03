@@ -2,7 +2,7 @@
 ; tile of a particular type.
 ;
 ; Among other things, this determines which blocks are pushable. See also
-; data/{game}/tileProperties/pushableTiles.s for more properties of pushable tiles.
+; data/{game}/tile_properties/pushableTiles.s for more properties of pushable tiles.
 ;
 ; Data format:
 ;

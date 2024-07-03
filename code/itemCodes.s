@@ -916,7 +916,7 @@ data_5114:
 	.db $10 $18 $00 $08 $0c $14 $1c $04
 	.db $08 $10 $18 $00 $04 $0c $14 $1c
 
-.include {"{GAME_DATA_DIR}/tileProperties/seedsDontBounce.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/seedsDontBounce.s"}
 
 .else ;ROM_SEASONS
 ;;
@@ -5409,7 +5409,7 @@ tryBreakTileWithSword:
 	.db $00 $00 ; Center
 
 
-.include {"{GAME_DATA_DIR}/tileProperties/clinkSounds.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/clinkSounds.s"}
 
 
 ;;
