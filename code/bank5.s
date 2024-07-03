@@ -208,7 +208,7 @@ func_410d:
 	ld a,d
 	ldh (<hActiveObject),a
 	ld a,(de)
-	sub SPECIALOBJECTID_MINECART
+	sub SPECIALOBJECT_MINECART
 	rst_jumpTable
 
 	.dw @ridingMinecart
@@ -984,7 +984,7 @@ checkCollisionForCompanion:
 
 	ld e,SpecialObject.id
 	ld a,(de)
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	jr nz,@notRicky
 
 	; This condition appears to have no effect either way?
@@ -1003,7 +1003,7 @@ checkCollisionForCompanion:
 	jr @checkCollision
 
 @notRicky:
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr nz,@checkCollision
 	ld a,(hl)
 	cp SPECIALCOLLISION_fe
@@ -1301,7 +1301,7 @@ companionGotoHazardHandlingState:
 
 	ld l,SpecialObject.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr z,@ret
 	ld (wDisableScreenTransitions),a
 	ld a,SND_SPLASH
@@ -1324,9 +1324,9 @@ companionDismountAndSavePosition:
 	cp (hl)
 	jr z,@normalDismount
 
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	jr z,@ricky
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr z,@dimitri
 .ifdef ROM_AGES
 @moosh:
@@ -1365,7 +1365,7 @@ companionDismountAndSavePosition:
 ; Called when dismounting an animal companion
 ;
 companionDismount:
-	lda SPECIALOBJECTID_LINK
+	lda SPECIALOBJECT_LINK
 	call setLinkID
 	ld hl,w1Link.oamFlagsBackup
 	ldi a,(hl)
@@ -1713,7 +1713,7 @@ companionFinalizeMounting:
 	ld a,d
 	ld (wLinkObjectIndex),a
 	call setCameraFocusedObjectToLink
-	ld a,SPECIALOBJECTID_LINK_RIDING_ANIMAL
+	ld a,SPECIALOBJECT_LINK_RIDING_ANIMAL
 	jp setLinkID
 
 ;;
@@ -1751,7 +1751,7 @@ companionFunc_47d8:
 	ld a,h
 	ld (wLinkObjectIndex),a
 	call setCameraFocusedObjectToLink
-	lda SPECIALOBJECTID_LINK
+	lda SPECIALOBJECT_LINK
 	call setLinkID
 	or d
 	ret
@@ -2917,7 +2917,7 @@ warpTransitionB:
 .else
 	xor a
 	ld (wDisabledObjects),a
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	ld a,SPECIALOBJECT_LINK_CUTSCENE
 	call setLinkIDOverride
 	ld l,SpecialObject.subid
 	ld (hl),$02
@@ -2969,7 +2969,7 @@ warpTransition6:
 @createDestinationTimewarpAnimation:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TIMEWARP
+	ld (hl),INTERAC_TIMEWARP
 	inc l
 	inc (hl)
 
@@ -3119,7 +3119,7 @@ warpTransition6:
 	call getFreeInteractionSlot
 	jr nz,++
 
-	ld (hl),INTERACID_TIMEPORTAL
+	ld (hl),INTERAC_TIMEPORTAL
 	ld l,Interaction.yh
 	call setShortPosition_paramC
 ++
@@ -4233,7 +4233,7 @@ linkState0d:
 
 
 ; Link is released without anything special.
-; ENEMYID_LIKE_LIKE sends Link to this state directly upon release.
+; ENEMY_LIKE_LIKE sends Link to this state directly upon release.
 @substate4:
 	ld h,d
 	ld l,SpecialObject.invincibilityCounter
@@ -4878,10 +4878,10 @@ linkState10:
 	call decPegasusSeedCounter
 
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	jr z,++
 .ifdef ROM_AGES
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jr z,++
 .endif
 
@@ -5013,7 +5013,7 @@ linkState10:
 	; directions while swinging his sword / using other items.
 
 	ld a,(w1Companion.id)
-	or SPECIALOBJECTID_RAFT
+	or SPECIALOBJECT_RAFT
 	jr z,@updateDirectionIfNotUsingItem
 	jr @updateDirection
 +
@@ -5721,7 +5721,7 @@ linkUpdateSwimming_sidescroll:
 	add 50
 	ld (hl),a
 
-	ld b,INTERACID_BUBBLE
+	ld b,INTERAC_BUBBLE
 	call objectCreateInteractionWithSubid00
 +
 	jp specialObjectAnimate
@@ -6529,7 +6529,7 @@ animateLinkWalking:
 	ld hl,w1ReservedItemF
 	ld a,$03
 	ldi (hl),a
-	ld (hl),ITEMID_DUST
+	ld (hl),ITEM_DUST
 	inc l
 	inc (hl)
 
@@ -7865,7 +7865,7 @@ specialObjectCode_transformedLink:
 
 	ld l,SpecialObject.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_LINK_AS_BABY
+	cp SPECIALOBJECT_LINK_AS_BABY
 	ret nz
 
 	ld l,SpecialObject.counter1
@@ -7882,23 +7882,23 @@ specialObjectCode_transformedLink:
 	call playSound
 
 @disableTransformation:
-	lda SPECIALOBJECTID_LINK
+	lda SPECIALOBJECT_LINK
 	call setLinkIDOverride
 	ld a,$01
 	ld (wDisableRingTransformations),a
 
 	ld e,SpecialObject.id
 	ld a,(de)
-	cp SPECIALOBJECTID_LINK_AS_BABY
+	cp SPECIALOBJECT_LINK_AS_BABY
 	ret nz
 
 @createGreenPoof:
-	ld b,INTERACID_GREENPOOF
+	ld b,INTERAC_GREENPOOF
 	jp objectCreateInteractionWithSubid00
 
 @resetIDToNormal:
 	; If a specific state is requested, go back to normal Link code and run it.
-	lda SPECIALOBJECTID_LINK
+	lda SPECIALOBJECT_LINK
 	call setLinkID
 	ld a,$01
 	ld (wDisableRingTransformations),a
@@ -7935,7 +7935,7 @@ specialObjectCode_transformedLink:
 	ld h,d
 	ld l,SpecialObject.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_LINK_AS_BABY
+	cp SPECIALOBJECT_LINK_AS_BABY
 	jr nz,+
 	ld l,SpecialObject.counter1
 	call decHlRef16WithCap
@@ -7962,7 +7962,7 @@ specialObjectCode_transformedLink:
 	ld h,d
 	ld l,SpecialObject.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_LINK_AS_BABY
+	cp SPECIALOBJECT_LINK_AS_BABY
 	jr nz,+
 	ld l,SpecialObject.speed
 	srl (hl)
@@ -7998,7 +7998,7 @@ specialObjectCode_transformedLink:
 
 	ld l,SpecialObject.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_LINK_AS_BABY
+	cp SPECIALOBJECT_LINK_AS_BABY
 	jr nz,++
 	ld l,SpecialObject.animParameter
 	bit 7,(hl)
@@ -8025,7 +8025,7 @@ specialObjectCode_transformedLink:
 	jr nc,++
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_FALLDOWNHOLE
+	ld (hl),INTERAC_FALLDOWNHOLE
 	inc l
 	inc (hl)
 	ld bc,$0500
@@ -8073,9 +8073,9 @@ specialObjectCode_linkRidingAnimal:
 	jp objectSetVisiblec1
 
 	; Unused code? (Revert back to ordinary Link code)
-	lda SPECIALOBJECTID_LINK
+	lda SPECIALOBJECT_LINK
 	call setLinkIDOverride
-	ld b,INTERACID_GREENPOOF
+	ld b,INTERAC_GREENPOOF
 	jp objectCreateInteractionWithSubid00
 
 @state1:
@@ -9459,9 +9459,9 @@ mapleSpawnItemDrops:
 	jr nz,@noTradeItem
 
 .ifdef ROM_AGES
-	ld b,INTERACID_TOUCHING_BOOK
+	ld b,INTERAC_TOUCHING_BOOK
 .else
-	ld b,INTERACID_GHASTLY_DOLL
+	ld b,INTERAC_GHASTLY_DOLL
 .endif
 	call objectCreateInteractionWithSubid00
 	ret nz
@@ -9664,7 +9664,7 @@ mapleSpawnItemDrop:
 	call getFreePartSlot
 	scf
 	ret nz
-	ld (hl),PARTID_ITEM_FROM_MAPLE
+	ld (hl),PART_ITEM_FROM_MAPLE
 	ld e,SpecialObject.yh
 	call objectCopyPosition_rawAddress
 	ldh a,(<hFF8B)
@@ -9681,7 +9681,7 @@ mapleSpawnItemDrop_variant:
 	call getFreePartSlot
 	scf
 	ret nz
-	ld (hl),PARTID_ITEM_FROM_MAPLE_2
+	ld (hl),PART_ITEM_FROM_MAPLE_2
 	ld l,Part.subid
 	ldh a,(<hFF8B)
 	ldi (hl),a
@@ -9711,7 +9711,7 @@ mapleDecideItemToCollect:
 	jr z,@nextPart1
 
 	ldi a,(hl)
-	cp PARTID_ITEM_FROM_MAPLE_2
+	cp PART_ITEM_FROM_MAPLE_2
 	jr nz,@nextPart1
 
 	ldd a,(hl)
@@ -9755,7 +9755,7 @@ mapleDecideItemToCollect:
 	jr z,@nextPart2
 
 	ldi a,(hl)
-	cp PARTID_ITEM_FROM_MAPLE
+	cp PART_ITEM_FROM_MAPLE
 	jr nz,@nextPart2
 
 	ldd a,(hl)
@@ -9855,7 +9855,7 @@ mapleFindUnexplodedBomb:
 	ld (de),a
 	inc e
 	ld (de),a
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID
 	ret nz
 	jr ++
@@ -9865,7 +9865,7 @@ mapleFindUnexplodedBomb:
 ; found was unsuitable (in the process of exploding).
 ;
 mapleFindNextUnexplodedBomb:
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID_startingAfterH
 	ret nz
 ++
@@ -10843,7 +10843,7 @@ rickyState8:
 	cp $1e
 	jr nz,@notCharged
 
-	ldbc ITEMID_RICKY_TORNADO, $00
+	ldbc ITEM_RICKY_TORNADO, $00
 	call companionCreateItem
 
 	ld a,SNDCTRL_STOPSFX
@@ -10859,7 +10859,7 @@ rickyState8:
 
 ;;
 rickyStartPunch:
-	ldbc ITEMID_28, $00
+	ldbc ITEM_28, $00
 	call companionCreateWeaponItem
 	ret nz
 	ld h,d
@@ -12169,7 +12169,7 @@ dimitriGotoEatingState:
 	ld (hl),SPEED_c0
 	ld c,$08
 	call companionSetAnimation
-	ldbc ITEMID_DIMITRI_MOUTH, $00
+	ldbc ITEM_DIMITRI_MOUTH, $00
 	call companionCreateWeaponItem
 
 	ld a,SND_DIMITRI
@@ -12368,7 +12368,7 @@ dimitriStateC:
 	jp dimitriState0
 
 ;;
-; State D: ? (set to this by INTERACID_CARPENTER subid $ff?)
+; State D: ? (set to this by INTERAC_CARPENTER subid $ff?)
 dimitriStateD:
 	ld e,SpecialObject.var3c
 	ld a,(de)
@@ -12710,7 +12710,7 @@ mooshState0:
 	jr nz,@setAnimation
 .else
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_MOOSH
+	cp SPECIALOBJECT_MOOSH
 	jr nz,@gotoCutsceneStateA
 
 	ld a,$20
@@ -12950,7 +12950,7 @@ mooshState8Substate1:
 	ld l,SpecialObject.substate
 	ld (hl),$05
 
-	ld b,INTERACID_EXCLAMATION_MARK
+	ld b,INTERAC_EXCLAMATION_MARK
 	call objectCreateInteractionWithSubid00
 
 	; Subtract new interaction's zh by $20 (should be above moosh)
@@ -13146,7 +13146,7 @@ mooshState8Substate3:
 	ld hl,wCompanionTutorialTextShown
 	call setFlag
 
-	ldbc ITEMID_28, $00
+	ldbc ITEM_28, $00
 	jp companionCreateWeaponItem
 
 ;;
@@ -13445,7 +13445,7 @@ mooshStateASubstate0:
 	ld (de),a
 
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_MOOSH
+	cp SPECIALOBJECT_MOOSH
 	jr nz,+
 	ld a,(wMooshState)
 	and $20

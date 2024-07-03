@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_BROTHER_GORIYAS
+; ENEMY_BROTHER_GORIYAS
 ; ==============================================================================
 enemyCode70:
 	jr z,@normalStatus
@@ -31,7 +31,7 @@ enemyCode70:
 	ld a,(de)
 	or a
 	jr nz,@func_45f0
-	ld b,ENEMYID_BROTHER_GORIYAS
+	ld b,ENEMY_BROTHER_GORIYAS
 	call ecom_spawnEnemyWithSubid01
 	ret nz
 	ld l,$96
@@ -229,7 +229,7 @@ enemyCode70:
 	ld (de),a
 	jr @@animate2
 +
-	ld b,PARTID_38
+	ld b,PART_38
 	call ecom_spawnProjectile
 	jr nz,@@animate2
 	ld l,$f0

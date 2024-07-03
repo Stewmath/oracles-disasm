@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ZELDA_APPROACH_TRIGGER
+; INTERAC_ZELDA_APPROACH_TRIGGER
 ; ==============================================================================
 interactionCodeda:
 	ld e,Interaction.state
@@ -54,7 +54,7 @@ interactionCodeda:
 	or a
 	jr z,++
 	ldi a,(hl)
-	cp INTERACID_TWINROVA_FLAME
+	cp INTERAC_TWINROVA_FLAME
 	jr nz,++
 	ld l,Interaction.visible
 	res 7,(hl)

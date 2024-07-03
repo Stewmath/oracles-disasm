@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TRIGGER_TRANSLATOR
+; INTERAC_TRIGGER_TRANSLATOR
 ; ==============================================================================
 interactionCode24:
 	call interactionDeleteAndRetIfEnabled02

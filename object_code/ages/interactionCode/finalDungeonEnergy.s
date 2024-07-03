@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FINAL_DUNGEON_ENERGY
+; INTERAC_FINAL_DUNGEON_ENERGY
 ; ==============================================================================
 interactionCodeb5:
 	ld e,Interaction.state

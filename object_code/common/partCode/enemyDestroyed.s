@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_ENEMY_DESTROYED
+; PART_ENEMY_DESTROYED
 ; ==============================================================================
 partCode02:
 	ld e,Part.state
@@ -28,7 +28,7 @@ partCode02:
 	xor a
 	call decideItemDrop
 	jp z,partDelete
-	ld b,PARTID_ITEM_DROP
+	ld b,PART_ITEM_DROP
 	jp objectReplaceWithID
 
 @initialize:

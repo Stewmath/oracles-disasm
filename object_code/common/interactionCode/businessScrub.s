@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BUSINESS_SCRUB
+; INTERAC_BUSINESS_SCRUB
 ;
 ; Variables:
 ;   var38: Number of rupees to spend (1-byte value, converted with "rupeeValue" methods)
@@ -30,7 +30,7 @@ interactionCodece:
 	or a
 	jr z,@noCompanion
 	ld a,(hl)
-	cp SPECIALOBJECTID_MOOSH
+	cp SPECIALOBJECT_MOOSH
 	jr z,@moosh
 @noCompanion:
 	ld a,(wEssencesObtained)
@@ -85,7 +85,7 @@ interactionCodece:
 	call objectAddToAButtonSensitiveObjectList
 
 	call getFreeInteractionSlot
-	ld a,INTERACID_BUSINESS_SCRUB
+	ld a,INTERAC_BUSINESS_SCRUB
 	ldi (hl),a
 	ld a,$80
 	ldi (hl),a

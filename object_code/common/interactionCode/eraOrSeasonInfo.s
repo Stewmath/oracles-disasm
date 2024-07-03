@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ERA_OR_SEASON_INFO
+; INTERAC_ERA_OR_SEASON_INFO
 ; ==============================================================================
 interactionCodee0:
 	ld e,Interaction.state

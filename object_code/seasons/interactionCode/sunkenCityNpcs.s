@@ -1,7 +1,7 @@
 ; ==============================================================================
-; INTERACID_FLOODED_HOUSE_GIRL
-; INTERACID_MASTER_DIVERS_WIFE
-; INTERACID_S_MASTER_DIVER
+; INTERAC_FLOODED_HOUSE_GIRL
+; INTERAC_MASTER_DIVERS_WIFE
+; INTERAC_S_MASTER_DIVER
 ; ==============================================================================
 interactionCode8a:
 interactionCode8b:
@@ -12,7 +12,7 @@ interactionCode8d:
 	ld (de),a
 	ld e,$41
 	ld a,(de)
-	cp INTERACID_S_MASTER_DIVER
+	cp INTERAC_S_MASTER_DIVER
 	jr nz,+
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained
@@ -32,7 +32,7 @@ interactionCode8d:
 	; 4th essence gotten
 	ld e,$41
 	ld a,(de)
-	cp INTERACID_MASTER_DIVERS_WIFE
+	cp INTERAC_MASTER_DIVERS_WIFE
 	jr nz,@npcShouldAppear
 	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED
 	call checkGlobalFlag
@@ -51,10 +51,10 @@ interactionCode8d:
 	ld e,$41
 	ld a,(de)
 	ld hl,@floodedHouseGirlScripts
-	cp INTERACID_FLOODED_HOUSE_GIRL
+	cp INTERAC_FLOODED_HOUSE_GIRL
 	jr z,@setScript
 	ld hl,@masterDiversWifeScripts
-	cp INTERACID_MASTER_DIVERS_WIFE
+	cp INTERAC_MASTER_DIVERS_WIFE
 	jr z,@setScript
 	ld hl,@masterDiverScripts
 @setScript:

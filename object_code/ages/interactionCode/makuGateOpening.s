@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_GATE_OPENING
+; INTERAC_MAKU_GATE_OPENING
 ; ==============================================================================
 interactionCode76:
 	ld e,Interaction.subid
@@ -179,7 +179,7 @@ interactionCode76:
 	ldh (<hFF8B),a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	ld a,(bc)
 	ld (hl),a

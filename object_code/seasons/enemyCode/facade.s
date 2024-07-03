@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_FACADE
+; ENEMY_FACADE
 ; ==============================================================================
 enemyCode71:
 	jr z,@normalStatus
@@ -238,7 +238,7 @@ enemyCode71:
 	jp objectSetInvisible
 
 @func_498c:
-	ld b,ENEMYID_BEETLE
+	ld b,ENEMY_BEETLE
 	call ecom_spawnEnemyWithSubid01
 	ret nz
 	ld l,$96
@@ -264,7 +264,7 @@ enemyCode71:
 	ret
 
 @func_49b2:
-	ld b,PARTID_2e
+	ld b,PART_2e
 	call ecom_spawnProjectile
 	ret nz
 	push hl
@@ -288,7 +288,7 @@ enemyCode71:
 	ret
 
 @func_49d9:
-	ld b,PARTID_VOLCANO_ROCK
+	ld b,PART_VOLCANO_ROCK
 	call ecom_spawnProjectile
 	ret nz
 	ld l,$c2

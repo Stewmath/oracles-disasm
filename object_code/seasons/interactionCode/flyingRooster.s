@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FLYING_ROOSTER
+; INTERAC_FLYING_ROOSTER
 ;
 ; Variables:
 ;   var30/var31: Initial position
@@ -285,7 +285,7 @@ interactionCode8c:
 
 	; Create helper object to handle screen transition when Link falls
 	call getFreeInteractionSlot
-	ld a,INTERACID_FLYING_ROOSTER
+	ld a,INTERAC_FLYING_ROOSTER
 	ldi (hl),a
 	ld (hl),$80
 	ld l,Interaction.enabled

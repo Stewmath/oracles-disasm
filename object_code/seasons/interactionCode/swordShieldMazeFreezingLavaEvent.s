@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_D8_FREEZING_LAVA_EVENT
+; INTERAC_D8_FREEZING_LAVA_EVENT
 ; ==============================================================================
 interactionCode69:
 	ld e,Interaction.subid
@@ -66,7 +66,7 @@ interactionCode69:
 	ld (de),a
 	call getFreeInteractionSlot
 	jp nz,interactionDelete
-	ld (hl),INTERACID_D8_FREEZING_LAVA_EVENT
+	ld (hl),INTERAC_D8_FREEZING_LAVA_EVENT
 	inc l
 	ld (hl),$01
 	ld e,$4b
@@ -110,7 +110,7 @@ interactionCode69:
 	call clearPaletteFadeVariablesAndRefreshPalettes
 	call getFreeInteractionSlot
 	jr nz,@@state3
-	ld (hl),INTERACID_D8_FREEZING_LAVA_EVENT
+	ld (hl),INTERAC_D8_FREEZING_LAVA_EVENT
 	inc l
 	ld (hl),$04
 	ld e,$58
@@ -174,7 +174,7 @@ interactionCode69:
 	call objectSetVisiblec0
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_D8_FREEZING_LAVA_EVENT
+	ld (hl),INTERAC_D8_FREEZING_LAVA_EVENT
 	inc l
 	ld (hl),$02
 	ld e,$59
@@ -192,7 +192,7 @@ interactionCode69:
 	ld c,$08
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	ldbc INTERACID_D8_FREEZING_LAVA_EVENT $03
+	ldbc INTERAC_D8_FREEZING_LAVA_EVENT $03
 	call objectCreateInteraction
 	jr nz,+
 	ld a,$01

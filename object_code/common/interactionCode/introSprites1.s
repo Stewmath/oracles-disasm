@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_INTRO_SPRITES_1
+; INTERAC_INTRO_SPRITES_1
 ; ==============================================================================
 interactionCode4a:
 	ld e,Interaction.state
@@ -34,7 +34,7 @@ interactionCode4a:
 	jr nz,++
 
 	; Create the "glow" behind the triforce
-	ld (hl),INTERACID_INTRO_SPRITES_1
+	ld (hl),INTERAC_INTRO_SPRITES_1
 	inc l
 	ld (hl),$04
 	inc l
@@ -79,7 +79,7 @@ interactionCode4a:
 	call getFreeInteractionSlot
 	jr nz,++
 
-	ld (hl),INTERACID_INTRO_SPRITES_1
+	ld (hl),INTERAC_INTRO_SPRITES_1
 	inc l
 	ld (hl),$0a
 	inc l

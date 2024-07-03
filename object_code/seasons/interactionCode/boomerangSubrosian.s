@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BOOMERANG_SUBROSIAN
+; INTERAC_BOOMERANG_SUBROSIAN
 ; ==============================================================================
 interactionCodec8:
 	ld e,$44
@@ -33,7 +33,7 @@ interactionCodec8:
 	dec (hl)
 	ret nz
 	call interactionIncSubstate
-	ld b,INTERACID_BOOMERANG
+	ld b,INTERAC_BOOMERANG
 	call objectCreateInteractionWithSubid00
 	jr nz,+
 	ld l,$56

@@ -1,9 +1,9 @@
 ; ==============================================================================
-; ENEMYID_RAMROCK_ARMS
+; ENEMY_RAMROCK_ARMS
 ;
 ; Variables:
 ;   subid: ?
-;   relatedObj1: ENEMYID_RAMROCK
+;   relatedObj1: ENEMY_RAMROCK
 ;   var30: ?
 ;   var32: Shields (subid 4): x-position relative to ramrock
 ;   var35: Number of times he's been hit in current phase
@@ -423,7 +423,7 @@ ramrockArm_subid2_substate2:
 	ld l,Enemy.collisionType
 	set 7,(hl)
 
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID
 	ret nz
 
@@ -465,7 +465,7 @@ ramrockArm_subid2_substate2:
 	ld (de),a
 @nextPuff:
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	push hl
 	call ramrockArm_setRelativePosition
 	pop hl

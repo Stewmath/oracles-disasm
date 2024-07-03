@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_OVERWORLD_KEY_SPRITE
+; INTERAC_OVERWORLD_KEY_SPRITE
 ; ==============================================================================
 interactionCode18:
 	ld e,Interaction.state

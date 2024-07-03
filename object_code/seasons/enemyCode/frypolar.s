@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_FRYPOLAR
+; ENEMY_FRYPOLAR
 ; ==============================================================================
 enemyCode77:
 	jr z,@normalStatus
@@ -108,7 +108,7 @@ enemyCode77:
 	ld c,(hl)
 	ld b,a
 	call getFreePartSlot
-	ld (hl),PARTID_3d
+	ld (hl),PART_3d
 	inc l
 	ld (hl),$03
 	inc l
@@ -118,7 +118,7 @@ enemyCode77:
 	ld l,$cd
 	ld (hl),c
 	call getFreePartSlot
-	ld (hl),PARTID_3e
+	ld (hl),PART_3e
 	ld l,$c3
 	inc (hl)
 	ld l,$cb
@@ -167,7 +167,7 @@ enemyCode77:
 @@substate2:
 	call ecom_decCounter1
 	ret nz
-	ldbc INTERACID_PUFF $02
+	ldbc INTERAC_PUFF $02
 	call objectCreateInteraction
 	ret nz
 	ld a,h
@@ -282,7 +282,7 @@ enemyCode77:
 	jr @@animate
 +
 	call func_62a8
-	ld b,PARTID_3e
+	ld b,PART_3e
 	call ecom_spawnProjectile
 @@animate:
 	jp enemyAnimate
@@ -445,7 +445,7 @@ func_6304:
 	add $04
 func_631a:
 	push af
-	ld b,PARTID_3d
+	ld b,PART_3d
 	call ecom_spawnProjectile
 	pop bc
 	ret nz

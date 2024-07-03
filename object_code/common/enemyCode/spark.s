@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SPARK
+; ENEMY_SPARK
 ; ==============================================================================
 enemyCode13:
 	call ecom_checkHazards
@@ -61,7 +61,7 @@ spark_state8:
 
 ; Just hit by a boomerang. (Also whisp's state 9.)
 spark_state9:
-	ldbc INTERACID_PUFF,$02
+	ldbc INTERAC_PUFF,$02
 	call objectCreateInteraction
 	ret nz
 
@@ -86,7 +86,7 @@ spark_stateA:
 
 	ld e,Enemy.id
 	ld a,(de)
-	cp ENEMYID_SPARK
-	ld b,PARTID_ITEM_DROP
+	cp ENEMY_SPARK
+	ld b,PART_ITEM_DROP
 	call z,ecom_spawnProjectile
 	jp enemyDelete

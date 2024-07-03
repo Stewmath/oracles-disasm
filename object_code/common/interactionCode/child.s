@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_CHILD
+; INTERAC_CHILD
 ;
 ; Variables:
 ;   subid: personality type (0-6)

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_PICKAXE_WORKER
+; INTERAC_PICKAXE_WORKER
 ; ==============================================================================
 interactionCode57:
 	ld e,Interaction.subid
@@ -100,7 +100,7 @@ interactionCode57:
 @nextObject:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION_WITH_DEBRIS
+	ld (hl),INTERAC_EXPLOSION_WITH_DEBRIS
 	inc l
 	ld (hl),$02
 	inc l
@@ -259,7 +259,7 @@ interactionCode57:
 @next:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FALLING_ROCK
+	ld (hl),INTERAC_FALLING_ROCK
 	inc l
 	ld (hl),$06 ; [new.subid] = $06
 	inc l

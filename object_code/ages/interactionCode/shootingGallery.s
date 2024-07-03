@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SHOOTING_GALLERY
+; INTERAC_SHOOTING_GALLERY
 ; ==============================================================================
 interactionCode30:
 	ld e,Interaction.subid
@@ -502,7 +502,7 @@ shootingGallery_createPuffAtEachTargetPosition:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld a,(bc)
 	inc bc
 	push bc
@@ -518,7 +518,7 @@ shootingGallery_createPuffAtEachTargetPosition:
 shootingGallery_createBallHere:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BALL
+	ld (hl),PART_BALL
 	jp objectCopyPosition
 
 ;;
@@ -563,7 +563,7 @@ shootingGallery_addValueToScore:
 	.dw $0051 ; $14 (strike)
 
 
-; Scripts for INTERACID_SHOOTING_GALLERY.
+; Scripts for INTERAC_SHOOTING_GALLERY.
 
 ; NPC scripts
 shootingGalleryScriptTable:

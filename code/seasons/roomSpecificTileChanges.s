@@ -812,7 +812,7 @@ tileReplacement_group0Map56:
 	xor a
 	ld (wSwitchState),a
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	ret z
 
 	call getThisRoomFlags

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_SHOOTING_DRAGON_HEAD
+; PART_SHOOTING_DRAGON_HEAD
 ; ==============================================================================
 partCode24:
 	jr z,@normalStatus
@@ -95,7 +95,7 @@ partCode24:
 func_65a6:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_SHOOTING_DRAGON_HEAD
+	ld (hl),PART_SHOOTING_DRAGON_HEAD
 	inc l
 	ld (hl),$02
 	call objectCopyPosition

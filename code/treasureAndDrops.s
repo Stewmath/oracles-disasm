@@ -737,7 +737,7 @@ loadTreasureDisplayData:
 
 .ifdef ROM_SEASONS
 +
-	cp ITEMID_SLINGSHOT
+	cp ITEM_SLINGSHOT
 	jr nz,+
 	ld a,(wSlingshotLevel)
 	cp $02
@@ -761,7 +761,7 @@ loadTreasureDisplayData:
 ; Decides what an enemy will drop.
 ;
 ; @param	c
-; @param[out]	c	Subid for PARTID_ITEM_DROP (see constants/itemDrops.s) or $ff if no item
+; @param[out]	c	Subid for PART_ITEM_DROP (see constants/itemDrops.s) or $ff if no item
 ;			should drop
 decideItemDrop_body:
 	ld a,c
@@ -770,7 +770,7 @@ decideItemDrop_body:
 	jr nz,+
 
 	; If parameter == 0, assume it's an enemy; use the enemy's ID for the drop table. (Assumes
-	; that 'd' points to an instance of PARTID_ENEMY_DESTROYED or PARTID_BOSS_DEATH_EXPLOSION,
+	; that 'd' points to an instance of PART_ENEMY_DESTROYED or PART_BOSS_DEATH_EXPLOSION,
 	; whose subid refers to the enemy that was killed? TODO: verify.)
 	ldh a,(<hActiveObjectType)
 	add Object.subid

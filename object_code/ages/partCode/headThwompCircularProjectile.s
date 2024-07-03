@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_HEAD_THWOMP_CIRCULAR_PROJECTILE
+; PART_HEAD_THWOMP_CIRCULAR_PROJECTILE
 ; ==============================================================================
 partCode3c:
 	jp nz,partDelete

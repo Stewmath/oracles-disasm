@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_PUSHBLOCK_TRIGGER
+; INTERAC_PUSHBLOCK_TRIGGER
 ; ==============================================================================
 interactionCode13:
 	call interactionDeleteAndRetIfEnabled02

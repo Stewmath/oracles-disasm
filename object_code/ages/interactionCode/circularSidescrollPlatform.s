@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_CIRCULAR_SIDESCROLL_PLATFORM
+; INTERAC_CIRCULAR_SIDESCROLL_PLATFORM
 ; ==============================================================================
 interactionCodea4:
 	call sidescrollPlatform_checkLinkOnPlatform
@@ -103,10 +103,10 @@ interactionCodea4:
 
 ;;
 ; Used by:
-; * INTERACID_MOVING_SIDESCROLL_PLATFORM
-; * INTERACID_MOVING_SIDESCROLL_CONVEYOR
-; * INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM
-; * INTERACID_CIRCULAR_SIDESCROLL_PLATFORM
+; * INTERAC_MOVING_SIDESCROLL_PLATFORM
+; * INTERAC_MOVING_SIDESCROLL_CONVEYOR
+; * INTERAC_DISAPPEARING_SIDESCROLL_PLATFORM
+; * INTERAC_CIRCULAR_SIDESCROLL_PLATFORM
 sidescrollingPlatformCommon:
 	ld a,(w1Link.state)
 	cp LINK_STATE_NORMAL

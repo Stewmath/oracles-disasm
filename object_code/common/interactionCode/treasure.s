@@ -1,7 +1,7 @@
  m_section_free Interaction_Code_Treasure NAMESPACE treasureInteraction
 
 ; ==============================================================================
-; INTERACID_TREASURE
+; INTERAC_TREASURE
 ;
 ; State $04 is used as a way to delete a treasure? (Bomb flower cutscene with goron elder
 ; sets the bomb flower to state 4 to delete it.)
@@ -211,7 +211,7 @@ interactionCode60:
 
 	ld l,Interaction.visible
 	res 7,(hl)
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	jp objectCreateInteractionWithSubid00
 
 

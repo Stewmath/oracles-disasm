@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_POLS_VOICE
+; ENEMY_POLS_VOICE
 ;
 ; Variables:
 ;   var30: gravity

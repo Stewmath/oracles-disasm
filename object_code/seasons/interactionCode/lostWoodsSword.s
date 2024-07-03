@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_LOST_WOODS_SWORD
+; INTERAC_LOST_WOODS_SWORD
 ; ==============================================================================
 interactionCode59:
 	ld e,$44
@@ -28,7 +28,7 @@ interactionCode59:
 	call interactionSetScript
 	ld a,$4d
 	call playSound
-	ldbc INTERACID_SPARKLE $04
+	ldbc INTERAC_SPARKLE $04
 	jp objectCreateInteraction
 @state1:
 	call interactionRunScript

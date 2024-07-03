@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SWOOP
+; ENEMY_SWOOP
 ;
 ; Variables:
 ;   var30: Number of frames before swoop begins to stomp
@@ -32,7 +32,7 @@ enemyCode71:
 
 
 swoop_state_uninitialized:
-	ld a,ENEMYID_SWOOP
+	ld a,ENEMY_SWOOP
 	ld b,$00
 	call enemyBoss_initializeRoom
 	call ecom_setSpeedAndState8
@@ -443,7 +443,7 @@ swoop_hitGround:
 	ld a,$48
 	call setTile
 
-	ld b,INTERACID_ROCKDEBRIS
+	ld b,INTERAC_ROCKDEBRIS
 	jp objectCreateInteractionWithSubid00
 
 

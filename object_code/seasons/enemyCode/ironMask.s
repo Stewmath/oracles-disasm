@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_IRON_MASK
+; ENEMY_IRON_MASK
 ; ==============================================================================
 enemyCode1c:
 	call ecom_checkHazards
@@ -258,7 +258,7 @@ ironMask_magnetGloveCheck:
 	ld (hl),ENEMYCOLLISION_UNMASKED_IRON_MASK
 	ld a,$04
 	call enemySetAnimation
-	ld b,ENEMYID_IRON_MASK
+	ld b,ENEMY_IRON_MASK
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 	jp objectCopyPosition

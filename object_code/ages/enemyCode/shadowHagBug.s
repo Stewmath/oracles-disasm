@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SHADOW_HAG_BUG
+; ENEMY_SHADOW_HAG_BUG
 ;
 ; Variables:
 ;   counter2: Lifetime counter

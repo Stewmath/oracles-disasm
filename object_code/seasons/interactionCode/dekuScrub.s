@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DEKU_SCRUB
+; INTERAC_DEKU_SCRUB
 ; ==============================================================================
 interactionCoded6:
 	ld e,$44
@@ -43,9 +43,9 @@ interactionCoded6:
 @setScript:
 	jp interactionSetScript
 @table_7f74:
-	.db SPECIALOBJECTID_RICKY
-	.db SPECIALOBJECTID_DIMITRI
-	.db SPECIALOBJECTID_MOOSH
+	.db SPECIALOBJECT_RICKY
+	.db SPECIALOBJECT_DIMITRI
+	.db SPECIALOBJECT_MOOSH
 @state1:
 	call interactionRunScript
 	call interactionAnimateAsNpc

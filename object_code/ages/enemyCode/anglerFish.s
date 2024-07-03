@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ANGLER_FISH
+; ENEMY_ANGLER_FISH
 ;
 ; Variables:
 ;   relatedObj1: reference to other subid (main <-> antenna)
@@ -52,7 +52,7 @@ enemyCode76:
 	ld (de),a
 	call enemySetAnimation
 
-	ld b,INTERACID_EXPLOSION
+	ld b,INTERAC_EXPLOSION
 	call objectCreateInteractionWithSubid00
 
 @normalStatus:
@@ -93,7 +93,7 @@ anglerFish_state_uninitialized:
 	jr z,@doneInit
 
 	; Subid 0 initialization; spawn subid 1, set their relatedObj1 to each other
-	ld b,ENEMYID_ANGLER_FISH
+	ld b,ENEMY_ANGLER_FISH
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 	ld e,Enemy.relatedObj1
@@ -269,7 +269,7 @@ anglerFish_main_stateC:
 	call getFreeEnemySlot_uncounted
 	jr nz,anglerFish_updatePosition
 
-	ld (hl),ENEMYID_ANGLER_FISH_BUBBLE
+	ld (hl),ENEMY_ANGLER_FISH_BUBBLE
 	ld l,Enemy.relatedObj1
 	ld a,Enemy.start
 	ldi (hl),a

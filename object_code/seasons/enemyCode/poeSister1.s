@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_POE_SISTER_1
+; ENEMY_POE_SISTER_1
 ; ==============================================================================
 enemyCode7e:
 	jr z,@normalStatus
@@ -42,7 +42,7 @@ enemyCode7e:
 @state0:
 	ld a,$7e
 	ld ($cc1c),a
-	ld b,PARTID_3b
+	ld b,PART_3b
 	call ecom_spawnProjectile
 	ret nz
 	call getRandomNumber_noPreserveVars
@@ -318,13 +318,13 @@ func_5f49:
 	ld a,(de)
 	and $07
 	ret nz
-	ld b,PARTID_POE_SISTER_FLAME
+	ld b,PART_POE_SISTER_FLAME
 	jp ecom_spawnProjectile
 
 func_5f54:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTABLE_TORCH
+	ld (hl),PART_LIGHTABLE_TORCH
 	ld e,$b3
 	ld a,(de)
 	and $f0

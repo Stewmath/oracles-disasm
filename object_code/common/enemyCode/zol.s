@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ZOL
+; ENEMY_ZOL
 ;
 ; Variables:
 ;   var30: 1 when the zol is out of the ground, 0 otherwise. (only for subid 0, and only
@@ -337,7 +337,7 @@ zol_subid01_stateB:
 ; Zol has been attacked, create puff, disable collisions, prepare to spawn two gels in the
 ; zol's place.
 zol_subid01_stateC:
-	ld b,INTERACID_KILLENEMYPUFF
+	ld b,INTERAC_KILLENEMYPUFF
 	call objectCreateInteractionWithSubid00
 
 	ld h,d
@@ -372,7 +372,7 @@ zol_subid01_stateD:
 ;;
 ; @param	c	X offset
 zol_spawnGel:
-	ld b,ENEMYID_GEL
+	ld b,ENEMY_GEL
 	call ecom_spawnEnemyWithSubid01
 	ret nz
 

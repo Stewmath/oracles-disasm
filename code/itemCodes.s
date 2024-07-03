@@ -1,9 +1,9 @@
 ;;
-; ITEMID_EMBER_SEED
-; ITEMID_SCENT_SEED
-; ITEMID_PEGASUS_SEED
-; ITEMID_GALE_SEED
-; ITEMID_MYSTERY_SEED
+; ITEM_EMBER_SEED
+; ITEM_SCENT_SEED
+; ITEM_PEGASUS_SEED
+; ITEM_GALE_SEED
+; ITEM_MYSTERY_SEED
 ;
 itemCode20:
 itemCode21:
@@ -51,7 +51,7 @@ itemCode24:
 
 	; Satchel
 	ldi a,(hl)
-	cp ITEMID_GALE_SEED
+	cp ITEM_GALE_SEED
 	jr nz,++
 
 	; Gale seed
@@ -117,7 +117,7 @@ itemCode24:
 	; If it's a mystery seed, get a random effect
 	ld e,Item.id
 	ld a,(de)
-	cp ITEMID_MYSTERY_SEED
+	cp ITEM_MYSTERY_SEED
 	ret nz
 
 	call getRandomNumber_noPreserveVars
@@ -223,7 +223,7 @@ seedItemState1:
 	call itemAnimate
 	ld e,Item.id
 	ld a,(de)
-	sub ITEMID_EMBER_SEED
+	sub ITEM_EMBER_SEED
 	rst_jumpTable
 	.dw @emberStandard
 	.dw @scentLanded
@@ -238,7 +238,7 @@ seedItemState1:
 	call itemAnimate
 	ld e,Item.id
 	ld a,(de)
-	sub ITEMID_EMBER_SEED
+	sub ITEM_EMBER_SEED
 	rst_jumpTable
 	.dw @emberStandard
 	.dw @scentOrPegasusCollided
@@ -255,7 +255,7 @@ seedItemState1:
 	ld (de),a
 	ld e,Item.id
 	ld a,(de)
-	sub ITEMID_EMBER_SEED
+	sub ITEM_EMBER_SEED
 	rst_jumpTable
 	.dw @emberStandard
 	.dw @scentOrPegasusCollided
@@ -335,7 +335,7 @@ seedItemState1:
 	; Change id to be the random type selected
 	ld l,Item.var03
 	ldd a,(hl)
-	add ITEMID_EMBER_SEED
+	add ITEM_EMBER_SEED
 	dec l
 	ld (hl),a
 
@@ -367,10 +367,10 @@ seedItemState1:
 
 ;;
 ; @param	a	Index to use for below table (plus $20, since
-;			ITEMID_EMBER_SEED=$20)
+;			ITEM_EMBER_SEED=$20)
 @loadGfxVarsWithIndex:
 	add a
-	ld hl,@data-(ITEMID_EMBER_SEED*4)
+	ld hl,@data-(ITEM_EMBER_SEED*4)
 	rst_addDoubleIndex
 
 	ld e,Item.oamFlagsBackup
@@ -424,7 +424,7 @@ seedItemDelete:
 seedItemState3:
 	ld e,Item.id
 	ld a,(de)
-	sub ITEMID_EMBER_SEED
+	sub ITEM_EMBER_SEED
 	rst_jumpTable
 	.dw emberSeedBurn
 	.dw seedUpdateAnimation
@@ -487,7 +487,7 @@ seedUpdateAnimation:
 seedItemState2:
 	ld e,Item.id
 	ld a,(de)
-	sub ITEMID_EMBER_SEED
+	sub ITEM_EMBER_SEED
 	rst_jumpTable
 	.dw emberSeedBurn
 	.dw scentSeedSmell
@@ -935,7 +935,7 @@ slingshotCheckCanPassSolidTile:
 ; This is an object which serves as a collision for enemies when Dimitri does his eating
 ; attack. Also checks for eatable tiles.
 ;
-; ITEMID_DIMITRI_MOUTH
+; ITEM_DIMITRI_MOUTH
 itemCode2b:
 	ld e,Item.state
 	ld a,(de)
@@ -994,7 +994,7 @@ itemCode2b:
 
 
 ;;
-; ITEMID_BOMBCHUS
+; ITEM_BOMBCHUS
 itemCode0d:
 	call bombchuCountdownToExplosion
 
@@ -1719,7 +1719,7 @@ bombchuCheckForEnemyTarget:
 .include {"{GAME_DATA_DIR}/bombchuTargets.s"}
 
 ;;
-; ITEMID_BOMB
+; ITEM_BOMB
 itemCode03:
 	ld e,Item.var2f
 	ld a,(de)
@@ -1999,7 +1999,7 @@ itemInitializeBombExplosion:
 	res 1,(hl)
 
 	; Check if this is a bomb, as opposed to a bombchu?
-	cp ITEMID_BOMB
+	cp ITEM_BOMB
 	ld a,$01
 	jr z,+
 	ld a,$06
@@ -2040,7 +2040,7 @@ explosionCheckAndApplyLinkCollision:
 	ret nz
 
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	ret z
 
 	ld a,BOMBPROOF_RING
@@ -2187,7 +2187,7 @@ explosionTryToBreakNextTile:
 	.db $f2 $00 $00
 
 ;;
-; ITEMID_BOOMERANG
+; ITEM_BOOMERANG
 itemCode06:
 	ld e,Item.state
 	ld a,(de)
@@ -2444,10 +2444,10 @@ itemCheckWithinRangeOfLink:
 ;;
 ; The chain on the switch hook; cycles between 3 intermediate positions
 ;
-; ITEMID_SWITCH_HOOK_CHAIN
+; ITEM_SWITCH_HOOK_CHAIN
 itemCode0bPost:
 	ld a,(w1WeaponItem.id)
-	cp ITEMID_SWITCH_HOOK
+	cp ITEM_SWITCH_HOOK
 	jp nz,itemDelete
 
 	ld a,(w1WeaponItem.var2f)
@@ -2514,7 +2514,7 @@ itemCode0bPost:
 	ret
 
 ;;
-; ITEMID_SWITCH_HOOK_CHAIN
+; ITEM_SWITCH_HOOK_CHAIN
 itemCode0b:
 	ld e,Item.state
 	ld a,(de)
@@ -2530,7 +2530,7 @@ itemCode0b:
 	jp objectSetVisible83
 
 ;;
-; ITEMID_SWITCH_HOOK
+; ITEM_SWITCH_HOOK
 itemCode0aPost:
 	call cpRelatedObject1ID
 	ret z
@@ -2542,7 +2542,7 @@ itemCode0aPost:
 	jp func_5902
 
 ;;
-; ITEMID_SWITCH_HOOK
+; ITEM_SWITCH_HOOK
 itemCode0a:
 	ld a,$08
 	ld (wDisableRingTransformations),a
@@ -2642,7 +2642,7 @@ itemCode0a:
 
 	inc a
 	ldi (hl),a
-	ld (hl),ITEMID_SWITCH_HOOK_CHAIN
+	ld (hl),ITEM_SWITCH_HOOK_CHAIN
 
 	; Remember to not create the item again
 	ld h,d
@@ -2757,7 +2757,7 @@ func_5902:
 	jp itemDelete
 
 ; State 3: grabbed something switchable
-; Uses w1ReservedItemE as ITEMID_SWITCH_HOOK_HELPER to hold the positions for link and the
+; Uses w1ReservedItemE as ITEM_SWITCH_HOOK_HELPER to hold the positions for link and the
 ; object temporarily.
 switchHookState3:
 	ld e,Item.substate
@@ -2820,7 +2820,7 @@ switchHookState3:
 
 @@objectCollision:
 	ld a,(w1ReservedInteraction1.id)
-	cp INTERACID_PUSHBLOCK
+	cp INTERAC_PUSHBLOCK
 	jr z,++
 
 	; Get the object being switched with's yx in bc
@@ -2856,7 +2856,7 @@ switchHookState3:
 	ld hl,w1ReservedItemE
 	ld a,$01
 	ldi (hl),a
-	ld (hl),ITEMID_SWITCH_HOOK_HELPER
+	ld (hl),ITEM_SWITCH_HOOK_HELPER
 
 	; Zero Item.state and Item.substate
 	ld l,Item.state
@@ -3101,7 +3101,7 @@ checkCanPlaceDiamondOnTile:
 
 
 ;;
-; ITEMID_SWITCH_HOOK_HELPER
+; ITEM_SWITCH_HOOK_HELPER
 ; Used with the switch hook in w1ReservedItemE to store position values.
 itemCode09:
 	ld h,d
@@ -3138,7 +3138,7 @@ itemCode09:
 ; State 1: do nothing until the switch hook is no longer in use, then delete self
 @state1:
 	ld a,(w1WeaponItem.id)
-	cp ITEMID_SWITCH_HOOK
+	cp ITEM_SWITCH_HOOK
 	ret z
 
 ; State 2: Restore camera to focusing on Link and delete self
@@ -3158,7 +3158,7 @@ func_5af5:
 .endif
 
 ;;
-; ITEMID_RICKY_TORNADO
+; ITEM_RICKY_TORNADO
 itemCode2a:
 	ld e,Item.state
 	ld a,(de)
@@ -3224,7 +3224,7 @@ itemCode2a:
 	jp itemAnimate
 
 ;;
-; ITEMID_MAGNET_BALL
+; ITEM_MAGNET_BALL
 ; Variables:
 ;   var03: Disables collisions and uses custom code to prevent enemies passing 
 ;		   through it (for wall flame shooters)
@@ -3930,7 +3930,7 @@ itemCode29:
 .else; ROM_AGES
 
 ;;
-; ITEMID_SHOOTER
+; ITEM_SHOOTER
 itemCode0f:
 	ld e,Item.state
 	ld a,(de)
@@ -3952,7 +3952,7 @@ itemCode0f:
 
 
 ;;
-; ITEMID_SHOOTER
+; ITEM_SHOOTER
 itemCode0fPost:
 	call cpRelatedObject1ID
 	jp nz,itemDelete
@@ -3985,7 +3985,7 @@ itemCode0fPost:
 
 
 ;;
-; ITEMID_28 (ricky/moosh attack?)
+; ITEM_28 (ricky/moosh attack?)
 ;
 itemCode28:
 	ld e,Item.state
@@ -4008,7 +4008,7 @@ itemCode28:
 
 @calculatePosition:
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	ld hl,@mooshData
 	jr nz,+
 
@@ -4036,7 +4036,7 @@ itemCode28:
 @tryToBreakTiles:
 	ld hl,@rickyBreakableTileOffsets
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	jr z,@nextTile
 	ld hl,@mooshBreakableTileOffsets
 
@@ -4055,7 +4055,7 @@ itemCode28:
 	inc hl
 	push hl
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	ld a,BREAKABLETILESOURCE_RICKY_PUNCH
 	jr z,+
 	ld a,BREAKABLETILESOURCE_MOOSH_BUTTSTOMP
@@ -4091,7 +4091,7 @@ itemCode28:
 
 
 ;;
-; ITEMID_SHOVEL
+; ITEM_SHOVEL
 itemCode15:
 	ld e,Item.state
 	ld a,(de)
@@ -4125,7 +4125,7 @@ itemCode15:
 
 .ifdef ROM_AGES
 ;;
-; ITEMID_CANE_OF_SOMARIA
+; ITEM_CANE_OF_SOMARIA
 itemCode04:
 	call itemTransferKnockbackToLink
 	ld e,Item.state
@@ -4156,11 +4156,11 @@ itemCode04:
 
 	call itemIncState
 
-	ld c,ITEMID_18
+	ld c,ITEM_18
 	call findItemWithID
 	jr nz,+
 
-	; Set var2f of any previous instance of ITEMID_18 (triggers deletion?)
+	; Set var2f of any previous instance of ITEM_18 (triggers deletion?)
 	ld l,Item.var2f
 	set 5,(hl)
 +
@@ -4180,7 +4180,7 @@ itemCode04:
 	ret nz
 	inc (hl)
 	inc l
-	ld (hl),ITEMID_18
+	ld (hl),ITEM_18
 
 	; Set Y/X of the new item as calculated earlier, and copy Link's Z position
 	ld l,Item.yh
@@ -4203,7 +4203,7 @@ itemCode04:
 
 
 ;;
-; ITEMID_18 (somaria block object)
+; ITEM_18 (somaria block object)
 itemCode18:
 	ld e,Item.state
 	ld a,(de)
@@ -4557,7 +4557,7 @@ itemCode18:
 
 .else; ROM_SEASONS
 
-; ITEMID_ROD_OF_SEASONS
+; ITEM_ROD_OF_SEASONS
 itemCode07:
 	call itemTransferKnockbackToLink
 	ld e,Object.state
@@ -4591,7 +4591,7 @@ itemCode07:
 	ret nz
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_USED_ROD_OF_SEASONS
+	ld (hl),INTERAC_USED_ROD_OF_SEASONS
 	ld e,Item.angle
 	ld l,Interaction.angle
 	ld a,(de)
@@ -4601,7 +4601,7 @@ itemCode07:
 .endif
 
 ;;
-; ITEMID_MINECART_COLLISION
+; ITEM_MINECART_COLLISION
 itemCode1d:
 	ld e,Item.state
 	ld a,(de)
@@ -4617,25 +4617,25 @@ itemCode1d:
 	ret
 
 ;;
-; ITEMID_MINECART_COLLISION
+; ITEM_MINECART_COLLISION
 itemCode1dPost:
 	ld hl,w1Companion.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	jp z,objectTakePosition
 	jp itemDelete
 
 .ifdef ROM_AGES
 
 ;;
-; ITEMID_SLINGSHOT
+; ITEM_SLINGSHOT
 itemCode13:
 	ret
 
 .else
 
 ;;
-; ITEMID_SLINGSHOT
+; ITEM_SLINGSHOT
 itemCode13:
 	ld e,Item.state
 	ld a,(de)
@@ -4655,7 +4655,7 @@ itemCode13:
 foolsOreRet:
 	ret
 
-; ITEMID_MAGNET_GLOVES
+; ITEM_MAGNET_GLOVES
 itemCode08:
 	ld e,Item.state
 	ld a,(de)
@@ -4683,7 +4683,7 @@ itemCode08:
 	ret
 .endif
 
-; ITEMID_FOOLS_ORE
+; ITEM_FOOLS_ORE
 itemCode1e:
 .ifdef ROM_SEASONS
 	ld e,Item.state
@@ -4702,7 +4702,7 @@ itemCode1e:
 .endif
 
 ;;
-; ITEMID_BIGGORON_SWORD
+; ITEM_BIGGORON_SWORD
 itemCode0c:
 	ld e,Item.state
 	ld a,(de)
@@ -4721,7 +4721,7 @@ itemCode0c:
 
 
 ;;
-; ITEMID_SWORD
+; ITEM_SWORD
 itemCode05:
 	call itemTransferKnockbackToLink
 	ld e,Item.state
@@ -4874,8 +4874,8 @@ itemCode05:
 
 
 ;;
-; ITEMID_PUNCH
-; ITEMID_NONE also points here, but this doesn't get called from there normally
+; ITEM_PUNCH
+; ITEM_NONE also points here, but this doesn't get called from there normally
 itemCode00:
 itemCode02:
 	ld e,Item.state
@@ -4926,7 +4926,7 @@ itemCode02:
 
 
 ;;
-; ITEMID_SWORD_BEAM
+; ITEM_SWORD_BEAM
 itemCode27:
 	ld e,Item.state
 	ld a,(de)
@@ -4995,7 +4995,7 @@ itemCode27:
 	jp itemDelete
 
 @collision:
-	ldbc INTERACID_CLINK, $81
+	ldbc INTERAC_CLINK, $81
 	call objectCreateInteraction
 	jp itemDelete
 
@@ -5006,9 +5006,9 @@ itemCode27:
 updateSwingableItemAnimation:
 	ld l,Item.animParameter
 .ifdef ROM_AGES
-	cp ITEMID_CANE_OF_SOMARIA
+	cp ITEM_CANE_OF_SOMARIA
 .else
-	cp ITEMID_ROD_OF_SEASONS
+	cp ITEM_ROD_OF_SEASONS
 .endif
 	jr z,label_07_227
 	bit 6,(hl)
@@ -5105,7 +5105,7 @@ updateBiggoronSwordAnimation:
 	jp itemSetAnimation
 
 ;;
-; ITEMID_MAGNET_GLOVES
+; ITEM_MAGNET_GLOVES
 ;
 itemCode08Post:
 	call cpRelatedObject1ID
@@ -5123,7 +5123,7 @@ itemCode08Post:
 	jp itemSetAnimation
 
 ;;
-; ITEMID_SLINGSHOT
+; ITEM_SLINGSHOT
 ;
 itemCode13Post:
 	call cpRelatedObject1ID
@@ -5137,7 +5137,7 @@ itemCode13Post:
 	jp itemSetAnimation
 
 ;;
-; ITEMID_FOOLS_ORE
+; ITEM_FOOLS_ORE
 ;
 itemCode1ePost:
 	call cpRelatedObject1ID
@@ -5156,7 +5156,7 @@ itemCode1ePost:
 	jr itemSetPositionInSwordArc
 
 ;;
-; ITEMID_PUNCH
+; ITEM_PUNCH
 ;
 itemCode00Post:
 itemCode02Post:
@@ -5166,7 +5166,7 @@ itemCode02Post:
 	jr itemSetPositionInSwordArc
 
 ;;
-; ITEMID_BIGGORON_SWORD
+; ITEM_BIGGORON_SWORD
 ;
 itemCode0cPost:
 	call cpRelatedObject1ID
@@ -5180,9 +5180,9 @@ itemCode0cPost:
 	jp itemCalculateSwordDamage
 
 ;;
-; ITEMID_CANE_OF_SOMARIA
-; ITEMID_SWORD
-; ITEMID_ROD_OF_SEASONS
+; ITEM_CANE_OF_SOMARIA
+; ITEM_SWORD
+; ITEM_ROD_OF_SEASONS
 ;
 itemCode04Post:
 itemCode05Post:
@@ -5387,7 +5387,7 @@ tryBreakTileWithSword:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_CLINK
+	ld (hl),INTERAC_CLINK
 	inc l
 	ld (hl),e
 	ld l,Interaction.yh
@@ -5553,7 +5553,7 @@ itemMimicBgTile:
 ;
 ; If it's not a tile (ie. it's dimitri), this is just an invisible item with collisions?
 ;
-; ITEMID_BRACELET
+; ITEM_BRACELET
 itemCode16:
 	ld e,Item.state
 	ld a,(de)
@@ -6085,7 +6085,7 @@ bounceSpeedReductionMapping:
 	.db $00 $00
 
 ;;
-; ITEMID_DUST
+; ITEM_DUST
 itemCode1a:
 	ld e,Item.substate
 	ld a,(de)

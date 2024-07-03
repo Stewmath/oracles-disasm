@@ -133,7 +133,7 @@ linkCutscene0:
 ;;
 ; Creates the colored orb that appears under Link in the opening cutscene
 linkCutscene_createGlowingOrb:
-	ldbc INTERACID_SPARKLE, $06
+	ldbc INTERAC_SPARKLE, $06
 	call objectCreateInteraction
 	jr nz,+
 	ld l,Interaction.relatedObj1
@@ -648,7 +648,7 @@ linkCutscene4:
 	ld e,SpecialObject.direction
 	ld a,$03
 	ld (de),a
-	lda SPECIALOBJECTID_LINK
+	lda SPECIALOBJECT_LINK
 	jp setLinkIDOverride
 
 ;;
@@ -699,7 +699,7 @@ linkCutscene5:
 	call specialObjectAnimate
 	jp objectApplySpeed
 +
-	ld a,SPECIALOBJECTID_LINK
+	ld a,SPECIALOBJECT_LINK
 	jp setLinkIDOverride
 
 ;;
@@ -769,7 +769,7 @@ linkCutscene7:
 	call specialObjectAnimate
 	call itemDecCounter1
 	ret nz
-	lda SPECIALOBJECTID_LINK
+	lda SPECIALOBJECT_LINK
 	call setLinkIDOverride
 	ld l,SpecialObject.direction
 	ld (hl),$02
@@ -909,7 +909,7 @@ linkCutsceneA:
 ; @param[out]	zflag	Set if shield equipped
 @checkShieldEquipped:
 	ld hl,wInventoryB
-	ld a,ITEMID_SHIELD
+	ld a,ITEM_SHIELD
 	cp (hl)
 	ret z
 	inc l
@@ -964,7 +964,7 @@ linkCutsceneA:
 --
 	call getFreeInteractionSlot
 	jr nz,@@setAnimation
-	ld (hl),INTERACID_KISS_HEART
+	ld (hl),INTERAC_KISS_HEART
 	inc l
 	ld a,b
 	dec a
@@ -1017,9 +1017,9 @@ linkCutsceneB:
 	ld (wTmpcbb9),a
 
 .ifdef ROM_AGES
-	ldbc INTERACID_SPARKLE, $0d
+	ldbc INTERAC_SPARKLE, $0d
 .else
-	ldbc INTERACID_SPARKLE, $09
+	ldbc INTERAC_SPARKLE, $09
 .endif
 	call objectCreateInteraction
 	jr nz,@state1

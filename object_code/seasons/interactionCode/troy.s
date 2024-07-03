@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TROY
+; INTERAC_TROY
 ; ==============================================================================
 interactionCodeca:
 	ld e,$44
@@ -186,14 +186,14 @@ func_7a49:
 	ret z
 	jr func_7a8e
 table_7a76:
-	.db ENEMYID_ROPE $01
-	.db ENEMYID_MASKED_MOBLIN $00
-	.db ENEMYID_SWORD_DARKNUT $00
-	.db ENEMYID_SWORD_DARKNUT $01
-	.db ENEMYID_WIZZROBE $01
-	.db ENEMYID_WIZZROBE $02
-	.db ENEMYID_LYNEL $00
-	.db ENEMYID_LYNEL $01
+	.db ENEMY_ROPE $01
+	.db ENEMY_MASKED_MOBLIN $00
+	.db ENEMY_SWORD_DARKNUT $00
+	.db ENEMY_SWORD_DARKNUT $01
+	.db ENEMY_WIZZROBE $01
+	.db ENEMY_WIZZROBE $02
+	.db ENEMY_LYNEL $00
+	.db ENEMY_LYNEL $01
 table_7a86:
 	.db $30 $40
 	.db $30 $b0
@@ -206,7 +206,7 @@ func_7a8e:
 	call addDoubleIndexToBc
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,$4b
 	ld a,(bc)
 	ld (hl),a

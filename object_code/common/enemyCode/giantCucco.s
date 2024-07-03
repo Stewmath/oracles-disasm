@@ -1,7 +1,7 @@
 ; ==============================================================================
-; ENEMYID_GIANT_CUCCO
+; ENEMY_GIANT_CUCCO
 ;
-; Variables are the same as ENEMYID_CUCCO.
+; Variables are the same as ENEMY_CUCCO.
 ; ==============================================================================
 enemyCode3b:
 	jr z,@normalStatus
@@ -133,7 +133,7 @@ cucco_checkSpawnCuccoAttacker:
 	cp $10
 	ret c
 
-	ld b,PARTID_CUCCO_ATTACKER
+	ld b,PART_CUCCO_ATTACKER
 	call ecom_spawnProjectile
 
 	ld e,Enemy.var30
@@ -185,7 +185,7 @@ cucco_attacked:
 
 
 ;;
-; Cucco will transform into ENEMYID_BABY_CUCCO (if not aggressive) or ENEMYID_GIANT_CUCCO
+; Cucco will transform into ENEMY_BABY_CUCCO (if not aggressive) or ENEMY_GIANT_CUCCO
 ; (if aggressive).
 cucco_hitWithMysterySeed:
 	ld l,Enemy.collisionType
@@ -196,15 +196,15 @@ cucco_hitWithMysterySeed:
 	ld a,(hl)
 	cp $10
 	jr c,+
-	ld a,ENEMYID_GIANT_CUCCO
+	ld a,ENEMY_GIANT_CUCCO
 	jr ++
 +
-	ld a,ENEMYID_BABY_CUCCO
+	ld a,ENEMY_BABY_CUCCO
 ++
 	ld e,Enemy.var31
 	ld (de),a
 
-	ldbc INTERACID_PUFF,$02
+	ldbc INTERAC_PUFF,$02
 	call objectCreateInteraction
 	ret nz
 

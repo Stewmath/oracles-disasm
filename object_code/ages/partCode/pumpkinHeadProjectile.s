@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_PUMPKIN_HEAD_PROJECTILE
+; PART_PUMPKIN_HEAD_PROJECTILE
 ; ==============================================================================
 partCode42:
 	jp nz,partDelete
@@ -54,7 +54,7 @@ partCode42:
 -
 	call getFreePartSlot
 	jr nz,++
-	ld (hl),PARTID_PUMPKIN_HEAD_PROJECTILE
+	ld (hl),PART_PUMPKIN_HEAD_PROJECTILE
 	inc l
 	ld (hl),b
 	ld l,$c9

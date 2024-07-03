@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_VINE_SPROUT
+; ENEMY_VINE_SPROUT
 ;
 ; Variables:
 ;   var31: Tile index underneath the sprout?
@@ -26,7 +26,7 @@ vineSprout_state0:
 	ldhl FIRST_ENEMY_INDEX, Enemy.id
 @nextEnemy:
 	ld a,(hl)
-	cp ENEMYID_VINE_SPROUT
+	cp ENEMY_VINE_SPROUT
 	jr nz,++
 	ld a,d
 	cp h
@@ -104,7 +104,7 @@ vineSprout_state1:
 	; Check various conditions for whether to push the sprout
 	ld hl,w1Link.id
 	ld a,(hl)
-	cpa SPECIALOBJECTID_LINK
+	cpa SPECIALOBJECT_LINK
 	jr nz,@notPushingSprout
 
 	ld l,<w1Link.state
@@ -221,7 +221,7 @@ vineSprout_linkJumpingDownCliff:
 	ret nc
 
 vineSprout_destroy:
-	ld b,INTERACID_ROCKDEBRIS
+	ld b,INTERAC_ROCKDEBRIS
 	call objectCreateInteractionWithSubid00
 
 	call vineSprout_getDefaultPosition

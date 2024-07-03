@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_CREDITS_TEXT_VERTICAL
+; INTERAC_CREDITS_TEXT_VERTICAL
 ;
 ; Variables:
 ;   var30/var31: 16-bit counter?
@@ -60,7 +60,7 @@ interactionCodeaf:
 @spawnChild:
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL
+	ld (hl),INTERAC_CREDITS_TEXT_VERTICAL
 	inc l
 	ld (hl),$01 ; [child.subid] = 1
 	inc l

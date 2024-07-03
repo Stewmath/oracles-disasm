@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ENABLE_SIDESCROLL_DOWN_TRANSITION
+; ENEMY_ENABLE_SIDESCROLL_DOWN_TRANSITION
 ; ==============================================================================
 enemyCode2b:
 	ld e,Enemy.state

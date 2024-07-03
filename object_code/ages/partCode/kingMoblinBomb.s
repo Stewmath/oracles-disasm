@@ -1,8 +1,8 @@
 ; ==============================================================================
-; PARTID_KING_MOBLIN_BOMB
+; PART_KING_MOBLIN_BOMB
 ;
 ; Variables:
-;   relatedObj1: Instance of ENEMYID_KING_MOBLIN
+;   relatedObj1: Instance of ENEMY_KING_MOBLIN
 ;   var30: If nonzero, damage has been applied to Link
 ;   var31: Number of red flashes before it explodes
 ; ==============================================================================

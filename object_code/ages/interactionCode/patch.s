@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_PATCH
+; INTERAC_PATCH
 ;
 ; Variables:
 ;   var38: 0 if Link has the broken tuni nut; 1 otherwise (upstairs script)
@@ -183,7 +183,7 @@ patch_subid01:
 	call playSound
 
 	; Spawn subid 3, a "manager" for the beetle enemies.
-	ldbc INTERACID_PATCH, $03
+	ldbc INTERAC_PATCH, $03
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.relatedObj1
@@ -257,7 +257,7 @@ patch_subid01:
 	ld a,(wTmpcfc0.patchMinigame.fixingSword)
 	add $06
 	ld c,a
-	ld b,INTERACID_PATCH
+	ld b,INTERAC_PATCH
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.relatedObj1
@@ -320,7 +320,7 @@ patch_subid01:
 	ldhl FIRST_ENEMY_INDEX, Enemy.id
 @nextEnemy:
 	ld a,(hl)
-	cp ENEMYID_HARMLESS_HARDHAT_BEETLE
+	cp ENEMY_HARMLESS_HARDHAT_BEETLE
 	jr nz,++
 	push hl
 	ld d,h
@@ -378,7 +378,7 @@ patch_subid02:
 	; Spawn the object that will toggle the minecart track when the button is down
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SWITCH_TILE_TOGGLER
+	ld (hl),INTERAC_SWITCH_TILE_TOGGLER
 	inc l
 	ld (hl),$01
 	ld l,Interaction.yh
@@ -402,10 +402,10 @@ patch_subid02:
 	or a
 	ret z
 
-	; Spawn the broken item sprite (INTERACID_PATCH subid 4 or 5)
+	; Spawn the broken item sprite (INTERAC_PATCH subid 4 or 5)
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PATCH
+	ld (hl),INTERAC_PATCH
 	inc l
 	ld a,(wTmpcfc0.patchMinigame.fixingSword)
 	add $04
@@ -537,12 +537,12 @@ patch_subid03:
 @spawnBeetle:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	call setShortPosition_paramC
 	call getFreeEnemySlot
 	ret nz
-	ld (hl),ENEMYID_HARMLESS_HARDHAT_BEETLE
+	ld (hl),ENEMY_HARMLESS_HARDHAT_BEETLE
 	ld l,Enemy.yh
 	call setShortPosition_paramC
 	xor a
@@ -558,7 +558,7 @@ patch_subid03:
 	ld b,$04
 ---
 	ldi a,(hl)
-	cp ENEMYID_HARMLESS_HARDHAT_BEETLE
+	cp ENEMY_HARMLESS_HARDHAT_BEETLE
 	jr nz,@nextFallenObject
 
 	push hl
@@ -649,7 +649,7 @@ patch_subid05:
 	; Collision occured; game failed.
 	ld a,$01
 	ld (wTmpcfc0.patchMinigame.failedGame),a
-	ld b,INTERACID_EXPLOSION
+	ld b,INTERAC_EXPLOSION
 	call objectCreateInteractionWithSubid00
 	ret nz
 	ld l,Interaction.var03

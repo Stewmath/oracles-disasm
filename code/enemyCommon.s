@@ -43,7 +43,7 @@ ecom_updateKnockback_common:
 
 	; Create "dust" if bit 7 of Enemy.knockbackCounter is set
 	push bc
-	ldbc INTERACID_FALLDOWNHOLE, $01
+	ldbc INTERAC_FALLDOWNHOLE, $01
 	call objectCreateInteraction
 	pop bc
 ++
@@ -178,11 +178,11 @@ ecom_checkHazardsCommon:
 
 
 ecom_makeSplashAndDelete:
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	jr ++
 
 ecom_makeLavaSplashAndDelete:
-	ld b,INTERACID_LAVASPLASH
+	ld b,INTERAC_LAVASPLASH
 ++
 	call objectCreateInteractionWithSubid00
 

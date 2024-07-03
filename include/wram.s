@@ -589,7 +589,7 @@ wMooshState: ; $c648/$c645
 ;     7: set after giving spring bananas to moosh
 	db
 wCompanionTutorialTextShown: ; $c649
-; Bits here are used by INTERACID_COMPANION_TUTORIAL to remember which pieces of
+; Bits here are used by INTERAC_COMPANION_TUTORIAL to remember which pieces of
 ; "tutorial" text have been seen.
 ; Bit 0: Ricky hopping over holes
 ; Bit 1: Ricky jumping over cliffs
@@ -2225,8 +2225,8 @@ wBlockPushAngle: ; $cca6/$ccc0
 .ifdef ROM_SEASONS
 
 wPirateSkullRandomNumber: ; -/$ccc1
-; Set to a random number from $01-$04 from var38 of INTERACID_PIRATE_SKULL.
-; Bit 7 set if INTERACID_QUICKSAND subid matches.
+; Set to a random number from $01-$04 from var38 of INTERAC_PIRATE_SKULL.
+; Bit 7 set if INTERAC_QUICKSAND subid matches.
 ; Used to determine whether the right quicksand pit has been found (for the bell)
 	db
 
@@ -2283,12 +2283,12 @@ wccb0: ; $ccb0/$ccc7
 	db
 
 wccb1: ; $ccb1
-; Disables PARTID_BUTTON when nonzero?
+; Disables PART_BUTTON when nonzero?
 	db
 
 .ifdef ROM_AGES
 wDisableWarps: ; $ccb2
-; Used by INTERACID_BLACK_TOWER_DOOR_HANDLER to stop the warp from sending you anywhere.
+; Used by INTERAC_BLACK_TOWER_DOOR_HANDLER to stop the warp from sending you anywhere.
 	db
 .endif
 
@@ -2330,7 +2330,7 @@ wInShop: ; $ccd3/$ccea
 
 wShootingGalleryccd5: ; $ccd5
 ; Shooting gallery: ?
-; (Also used by target carts with INTERACID_TROY?)
+; (Also used by target carts with INTERAC_TROY?)
 	.db
 wShopHaveEnoughRupees: ; $ccd5/$ccec
 ; Shop: Set to 0 if you have enough money for an item, 1 otherwise
@@ -2666,7 +2666,7 @@ wSwitchState: ; $cdd3/$cc32
 	db
 
 wSpinnerState: ; $cdd4/$cc33
-; Used by INTERACID_SPINNER.
+; Used by INTERAC_SPINNER.
 ; Each bit holds the state of one spinner (0 for blue, 1 for red).
 ; Persists between rooms within a dungeon.
 	db
@@ -2814,7 +2814,7 @@ wRoomLayoutEnd: ; $cfc0
 ; $cfc0:
 ;  * Bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
 ;    corresponding cutscene (which appears to be dependent on the room you're in).
-;  * Set to nonzero by PARTID_SEED_ON_TREE to indicate that it's shown the "you can't
+;  * Set to nonzero by PART_SEED_ON_TREE to indicate that it's shown the "you can't
 ;    pick up these seeds" text
 ; $cfc1:
 ;  * Used by door controllers
@@ -2955,7 +2955,7 @@ wRoomLayoutEnd: ; $cfc0
 	targetConfiguration: ; $cfd4
 		db
 	beganGameWithTroy:
-	; Used by INTERACID_TROY (minigame for bombchus).
+	; Used by INTERAC_TROY (minigame for bombchus).
 		db
 	prizeIndex: ; $cfd6
 		db
@@ -3064,10 +3064,10 @@ wRoomLayoutEnd: ; $cfc0
 	cfd2: ; $cfd2
 		db
 	cfd3: ; $cfd3
-	; Link's position is stored here by INTERACID_HARDHAT_WORKER
+	; Link's position is stored here by INTERAC_HARDHAT_WORKER
 		db
 	cfd4: ; $cfd4
-	; Link's direction is stored here by INTERACID_HARDHAT_WORKER
+	; Link's direction is stored here by INTERAC_HARDHAT_WORKER
 		db
 	cfd5: ; $cfd5
 	; Used as a position value? Maybe a focus position for npcs in certain cutscenes?
@@ -3234,7 +3234,7 @@ wRoomLayoutEnd: ; $cfc0
 
 .ENUM $dc00 export
 	; The item that Link is holding / throwing. Even if Link is holding some other
-	; object like an enemy or Dimitri, this object still exists as ITEMID_BRACELET,
+	; object like an enemy or Dimitri, this object still exists as ITEM_BRACELET,
 	; or at least it does while the object is being thrown. This invisible object will
 	; copy its position to the actual object being thrown each frame, and update that
 	; object's state accordingly (ie. ENEMYSTATE_GRABBED).
@@ -3247,7 +3247,7 @@ wRoomLayoutEnd: ; $cfc0
 
 .ENUM $de00 export
 	; Doesn't have collisions? (comes after LAST_STANDARD_ITEM_INDEX)
-	; Used to store positions for switch hook (ITEMID_SWITCH_HOOK_HELPER).
+	; Used to store positions for switch hook (ITEM_SWITCH_HOOK_HELPER).
 	w1ReservedItemE:	instanceof ItemStruct
 .ENDE
 

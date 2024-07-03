@@ -158,7 +158,7 @@ tryToBreakTile_body:
 
 .ifdef ROM_AGES
 @somariaBlock:
-	ld c,ITEMID_18
+	ld c,ITEM_18
 	call findItemWithID
 	jr nz,@done
 
@@ -237,7 +237,7 @@ decideItemDropForBrokenTile:
 
 	call getFreePartSlot
 	jr nz,@done
-	ld (hl),PARTID_ITEM_DROP
+	ld (hl),PART_ITEM_DROP
 	inc l
 	ld (hl),c ; [subid]
 

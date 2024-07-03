@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_GHOST_VERAN
+; INTERAC_GHOST_VERAN
 ; ==============================================================================
 interactionCode3e:
 	ld e,Interaction.state
@@ -105,7 +105,7 @@ runVeranGhostSubid0:
 	or a
 	jr z,++
 
-	ldbc INTERACID_HUMAN_VERAN, $00
+	ldbc INTERAC_HUMAN_VERAN, $00
 	call objectCreateInteraction
 	ret nz
 
@@ -280,7 +280,7 @@ runVeranGhostSubid2:
 @substate2:
 	call getFreeEnemySlot
 	ret nz
-	ld (hl),ENEMYID_VERAN_FAIRY
+	ld (hl),ENEMY_VERAN_FAIRY
 	call objectCopyPosition
 	ld e,Interaction.relatedObj2
 	ld a,Enemy.start

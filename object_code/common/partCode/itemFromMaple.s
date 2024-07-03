@@ -1,6 +1,6 @@
 ; ==============================================================================
-; PARTID_ITEM_FROM_MAPLE
-; PARTID_ITEM_FROM_MAPLE_2
+; PART_ITEM_FROM_MAPLE
+; PART_ITEM_FROM_MAPLE_2
 ; ==============================================================================
 partCode14:
 partCode15:

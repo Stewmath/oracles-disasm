@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FEMALE_VILLAGER
+; INTERAC_FEMALE_VILLAGER
 ; ==============================================================================
 interactionCode3b:
 	ld e,Interaction.state

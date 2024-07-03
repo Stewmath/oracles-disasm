@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SMASHER
+; ENEMY_SMASHER
 ;
 ; Variables (ball, subid 0):
 ;   relatedObj1: parent
@@ -69,7 +69,7 @@ smasher_state_uninitialized:
 	call enemyBoss_initializeRoom
 
 	; Spawn parent
-	ld b,ENEMYID_SMASHER
+	ld b,ENEMY_SMASHER
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 

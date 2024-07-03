@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BIPIN_BLOSSOM_FAMILY_SPAWNER
+; INTERAC_BIPIN_BLOSSOM_FAMILY_SPAWNER
 ; ==============================================================================
 interactionCodeac:
 	ld a,GLOBALFLAG_FINISHEDGAME
@@ -314,66 +314,66 @@ spawnBipinBlossomFamilyObjects:
 ;   b4: X position
 
 @leftStage0:
-	.db INTERACID_BIPIN   $00 $00 $48 $48
-	.db INTERACID_BLOSSOM $00 $00 $38 $78
+	.db INTERAC_BIPIN   $00 $00 $48 $48
+	.db INTERAC_BLOSSOM $00 $00 $38 $78
 @rightStage0:
 	.db $00
 
 @leftStage1:
-	.db INTERACID_BLOSSOM $01 $00 $18 $48
+	.db INTERAC_BLOSSOM $01 $00 $18 $48
 	.db $00
 @rightStage1:
-	.db INTERACID_BIPIN   $01 $00 $38 $58
+	.db INTERAC_BIPIN   $01 $00 $38 $58
 	.db $00
 
 @leftStage2:
-	.db INTERACID_BLOSSOM $02 $00 $18 $48
-	.db INTERACID_CHILD   $07 $00 $10 $38
+	.db INTERAC_BLOSSOM $02 $00 $18 $48
+	.db INTERAC_CHILD   $07 $00 $10 $38
 	.db $00
 @rightStage2:
-	.db INTERACID_BIPIN   $02 $00 $38 $58
+	.db INTERAC_BIPIN   $02 $00 $38 $58
 	.db $00
 
 @leftStage3:
-	.db INTERACID_BLOSSOM $03 $00 $38 $78
+	.db INTERAC_BLOSSOM $03 $00 $38 $78
 	.db $00
 @rightStage3:
-	.db INTERACID_BIPIN   $03 $00 $38 $58
+	.db INTERAC_BIPIN   $03 $00 $38 $58
 	.db $00
 
 @leftStage4_hyperactive:
-	.db INTERACID_BLOSSOM $04 $00 $38 $78
-	.db INTERACID_CHILD   $00 $01 $38 $68
+	.db INTERAC_BLOSSOM $04 $00 $38 $78
+	.db INTERAC_CHILD   $00 $01 $38 $68
 	.db $00
 @leftStage4_shy:
-	.db INTERACID_BLOSSOM $04 $00 $38 $78
-	.db INTERACID_CHILD   $01 $02 $38 $18
+	.db INTERAC_BLOSSOM $04 $00 $38 $78
+	.db INTERAC_CHILD   $01 $02 $38 $18
 	.db $00
 @leftStage4_curious:
-	.db INTERACID_BLOSSOM $04 $00 $38 $78
-	.db INTERACID_CHILD   $02 $03 $20 $38
+	.db INTERAC_BLOSSOM $04 $00 $38 $78
+	.db INTERAC_CHILD   $02 $03 $20 $38
 	.db $00
 
 @rightStage4_hyperactive:
 @rightStage4_shy:
 @rightStage4_curious:
-	.db INTERACID_BIPIN   $04 $00 $38 $58
+	.db INTERAC_BIPIN   $04 $00 $38 $58
 	.db $00
 
 @leftStage5_hyperactive:
-	.db INTERACID_BLOSSOM $05 $00 $38 $78
-	.db INTERACID_BIPIN   $05 $00 $58 $88
-	.db INTERACID_CHILD   $00 $04 $38 $68
+	.db INTERAC_BLOSSOM $05 $00 $38 $78
+	.db INTERAC_BIPIN   $05 $00 $58 $88
+	.db INTERAC_CHILD   $00 $04 $38 $68
 	.db $00
 @leftStage5_shy:
-	.db INTERACID_BLOSSOM $05 $00 $38 $78
-	.db INTERACID_BIPIN   $05 $00 $58 $88
-	.db INTERACID_CHILD   $01 $05 $38 $18
+	.db INTERAC_BLOSSOM $05 $00 $38 $78
+	.db INTERAC_BIPIN   $05 $00 $58 $88
+	.db INTERAC_CHILD   $01 $05 $38 $18
 	.db $00
 @leftStage5_curious:
-	.db INTERACID_BLOSSOM $05 $00 $38 $78
-	.db INTERACID_BIPIN   $05 $00 $58 $88
-	.db INTERACID_CHILD   $02 $06 $20 $38
+	.db INTERAC_BLOSSOM $05 $00 $38 $78
+	.db INTERAC_BIPIN   $05 $00 $58 $88
+	.db INTERAC_CHILD   $02 $06 $20 $38
 	.db $00
 
 @rightStage5_hyperactive:
@@ -385,110 +385,110 @@ spawnBipinBlossomFamilyObjects:
 @leftStage6_shy:
 	.db $00
 @leftStage6_curious:
-	.db INTERACID_CHILD   $02 $09 $20 $38
+	.db INTERAC_CHILD   $02 $09 $20 $38
 	.db $00
 
 @rightStage6_hyperactive:
-	.db INTERACID_BLOSSOM $06 $00 $22 $58
-	.db INTERACID_BIPIN   $06 $00 $38 $58
-	.db INTERACID_CHILD   $00 $07 $38 $48
+	.db INTERAC_BLOSSOM $06 $00 $22 $58
+	.db INTERAC_BIPIN   $06 $00 $38 $58
+	.db INTERAC_CHILD   $00 $07 $38 $48
 	.db $00
 @rightStage6_shy:
-	.db INTERACID_BLOSSOM $06 $01 $22 $58
-	.db INTERACID_BIPIN   $06 $00 $38 $58
-	.db INTERACID_CHILD   $01 $08 $18 $48
+	.db INTERAC_BLOSSOM $06 $01 $22 $58
+	.db INTERAC_BIPIN   $06 $00 $38 $58
+	.db INTERAC_CHILD   $01 $08 $18 $48
 	.db $00
 @rightStage6_curious:
-	.db INTERACID_BLOSSOM $06 $02 $22 $58
-	.db INTERACID_BIPIN   $06 $00 $38 $58
+	.db INTERAC_BLOSSOM $06 $02 $22 $58
+	.db INTERAC_BIPIN   $06 $00 $38 $58
 	.db $00
 
 @leftStage7_slacker:
-	.db INTERACID_CHILD   $03 $0a $24 $38
+	.db INTERAC_CHILD   $03 $0a $24 $38
 	.db $00
 @leftStage7_warrior:
-	.db INTERACID_CHILD   $04 $0b $48 $40
+	.db INTERAC_CHILD   $04 $0b $48 $40
 	.db $00
 @leftStage7_arborist:
 	.db $00
 @leftStage7_singer:
-	.db INTERACID_BLOSSOM $07 $03 $58 $88
-	.db INTERACID_CHILD   $06 $0d $38 $76
+	.db INTERAC_BLOSSOM $07 $03 $58 $88
+	.db INTERAC_CHILD   $06 $0d $38 $76
 	.db $00
 
 @rightStage7_slacker:
-	.db INTERACID_BLOSSOM $07 $00 $22 $58
-	.db INTERACID_BIPIN   $07 $00 $38 $58
+	.db INTERAC_BLOSSOM $07 $00 $22 $58
+	.db INTERAC_BIPIN   $07 $00 $38 $58
 	.db $00
 @rightStage7_warrior:
-	.db INTERACID_BLOSSOM $07 $01 $22 $58
-	.db INTERACID_BIPIN   $07 $00 $38 $58
+	.db INTERAC_BLOSSOM $07 $01 $22 $58
+	.db INTERAC_BIPIN   $07 $00 $38 $58
 	.db $00
 @rightStage7_arborist:
-	.db INTERACID_BLOSSOM $07 $02 $48 $30
-	.db INTERACID_BIPIN   $07 $00 $38 $58
-	.db INTERACID_CHILD   $05 $0c $22 $58
+	.db INTERAC_BLOSSOM $07 $02 $48 $30
+	.db INTERAC_BIPIN   $07 $00 $38 $58
+	.db INTERAC_CHILD   $05 $0c $22 $58
 	.db $00
 @rightStage7_singer:
-	.db INTERACID_BIPIN   $07 $00 $38 $58
+	.db INTERAC_BIPIN   $07 $00 $38 $58
 	.db $00
 
 @leftStage8_slacker:
-	.db INTERACID_BLOSSOM $08 $00 $58 $88
-	.db INTERACID_CHILD   $03 $0e $44 $78
+	.db INTERAC_BLOSSOM $08 $00 $58 $88
+	.db INTERAC_CHILD   $03 $0e $44 $78
 	.db $00
 @leftStage8_warrior:
-	.db INTERACID_BLOSSOM $08 $01 $38 $78
+	.db INTERAC_BLOSSOM $08 $01 $38 $78
 	.db $00
 @leftStage8_arborist:
-	.db INTERACID_BLOSSOM $08 $02 $38 $78
+	.db INTERAC_BLOSSOM $08 $02 $38 $78
 	.db $00
 @leftStage8_singer:
-	.db INTERACID_CHILD   $06 $11 $14 $26
+	.db INTERAC_CHILD   $06 $11 $14 $26
 	.db $00
 
 @rightStage8_slacker:
-	.db INTERACID_BIPIN   $08 $00 $38 $58
+	.db INTERAC_BIPIN   $08 $00 $38 $58
 	.db $00
 @rightStage8_warrior:
-	.db INTERACID_BIPIN   $08 $00 $38 $58
-	.db INTERACID_CHILD   $04 $0f $18 $48
+	.db INTERAC_BIPIN   $08 $00 $38 $58
+	.db INTERAC_CHILD   $04 $0f $18 $48
 	.db $00
 @rightStage8_arborist:
-	.db INTERACID_BIPIN   $08 $00 $32 $58
-	.db INTERACID_CHILD   $05 $10 $48 $58
+	.db INTERAC_BIPIN   $08 $00 $32 $58
+	.db INTERAC_CHILD   $05 $10 $48 $58
 	.db $00
 @rightStage8_singer:
-	.db INTERACID_BIPIN   $08 $00 $38 $58
-	.db INTERACID_BLOSSOM $08 $03 $48 $28
+	.db INTERAC_BIPIN   $08 $00 $38 $58
+	.db INTERAC_BLOSSOM $08 $03 $48 $28
 	.db $00
 
 @leftStage9_slacker:
-	.db INTERACID_BLOSSOM $09 $00 $58 $88
-	.db INTERACID_CHILD   $03 $12 $44 $78
+	.db INTERAC_BLOSSOM $09 $00 $58 $88
+	.db INTERAC_CHILD   $03 $12 $44 $78
 	.db $00
 @leftStage9_warrior:
-	.db INTERACID_BLOSSOM $09 $01 $38 $78
-	.db INTERACID_CHILD   $04 $13 $48 $40
+	.db INTERAC_BLOSSOM $09 $01 $38 $78
+	.db INTERAC_CHILD   $04 $13 $48 $40
 	.db $00
 @leftStage9_arborist:
-	.db INTERACID_BLOSSOM $09 $02 $38 $78
+	.db INTERAC_BLOSSOM $09 $02 $38 $78
 	.db $00
 @leftStage9_singer:
-	.db INTERACID_BLOSSOM $09 $03 $58 $78
-	.db INTERACID_CHILD   $06 $15 $36 $68
+	.db INTERAC_BLOSSOM $09 $03 $58 $78
+	.db INTERAC_CHILD   $06 $15 $36 $68
 	.db $00
 
 @rightStage9_slacker:
-	.db INTERACID_BIPIN   $09 $00 $38 $58
+	.db INTERAC_BIPIN   $09 $00 $38 $58
 	.db $00
 @rightStage9_warrior:
-	.db INTERACID_BIPIN   $09 $00 $38 $58
+	.db INTERAC_BIPIN   $09 $00 $38 $58
 	.db $00
 @rightStage9_arborist:
-	.db INTERACID_BIPIN   $09 $00 $32 $58
-	.db INTERACID_CHILD   $05 $14 $48 $58
+	.db INTERAC_BIPIN   $09 $00 $32 $58
+	.db INTERAC_CHILD   $05 $14 $48 $58
 	.db $00
 @rightStage9_singer:
-	.db INTERACID_BIPIN   $09 $00 $38 $58
+	.db INTERAC_BIPIN   $09 $00 $38 $58
 	.db $00

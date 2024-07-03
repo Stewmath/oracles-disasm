@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_D5_FALLING_MAGNET_BALL
+; INTERAC_D5_FALLING_MAGNET_BALL
 ; ==============================================================================
 interactionCode64:
 	ld e,Interaction.state
@@ -60,7 +60,7 @@ interactionCode64:
 	ret nz
 	ld (hl),$01
 	inc l
-	ld (hl),ITEMID_MAGNET_BALL
+	ld (hl),ITEM_MAGNET_BALL
 	call objectCopyPosition
 	ld e,Interaction.relatedObj1
 	ld l,Object.relatedObj1

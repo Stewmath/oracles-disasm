@@ -1,7 +1,7 @@
 ; ==============================================================================
-; ENEMYID_LINK_MIMIC
+; ENEMY_LINK_MIMIC
 ;
-; Shares code with ENEMYID_ARM_MIMIC.
+; Shares code with ENEMY_ARM_MIMIC.
 ; ==============================================================================
 enemyCode64:
 	jr z,@normalStatus

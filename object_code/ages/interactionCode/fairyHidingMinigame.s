@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FAIRY_HIDING_MINIGAME
+; INTERAC_FAIRY_HIDING_MINIGAME
 ; ==============================================================================
 interactionCode6c:
 	ld e,Interaction.subid
@@ -137,7 +137,7 @@ fairyHidingMinigame_subid01:
 @state2:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FOREST_FAIRY
+	ld (hl),INTERAC_FOREST_FAIRY
 	ld l,Interaction.var03
 	ld e,l
 	ld a,(de)
@@ -210,7 +210,7 @@ fairyHidingMinigame_spawn3FairiesAndDelete:
 @spawnFairy:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FOREST_FAIRY
+	ld (hl),INTERAC_FOREST_FAIRY
 	inc l
 	inc (hl)   ; [subid] = $01
 	inc l

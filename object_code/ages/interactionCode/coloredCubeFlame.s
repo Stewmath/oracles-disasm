@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_COLORED_CUBE_FLAME
+; INTERAC_COLORED_CUBE_FLAME
 ; ==============================================================================
 interactionCode1a:
 	call checkInteractionState

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FOREST_FAIRY
+; INTERAC_FOREST_FAIRY
 ; ==============================================================================
 interactionCode49:
 	ld e,Interaction.subid
@@ -187,7 +187,7 @@ forestFairy_subid00State1:
 	jr nz,@label_09_164
 
 	push bc
-	ldbc INTERACID_SPARKLE, $02
+	ldbc INTERAC_SPARKLE, $02
 	call objectCreateInteraction
 	pop bc
 
@@ -375,7 +375,7 @@ forestFairy_subid03State2:
 	jr nz,++
 
 	push bc
-	ldbc INTERACID_SPARKLE, $02
+	ldbc INTERAC_SPARKLE, $02
 	call objectCreateInteraction
 	pop bc
 ++

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SMOG_BOSS
+; INTERAC_SMOG_BOSS
 ;
 ; Variables:
 ;   subid:    The index of the last enemy spawned. Incremented each time "@spawnEnemy" is
@@ -309,7 +309,7 @@ interactionCode33:
 
 	; This sets hl to a brand new enemy slot
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_SMOG
+	ld (hl),ENEMY_SMOG
 
 	ld a,(bc)
 	ld l,c
@@ -477,7 +477,7 @@ interactionCode33:
 	or a
 	jr z,@nextEnemy
 	ldi a,(hl)
-	cp ENEMYID_SMOG
+	cp ENEMY_SMOG
 	jr nz,@nextEnemy
 	ldi a,(hl)
 	bit 1,a
@@ -497,7 +497,7 @@ interactionCode33:
 @spawnEnemy:
 	push af
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_SMOG
+	ld (hl),ENEMY_SMOG
 
 	; Increment this.subid, which acts as the "enemy index" to spawn
 	ld b,h

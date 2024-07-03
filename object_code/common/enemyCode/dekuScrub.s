@@ -1,10 +1,10 @@
 ; ==============================================================================
-; ENEMYID_DEKU_SCRUB
+; ENEMY_DEKU_SCRUB
 ;
 ; Variables:
-;   var03: Read by ENEMYID_BUSH_OR_ROCK to control Z-offset
+;   var03: Read by ENEMY_BUSH_OR_ROCK to control Z-offset
 ;   var30: Starts at 2, gets decremented each time one of the scrub's bullets hits itself.
-;   var31: Index of ENEMYID_BUSH_OR_ROCK
+;   var31: Index of ENEMY_BUSH_OR_ROCK
 ;   var32: "pressedAButton" variable (nonzero when player presses A)
 ;   var33: Former var03 value (low byte of text index, TX_45XX)
 ; ==============================================================================
@@ -18,7 +18,7 @@ enemyCode27:
 
 	; ENEMYSTATUS_JUST_HIT
 
-	; Check var30, which is decremented by PARTID_DEKU_SCRUB_PROJECTILE each time it
+	; Check var30, which is decremented by PART_DEKU_SCRUB_PROJECTILE each time it
 	; hits the deku scrub.
 	ld e,Enemy.var30
 	ld a,(de)
@@ -164,7 +164,7 @@ dekuScrub_stateA:
 	jr nz,dekuScrub_animate
 	ld (de),a
 
-	ld b,PARTID_DEKU_SCRUB_PROJECTILE
+	ld b,PART_DEKU_SCRUB_PROJECTILE
 	call ecom_spawnProjectile
 
 dekuScrub_animate:
@@ -256,7 +256,7 @@ dekuScrub_fireAnimations:
 ;;
 ; @param[out]	zflag	z if spawned bus successfully
 dekuScrub_spawnBush:
-	ld b,ENEMYID_BUSH_OR_ROCK
+	ld b,ENEMY_BUSH_OR_ROCK
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_ITEM_DROP
+; PART_ITEM_DROP
 ;
 ; Variables:
 ;   relatedObj1: ?
@@ -379,7 +379,7 @@ itemDrop_spawnEnemy:
 	jr nz,@delete
 
 .ifdef ROM_SEASONS
-	ld b,ENEMYID_PODOBOO_TOWER
+	ld b,ENEMY_PODOBOO_TOWER
 	ld a,(wTilesetFlags)
 	cp (TILESETFLAG_SUBROSIA|TILESETFLAG_OUTDOORS)
 	jr z,+
@@ -404,8 +404,8 @@ itemDrop_spawnEnemy:
 	jp partDelete
 
 @enemiesToSpawn:
-	.db ENEMYID_ROPE,   ENEMYID_ROPE,   ENEMYID_ROPE,   ENEMYID_BEETLE
-	.db ENEMYID_BEETLE, ENEMYID_BEETLE, ENEMYID_BEETLE, ENEMYID_BEETLE
+	.db ENEMY_ROPE,   ENEMY_ROPE,   ENEMY_ROPE,   ENEMY_BEETLE
+	.db ENEMY_BEETLE, ENEMY_BEETLE, ENEMY_BEETLE, ENEMY_BEETLE
 
 ;;
 ; Delete and return from caller if it goes out of bounds in a sidescrolling room
@@ -491,7 +491,7 @@ itemDrop_checkOnHazard:
 	rrca
 	ret nc
 
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	xor a
 	jr @onWaterSidescrolling
 
@@ -499,7 +499,7 @@ itemDrop_checkOnHazard:
 	rrca
 	jr c,@onWater
 	rrca
-	ld b,INTERACID_LAVASPLASH
+	ld b,INTERAC_LAVASPLASH
 	jr nc,@replaceWithAnimation
 
 	call objectCreateFallingDownHoleInteraction
@@ -513,7 +513,7 @@ itemDrop_checkOnHazard:
 	ret
 
 @onWater:
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	ld a,(wTilesetFlags)
 	and TILESETFLAG_SIDESCROLL
 	jr z,@replaceWithAnimation

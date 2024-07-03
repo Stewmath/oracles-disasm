@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_SEED_AND_ESSENCES
+; INTERAC_MAKU_SEED_AND_ESSENCES
 ; ==============================================================================
 interactionCodede:
 	ld e,$42
@@ -38,7 +38,7 @@ interactionCodede:
 	call playSound
 	ld a,$77
 	call playSound
-	ld b,INTERACID_SPARKLE
+	ld b,INTERAC_SPARKLE
 	call objectCreateInteractionWithSubid00
 	ret nz
 	ld l,$46
@@ -105,7 +105,7 @@ interactionCodede:
 	ld b,(hl)
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_SEED_AND_ESSENCES
+	ld (hl),INTERAC_MAKU_SEED_AND_ESSENCES
 	call objectCopyPosition
 	ld a,b
 	ld bc,@@table_6bc3
@@ -247,7 +247,7 @@ func_6c94:
 	ld a,(wFrameCounter)
 	and $07
 	ret nz
-	ldbc INTERACID_SPARKLE $03
+	ldbc INTERAC_SPARKLE $03
 	call objectCreateInteraction
 	ret nz
 	ld a,(wFrameCounter)

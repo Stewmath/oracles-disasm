@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_RAFT
+; INTERAC_RAFT
 ; ==============================================================================
 interactionCodee6:
 	ld e,Interaction.state
@@ -32,11 +32,11 @@ interactionCodee6:
 
 	; Check if Link's riding a raft
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jp z,interactionDelete
 
 	; Check if there's another raft interaction
-	ld c,INTERACID_RAFT
+	ld c,INTERAC_RAFT
 	call objectFindSameTypeObjectWithID
 	ld a,h
 	cp d
@@ -87,13 +87,13 @@ interactionCodee6:
 	ld a,(w1Link.id)
 	or a
 	jr z,++
-	xor a ; SPECIALOBJECTID_LINK
+	xor a ; SPECIALOBJECT_LINK
 	call setLinkIDOverride
 ++
 	ld hl,w1Companion.enabled
 	ld (hl),$03
 	inc l
-	ld (hl),SPECIALOBJECTID_RAFT
+	ld (hl),SPECIALOBJECT_RAFT
 	ld e,Interaction.direction
 	ld l,<w1Link.direction
 	ld a,(de)

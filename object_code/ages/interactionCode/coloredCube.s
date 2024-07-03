@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_COLORED_CUBE
+; INTERAC_COLORED_CUBE
 ; ==============================================================================
 interactionCode19:
 	call objectReplaceWithAnimationIfOnHazard

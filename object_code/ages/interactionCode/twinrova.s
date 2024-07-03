@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TWINROVA
+; INTERAC_TWINROVA
 ;
 ; Variables:
 ;   var3a: Index for "loadAngleAndCounterPreset" function
@@ -104,7 +104,7 @@ twinrova_genericInitialize:
 	; Spawn the other half ([subid]+1)
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_TWINROVA
+	ld (hl),INTERAC_TWINROVA
 	inc l
 	ld e,l
 	ld a,(de)
@@ -286,7 +286,7 @@ presetInteractionAnglesAndCounters:
 	.db $1a $04
 	.db $00 $00
 
-@data3: ; INTERACID_RAFTWRECK_CUTSCENE_HELPER
+@data3: ; INTERAC_RAFTWRECK_CUTSCENE_HELPER
 	.db $15 $0c
 	.db $16 $0c
 	.db $17 $12

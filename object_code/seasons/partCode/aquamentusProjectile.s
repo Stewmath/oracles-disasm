@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_AQUAMENTUS_PROJECTILE
+; PART_AQUAMENTUS_PROJECTILE
 ; ==============================================================================
 partCode40:
 	jp nz,partDelete
@@ -56,7 +56,7 @@ func_7081:
 func_708e:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_AQUAMENTUS_PROJECTILE
+	ld (hl),PART_AQUAMENTUS_PROJECTILE
 	inc l
 	inc (hl)
 	call objectCopyPosition

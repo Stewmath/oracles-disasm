@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_52
+; PART_52
 ; Used by Ganon
 ; ==============================================================================
 partCode52:
@@ -146,7 +146,7 @@ partCode52:
 @func_5d31:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_52
+	ld (hl),PART_52
 	inc l
 	inc (hl)
 	inc l

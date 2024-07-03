@@ -1,5 +1,5 @@
 ;;
-; ITEMID_SHOVEL ($15)
+; ITEM_SHOVEL ($15)
 parentItemCode_shovel:
 	ld e,Item.state
 	ld a,(de)

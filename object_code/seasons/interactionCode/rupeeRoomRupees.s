@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_RUPEE_ROOM_RUPEES
+; INTERAC_RUPEE_ROOM_RUPEES
 ; ==============================================================================
 interactionCode1d:
 	ld e,Interaction.state

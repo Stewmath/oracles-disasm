@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BLAINO
+; INTERAC_BLAINO
 ; var37 - 0 if enough rupees, else 1
 ; var38 - RUPEEVAL_10 if cheated, otherwise RUPEEVAL_20
 ; var39 - pointer to Blaino / script ???

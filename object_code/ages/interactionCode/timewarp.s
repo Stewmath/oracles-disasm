@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TIMEWARP
+; INTERAC_TIMEWARP
 ;
 ; Variables:
 ;   var03: ?
@@ -53,11 +53,11 @@ timewarp_subid0_state1:
 	ld b,$03
 
 ;;
-; @param	b	Subid of INTERACID_TIMEWARP object to spawn
+; @param	b	Subid of INTERAC_TIMEWARP object to spawn
 timewarp_spawnChild:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TIMEWARP
+	ld (hl),INTERAC_TIMEWARP
 	inc l
 	ld (hl),b ; [subid]
 	inc l
@@ -96,7 +96,7 @@ timewarp_subid0_state2:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_TIMEWARP_ANIMATION
+	ld (hl),PART_TIMEWARP_ANIMATION
 	inc l
 	ld (hl),e ; [subid]
 
@@ -201,7 +201,7 @@ timewarp_subid2:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),$06
-	ldbc INTERACID_SPARKLE, $01
+	ldbc INTERAC_SPARKLE, $01
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.var03

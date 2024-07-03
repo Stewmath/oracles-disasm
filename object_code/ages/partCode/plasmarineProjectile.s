@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_PLASMARINE_PROJECTILE
+; PART_PLASMARINE_PROJECTILE
 ; ==============================================================================
 partCode43:
 	jr nz,@delete
@@ -7,7 +7,7 @@ partCode43:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld a,(hl)
-	cp ENEMYID_PLASMARINE
+	cp ENEMY_PLASMARINE
 	jr nz,@delete
 
 	ld e,Part.state

@@ -1,11 +1,11 @@
 ; ==============================================================================
-; ENEMYID_TWINROVA
+; ENEMY_TWINROVA
 ;
 ; Variables:
 ;   var03: If bit 0 is unset, this acts as the "spawner" for the other twinrova object.
 ;          Bit 7: ?
 ;   relatedObj1: Reference to other twinrova object
-;   relatedObj2: Reference to INTERACID_PUFF
+;   relatedObj2: Reference to INTERAC_PUFF
 ;   var30: Anglular velocity (amount to add to angle)
 ;   var31: Counter used for z-position bobbing
 ;   var32: Bit 0: Nonzero while projectile is being fired?
@@ -15,7 +15,7 @@
 ;          Bit 4: Signal in merging cutscene
 ;          Bit 5: ?
 ;          Bit 6: Signal to do "death cutscene" if health is 0. Set by
-;                 PARTID_RED_TWINROVA_PROJECTILE or PARTID_BLUE_TWINROVA_PROJECTILE.
+;                 PART_RED_TWINROVA_PROJECTILE or PART_BLUE_TWINROVA_PROJECTILE.
 ;          Bit 7: If set, updates draw layer relative to Link
 ;   var33: Movement pattern (0-3)
 ;   var34: Position index (within the movement pattern)
@@ -87,7 +87,7 @@ enemyCode03:
 
 
 twinrova_state_uninitialized:
-	ld a,ENEMYID_TWINROVA
+	ld a,ENEMY_TWINROVA
 	ld (wEnemyIDToLoadExtraGfx),a
 	ld a,$01
 	ld (wLoadedTreeGfxIndex),a
@@ -109,7 +109,7 @@ twinrova_state_uninitialized:
 
 
 twinrova_state_spawner:
-	ld b,ENEMYID_TWINROVA
+	ld b,ENEMY_TWINROVA
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 
@@ -300,7 +300,7 @@ twinrova_state9:
 	jp showText
 
 @substate3:
-	ldbc INTERACID_PUFF,$02
+	ldbc INTERAC_PUFF,$02
 	call objectCreateInteraction
 	ret nz
 	ld a,h
@@ -697,7 +697,7 @@ twinrova_state10:
 	ld e,l
 	ld a,(de)
 	ldi (hl),a ; [child.enabled] = [this.enabled]
-	ld (hl),ENEMYID_MERGED_TWINROVA ; [child.id]
+	ld (hl),ENEMY_MERGED_TWINROVA ; [child.id]
 	call objectCopyPosition
 
 	ld a,$01
@@ -899,12 +899,12 @@ twinrova_checkFireProjectile:
 
 ;;
 @spawnProjectile:
-	ld b,PARTID_RED_TWINROVA_PROJECTILE
+	ld b,PART_RED_TWINROVA_PROJECTILE
 	ld e,Enemy.subid
 	ld a,(de)
 	or a
 	jr z,+
-	ld b,PARTID_BLUE_TWINROVA_PROJECTILE
+	ld b,PART_BLUE_TWINROVA_PROJECTILE
 +
 	jp ecom_spawnProjectile
 

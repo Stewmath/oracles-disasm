@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BOOK_OF_SEALS_PODIUM
+; INTERAC_BOOK_OF_SEALS_PODIUM
 ;
 ; Variables:
 ;   var03: Tile index to replace path with?
@@ -224,7 +224,7 @@ interactionCodeb4:
 @next:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_BOOK_OF_SEALS_PODIUM
+	ld (hl),INTERAC_BOOK_OF_SEALS_PODIUM
 	inc l
 	ld (hl),e ; [subid]
 	ld l,Interaction.yh

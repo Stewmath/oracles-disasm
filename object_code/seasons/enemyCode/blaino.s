@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_BLAINO
+; ENEMY_BLAINO
 ; ==============================================================================
 enemyCode54:
 	jr z,@normalStatus
@@ -72,7 +72,7 @@ enemyCode54:
 @state0:
 	call getFreeEnemySlot_uncounted
 	ret nz
-	ld (hl),ENEMYID_BLAINOS_GLOVES
+	ld (hl),ENEMY_BLAINOS_GLOVES
 	ld l,Enemy.relatedObj1
 	ld a,$80
 	ldi (hl),a

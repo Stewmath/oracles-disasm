@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MINIBOSS_PORTAL
+; INTERAC_MINIBOSS_PORTAL
 ; ==============================================================================
 interactionCode7e:
 	ld e,Interaction.subid
@@ -64,7 +64,7 @@ interactionCode7e:
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing
 	ret nc
 
-	; Check that [w1Link.id] == SPECIALOBJECTID_LINK, check collisions are enabled
+	; Check that [w1Link.id] == SPECIALOBJECT_LINK, check collisions are enabled
 	ld a,(w1Link.id)
 	or a
 	call z,checkLinkCollisionsEnabled

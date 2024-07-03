@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_PLAY_NAYRU_MUSIC
+; INTERAC_PLAY_NAYRU_MUSIC
 ; ==============================================================================
 interactionCode2f:
 	ld a,GLOBALFLAG_INTRO_DONE

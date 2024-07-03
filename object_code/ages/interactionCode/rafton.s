@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_RAFTON
+; INTERAC_RAFTON
 ;
 ; Variables:
 ;   var38: "behaviour" (what he does based on the stage in the game)

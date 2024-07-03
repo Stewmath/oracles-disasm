@@ -1,15 +1,15 @@
 ; ==============================================================================
-; ENEMYID_CUCCO
+; ENEMY_CUCCO
 ;
-; Shares some code with ENEMYID_GIANT_CUCCO.
+; Shares some code with ENEMY_GIANT_CUCCO.
 ;
 ; Variables:
-;   relatedObj1: INTERACID_PUFF object when transforming
-;   var30: Number of times it's been hit (also read by PARTID_CUCCO_ATTACKER to decide
+;   relatedObj1: INTERAC_PUFF object when transforming
+;   var30: Number of times it's been hit (also read by PART_CUCCO_ATTACKER to decide
 ;          speed)
 ;   var31: Enemy ID to transform into, when a mystery seed is used on it
 ;   var32: Counter used while being held
-;   var33: Counter until next PARTID_CUCCO_ATTACKER is spawned
+;   var33: Counter until next PART_CUCCO_ATTACKER is spawned
 ; ==============================================================================
 enemyCode36:
 	jr z,@normalStatus
@@ -57,7 +57,7 @@ cucco_state_uninitialized:
 	ret
 
 
-; Also used by ENEMYID_GIANT_CUCCO
+; Also used by ENEMY_GIANT_CUCCO
 cucco_state_grabbed:
 	inc e
 	ld a,(de)
@@ -135,7 +135,7 @@ cucco_state_stub:
 
 
 ; Standing still.
-; Also used by ENEMYID_GIANT_CUCCO.
+; Also used by ENEMY_GIANT_CUCCO.
 cucco_state8:
 	call objectAddToGrabbableObjectBuffer
 
@@ -161,7 +161,7 @@ cucco_state8:
 
 
 ; Moving in some direction until [counter2] == 0.
-; Also used by ENEMYID_GIANT_CUCCO.
+; Also used by ENEMY_GIANT_CUCCO.
 cucco_state9:
 	call objectAddToGrabbableObjectBuffer
 	ld h,d
@@ -202,7 +202,7 @@ cucco_stateA:
 	jr cucco_animate
 
 
-; In the process of transforming (into ENEMYID_BABY_CUCCO or ENEMYID_GIANT_CUCCO, based on
+; In the process of transforming (into ENEMY_BABY_CUCCO or ENEMY_GIANT_CUCCO, based on
 ; var31)
 cucco_stateB:
 	ld a,Object.animParameter

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BOY
+; INTERAC_BOY
 ; ==============================================================================
 interactionCode3c:
 	ld e,Interaction.state
@@ -141,7 +141,7 @@ interactionCode3c:
 	xor a
 	ld ($cfd3),a
 
-	ldbc INTERACID_BALL,$00
+	ldbc INTERAC_BALL,$00
 	call objectCreateInteraction
 	ld bc,$4a75
 	call interactionHSetPosition
@@ -650,7 +650,7 @@ boyRunSubid09:
 @updateAngleAndCounter:
 	ld e,Interaction.id
 	ld a,(de)
-	cp INTERACID_BOY
+	cp INTERAC_BOY
 	jr z,@boy
 
 	; Which interaction is this for?
@@ -726,7 +726,7 @@ boyRunSubid09:
 	ld e,Interaction.id
 	ld a,(de)
 	ld b,$34
-	cp INTERACID_BOY_2
+	cp INTERAC_BOY_2
 	jr z,+
 	ld b,$20
 +
@@ -934,7 +934,7 @@ boyStartHop:
 	jp objectSetSpeedZ
 
 ;;
-; Load a script for INTERACID_BOY.
+; Load a script for INTERAC_BOY.
 boyLoadScript:
 	ld e,Interaction.subid
 	ld a,(de)

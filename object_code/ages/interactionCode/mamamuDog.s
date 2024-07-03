@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAMAMU_DOG
+; INTERAC_MAMAMU_DOG
 ;
 ; Variables (for subid $01):
 ;   var3a: Target position index

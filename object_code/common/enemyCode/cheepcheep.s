@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_CHEEP_CHEEP
+; ENEMY_CHEEP_CHEEP
 ;
 ; Variables:
 ;   var03: How far to travel (copied to counter1)

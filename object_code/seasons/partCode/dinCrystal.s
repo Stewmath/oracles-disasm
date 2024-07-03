@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_DIN_CRYSTAL
+; PART_DIN_CRYSTAL
 ; ==============================================================================
 partCode4f:
 	jr z,@normalStatus
@@ -62,7 +62,7 @@ partCode4f:
 @state0:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_SHADOW
+	ld (hl),PART_SHADOW
 	inc l
 	ld (hl),$00
 	inc l
@@ -108,7 +108,7 @@ partCode4f:
 	ld bc,$0404
 -
 	call getFreePartSlot
-	ld (hl),PARTID_DIN_CRYSTAL
+	ld (hl),PART_DIN_CRYSTAL
 	inc l
 	inc (hl)
 	ld l,Part.angle
@@ -134,7 +134,7 @@ partCode4f:
 	ret nz
 	call getFreeEnemySlot
 	ret nz
-	ld (hl),ENEMYID_GENERAL_ONOX
+	ld (hl),ENEMY_GENERAL_ONOX
 	ld e,Part.relatedObj2
 	ld a,$80
 	ld (de),a

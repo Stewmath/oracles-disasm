@@ -4829,7 +4829,7 @@ loadTreasureDisplayData:
 
 ;;
 ; @param	a
-; @param[out]	a,c	Subid for PARTID_ITEM_DROP (see constants/itemDrops.s)
+; @param[out]	a,c	Subid for PART_ITEM_DROP (see constants/itemDrops.s)
 ; @param[out]	zflag	z if there is no item drop
 decideItemDrop:
 	ld c,a
@@ -5449,7 +5449,7 @@ clearAllItemsAndPutLinkOnGround:
 .ifdef ROM_AGES
 	ld l,Item.id
 	ld a,(hl)
-	cp ITEMID_18
+	cp ITEM_18
 	jr nz,@notSomariaBlock
 
 ; Somaria block creation
@@ -7675,7 +7675,7 @@ checkLinkIsOverHazard:
 
 	ld e,SpecialObject.id
 	ld a,(de)
-	sub SPECIALOBJECTID_DIMITRI
+	sub SPECIALOBJECT_DIMITRI
 	ret z
 
 	push bc
@@ -7726,7 +7726,7 @@ objectReplaceWithAnimationIfOnHazard:
 	rrca
 	jr c,objectReplaceWithFallingDownHoleInteraction
 
-	ld b,INTERACID_LAVASPLASH
+	ld b,INTERAC_LAVASPLASH
 	jr objectReplaceWithSplash@create
 
 ;;
@@ -7736,7 +7736,7 @@ objectReplaceWithFallingDownHoleInteraction:
 
 ;;
 objectReplaceWithSplash:
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 @create:
 	call objectCreateInteractionWithSubid00
 @delete:
@@ -7861,7 +7861,7 @@ breakCrackedFloor:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FALLDOWNHOLE
+	ld (hl),INTERAC_FALLDOWNHOLE
 
 	; Disable interaction's sound effect
 	inc l
@@ -8364,7 +8364,7 @@ setScreenShakeCounter:
 
 ;;
 objectCreatePuff:
-	ld b,INTERACID_PUFF
+	ld b,INTERAC_PUFF
 
 ;;
 ; @param	b	High byte of interaction
@@ -8394,7 +8394,7 @@ objectCreateFallingDownHoleInteraction:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_FALLDOWNHOLE
+	ld (hl),INTERAC_FALLDOWNHOLE
 
 	; Store object type in Interaction.counter1
 	ld l,Interaction.counter1
@@ -8493,7 +8493,7 @@ interactionSetHighTextIndex:
 ; Sets the interaction's script to hl, also resets Interaction.counter variables.
 ;
 ; @param	hl	The address of the script
-; @param[out]	a	0 (this is assumed by INTERACID_MAMAMU_DOG due to an apparent bug...)
+; @param[out]	a	0 (this is assumed by INTERAC_MAMAMU_DOG due to an apparent bug...)
 interactionSetScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
@@ -8849,7 +8849,7 @@ objectPreventLinkFromPassing:
 	; If Dimitri is active, we can't let him pass either while being thrown.
 	ld hl,w1Companion.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr nz,@end
 
 	ld l,<w1Companion.state
@@ -9226,7 +9226,7 @@ giveRingToLink:
 createRingTreasure:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_RING
 	inc l
@@ -9238,14 +9238,14 @@ createRingTreasure:
 	ret
 
 ;;
-; Creates a "treasure" interaction (INTERACID_TREASURE). Doesn't initialize X/Y.
+; Creates a "treasure" interaction (INTERAC_TREASURE). Doesn't initialize X/Y.
 ;
 ; @param	bc	Treasure to create (b = main id, c = subid)
 ; @param[out]	zflag	Set if the treasure was created successfully.
 createTreasure:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -9493,7 +9493,7 @@ enemyDie:
 	ldi (hl),a
 
 	; Part.id
-	ld (hl),PARTID_ENEMY_DESTROYED
+	ld (hl),PART_ENEMY_DESTROYED
 
 	; [Part.subid] = [Enemy.id]
 	inc l
@@ -10383,9 +10383,9 @@ clearVar3fForParentItems:
 ;
 ; @param	d	Link object
 linkCreateSplash:
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 
-	; Check if in lava; if so, set b to INTERACID_LAVASPLASH.
+	; Check if in lava; if so, set b to INTERAC_LAVASPLASH.
 	ld a,(wLinkSwimmingState)
 	bit 6,a
 	jr z,+
@@ -11013,7 +11013,7 @@ initializeRoom:
 	dec a
 	jr nz,+
 
-	ld b,INTERACID_SCREEN_DISTORTION
+	ld b,INTERAC_SCREEN_DISTORTION
 	jp objectCreateInteractionWithSubid00
 +
 	callab roomInitialization.calculateRoomStateModifier
@@ -13677,7 +13677,7 @@ getWildTokayObjectDataIndex:
 objectCreateSparkle:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$00
 	jp objectCopyPositionWithOffset
@@ -13689,7 +13689,7 @@ objectCreateSparkle:
 objectCreateSparkleMovingUp:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$02
 	ld l,Interaction.speedY
@@ -13705,7 +13705,7 @@ objectCreateSparkleMovingUp:
 objectCreateRedBlueOrb:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$04
 	jp objectCopyPositionWithOffset

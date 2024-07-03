@@ -1,10 +1,10 @@
 ; ==============================================================================
-; ENEMYID_OCTOGON
+; ENEMY_OCTOGON
 ;
 ; Variables:
 ;   var03: Where it actually is? (0 = above water, 1 = below water)
 ;   counter2: Counter until it moves above or below the water?
-;   relatedObj1: Reference to other instance of ENEMYID_OCTOGON?
+;   relatedObj1: Reference to other instance of ENEMY_OCTOGON?
 ;   var30: Index in "target position list"?
 ;   var31/var32: Target position to move to
 ;   var33/var34: Original Y/X position when this screen was entered
@@ -172,7 +172,7 @@ octogon_state_uninitialized:
 	jp ecom_setSpeedAndState8
 
 @notSubid2:
-	ld a,ENEMYID_OCTOGON
+	ld a,ENEMY_OCTOGON
 	ld (wEnemyIDToLoadExtraGfx),a
 	ld a,PALH_88
 	call loadPaletteHeader
@@ -187,7 +187,7 @@ octogon_state_uninitialized:
 	; Create "child" with subid 2? They will reference each other with relatedObj2.
 	call getFreeEnemySlot_uncounted
 	ret nz
-	ld (hl),ENEMYID_OCTOGON
+	ld (hl),ENEMY_OCTOGON
 	inc l
 	ld (hl),$02 ; [child.subid]
 	ld l,Enemy.relatedObj1
@@ -315,7 +315,7 @@ octogon_state_uninitialized:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_BUBBLE
+	ld (hl),INTERAC_BUBBLE
 	inc l
 	inc (hl) ; [bubble.subid] = 1
 	ld l,Interaction.relatedObj1
@@ -691,7 +691,7 @@ octogon_subid0BelowWater_stateB:
 	ld (hl),60 ; [counter1]
 	ld l,e
 	inc (hl) ; [state] = $0c
-	ld b,PARTID_OCTOGON_DEPTH_CHARGE
+	ld b,PART_OCTOGON_DEPTH_CHARGE
 	call ecom_spawnProjectile
 	jr octogon_loadNormalSubmergedAnimation
 
@@ -839,7 +839,7 @@ octogon_doSplashAnimation:
 	; Splash animation
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_OCTOGON_SPLASH
+	ld (hl),INTERAC_OCTOGON_SPLASH
 	ld e,Enemy.direction
 	ld a,(de)
 	and $0c
@@ -930,7 +930,7 @@ octogon_subid1_belowWater_stateB:
 
 	call getFreePartSlot
 	jr nz,++
-	ld (hl),PARTID_OCTOGON_BUBBLE
+	ld (hl),PART_OCTOGON_BUBBLE
 	call octogon_initializeProjectile
 ++
 	jp octogon_doSplashAnimation
@@ -963,7 +963,7 @@ octogon_subid1_aboveWater:
 	call ecom_decCounter1
 	ret nz
 	ld (hl),120
-	ld b,PARTID_OCTOGON_DEPTH_CHARGE
+	ld b,PART_OCTOGON_DEPTH_CHARGE
 	jp ecom_spawnProjectile
 
 
@@ -1170,11 +1170,11 @@ octogon_fixPositionAboveWater:
 octogon_fireOctorokProjectile:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_OCTOROK_PROJECTILE
+	ld (hl),PART_OCTOROK_PROJECTILE
 
 ;;
-; @param	h	Projectile (could be PARTID_OCTOROK_PROJECTILE or
-;			PARTID_OCTOGON_BUBBLE)
+; @param	h	Projectile (could be PART_OCTOROK_PROJECTILE or
+;			PART_OCTOGON_BUBBLE)
 octogon_initializeProjectile:
 	ld e,Enemy.direction
 	ld a,(de)

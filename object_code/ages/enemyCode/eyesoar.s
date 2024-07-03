@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_EYESOAR
+; ENEMY_EYESOAR
 ;
 ; Variables:
 ;   var30-var35: Object indices of children
@@ -108,7 +108,7 @@ eyesoar_state1:
 	ret nz
 
 	; Spawn the "real" version of the boss (subid 1).
-	ld b,ENEMYID_EYESOAR
+	ld b,ENEMY_EYESOAR
 	call ecom_spawnUncountedEnemyWithSubid01
 
 	ld l,Enemy.enabled
@@ -125,7 +125,7 @@ eyesoar_state1:
 @spawnChildLoop:
 	push hl
 	call getFreeEnemySlot_uncounted
-	ld (hl),ENEMYID_EYESOAR_CHILD
+	ld (hl),ENEMY_EYESOAR_CHILD
 	inc l
 	dec c
 	ld (hl),c ; [child.subid]

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_GET_ROD_OF_SEASONS
+; INTERAC_GET_ROD_OF_SEASONS
 ;
 ; Variables:
 ;   var03:    Index of a seasons' sparkle from 0 to 3
@@ -85,7 +85,7 @@ interactionCodee6_state0:
 	ld l,Interaction.counter2
 	ld (hl),$30
 
-	ldbc INTERACID_GET_ROD_OF_SEASONS 03
+	ldbc INTERAC_GET_ROD_OF_SEASONS 03
 	call objectCreateInteraction
 	ret nz
 
@@ -313,7 +313,7 @@ dropSparkles:
 
 	ld l,Interaction.var3b
 	ld (hl),$10
-	ldbc INTERACID_SPARKLE, $01
+	ldbc INTERAC_SPARKLE, $01
 	jp objectCreateInteraction
 
 
@@ -333,7 +333,7 @@ spawnRodOfSeasonsSparkles:
 	ret nz
 
 	; spawn subid $01 (the sparkles for each season)
-	ld (hl),INTERACID_GET_ROD_OF_SEASONS
+	ld (hl),INTERAC_GET_ROD_OF_SEASONS
 	inc l
 	ld (hl),$01
 	inc l

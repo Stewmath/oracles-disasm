@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_TWINROVA_FLAME
+; PART_TWINROVA_FLAME
 ; ==============================================================================
 partCode4c:
 	jr z,@normalStatus
@@ -79,7 +79,7 @@ partCode4c:
 -
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_TWINROVA_FLAME
+	ld (hl),PART_TWINROVA_FLAME
 	inc l
 	inc (hl)
 	ld l,$c9

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_LINKED_GAME_GHINI
+; INTERAC_LINKED_GAME_GHINI
 ;
 ; Variables:
 ;   var3f: Secret index (for "linkedGameNpcScript")

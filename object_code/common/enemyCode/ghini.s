@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_GHINI
+; ENEMY_GHINI
 ;
 ; Variables:
 ;   var30/31: Target Y/X position for subid 2 only
@@ -35,7 +35,7 @@ enemyCode17:
 	ldhl FIRST_ENEMY_INDEX, Enemy.id
 @nextGhini:
 	ld a,(hl)
-	cp ENEMYID_GHINI
+	cp ENEMY_GHINI
 	jr nz,++
 	inc l
 	ldd a,(hl)

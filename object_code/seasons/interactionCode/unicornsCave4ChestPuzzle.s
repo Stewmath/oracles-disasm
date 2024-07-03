@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_D5_4_CHEST_PUZZLE
+; INTERAC_D5_4_CHEST_PUZZLE
 ; ==============================================================================
 interactionCode62:
 	ld e,Interaction.subid
@@ -50,7 +50,7 @@ interactionCode62:
 @@func_4fa5:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_D5_4_CHEST_PUZZLE
+	ld (hl),INTERAC_D5_4_CHEST_PUZZLE
 	inc l
 	ld (hl),$01
 	ld l,$70
@@ -161,7 +161,7 @@ interactionCode62:
 	call objectCreatePuff
 	call getFreeEnemySlot
 	ret nz
-	ld (hl),ENEMYID_WHISP
+	ld (hl),ENEMY_WHISP
 	call objectCopyPosition
 	ld e,$70
 	ld a,(de)

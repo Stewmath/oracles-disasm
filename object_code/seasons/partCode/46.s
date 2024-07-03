@@ -111,7 +111,7 @@ partCode46:
 func_74fd:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_S_46
+	ld (hl),PART_S_46
 	inc l
 	inc (hl)
 	ld l,$c9

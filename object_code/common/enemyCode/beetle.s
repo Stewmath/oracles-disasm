@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_BEETLE
+; ENEMY_BEETLE
 ;
 ; Variables for spawner (subid 0):
 ;   var30: Number of beetles spawned in? It's never actually used, and it doesn't seem to
@@ -103,7 +103,7 @@ beetle_state_spawner:
 	ld a,90
 	ld (de),a
 
-	ld b,ENEMYID_BEETLE
+	ld b,ENEMY_BEETLE
 	call ecom_spawnEnemyWithSubid01
 	ret nz
 	inc (hl) ; [subid] = 2

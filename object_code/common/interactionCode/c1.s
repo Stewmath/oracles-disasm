@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_c1
+; INTERAC_c1
 ;
 ; Variables:
 ;   counter1/counter2: 16-bit counter
@@ -89,8 +89,8 @@ interactionCodec1:
 	ret nz
 	ld (hl),$06 ; [var36]
 .ifdef ROM_AGES
-	ldbc INTERACID_SPARKLE, $09
+	ldbc INTERAC_SPARKLE, $09
 .else
-	ldbc INTERACID_SPARKLE, $05
+	ldbc INTERAC_SPARKLE, $05
 .endif
 	jp objectCreateInteraction

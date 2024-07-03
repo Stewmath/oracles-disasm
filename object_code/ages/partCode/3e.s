@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_3e
+; PART_3e
 ;
 ; Variables:
 ;   var30-3f: stores enemy index of every loaded Ambi Guard
@@ -20,7 +20,7 @@ partCode3e:
 	ldhl FIRST_ENEMY_INDEX, Enemy.id
 -
 	ld a,(hl)
-	cp ENEMYID_AMBI_GUARD
+	cp ENEMY_AMBI_GUARD
 	jr nz,+
 	ld a,h
 	ld (de),a

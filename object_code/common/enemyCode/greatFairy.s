@@ -1,8 +1,8 @@
 ; ==============================================================================
-; ENEMYID_GREAT_FAIRY
+; ENEMY_GREAT_FAIRY
 ;
 ; Variables:
-;   relatedObj2: Reference to INTERACID_PUFF
+;   relatedObj2: Reference to INTERAC_PUFF
 ;   var30: Counter used to update Z-position as she floats up and down
 ;   var31: Number of hearts spawned (the ones that circle around Link)
 ; ==============================================================================
@@ -241,7 +241,7 @@ greatFairy_spawnCirclingHeart:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_GREAT_FAIRY_HEART
+	ld (hl),PART_GREAT_FAIRY_HEART
 	ld l,Part.relatedObj1
 	ld a,Enemy.start
 	ldi (hl),a
@@ -255,7 +255,7 @@ greatFairy_spawnCirclingHeart:
 
 ;;
 greatFairy_createPuff:
-	ldbc INTERACID_PUFF,$02
+	ldbc INTERAC_PUFF,$02
 	call objectCreateInteraction
 	ret nz
 

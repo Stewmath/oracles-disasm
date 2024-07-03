@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_VIRE
+; INTERAC_VIRE
 ;
 ; Variables:
 ;   relatedObj1: Zelda object (for vire subid 2 only)
@@ -127,7 +127,7 @@ vire_subid1:
 @spawnFireball:
 	call getFreePartSlot
 	jr nz,vire_setRandomCounter1
-	ld (hl),PARTID_DONKEY_KONG_FLAME
+	ld (hl),PART_DONKEY_KONG_FLAME
 	inc l
 	inc (hl) ; [subid] = 1
 
@@ -160,7 +160,7 @@ vire_subid2:
 	bit 6,(hl)
 	jp nz,interactionDelete
 
-	ldbc INTERACID_ZELDA, $03
+	ldbc INTERAC_ZELDA, $03
 	call objectCreateInteraction
 	ret nz
 
@@ -217,7 +217,7 @@ vire_subid2:
 
 	call getFreePartSlot
 	jr nz,++
-	ld (hl),PARTID_DONKEY_KONG_FLAME
+	ld (hl),PART_DONKEY_KONG_FLAME
 	call objectCopyPosition
 	ld e,Interaction.direction
 	ld a,$01

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_POKEY
+; ENEMY_POKEY
 ; ==============================================================================
 enemyCode11:
 	jr z,++
@@ -70,7 +70,7 @@ pokey_state_0:
 	ld b,$04
 	call checkBEnemySlotsAvailable
 	ret nz
-	ld b,ENEMYID_POKEY
+	ld b,ENEMY_POKEY
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),$05
 	ld l,$96

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BLACK_TOWER_DOOR_HANDLER
+; INTERAC_BLACK_TOWER_DOOR_HANDLER
 ; ==============================================================================
 interactionCodec6:
 	ld e,Interaction.state
@@ -86,6 +86,6 @@ interactionCodec6:
 @state2:
 	call interactionDecCounter1
 	ret nz
-	ld b,INTERACID_MAKU_SEED_AND_ESSENCES
+	ld b,INTERAC_MAKU_SEED_AND_ESSENCES
 	call objectCreateInteractionWithSubid00
 	jp interactionDelete

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_HORON_DOG
+; INTERAC_HORON_DOG
 ;
 ; Variables:
 ;   subid: Used as a sort of "state" variable?

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_NAYRU_RALPH_CREDITS
+; INTERAC_NAYRU_RALPH_CREDITS
 ; ==============================================================================
 interactionCodedf:
 	ld e,Interaction.state

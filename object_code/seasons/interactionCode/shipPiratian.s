@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SHIP_PIRATIAN
+; INTERAC_SHIP_PIRATIAN
 ; ==============================================================================
 interactionCodeb1:
 	ld e,$44
@@ -14,7 +14,7 @@ interactionCodeb1:
 	.dw piratian_state6
 
 ; ==============================================================================
-; INTERACID_SHIP_PIRATIAN_CAPTAIN
+; INTERAC_SHIP_PIRATIAN_CAPTAIN
 ; ==============================================================================
 interactionCodeb2:
 	ld e,$44

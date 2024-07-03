@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_WATER_PUSHBLOCK
+; INTERAC_WATER_PUSHBLOCK
 ; ==============================================================================
 interactionCode9e:
 	ld e,Interaction.subid

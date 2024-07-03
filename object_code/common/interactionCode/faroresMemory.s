@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FARORES_MEMORY
+; INTERAC_FARORES_MEMORY
 ; ==============================================================================
 interactionCode1c:
 	call checkInteractionState

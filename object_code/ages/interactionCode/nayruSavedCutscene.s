@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_NAYRU_SAVED_CUTSCENE
+; INTERAC_NAYRU_SAVED_CUTSCENE
 ; ==============================================================================
 interactionCode6e:
 	ld e,Interaction.subid

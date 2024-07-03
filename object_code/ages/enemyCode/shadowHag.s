@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SHADOW_HAG
+; ENEMY_SHADOW_HAG
 ;
 ; Variables:
 ;   counter2: Number of times to spawn bugs before shadows separate
@@ -21,7 +21,7 @@ enemyCode7a:
 @killNext:
 	ld l,Enemy.id
 	ld a,(hl)
-	cp ENEMYID_SHADOW_HAG_BUG
+	cp ENEMY_SHADOW_HAG_BUG
 	call z,ecom_killObjectH
 	inc h
 	ld a,h
@@ -56,7 +56,7 @@ enemyCode7a:
 	.dw shadowHag_state13
 
 shadowHag_state_uninitialized:
-	ld a,ENEMYID_SHADOW_HAG
+	ld a,ENEMY_SHADOW_HAG
 	ld b,$00
 	call enemyBoss_initializeRoom
 	ld a,SPEED_80
@@ -176,7 +176,7 @@ shadowHag_state9:
 	call checkBPartSlotsAvailable
 	ret nz
 
-	ldbc PARTID_SHADOW_HAG_SHADOW,$04
+	ldbc PART_SHADOW_HAG_SHADOW,$04
 --
 	call ecom_spawnProjectile
 	dec c
@@ -254,7 +254,7 @@ shadowHag_initStateC:
 	ld (hl),30
 
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_PODOBOO
+	ld (hl),$80|ENEMY_PODOBOO
 
 	ld l,Enemy.collisionRadiusY
 	ld (hl),$03
@@ -295,7 +295,7 @@ shadowHag_stateD:
 	ret nc
 
 	; Spawn bug
-	ld b,ENEMYID_SHADOW_HAG_BUG
+	ld b,ENEMY_SHADOW_HAG_BUG
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 
@@ -381,7 +381,7 @@ shadowHag_state10:
 	call ecom_incState
 
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_SHADOW_HAG
+	ld (hl),$80|ENEMY_SHADOW_HAG
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_180
@@ -449,7 +449,7 @@ shadowHag_doneCharging:
 	inc (hl)
 
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_PODOBOO
+	ld (hl),$80|ENEMY_PODOBOO
 	ld a,$06
 	jp enemySetAnimation
 
@@ -535,7 +535,7 @@ shadowHag_beginReturningToGround:
 
 	; Make hag invincible
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_PODOBOO
+	ld (hl),$80|ENEMY_PODOBOO
 
 	ld l,Enemy.collisionRadiusY
 	ld (hl),$03

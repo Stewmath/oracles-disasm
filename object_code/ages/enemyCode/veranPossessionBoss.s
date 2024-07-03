@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_VERAN_POSSESSION_BOSS
+; ENEMY_VERAN_POSSESSION_BOSS
 ;
 ; Variables:
 ;   relatedObj1: For subid 2 (veran ghost/human), this is a reference to subid 0 or 1
@@ -43,7 +43,7 @@ enemyCode61:
 veranPossessionBoss_state_uninitialized:
 	bit 1,b
 	jr nz,++
-	ld a,ENEMYID_VERAN_POSSESSION_BOSS
+	ld a,ENEMY_VERAN_POSSESSION_BOSS
 	ld (wEnemyIDToLoadExtraGfx),a
 ++
 	ld a,b
@@ -128,7 +128,7 @@ veranPossessionBoss_nayruAmbi_state8:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_SHADOW
+	ld (hl),PART_SHADOW
 	ld l,Part.var03
 	ld (hl),$06 ; Y-offset of shadow relative to self
 
@@ -330,7 +330,7 @@ veranPossessionBoss_nayru_stateC:
 	ld l,e
 	inc (hl) ; [state]
 
-	ld b,PARTID_VERAN_PROJECTILE
+	ld b,PART_VERAN_PROJECTILE
 	jp ecom_spawnProjectile
 
 
@@ -359,7 +359,7 @@ veranPossessionBoss_nayruAmbi_stateE:
 	; Spawn veran ghost form
 	call getFreeEnemySlot_uncounted
 	ret nz
-	ld (hl),ENEMYID_VERAN_POSSESSION_BOSS
+	ld (hl),ENEMY_VERAN_POSSESSION_BOSS
 	inc l
 	ld (hl),$02 ; [child.subid]
 
@@ -459,7 +459,7 @@ veranPossessionBoss_nayru_state14:
 	ld (hl),$03
 
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_NAYRU_SAVED_CUTSCENE
+	ld (hl),INTERAC_NAYRU_SAVED_CUTSCENE
 	ret
 
 
@@ -511,7 +511,7 @@ veranPossessionBoss_ambi_stateC:
 	ret nc
 
 	dec (hl)
-	ld b,PARTID_VERAN_PROJECTILE
+	ld b,PART_VERAN_PROJECTILE
 	jp ecom_spawnProjectile
 
 ; Each byte is the probability of veran spawning spiders when she has 'n' hits left (ie.
@@ -543,7 +543,7 @@ veranPossessionBoss_ambi_stateD:
 	cp $06
 	ret nc
 
-	ld b,ENEMYID_VERAN_SPIDER
+	ld b,ENEMY_VERAN_SPIDER
 	jp ecom_spawnEnemyWithSubid01
 
 
@@ -572,7 +572,7 @@ veranPossessionBoss_ambi_state14:
 
 	; Spawn subid 3 of this object
 	call getFreeEnemySlot_uncounted
-	ld (hl),ENEMYID_VERAN_POSSESSION_BOSS
+	ld (hl),ENEMY_VERAN_POSSESSION_BOSS
 	inc l
 	ld (hl),$03 ; [subid]
 
@@ -787,7 +787,7 @@ veranPossessionBoss_humanForm_stateE:
 	call checkLinkCollisionsEnabled
 	ret nc
 
-	ldbc INTERACID_PUFF,$02
+	ldbc INTERAC_PUFF,$02
 	call objectCreateInteraction
 	ret nz
 	ld a,h
@@ -867,7 +867,7 @@ veranPossessionBoss_subid3:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_AMBI
+	ld (hl),INTERAC_AMBI
 	inc l
 	ld (hl),$07 ; [subid]
 

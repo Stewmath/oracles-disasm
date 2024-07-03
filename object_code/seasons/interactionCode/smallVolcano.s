@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SMALL_VOLCANO
+; INTERAC_SMALL_VOLCANO
 ; ==============================================================================
 interactionCode51:
 	call checkInteractionState
@@ -33,7 +33,7 @@ interactionCode51:
 	ld c,a
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_VOLCANO_ROCK
+	ld (hl),PART_VOLCANO_ROCK
 	ld e,$42
 	inc l
 	ld a,(de)

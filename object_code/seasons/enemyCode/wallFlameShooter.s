@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_WALL_FLAME_SHOOTER
+; ENEMY_WALL_FLAME_SHOOTER
 ; ==============================================================================
 enemyCode5c:
 	dec a
@@ -31,6 +31,6 @@ enemyCode5c:
 	ld (hl),$10
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_WALL_FLAME_SHOOTERS_FLAMES
+	ld (hl),PART_WALL_FLAME_SHOOTERS_FLAMES
 	ld bc,$0600
 	jp objectCopyPositionWithOffset

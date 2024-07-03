@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FARORE_MAKECHEST
+; INTERAC_FARORE_MAKECHEST
 ; ==============================================================================
 interactionCode11:
 	ld e,Interaction.subid
@@ -86,9 +86,9 @@ interac11_subid00:
 
 	; Create a large, blue-and-red sparkle, and set its "related object" to this.
 .ifdef ROM_AGES
-	ldbc INTERACID_SPARKLE, $0c
+	ldbc INTERAC_SPARKLE, $0c
 .else
-	ldbc INTERACID_SPARKLE, $04
+	ldbc INTERAC_SPARKLE, $04
 .endif
 	call objectCreateInteraction
 	ld l,Interaction.relatedObj1

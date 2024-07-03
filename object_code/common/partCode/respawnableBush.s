@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_RESPAWNABLE_BUSH
+; PART_RESPAWNABLE_BUSH
 ; ==============================================================================
 partCode0f:
 	jr z,@normalStatus
@@ -24,7 +24,7 @@ partCode0f:
 
 	call getFreePartSlot
 	jr nz,@doneItemDropSpawn
-	ld (hl),PARTID_ITEM_DROP
+	ld (hl),PART_ITEM_DROP
 	inc l
 	ld e,l
 	ld a,(de)
@@ -32,7 +32,7 @@ partCode0f:
 	call objectCopyPosition
 
 @doneItemDropSpawn:
-	ld b,INTERACID_GRASSDEBRIS
+	ld b,INTERAC_GRASSDEBRIS
 	call objectCreateInteractionWithSubid00
 
 @normalStatus:

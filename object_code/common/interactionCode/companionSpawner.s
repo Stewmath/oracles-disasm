@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_COMPANION_SPAWNER
+; INTERAC_COMPANION_SPAWNER
 ; ==============================================================================
 .ifdef ROM_AGES
 interactionCode67:
@@ -40,9 +40,9 @@ interactionCode5f:
 	; But there's a check later that will prevent the companion from spawning if this
 	; slot is in use...
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_MOOSH+1
+	cp SPECIALOBJECT_MOOSH+1
 	jr nc,@label_0a_047
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	jp nz,@deleteSelf
 
 @label_0a_047:
@@ -319,7 +319,7 @@ interactionCode5f:
 	and $20
 	jr z,@deleteSelf
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr z,@deleteSelf
 	ld hl,wDimitriState
 	ld a,TREASURE_FLIPPERS
@@ -330,7 +330,7 @@ interactionCode5f:
 
 @subid02:
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr nz,@deleteSelf
 	ld hl,wDimitriState
 	jr @deleteSelfIfBit7OfAnimalStateSet
@@ -341,7 +341,7 @@ interactionCode5f:
 	bit 1,a
 	jr z,@deleteSelf
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	jr z,@deleteSelfIfBit7OfAnimalStateSet
 	ld a,(hl)
 	bit 6,a
@@ -351,7 +351,7 @@ interactionCode5f:
 @subid06:
 	ld hl,wRickyState
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	jr z,@deleteSelf2
 	ld a,(wFluteIcon)
 	or a
@@ -363,7 +363,7 @@ interactionCode5f:
 
 @subid03:
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_MOOSH
+	cp SPECIALOBJECT_MOOSH
 	jr nz,@deleteSelf
 	ld hl,wMooshState
 	ld a,(hl)
@@ -518,19 +518,19 @@ interactionCode5f:
 ;   b3: Unused
 @presetCompanionData:
 .ifdef ROM_AGES
-	.db SPECIALOBJECTID_MOOSH,   $28, $58, $00 ; $00 == [subid]
-	.db SPECIALOBJECTID_MOOSH,   $48, $38, $00 ; $01
-	.db SPECIALOBJECTID_RICKY,   $40, $50, $00 ; $02
-	.db SPECIALOBJECTID_DIMITRI, $48, $30, $00 ; $03
+	.db SPECIALOBJECT_MOOSH,   $28, $58, $00 ; $00 == [subid]
+	.db SPECIALOBJECT_MOOSH,   $48, $38, $00 ; $01
+	.db SPECIALOBJECT_RICKY,   $40, $50, $00 ; $02
+	.db SPECIALOBJECT_DIMITRI, $48, $30, $00 ; $03
 	.db $00,                     $58, $50, $00 ; $04
 	.db $00,                     $48, $68, $00 ; $05
 .else
-	.db SPECIALOBJECTID_MAPLE,   $18, $b8, $00
-	.db SPECIALOBJECTID_RICKY,   $38, $50, $00
-	.db SPECIALOBJECTID_DIMITRI, $18, $5f, $00
-	.db SPECIALOBJECTID_MOOSH,   $18, $30, $00
-	.db SPECIALOBJECTID_DIMITRI, $28, $60, $00
-	.db SPECIALOBJECTID_MOOSH,   $58, $40, $00
+	.db SPECIALOBJECT_MAPLE,   $18, $b8, $00
+	.db SPECIALOBJECT_RICKY,   $38, $50, $00
+	.db SPECIALOBJECT_DIMITRI, $18, $5f, $00
+	.db SPECIALOBJECT_MOOSH,   $18, $30, $00
+	.db SPECIALOBJECT_DIMITRI, $28, $60, $00
+	.db SPECIALOBJECT_MOOSH,   $58, $40, $00
 .endif
 
 

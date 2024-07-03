@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MISC_PUZZLES
+; INTERAC_MISC_PUZZLES
 ; ==============================================================================
 interactionCode90:
 	ld e,Interaction.subid
@@ -260,7 +260,7 @@ miscPuzzles_subid04:
 @spawnSubid:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MISC_PUZZLES
+	ld (hl),INTERAC_MISC_PUZZLES
 	inc l
 	ld (hl),c
 	inc l
@@ -451,7 +451,7 @@ miscPuzzles_subid07:
 	ldhl FIRST_PART_INDEX, Part.id
 --
 	ld a,(hl)
-	cp PARTID_LIGHTABLE_TORCH
+	cp PART_LIGHTABLE_TORCH
 	call z,@deletePartObject
 	inc h
 	ld a,h
@@ -680,7 +680,7 @@ miscPuzzles_subid0b:
 	ld a,TILEINDEX_SS_LADDER
 	call setTile
 
-	ld b,INTERACID_PUFF
+	ld b,INTERAC_PUFF
 	call objectCreateInteractionWithSubid00
 
 	ld e,Interaction.yh
@@ -787,7 +787,7 @@ miscPuzzles_subid0d:
 
 	ld a,SND_SOLVEPUZZLE
 	call playSound
-	ld b,INTERACID_PUFF
+	ld b,INTERAC_PUFF
 	call objectCreateInteractionWithSubid00
 
 	call objectGetTileAtPosition
@@ -826,7 +826,7 @@ miscPuzzles_subid0e:
 
 	ld a,SND_SOLVEPUZZLE
 	call playSound
-	ld b,INTERACID_PUFF
+	ld b,INTERAC_PUFF
 	call objectCreateInteractionWithSubid00
 
 	call objectGetTileAtPosition
@@ -1125,7 +1125,7 @@ miscPuzzles_subid19:
 @createDebris:
 	push hl
 	push bc
-	ld b,INTERACID_ROCKDEBRIS
+	ld b,INTERAC_ROCKDEBRIS
 	call objectCreateInteractionWithSubid00
 	pop bc
 	pop hl
@@ -1328,7 +1328,7 @@ miscPuzzles_subid21:
 	ld c,(hl)
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION
+	ld (hl),INTERAC_EXPLOSION
 	jp objectCopyPositionWithOffset
 
 @explosionPositions:

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SCREEN_DISTORTION
+; INTERAC_SCREEN_DISTORTION
 ; ==============================================================================
 interactionCode7c:
 	call checkInteractionState

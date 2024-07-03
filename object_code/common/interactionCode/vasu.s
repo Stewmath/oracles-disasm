@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_VASU
+; INTERAC_VASU
 ;
 ; Variables:
 ;   var36: Nonzero if TREASURE_RING_BOX is obtained

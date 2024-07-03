@@ -1,9 +1,9 @@
 ; ==============================================================================
-; ENEMYID_GIANT_GHINI
+; ENEMY_GIANT_GHINI
 ;
 ; Variables:
 ;   var30: Number of children alive
-;   var32: Nonzero to begin charging at Link (written to by ENEMYID_GIANT_GHINI_CHILD)
+;   var32: Nonzero to begin charging at Link (written to by ENEMY_GIANT_GHINI_CHILD)
 ;   var33: Counter for Z-axis movement (reverses direction every 16 frames)
 ;   var34: The current "vertical half" of the screen it's moving toward
 ;   var35: Position the ghini is currently charging toward
@@ -34,7 +34,7 @@ enemyCode70:
 
 
 giantGhini_state_uninitialized:
-	ld a,ENEMYID_GIANT_GHINI
+	ld a,ENEMY_GIANT_GHINI
 	ld b,$00
 	call enemyBoss_initializeRoom
 	call ecom_setSpeedAndState8
@@ -276,7 +276,7 @@ giantGhini_updateZPos:
 giantGhini_spawnChildren:
 	ld c,$03
 @nextChild:
-	ld b,ENEMYID_GIANT_GHINI_CHILD
+	ld b,ENEMY_GIANT_GHINI_CHILD
 	call ecom_spawnEnemyWithSubid01
 	ret nz
 

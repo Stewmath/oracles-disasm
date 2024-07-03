@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SYRUP_CUCCO
+; INTERAC_SYRUP_CUCCO
 ;
 ; Variables:
 ;   var3c: $00 normally, $01 while cucco is chastizing Link

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_KNOW_IT_ALL_BIRD
+; INTERAC_KNOW_IT_ALL_BIRD
 ;
 ; Variables:
 ;   var36: Counter until bird should turn around?

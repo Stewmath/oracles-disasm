@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_PUMPKIN_HEAD
+; ENEMY_PUMPKIN_HEAD
 ;
 ; Variables (body, subid 1):
 ;   relatedObj1: Reference to ghost
@@ -56,7 +56,7 @@ pumpkinHead_state_uninitialized:
 	; Subid 0 (spawner)
 	inc a
 	ld (de),a ; [state] = 1
-	ld a,ENEMYID_PUMPKIN_HEAD
+	ld a,ENEMY_PUMPKIN_HEAD
 	ld b,$00
 	jp enemyBoss_initializeRoom
 
@@ -72,7 +72,7 @@ pumpkinHead_state_spawner:
 	ret nz
 
 	; Spawn body
-	ld b,ENEMYID_PUMPKIN_HEAD
+	ld b,ENEMY_PUMPKIN_HEAD
 	call ecom_spawnUncountedEnemyWithSubid01
 	call objectCopyPosition
 	ld c,h
@@ -982,7 +982,7 @@ pumpkinHead_head_state0c:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_PUMPKIN_HEAD_PROJECTILE
+	ld (hl),PART_PUMPKIN_HEAD_PROJECTILE
 	ld l,Part.angle
 	ld e,Enemy.angle
 	ld a,(de)

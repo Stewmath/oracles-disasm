@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_RABBIT
+; INTERAC_RABBIT
 ; ==============================================================================
 interactionCode4b_body:
 	ld e,Interaction.state
@@ -442,7 +442,7 @@ rabbitSubid5:
 	ld bc,-$1e0
 	call objectSetSpeedZ
 
-	ldbc INTERACID_CLINK,$80
+	ldbc INTERAC_CLINK,$80
 	call objectCreateInteraction
 	jr nz,@label_3f_367
 
@@ -560,7 +560,7 @@ spawnNextRabbitThatTurnsToStone:
 spawnRabbitWithSubid1;
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_RABBIT
+	ld (hl),INTERAC_RABBIT
 	inc l
 	inc (hl)
 	jp interactionHSetPosition

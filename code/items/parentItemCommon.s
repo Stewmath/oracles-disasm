@@ -80,7 +80,7 @@ parentItemLoadAnimationAndIncState:
 
 .ifdef ROM_AGES
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	ld a,c
 	jr z,@setAnimation
 

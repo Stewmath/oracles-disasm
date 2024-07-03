@@ -45,12 +45,12 @@ interactionCode65:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_D6_CRYSTAL_TRAP_ROOM
+	ld (hl),INTERAC_D6_CRYSTAL_TRAP_ROOM
 	inc l
 	ld (hl),$01
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_D6_CRYSTAL_TRAP_ROOM
+	ld (hl),INTERAC_D6_CRYSTAL_TRAP_ROOM
 	inc l
 	ld (hl),$02
 	ret

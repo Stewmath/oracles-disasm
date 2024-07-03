@@ -133,7 +133,7 @@
 .define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
 .define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
 
-; Used by INTERACID_LEVER_LAVA_FILLER. (Range of $0c tiles starting from $c3 is assumed to be of
+; Used by INTERAC_LEVER_LAVA_FILLER. (Range of $0c tiles starting from $c3 is assumed to be of
 ; this type.)
 .define TILEINDEX_LAVA_SOURCE_UP_LEFT		$c3 ; dungeons only
 .define TILEINDEX_LAVA_SOURCE_DOWN_LEFT		$c6 ; dungeons only

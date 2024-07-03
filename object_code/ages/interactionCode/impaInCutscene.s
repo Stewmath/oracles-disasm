@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_IMPA_IN_CUTSCENE
+; INTERAC_IMPA_IN_CUTSCENE
 ;
 ; Variables:
 ;   var3b: For subid 1, saves impa's "oamTileIndexBase" so it can be restored after Impa
@@ -127,7 +127,7 @@ interactionCode31:
 	ld b,$10
 	call clearMemory
 
-	ldbc INTERACID_ZELDA, $06
+	ldbc INTERAC_ZELDA, $06
 	call objectCreateInteraction
 	ld l,Interaction.yh
 	ld (hl),$8c
@@ -517,7 +517,7 @@ impaSubid0:
 	ld a,$05
 	call interactionSetAnimation
 
-	ld b,INTERACID_GHOST_VERAN
+	ld b,INTERAC_GHOST_VERAN
 	call objectCreateInteractionWithSubid00
 
 	ld a,SND_BOSS_DEAD

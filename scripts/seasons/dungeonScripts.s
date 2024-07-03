@@ -1,11 +1,11 @@
-; These are a bunch of scripts used by INTERACID_DUNGEON_SCRIPT.
+; These are a bunch of scripts used by INTERAC_DUNGEON_SCRIPT.
 
 dungeonScript_minibossDeath:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
 	wait 20
-	spawninteraction INTERACID_MINIBOSS_PORTAL, $00, $00, $00
+	spawninteraction INTERAC_MINIBOSS_PORTAL, $00, $00, $00
 
 enableLinkAndMenu:
 	writememory wDisableLinkCollisionsAndMenu, $00
@@ -90,7 +90,7 @@ poisonMothsLairScript_minibossDeath:
 	wait 20
 	createpuff
 	settilehere TILEINDEX_INDOOR_UPSTAIRCASE
-	spawninteraction INTERACID_MINIBOSS_PORTAL, $00, $00, $00
+	spawninteraction INTERAC_MINIBOSS_PORTAL, $00, $00, $00
 	scriptjump enableLinkAndMenu
 
 
@@ -116,7 +116,7 @@ dancingDragonScript_spawnStairsToB1:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
-	spawninteraction INTERACID_PUFF, $00, $38, $98
+	spawninteraction INTERAC_PUFF, $00, $38, $98
 	wait 8
 	settilehere TILEINDEX_SOUTH_STAIRS
 	playsound SND_SOLVEPUZZLE

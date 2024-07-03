@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DANCE_HALL_MINIGAME
+; INTERAC_DANCE_HALL_MINIGAME
 ; ==============================================================================
 interactionCode6a:
 	ld e,Interaction.subid

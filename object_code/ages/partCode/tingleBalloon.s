@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_TINGLE_BALLOON
+; PART_TINGLE_BALLOON
 ; ==============================================================================
 partCode44:
 	jr nz,@beenHit
@@ -61,7 +61,7 @@ partCode44:
 
 	; Spawn explosion
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_EXPLOSION
+	ld (hl),INTERAC_EXPLOSION
 	ld l,Interaction.var03
 	ld (hl),$01 ; Give it a higher draw priority?
 	ld bc,$f000

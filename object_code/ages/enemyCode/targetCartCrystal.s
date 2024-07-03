@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_TARGET_CART_CRYSTAL
+; ENEMY_TARGET_CART_CRYSTAL
 ;
 ; Variables:
 ;   var03: 0 for no movement, 1 for up/down, 2 for left/right
@@ -72,7 +72,7 @@ targetCartCrystal_state2:
 	ld a,$04
 @spawnNext:
 	ldh (<hFF8B),a
-	ldbc INTERACID_FALLING_ROCK,$03
+	ldbc INTERAC_FALLING_ROCK,$03
 	call objectCreateInteraction
 	jr nz,@delete
 	ld l,Interaction.angle

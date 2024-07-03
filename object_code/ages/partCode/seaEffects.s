@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_SEA_EFFECTS
+; PART_SEA_EFFECTS
 ; When this object exists, it applies the effects of whirlpool and pollution tiles.
 ; It's a bit weird to put this functionality in an object...
 ; ==============================================================================
@@ -34,7 +34,7 @@ partCode2e:
 
 	ld l,SpecialObject.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	ld a,$05
 	jr nz,+
 	add a

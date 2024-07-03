@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ROLLER
+; INTERAC_ROLLER
 ;
 ; Variables:
 ;   counter1:
@@ -124,7 +124,7 @@ interactionCode7a:
 
 	; Check bracelet is not on A or B.
 	ld hl,wInventoryB
-	ld a,ITEMID_BRACELET
+	ld a,ITEM_BRACELET
 	cp (hl)
 	jr z,@notPushingAgainstRoller
 	inc hl

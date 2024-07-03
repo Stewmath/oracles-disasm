@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_BUSH_OR_ROCK
+; ENEMY_BUSH_OR_ROCK
 ;
 ; Variables:
 ;   var30: Enemy ID of parent object
@@ -155,10 +155,10 @@ enemyCode58:
 
 ; Debris for each subid (0-3)
 @debrisTypes:
-	.db INTERACID_GRASSDEBRIS
-	.db INTERACID_GRASSDEBRIS
-	.db INTERACID_ROCKDEBRIS
-	.db INTERACID_ROCKDEBRIS
+	.db INTERAC_GRASSDEBRIS
+	.db INTERAC_GRASSDEBRIS
+	.db INTERAC_ROCKDEBRIS
+	.db INTERAC_ROCKDEBRIS
 
 ;;
 ; Make parent visible, remove self from Parent.relatedObj2
@@ -203,7 +203,7 @@ enemyCode58:
 	ld (de),a
 
 	; Don't allow destruction of bush for deku scrubs
-	cp ENEMYID_DEKU_SCRUB
+	cp ENEMY_DEKU_SCRUB
 	ret nz
 	ld e,Enemy.enemyCollisionMode
 	ld a,ENEMYCOLLISION_ROCK

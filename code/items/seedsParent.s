@@ -1,5 +1,5 @@
 ;;
-; ITEMID_SLINGSHOT ($13)
+; ITEM_SLINGSHOT ($13)
 ; @snaddr{4d25}
 parentItemCode_slingshot:
 .ifdef ROM_SEASONS
@@ -58,7 +58,7 @@ parentItemCode_slingshot:
 
 
 ;;
-; ITEMID_SHOOTER ($0f)
+; ITEM_SHOOTER ($0f)
 parentItemCode_shooter:
 .ifdef ROM_AGES
 	ld e,Item.state
@@ -191,7 +191,7 @@ parentItemCode_shooter:
 	ld a,$48
 	jr nz,++
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	ld a,$40
 	jr z,++
 	ld a,$38
@@ -209,7 +209,7 @@ parentItemCode_shooter:
 
 
 ;;
-; ITEMID_SEED_SATCHEL ($19)
+; ITEM_SEED_SATCHEL ($19)
 parentItemCode_satchel:
 	ld e,Item.state
 	ld a,(de)
@@ -220,7 +220,7 @@ parentItemCode_satchel:
 @state0:
 .ifdef ROM_AGES
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jp z,clearParentItem
 	call isLinkUnderwater
 	jp nz,clearParentItem
@@ -232,7 +232,7 @@ parentItemCode_satchel:
 	call clearSelfIfNoSeeds
 
 	ld a,b
-	cp ITEMID_PEGASUS_SEED
+	cp ITEM_PEGASUS_SEED
 	jr z,@pegasusSeeds
 
 	push bc
@@ -265,7 +265,7 @@ parentItemCode_satchel:
 	ld hl,w1ReservedItemF
 	ld a,$03
 	ldi (hl),a
-	ld (hl),ITEMID_DUST
+	ld (hl),ITEM_DUST
 @clear:
 	jp clearParentItem
 

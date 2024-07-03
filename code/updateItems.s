@@ -758,11 +758,11 @@ itemUpdateThrowingVerticallyAndCheckHazards:
 	and TILESETFLAG_SIDESCROLL
 	jr z,+
 
-	ld b,INTERACID_LAVASPLASH
+	ld b,INTERAC_LAVASPLASH
 	bit 2,(hl)
 	jr nz,@createSplash
 
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	bit 6,(hl)
 	call nz,@createSplash
 +
@@ -779,7 +779,7 @@ itemUpdateThrowingVerticallyAndCheckHazards:
 
 	ld h,d
 	ld l,Item.var3b
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	bit 0,(hl)
 	jr nz,@createSplash
 
@@ -787,7 +787,7 @@ itemUpdateThrowingVerticallyAndCheckHazards:
 	bit 1,(hl)
 	jr nz,@createHoleAnim
 
-	ld b,INTERACID_LAVASPLASH
+	ld b,INTERAC_LAVASPLASH
 	bit 2,(hl)
 	jr nz,@createSplash
 
@@ -809,7 +809,7 @@ itemUpdateThrowingVerticallyAndCheckHazards:
 ;;
 ; Creates an interaction to do the clinking animation.
 objectCreateClinkInteraction:
-	ld b,INTERACID_CLINK
+	ld b,INTERAC_CLINK
 	jp objectCreateInteractionWithSubid00
 
 ;;

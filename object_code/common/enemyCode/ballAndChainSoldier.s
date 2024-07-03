@@ -1,10 +1,10 @@
 ; ==============================================================================
-; ENEMYID_BALL_AND_CHAIN_SOLDIER
+; ENEMY_BALL_AND_CHAIN_SOLDIER
 ;
 ; Variables:
-;   relatedObj2: reference to PARTID_SPIKED_BALL
-;   counter1: Written to by PARTID_SPIKED_BALL?
-;   var30: Signal for PARTID_SPIKED_BALL.
+;   relatedObj2: reference to PART_SPIKED_BALL
+;   counter1: Written to by PART_SPIKED_BALL?
+;   var30: Signal for PART_SPIKED_BALL.
 ;          0: Ball should rotate at normal speed.
 ;          1: Ball should rotate at double speed.
 ;          2: Ball should be thrown at Link.
@@ -88,7 +88,7 @@ ballAndChain_state8:
 	ld l,Enemy.counter1
 	ld (hl),90
 
-	; Signal PARTID_SPIKED_BALL to rotate faster
+	; Signal PART_SPIKED_BALL to rotate faster
 	ld l,Enemy.var30
 	inc (hl)
 
@@ -114,13 +114,13 @@ ballAndChain_state9:
 
 	call ballAndChain_setDefaultState
 
-	; Signal PARTID_SPIKED_BALL to begin throw toward Link
+	; Signal PART_SPIKED_BALL to begin throw toward Link
 	ld l,Enemy.var30
 	inc (hl)
 	ret
 
 
-; Waiting for PARTID_SPIKED_BALL to set this object's counter1 to 0 (signalling the throw
+; Waiting for PART_SPIKED_BALL to set this object's counter1 to 0 (signalling the throw
 ; is done)
 ballAndChain_stateA:
 	ld e,Enemy.counter1
@@ -166,7 +166,7 @@ ballAndChain_spawnSpikedBall:
 	ret nz
 
 	; Spawn the ball
-	ld b,PARTID_SPIKED_BALL
+	ld b,PART_SPIKED_BALL
 	call ecom_spawnProjectile
 
 	; Spawn the 3 parts of the chain. Their "relatedObj1" will be set to the ball (not

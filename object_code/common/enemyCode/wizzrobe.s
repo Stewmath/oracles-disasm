@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_WIZZROBE
+; ENEMY_WIZZROBE
 ;
 ; Variables:
 ;   var30: The low byte of wWizzrobePositionReservations that this wizzrobe is using
@@ -188,7 +188,7 @@ wizzrobe_subid0_stateA:
 	ld a,(hl)
 	cp 52
 	ret nz
-	ld b,PARTID_WIZZROBE_PROJECTILE
+	ld b,PART_WIZZROBE_PROJECTILE
 	jp ecom_spawnProjectile
 
 @phaseOut:
@@ -275,7 +275,7 @@ wizzrobe_subid1_stateA:
 	ld a,(hl)
 	cp 52
 	ret nz
-	ld b,PARTID_WIZZROBE_PROJECTILE
+	ld b,PART_WIZZROBE_PROJECTILE
 	jp ecom_spawnProjectile
 
 @phaseOut:
@@ -524,7 +524,7 @@ wizzrobe_fireEvery32Frames:
 	ld a,(de)
 	and $1f
 	ret nz
-	ld b,PARTID_WIZZROBE_PROJECTILE
+	ld b,PART_WIZZROBE_PROJECTILE
 	jp ecom_spawnProjectile
 
 

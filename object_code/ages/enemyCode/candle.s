@@ -1,8 +1,8 @@
 ; ==============================================================================
-; ENEMYID_CANDLE
+; ENEMY_CANDLE
 ;
 ; Variables:
-;   relatedObj1: reference to INTERACID_EXPLOSION while exploding
+;   relatedObj1: reference to INTERAC_EXPLOSION while exploding
 ; ==============================================================================
 enemyCode55:
 	call ecom_checkHazards
@@ -97,7 +97,7 @@ candle_state9:
 
 ; Just lit on fire
 candle_stateA:
-	ld b,PARTID_CANDLE_FLAME
+	ld b,PART_CANDLE_FLAME
 	call ecom_spawnProjectile
 	ret nz
 
@@ -155,7 +155,7 @@ candle_stateD:
 
 	; Create an explosion object; but the collisions are still provided by the candle
 	; object, so this doesn't delete itself yet.
-	ld b,INTERACID_EXPLOSION
+	ld b,INTERAC_EXPLOSION
 	call objectCreateInteractionWithSubid00
 	ret nz
 	ld a,h

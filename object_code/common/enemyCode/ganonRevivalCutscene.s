@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_GANON_REVIVAL_CUTSCENE
+; ENEMY_GANON_REVIVAL_CUTSCENE
 ;
 ; Variables:
 ;   var30: Copied to counter2?
@@ -128,7 +128,7 @@ ganonRevivalCutscene_spawnShadow:
 	call getFreeEnemySlot_uncounted
 	ret nz
 
-	ld (hl),ENEMYID_GANON_REVIVAL_CUTSCENE
+	ld (hl),ENEMY_GANON_REVIVAL_CUTSCENE
 	inc l
 	inc (hl) ; [child.subid] = 1
 

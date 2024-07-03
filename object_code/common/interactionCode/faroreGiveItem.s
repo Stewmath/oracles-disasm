@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FARORE_GIVEITEM
+; INTERAC_FARORE_GIVEITEM
 ; ==============================================================================
 interactionCoded9:
 	ld e,Interaction.state
@@ -102,7 +102,7 @@ interactiond9_state1:
 	ld a,c
 	ld (wChestContentsOverride+1),a
 
-	ld b,INTERACID_FARORE_MAKECHEST
+	ld b,INTERAC_FARORE_MAKECHEST
 	jp objectCreateInteractionWithSubid00
 
 @substate1:
@@ -184,7 +184,7 @@ interactiond9_state2:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	ld l,Interaction.yh
 	ld (hl),$28
 	ld l,Interaction.xh

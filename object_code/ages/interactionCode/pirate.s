@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_PIRATE
+; INTERAC_PIRATE
 ;
 ; Variables:
 ;   var3f: Push counter for subid 4 (tokay eyeball is inserted when it reached 0)

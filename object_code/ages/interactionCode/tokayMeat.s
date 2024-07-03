@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TOKAY_MEAT
+; INTERAC_TOKAY_MEAT
 ; ==============================================================================
 interactionCode8c:
 	ld e,Interaction.state
@@ -75,7 +75,7 @@ interactionCode8c:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TOKAY_MEAT
+	ld (hl),INTERAC_TOKAY_MEAT
 	jp interactionIncSubstate
 
 @beingHeld:

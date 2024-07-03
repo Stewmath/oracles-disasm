@@ -1,5 +1,5 @@
 ;;
-; ITEMID_FEATHER ($17)
+; ITEM_FEATHER ($17)
 parentItemCode_feather:
 	ld e,Item.state
 	ld a,(de)
@@ -15,7 +15,7 @@ parentItemCode_feather:
 
 	; Can't use the feather while using the switch hook
 	ld a,(w1ParentItem2.id)
-	cp ITEMID_SWITCH_HOOK
+	cp ITEM_SWITCH_HOOK
 	jr z,@deleteParent
 .endif
 

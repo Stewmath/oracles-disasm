@@ -1,9 +1,9 @@
 ; ==============================================================================
-; ENEMYID_GANON
+; ENEMY_GANON
 ;
 ; Variables:
-;   relatedObj1: ENEMYID_GANON_REVIVAL_CUTSCENE
-;   relatedObj2: PARTID_SHADOW object
+;   relatedObj1: ENEMY_GANON_REVIVAL_CUTSCENE
+;   relatedObj2: PART_SHADOW object
 ;   var30: Base x-position during teleport
 ;   var32: Related to animation for state A?
 ;   var35+: Pointer to sequence of attack states to iterate through
@@ -168,11 +168,11 @@ ganon_state_uninitialized:
 	jp fadeinFromWhite
 
 
-; Spawning ENEMYID_GANON_REVIVAL_CUTSCENE
+; Spawning ENEMY_GANON_REVIVAL_CUTSCENE
 ganon_state1:
 	call getFreeEnemySlot_uncounted
 	ret nz
-	ld (hl),ENEMYID_GANON_REVIVAL_CUTSCENE
+	ld (hl),ENEMY_GANON_REVIVAL_CUTSCENE
 	ld l,Enemy.relatedObj1
 	ld (hl),Enemy.start
 	inc l
@@ -407,7 +407,7 @@ ganon_state8_substate6:
 	ldbc $fe,SPEED_280
 
 ganon_state8_spawnProjectile:
-	ld e,PARTID_52
+	ld e,PART_52
 	call ganon_spawnPart
 	ret nz
 	ld l,Part.angle
@@ -489,7 +489,7 @@ ganon_state9_substate4:
 	ld b,$04
 
 @spawnProjectile:
-	ld e,PARTID_52
+	ld e,PART_52
 	call ganon_spawnPart
 	ld l,Part.subid
 	inc (hl) ; [subid] = 1
@@ -597,7 +597,7 @@ ganon_stateA_substate3:
 	ld l,Enemy.speed
 	ld (hl),SPEED_300
 	call ecom_updateAngleTowardTarget
-	ld e,PARTID_GANON_TRIDENT
+	ld e,PART_GANON_TRIDENT
 	call ganon_spawnPart
 	jp objectSetVisible83
 
@@ -705,7 +705,7 @@ ganon_stateB_substate3:
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	call objectSetVisible83
-	ld e,PARTID_51
+	ld e,PART_51
 	call ganon_spawnPart
 	ret nz
 	ld bc,$f810
@@ -778,7 +778,7 @@ ganon_stateB_substate7:
 	ld (hl),24 ; [counter1]
 	ld l,e
 	inc (hl) ; [substate]
-	ld e,PARTID_51
+	ld e,PART_51
 	call ganon_spawnPart
 	ret nz
 	ld l,Part.subid
@@ -968,7 +968,7 @@ ganon_stateC_substate8:
 
 	ld a,$05
 	call enemySetAnimation
-	ld e,PARTID_52
+	ld e,PART_52
 	call ganon_spawnPart
 	ret nz
 	ld l,Part.subid
@@ -1045,7 +1045,7 @@ ganon_stateE_substate0:
 	jp nz,ecom_flickerVisibility
 
 	inc (hl)
-	ld e,PARTID_BOSS_DEATH_EXPLOSION
+	ld e,PART_BOSS_DEATH_EXPLOSION
 	call ganon_spawnPart
 	ret nz
 	ld l,Part.subid

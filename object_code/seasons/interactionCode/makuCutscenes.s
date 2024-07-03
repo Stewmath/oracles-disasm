@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_CUTSCENES
+; INTERAC_MAKU_CUTSCENES
 ; ==============================================================================
 interactionCode22:
 	ld e,Interaction.state
@@ -210,7 +210,7 @@ interactionCode22:
 	ldh (<hFF8B),a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	ld a,(bc)
 	ld (hl),a

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_RAMROCK_SEED_FORM_LASER
+; PART_RAMROCK_SEED_FORM_LASER
 ; ==============================================================================
 partCode34:
 	ld e,Part.state
@@ -66,7 +66,7 @@ partCode34:
 	ret nz
 
 	; spawn self with var03+1
-	ld (hl),PARTID_RAMROCK_SEED_FORM_LASER
+	ld (hl),PART_RAMROCK_SEED_FORM_LASER
 	inc l
 	ld (hl),$0e
 	ld l,e

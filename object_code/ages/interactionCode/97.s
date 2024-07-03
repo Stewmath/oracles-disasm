@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_97
+; INTERAC_97
 ; ==============================================================================
 interactionCode97:
 	ld e,Interaction.subid
@@ -34,7 +34,7 @@ interaction97_subid00:
 	ld b,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	jp objectCopyPositionWithOffset
 
 @state0:
@@ -75,7 +75,7 @@ interaction97_subid01:
 	ld e,(hl)
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_JABU_JABUS_BUBBLES
+	ld (hl),PART_JABU_JABUS_BUBBLES
 	inc l
 	ld (hl),e
 	ld l,Part.yh
@@ -108,7 +108,7 @@ interaction97_subid01:
 ; Data format:
 ;   b0: Y
 ;   b1: X
-;   b2: Subid for PARTID_JABU_JABUS_BUBBLES
+;   b2: Subid for PART_JABU_JABUS_BUBBLES
 @positions:
 	.db $40 $2f $00
 	.db $42 $31 $00

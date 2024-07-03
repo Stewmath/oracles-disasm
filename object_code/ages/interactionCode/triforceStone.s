@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TRIFORCE_STONE
+; INTERAC_TRIFORCE_STONE
 ; ==============================================================================
 interactionCode34:
 	ld e,Interaction.state
@@ -50,7 +50,7 @@ interactionCode34:
 	ld l,Interaction.counter1
 	ld (hl),$40
 
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	ld a,SPECIALOBJECT_LINK_CUTSCENE
 	call setLinkIDOverride
 	ld l,<w1Link.subid
 	ld (hl),$06

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_FLYING_TILE
+; ENEMY_FLYING_TILE
 ;
 ; Variables:
 ;   var30/var31: Pointer to current address in flyingTile_layoutData
@@ -99,7 +99,7 @@ flyingTile_state_spawner:
 	push hl
 
 	call @flyingTile_saveTileDataAddress
-	ld b,ENEMYID_FLYING_TILE
+	ld b,ENEMY_FLYING_TILE
 	call ecom_spawnEnemyWithSubid01
 	jr nz,++
 
@@ -183,7 +183,7 @@ flyingTile_stateB:
 
 ;;
 flyingTile_dead:
-	ld b,INTERACID_ROCKDEBRIS
+	ld b,INTERAC_ROCKDEBRIS
 	call objectCreateInteractionWithSubid00
 
 ;;

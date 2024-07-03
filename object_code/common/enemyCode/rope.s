@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ROPE
+; ENEMY_ROPE
 ;
 ; Variables:
 ;   counter2: Cooldown until rope can charge at Link again

@@ -1,8 +1,8 @@
 ; ==============================================================================
-; ENEMYID_AMBI_GUARD
+; ENEMY_AMBI_GUARD
 ;
 ; Variables:
-;   relatedObj2: PARTID_DETECTION_HELPER; checks when Link is visible.
+;   relatedObj2: PART_DETECTION_HELPER; checks when Link is visible.
 ;   var30-var31: Movement script address
 ;   var32: Y-destination (reserved by movement script)
 ;   var33: X-destination (reserved by movement script)
@@ -13,9 +13,9 @@
 ;          and once it's done, it sets var35 to 1 (move more quickly) and normal code
 ;          resumes. Used for the delay between noticing Link and taking action.
 ;   var37: Timer until guard "notices" scent seed.
-;   var3a: When set to $ff, faces PARTID_DETECTION_HELPER?
+;   var3a: When set to $ff, faces PART_DETECTION_HELPER?
 ;   var3b: When set to $ff, the guard immediately notices Link. (Written to by
-;          PARTID_DETECTION_HELPER.)
+;          PART_DETECTION_HELPER.)
 ; ==============================================================================
 enemyCode54:
 	jr z,@normalStatus	 
@@ -326,7 +326,7 @@ ambiGuard_attacksLink_state11:
 	jp enemyAnimate
 
 ;;
-; Deletes self if Veran was defeated, otherwise spawns PARTID_DETECTION_HELPER.
+; Deletes self if Veran was defeated, otherwise spawns PART_DETECTION_HELPER.
 ;
 ; @param[out]	zflag	nz if caller should return immediately (deleted self)
 ambiGuard_commonInitialization:
@@ -339,7 +339,7 @@ ambiGuard_commonInitialization:
 ++
 	call getFreePartSlot
 	jr nz,++
-	ld (hl),PARTID_DETECTION_HELPER
+	ld (hl),PART_DETECTION_HELPER
 	ld l,Part.relatedObj1
 	ld a,Enemy.start
 	ldi (hl),a
@@ -435,7 +435,7 @@ ambiGuard_alertAllGuards:
 ---
 	ld l,Enemy.id
 	ld a,(hl)
-	cp ENEMYID_AMBI_GUARD
+	cp ENEMY_AMBI_GUARD
 	jr nz,@nextEnemy
 
 	ld a,h
@@ -586,7 +586,7 @@ ambiGuard_checkSpottedLink:
 	ld l,Enemy.state
 	ld (hl),$0f
 
-	; Delete PARTID_DETECTION_HELPER
+	; Delete PART_DETECTION_HELPER
 	ld a,Object.health
 	call objectGetRelatedObject2Var
 	ld (hl),$00

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DUNGEON_STUFF
+; INTERAC_DUNGEON_STUFF
 ; ==============================================================================
 interactionCode12:
 	ld e,Interaction.subid
@@ -192,7 +192,7 @@ interactionCode12:
 @createPuff:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	jp setShortPosition_paramC
 
@@ -217,7 +217,7 @@ interactionCode12:
 
 	ld (hl),$01
 	inc l
-	ld (hl),ITEMID_MAGNET_BALL
+	ld (hl),ITEM_MAGNET_BALL
 	call objectCopyPosition
 
 	; copy relatedObj1 over

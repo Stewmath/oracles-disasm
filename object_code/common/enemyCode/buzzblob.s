@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_BUZZBLOB
+; ENEMY_BUZZBLOB
 ;
 ; Variables:
 ;   var30: Animation index ($02 if in cukeman form)

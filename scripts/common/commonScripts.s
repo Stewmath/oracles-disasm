@@ -1,5 +1,5 @@
 ; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
-; assembly code to get the full picture (run "git grep INTERACID_X" to search for its code).
+; assembly code to get the full picture (run "git grep INTERAC_X" to search for its code).
 
 stubScript:
 	scriptend
@@ -13,7 +13,7 @@ genericNpcScript:
 
 
 ; ==============================================================================
-; INTERACID_FARORE
+; INTERAC_FARORE
 ; ==============================================================================
 
 faroreScript:
@@ -128,7 +128,7 @@ faroreLinked:
 
 
 ; ==============================================================================
-; INTERACID_DUNGEON_STUFF
+; INTERAC_DUNGEON_STUFF
 ; ==============================================================================
 
 dropSmallKeyWhenNoEnemiesScript:
@@ -156,7 +156,7 @@ setRoomFlagBit7WhenNoEnemiesScript:
 
 
 ; ==============================================================================
-; INTERACID_FARORES_MEMORY
+; INTERAC_FARORES_MEMORY
 ; ==============================================================================
 faroresMemoryScript:
 	initcollisions
@@ -176,7 +176,7 @@ faroresMemoryScript:
 
 
 ; ==================================================
-; INTERACID_DOOR_CONTROLLER.
+; INTERAC_DOOR_CONTROLLER.
 ; ==================================================
 ;
 ; Door opener/closer scripts.
@@ -432,7 +432,7 @@ doorController_openWhenTorchesLit_left_1Torch:
 
 
 ; ==============================================================================
-; INTERACID_SHOPKEEPER
+; INTERAC_SHOPKEEPER
 ; ==============================================================================
 
 .ifdef ROM_SEASONS
@@ -853,7 +853,7 @@ shopkeeperScript_notOpenYet:
 
 .ifdef ROM_SEASONS
 ; ==============================================================================
-; INTERACID_BOMB_FLOWER
+; INTERAC_BOMB_FLOWER
 ; ==============================================================================
 
 ; bomb flower placed on rocks blocking temple of autumn
@@ -890,7 +890,7 @@ bombflower_unblockAutumnTemple:
 
 
 ; ==============================================================================
-; INTERACID_SPINNER
+; INTERAC_SPINNER
 ; ==============================================================================
 
 spinnerScript_initialization:
@@ -909,7 +909,7 @@ spinnerScript_waitForLink:
 
 
 ; ==============================================================================
-; INTERACID_ESSENCE
+; INTERAC_ESSENCE
 ; ==============================================================================
 essenceScript_essenceGetCutscene:
 	playsound MUS_ESSENCE
@@ -928,7 +928,7 @@ essenceScript_essenceGetCutscene:
 
 
 ; ==============================================================================
-; INTERACID_VASU
+; INTERAC_VASU
 ; ==============================================================================
 
 vasuScript:
@@ -1171,7 +1171,7 @@ blueSnakeScript_successfulRingTransfer:
 
 
 ; ==============================================================================
-; INTERACID_GAME_COMPLETE_DIALOG
+; INTERAC_GAME_COMPLETE_DIALOG
 ; ==============================================================================
 gameCompleteDialogScript:
 	wait 30
@@ -1194,7 +1194,7 @@ gameCompleteDialogScript:
 
 
 ; ==============================================================================
-; INTERACID_RING_HELP_BOOK
+; INTERAC_RING_HELP_BOOK
 ; ==============================================================================
 
 ringHelpBookSubid1Reset:

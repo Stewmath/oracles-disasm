@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_AGUNIMA
+; ENEMY_AGUNIMA
 ; ==============================================================================
 enemyCode73:
 	jr z,@normalStatus
@@ -109,7 +109,7 @@ enemyCode73:
 	ld b,$04
 	call checkBEnemySlotsAvailable
 	ret nz
-	ld b,ENEMYID_AGUNIMA
+	ld b,ENEMY_AGUNIMA
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,$b1
 	ld c,h
@@ -401,7 +401,7 @@ agunimaSubId00:
 	call ecom_decCounter1
 	jp nz,seasonsFunc_0e_506b
 	inc (hl)
-	ld b,PARTID_39
+	ld b,PART_39
 	call ecom_spawnProjectile
 	jp nz,seasonsFunc_0e_506b
 	ld h,d

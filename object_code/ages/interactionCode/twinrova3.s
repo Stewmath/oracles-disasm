@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TWINROVA_3
+; INTERAC_TWINROVA_3
 ;
 ; Variables:
 ;   var3c: A target position index for the data in var3e/var3f.

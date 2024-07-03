@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ARMOS_WARRIOR
+; ENEMY_ARMOS_WARRIOR
 ;
 ; Variables (for parent only, subid 1):
 ;   var30: "Turn" direction (should be 8 or -8)
@@ -90,7 +90,7 @@ armosWarrior_state_uninitialized:
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
 
-	ld a,ENEMYID_ARMOS_WARRIOR
+	ld a,ENEMY_ARMOS_WARRIOR
 	jp enemyBoss_initializeRoom
 
 
@@ -103,7 +103,7 @@ armosWarrior_state_spawner:
 	call ecom_setZAboveScreen
 
 	; Spawn parent
-	ld b,ENEMYID_ARMOS_WARRIOR
+	ld b,ENEMY_ARMOS_WARRIOR
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld c,h
 
@@ -397,7 +397,7 @@ armosWarrior_parent_stateD:
 	ld c,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_ROCKDEBRIS
+	ld (hl),INTERAC_ROCKDEBRIS
 	jp objectCopyPositionWithOffset
 
 @gotoNextState:

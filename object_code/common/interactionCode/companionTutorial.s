@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_COMPANION_TUTORIAL
+; INTERAC_COMPANION_TUTORIAL
 ; ==============================================================================
 interactionCoded0:
 	ld e,Interaction.state
@@ -25,10 +25,10 @@ interactionCoded0:
 	ld e,Interaction.subid
 	ld a,(de)
 	srl a
-	add SPECIALOBJECTID_FIRST_COMPANION
-	cp SPECIALOBJECTID_LAST_COMPANION+1
+	add SPECIALOBJECT_FIRST_COMPANION
+	cp SPECIALOBJECT_LAST_COMPANION+1
 	jr c,+
-	ld a,SPECIALOBJECTID_MOOSH
+	ld a,SPECIALOBJECT_MOOSH
 +
 	ld hl,w1Companion.id
 	cp (hl)

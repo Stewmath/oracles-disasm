@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MOVING_SIDESCROLL_PLATFORM
+; INTERAC_MOVING_SIDESCROLL_PLATFORM
 ; ==============================================================================
 interactionCodea1:
 	call sidescrollPlatform_checkLinkOnPlatform

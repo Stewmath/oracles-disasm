@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_OLD_MAN_WITH_RUPEES
+; INTERAC_OLD_MAN_WITH_RUPEES
 ; ==============================================================================
 interactionCode2e:
 	call checkInteractionState

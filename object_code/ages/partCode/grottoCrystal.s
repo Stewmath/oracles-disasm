@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_GROTTO_CRYSTAL
+; PART_GROTTO_CRYSTAL
 ; ==============================================================================
 partCode24:
 	jr z,@normalStatus
@@ -13,7 +13,7 @@ partCode24:
 	ld a,$01
 	call partSetAnimation
 	; sarcophagus when it breaks
-	ldbc, INTERACID_SARCOPHAGUS $80
+	ldbc, INTERAC_SARCOPHAGUS $80
 	jp objectCreateInteraction
 @normalStatus:
 	ld e,$c4

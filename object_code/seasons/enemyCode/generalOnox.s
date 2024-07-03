@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_GENERAL_ONOX
+; ENEMY_GENERAL_ONOX
 ; ==============================================================================
 enemyCode02:
 	jr z,@normalStatus
@@ -96,7 +96,7 @@ generalOnox_subid0:
 	.dw @stateC
 
 @state8:
-	ld b,PARTID_47
+	ld b,PART_47
 	call ecom_spawnProjectile
 	ret nz
 	ld h,d
@@ -332,7 +332,7 @@ generalOnox_subid0:
 	call objectSetVisible83
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	ret
 
 @@substate2:
@@ -551,7 +551,7 @@ generalOnox_subid1:
 	jr z,+
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_49
+	ld (hl),PART_49
 	ld bc,$19f9
 	jp objectCopyPositionWithOffset
 +
@@ -581,7 +581,7 @@ generalOnox_subid2:
 	ld (hl),$50
 	ld l,$8d
 	ld (hl),$50
-	ldbc INTERACID_0b $02
+	ldbc INTERAC_0b $02
 	call objectCreateInteraction
 	ret nz
 	ld e,$98

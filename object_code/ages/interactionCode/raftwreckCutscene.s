@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_RAFTWRECK_CUTSCENE
+; INTERAC_RAFTWRECK_CUTSCENE
 ; ==============================================================================
 interactionCode9b:
 	ld e,Interaction.state

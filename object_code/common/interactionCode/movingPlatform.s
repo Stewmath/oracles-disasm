@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MOVING_PLATFORM
+; INTERAC_MOVING_PLATFORM
 ;
 ; Variables:
 ;   Subid: After being processed, this just represents the size (see @collisionRadii).

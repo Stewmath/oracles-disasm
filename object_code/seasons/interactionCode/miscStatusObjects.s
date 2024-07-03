@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MISC_STATIC_OBJECTS
+; INTERAC_MISC_STATIC_OBJECTS
 ; ==============================================================================
 interactionCode4c:
 	ld e,Interaction.subid

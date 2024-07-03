@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_GAME_COMPLETE_DIALOG
+; INTERAC_GAME_COMPLETE_DIALOG
 ; ==============================================================================
 interactionCoded1:
 	ld e,Interaction.state

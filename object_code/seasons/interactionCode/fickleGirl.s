@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FICKLE_GIRL
+; INTERAC_FICKLE_GIRL
 ; ==============================================================================
 interactionCode2e:
 	ld e,$44
@@ -34,7 +34,7 @@ interactionCode2e:
 	call interactionSetScript
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_8e
+	ld (hl),INTERAC_8e
 	inc l
 	ld (hl),$00
 	ld l,$57
@@ -84,7 +84,7 @@ interactionCode2e:
 	call @func_5f65
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_POPPABLE_BUBBLE
+	ld (hl),PART_POPPABLE_BUBBLE
 	inc l
 	ld (hl),$01
 	ld l,$c9
@@ -100,7 +100,7 @@ interactionCode2e:
 -
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_POPPABLE_BUBBLE
+	ld (hl),PART_POPPABLE_BUBBLE
 	inc l
 	ld (hl),$00
 	ld l,$c9

@@ -1,10 +1,10 @@
 ; ==============================================================================
-; ENEMYID_BLUE_STALFOS
+; ENEMY_BLUE_STALFOS
 ;
 ; Variables (for subid 1, "main" enemy):
 ;   var30/var31: Destination position while moving
 ;   var32: Projectile pattern index; number from 0-7 which cycles through ball types.
-;          (Used by PARTID_BLUE_STALFOS_PROJECTILE.)
+;          (Used by PART_BLUE_STALFOS_PROJECTILE.)
 ;
 ; Variables (for subid 3, the afterimage):
 ;   var30/var31: Y/X position?
@@ -53,7 +53,7 @@ blueStalfos_state_uninitialized:
 	call ecom_incState
 	ld l,Enemy.zh
 	ld (hl),$ff
-	ld a,ENEMYID_BLUE_STALFOS
+	ld a,ENEMY_BLUE_STALFOS
 	jp enemyBoss_initializeRoom
 
 
@@ -63,7 +63,7 @@ blueStalfos_state_spawner:
 	ret nz
 
 	; Spawn subid 1
-	ld b,ENEMYID_BLUE_STALFOS
+	ld b,ENEMY_BLUE_STALFOS
 	call ecom_spawnUncountedEnemyWithSubid01
 	call objectCopyPosition
 	ld l,Enemy.enabled
@@ -232,7 +232,7 @@ blueStalfos_main_state0c:
 	jp c,blueStalfos_main_beginSickleAttack
 
 @projectileAttack:
-	ld b,PARTID_BLUE_STALFOS_PROJECTILE
+	ld b,PART_BLUE_STALFOS_PROJECTILE
 	call ecom_spawnProjectile
 	ret nz
 	ld h,d
@@ -369,7 +369,7 @@ blueStalfos_main_beginSickleAttack:
 	jp enemySetAnimation
 
 
-; Just hit by PARTID_BLUE_STALFOS_PROJECTILE; turning into a small bat
+; Just hit by PART_BLUE_STALFOS_PROJECTILE; turning into a small bat
 blueStalfos_main_state14:
 	call blueStalfos_createPuff
 	ret nz
@@ -476,7 +476,7 @@ blueStalfos_subid2:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld a,(hl)
-	cp ENEMYID_BLUE_STALFOS
+	cp ENEMY_BLUE_STALFOS
 	jp nz,enemyDelete
 
 	; [this.collisionType] = [subid0.collisionType]
@@ -569,7 +569,7 @@ blueStalfos_subid3:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld a,(hl)
-	cp ENEMYID_BLUE_STALFOS
+	cp ENEMY_BLUE_STALFOS
 	jp nz,enemyDelete
 
 	ld l,Enemy.state
@@ -807,7 +807,7 @@ blueStalfos_afterImage_resetPositionVars:
 
 ;;
 blueStalfos_createPuff:
-	ldbc INTERACID_PUFF,$02
+	ldbc INTERAC_PUFF,$02
 	call objectCreateInteraction
 	ret nz
 

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_VERAN_PROJECTILE
+; PART_VERAN_PROJECTILE
 ; ==============================================================================
 partCode37:
 	jp nz,partDelete
@@ -75,7 +75,7 @@ veranProjectile_subid0:
 	; Create a projectile
 	call getFreePartSlot
 	jr nz,@animate
-	ld (hl),PARTID_VERAN_PROJECTILE
+	ld (hl),PART_VERAN_PROJECTILE
 	inc l
 	inc (hl) ; [subid] = 1
 
@@ -88,7 +88,7 @@ veranProjectile_subid0:
 	jp partAnimate
 
 @delete:
-	ldbc INTERACID_PUFF,$80
+	ldbc INTERAC_PUFF,$80
 	call objectCreateInteraction
 	jp partDelete
 

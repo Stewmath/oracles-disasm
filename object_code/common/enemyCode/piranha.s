@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_PIRANHA
+; ENEMY_PIRANHA
 ;
 ; Variables:
 ;   zh: Equals 2 when underwater
@@ -113,7 +113,7 @@ fish_subid00:
 
 	ld l,Enemy.speed
 	ld (hl),SPEED_c0
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	call objectCreateInteractionWithSubid00
 	call objectSetVisiblec1
 	ld b,$00
@@ -155,7 +155,7 @@ fish_enterWater:
 	ld (hl),SPEED_80
 
 	call fish_setRandomCounter1
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	call objectCreateInteractionWithSubid00
 	call objectSetVisible83
 	jp fish_updateAnimationFromAngle

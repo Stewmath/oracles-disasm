@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_S_DIN
+; INTERAC_S_DIN
 ; ==============================================================================
 interactionCodea5:
 	ld e,$44
@@ -73,7 +73,7 @@ dinState0:
 	jp z,interactionDelete
 	ld a,$06
 	call interactionSetAnimation
-	ld a,INTERACID_S_DIN
+	ld a,INTERAC_S_DIN
 	ld (wInteractionIDToLoadExtraGfx),a
 	ld (wLoadedTreeGfxIndex),a
 	ld hl,mainScripts.dinScript_subid8Init
@@ -131,7 +131,7 @@ dinState1_subid0:
 @func_6521:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$05
 	call getRandomNumber
@@ -193,7 +193,7 @@ dinState1_subid0:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_DINS_CRYSTAL_FADING
+	ld (hl),INTERAC_DINS_CRYSTAL_FADING
 	inc l
 	ld (hl),b
 	dec (hl)

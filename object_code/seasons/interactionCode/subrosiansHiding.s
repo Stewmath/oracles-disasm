@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ROSA_HIDING
+; INTERAC_ROSA_HIDING
 ; ==============================================================================
 interactionCode6c:
 	ld e,Interaction.subid
@@ -9,7 +9,7 @@ interactionCode6c:
 	.dw rosaSubId1
 
 ; ==============================================================================
-; INTERACID_STRANGE_BROTHERS_HIDING
+; INTERAC_STRANGE_BROTHERS_HIDING
 ; ==============================================================================
 interactionCode6d:
 	ld e,Interaction.subid
@@ -52,7 +52,7 @@ rosaSubId0:
 	ld ($cc9f),a
 	ld a,$01
 	ld ($ccab),a
-	ldbc $01 INTERACID_ROSA_HIDING
+	ldbc $01 INTERAC_ROSA_HIDING
 	call spawnHider
 	ld e,a
 	ld bc,@table_67f1
@@ -282,9 +282,9 @@ strangeBrothersSubId0:
 func_6964:
 	ld a,$01
 	ld ($ccab),a
-	ldbc $01 INTERACID_STRANGE_BROTHERS_HIDING
+	ldbc $01 INTERAC_STRANGE_BROTHERS_HIDING
 	call spawnHider
-	ldbc $02 INTERACID_STRANGE_BROTHERS_HIDING
+	ldbc $02 INTERAC_STRANGE_BROTHERS_HIDING
 	call spawnHider
 	ld a,TREASURE_FEATHER
 	call checkTreasureObtained

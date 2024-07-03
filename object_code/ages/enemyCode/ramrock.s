@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_RAMROCK
+; ENEMY_RAMROCK
 ;
 ; Variables:
 ;   var30: Set to $01 by hands when they collide with ramrock
@@ -26,7 +26,7 @@ enemyCode07:
 
 
 ramrock_state0:
-	ld a,ENEMYID_RAMROCK
+	ld a,ENEMY_RAMROCK
 	ld b,PALH_83
 	call enemyBoss_initializeRoom
 	ld a,SPEED_100
@@ -85,7 +85,7 @@ ramrock_state8_substate1:
 
 	ld c,$01
 @spawnArm:
-	ld b,ENEMYID_RAMROCK_ARMS
+	ld b,ENEMY_RAMROCK_ARMS
 	call ecom_spawnEnemyWithSubid01
 	ld l,Enemy.subid
 	ld (hl),c
@@ -183,7 +183,7 @@ ramrock_bombPhase:
 	call @func_68fe
 
 	; Stop movement of any bombs that touch ramrock
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID
 	ret nz
 	call checkObjectsCollided
@@ -191,7 +191,7 @@ ramrock_bombPhase:
 	ld l,Item.angle
 	ld (hl),$ff
 ++
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID_startingAfterH
 	ret nz
 	call checkObjectsCollided
@@ -221,7 +221,7 @@ ramrock_bombPhase_substate0:
 	ret nz
 
 	; Spawn arms
-	ld b,ENEMYID_RAMROCK_ARMS
+	ld b,ENEMY_RAMROCK_ARMS
 	call ecom_spawnEnemyWithSubid01
 	ld l,Enemy.subid
 	ld (hl),$02
@@ -230,7 +230,7 @@ ramrock_bombPhase_substate0:
 	inc l
 	ld (hl),d
 
-	ld b,ENEMYID_RAMROCK_ARMS
+	ld b,ENEMY_RAMROCK_ARMS
 	call ecom_spawnEnemyWithSubid01
 	ld l,Enemy.subid
 	ld (hl),$03
@@ -448,7 +448,7 @@ ramrock_seedPhase_substate0:
 
 	ld c,$04
 @spawnArm:
-	ld b,ENEMYID_RAMROCK_ARMS
+	ld b,ENEMY_RAMROCK_ARMS
 	call ecom_spawnEnemyWithSubid01
 	ld l,Enemy.subid
 	ld (hl),c
@@ -537,7 +537,7 @@ ramrock_seedPhase_substate2:
 	ld l,Enemy.counter1
 	ld (hl),60
 
-	ld b,PARTID_RAMROCK_SEED_FORM_ORB
+	ld b,PART_RAMROCK_SEED_FORM_ORB
 	call ecom_spawnProjectile
 	ld bc,$1000
 	call objectCopyPositionWithOffset
@@ -567,7 +567,7 @@ ramrock_seedPhase_substate3:
 	inc l
 	ld (hl),30 ; [counter2]
 
-	ld b,PARTID_RAMROCK_SEED_FORM_LASER
+	ld b,PART_RAMROCK_SEED_FORM_LASER
 	call ecom_spawnProjectile
 	ld l,Part.subid
 	ld (hl),$0e
@@ -643,7 +643,7 @@ ramrock_glovePhase_substate0:
 	ld bc,$e001
 @spawnArm:
 	push bc
-	ld b,PARTID_RAMROCK_GLOVE_FORM_ARM
+	ld b,PART_RAMROCK_GLOVE_FORM_ARM
 	call ecom_spawnProjectile
 	ld l,Part.subid
 	ld (hl),c

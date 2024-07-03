@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MOBLIN_KEEP_SCENES
+; INTERAC_MOBLIN_KEEP_SCENES
 ; ==============================================================================
 interactionCodeab:
 	ld e,$44
@@ -74,7 +74,7 @@ moblinKeepScene_spawnKingMoblin:
 	call addDoubleIndexToBc
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_KING_MOBLIN
+	ld (hl),INTERAC_KING_MOBLIN
 	inc l
 	ld a,(bc)
 	ld (hl),a
@@ -99,7 +99,7 @@ moblinKeepScene_spawn2MoblinsAfterKeepDestroyed:
 --
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_S_MOBLIN
+	ld (hl),INTERAC_S_MOBLIN
 	inc l
 	ld (hl),$04
 	inc l

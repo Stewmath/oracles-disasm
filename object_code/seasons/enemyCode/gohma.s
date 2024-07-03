@@ -1,11 +1,11 @@
 ; ==============================================================================
-; ENEMYID_GOHMA
+; ENEMY_GOHMA
 ;
 ; Variables for subid 1 (main body):
 ;   relatedObj2: Reference to subid 3 (claw)
 ;   var30: ?
 ;   var31: Affects animation?
-;   var32: Number of "children" spawned (ENEMYID_GOHMA_GEL)
+;   var32: Number of "children" spawned (ENEMY_GOHMA_GEL)
 ;
 ; Variables for subid 2 (body hitbox):
 ;   relatedObj1: Reference to subid 1
@@ -53,7 +53,7 @@ enemyCode7b:
 	ld a,Object.id
 	call objectGetRelatedObject2Var
 	ld a,(hl)
-	cp ENEMYID_GOHMA
+	cp ENEMY_GOHMA
 	jr nz,@normalStatus
 
 	ld l,Enemy.invincibilityCounter
@@ -111,7 +111,7 @@ gohma_state_uninitialized:
 	; Subid 0
 	inc a
 	ld (de),a ; [state] = 1
-	ld a,ENEMYID_GOHMA
+	ld a,ENEMY_GOHMA
 	call enemyBoss_initializeRoom
 
 
@@ -120,7 +120,7 @@ gohma_state_spawner:
 	call checkBEnemySlotsAvailable
 	ret nz
 
-	ld b,ENEMYID_GOHMA
+	ld b,ENEMY_GOHMA
 	call ecom_spawnUncountedEnemyWithSubid01
 	call objectCopyPosition
 
@@ -889,7 +889,7 @@ gohma_subid1_dead:
 @nextEnemy:
 	ld l,Enemy.id
 	ld a,(hl)
-	cp ENEMYID_GOHMA_GEL
+	cp ENEMY_GOHMA_GEL
 	call z,ecom_killObjectH
 	inc h
 	ld a,h
@@ -900,7 +900,7 @@ gohma_subid1_dead:
 	ld a,Object.id
 	call objectGetRelatedObject2Var
 	ld a,(hl)
-	cp ENEMYID_GOHMA
+	cp ENEMY_GOHMA
 	jr nz,@dead
 
 	call ecom_killObjectH
@@ -1139,7 +1139,7 @@ gohma_phase2_spawnGelChild:
 	call getRandomNumber_noPreserveVars
 	and $03
 	ld c,a
-	ld b,ENEMYID_GOHMA_GEL
+	ld b,ENEMY_GOHMA_GEL
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 
@@ -1173,12 +1173,12 @@ gohma_checkShouldBlock:
 	cp $2c
 	ret c
 
-	; Check if any item with ID above ITEMID_DUST is active?
+	; Check if any item with ID above ITEM_DUST is active?
 	ld h,FIRST_ITEM_INDEX
 @nextItem:
 	ld l,Item.id
 	ld a,(hl)
-	cp ITEMID_DUST
+	cp ITEM_DUST
 	jr nc,@beginBlock
 	inc h
 	ld a,h

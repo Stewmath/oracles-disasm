@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_OCTOROK
+; ENEMY_OCTOROK
 ;
 ; Variables:
 ;   counter1: How many frames to wait after various actions.
@@ -258,7 +258,7 @@ octorok_state_0b:
 	ld l,e
 	ld (hl),$09 ; [state] = $09
 
-	ld b,PARTID_OCTOROK_PROJECTILE
+	ld b,PART_OCTOROK_PROJECTILE
 	call ecom_spawnProjectile
 	ret nz
 	ld a,SND_THROW

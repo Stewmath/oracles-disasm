@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TOILET_HAND
+; INTERAC_TOILET_HAND
 ; ==============================================================================
 interactionCode5b:
 	ld e,Interaction.state
@@ -122,18 +122,18 @@ interactionCode5b:
 ; First byte is the object ID to detect; second is an index that the script will use later
 ; (gets written to var38).
 @items:
-	.db ITEMID_BOMB,          $00
-	.db ITEMID_BOMBCHUS,      $01
-	.db ITEMID_18,            $02
-	.db ITEMID_EMBER_SEED,    $03
-	.db ITEMID_SCENT_SEED,    $04
-	.db ITEMID_GALE_SEED,     $05
-	.db ITEMID_MYSTERY_SEED,  $06
-	.db ITEMID_BRACELET,      $07
+	.db ITEM_BOMB,          $00
+	.db ITEM_BOMBCHUS,      $01
+	.db ITEM_18,            $02
+	.db ITEM_EMBER_SEED,    $03
+	.db ITEM_SCENT_SEED,    $04
+	.db ITEM_GALE_SEED,     $05
+	.db ITEM_MYSTERY_SEED,  $06
+	.db ITEM_BRACELET,      $07
 	.db $00
 
 @interactions:
-	.db INTERACID_PUSHBLOCK,  $07
+	.db INTERAC_PUSHBLOCK,  $07
 	.db $00
 
 @scriptTable:

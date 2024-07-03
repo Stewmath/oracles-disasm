@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DIN_IMPRISONED_EVENT
+; INTERAC_DIN_IMPRISONED_EVENT
 ; ==============================================================================
 interactionCode4f:
 	ld e,Interaction.state
@@ -286,7 +286,7 @@ interactionCode4f_state1:
 --
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_DIN_IMPRISONED_EVENT
+	ld (hl),INTERAC_DIN_IMPRISONED_EVENT
 	inc l
 	ld (hl),$04
 	inc l
@@ -399,7 +399,7 @@ interactionCode4f_state1:
 -
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_DIN_IMPRISONED_EVENT
+	ld (hl),INTERAC_DIN_IMPRISONED_EVENT
 	inc l
 	ld (hl),$03
 	ld l,$46

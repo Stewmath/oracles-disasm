@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_STATUE_EYEBALL
+; INTERAC_STATUE_EYEBALL
 ; ==============================================================================
 interactionCodee2:
 	ld e,Interaction.subid
@@ -119,7 +119,7 @@ interactionCodee2:
 @spawnChild:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_STATUE_EYEBALL
+	ld (hl),INTERAC_STATUE_EYEBALL
 	inc l
 	ld (hl),e ; [subid]
 	push bc

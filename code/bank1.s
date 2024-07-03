@@ -277,7 +277,7 @@ screenTransitionState2:
 	ret
 +
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	jr z,@startTransition
 
 	; Don't allow transitions over holes
@@ -2261,9 +2261,9 @@ cutscene17:
 
 	ldi a,(hl)
 .ifdef ROM_AGES
-	cp INTERACID_ZELDA
+	cp INTERAC_ZELDA
 .else
-	cp INTERACID_S_ZELDA
+	cp INTERAC_S_ZELDA
 .endif
 	jr z,++
 +
@@ -3775,7 +3775,7 @@ func_5c18:
 	call checkUpdateDungeonMinimap
 	ld hl,w1Companion.id
 	ldd a,(hl)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jr nz,++
 
 	bit 1,(hl)
@@ -3939,9 +3939,9 @@ func_5cfe:
 	or a
 	jr z,@clearCompanion
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	jr z,@clearCompanion
-	cp SPECIALOBJECTID_MAPLE
+	cp SPECIALOBJECT_MAPLE
 	jr z,@clearCompanion
 
 .ifdef ROM_SEASONS
@@ -4116,7 +4116,7 @@ checkDisplayEraOrSeasonInfo:
 	ret nz
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_ERA_OR_SEASON_INFO
+	ld (hl),INTERAC_ERA_OR_SEASON_INFO
 	ret
 .endif
 
@@ -4246,7 +4246,7 @@ checkDisplayEraOrSeasonInfo:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_ERA_OR_SEASON_INFO
+	ld (hl),INTERAC_ERA_OR_SEASON_INFO
 	ret
 
 .endif
@@ -5574,7 +5574,7 @@ determineCompanionRegionSeason:
 
 @companionRegion:
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_RICKY-1
+	sub SPECIALOBJECT_RICKY-1
 	and $03
 	ld (wRoomStateModifier),a
 	jr setSeason

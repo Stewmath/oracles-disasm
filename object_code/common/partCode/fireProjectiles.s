@@ -1,6 +1,6 @@
 ; ==============================================================================
-; PARTID_ZORA_FIRE
-; PARTID_GOPONGA_PROJECTILE
+; PART_ZORA_FIRE
+; PART_GOPONGA_PROJECTILE
 ; ==============================================================================
 partCode19:
 partCode31:

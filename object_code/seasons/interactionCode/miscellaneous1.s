@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_S_MISCELLANEOUS_1
+; INTERAC_S_MISCELLANEOUS_1
 ; ==============================================================================
 interactionCode6b:
 	ld e,Interaction.subid
@@ -338,7 +338,7 @@ oreChunkDigSpot:
 	ret nz
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_ITEM_DROP
+	ld (hl),PART_ITEM_DROP
 	inc l
 	ld (hl),$0e
 	inc l
@@ -364,7 +364,7 @@ misc1_spawnTreasureBCifRoomFlagBit5NotSet:
 misc1_spawnTreasureBC:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -550,14 +550,14 @@ natzuSwitch:
 	ld a,$01
 	ld (de),a
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jp z,interactionDelete
 	call getThisRoomFlags
 	and $40
 	jp nz,interactionDelete
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_SWITCH
+	ld (hl),PART_SWITCH
 	inc l
 	ld (hl),$01
 	jp objectCopyPosition
@@ -640,7 +640,7 @@ replacePirateShipWithQuicksand:
 	ld a,GLOBALFLAG_PIRATE_SHIP_DOCKED
 	call checkGlobalFlag
 	jp z,interactionDelete
-	ld b,INTERACID_QUICKSAND
+	ld b,INTERAC_QUICKSAND
 	call objectCreateInteractionWithSubid00
 	jp interactionDelete
 	
@@ -692,7 +692,7 @@ horonVillagePortalBridgeSpawner:
 @spawnBridge:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BRIDGE_SPAWNER
+	ld (hl),PART_BRIDGE_SPAWNER
 	ld l,$c7
 	ld (hl),e
 	ld l,$c9
@@ -822,7 +822,7 @@ mtCuccoBananaTree:
 	ld (hl),a
 	call getFreePartSlot
 	jp nz,interactionDelete
-	ld (hl),PARTID_GASHA_TREE
+	ld (hl),PART_GASHA_TREE
 	ld l,$d6
 	ld (hl),$40
 	inc l

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_S_COMPANION_SCRIPTS
+; INTERAC_S_COMPANION_SCRIPTS
 ; ==============================================================================
 interactionCode71:
 	ld a,(wLinkDeathTrigger)
@@ -118,9 +118,9 @@ companionScript_subid02:
 	and $01
 	jr z,companionScript_delete
 	ld a,($d101)
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	jr z,@func_6d72
-	cp SPECIALOBJECTID_MOOSH
+	cp SPECIALOBJECT_MOOSH
 	jr nz,companionScript_delete
 	ld a,$0a
 	ld hl,$d104
@@ -387,10 +387,10 @@ companionScript_subid08:
 	ld a,$01
 	ld (de),a
 	ld a,($d101)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr nz,companionScript_delete2
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr z,companionScript_delete2
 @state1:
 	ld a,($cd00)
@@ -431,7 +431,7 @@ companionScript_subid09:
 	call checkTreasureObtained
 	jr c,+
 	ld l,<wAnimalCompanion
-	ld (hl),SPECIALOBJECTID_RICKY
+	ld (hl),SPECIALOBJECT_RICKY
 +
 	ld l,<wRickyState
 	set 5,(hl)

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_51
+; PART_51
 ; Used by Ganon
 ; ==============================================================================
 partCode51:
@@ -137,7 +137,7 @@ partCode51:
 @state2:
 	call partCommon_checkTileCollisionOrOutOfBounds
 	jr nc,+
-	ld b,INTERACID_EXPLOSION
+	ld b,INTERAC_EXPLOSION
 	call objectCreateInteractionWithSubid00
 	ld a,$3c
 	call z,setScreenShakeCounter
@@ -149,7 +149,7 @@ partCode51:
 	jr nz,+
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_51
+	ld (hl),PART_51
 	inc l
 	ld (hl),$02
 	ld l,$c9

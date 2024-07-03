@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ZELDA_VILLAGERS_ROOM
+; INTERAC_ZELDA_VILLAGERS_ROOM
 ; ==============================================================================
 interactionCodec4:
 	call checkZeldaVillagersSeenButNoMakuSeed
@@ -77,14 +77,14 @@ zeldaVillagersRoom_interactionsTableLookup:
 @villagersSeenInteractions:
 	.db $05
 	; interactioncode - subid - yh - xh
-	.db INTERACID_S_ZELDA $07 $28 $48
-	.db INTERACID_IMPA $02 $30 $60
-	.db INTERACID_bc $01 $48 $60
-	.db INTERACID_be $01 $48 $30
-	.db INTERACID_bd $01 $30 $30
+	.db INTERAC_S_ZELDA $07 $28 $48
+	.db INTERAC_IMPA $02 $30 $60
+	.db INTERAC_bc $01 $48 $60
+	.db INTERAC_be $01 $48 $30
+	.db INTERAC_bd $01 $30 $30
 
 @gotMakuSeedInteractions:
 	.db $03
-	.db INTERACID_bc $02 $48 $60
-	.db INTERACID_be $02 $48 $30
-	.db INTERACID_bd $02 $30 $30
+	.db INTERAC_bc $02 $48 $60
+	.db INTERAC_be $02 $48 $30
+	.db INTERAC_bd $02 $30 $30

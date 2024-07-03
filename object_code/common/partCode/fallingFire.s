@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_FALLING_FIRE
+; PART_FALLING_FIRE
 ; ==============================================================================
 partCode23:
 	ld e,$c2
@@ -37,7 +37,7 @@ partCode23:
 ++
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_FALLING_FIRE
+	ld (hl),PART_FALLING_FIRE
 	inc l
 	ld (hl),$02
 	ld l,$f0

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FAKE_OCTOROK
+; INTERAC_FAKE_OCTOROK
 ; ==============================================================================
 interactionCode32:
 	ld e,Interaction.state
@@ -48,9 +48,9 @@ interactionCode32:
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED
 	call checkGlobalFlag
 	jr z,++
-	ld a,ENEMYID_GREAT_FAIRY
+	ld a,ENEMY_GREAT_FAIRY
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_GREAT_FAIRY
+	ld (hl),ENEMY_GREAT_FAIRY
 	call objectCopyPosition
 	jp interactionDelete
 ++
@@ -154,7 +154,7 @@ greatFairyOctorokCode:
 	cp $f0
 	ret nz
 
-	ldbc INTERACID_GREAT_FAIRY, $01
+	ldbc INTERAC_GREAT_FAIRY, $01
 	call objectCreateInteraction
 	ld a,TREASURE_FAIRY_POWDER
 	call loseTreasure

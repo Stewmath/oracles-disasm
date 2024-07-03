@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MISCELLANEOUS_2
+; INTERAC_MISCELLANEOUS_2
 ; ==============================================================================
 interactionCodedc:
 	ld e,Interaction.subid
@@ -301,12 +301,12 @@ interactiondc_subid05:
 	jp interactionDecCounter1
 
 
-; Makes volcanoes erupt before tuni nut is restored (spawns INTERACID_VOLCANO_HANLDER)
+; Makes volcanoes erupt before tuni nut is restored (spawns INTERAC_VOLCANO_HANLDER)
 interactiondc_subid06:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED
 	call checkGlobalFlag
 	jr nz,@delete
-	ldbc INTERACID_VOLCANO_HANDLER,$01
+	ldbc INTERAC_VOLCANO_HANDLER,$01
 	call objectCreateInteraction
 @delete:
 	jp interactionDelete
@@ -590,7 +590,7 @@ interactiondc_subid0D:
 ++
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BRIDGE_SPAWNER
+	ld (hl),PART_BRIDGE_SPAWNER
 	ld l,Part.counter2
 	ld (hl),b
 	ld l,Part.angle
@@ -668,7 +668,7 @@ interactiondc_subid0E:
 @spawnPuff:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	jp setShortPosition_paramC
 
@@ -786,7 +786,7 @@ interactiondc_subid12:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BRIDGE_SPAWNER
+	ld (hl),PART_BRIDGE_SPAWNER
 	ld l,Part.counter2
 	ld (hl),$0c
 	ld l,Part.angle
@@ -824,7 +824,7 @@ interactiondc_subid14:
 	call objectGetTileAtPosition
 	cp $dc ; TODO
 	jr nz,@delete
-	ld b,INTERACID_DECORATION
+	ld b,INTERAC_DECORATION
 	call objectCreateInteractionWithSubid00
 @delete:
 	jp interactionDelete

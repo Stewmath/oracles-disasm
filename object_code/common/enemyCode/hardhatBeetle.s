@@ -1,6 +1,6 @@
 ; ==============================================================================
-; ENEMYID_HARDHAT_BEETLE
-; ENEMYID_HARMLESS_HARDHAT_BEETLE
+; ENEMY_HARDHAT_BEETLE
+; ENEMY_HARMLESS_HARDHAT_BEETLE
 ; ==============================================================================
 enemyCode4d:
 .ifdef ROM_AGES
@@ -33,7 +33,7 @@ enemyCode5f:
 .ifdef ROM_AGES
 	ld e,Enemy.id
 	ld a,(de)
-	cp ENEMYID_HARMLESS_HARDHAT_BEETLE
+	cp ENEMY_HARMLESS_HARDHAT_BEETLE
 	ld a,PALH_8d
 	call z,loadPaletteHeader
 .endif

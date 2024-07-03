@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MASTER_DIVER
+; INTERAC_MASTER_DIVER
 ;
 ; Variables:
 ;   var3f: Secret index (for "linkedGameNpcScript")

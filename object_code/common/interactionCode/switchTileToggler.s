@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SWITCH_TILE_TOGGLER
+; INTERAC_SWITCH_TILE_TOGGLER
 ; ==============================================================================
 interactionCode78:
 	ld e,Interaction.state

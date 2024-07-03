@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TUNI_NUT
+; INTERAC_TUNI_NUT
 ; ==============================================================================
 interactionCodeb1_body:
 	ld e,Interaction.state
@@ -101,7 +101,7 @@ tuniNut_beginMovingIntoPlace:
 	ld a,60
 	ld (de),a
 
-	ldbc INTERACID_SPARKLE, $07
+	ldbc INTERAC_SPARKLE, $07
 	call objectCreateInteraction
 	ld l,Interaction.relatedObj1
 	ld a,e

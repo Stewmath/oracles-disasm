@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_COMEDIAN
+; INTERAC_COMEDIAN
 ;
 ; Variables: (these are only used in scripts / bank 15 functions))
 ;   var37: base animation index ($00 for no mustache, $04 for mustache)

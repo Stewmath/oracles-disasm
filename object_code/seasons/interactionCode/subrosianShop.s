@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SUBROSIAN_SHOP
+; INTERAC_SUBROSIAN_SHOP
 ; Variables:
 ;   var37 - wram variable to check for number of 2nd currency
 ;   var38 - number of 2nd currency required

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TITLESCREEN_CLOUDS
+; INTERAC_TITLESCREEN_CLOUDS
 ; ==============================================================================
 interactionCoded2:
 	ld e,Interaction.state
@@ -65,7 +65,7 @@ interactionCoded2:
 	ret z
 
 ;;
-; This is used by INTERACID_TITLESCREEN_CLOUDS and INTERACID_INTRO_BIRD.
+; This is used by INTERAC_TITLESCREEN_CLOUDS and INTERAC_INTRO_BIRD.
 ; @param[out]	a	X position
 introObject_applySpeed:
 	ld h,d

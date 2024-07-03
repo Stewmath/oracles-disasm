@@ -85,7 +85,7 @@ agesFunc_10_70f6:
 	call fadeinFromWhite
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL
+	ld (hl),INTERAC_CREDITS_TEXT_VERTICAL
 	ld l,Interaction.yh
 	ld (hl),$e8
 	inc l
@@ -125,7 +125,7 @@ agesFunc_10_70f6:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_INTRO_SPRITES_1
+	ld (hl),INTERAC_INTRO_SPRITES_1
 	inc l
 	ld (hl),$09
 	inc l
@@ -171,7 +171,7 @@ agesFunc_10_70f6:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_cf
+	ld (hl),INTERAC_cf
 	inc l
 	dec b
 	ld (hl),b

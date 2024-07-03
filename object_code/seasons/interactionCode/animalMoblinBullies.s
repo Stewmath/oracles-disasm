@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ANIMAL_MOBLIN_BULLIES
+; INTERAC_ANIMAL_MOBLIN_BULLIES
 ; ==============================================================================
 interactionCode73:
 	ld h,d
@@ -20,10 +20,10 @@ interactionCode73:
 @func_7078:
 	ld e,$44
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	or a
 	jr z,@func_70fd_delete
-	cp SPECIALOBJECTID_MOOSH
+	cp SPECIALOBJECT_MOOSH
 	jr z,@moosh
 	ld a,(de)
 	rst_jumpTable
@@ -42,9 +42,9 @@ interactionCode73:
 	call interactionInitGraphics
 	ld hl,$d101
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_MOOSH
+	cp SPECIALOBJECT_MOOSH
 	jr z,@func_70c1
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr nz,@func_70fd_delete
 	; companion is dimitri
 	cp (hl)

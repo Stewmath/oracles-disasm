@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ESSENCE
+; INTERAC_ESSENCE
 ; ==============================================================================
 interactionCode7f:
 	ld a,(wLinkDeathTrigger)
@@ -36,7 +36,7 @@ interaction7f_subid00:
 	call objectSetCollideRadius
 
 	; Create the pedestal
-	ldbc INTERACID_ESSENCE, $01
+	ldbc INTERAC_ESSENCE, $01
 	call objectCreateInteraction
 
 	; Delete self if got essence
@@ -51,7 +51,7 @@ interaction7f_subid00:
 	ld hl,w1ReservedInteraction1
 	ld (hl),$81
 	inc l
-	ld (hl),INTERACID_ESSENCE
+	ld (hl),INTERAC_ESSENCE
 	inc l
 	ld (hl),$02
 	call objectCopyPosition

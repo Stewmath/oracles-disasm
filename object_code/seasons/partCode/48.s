@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_48
+; PART_48
 ; ==============================================================================
 partCode48:
 	ld e,$c2
@@ -24,7 +24,7 @@ partCode48:
 	ret nz
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	inc l
 	inc (hl)
 	ret
@@ -125,7 +125,7 @@ partCode48:
 	ld b,$06
 -
 	call getFreePartSlot
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	inc l
 	ld (hl),$03
 	ld l,$c9
@@ -192,7 +192,7 @@ partCode48:
 	ret nz
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	inc l
 	ld (hl),$05
 	ret

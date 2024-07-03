@@ -1,5 +1,5 @@
 ; =======================================================================================
-; PARTID_MOVING_ORB
+; PART_MOVING_ORB
 ;
 ; Variables:
 ;   var32: Dest Y position (from movement script)

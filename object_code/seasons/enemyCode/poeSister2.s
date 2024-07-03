@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_POE_SISTER_2
+; ENEMY_POE_SISTER_2
 ; ==============================================================================
 enemyCode76:
 	jr z,@normalStatus
@@ -53,7 +53,7 @@ enemyCode76:
 	jr z,@func5c6d
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_DARK_ROOM_HANDLER
+	ld (hl),PART_DARK_ROOM_HANDLER
 	ld l,$c6
 	ld a,$04
 	ldi (hl),a
@@ -79,7 +79,7 @@ enemyCode76:
 	ld h,d
 	jp enemyCode7e@func_5dd5
 
-; Also used by ENEMYID_POE_SISTER_1
+; Also used by ENEMY_POE_SISTER_1
 @func5c6d:
 	ld l,$84
 	ld (hl),$0b

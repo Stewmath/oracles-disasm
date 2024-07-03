@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SPECIAL_WARP
+; INTERAC_SPECIAL_WARP
 ; ==============================================================================
 interactionCode1f:
 	ld e,Interaction.subid
@@ -69,7 +69,7 @@ interactionCode1f:
 
 @subid1State0:
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jp nz,interactionDelete
 
 	ld bc,$0810

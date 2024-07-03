@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MISC_BOY_NPCS
+; INTERAC_MISC_BOY_NPCS
 ; ==============================================================================
 interactionCode3e:
 	call checkInteractionState
@@ -56,7 +56,7 @@ interactionCode3e:
 	call @@var03_03
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_BALL_THROWN_TO_DOG
+	ld (hl),INTERAC_BALL_THROWN_TO_DOG
 	ld bc,$00fd
 	call objectCopyPositionWithOffset
 	ld l,$4b

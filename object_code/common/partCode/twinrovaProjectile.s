@@ -1,10 +1,10 @@
 ; ==============================================================================
-; PARTID_RED_TWINROVA_PROJECTILE
-; PARTID_BLUE_TWINROVA_PROJECTILE
+; PART_RED_TWINROVA_PROJECTILE
+; PART_BLUE_TWINROVA_PROJECTILE
 ;
 ; Variables:
-;   relatedObj1: Instance of ENEMYID_TWINROVA that fired the projectile
-;   relatedObj2: Instance of ENEMYID_TWINROVA that could be hit by the projectile
+;   relatedObj1: Instance of ENEMY_TWINROVA that fired the projectile
+;   relatedObj2: Instance of ENEMY_TWINROVA that could be hit by the projectile
 ; ==============================================================================
 partCode4b:
 partCode4d:
@@ -76,7 +76,7 @@ partCode4d:
 	; Play sound depending which one it is
 	ld e,Part.id
 	ld a,(de)
-	cp PARTID_RED_TWINROVA_PROJECTILE
+	cp PART_RED_TWINROVA_PROJECTILE
 	ld a,SND_BEAM1
 	jr z,+
 	ld a,SND_BEAM2

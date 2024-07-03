@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_EXTENDABLE_BRIDGE
+; INTERAC_EXTENDABLE_BRIDGE
 ; ==============================================================================
 interactionCode23:
 	ld e,Interaction.state

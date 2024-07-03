@@ -109,7 +109,7 @@ nextToChestTile:
 	ld hl,w1ReservedInteraction0.enabled
 	ld a,$81
 	ldi (hl),a
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 
 	; Write contents to Interaction.subid, Interaction.var03
 	inc l
@@ -282,7 +282,7 @@ nextToPushableBlock:
 
 	; Set id
 	inc l
-	ld (hl),INTERACID_PUSHBLOCK
+	ld (hl),INTERAC_PUSHBLOCK
 
 	; Set angle
 	ld a,(wLinkPushingDirection)
@@ -324,7 +324,7 @@ nextToPushableBlock:
 .ifdef ROM_AGES
 	; For the somaria block, use its dedicated object to move it around.
 @somariaBlock:
-	ld c,ITEMID_18
+	ld c,ITEM_18
 	call findItemWithID
 	jr nz,@end
 
@@ -364,7 +364,7 @@ nextToKeyBlock:
 	; Create a "puff" at the keyblock's former position
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	ldh a,(<hFF8D)
 	call setShortPosition
@@ -398,7 +398,7 @@ nextToKeyDoor:
 	ld hl,w1ReservedInteraction0.enabled
 	ld (hl),$01
 	inc l
-	ld (hl),INTERACID_DOOR_CONTROLLER
+	ld (hl),INTERAC_DOOR_CONTROLLER
 
 	; Copy position to Interaction.yh
 	ldh a,(<hFF8D)
@@ -496,7 +496,7 @@ nextToOverworldKeyhole:
 	; Create the key sprite
 	call createKeySpriteInteraction
 
-	; Increment id to change it to INTERACID_OVERWORLD_KEY_SPRITE
+	; Increment id to change it to INTERAC_OVERWORLD_KEY_SPRITE
 	ld l,Interaction.id
 	inc (hl)
 
@@ -567,7 +567,7 @@ jumpToShowInfoText:
 createKeySpriteInteraction:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_DUNGEON_KEY_SPRITE
+	ld (hl),INTERAC_DUNGEON_KEY_SPRITE
 	inc l
 
 	; Store tile index in subid
@@ -638,7 +638,7 @@ nextToGhiniSpawner:
 	; Create the ghini
 	call getFreeEnemySlot
 	ret nz
-	ld (hl),ENEMYID_GHINI
+	ld (hl),ENEMY_GHINI
 
 	; Set subid to $01 to tell it to do a slow spawn, instead of being active right
 	; away

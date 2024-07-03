@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MISCELLANEOUS_1
+; INTERAC_MISCELLANEOUS_1
 ; ==============================================================================
 interactionCode6b:
 	ld e,Interaction.subid
@@ -105,7 +105,7 @@ interaction6b_subid01:
 
 	ld hl,objectData.nayruAndAnimalsInIntro
 	call parseGivenObjectData
-	ld a,INTERACID_NAYRU
+	ld a,INTERAC_NAYRU
 	ld (wInteractionIDToLoadExtraGfx),a
 
 	push de
@@ -212,7 +212,7 @@ interaction6b_subid05:
 	ld c,(hl)
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl)
 	inc l
@@ -565,7 +565,7 @@ interaction6b_subid0f:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_SWITCH
+	ld (hl),PART_SWITCH
 	inc l
 	ld (hl),$01
 	jp objectCopyPosition

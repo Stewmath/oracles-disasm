@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_KING_MOBLIN
+; ENEMY_KING_MOBLIN
 ; ==============================================================================
 enemyCode07:
 	jr z,@normalStatus
@@ -143,7 +143,7 @@ enemyCode07:
 	call ecom_decCounter1
 	jr nz,@animate
 	inc (hl)
-	ld b,PARTID_KING_MOBLIN_BOMB
+	ld b,PART_KING_MOBLIN_BOMB
 	call ecom_spawnProjectile
 	ret nz
 	ld e,$84
@@ -271,7 +271,7 @@ enemyCode07:
 	ld b,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION
+	ld (hl),INTERAC_EXPLOSION
 	ld l,$4b
 	ld (hl),b
 	ld l,$4d

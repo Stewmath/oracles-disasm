@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_VILLAGER
+; INTERAC_VILLAGER
 ;
 ; Variables:
 ;   var03: Nonzero if he's turned to stone
@@ -242,7 +242,7 @@ interactionCode3a:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 
 	; Write something to subid? This shouldn't matter, this lightning object doesn't
 	; seem to use subid anyway.

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_LYNEL
+; ENEMY_LYNEL
 ;
 ; Variables:
 ;   var30: Determines probability that the Lynel turns toward Link whenever it turns (less
@@ -143,7 +143,7 @@ enemyCode0d:
 @state_0a:
 	call ecom_decCounter1
 	jr nz,@animate
-	ld b,PARTID_LYNEL_BEAM
+	ld b,PART_LYNEL_BEAM
 	call ecom_spawnProjectile
 	jr nz,@gotoState8
 

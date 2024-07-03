@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SPINY_BEETLE
+; ENEMY_SPINY_BEETLE
 ;
 ; Variables:
 ;   var03: $80 when stationary, $81 when charging Link. Child object (bush or rock) reads
@@ -50,7 +50,7 @@ enemyCode1b:
 
 @state_uninitialized:
 	; Spawn the bush or rock to hide under
-	ld b,ENEMYID_BUSH_OR_ROCK
+	ld b,ENEMY_BUSH_OR_ROCK
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 
@@ -90,7 +90,7 @@ enemyCode1b:
 
 	; Borrow beamos collisions (nothing can kill it until rock is removed)
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_BEAMOS
+	ld (hl),$80|ENEMY_BEAMOS
 	ret
 
 
@@ -211,7 +211,7 @@ enemyCode1b:
 
 	; Restore normal collisions
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_SPINY_BEETLE
+	ld (hl),$80|ENEMY_SPINY_BEETLE
 
 	ld l,Enemy.collisionRadiusY
 	ld a,$06

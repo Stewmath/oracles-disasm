@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_HARP_OF_AGES_SPAWNER
+; INTERAC_HARP_OF_AGES_SPAWNER
 ; ==============================================================================
 interactionCodeb3:
 	ld e,Interaction.state
@@ -21,7 +21,7 @@ interactionCodeb3:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_HARP
 
@@ -34,7 +34,7 @@ interactionCodeb3:
 	; Spawn a sparkle object attached to the harp of ages object we just spawned
 	call getFreeInteractionSlot
 	jr nz,@incState
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$0c ; [subid]
 	ld l,Interaction.relatedObj1
@@ -112,7 +112,7 @@ interactionCodeb3:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_NAYRU
+	ld (hl),INTERAC_NAYRU
 	inc l
 	ld (hl),$07 ; [subid]
 	call objectCopyPosition

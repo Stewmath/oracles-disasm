@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_AMBI
+; INTERAC_AMBI
 ; ==============================================================================
 interactionCode4d:
 	ld e,Interaction.state
@@ -108,7 +108,7 @@ interactionCode4d:
 	ld (de),a
 	ret
 ++
-	ld (hl),INTERACID_GHOST_VERAN
+	ld (hl),INTERAC_GHOST_VERAN
 	inc l
 	inc (hl)
 	ld bc,$f000
@@ -257,7 +257,7 @@ ambi_runSubid03:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl) ; [subid] = $01
 	inc l
@@ -284,7 +284,7 @@ ambi_runSubid03:
 	ret z
 
 	call interactionIncSubstate
-	ldbc INTERACID_SPARKLE,$08
+	ldbc INTERAC_SPARKLE,$08
 	call objectCreateInteraction
 	ld a,$02
 	jp fadeinFromWhiteWithDelay

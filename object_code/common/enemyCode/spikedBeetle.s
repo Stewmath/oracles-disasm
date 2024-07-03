@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SPIKED_BEETLE
+; ENEMY_SPIKED_BEETLE
 ;
 ; Variables:
 ;   var30: $00 normally, $01 when flipped over.

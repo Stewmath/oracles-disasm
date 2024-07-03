@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_OMUAI
+; ENEMY_OMUAI
 ; ==============================================================================
 enemyCode72:
 	jr z,@normalStatus
@@ -394,7 +394,7 @@ func_4c3c:
 	pop hl
 	
 func_4c65:
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	call objectCreateInteractionWithSubid00
 	ld h,d
 func_4c6b:
@@ -439,7 +439,7 @@ func_4c88:
 	ld c,(hl)
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_SPLASH
+	ld (hl),INTERAC_SPLASH
 	ld l,$4b
 	ld (hl),b
 	ld l,$4d
@@ -570,7 +570,7 @@ func_4d36:
 func_4d54:
 	xor a
 	ld (de),a
-	ld b,PARTID_GOPONGA_PROJECTILE
+	ld b,PART_GOPONGA_PROJECTILE
 	call ecom_spawnProjectile
 	ret nz
 	ld l,$c2

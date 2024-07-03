@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_EXCLAMATION_MARK
+; INTERAC_EXCLAMATION_MARK
 ; ==============================================================================
 interactionCode9f:
 	ld e,Interaction.state
@@ -43,7 +43,7 @@ objectCreateExclamationMark_body:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_EXCLAMATION_MARK
+	ld (hl),INTERAC_EXCLAMATION_MARK
 	ld l,Interaction.counter1
 	ldh a,(<hFF8B)
 	ld (hl),a
@@ -56,7 +56,7 @@ objectCreateExclamationMark_body:
 	ret
 
 ;;
-; Create an interaction with id $a0 (INTERACID_FLOATING_IMAGE). Its position will be
+; Create an interaction with id $a0 (INTERAC_FLOATING_IMAGE). Its position will be
 ; placed at the current object's position + bc.
 ;
 ; @param	bc	Offset relative to object to place the interaction at
@@ -65,7 +65,7 @@ objectCreateExclamationMark_body:
 objectCreateFloatingImage:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FLOATING_IMAGE
+	ld (hl),INTERAC_FLOATING_IMAGE
 	inc l
 	ldh a,(<hFF8D)
 	ldi (hl),a

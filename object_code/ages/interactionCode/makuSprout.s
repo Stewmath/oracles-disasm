@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_SPROUT
+; INTERAC_MAKU_SPROUT
 ;
 ; Variables:
 ;   var3b: Animation

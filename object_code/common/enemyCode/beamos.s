@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_BEAMOS
+; ENEMY_BEAMOS
 ; ==============================================================================
 enemyCode16:
 	jr z,@normalStatus
@@ -58,7 +58,7 @@ enemyCode16:
 	ret nc
 
 	; Spawn projectile every frame for 10 frames
-	ld b,PARTID_BEAM
+	ld b,PART_BEAM
 	call ecom_spawnProjectile
 	ret nz
 

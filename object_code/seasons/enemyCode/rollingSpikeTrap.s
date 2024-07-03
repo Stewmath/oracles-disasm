@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ROLLING_SPIKE_TRAP
+; ENEMY_ROLLING_SPIKE_TRAP
 ; ==============================================================================
 enemyCode0f:
 	dec a
@@ -43,7 +43,7 @@ enemyCode0f:
 	call checkBEnemySlotsAvailable
 	ret nz
 	call copyVar03ToVar30
-	ld b,ENEMYID_ROLLING_SPIKE_TRAP
+	ld b,ENEMY_ROLLING_SPIKE_TRAP
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),$08
 	call seasonsFunc_0c_68c8
@@ -172,7 +172,7 @@ seasonsFunc_0c_68fa:
 	push de
 	call seasonsFunc_0c_6925
 	push bc
-	ld b,ENEMYID_ROLLING_SPIKE_TRAP
+	ld b,ENEMY_ROLLING_SPIKE_TRAP
 	call ecom_spawnEnemyWithSubid01
 	ld (hl),$09
 	pop bc

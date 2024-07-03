@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_VOLCANO_HANDLER
+; INTERAC_VOLCANO_HANDLER
 ; ==============================================================================
 interactionCodeb2:
 	call checkInteractionState
@@ -31,7 +31,7 @@ interactionCodeb2:
 	ld c,a
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_VOLCANO_ROCK
+	ld (hl),PART_VOLCANO_ROCK
 	inc l
 	ld (hl),$01 ; [subid]
 	ld b,$00

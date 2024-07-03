@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_BLACK_TOWER_MOVING_FLAMES
+; PART_BLACK_TOWER_MOVING_FLAMES
 ;
 ; Variables:
 ;   var30: next yh to move to

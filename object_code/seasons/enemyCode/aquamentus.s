@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_AQUAMENTUS
+; ENEMY_AQUAMENTUS
 ;
 ; Variables (subid 1, main body):
 ;   var31: Affects collision box?
@@ -84,7 +84,7 @@ aquamentus_state_uninitialized:
 	; Subid is 0; go to state 1
 	ld l,e
 	inc (hl) ; [state] = 1
-	ld a,ENEMYID_AQUAMENTUS
+	ld a,ENEMY_AQUAMENTUS
 	ld b,PALH_SPR_AQUAMENTUS
 	jp enemyBoss_initializeRoom
 
@@ -98,7 +98,7 @@ aquamentus_state_spawner:
 	call checkBEnemySlotsAvailable
 	ret nz
 
-	ld b,ENEMYID_AQUAMENTUS
+	ld b,ENEMY_AQUAMENTUS
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld c,h
 
@@ -322,7 +322,7 @@ aquamentus_body_stateE:
 	jr nz,@applySpeed
 
 	; Create dust
-	ld (hl),INTERACID_FALLDOWNHOLE
+	ld (hl),INTERAC_FALLDOWNHOLE
 	inc l
 	inc (hl) ; [subid] = 1
 	ld bc,$1010
@@ -679,7 +679,7 @@ aquamentus_fireProjectiles:
 	ld (de),a
 	ld a,SND_DODONGO_OPEN_MOUTH
 	call playSound
-	ld b,PARTID_AQUAMENTUS_PROJECTILE
+	ld b,PART_AQUAMENTUS_PROJECTILE
 	jp ecom_spawnProjectile
 
 ;;

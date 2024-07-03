@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_BALL
+; PART_BALL
 ; Ball for the shooting gallery
 ; ==============================================================================
 partCode38:
@@ -208,11 +208,11 @@ func_6bca:
 	ld a,$04
 --
 	ldh (<hFF8B),a
-	ldbc, INTERACID_FALLING_ROCK $04
+	ldbc, INTERAC_FALLING_ROCK $04
 	ld a,($cfd5)
 	cp $02
 	jr c,+
-	ldbc, INTERACID_FALLING_ROCK $05
+	ldbc, INTERAC_FALLING_ROCK $05
 +
 	call objectCreateInteraction
 	jr nz,+

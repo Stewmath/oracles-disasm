@@ -1,12 +1,12 @@
 ; ==============================================================================
-; ENEMYID_KING_MOBLIN
+; ENEMY_KING_MOBLIN
 ;
 ; Variables:
 ;   counter2: ?
-;   relatedObj2: Instance of PARTID_KING_MOBLIN_BOMB
-;   var30/var31: Object indices for two ENEMYID_KING_MOBLIN_MINION instances
+;   relatedObj2: Instance of PART_KING_MOBLIN_BOMB
+;   var30/var31: Object indices for two ENEMY_KING_MOBLIN_MINION instances
 ;   var32: Target x-position to walk toward to grab bomb
-;   var33: Signal from ENEMYID_KING_MOBLIN_MINION to trigger warp to the outside
+;   var33: Signal from ENEMY_KING_MOBLIN_MINION to trigger warp to the outside
 ; ==============================================================================
 enemyCode7f:
 	jr z,@normalStatus
@@ -105,7 +105,7 @@ enemyCode7f:
 
 
 kingMoblin_state_uninitialized:
-	ld a,ENEMYID_KING_MOBLIN
+	ld a,ENEMY_KING_MOBLIN
 	ld (wEnemyIDToLoadExtraGfx),a
 
 	ld a,PALH_8c
@@ -142,7 +142,7 @@ kingMoblin_state_uninitialized:
 ; @param[out]	a,h	Object index
 @spawnMinion:
 	call getFreeEnemySlot_uncounted
-	ld (hl),ENEMYID_KING_MOBLIN_MINION
+	ld (hl),ENEMY_KING_MOBLIN_MINION
 	ld l,Enemy.relatedObj1
 	ld a,Enemy.start
 	ldi (hl),a
@@ -187,7 +187,7 @@ kingMoblin_state8:
 	; Poof at stairs
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	ld (hl),$68
 	ld l,Interaction.xh
@@ -245,7 +245,7 @@ kingMoblin_stateB:
 	call ecom_decCounter2
 	jr nz,kingMoblin_animate
 
-	ld b,PARTID_KING_MOBLIN_BOMB
+	ld b,PART_KING_MOBLIN_BOMB
 	call ecom_spawnProjectile
 	ret nz
 
@@ -365,7 +365,7 @@ kingMoblin_stateF:
 	ld a,Object.id
 	call objectGetRelatedObject2Var
 	ld a,(hl)
-	cp PARTID_KING_MOBLIN_BOMB
+	cp PART_KING_MOBLIN_BOMB
 	jp nz,kingMoblin_moveToCentre
 
 	; Do several checks to see if king moblin can pick up the bomb.
@@ -502,7 +502,7 @@ kingMoblin_state13:
 	ret
 
 
-; Wait for signal from ENEMYID_KING_MOBLIN_MINION to go to state $15?
+; Wait for signal from ENEMY_KING_MOBLIN_MINION to go to state $15?
 kingMoblin_state14:
 	ld e,Enemy.var33
 	ld a,(de)
@@ -552,7 +552,7 @@ kingMoblin_state15:
 	ld b,$08
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION
+	ld (hl),INTERAC_EXPLOSION
 	ld l,Interaction.yh
 	ld (hl),b
 	ld l,Interaction.xh
@@ -591,7 +591,7 @@ kingMoblin_checkMoveToCentre:
 	ld a,Object.id
 	call objectGetRelatedObject2Var
 	ld a,(hl)
-	cp PARTID_KING_MOBLIN_BOMB
+	cp PART_KING_MOBLIN_BOMB
 	ret z
 
 ;;

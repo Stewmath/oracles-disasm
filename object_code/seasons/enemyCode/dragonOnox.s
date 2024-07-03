@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_DRAGON_ONOX
+; ENEMY_DRAGON_ONOX
 ;
 ; Variables:
 ;   var2a:
@@ -99,7 +99,7 @@ enemyCode05:
 	.dw dragonOnox_rightShoulderSphere
 
 dragonOnox_bodyPartSpawner:
-	ld a,ENEMYID_DRAGON_ONOX
+	ld a,ENEMY_DRAGON_ONOX
 	ld b,$8a
 	call enemyBoss_initializeRoom
 	xor a
@@ -110,7 +110,7 @@ dragonOnox_bodyPartSpawner:
 	ld b,$09
 	call checkBEnemySlotsAvailable
 	ret nz
-	ld b,ENEMYID_DRAGON_ONOX
+	ld b,ENEMY_DRAGON_ONOX
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,Enemy.enabled
 	ld e,l
@@ -545,7 +545,7 @@ dragonOnox_mainBody_state5:
 	ret nz
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_33
+	ld (hl),PART_33
 	ld bc,$1800
 	call objectCopyPositionWithOffset
 	ld a,SND_DODONGO_OPEN_MOUTH
@@ -827,7 +827,7 @@ dragonOnox_mainBody_stateB:
 	; fireballs?
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_4a
+	ld (hl),PART_4a
 	ld l,Part.var31
 	ld (hl),c
 	ld bc,$1800

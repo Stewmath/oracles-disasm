@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_OLD_MAN_WITH_JEWEL
+; INTERAC_OLD_MAN_WITH_JEWEL
 ;
 ; Variables:
 ;   var35: $01 if Link has at least 5 essences

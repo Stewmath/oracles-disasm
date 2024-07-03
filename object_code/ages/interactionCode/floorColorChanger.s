@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FLOOR_COLOR_CHANGER
+; INTERAC_FLOOR_COLOR_CHANGER
 ; ==============================================================================
 interactionCode22:
 	ld e,Interaction.subid
@@ -38,7 +38,7 @@ interactionCode22:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_FLOOR_COLOR_CHANGER
+	ld (hl),INTERAC_FLOOR_COLOR_CHANGER
 	inc l
 	ld (hl),$01 ; [subid] = $01
 

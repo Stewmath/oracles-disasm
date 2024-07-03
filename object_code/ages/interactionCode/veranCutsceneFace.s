@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_VERAN_CUTSCENE_FACE
+; INTERAC_VERAN_CUTSCENE_FACE
 ; ==============================================================================
 interactionCode2d:
 	ld e,Interaction.state

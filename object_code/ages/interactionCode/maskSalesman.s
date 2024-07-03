@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MASK_SALESMAN
+; INTERAC_MASK_SALESMAN
 ; ==============================================================================
 interactionCode5c:
 	call checkInteractionState

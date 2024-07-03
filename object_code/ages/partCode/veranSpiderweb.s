@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_VERAN_SPIDERWEB
+; PART_VERAN_SPIDERWEB
 ; ==============================================================================
 partCode56:
 	jr z,@normalStatus
@@ -45,7 +45,7 @@ partCode56:
 	ld (hl),$04
 	call getFreePartSlot
 	jr nz,++
-	ld (hl),PARTID_VERAN_SPIDERWEB
+	ld (hl),PART_VERAN_SPIDERWEB
 	inc l
 	ld (hl),$02
 	ld l,$d6
@@ -159,7 +159,7 @@ partCode56:
 	jr z,++
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_VERAN_SPIDERWEB
+	ld (hl),PART_VERAN_SPIDERWEB
 	inc l
 	ld (hl),$03
 	ld l,$d6

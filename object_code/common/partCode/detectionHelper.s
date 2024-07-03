@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_DETECTION_HELPER
+; PART_DETECTION_HELPER
 ;
 ; Variables (for subid 0, the "controller"):
 ;   counter1: Countdown until firing another detection projectile forward
@@ -80,7 +80,7 @@ partCode0e:
 @spawnCollisionHelper:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_DETECTION_HELPER
+	ld (hl),PART_DETECTION_HELPER
 	inc l
 	ld (hl),e
 	inc l

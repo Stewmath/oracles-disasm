@@ -1,11 +1,11 @@
 ; ==============================================================================
-; PARTID_CANDLE_FLAME
+; PART_CANDLE_FLAME
 ; ==============================================================================
 partCode36:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld a,(hl)
-	cp ENEMYID_CANDLE
+	cp ENEMY_CANDLE
 	jp nz,partDelete
 
 	ld b,h

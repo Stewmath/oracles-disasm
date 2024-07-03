@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_S_LINKED_GAME_GHINI
+; INTERAC_S_LINKED_GAME_GHINI
 ; ==============================================================================
 interactionCodecb:
 	ld e,$44
@@ -306,7 +306,7 @@ table_7c9e:
 func_7cce:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_S_LINKED_GAME_GHINI
+	ld (hl),INTERAC_S_LINKED_GAME_GHINI
 	inc hl
 	push hl
 	call func_7c8a

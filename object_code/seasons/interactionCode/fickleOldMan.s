@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FICKLE_OLD_MAN
+; INTERAC_FICKLE_OLD_MAN
 ; ==============================================================================
 interactionCode80:
 	call checkInteractionState

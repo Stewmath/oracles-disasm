@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_TWINROVA_ICE
+; ENEMY_TWINROVA_ICE
 ;
 ; Variables:
 ;   var3e: ?

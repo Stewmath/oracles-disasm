@@ -180,7 +180,7 @@ checkUseItems:
 	call clearAllParentItems_body
 
 	ld hl,w1ParentItem2
-	ldde $ff, ITEMID_SWORD
+	ldde $ff, ITEM_SWORD
 	ld c,$f1
 	call initializeParentItem
 
@@ -221,7 +221,7 @@ checkItemUsed:
 	ret nz
 
 @forcePunch:
-	ld a,ITEMID_PUNCH
+	ld a,ITEM_PUNCH
 
 @checkItem:
 	; Item IDs $20 and above can't be used directly as items?
@@ -398,38 +398,38 @@ parentItemUpdate:
 	ld a,(de)
 	rst_jumpTable
 
-	.dw parentItemCode_punch		; ITEMID_NONE
-	.dw parentItemCode_shield		; ITEMID_SHIELD
-	.dw parentItemCode_punch		; ITEMID_PUNCH
-	.dw parentItemCode_bomb			; ITEMID_BOMB
-	.dw parentItemCode_caneOfSomaria	; ITEMID_CANE_OF_SOMARIA
-	.dw parentItemCode_sword		; ITEMID_SWORD
-	.dw parentItemCode_boomerang		; ITEMID_BOOMERANG
-	.dw parentItemCode_rodOfSeasons		; ITEMID_ROD_OF_SEASONS
-	.dw parentItemCode_magnetGloves		; ITEMID_MAGNET_GLOVES
-	.dw clearParentItem			; ITEMID_SWITCH_HOOK_HELPER
-	.dw parentItemCode_switchHook		; ITEMID_SWITCH_HOOK
-	.dw clearParentItem			; ITEMID_SWITCH_HOOK_CHAIN
-	.dw parentItemCode_biggoronSword	; ITEMID_BIGGORON_SWORD
-	.dw parentItemCode_bombchu		; ITEMID_BOMBCHUS
-	.dw parentItemCode_flute		; ITEMID_FLUTE
-	.dw parentItemCode_shooter		; ITEMID_SHOOTER
-	.dw clearParentItem			; ITEMID_10
-	.dw parentItemCode_harp			; ITEMID_HARP
-	.dw clearParentItem			; ITEMID_12
-	.dw parentItemCode_slingshot		; ITEMID_SLINGSHOT
-	.dw clearParentItem			; ITEMID_14
-	.dw parentItemCode_shovel		; ITEMID_SHOVEL
-	.dw parentItemCode_bracelet		; ITEMID_BRACELET
-	.dw parentItemCode_feather		; ITEMID_FEATHER
-	.dw clearParentItem			; ITEMID_18
-	.dw parentItemCode_satchel		; ITEMID_SEED_SATCHEL
-	.dw clearParentItem			; ITEMID_DUST
-	.dw clearParentItem			; ITEMID_1b
-	.dw clearParentItem			; ITEMID_1c
-	.dw clearParentItem			; ITEMID_MINECART_COLLISION
-	.dw parentItemCode_foolsOre		; ITEMID_FOOLS_ORE
-	.dw clearParentItem			; ITEMID_1f
+	.dw parentItemCode_punch		; ITEM_NONE
+	.dw parentItemCode_shield		; ITEM_SHIELD
+	.dw parentItemCode_punch		; ITEM_PUNCH
+	.dw parentItemCode_bomb			; ITEM_BOMB
+	.dw parentItemCode_caneOfSomaria	; ITEM_CANE_OF_SOMARIA
+	.dw parentItemCode_sword		; ITEM_SWORD
+	.dw parentItemCode_boomerang		; ITEM_BOOMERANG
+	.dw parentItemCode_rodOfSeasons		; ITEM_ROD_OF_SEASONS
+	.dw parentItemCode_magnetGloves		; ITEM_MAGNET_GLOVES
+	.dw clearParentItem			; ITEM_SWITCH_HOOK_HELPER
+	.dw parentItemCode_switchHook		; ITEM_SWITCH_HOOK
+	.dw clearParentItem			; ITEM_SWITCH_HOOK_CHAIN
+	.dw parentItemCode_biggoronSword	; ITEM_BIGGORON_SWORD
+	.dw parentItemCode_bombchu		; ITEM_BOMBCHUS
+	.dw parentItemCode_flute		; ITEM_FLUTE
+	.dw parentItemCode_shooter		; ITEM_SHOOTER
+	.dw clearParentItem			; ITEM_10
+	.dw parentItemCode_harp			; ITEM_HARP
+	.dw clearParentItem			; ITEM_12
+	.dw parentItemCode_slingshot		; ITEM_SLINGSHOT
+	.dw clearParentItem			; ITEM_14
+	.dw parentItemCode_shovel		; ITEM_SHOVEL
+	.dw parentItemCode_bracelet		; ITEM_BRACELET
+	.dw parentItemCode_feather		; ITEM_FEATHER
+	.dw clearParentItem			; ITEM_18
+	.dw parentItemCode_satchel		; ITEM_SEED_SATCHEL
+	.dw clearParentItem			; ITEM_DUST
+	.dw clearParentItem			; ITEM_1b
+	.dw clearParentItem			; ITEM_1c
+	.dw clearParentItem			; ITEM_MINECART_COLLISION
+	.dw parentItemCode_foolsOre		; ITEM_FOOLS_ORE
+	.dw clearParentItem			; ITEM_1f
 
 ;;
 clearParentItem:

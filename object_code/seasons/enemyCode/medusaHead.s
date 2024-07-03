@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_MEDUSA_HEAD
+; ENEMY_MEDUSA_HEAD
 ; ==============================================================================
 enemyCode7f:
 	jr z,@normalStatus
@@ -95,7 +95,7 @@ enemyCode7f:
 	ld b,$04
 	call checkBEnemySlotsAvailable
 	ret nz
-	ldbc ENEMYID_MEDUSA_HEAD $04
+	ldbc ENEMY_MEDUSA_HEAD $04
 -
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld (hl),c
@@ -229,7 +229,7 @@ enemyCode7f:
 	ld (hl),$00
 	or a
 	jr z,@@animate
-	ld b,PARTID_S_46
+	ld b,PART_S_46
 	call ecom_spawnProjectile
 	ld a,$01
 	jp enemySetAnimation
@@ -364,7 +364,7 @@ enemyCode7f:
 	ld (hl),$05
 	ld l,e
 	inc (hl)
-	ld b,PARTID_S_45
+	ld b,PART_S_45
 	call ecom_spawnProjectile
 	ld a,$02
 	jp enemySetAnimation
@@ -505,7 +505,7 @@ enemyCode7f:
 	ld a,(hl)
 	rrca
 	jr nc,@@animate
-	ld b,PARTID_44
+	ld b,PART_44
 	call ecom_spawnProjectile
 	jr nz,@@animate
 	ld e,$86
@@ -586,7 +586,7 @@ func_7eb5:
 	cp $60
 	ret nc
 	ld (hl),$5a
-	ld b,PARTID_S_46
+	ld b,PART_S_46
 	call ecom_spawnProjectile
 	ld a,$01
 	jp enemySetAnimation

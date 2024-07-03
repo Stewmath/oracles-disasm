@@ -1,6 +1,6 @@
 ;;
-; ITEMID_FLUTE ($0e)
-; ITEMID_HARP ($11)
+; ITEM_FLUTE ($0e)
+; ITEM_HARP ($11)
 parentItemCode_flute:
 parentItemCode_harp:
 	ld e,Item.state
@@ -104,7 +104,7 @@ parentItemCode_harp:
 .endif
 
 	; Flute: try to spawn companion
-	ldbc INTERACID_COMPANION_SPAWNER, $80
+	ldbc INTERAC_COMPANION_SPAWNER, $80
 	call objectCreateInteraction
 
 @clearSelf:
@@ -180,7 +180,7 @@ parentItemCode_harp:
 	ld hl,wFluteIcon
 	ld e,Item.id
 	ld a,(de)
-	cp ITEMID_FLUTE
+	cp ITEM_FLUTE
 
 .ifdef ROM_AGES
 	ret z

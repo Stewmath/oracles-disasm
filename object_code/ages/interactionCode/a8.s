@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_a8
+; INTERAC_a8
 ; ==============================================================================
 interactionCodea8:
 	ld e,Interaction.subid
@@ -18,7 +18,7 @@ interactionCodea8:
 @subid3:
 	ld a,(de)
 	and $0f
-	add SPECIALOBJECTID_RICKY_CUTSCENE
+	add SPECIALOBJECT_RICKY_CUTSCENE
 	ld b,a
 	ld a,(de)
 	swap a
@@ -61,7 +61,7 @@ interactionCodea8:
 
 @initLinkInCutscene:
 	ld hl,w1Link.id
-	ld (hl),SPECIALOBJECTID_LINK_CUTSCENE
+	ld (hl),SPECIALOBJECT_LINK_CUTSCENE
 	inc l
 	ld (hl),a
 	ret
@@ -86,7 +86,7 @@ interactionCodea8:
 	xor a
 	ld (wDisabledObjects),a
 	ld hl,w1Link.id
-	ld (hl),SPECIALOBJECTID_LINK
+	ld (hl),SPECIALOBJECT_LINK
 	ret
 
 @thing6:
@@ -103,7 +103,7 @@ interactionCodea8:
 	ld a,h
 	ld (wLinkObjectIndex),a
 	ld hl,wInventoryB
-	ld (hl),ITEMID_SWORD
+	ld (hl),ITEM_SWORD
 	inc l
 	ld (hl),$00 ; [wInventoryA]
 	ld hl,@linkSwordDemonstrationInput

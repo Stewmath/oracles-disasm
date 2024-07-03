@@ -1,6 +1,6 @@
 ; ==============================================================================
-; ENEMYID_CROW
-; ENEMYID_BLUE_CROW
+; ENEMY_CROW
+; ENEMY_BLUE_CROW
 ;
 ; Variables:
 ;   var30: "Base" animation index (direction gets added to this)
@@ -179,7 +179,7 @@ crow_subid1_state8:
 	ld b,$00
 @nextEnemy:
 	ld a,(hl)
-	cp ENEMYID_CROW
+	cp ENEMY_CROW
 	jr nz,++
 
 	ld l,e ; l = state

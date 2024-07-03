@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_SEED
+; INTERAC_MAKU_SEED
 ;
 ; Variables:
 ;   var38: ?
@@ -62,7 +62,7 @@ interactionCodea6:
 ;;
 ; Unused function?
 @func_5d87:
-	ldbc INTERACID_SPARKLE,$0b
+	ldbc INTERAC_SPARKLE,$0b
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.counter1
@@ -97,7 +97,7 @@ interactionCodea6:
 
 ;;
 @createSparkle:
-	ldbc INTERACID_SPARKLE,$0f
+	ldbc INTERAC_SPARKLE,$0f
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.relatedObj1

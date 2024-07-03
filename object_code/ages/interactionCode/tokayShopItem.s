@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TOKAY_SHOP_ITEM
+; INTERAC_TOKAY_SHOP_ITEM
 ;
 ; Variables:
 ;   var38: If nonzero, item can be bought with seeds

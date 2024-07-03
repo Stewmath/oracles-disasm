@@ -18,7 +18,7 @@ checkReloadShopItemTiles:
 
 
 ; ==============================================================================
-; INTERACID_SHOPKEEPER
+; INTERAC_SHOPKEEPER
 ;
 ; Variables:
 ;   var37: Index of item that Link is holding (the item's "subid")
@@ -489,7 +489,7 @@ shopkeeperState5:
 
 	; Spawn a rupee "treasure" that doesn't actually give you anything?
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	ld l,Interaction.subid
 	ld (hl),TREASURE_RUPEES
 	inc l
@@ -631,7 +631,7 @@ shopkeeperCheckAllItemsBought:
 	or a
 	jr z,@next
 	ld a,(hl)
-	cp INTERACID_SHOP_ITEM
+	cp INTERAC_SHOP_ITEM
 	ret z
 @next:
 	inc h

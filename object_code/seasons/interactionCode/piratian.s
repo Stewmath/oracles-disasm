@@ -1,6 +1,6 @@
 ; ==============================================================================
-; INTERACID_PIRATIAN
-; INTERACID_PIRATIAN_CAPTAIN
+; INTERAC_PIRATIAN
+; INTERAC_PIRATIAN_CAPTAIN
 ; ==============================================================================
 interactionCode40:
 interactionCode41:

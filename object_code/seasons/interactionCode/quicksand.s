@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_QUICKSAND
+; INTERAC_QUICKSAND
 ; ==============================================================================
 interactionCode5e:
 	call returnIfScrollMode01Unset
@@ -142,7 +142,7 @@ _matchSkullNumberWithSubid:
 
 ; Checks for Pirate Skull, Bomb, Used Scent Seed, or Item Drop to pull into the center
 _findPirateSkullAddress:
-	ld c,INTERACID_PIRATE_SKULL
+	ld c,INTERAC_PIRATE_SKULL
 	call objectFindSameTypeObjectWithID
 	ret nz
 	ld l,Interaction.zh
@@ -153,7 +153,7 @@ _findItemDropAddress:
 -
 	ld l,Part.id
 	ld a,(hl)
-	cp PARTID_ITEM_DROP
+	cp PART_ITEM_DROP
 	call z,_objectIsPart
 	inc h
 	ld a,h
@@ -192,13 +192,13 @@ _moveObjectIfGrounded:
 	ret
 
 _findBombOrScentSeedAddress:
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID
 	call z,_objectIsItem
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID_startingAfterH
 	call z,_objectIsItem
-	ld c,ITEMID_SCENT_SEED
+	ld c,ITEM_SCENT_SEED
 	call findItemWithID
 	ret nz
 

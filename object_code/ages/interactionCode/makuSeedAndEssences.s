@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_SEED_AND_ESSENCES
+; INTERAC_MAKU_SEED_AND_ESSENCES
 ;
 ; Variables:
 ;   counter1: Essence index (for the maku seed / spawner object)
@@ -49,7 +49,7 @@ interactiond7_makuSeed:
 	ld a,SND_DROPESSENCE
 	call playSound
 
-	ldbc INTERACID_SPARKLE, $04
+	ldbc INTERAC_SPARKLE, $04
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.counter1
@@ -127,7 +127,7 @@ interactiond7_makuSeed:
 	; Spawn next essence
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_SEED_AND_ESSENCES
+	ld (hl),INTERAC_MAKU_SEED_AND_ESSENCES
 	call objectCopyPosition
 	ld a,b
 	ld bc,@essenceSpawnerData
@@ -404,7 +404,7 @@ interactiond7_updateSmallSparkles:
 	and $07
 	ret nz
 
-	ldbc INTERACID_SPARKLE, $03
+	ldbc INTERAC_SPARKLE, $03
 	call objectCreateInteraction
 	ret nz
 

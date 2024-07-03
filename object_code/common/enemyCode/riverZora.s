@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_RIVER_ZORA
+; ENEMY_RIVER_ZORA
 ; ==============================================================================
 enemyCode08:
 	jr z,@normalStatus
@@ -104,7 +104,7 @@ enemyCode08:
 
 	; Make projectile
 	ld (hl),$00
-	ld b,PARTID_ZORA_FIRE
+	ld b,PART_ZORA_FIRE
 	call ecom_spawnProjectile
 	jr nz,@animate
 	ld l,Part.subid
@@ -126,6 +126,6 @@ enemyCode08:
 	ld e,Enemy.counter1
 	ld (de),a
 
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 	call objectCreateInteractionWithSubid00
 	jp objectSetInvisible

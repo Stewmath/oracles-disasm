@@ -129,7 +129,7 @@ loadLinkAndCompanionAnimationFrame_body:
 
 	ld e,SpecialObject.id
 	ld a,(de)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	ld de,$8701
 	jr c,+
 	ld d,$86
@@ -139,7 +139,7 @@ loadLinkAndCompanionAnimationFrame_body:
 ; These are animation frame indices; frame indices under the given value don't have link's direction
 ; added to them?
 @data:
-	.db $54 ; SPECIALOBJECTID_LINK
+	.db $54 ; SPECIALOBJECT_LINK
 	.db $20
 	.db $00
 	.db $00
@@ -148,11 +148,11 @@ loadLinkAndCompanionAnimationFrame_body:
 	.db $00
 	.db $00
 .ifdef ROM_AGES
-	.db $ff ; SPECIALOBJECTID_LINK_CUTSCENE
+	.db $ff ; SPECIALOBJECT_LINK_CUTSCENE
 .else; ROM_SEASONS
 	.db $40
 .endif
-	.db $ff ; SPECIALOBJECTID_LINK_RIDING_ANIMAL
+	.db $ff ; SPECIALOBJECT_LINK_RIDING_ANIMAL
 
 ;;
 ; Gets size, address of graphics to load.
@@ -375,11 +375,11 @@ func_4553:
 	; Standard, just walking or standing animation
 @standingAnimation:
 	ld a,(wInventoryA)
-	cp ITEMID_SHIELD
+	cp ITEM_SHIELD
 	jr z,@shieldEquipped
 
 	ld a,(wInventoryB)
-	cp ITEMID_SHIELD
+	cp ITEM_SHIELD
 	jr nz,@animationFound
 
 	; Walking or standing with shield equipped
@@ -407,7 +407,7 @@ func_4553:
 ;;
 ; Gets the ID to use for the Link object based on what transformation rings he's wearing
 ; (see constants/specialObjectTypes.s).
-; Under normal circumstances, this will return 0 (SPECIALOBJECTID_LINK).
+; Under normal circumstances, this will return 0 (SPECIALOBJECT_LINK).
 ; @param[out] b Special object ID to use, based on the ring Link is wearing
 getTransformedLinkID:
 	ld hl,wDisableRingTransformations
@@ -452,11 +452,11 @@ getTransformedLinkID:
 	ret
 
 @ringToID:
-	.db OCTO_RING		SPECIALOBJECTID_LINK_AS_OCTOROK
-	.db MOBLIN_RING		SPECIALOBJECTID_LINK_AS_MOBLIN
-	.db LIKE_LIKE_RING	SPECIALOBJECTID_LINK_AS_LIKELIKE
-	.db SUBROSIAN_RING	SPECIALOBJECTID_LINK_AS_SUBROSIAN
-	.db FIRST_GEN_RING	SPECIALOBJECTID_LINK_AS_RETRO
+	.db OCTO_RING		SPECIALOBJECT_LINK_AS_OCTOROK
+	.db MOBLIN_RING		SPECIALOBJECT_LINK_AS_MOBLIN
+	.db LIKE_LIKE_RING	SPECIALOBJECT_LINK_AS_LIKELIKE
+	.db SUBROSIAN_RING	SPECIALOBJECT_LINK_AS_SUBROSIAN
+	.db FIRST_GEN_RING	SPECIALOBJECT_LINK_AS_RETRO
 	.db $00
 
 ;;

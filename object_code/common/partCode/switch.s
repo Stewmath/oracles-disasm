@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_SWITCH
+; PART_SWITCH
 ;
 ; Variables:
 ;   var30: Position of tile it's on

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_IRON_MASK
+; ENEMY_IRON_MASK
 ; ==============================================================================
 enemyCode1c:
 	call ecom_checkHazards
@@ -71,7 +71,7 @@ ironMask_state_switchHook:
 	cp ENEMYCOLLISION_UNMASKED_IRON_MASK
 	jr z,@dontRemoveMask
 
-	ld b,ENEMYID_IRON_MASK
+	ld b,ENEMY_IRON_MASK
 	call ecom_spawnUncountedEnemyWithSubid01
 	jr nz,@dontRemoveMask
 

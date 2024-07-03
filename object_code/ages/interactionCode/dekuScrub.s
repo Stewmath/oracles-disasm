@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DEKU_SCRUB
+; INTERAC_DEKU_SCRUB
 ;
 ; Variables:
 ;   var3e: 0 if the deku scrub is hiding, 1 if not

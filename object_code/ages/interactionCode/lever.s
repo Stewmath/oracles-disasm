@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_LEVER
+; INTERAC_LEVER
 ;
 ; subid:    Bit 7 set if this is the "child" object (the part that links the lever base to
 ;           the part Link is pulling); otherwise, bit 0 set if the lever is pulled upward.
@@ -31,11 +31,11 @@ interactionCode61:
 	or a
 	jr nz,@label_09_254
 
-	; Create new INTERACID_LEVER, and set their relatedObj1's to each other.
+	; Create new INTERAC_LEVER, and set their relatedObj1's to each other.
 	; This new "child" object will just be the graphic for the "extending" part.
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_LEVER
+	ld (hl),INTERAC_LEVER
 	ld l,Interaction.relatedObj1
 	ld e,l
 	ld a,Interaction.enabled

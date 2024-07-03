@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SEASONS_FAIRY
+; INTERAC_SEASONS_FAIRY
 ; ==============================================================================
 interactionCode50:
 	ld e,Interaction.state
@@ -81,7 +81,7 @@ interactionCode50:
 	jr @createInteraction
 
 @createSparkle1:
-	ldbc INTERACID_SPARKLE,$07
+	ldbc INTERAC_SPARKLE,$07
 	call objectCreateInteraction
 	ld e,Interaction.counter1
 	ld a,(de)
@@ -90,7 +90,7 @@ interactionCode50:
 	ret
 
 @createSparkle2:
-	ldbc INTERACID_SPARKLE,$01
+	ldbc INTERAC_SPARKLE,$01
 
 @createInteraction:
 	jp objectCreateInteraction

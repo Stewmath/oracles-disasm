@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_GORON_ELDER
+; INTERAC_GORON_ELDER
 ;
 ; Variables:
 ;   var3f: If zero, elder should face Link when he's close?

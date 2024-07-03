@@ -402,7 +402,7 @@ initialFileVariables_heroGame:
 initialFileVariables_linkedGame:
 	.db <wSwordLevel			$01
 	.db <wShieldLevel			$01
-	.db <wInventoryStorage			ITEMID_SWORD
+	.db <wInventoryStorage			ITEM_SWORD
 	.db <wObtainedTreasureFlags,		(1<<TREASURE_PUNCH) | (1<<TREASURE_SWORD)
 .ifdef ROM_AGES
 	.db <wPirateShipY			$58

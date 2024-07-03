@@ -1,4 +1,4 @@
-; These are subid values for PARTID_ITEM_DROP.
+; These are subid values for PART_ITEM_DROP.
 ; Also use these in the editor when making item drop objects.
 
 .enum 0

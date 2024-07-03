@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DATING_ROSA_EVENT
+; INTERAC_DATING_ROSA_EVENT
 ; ==============================================================================
 interactionCode31:
 	ld e,$42
@@ -332,7 +332,7 @@ interactionCode31:
 	jr nz,+
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_STAR_ORE
 	ld e,$71

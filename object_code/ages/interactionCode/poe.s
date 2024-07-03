@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_POE
+; INTERAC_POE
 ;
 ; var3e: Animations don't update when nonzero. (Used when disappearing.)
 ; var3f: If nonzero, doesn't face toward Link.

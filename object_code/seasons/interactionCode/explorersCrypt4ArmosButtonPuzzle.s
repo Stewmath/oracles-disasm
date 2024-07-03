@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_D7_4_ARMOS_BUTTON_PUZZLE
+; INTERAC_D7_4_ARMOS_BUTTON_PUZZLE
 ; ==============================================================================
 interactionCode66:
 	ld e,Interaction.subid
@@ -191,7 +191,7 @@ func_56a5:
 func_56b8:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_D7_4_ARMOS_BUTTON_PUZZLE
+	ld (hl),INTERAC_D7_4_ARMOS_BUTTON_PUZZLE
 	inc l
 	ld (hl),$01
 	push bc

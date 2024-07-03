@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_MOTHULA
+; ENEMY_MOTHULA
 ;
 ; Variables:
 ;   var30: Angular speed (amount to add to angle; clockwise / counterclockwise)
@@ -50,7 +50,7 @@ enemyCode7a:
 
 
 mothula_state_uninitialized:
-	ld a,ENEMYID_MOTHULA
+	ld a,ENEMY_MOTHULA
 	ld b,PALH_SEASONS_82
 	call enemyBoss_initializeRoom
 
@@ -262,7 +262,7 @@ mothula_stateF:
 ; @param	hl	var37 (counter to spawn projectile)
 mothula_spawnFireball:
 	ld (hl),$50
-	ld b,PARTID_MOTHULA_PROJECTILE_1
+	ld b,PART_MOTHULA_PROJECTILE_1
 	jp ecom_spawnProjectile
 
 ;;
@@ -273,7 +273,7 @@ mothula_spawnSomethingAfterStandingStill:
 	or a
 	jr nz,mothula_spawnChild
 
-	ld b,PARTID_MOTHULA_PROJECTILE_2
+	ld b,PART_MOTHULA_PROJECTILE_2
 	call ecom_spawnProjectile
 	ret nz
 
@@ -296,7 +296,7 @@ mothula_initChild:
 
 ;;
 mothula_spawnChild:
-	ld b,ENEMYID_MOTHULA_CHILD
+	ld b,ENEMY_MOTHULA_CHILD
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 	call mothula_initChild

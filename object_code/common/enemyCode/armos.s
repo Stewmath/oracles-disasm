@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ARMOS
+; ENEMY_ARMOS
 ;
 ; Variables:
 ;   subid: If bit 7 is set, it's a real armos; otherwise it's an armos spawner.
@@ -82,7 +82,7 @@ armos_uninitialized:
 +
 	; Effectively disable collisions
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_PODOBOO
+	ld (hl),$80|ENEMY_PODOBOO
 	ret
 
 @gotoState1:
@@ -187,7 +187,7 @@ armos_beginMoving:
 
 	; Enable normal collisions
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_ARMOS
+	ld (hl),$80|ENEMY_ARMOS
 
 	inc l
 	ldi (hl),a ; Set enemyCollisionMode
@@ -325,7 +325,7 @@ armos_spawnArmosAtPosition:
 	push hl
 	ld c,l
 
-	ld b,ENEMYID_ARMOS
+	ld b,ENEMY_ARMOS
 	call ecom_spawnEnemyWithSubid01
 	jr nz,@ret
 

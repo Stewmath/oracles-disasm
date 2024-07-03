@@ -1,7 +1,7 @@
 ; ==============================================================================
-; ENEMYID_ARM_MIMIC
+; ENEMY_ARM_MIMIC
 ;
-; Shares code with ENEMYID_LINK_MIMIC.
+; Shares code with ENEMY_LINK_MIMIC.
 ;
 ; Variables:
 ;   var30: Animation index

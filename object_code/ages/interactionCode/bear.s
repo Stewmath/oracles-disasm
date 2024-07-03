@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BEAR
+; INTERAC_BEAR
 ; ==============================================================================
 interactionCode5d:
 	ld e,Interaction.state
@@ -140,7 +140,7 @@ bear_state1:
 	ret nc
 
 	; Put Link into the cutscene state
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	ld a,SPECIALOBJECT_LINK_CUTSCENE
 	call setLinkIDOverride
 	ld l,<w1Link.subid
 	ld (hl),$03

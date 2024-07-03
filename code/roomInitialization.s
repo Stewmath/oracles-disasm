@@ -33,7 +33,7 @@ loadRememberedCompanion:
 	ld a,c
 
 .ifdef ROM_AGES
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jr z,@raft
 .endif
 
@@ -67,7 +67,7 @@ loadRememberedCompanion:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_RAFT
+	ld (hl),INTERAC_RAFT
 	inc l
 	ld (hl),$02
 
@@ -115,7 +115,7 @@ checkAndSpawnMaple:
 	or a
 	jr z,+
 .endif
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 +
 	ld hl,maplePresentLocationsTable
 	rst_addDoubleIndex
@@ -186,7 +186,7 @@ updateRosaDateStatus:
 	ld hl,w1ReservedInteraction1.id
 @nextInteraction:
 	ld a,(hl)
-	cp INTERACID_ROSA
+	cp INTERAC_ROSA
 	ret z
 
 	inc h
@@ -196,7 +196,7 @@ updateRosaDateStatus:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_ROSA
+	ld (hl),INTERAC_ROSA
 	inc l
 	ld (hl),$01 ; [subid] = 1
 	ret
@@ -660,7 +660,7 @@ checkSpawnTimeportalInteraction:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_TIMEPORTAL
+	ld (hl),INTERAC_TIMEPORTAL
 	ld a,$01
 	ld (wcddd),a
 	ld l,Interaction.yh
@@ -701,13 +701,13 @@ calculateRoomStateModifier:
 	or a
 	jr z,@standard
 
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 	ld (wRoomStateModifier),a
 	ret
 
 ;;
 ; If there are whirlpools or pollution tiles on the screen, this creates a part of type
-; PARTID_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
+; PART_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
 createSeaEffectsPartIfApplicable:
 	ld a,(wActiveCollisions)
 	ld hl,seaEffectTileTable
@@ -727,7 +727,7 @@ createSeaEffectsPartIfApplicable:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_SEA_EFFECTS
+	ld (hl),PART_SEA_EFFECTS
 	ret
 
 .include {"{GAME_DATA_DIR}/tile_properties/seaEffectTiles1.s"}
@@ -746,7 +746,7 @@ func_02_7a3a:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_TIMEPORTAL
+	ld (hl),INTERAC_TIMEPORTAL
 	ld a,(wPortalPos)
 	ld l,Interaction.yh
 	jp setShortPosition

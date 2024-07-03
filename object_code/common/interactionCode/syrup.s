@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SYRUP
+; INTERAC_SYRUP
 ;
 ; Variables:
 ;   var37: Item being bought
@@ -77,7 +77,7 @@ interactionCode43:
 .endif
 	ld (de),a
 
-	; Assume he's holding an INTERACID_SHOP_ITEM. Subids $07-$0c are for syrup's shop.
+	; Assume he's holding an INTERAC_SHOP_ITEM. Subids $07-$0c are for syrup's shop.
 	ld l,Interaction.subid
 	ld a,(hl)
 	push af
@@ -186,7 +186,7 @@ interactionCode43:
 	or a
 	jr z,@gotoState1 ; Skip below code if he was holding nothing to begin with
 
-	; If purchase was successful, set the held item (INTERACID_SHOP_ITEM) to state
+	; If purchase was successful, set the held item (INTERAC_SHOP_ITEM) to state
 	; 3 (link obtains it)
 	inc a
 	ld c,$03

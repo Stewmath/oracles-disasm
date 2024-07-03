@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_OCTOGON_DEPTH_CHARGE
+; PART_OCTOGON_DEPTH_CHARGE
 ;
 ; Variables:
 ;   var30: gravity
@@ -191,7 +191,7 @@ octogonDepthCharge_subid0:
 @spawnNext:
 	call getFreePartSlot
 	jr nz,++
-	ld (hl),PARTID_OCTOGON_DEPTH_CHARGE
+	ld (hl),PART_OCTOGON_DEPTH_CHARGE
 	inc l
 	inc (hl) ; [subid] = 1
 	ld l,Part.angle

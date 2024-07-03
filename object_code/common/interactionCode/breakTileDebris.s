@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_GRASSDEBRIS (and other animations)
+; INTERAC_GRASSDEBRIS (and other animations)
 ; ==============================================================================
 
 interactionCode00:
@@ -88,7 +88,7 @@ interactionCode0c:
 ++
 	ld e,Interaction.id
 	ld a,(de)
-	cp INTERACID_SHOVELDEBRIS
+	cp INTERAC_SHOVELDEBRIS
 	jr nz,+
 
 	ld c,$60
@@ -106,7 +106,7 @@ interactionCode0c:
 	or a
 	jr z,@interac00
 
-	cp INTERACID_SHOVELDEBRIS
+	cp INTERAC_SHOVELDEBRIS
 	ret nz
 
 @interac0A:

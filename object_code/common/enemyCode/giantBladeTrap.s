@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_GIANT_BLADE_TRAP
+; ENEMY_GIANT_BLADE_TRAP
 ; ==============================================================================
 enemyCode2a:
 	; Return for ENEMYSTATUS_01 or ENEMYSTATUS_STUNNED

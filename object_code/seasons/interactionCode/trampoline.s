@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TRAMPOLINE
+; INTERAC_TRAMPOLINE
 ; ==============================================================================
 interactionCode7c:
 	call objectSetPriorityRelativeToLink

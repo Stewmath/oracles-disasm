@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BANANA
+; INTERAC_BANANA
 ; ==============================================================================
 interactionCodec0:
 	ld e,Interaction.state
@@ -20,7 +20,7 @@ interactionCodec0:
 	call objectGetRelatedObject1Var
 	ld l,SpecialObject.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_MOOSH_CUTSCENE
+	cp SPECIALOBJECT_MOOSH_CUTSCENE
 	jp nz,interactionDelete
 
 	ld e,Interaction.direction

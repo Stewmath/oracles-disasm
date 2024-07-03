@@ -1,5 +1,5 @@
 ;;
-; ITEMID_SHIELD ($01)
+; ITEM_SHIELD ($01)
 parentItemCode_shield:
 	; Verify that the shield can be used
 	call @checkShieldIsUsable
@@ -56,7 +56,7 @@ parentItemCode_shield:
 
 	; Can use on the raft, but not on any other rides
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jr z,+
 .endif
 

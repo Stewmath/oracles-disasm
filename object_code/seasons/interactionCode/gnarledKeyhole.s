@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_GNARLED_KEYHOLE
+; INTERAC_GNARLED_KEYHOLE
 ; ==============================================================================
 interactionCode21:
 	ld e,$44
@@ -143,7 +143,7 @@ func_54ae:
 	ld e,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_D1_RISING_STONES
+	ld (hl),INTERAC_D1_RISING_STONES
 	inc l
 	ld a,(wFrameCounter)
 	and $06

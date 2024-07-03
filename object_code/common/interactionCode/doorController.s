@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DOOR_CONTROLLER
+; INTERAC_DOOR_CONTROLLER
 ; ==============================================================================
 interactionCode1e:
 	call interactionDeleteAndRetIfEnabled02

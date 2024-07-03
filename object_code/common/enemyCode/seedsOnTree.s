@@ -1,8 +1,8 @@
 ; ==============================================================================
-; ENEMYID_SEEDS_ON_TREE
+; ENEMY_SEEDS_ON_TREE
 ;
 ; Variables:
-;   var03: Child "PARTID_SEED_ON_TREE" objects write here when Link touches them?
+;   var03: Child "PART_SEED_ON_TREE" objects write here when Link touches them?
 ; ==============================================================================
 enemyCode5a:
 	ld e,Enemy.state
@@ -92,7 +92,7 @@ enemyCode5a:
 	ld c,a
 
 	call getFreePartSlot
-	ld (hl),PARTID_SEED_ON_TREE
+	ld (hl),PART_SEED_ON_TREE
 	inc l
 	ldh a,(<hFF8B)
 	ld (hl),a ; [subid]
@@ -130,7 +130,7 @@ enemyCode5a:
 
 
 @state1:
-	; Waiting for one of the PARTID_SEED_ON_TREE objects to write to var03, indicating
+	; Waiting for one of the PART_SEED_ON_TREE objects to write to var03, indicating
 	; that they were grabbed
 	ld e,Enemy.var03
 	ld a,(de)

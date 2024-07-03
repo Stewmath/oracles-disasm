@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_FIRE_KEESE
+; ENEMY_FIRE_KEESE
 ;
 ; Variables:
 ;   var30: Distance away (in tiles) closest lit torch is
@@ -30,7 +30,7 @@ enemyCode39:
 	or a
 	ret nz
 
-	ld b,PARTID_FIRE
+	ld b,PART_FIRE
 	call ecom_spawnProjectile
 
 	ld h,d
@@ -417,7 +417,7 @@ fireKeese_subid1_stateB:
 	ld e,Enemy.var33
 	ld a,(de)
 	or a
-	ld b,PARTID_FIRE
+	ld b,PART_FIRE
 	call z,ecom_spawnProjectile
 	jp enemyAnimate
 

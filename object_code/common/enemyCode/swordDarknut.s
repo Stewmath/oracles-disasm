@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SWORD_DARKNUT
+; ENEMY_SWORD_DARKNUT
 ; ==============================================================================
 enemyCode48:
 .ifdef ROM_AGES
@@ -220,7 +220,7 @@ swordEnemy_updateEnemyCollisionMode:
 	inc b
 	ld e,Enemy.id
 	ld a,(de)
-	cp ENEMYID_SWORD_SHROUDED_STALFOS
+	cp ENEMY_SWORD_SHROUDED_STALFOS
 	ld a,ENEMYCOLLISION_BURNABLE_ENEMY
 	jr nz,@setVars
 .ifdef ROM_AGES
@@ -268,7 +268,7 @@ swordDarknut_updateEnemyCollisionMode:
 ; Check whether the angle between Link and the enemy is such that the collision should be
 ; ignored (due to the sword blocking it)
 ;
-; Knockback is handled by PARTID_ENEMY_SWORD.
+; Knockback is handled by PART_ENEMY_SWORD.
 ;
 ; @param[out]	zflag	z if sword hits should be ignored
 swordEnemy_checkIgnoreCollision:

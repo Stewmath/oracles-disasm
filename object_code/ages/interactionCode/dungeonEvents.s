@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DUNGEON_EVENTS
+; INTERAC_DUNGEON_EVENTS
 ; ==============================================================================
 interactionCode21:
 	ld e,Interaction.subid
@@ -548,7 +548,7 @@ setTileWithPuff:
 createPuffAt:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	jp setShortPosition_paramC
 
@@ -711,7 +711,7 @@ makeTorchAtPositionTemporarilyLightable:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_LIGHTABLE_TORCH
+	ld (hl),PART_LIGHTABLE_TORCH
 	inc l
 	ld (hl),$01
 	ld l,Part.counter2

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SUBROSIAN_SMITHS
+; INTERAC_SUBROSIAN_SMITHS
 ; ==============================================================================
 interactionCode34:
 	call checkInteractionState

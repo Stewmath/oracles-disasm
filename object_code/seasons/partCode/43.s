@@ -33,7 +33,7 @@ partCode43:
 @func_7236:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_43
+	ld (hl),PART_43
 	inc l
 	ld (hl),$03
 	ld l,$c9
@@ -142,7 +142,7 @@ partCode43:
 	ld bc,$030d
 @func_72e9:
 	call getFreePartSlot
-	ld (hl),PARTID_43
+	ld (hl),PART_43
 	inc l
 	ld (hl),$04
 	inc l

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SLATE_SLOT
+; INTERAC_SLATE_SLOT
 ;
 ; Variables:
 ;   var3f: Counter to push against this object until the slate will be placed

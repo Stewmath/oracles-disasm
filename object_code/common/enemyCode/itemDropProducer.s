@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ITEM_DROP_PRODUCER
+; ENEMY_ITEM_DROP_PRODUCER
 ;
 ; Variables:
 ;   var30: Tile at position (item drop will spawn when this changes)
@@ -35,7 +35,7 @@ enemyCode59:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_ITEM_DROP
+	ld (hl),PART_ITEM_DROP
 
 	; [child.subid] = [this.subid]
 	inc l

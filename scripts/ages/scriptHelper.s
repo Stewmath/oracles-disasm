@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DUNGEON_SCRIPT
+; INTERAC_DUNGEON_SCRIPT
 ; ==============================================================================
 
 ;;
@@ -16,17 +16,17 @@ setTrigger2IfTriggers0And1Set:
 	ret
 
 ;;
-; Creates a part object (PARTID_LIGHTABLE_TORCH) at each unlit torch, allowing them to be lit.
+; Creates a part object (PART_LIGHTABLE_TORCH) at each unlit torch, allowing them to be lit.
 makeTorchesLightable:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_CREATE_OBJECT_AT_EACH_TILEINDEX
+	ld (hl),INTERAC_CREATE_OBJECT_AT_EACH_TILEINDEX
 	inc l
 	ld (hl),TILEINDEX_UNLIT_TORCH
 
 	ld l,Interaction.yh
-	ld (hl),PARTID_LIGHTABLE_TORCH
+	ld (hl),PART_LIGHTABLE_TORCH
 	ld l,Interaction.xh
 	ld (hl),$10
 	ret
@@ -46,7 +46,7 @@ func_4f5d:
 spawnBridge:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BRIDGE_SPAWNER
+	ld (hl),PART_BRIDGE_SPAWNER
 	ld l,Part.counter2
 	ld (hl),b
 	ld l,Part.angle
@@ -89,7 +89,7 @@ label_15_031:
 	ret
 
 ; ==============================================================================
-; INTERACID_BIPIN
+; INTERAC_BIPIN
 ; ==============================================================================
 
 ;;
@@ -136,7 +136,7 @@ bipinScript3:
 
 
 ; ==============================================================================
-; INTERACID_BLOSSOM
+; INTERAC_BLOSSOM
 ; ==============================================================================
 
 ;;
@@ -209,7 +209,7 @@ blossom_openNameEntryMenu:
 
 
 ; ==============================================================================
-; INTERACID_VERAN_CUTSCENE_FACE
+; INTERAC_VERAN_CUTSCENE_FACE
 ; ==============================================================================
 veranFaceCutsceneScript:
 	disableinput
@@ -225,7 +225,7 @@ veranFaceCutsceneScript:
 
 
 ; ==============================================================================
-; INTERACID_OLD_MAN_WITH_RUPEES
+; INTERAC_OLD_MAN_WITH_RUPEES
 ; ==============================================================================
 
 ;;
@@ -262,15 +262,15 @@ oldMan_rupeeValues:
 
 
 ; ==============================================================================
-; INTERACID_SHOOTING_GALLERY
+; INTERAC_SHOOTING_GALLERY
 ; ==============================================================================
 
 ;;
 shootingGallery_beginGame:
-	; Spawn a new INTERACID_SHOOTING_GALLERY with subid 3 (runs the game)
+	; Spawn a new INTERAC_SHOOTING_GALLERY with subid 3 (runs the game)
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SHOOTING_GALLERY
+	ld (hl),INTERAC_SHOOTING_GALLERY
 	inc l
 	ld (hl),$03
 	inc l
@@ -325,18 +325,18 @@ shootingGallery_cpScore:
 shootingGallery_equipSword:
 	ld hl,hFF8A
 	ld a,(wInventoryA)
-	cp ITEMID_SWORD
+	cp ITEM_SWORD
 	jr nz,@equipOnB
 
 @equipOnA:
 	xor a
 	ldi (hl),a
-	ld a,ITEMID_SWORD
+	ld a,ITEM_SWORD
 	ld (hl),a
 	jr shootingGallery_changeEquips
 
 @equipOnB:
-	ld a,ITEMID_SWORD
+	ld a,ITEM_SWORD
 	ldi (hl),a
 	xor a
 	ld (hl),a
@@ -345,7 +345,7 @@ shootingGallery_equipSword:
 ;;
 shootingGallery_equipBiggoronSword:
 	ld hl,hFF8A
-	ld a,ITEMID_BIGGORON_SWORD
+	ld a,ITEM_BIGGORON_SWORD
 	ldi (hl),a
 	ld (hl),a
 
@@ -394,7 +394,7 @@ func_50e4:
 
 ;;
 createSparkle:
-	ld b,INTERACID_SPARKLE
+	ld b,INTERAC_SPARKLE
 	jp objectCreateInteractionWithSubid00
 
 ;;
@@ -746,7 +746,7 @@ shootingGalleryScript_goronNpc_gameDone:
 
 
 ; ==============================================================================
-; INTERACID_IMPA_IN_CUTSCENE
+; INTERAC_IMPA_IN_CUTSCENE
 ; ==============================================================================
 
 ;;
@@ -829,7 +829,7 @@ impaScript4:
 	writememory w1Link.direction, DIR_UP
 	wait 20
 	xorcfc0bit 0
-	spawninteraction INTERACID_NAYRU, $09, $f8, $48
+	spawninteraction INTERAC_NAYRU, $09, $f8, $48
 
 	setspeed SPEED_100
 	movedown $41
@@ -951,7 +951,7 @@ impaScript7:
 
 
 ; ==============================================================================
-; INTERACID_FAKE_OCTOROK
+; INTERAC_FAKE_OCTOROK
 ; ==============================================================================
 
 greatFairyOctorok_createMagicPowderAnimation:
@@ -961,7 +961,7 @@ greatFairyOctorok_createMagicPowderAnimation:
 @next:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_SPARKLE
+	ld (hl),PART_SPARKLE
 	ld l,Part.var03
 	inc (hl)
 	call objectCopyPositionWithOffset
@@ -974,7 +974,7 @@ greatFairyOctorok_createMagicPowderAnimation:
 
 
 ; ==============================================================================
-; INTERACID_CHILD
+; INTERAC_CHILD
 ; ==============================================================================
 
 ;;
@@ -1034,7 +1034,7 @@ child_giveRupees:
 
 
 ; ==============================================================================
-; INTERACID_NAYRU
+; INTERAC_NAYRU
 ; ==============================================================================
 
 ; Subid $01: Cutscene in Ambi's palace after getting bombs
@@ -1094,7 +1094,7 @@ nayruScript02_part2:
 	playsound SND_TUNE_OF_AGES
 	wait 260
 
-	spawninteraction INTERACID_PLAY_HARP_SONG, $02, $00, $00
+	spawninteraction INTERAC_PLAY_HARP_SONG, $02, $00, $00
 	checkcfc0bit 7
 	wait 45
 
@@ -1168,7 +1168,7 @@ nayruScript07:
 	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
 	showtext TX_1d11
 
-	spawninteraction INTERACID_PLAY_HARP_SONG, $00, $00, $00
+	spawninteraction INTERAC_PLAY_HARP_SONG, $00, $00, $00
 	checkcfc0bit 7
 	wait 36
 
@@ -1229,7 +1229,7 @@ nayruScript10:
 	checkmemoryeq wTmpcbb5, $07
 	wait 20
 
-	spawninteraction INTERACID_CLINK, $80, $74, $78
+	spawninteraction INTERAC_CLINK, $80, $74, $78
 	playsound SND_SCENT_SEED
 	setspeed SPEED_200
 	movedown $18
@@ -1301,16 +1301,16 @@ setLinkAnimation:
 
 
 ; ==============================================================================
-; INTERACID_RALPH
+; INTERAC_RALPH
 ; ==============================================================================
 
 ;;
-; Creates an instance of "INTERACID_SWORD", which will read the current object's
+; Creates an instance of "INTERAC_SWORD", which will read the current object's
 ; animParameter in order to know when to produce a sword swing animation.
 ralph_createLinkedSwordAnimation:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SWORD
+	ld (hl),INTERAC_SWORD
 	ld l,Interaction.relatedObj1+1
 	ld a,d
 	ld (hl),a
@@ -1565,7 +1565,7 @@ ralphSubid0cScript:
 	jumpifroomflagset $40, @alreadySawCutscene
 
 	disableinput
-	spawninteraction INTERACID_AMBI, $05, $3c, $78
+	spawninteraction INTERAC_AMBI, $05, $3c, $78
 	setmusic MUS_DISASTER
 	wait 60
 
@@ -1649,7 +1649,7 @@ ralphSubid0cScript:
 
 
 ; ==============================================================================
-; INTERACID_MONKEY
+; INTERAC_MONKEY
 ; ==============================================================================
 
 ;;
@@ -1688,7 +1688,7 @@ monkey_setAnimationFromVar3a:
 
 
 ; ==============================================================================
-; INTERACID_VILLAGER
+; INTERAC_VILLAGER
 ; ==============================================================================
 
 ;;
@@ -1704,7 +1704,7 @@ villager_setLinkYToVar39:
 villager_createBallAccessory:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_ACCESSORY
+	ld (hl),INTERAC_ACCESSORY
 	inc l
 	ld (hl),$3f
 	inc l
@@ -1719,7 +1719,7 @@ villager_createBallAccessory:
 ;;
 ; Creates an actual ball that can be thrown by the villagers.
 villager_createBall:
-	ldbc INTERACID_BALL, $00
+	ldbc INTERAC_BALL, $00
 	call objectCreateInteraction
 	ret nz
 	ld bc,$4a3c
@@ -1727,7 +1727,7 @@ villager_createBall:
 
 
 ; ==============================================================================
-; INTERACID_BOY
+; INTERAC_BOY
 ; ==============================================================================
 
 ;;
@@ -1761,7 +1761,7 @@ boy_createLightning:
 	ld b,a
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl)
 	inc l
@@ -1864,7 +1864,7 @@ boySubid07Script:
 	; Begin funny joke cutscene, wait for Link to return to normal
 	asm15 moveLinkToPosition, $02
 	wait 1
-	checkmemoryeq w1Link.id, SPECIALOBJECTID_LINK
+	checkmemoryeq w1Link.id, SPECIALOBJECT_LINK
 
 	writeobjectbyte Interaction.var3d, $00
 	asm15 setLinkToState08AndSetDirection, DIR_DOWN
@@ -1906,7 +1906,7 @@ boySubid07Script:
 
 
 ; ==============================================================================
-; INTERACID_VERAN_GHOST
+; INTERAC_VERAN_GHOST
 ; ==============================================================================
 
 ;;
@@ -2029,7 +2029,7 @@ ghostVeranSubid0Script_part1:
 
 
 ; ==============================================================================
-; INTERACID_SOLDIER
+; INTERAC_SOLDIER
 ; ==============================================================================
 
 ;;
@@ -2181,7 +2181,7 @@ soldierSubid0aScript:
 
 
 ; ==============================================================================
-; INTERACID_TOKAY
+; INTERAC_TOKAY
 ; ==============================================================================
 
 ;;
@@ -2241,7 +2241,7 @@ tokayGame_createAccessoryForPrize:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_ACCESSORY
+	ld (hl),INTERAC_ACCESSORY
 	inc l
 	ld e,Interaction.var03
 	ld a,(de)
@@ -2283,7 +2283,7 @@ tokayGiveShieldUpgradeToLink:
 tokayGiveItemToLink:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld e,Interaction.var03
 	ld a,(de)
@@ -2325,7 +2325,7 @@ tokayGame_givePrizeToLink:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld a,(wWildTokayGameLevel)
 	ld bc,@prizes
@@ -2367,13 +2367,13 @@ tokayGame_givePrizeToLink:
 	.db TREASURE_RUPEES, $10
 
 ;;
-; Searches for an interaction of type INTERACID_TOKAY_SHOP_ITEM, and stores the high byte
+; Searches for an interaction of type INTERAC_TOKAY_SHOP_ITEM, and stores the high byte
 ; of its address in var3f (or writes 0 if none is found).
 tokayFindShopItem:
 	ld e,Interaction.var3f
 	xor a
 	ld (de),a
-	ld c,INTERACID_TOKAY_SHOP_ITEM
+	ld c,INTERAC_TOKAY_SHOP_ITEM
 	call objectFindSameTypeObjectWithID
 	ret nz
 	ld (de),a
@@ -2571,7 +2571,7 @@ turnToFaceLink:
 
 
 ; ==============================================================================
-; INTERACID_AMBI
+; INTERAC_AMBI
 ; ==============================================================================
 
 ambiFlickerVisibility:
@@ -2657,7 +2657,7 @@ dumbbellManScript:
 
 
 ; ==============================================================================
-; INTERACID_OLD_MAN
+; INTERAC_OLD_MAN
 ; ==============================================================================
 
 ;;
@@ -2822,7 +2822,7 @@ oldManScript_givesFairyPowder:
 
 
 ; ==============================================================================
-; INTERACID_MAMAMU_YAN
+; INTERAC_MAMAMU_YAN
 ; ==============================================================================
 
 mamamuYanRandomizeDogLocation:
@@ -2965,7 +2965,7 @@ mamamuYanScript:
 
 
 ; ==============================================================================
-; INTERACID_MAMAMU_DOG
+; INTERAC_MAMAMU_DOG
 ; ==============================================================================
 
 ;;
@@ -3038,7 +3038,7 @@ mamamuDog_decCounter:
 
 
 ; ==============================================================================
-; INTERACID_POSTMAN
+; INTERAC_POSTMAN
 ; ==============================================================================
 postmanScript:
 	jumpifroomflagset $20, mainScripts.stubScript
@@ -3077,7 +3077,7 @@ postmanScript:
 
 
 ; ==============================================================================
-; INTERACID_PICKAXE_WORKER
+; INTERAC_PICKAXE_WORKER
 ; ==============================================================================
 
 ;;
@@ -3151,7 +3151,7 @@ pickaxeWorkerSubid01Script_part2:
 
 
 ; ==============================================================================
-; INTERACID_HARDHAT_WORKER
+; INTERAC_HARDHAT_WORKER
 ; ==============================================================================
 
 ;;
@@ -3422,7 +3422,7 @@ hardhatWorkerSubid03Script:
 
 
 ; ==============================================================================
-; INTERACID_POE
+; INTERAC_POE
 ; ==============================================================================
 
 ;;
@@ -3496,7 +3496,7 @@ poeScript:
 
 
 ; ==============================================================================
-; INTERACID_OLD_ZORA
+; INTERAC_OLD_ZORA
 ; ==============================================================================
 
 ; Zora who trades you the broken sword for a guitar.
@@ -3540,7 +3540,7 @@ oldZoraScript:
 
 
 ; ==============================================================================
-; INTERACID_TOILET_HAND
+; INTERAC_TOILET_HAND
 ; ==============================================================================
 
 ;;
@@ -3610,7 +3610,7 @@ toiletHand_checkVisibility:
 
 
 ; ==============================================================================
-; INTERACID_MASK_SALESMAN
+; INTERAC_MASK_SALESMAN
 ; ==============================================================================
 
 maskSalesmanScript:
@@ -3674,7 +3674,7 @@ maskSalesmanScript:
 
 
 ; ==============================================================================
-; INTERACID_COMEDIAN
+; INTERAC_COMEDIAN
 ; ==============================================================================
 
 ;;
@@ -3809,7 +3809,7 @@ comedianScript:
 
 
 ; ==============================================================================
-; INTERACID_GORON
+; INTERAC_GORON
 ; ==============================================================================
 
 ;;
@@ -4391,7 +4391,7 @@ goron_countdownToPlayRockSoundAndShakeScreen:
 
 ;;
 goron_createFallingRockSpawner:
-	ld b,INTERACID_FALLING_ROCK
+	ld b,INTERAC_FALLING_ROCK
 	jp objectCreateInteractionWithSubid00
 
 ;;
@@ -4446,7 +4446,7 @@ goron_createRockDebrisToRight:
 	ldh (<hFF8B),a
 	call getFreeInteractionSlot
 	jr nz,@end
-	ld (hl),INTERACID_FALLING_ROCK
+	ld (hl),INTERAC_FALLING_ROCK
 	inc l
 	ld (hl),$02
 	inc l
@@ -4560,7 +4560,7 @@ goron_targetCarts_spawnPrize:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -4617,7 +4617,7 @@ goron_bigBang_spawnPrize:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -4647,7 +4647,7 @@ goron_bigBang_spawnPrize:
 ; Delete a treasure on the screen. Used during bomb flower explosion, for removing the
 ; displayed treasure when starting target carts, ...
 goron_deleteTreasure:
-	ld b,INTERACID_TREASURE
+	ld b,INTERAC_TREASURE
 	call goron_findInteractionWithID
 	ld l,Interaction.state
 	ld (hl),$04 ; State 4 causes deletion
@@ -4655,7 +4655,7 @@ goron_deleteTreasure:
 
 ;;
 goron_targetCarts_deleteMinecartAndClearStaticObjects:
-	ld b,INTERACID_MINECART
+	ld b,INTERAC_MINECART
 	call goron_findInteractionWithID
 	push de
 	ld e,l
@@ -4697,7 +4697,7 @@ goron_targetCarts_deleteCrystals:
 	jr z,@nextEnemy
 	inc l
 	ldd a,(hl)
-	cp ENEMYID_TARGET_CART_CRYSTAL
+	cp ENEMY_TARGET_CART_CRYSTAL
 	jr nz,@nextEnemy
 	push de
 	push hl
@@ -4788,7 +4788,7 @@ goron_targetCarts_configureInventory:
 	ld a,(bc)
 	ldi (hl),a
 	ld a,(wInventoryA)
-	cp ITEMID_SHOOTER
+	cp ITEM_SHOOTER
 	jr nz,@equipToA
 
 @equipToB:
@@ -4797,12 +4797,12 @@ goron_targetCarts_configureInventory:
 	inc c
 	ld a,(bc)
 	ldi (hl),a
-	ld a,ITEMID_SHOOTER
+	ld a,ITEM_SHOOTER
 	ld (bc),a
 	jr @setupSeedShooter
 
 @equipToA:
-	ld a,ITEMID_SHOOTER
+	ld a,ITEM_SHOOTER
 	ld (bc),a
 	inc c
 	ld a,(bc)
@@ -4877,7 +4877,7 @@ goron_targetCarts_reloadCrystalsInFirstRoom:
 
 	call getFreeEnemySlot
 	ldh a,(<hFF8B)
-	ld (hl),ENEMYID_TARGET_CART_CRYSTAL
+	ld (hl),ENEMY_TARGET_CART_CRYSTAL
 	inc l
 	ld (hl),a
 @nextCrystal:
@@ -5027,7 +5027,7 @@ goron_bigBang_checkLinkHitByBomb:
 goron_bigBang_createBombSpawner:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BIGBANG_BOMB_SPAWNER
+	ld (hl),PART_BIGBANG_BOMB_SPAWNER
 	inc l
 	ld (hl),$ff
 	ret
@@ -5036,7 +5036,7 @@ goron_bigBang_createBombSpawner:
 goron_createBombFlowerSprite:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_BOMB_FLOWER
 	inc l
@@ -5111,7 +5111,7 @@ goron_createExplosionIndex:
 	call addDoubleIndexToBc
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION
+	ld (hl),INTERAC_EXPLOSION
 	ld l,Interaction.yh
 	ld a,(bc)
 	ld (hl),a
@@ -5345,7 +5345,7 @@ goron_subid08_pressedAScript:
 
 
 ; ==============================================================================
-; INTERACID_RAFTON
+; INTERAC_RAFTON
 ; ==============================================================================
 
 ; Rafton in right part of house
@@ -5398,7 +5398,7 @@ rafton_subid01Script:
 
 
 ; ==============================================================================
-; INTERACID_CHEVAL
+; INTERAC_CHEVAL
 ; ==============================================================================
 
 ;;
@@ -5408,7 +5408,7 @@ cheval_setTalkedGlobalflag:
 
 
 ; ==============================================================================
-; INTERACID_MISCELLANEOUS_1
+; INTERAC_MISCELLANEOUS_1
 ; ==============================================================================
 
 ;;
@@ -5458,7 +5458,7 @@ interaction6b_isLinkAtScreenEdge:
 ; @param	a	Value for var03
 moveLinkToPosition:
 	push af
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	ld a,SPECIALOBJECT_LINK_CUTSCENE
 	call setLinkIDOverride
 
 	ld l,<w1Link.subid
@@ -5512,7 +5512,7 @@ interaction6b_subid04Script:
 	asm15 interaction6b_loadMoblinsAttackingMakuSprout
 
 	wait 60
-	spawninteraction INTERACID_PUFF, $00, $58, $28
+	spawninteraction INTERAC_PUFF, $00, $58, $28
 	wait 4
 	settileat $52, $f9
 
@@ -5579,13 +5579,13 @@ interaction6b_subid04Script:
 	; Load movement preset for Link, wait for it to finish
 	asm15 moveLinkToPosition, $00
 	wait 1
-	checkmemoryeq w1Link.id, SPECIALOBJECTID_LINK
+	checkmemoryeq w1Link.id, SPECIALOBJECT_LINK
 
 	wait 30
 	showtext TX_05d3
 	wait 30
 
-	spawninteraction INTERACID_MAKU_GATE_OPENING, $01, $00, $00
+	spawninteraction INTERAC_MAKU_GATE_OPENING, $01, $00, $00
 
 @waitForGatesToOpen:
 	jumpifroomflagset $80, ++
@@ -5614,7 +5614,7 @@ interaction6b_subid04Script:
 
 
 ; ==============================================================================
-; INTERACID_FAIRY_HIDING_MINIGAME
+; INTERAC_FAIRY_HIDING_MINIGAME
 ; ==============================================================================
 
 ;;
@@ -5623,7 +5623,7 @@ fairyHidingMinigame_spawnForestFairyIndex:
 	ld b,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FOREST_FAIRY
+	ld (hl),INTERAC_FOREST_FAIRY
 	ld l,Interaction.var03
 	ld (hl),b
 	ret
@@ -5720,7 +5720,7 @@ fairyHidingMinigame_subid02Script:
 
 
 ; ==============================================================================
-; INTERACID_POSSESSED_NAYRU
+; INTERAC_POSSESSED_NAYRU
 ; ==============================================================================
 
 ;;
@@ -5745,7 +5745,7 @@ possessedNayru_makeExclamationMark:
 
 
 ; ==============================================================================
-; INTERACID_NAYRU_SAVED_CUTSCENE
+; INTERAC_NAYRU_SAVED_CUTSCENE
 ; ==============================================================================
 
 ;;
@@ -5842,7 +5842,7 @@ nayruSavedCutscene_loadGuardAnimation:
 
 
 ; ==============================================================================
-; INTERACID_COMPANION_SCRIPTS
+; INTERAC_COMPANION_SCRIPTS
 ; ==============================================================================
 
 ;;
@@ -5877,7 +5877,7 @@ companionScript_restoreMusic:
 
 ;;
 companionScript_spawnFairyAfterFindingCompanionInForest:
-	ldbc INTERACID_FOREST_FAIRY, $03
+	ldbc INTERAC_FOREST_FAIRY, $03
 	call objectCreateInteraction
 	ld l,Interaction.var03
 	ld (hl),$0f
@@ -5930,7 +5930,7 @@ companionScript_subid07Script_body:
 
 @savedDimitri:
 	disableinput
-	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECTID_DIMITRI, @notFirstMeeting
+	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECT_DIMITRI, @notFirstMeeting
 
 	; First meeting
 	showtext TX_2101
@@ -5979,7 +5979,7 @@ companionScript_subid03Script_body:
 	jumpifmemoryset wRickyState, $01, @alreadyExplainedSituation
 
 	ormemory wRickyState, $01
-	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECTID_RICKY, @notFirstMeeting
+	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECT_RICKY, @notFirstMeeting
 
 	; First meeting
 	showtext TX_2000
@@ -6065,7 +6065,7 @@ companionScript_subid09Script_body:
 
 
 ; ==============================================================================
-; INTERACID_KING_MOBLIN_DEFEATED
+; INTERAC_KING_MOBLIN_DEFEATED
 ; ==============================================================================
 
 ;;
@@ -6088,14 +6088,14 @@ kingMoblinDefeated_setGoronDirection:
 kingMoblinDefeated_spawnInteraction8a:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_REMOTE_MAKU_CUTSCENE
+	ld (hl),INTERAC_REMOTE_MAKU_CUTSCENE
 	ld l,Interaction.var03
 	ld (hl),$06
 	ret
 
 
 ; ==============================================================================
-; INTERACID_GHINI_HARASSING_MOOSH
+; INTERAC_GHINI_HARASSING_MOOSH
 ; ==============================================================================
 
 ;;
@@ -6111,7 +6111,7 @@ ghiniHarassingMoosh_beginCircularMovement:
 
 
 ; ==============================================================================
-; INTERACID_TOKAY_SHOP_ITEM
+; INTERAC_TOKAY_SHOP_ITEM
 ; ==============================================================================
 
 ;;
@@ -6208,7 +6208,7 @@ tokayShopItem_lose10MysterySeeds:
 
 
 ; ==============================================================================
-; INTERACID_BOMB_UPGRADE_FAIRY
+; INTERAC_BOMB_UPGRADE_FAIRY
 ; ==============================================================================
 
 ;;
@@ -6233,7 +6233,7 @@ bombUpgradeFairy_lightningStrikesLink:
 	dec l
 	set 7,(hl)
 	inc l
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl)
 	ld l,Part.yh
@@ -6359,7 +6359,7 @@ bombUpgradeFairyScript_body:
 
 
 ; ==============================================================================
-; INTERACID_MAKU_TREE
+; INTERAC_MAKU_TREE
 ; ==============================================================================
 
 ;;
@@ -6448,11 +6448,11 @@ makuTree_modifyTextIndexForLinked:
 	ld h,d
 	ld l,Interaction.id
 	ld a,(hl)
-	cp INTERACID_REMOTE_MAKU_CUTSCENE
+	cp INTERAC_REMOTE_MAKU_CUTSCENE
 	jr nz,+
 	dec a
 +
-	sub INTERACID_MAKU_TREE
+	sub INTERAC_MAKU_TREE
 	ret
 
 makuTree_textOffsetsForLinked:
@@ -6466,7 +6466,7 @@ makuTree_dropSeedSatchel:
 	set 7,(hl)
 
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_SEED_SATCHEL
 	inc l
@@ -6501,7 +6501,7 @@ makuTree_checkSpawnSeedSatchel:
 	ret z
 
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_SEED_SATCHEL
 	inc l
@@ -6516,7 +6516,7 @@ makuTree_checkSpawnSeedSatchel:
 
 ;;
 makuTree_spawnMakuSeed:
-	ldbc INTERACID_MAKU_SEED, $00
+	ldbc INTERAC_MAKU_SEED, $00
 	jp objectCreateInteraction
 
 ;;
@@ -6781,7 +6781,7 @@ makuTree_subid06Script_part2_body:
 
 
 ; ==============================================================================
-; INTERACID_MAKU_SPROUT
+; INTERAC_MAKU_SPROUT
 ; ==============================================================================
 
 ;;
@@ -6838,7 +6838,7 @@ makuSprout_subid00Script_body:
 
 
 ; ==============================================================================
-; INTERACID_REMOTE_MAKU_CUTSCENE
+; INTERAC_REMOTE_MAKU_CUTSCENE
 ; ==============================================================================
 
 ;;
@@ -6870,7 +6870,7 @@ remoteMakuCutscene_checkinitUnderwaterWaves:
 
 
 ; ==============================================================================
-; INTERACID_GORON_ELDER
+; INTERAC_GORON_ELDER
 ; ==============================================================================
 
 ;;
@@ -6912,7 +6912,7 @@ goronElderScript_subid00_body:
 
 	asm15 moveLinkToPosition, $01
 	wait 1
-	checkmemoryeq w1Link.id, SPECIALOBJECTID_LINK
+	checkmemoryeq w1Link.id, SPECIALOBJECT_LINK
 	wait 30
 
 	showtext TX_2488
@@ -6949,7 +6949,7 @@ goronElderScript_subid01_body:
 
 
 ; ==============================================================================
-; INTERACID_CLOAKED_TWINROVA
+; INTERAC_CLOAKED_TWINROVA
 ; ==============================================================================
 
 ; Cutscene at maku tree screen after saving Nayru
@@ -6982,7 +6982,7 @@ cloakedTwinrova_subid02Script_body:
 
 
 ; ==============================================================================
-; INTERACID_MISC_PUZZLES
+; INTERAC_MISC_PUZZLES
 ; ==============================================================================
 
 ;;
@@ -7018,7 +7018,7 @@ miscPuzzles_drawCrownDungeonOpeningFrame3:
 @spawnPuff:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	inc l
 	ld (hl),$81
 	ld l,Interaction.yh
@@ -7029,7 +7029,7 @@ miscPuzzles_drawCrownDungeonOpeningFrame3:
 
 
 ; ==============================================================================
-; INTERACID_TWINROVA
+; INTERAC_TWINROVA
 ; ==============================================================================
 
 ;;
@@ -7122,7 +7122,7 @@ twinrova_subid06Script_body:
 	scriptend
 
 ; ==============================================================================
-; INTERACID_PATCH
+; INTERAC_PATCH
 ; ==============================================================================
 
 ;;
@@ -7160,7 +7160,7 @@ patch_setStairTile:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	ld (hl),$48
 	ld l,Interaction.xh
@@ -7289,7 +7289,7 @@ patch_downstairsScript_body:
 
 
 ; ==============================================================================
-; INTERACID_MOBLIN
+; INTERAC_MOBLIN
 ; ==============================================================================
 
 ;;
@@ -7297,12 +7297,12 @@ patch_downstairsScript_body:
 moblin_spawnEnemyHere:
 	call getFreeEnemySlot
 	ret nz
-	ld (hl),ENEMYID_MASKED_MOBLIN
+	ld (hl),ENEMY_MASKED_MOBLIN
 	jp objectCopyPosition
 
 
 ; ==============================================================================
-; INTERACID_CARPENTER
+; INTERAC_CARPENTER
 ; ==============================================================================
 
 ;;
@@ -7362,7 +7362,7 @@ carpenter_subid00Script_body:
 
 
 ; ==============================================================================
-; INTERACID_RAFTWRECK_CUTSCENE
+; INTERAC_RAFTWRECK_CUTSCENE
 ; ==============================================================================
 raftwreckCutsceneScript_body:
 	wait 8
@@ -7420,20 +7420,20 @@ raftwreckCutsceneScript_body:
 	scriptend
 
 ;;
-; Deals with spawning instances of INTERACID_RAFTWRECK_CUTSCENE (creates wind and
+; Deals with spawning instances of INTERAC_RAFTWRECK_CUTSCENE (creates wind and
 ; lightning strikes)
 raftwreckCutscene_spawnHelperSubid:
 	ld b,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_RAFTWRECK_CUTSCENE_HELPER
+	ld (hl),INTERAC_RAFTWRECK_CUTSCENE_HELPER
 	inc l
 	ld (hl),b
 	ret
 
 
 ; ==============================================================================
-; INTERACID_TOKKEY
+; INTERAC_TOKKEY
 ; ==============================================================================
 
 ;;
@@ -7452,7 +7452,7 @@ tokkey_centerLinkOnTile:
 tokkey_makeLinkPlayTuneOfCurrents:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PLAY_HARP_SONG
+	ld (hl),INTERAC_PLAY_HARP_SONG
 	inc l
 	inc (hl)
 	ret
@@ -7537,7 +7537,7 @@ tokkayScript_justHeardTune_body:
 
 
 ; ==============================================================================
-; INTERACID_ZORA
+; INTERAC_ZORA
 ; ==============================================================================
 ;;
 zora_createExclamationMark:
@@ -7620,7 +7620,7 @@ zora_setLinkDirectionLeft:
 
 
 ; ==============================================================================
-; INTERACID_ZELDA
+; INTERAC_ZELDA
 ; ==============================================================================
 
 ;;
@@ -7737,7 +7737,7 @@ zeldaSubid05Script_body:
 
 
 ; ==============================================================================$08
-; INTERACID_TWINROVA_IN_CUTSCENE
+; INTERAC_TWINROVA_IN_CUTSCENE
 ; ==============================================================================$08
 twinrovaInCutsceneScript_body:
 	wait 120
@@ -7749,7 +7749,7 @@ twinrovaInCutsceneScript_body:
 
 
 ; ==============================================================================
-; INTERACID_VIRE
+; INTERAC_VIRE
 ; ==============================================================================
 vire_activateMusic:
 	xor a
@@ -7759,7 +7759,7 @@ vire_activateMusic:
 
 
 ; ==============================================================================
-; INTERACID_SYMMETRY_NPC
+; INTERAC_SYMMETRY_NPC
 ; ==============================================================================
 ;;
 ; Puts a value in wTmpcfc0.genericCutscene.cfc1:
@@ -8016,7 +8016,7 @@ symmetryNpcSubid6And7Script:
 
 
 ; ==============================================================================
-; INTERACID_PIRATE_CAPTAIN
+; INTERAC_PIRATE_CAPTAIN
 ; ==============================================================================
 
 pirateCaptain_warpOut:
@@ -8061,7 +8061,7 @@ pirateCaptainScript:
 
 
 ; ==============================================================================
-; INTERACID_PIRATE
+; INTERAC_PIRATE
 ; ==============================================================================
 ;;
 pirate_openEyeballCave:
@@ -8076,16 +8076,16 @@ pirate_openEyeballCave:
 	call setTile
 	ld a,SND_DOORCLOSE
 	call playSound
-	ldbc INTERACID_PUFF, $00
+	ldbc INTERAC_PUFF, $00
 	jp objectCreateInteraction
 
 
 ; ==============================================================================
-; INTERACID_TINGLE
+; INTERAC_TINGLE
 ; ==============================================================================
 ;;
 tingle_createGlowAroundLink:
-	ldbc INTERACID_SPARKLE,$04
+	ldbc INTERAC_SPARKLE,$04
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.counter1
@@ -8100,7 +8100,7 @@ tingle_createGlowAroundLink:
 
 
 ; ==============================================================================
-; INTERACID_TROY
+; INTERAC_TROY
 ; ==============================================================================
 ;;
 troy_chooseRandomAnimalText:
@@ -8310,7 +8310,7 @@ linkedNpc_calcLowTextIndex:
 
 
 ; ==============================================================================
-; INTERACID_PLEN
+; INTERAC_PLEN
 ; ==============================================================================
 plenSubid0Script:
 	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
@@ -8361,7 +8361,7 @@ plenSubid0Script:
 
 
 ; ==============================================================================
-; INTERACID_GREAT_FAIRY
+; INTERAC_GREAT_FAIRY
 ; ==============================================================================
 greatFairy_checkScreenIsScrolling:
 	ld a,(wScrollMode)
@@ -8373,7 +8373,7 @@ greatFairy_checkScreenIsScrolling:
 
 
 ; ==============================================================================
-; INTERACID_SLATE_SLOT
+; INTERAC_SLATE_SLOT
 ; ==============================================================================
 
 ;;
@@ -8443,7 +8443,7 @@ slateSlot_placeSlate:
 
 
 ; ==============================================================================
-; INTERACID_MISCELLANEOUS_2
+; INTERAC_MISCELLANEOUS_2
 ; ==============================================================================
 ;;
 interactiondc_removeGraveyardGateTiles1:
@@ -8512,7 +8512,7 @@ interactiondc_7bde:
 interactiondc_spawnPuff:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	ld (hl),b
 	ld l,Interaction.xh

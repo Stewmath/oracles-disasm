@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_FLOORMASTER
+; ENEMY_FLOORMASTER
 ;
 ; Variables for subids other than 0:
 ;   relatedObj1: Reference to spawner object (subid 0)
@@ -133,7 +133,7 @@ floormaster_state1:
 	cp $03
 	ret nc
 
-	ld b,ENEMYID_FLOORMASTER
+	ld b,ENEMY_FLOORMASTER
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 

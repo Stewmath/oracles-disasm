@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_TREE
+; INTERAC_MAKU_TREE
 ; TODO: finish
 ; Variables:
 ;   ws_cc39: Maku tree stage
@@ -169,7 +169,7 @@ makuTree_spawnGnarledKey:
 	ret z
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_GNARLED_KEY
 	inc l
@@ -183,7 +183,7 @@ makuTree_spawnGnarledKey:
 	ret
 
 
-; INTERACID_88
+; INTERAC_88
 ; clouds above Onox castle?
 interactionCode88:
 	call checkInteractionState

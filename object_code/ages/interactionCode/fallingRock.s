@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_FALLING_ROCK
+; INTERAC_FALLING_ROCK
 ; ==============================================================================
 interactionCode92:
 	ld e,Interaction.subid
@@ -35,7 +35,7 @@ fallingRock_subid00:
 	ld (hl),20
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FALLING_ROCK
+	ld (hl),INTERAC_FALLING_ROCK
 	inc l
 	ld (hl),$01
 	inc l
@@ -77,7 +77,7 @@ fallingRock_subid01:
 	ld b,$00
 @next:
 	push bc
-	ldbc INTERACID_FALLING_ROCK, $02
+	ldbc INTERAC_FALLING_ROCK, $02
 	call objectCreateInteraction
 	pop bc
 	ret nz

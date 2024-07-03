@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_CONFETTI
+; INTERAC_MAKU_CONFETTI
 ;
 ; This object uses component speed (instead of using one byte for speed value, two words
 ; are used, for Y/X speeds respectively).
@@ -117,7 +117,7 @@ makuConfetti_subid0:
 	; Spawn a piece of confetti
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_CONFETTI
+	ld (hl),INTERAC_MAKU_CONFETTI
 
 	; [new.var03] = ++[this.counter1]
 	ld e,Interaction.counter1
@@ -278,7 +278,7 @@ makuConfetti_subid0:
 @makeSparkle:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$02
 	jp objectCopyPosition
@@ -385,7 +385,7 @@ makuConfetti_subid1:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_CONFETTI
+	ld (hl),INTERAC_MAKU_CONFETTI
 	inc l
 	ld (hl),$01 ; [new.subid] = $02
 

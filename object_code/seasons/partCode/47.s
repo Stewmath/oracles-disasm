@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_47
+; PART_47
 ; ==============================================================================
 partCode47:
 	ld e,$c2
@@ -36,7 +36,7 @@ partCode47:
 
 @func_7566:
 	call getFreePartSlot
-	ld (hl),PARTID_47
+	ld (hl),PART_47
 	inc l
 	ld a,$05
 	sub b
@@ -383,7 +383,7 @@ partCode47:
 @func_776f:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	inc l
 	ld (hl),$02
 	ld l,$d6

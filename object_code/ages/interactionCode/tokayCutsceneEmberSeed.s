@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TOKAY_CUTSCENE_EMBER_SEED
+; INTERAC_TOKAY_CUTSCENE_EMBER_SEED
 ; ==============================================================================
 interactionCode8f:
 	ld e,Interaction.state

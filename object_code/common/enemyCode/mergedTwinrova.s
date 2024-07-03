@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_MERGED_TWINROVA
+; ENEMY_MERGED_TWINROVA
 ;
 ; Variables:
 ;   subid: 0 or 1 for lava or ice
@@ -120,7 +120,7 @@ enemyCode01:
 
 ; Fight just starting
 mergedTwinrova_state_uninitialized:
-	ld a,ENEMYID_MERGED_TWINROVA
+	ld a,ENEMY_MERGED_TWINROVA
 	ld (wEnemyIDToLoadExtraGfx),a
 
 	ldh a,(<hActiveObject)
@@ -209,7 +209,7 @@ mergedTwinrova_state9:
 	ld (hl),60 ; [counter1]
 
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_BEAMOS
+	ld (hl),$80|ENEMY_BEAMOS
 
 	ld l,Enemy.var39
 	ld (hl),$01
@@ -326,7 +326,7 @@ mergedTwinrova_stateA:
 	inc (hl) ; [state] = $0b
 
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_MERGED_TWINROVA
+	ld (hl),$80|ENEMY_MERGED_TWINROVA
 
 	ld l,Enemy.counter1
 	ld (hl),30
@@ -488,7 +488,7 @@ mergedTwinrova_lavaRoom_stateE:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_TWINROVA_FLAME
+	ld (hl),PART_TWINROVA_FLAME
 	ld l,Part.angle
 	ld (hl),b
 	ld bc,$1000
@@ -559,7 +559,7 @@ mergedTwinrova_lavaRoom_stateE:
 
 	call getFreeEnemySlot_uncounted
 	ret nz
-	ld (hl),ENEMYID_TWINROVA_BAT
+	ld (hl),ENEMY_TWINROVA_BAT
 	ld l,Enemy.relatedObj1+1
 	ld (hl),d
 	dec l
@@ -629,7 +629,7 @@ mergedTwinrova_iceRoom_stateC:
 	jp enemySetAnimation
 
 
-; Spawning ice projectiles (ENEMYID_TWINROVA_ICE)
+; Spawning ice projectiles (ENEMY_TWINROVA_ICE)
 mergedTwinrova_iceRoom_stateD:
 	inc e
 	ld a,(de) ; [substate]
@@ -674,7 +674,7 @@ mergedTwinrova_iceRoom_stateD:
 	; Spawn ice projectile
 	call getFreeEnemySlot_uncounted
 	ret nz
-	ld (hl),ENEMYID_TWINROVA_ICE
+	ld (hl),ENEMY_TWINROVA_ICE
 	ld l,Enemy.angle
 	ld (hl),e
 	ld l,Enemy.relatedObj1
@@ -746,7 +746,7 @@ mergedTwinrova_iceRoom_stateF:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_TWINROVA_SNOWBALL
+	ld (hl),PART_TWINROVA_SNOWBALL
 	ld bc,$e800
 	jp objectCopyPositionWithOffset
 
@@ -946,7 +946,7 @@ mergedTwinrova_deathCutscene:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION
+	ld (hl),INTERAC_EXPLOSION
 	ld l,Interaction.yh
 	ld (hl),b
 	ld l,Interaction.xh

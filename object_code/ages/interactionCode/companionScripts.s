@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_COMPANION_SCRIPTS
+; INTERAC_COMPANION_SCRIPTS
 ; ==============================================================================
 interactionCode71:
 	ld a,(wLinkDeathTrigger)
@@ -100,7 +100,7 @@ companionScript_genericState0:
 	ld (de),a
 
 	ld a,(w1Companion.id)
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 	ld e,Interaction.var30
 	ld (de),a
 	add <wRickyState
@@ -189,9 +189,9 @@ companionScript_subid0d:
 	ret z
 
 	ldi a,(hl)
-	cp SPECIALOBJECTID_FIRST_COMPANION
+	cp SPECIALOBJECT_FIRST_COMPANION
 	ret c
-	cp SPECIALOBJECTID_LAST_COMPANION+1
+	cp SPECIALOBJECT_LAST_COMPANION+1
 	ret nc
 
 	; Check if the companion is roughly at this object's position
@@ -225,7 +225,7 @@ companionScript_subid0d:
 	call dropLinkHeldItem
 +
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_FIRST_COMPANION
+	sub SPECIALOBJECT_FIRST_COMPANION
 	ld hl,@textIndices
 	rst_addDoubleIndex
 	ldi a,(hl)
@@ -292,7 +292,7 @@ companionScript_subid06:
 	jr nz,companionScript_deleteSelf
 	ld hl,w1Companion.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr nz,companionScript_deleteSelf
 
 	; Return if Dimitri's still in the water
@@ -345,10 +345,10 @@ companionScript_subid08:
 	ld a,(hl)
 	or a
 	jr nz,+
-	ld a,SPECIALOBJECTID_MOOSH
+	ld a,SPECIALOBJECT_MOOSH
 	ld (hl),a
 +
-	sub SPECIALOBJECTID_FIRST_COMPANION
+	sub SPECIALOBJECT_FIRST_COMPANION
 	add <TX_1123
 	ld (wTextSubstitutions),a
 
@@ -376,7 +376,7 @@ companionScript_subid08:
 	ld (wDisabledObjects),a
 	call putLinkOnGround
 
-	ldbc INTERACID_FOREST_FAIRY, $03
+	ldbc INTERAC_FOREST_FAIRY, $03
 	call objectCreateInteraction
 	ld l,Interaction.var03
 	ld (hl),$0f
@@ -412,7 +412,7 @@ companionScript_subid09:
 	; Put companion index (0-2) in var39
 	ld hl,wAnimalCompanion
 	ld a,(hl)
-	sub SPECIALOBJECTID_FIRST_COMPANION
+	sub SPECIALOBJECT_FIRST_COMPANION
 	ld e,Interaction.var39
 	ld (de),a
 
@@ -484,7 +484,7 @@ companionScript_subid0a:
 	; Put companion index (0-2) in var39
 	ld hl,wAnimalCompanion
 	ld a,(hl)
-	sub SPECIALOBJECTID_FIRST_COMPANION
+	sub SPECIALOBJECT_FIRST_COMPANION
 	ld e,Interaction.var39
 	ld (de),a
 
@@ -505,7 +505,7 @@ companionScript_subid0a:
 	ld bc,$1103
 @nextFairy:
 	push bc
-	ldbc INTERACID_FOREST_FAIRY, $04
+	ldbc INTERAC_FOREST_FAIRY, $04
 	call objectCreateInteraction
 	pop bc
 	ld l,Interaction.var03
@@ -547,7 +547,7 @@ companionScript_subid0b:
 	call checkGlobalFlag
 	jr nz,companionScript_delete
 
-	ldbc INTERACID_FOREST_FAIRY, $03
+	ldbc INTERAC_FOREST_FAIRY, $03
 	call objectCreateInteraction
 	ld l,Interaction.var03
 	ld (hl),$14

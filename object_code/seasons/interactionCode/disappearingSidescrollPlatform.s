@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM
+; INTERAC_DISAPPEARING_SIDESCROLL_PLATFORM
 ; ==============================================================================
 interactionCodea3:
 	ld e,Interaction.state
@@ -91,7 +91,7 @@ interactionCodea3:
 
 ;;
 ; Used by:
-; * INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM
+; * INTERAC_DISAPPEARING_SIDESCROLL_PLATFORM
 sidescrollingPlatformCommon:
 	ld a,(w1Link.state)
 	cp LINK_STATE_NORMAL

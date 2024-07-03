@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_HEROS_CAVE_SWORD_CHEST
+; INTERAC_HEROS_CAVE_SWORD_CHEST
 ; ==============================================================================
 interactionCodec6:
 	ld e,Interaction.state
@@ -56,7 +56,7 @@ interactionCodec6:
 	ld (de),a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),>TREASURE_OBJECT_SWORD_03
 	inc l

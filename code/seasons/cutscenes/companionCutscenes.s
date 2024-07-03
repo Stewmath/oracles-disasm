@@ -93,7 +93,7 @@ rickyState1:
 @clink:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CLINK
+	ld (hl),INTERAC_CLINK
 	ld bc,$f812
 	jp objectCopyPositionWithOffset
 
@@ -286,7 +286,7 @@ mooshCutscenes:
 	ld (hl),$e0
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_BANANA
+	ld (hl),INTERAC_BANANA
 	ld l,Interaction.relatedObj1+1
 	ld (hl),d
 +
@@ -363,7 +363,7 @@ mooshCutscenes:
 	ld b,$3f
 	call clearMemory
 	ld hl,w1Companion.id
-	ld (hl),SPECIALOBJECTID_DIMITRI_CUTSCENE
+	ld (hl),SPECIALOBJECT_DIMITRI_CUTSCENE
 	ld l,SpecialObject.yh
 	ld (hl),$e8
 	inc l
@@ -514,7 +514,7 @@ dimitriCutscenes:
 	ld b,$3f
 	call clearMemory
 	ld hl,w1Companion.id
-	ld (hl),SPECIALOBJECTID_RICKY_CUTSCENE
+	ld (hl),SPECIALOBJECT_RICKY_CUTSCENE
 	inc l
 	ld (hl),$01 ; subid
 	ld l,SpecialObject.yh

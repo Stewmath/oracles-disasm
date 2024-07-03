@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_VERAN_FINAL_FORM
+; ENEMY_VERAN_FINAL_FORM
 ;
 ; Variables:
 ;   subid: 0 - turtle, 1 - spider, 2 - bee
@@ -259,7 +259,7 @@ veranFinal_turtleForm_state4:
 	call objectSetVisible83
 	ld a,SND_POOF
 	call playSound
-	ld b,PARTID_VERAN_ACID_POOL
+	ld b,PART_VERAN_ACID_POOL
 	jp ecom_spawnProjectile
 
 
@@ -385,7 +385,7 @@ veranFinal_turtleForm_state9:
 	ld l,Enemy.state
 	dec (hl)
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_VERAN_FINAL_FORM
+	ld (hl),$80|ENEMY_VERAN_FINAL_FORM
 	inc l
 	ld (hl),ENEMYCOLLISION_VERAN_TURTLE_FORM_VULNERABLE ; [enemyCollisionType]
 
@@ -447,7 +447,7 @@ veranFinal_turtleForm_stateA:
 @substate2:
 	call ecom_decCounter2
 	ret nz
-	ldbc INTERACID_MISC_PUZZLES, $21
+	ldbc INTERAC_MISC_PUZZLES, $21
 	call objectCreateInteraction
 	ret nz
 	jp ecom_incSubstate
@@ -611,7 +611,7 @@ veranFinal_spiderForm_jumpAttack:
 	.dw @substate4
 
 @substate0:
-	ld b,PARTID_VERAN_SPIDERWEB
+	ld b,PART_VERAN_SPIDERWEB
 	call ecom_spawnProjectile
 	ret nz
 	call ecom_incSubstate
@@ -757,7 +757,7 @@ veranFinal_spiderForm_webAttack_substate2:
 	call ecom_decCounter2
 	ret nz
 
-	ld b,PARTID_VERAN_SPIDERWEB
+	ld b,PART_VERAN_SPIDERWEB
 	call ecom_spawnProjectile
 	ret nz
 	ld l,Part.subid
@@ -908,7 +908,7 @@ veranFinal_initializeForm:
 	ld (hl),a
 
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_VERAN_FINAL_FORM
+	ld (hl),$80|ENEMY_VERAN_FINAL_FORM
 	inc l
 	ld (hl),e
 
@@ -1039,7 +1039,7 @@ veranFinal_beeForm_state6:
 	call ecom_decCounter1
 	jr nz,++
 	ld (hl),$0f ; [counter1]
-	ld b,PARTID_VERAN_BEE_PROJECTILE
+	ld b,PART_VERAN_BEE_PROJECTILE
 	call ecom_spawnProjectile
 ++
 	call objectApplySpeed
@@ -1151,7 +1151,7 @@ veranFinal_beeForm_stateA:
 	call getFreeEnemySlot
 	jr nz,veranFinal_beeForm_animate2
 
-	ld (hl),ENEMYID_VERAN_CHILD_BEE
+	ld (hl),ENEMY_VERAN_CHILD_BEE
 	inc l
 	ld (hl),b ; [child.subid]
 	call objectCopyPosition
@@ -1215,7 +1215,7 @@ veranFinal_beeForm_screenCornerEntrances:
 veranFinal_transformToBeeOrSpider:
 	ld (hl),$01
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_BEAMOS
+	ld (hl),$80|ENEMY_BEAMOS
 
 	ld l,Enemy.health
 	ld a,(hl)
@@ -1373,7 +1373,7 @@ veranFinal_dead:
 	ld (hl),a
 
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_BEAMOS
+	ld (hl),$80|ENEMY_BEAMOS
 
 	ld l,Enemy.collisionRadiusY
 	ld (hl),$08

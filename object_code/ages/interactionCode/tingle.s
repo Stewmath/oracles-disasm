@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TINGLE
+; INTERAC_TINGLE
 ;
 ; Variables:
 ;   var3d: Satchel level (minus one); used by script.
@@ -50,7 +50,7 @@ interactionCodec8:
 ++
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_TINGLE_BALLOON
+	ld (hl),PART_TINGLE_BALLOON
 	call objectCopyPosition
 	ld l,Part.relatedObj1
 	ld a,Interaction.start

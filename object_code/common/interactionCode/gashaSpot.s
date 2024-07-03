@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_GASHA_SPOT
+; INTERAC_GASHA_SPOT
 ; ==============================================================================
 .enum 0
 	GASHATREASURE_HEART_PIECE	db ; $00
@@ -73,7 +73,7 @@ interactionCodeb6:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_GASHA_TREE
+	ld (hl),PART_GASHA_TREE
 	inc l
 	ld (hl),$01
 	ld l,Part.relatedObj1

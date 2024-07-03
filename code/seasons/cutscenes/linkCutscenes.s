@@ -127,7 +127,7 @@ linkCutscene0:
 ;;
 ; Creates the colored orb that appears under Link in the opening cutscene
 linkCutscene_createGlowingOrb:
-	ldbc INTERACID_SPARKLE, $06
+	ldbc INTERAC_SPARKLE, $06
 	call objectCreateInteraction
 	jr nz,+
 	ld l,Interaction.relatedObj1
@@ -574,7 +574,7 @@ linkCutscene2:
 	ld a,($cfd0)
 	cp $03
 	ret nz
-	ld a,SPECIALOBJECTID_LINK
+	ld a,SPECIALOBJECT_LINK
 	jp setLinkIDOverride
 
 seasonsFunc_06_7178:
@@ -845,7 +845,7 @@ linkCutscene6:
 ; @param[out]	zflag	Set if shield equipped
 @checkShieldEquipped:
 	ld hl,wInventoryB
-	ld a,ITEMID_SHIELD
+	ld a,ITEM_SHIELD
 	cp (hl)
 	ret z
 	inc l
@@ -900,7 +900,7 @@ linkCutscene6:
 --
 	call getFreeInteractionSlot
 	jr nz,@@setAnimation
-	ld (hl),INTERACID_KISS_HEART
+	ld (hl),INTERAC_KISS_HEART
 	inc l
 	ld a,b
 	dec a
@@ -963,7 +963,7 @@ linkCutscene8:
 	call moveToAngleSnapToGrid
 	call checkCloseToY48X50
 	ret nc
-	ld a,SPECIALOBJECTID_LINK
+	ld a,SPECIALOBJECT_LINK
 	jp setLinkIDOverride
 
 
@@ -1095,9 +1095,9 @@ linkCutsceneA:
 	ld (wTmpcbb9),a
 
 .ifdef ROM_AGES
-	ldbc INTERACID_SPARKLE, $0d
+	ldbc INTERAC_SPARKLE, $0d
 .else
-	ldbc INTERACID_SPARKLE, $09
+	ldbc INTERAC_SPARKLE, $09
 .endif
 	call objectCreateInteraction
 	jr nz,@state1

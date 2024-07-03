@@ -77,7 +77,7 @@ interactionCode74:
 @func_7268:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_74
+	ld (hl),INTERAC_74
 	inc l
 	ld (hl),e
 	ld e,$4b

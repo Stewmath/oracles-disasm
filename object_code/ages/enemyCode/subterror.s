@@ -1,9 +1,9 @@
 ; ==============================================================================
-; ENEMYID_SUBTERROR
+; ENEMY_SUBTERROR
 ;
 ; Variables:
 ;   var30: If nonzero, dirt is created at subterror's position every 8 frames.
-;   var31: Counter until a new dirt object (PARTID_SUBTERROR_DIRT) is created.
+;   var31: Counter until a new dirt object (PART_SUBTERROR_DIRT) is created.
 ; ==============================================================================
 enemyCode72:
 	jr z,@normalStatus
@@ -36,7 +36,7 @@ enemyCode72:
 
 
 subterror_state_uninitialized:
-	ld a,ENEMYID_SUBTERROR
+	ld a,ENEMY_SUBTERROR
 	ld b,PALH_be
 	call enemyBoss_initializeRoom
 	call ecom_setSpeedAndState8
@@ -113,7 +113,7 @@ subterror_state8:
 @substate1:
 	call subterror_retFromCallerIfAnimationUnfinished
 
-	ld b,INTERACID_ROCKDEBRIS
+	ld b,INTERAC_ROCKDEBRIS
 	call objectCreateInteractionWithSubid00
 
 	call ecom_incSubstate
@@ -498,7 +498,7 @@ subterror_spawnDirt:
 	dec e
 	ld (de),a ; [var30] = 7
 
-	ld b,PARTID_SUBTERROR_DIRT
+	ld b,PART_SUBTERROR_DIRT
 	call ecom_spawnProjectile
 
 	call objectGetTileAtPosition

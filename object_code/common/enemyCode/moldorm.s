@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_MOLDORM
+; ENEMY_MOLDORM
 ;
 ; Variables for head (subid 1):
 ;   var30: Tail 1 object index
@@ -154,7 +154,7 @@ moldorm_state1:
 	jp nz,objectSetVisible82
 
 	; Spawn head
-	ld b,ENEMYID_MOLDORM
+	ld b,ENEMY_MOLDORM
 	call ecom_spawnUncountedEnemyWithSubid01
 
 	; Spawn tail 1

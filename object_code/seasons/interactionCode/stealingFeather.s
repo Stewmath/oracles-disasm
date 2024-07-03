@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_STEALING_FEATHER
+; INTERAC_STEALING_FEATHER
 ; ==============================================================================
 interactionCode6e:
 	ld e,Interaction.subid

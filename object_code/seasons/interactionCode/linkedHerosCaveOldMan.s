@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_LINKED_HEROS_CAVE_OLD_MAN
+; INTERAC_LINKED_HEROS_CAVE_OLD_MAN
 ; ==============================================================================
 interactionCodee4:
 	call checkInteractionState
@@ -29,7 +29,7 @@ linkedHerosCaveOldMan_spawnChests:
 	call func_6f39
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,$4b
 	call setShortPosition_paramC
 +

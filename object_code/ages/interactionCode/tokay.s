@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TOKAY
+; INTERAC_TOKAY
 ; ==============================================================================
 interactionCode48:
 	ld e,Interaction.state
@@ -85,7 +85,7 @@ interactionCode48:
 	call tokayLoadScript
 
 	; Set the Link object to run the cutscene where he gets mugged
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	ld a,SPECIALOBJECT_LINK_CUTSCENE
 	call setLinkIDOverride
 	ld l,<w1Link.subid
 	ld (hl),$07
@@ -538,9 +538,9 @@ tokayInitHeldItem:
 
 ;;
 ; @param	hl	Pointer to an object which will be set to type
-;			INTERACID_ACCESSORY.
+;			INTERAC_ACCESSORY.
 tokayInitAccessory:
-	ld (hl),INTERACID_ACCESSORY
+	ld (hl),INTERAC_ACCESSORY
 	ld l,Interaction.relatedObj1
 	ld (hl),Interaction.enabled
 	inc l
@@ -835,7 +835,7 @@ tokayInitMeatAccessory:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_ACCESSORY
+	ld (hl),INTERAC_ACCESSORY
 	inc l
 	ld (hl),$73
 	inc l
@@ -882,7 +882,7 @@ tokayRunSubid19:
 	; Create meat spawner?
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_WILD_TOKAY_CONTROLLER
+	ld (hl),INTERAC_WILD_TOKAY_CONTROLLER
 	call interactionIncSubstate
 	ld a,SNDCTRL_MEDIUM_FADEOUT
 	call playSound

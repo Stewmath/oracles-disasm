@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_LEAF
+; INTERAC_MAKU_LEAF
 ; leaves during maku tree cutscenes
 ; Variables:
 ;   var03: pointer to another interactionCode48
@@ -37,7 +37,7 @@ interactionCode48:
 	ret nz
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_LEAF
+	ld (hl),INTERAC_MAKU_LEAF
 	ld e,Interaction.var03
 	ld a,(de)
 	ld l,e
@@ -147,7 +147,7 @@ interactionCode48:
 	ret
 
 @func_7018:
-	ldbc INTERACID_SPARKLE $02
+	ldbc INTERAC_SPARKLE $02
 	call objectCreateInteraction
 
 @table_701e:

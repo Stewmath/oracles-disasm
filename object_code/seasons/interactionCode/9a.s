@@ -41,7 +41,7 @@ interactionCode9a:
 	ld de,@table_59e4
 	call @func_59ba
 	pop de
-	; INTERACID_9a
+	; INTERAC_9a
 	ld e,$42
 	ld a,$03
 	ld (de),a
@@ -117,7 +117,7 @@ interactionCode9a:
 --
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_9a
+	ld (hl),INTERAC_9a
 	inc l
 	ld (hl),$01
 	ld a,b
@@ -215,14 +215,14 @@ interactionCode9a:
 	ret
 
 @table_59d8:
-	.db INTERACID_KING_MOBLIN, $01 $40 $78
-	.db INTERACID_S_MOBLIN,    $02 $48 $68
-	.db INTERACID_S_MOBLIN,    $02 $48 $88
+	.db INTERAC_KING_MOBLIN, $01 $40 $78
+	.db INTERAC_S_MOBLIN,    $02 $48 $68
+	.db INTERAC_S_MOBLIN,    $02 $48 $88
 
 @table_59e4:
-	.db INTERACID_KING_MOBLIN, $02 $68 $78
-	.db INTERACID_S_MOBLIN,    $03 $60 $58
-	.db INTERACID_S_MOBLIN,    $03 $40 $58
+	.db INTERAC_KING_MOBLIN, $02 $68 $78
+	.db INTERAC_S_MOBLIN,    $03 $60 $58
+	.db INTERAC_S_MOBLIN,    $03 $40 $58
 
 state1_subid3:
 	ld e,$45
@@ -346,7 +346,7 @@ func_5a82:
 	ld e,l
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_9a
+	ld (hl),INTERAC_9a
 	inc l
 	ld (hl),$00
 	inc l

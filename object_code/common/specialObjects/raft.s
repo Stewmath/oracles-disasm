@@ -239,7 +239,7 @@ specialObjectCode_raft:
 
 ; State 3: replace self with raft interaction
 @state3:
-	ldbc INTERACID_RAFT, $02
+	ldbc INTERAC_RAFT, $02
 	call objectCreateInteraction
 	ret nz
 	ld e,SpecialObject.direction

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_TWINROVA_SNOWBALL
+; PART_TWINROVA_SNOWBALL
 ; ==============================================================================
 partCode4e:
 	jr z,@normalStatus
@@ -70,6 +70,6 @@ partCode4e:
 	ret nc
 
 @destroy:
-	ld b,INTERACID_SNOWDEBRIS
+	ld b,INTERAC_SNOWDEBRIS
 	call objectCreateInteractionWithSubid00
 	jp partDelete

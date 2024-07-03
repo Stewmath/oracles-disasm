@@ -1,5 +1,5 @@
 ;;
-; ITEMID_CANE_OF_SOMARIA ($04)
+; ITEM_CANE_OF_SOMARIA ($04)
 parentItemCode_caneOfSomaria:
 .ifdef ROM_AGES
 	ld e,Item.state

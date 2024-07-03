@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_CREATE_OBJECT_AT_EACH_TILEINDEX
+; INTERAC_CREATE_OBJECT_AT_EACH_TILEINDEX
 ; ==============================================================================
 interactionCodec7:
 	ld e,Interaction.subid

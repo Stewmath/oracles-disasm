@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_DIGDOGGER
+; ENEMY_DIGDOGGER
 ; ==============================================================================
 enemyCode7c:
 	jr z,@normalStatus
@@ -82,7 +82,7 @@ enemyCode7c:
 	ld b,$02
 	call checkBEnemySlotsAvailable
 	ret nz
-	ld b,ENEMYID_DIGDOGGER
+	ld b,ENEMY_DIGDOGGER
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,$8b
 	ld (hl),$28
@@ -505,7 +505,7 @@ enemyCode7c:
 	ld a,(de)
 	ld c,a
 -
-	ld b,ENEMYID_MINI_DIGDOGGER
+	ld b,ENEMY_MINI_DIGDOGGER
 	call ecom_spawnUncountedEnemyWithSubid01
 	call objectCopyPosition
 	ld l,$96

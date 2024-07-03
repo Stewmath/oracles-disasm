@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ANGLER_FISH_BUBBLE
+; ENEMY_ANGLER_FISH_BUBBLE
 ; ==============================================================================
 enemyCode26:
 	jr z,@normalStatus
@@ -47,7 +47,7 @@ enemyCode26:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld a,(hl)
-	cp ENEMYID_ANGLER_FISH
+	cp ENEMY_ANGLER_FISH
 	jr nz,@popBubble
 
 	call objectApplySpeed
@@ -82,7 +82,7 @@ enemyCode26:
 
 	call getFreePartSlot
 	jr nz,++
-	ld (hl),PARTID_ITEM_DROP
+	ld (hl),PART_ITEM_DROP
 	inc l
 	ld (hl),ITEM_DROP_SCENT_SEEDS
 

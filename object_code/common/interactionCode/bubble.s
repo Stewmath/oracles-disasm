@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BUBBLE
+; INTERAC_BUBBLE
 ;
 ; Variables:
 ;   var30: Value to add to angle
@@ -103,7 +103,7 @@ interactionCode91:
 	call interactionDecCounter1
 	ret nz
 	ld (hl),90
-	ld b,INTERACID_BUBBLE
+	ld b,INTERAC_BUBBLE
 	jp objectCreateInteractionWithSubid00
 
 @@state0:

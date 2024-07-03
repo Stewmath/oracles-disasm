@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_BUTTON
+; PART_BUTTON
 ;
 ; Variables:
 ;   var03: Bit index (copied from subid ignoring bit 7)

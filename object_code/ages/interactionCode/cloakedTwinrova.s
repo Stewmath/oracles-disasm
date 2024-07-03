@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_CLOAKED_TWINROVA
+; INTERAC_CLOAKED_TWINROVA
 ; ==============================================================================
 interactionCode8d:
 	ld e,Interaction.state
@@ -61,7 +61,7 @@ interactionCode8d:
 	ld a,(de)
 	or a
 	jr z,++
-	ldbc INTERACID_TWINROVA, $02
+	ldbc INTERAC_TWINROVA, $02
 	call objectCreateInteraction
 ++
 	jp interactionDelete

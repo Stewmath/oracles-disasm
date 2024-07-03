@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_PODOBOO
+; ENEMY_PODOBOO
 ;
 ; Variables:
 ;   relatedObj1: "Parent" (for subid 1, the lava particle)
@@ -145,7 +145,7 @@ podoboo_spawnLavaParticleEvery16Frames:
 
 ;;
 podoboo_spawnLavaParticle:
-	ld b,ENEMYID_PODOBOO
+	ld b,ENEMY_PODOBOO
 	call ecom_spawnUncountedEnemyWithSubid01
 	ret nz
 	call objectCopyPosition
@@ -184,7 +184,7 @@ podoboo_beginMovingUp:
 ;;
 ; @param[out]	zflag	z if created successfully
 podoboo_makeLavaSplash:
-	ldbc INTERACID_LAVASPLASH,$01
+	ldbc INTERAC_LAVASPLASH,$01
 	jp objectCreateInteraction
 
 

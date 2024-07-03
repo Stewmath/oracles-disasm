@@ -1,11 +1,11 @@
 ; ==============================================================================
-; PARTID_SPIKED_BALL
+; PART_SPIKED_BALL
 ;
 ; Variables:
 ;   speed: Nonstandard usage; it's a 16-bit variable which gets added to var30 (distance
 ;          away from origin).
-;   relatedObj1: ENEMYID_BALL_AND_CHAIN_SOLDIER (for the head / subid 0),
-;                or PARTID_SPIKED_BALL (the head; for subids 1-3).
+;   relatedObj1: ENEMY_BALL_AND_CHAIN_SOLDIER (for the head / subid 0),
+;                or PART_SPIKED_BALL (the head; for subids 1-3).
 ;   var30: Distance away from origin point
 ; ==============================================================================
 partCode2a:
@@ -56,7 +56,7 @@ spikedBall_head:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld a,(hl)
-	cp ENEMYID_BALL_AND_CHAIN_SOLDIER
+	cp ENEMY_BALL_AND_CHAIN_SOLDIER
 	jp nz,partDelete
 
 	ld b,h
@@ -206,7 +206,7 @@ spikedBall_chain:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld a,(hl)
-	cp PARTID_SPIKED_BALL
+	cp PART_SPIKED_BALL
 	jp nz,partDelete
 
 	; Copy parent's angle
@@ -285,7 +285,7 @@ spikedBall_head_updateDistanceFromOrigin:
 	ret
 
 @fullyRetracted:
-	; Tell parent (ENEMYID_BALL_AND_CHAIN_SOLDIER) we're fully retracted
+	; Tell parent (ENEMY_BALL_AND_CHAIN_SOLDIER) we're fully retracted
 	ld a,Object.counter1
 	call objectGetRelatedObject1Var
 	ld (hl),$00

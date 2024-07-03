@@ -1,4 +1,4 @@
-; This data is used by INTERACID_DUNGEON_KEY_SPRITE to determine what key sprite to use when opening
+; This data is used by INTERAC_DUNGEON_KEY_SPRITE to determine what key sprite to use when opening
 ; locked doors.
 ;
 ; This does not make doors unlockable. See data/{game}/tile_properties/interactableTiles.s for that.

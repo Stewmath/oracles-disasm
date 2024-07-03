@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TILE_FILLER
+; INTERAC_TILE_FILLER
 ; ==============================================================================
 interactionCode25:
 	call returnIfScrollMode01Unset
@@ -24,7 +24,7 @@ interactionCode25:
 
 	call getFreeInteractionSlot
 	jr nz,@state1
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	call setShortPosition_paramC
 

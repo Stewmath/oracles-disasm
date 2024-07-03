@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_BOSS_DEATH_EXPLOSION
+; PART_BOSS_DEATH_EXPLOSION
 ; ==============================================================================
 partCode04:
 	ld e,Part.state
@@ -24,7 +24,7 @@ partCode04:
 	xor a
 	call decideItemDrop
 	jr z,@delete
-	ld b,PARTID_ITEM_DROP
+	ld b,PART_ITEM_DROP
 	jp objectReplaceWithID
 
 @delete:

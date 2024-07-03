@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_GORON
+; INTERAC_GORON
 ;
 ; Variables:
 ;   var3f: Nonzero when "napping" (link is far away)
@@ -760,7 +760,7 @@ goronDance_checkLinkInput:
 	ret nz
 
 	; Spawn a goron with subid $02? (A "fake" object that manages a jump?)
-	ld (hl),INTERACID_GORON
+	ld (hl),INTERAC_GORON
 	inc l
 	ld (hl),$02
 	ld a,$01

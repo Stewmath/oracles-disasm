@@ -1,5 +1,5 @@
 ;;
-; ITEMID_BOOMERANG ($06)
+; ITEM_BOOMERANG ($06)
 parentItemCode_boomerang:
 	ld e,Item.state
 	ld a,(de)
@@ -16,7 +16,7 @@ parentItemCode_boomerang:
 	call isLinkUnderwater
 	jp nz,clearParentItem
 	ld a,(w1ParentItem2.id)
-	cp ITEMID_SWITCH_HOOK
+	cp ITEM_SWITCH_HOOK
 	jp z,clearParentItem
 .endif
 

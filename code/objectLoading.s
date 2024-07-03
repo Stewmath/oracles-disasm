@@ -520,7 +520,7 @@ objectDataOp9:
 .ifdef AGES_ENGINE
 
 ;;
-; Item drops. Seasons uses ENEMYID_ITEM_DROP_PRODUCER directly instead of this.
+; Item drops. Seasons uses ENEMY_ITEM_DROP_PRODUCER directly instead of this.
 objectDataOpA:
 	ld a,(de)
 	inc de
@@ -549,7 +549,7 @@ objectDataOpA:
 	jp nz,skipToOpEnd_2byte
 
 	; Set ID
-	ld (hl),ENEMYID_ITEM_DROP_PRODUCER
+	ld (hl),ENEMY_ITEM_DROP_PRODUCER
 	inc l
 	ld a,(de)
 	inc de

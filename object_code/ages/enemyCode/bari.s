@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_BARI
+; ENEMY_BARI
 ;
 ; Variables:
 ;   var30/var31: Initial Y/X position (aka target position; they always hover around this
@@ -219,7 +219,7 @@ bari_subid0_stateA:
 ;;
 ; @param	c	X-offset (and value to add to angle)
 @spawnSmallBari:
-	ld b,ENEMYID_BARI
+	ld b,ENEMY_BARI
 	call ecom_spawnEnemyWithSubid01
 	ret nz
 
@@ -240,7 +240,7 @@ bari_subid0_stateA:
 	jp objectCopyPositionWithOffset
 
 @substate0:
-	ld b,INTERACID_KILLENEMYPUFF
+	ld b,INTERAC_KILLENEMYPUFF
 	call objectCreateInteractionWithSubid00
 
 	ld h,d

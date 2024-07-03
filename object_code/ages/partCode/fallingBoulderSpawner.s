@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_FALLING_BOULDER_SPAWNER
+; PART_FALLING_BOULDER_SPAWNER
 ;
 ; Variables:
 ;   var30: yh to spawn boulder at

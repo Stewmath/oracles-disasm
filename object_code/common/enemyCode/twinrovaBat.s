@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_TWINROVA_BAT
+; ENEMY_TWINROVA_BAT
 ; ==============================================================================
 enemyCode5e:
 	jr z,+
@@ -10,7 +10,7 @@ enemyCode5e:
 	ld a,Object.id
 	call objectGetRelatedObject1Var
 	ld a,(hl)
-	cp ENEMYID_MERGED_TWINROVA
+	cp ENEMY_MERGED_TWINROVA
 	jp nz,enemyDelete
 
 	ld e,Enemy.counter1

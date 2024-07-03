@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_D8_GRABBABLE_ICE
+; INTERAC_D8_GRABBABLE_ICE
 ; ==============================================================================
 interactionCode68:
 	ld e,Interaction.state
@@ -44,7 +44,7 @@ interactionCode68:
 	ld (hl),$03
 	ld l,$46
 	ld (hl),$1e
-	ld b,INTERACID_FALLDOWNHOLE
+	ld b,INTERAC_FALLDOWNHOLE
 	jp objectCreateInteractionWithSubid00
 @state2:
 	ld e,Interaction.substate

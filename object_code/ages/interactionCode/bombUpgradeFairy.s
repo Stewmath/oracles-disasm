@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BOMB_UPGRADE_FAIRY
+; INTERAC_BOMB_UPGRADE_FAIRY
 ; ==============================================================================
 interactionCode83:
 	ld e,Interaction.subid
@@ -74,7 +74,7 @@ bombUpgradeFairy_subid00:
 	call checkLinkVulnerable
 	ret nc
 
-	ldbc INTERACID_PUFF, $02
+	ldbc INTERAC_PUFF, $02
 	call objectCreateInteraction
 	ret nz
 	ld e,Interaction.relatedObj2
@@ -108,7 +108,7 @@ bombUpgradeFairy_subid00:
 	ld l,Interaction.yh
 	ld (hl),$28
 
-	ldbc INTERACID_SPARKLE, $0e
+	ldbc INTERAC_SPARKLE, $0e
 	call objectCreateInteraction
 
 	call objectSetVisible81
@@ -123,7 +123,7 @@ bombUpgradeFairy_subid00:
 @spawnSubid2Instance:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_BOMB_UPGRADE_FAIRY
+	ld (hl),INTERAC_BOMB_UPGRADE_FAIRY
 	inc l
 	ld (hl),$02
 	inc l
@@ -249,7 +249,7 @@ bombUpgradeFairy_subid02:
 	ld l,Interaction.xh
 	ld (hl),b
 
-	ldbc INTERACID_PUFF, $02
+	ldbc INTERAC_PUFF, $02
 	call objectCreateInteraction
 	ret nz
 	ld e,Interaction.relatedObj2

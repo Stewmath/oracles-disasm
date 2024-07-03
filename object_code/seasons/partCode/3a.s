@@ -53,7 +53,7 @@ partCode3a:
 	ld e,$01
 @func_6ab5:
 	call getFreePartSlot
-	ld (hl),PARTID_3a
+	ld (hl),PART_3a
 	inc l
 	ld (hl),e
 	inc l
@@ -134,7 +134,7 @@ partCode3a:
 	add $02
 	cp $05
 	jr nc,@@func_6b4d
-	ldbc INTERACID_PUFF $02
+	ldbc INTERAC_PUFF $02
 	call objectCreateInteraction
 	ret nz
 	ld e,$d8

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_POSSESSED_NAYRU
+; INTERAC_POSSESSED_NAYRU
 ; ==============================================================================
 interactionCode6d:
 	ld e,Interaction.subid
@@ -34,7 +34,7 @@ possessedNayru_subid00:
 	; Spawn "ghost" veran
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_POSSESSED_NAYRU
+	ld (hl),INTERAC_POSSESSED_NAYRU
 	inc l
 	ld (hl),$02
 	ld l,Interaction.relatedObj1
@@ -74,7 +74,7 @@ possessedNayru_subid00:
 @state2:
 	call getFreeEnemySlot
 	ret nz
-	ld (hl),ENEMYID_VERAN_POSSESSION_BOSS
+	ld (hl),ENEMY_VERAN_POSSESSION_BOSS
 	call objectCopyPosition
 	ld h,d
 	ld l,Interaction.state

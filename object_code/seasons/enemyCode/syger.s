@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SYGER
+; ENEMY_SYGER
 ; ==============================================================================
 enemyCode74:
 	jr z,@normalStatus
@@ -78,7 +78,7 @@ enemyCode74:
 	ld b,$02
 	call checkBEnemySlotsAvailable
 	ret nz
-	ld b,ENEMYID_SYGER
+	ld b,ENEMY_SYGER
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld c,h
 	call ecom_spawnUncountedEnemyWithSubid01

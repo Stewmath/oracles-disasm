@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MOVING_SIDESCROLL_CONVEYOR
+; INTERAC_MOVING_SIDESCROLL_CONVEYOR
 ; ==============================================================================
 interactionCodea2:
 	call interactionAnimate

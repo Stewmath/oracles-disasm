@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DUNGEON_KEY_SPRITE
+; INTERAC_DUNGEON_KEY_SPRITE
 ; ==============================================================================
 interactionCode17:
 	ld e,Interaction.state

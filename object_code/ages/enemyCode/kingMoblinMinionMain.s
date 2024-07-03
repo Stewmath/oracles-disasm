@@ -1,9 +1,9 @@
 ; ==============================================================================
-; ENEMYID_KING_MOBLIN_MINION
+; ENEMY_KING_MOBLIN_MINION
 ;
 ; Variables:
-;   relatedObj1: Instance of ENEMYID_KING_MOBLIN
-;   relatedObj2: Instance of PARTID_BOMB (smaller bomb thrown by this object)
+;   relatedObj1: Instance of ENEMY_KING_MOBLIN
+;   relatedObj2: Instance of PART_BOMB (smaller bomb thrown by this object)
 ; ==============================================================================
 enemyCode56_body:
 	ld e,Enemy.state
@@ -78,7 +78,7 @@ kingMoblinMinion_state3:
 	call ecom_decCounter2
 	jr nz,kingMoblinMinion_animate
 
-	ld b,PARTID_BOMB
+	ld b,PART_BOMB
 	call ecom_spawnProjectile
 	ret nz
 
@@ -157,7 +157,7 @@ kingMoblinMinion_state6:
 	jr kingMoblinMinion_animate
 
 
-; ENEMYID_KING_MOBLIN sets this object's state to 7 when defeated.
+; ENEMY_KING_MOBLIN sets this object's state to 7 when defeated.
 kingMoblinMinion_state7:
 	ld h,d
 	ld l,e
@@ -259,7 +259,7 @@ kingMoblinMinion_stateA:
 	jp enemyAnimate
 
 @delete:
-	; Write to var33 on ENEMYID_KING_MOBLIN to request the screen transition to begin
+	; Write to var33 on ENEMY_KING_MOBLIN to request the screen transition to begin
 	ld a,Object.var33
 	call objectGetRelatedObject1Var
 	ld (hl),$01

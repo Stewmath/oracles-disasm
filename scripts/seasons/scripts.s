@@ -1,16 +1,16 @@
 ; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
-; assembly code to get the full picture (run "git grep INTERACID_X" to search for its code).
+; assembly code to get the full picture (run "git grep INTERAC_X" to search for its code).
 
 .include "scripts/common/commonScripts.s"
 
 ; ==============================================================================
-; INTERACID_DUNGEON_SCRIPT
+; INTERAC_DUNGEON_SCRIPT
 ; ==============================================================================
 .include "scripts/seasons/dungeonScripts.s"
 
 
 ; ==============================================================================
-; INTERACID_GNARLED_KEYHOLE
+; INTERAC_GNARLED_KEYHOLE
 ; ==============================================================================
 gnarledKeyholeScript:
 	checkcfc0bit 0
@@ -25,7 +25,7 @@ gnarledKeyholeScript:
 
 
 ; ==============================================================================
-; INTERACID_MAKU_CUTSCENES
+; INTERAC_MAKU_CUTSCENES
 ; ==============================================================================
 makuTreeScript_remoteCutscene:
 	disableinput
@@ -37,7 +37,7 @@ makuTreeScript_remoteCutsceneDontSetRoomFlag:
 	asm15 hideStatusBar
 	asm15 scriptHelp.seasonsFunc_15_571a, $02
 	checkpalettefadedone
-	spawninteraction INTERACID_MAKU_LEAF, $00, $40, $50
+	spawninteraction INTERAC_MAKU_LEAF, $00, $40, $50
 	wait 240
 	wait 60
 	callscript script4e25
@@ -112,7 +112,7 @@ makuTreeScript_gateHit:
 	.dw @checkLinkHitGateWithSword
 	.dw @gateHit
 @gateHit:
-	giveitem ITEMID_SWORD, $03
+	giveitem ITEM_SWORD, $03
 	disableinput
 	wait 60
 	incstate
@@ -125,7 +125,7 @@ makuTreeScript_gateHit:
 	
 	
 ; ==============================================================================
-; INTERACID_SEASON_SPIRITS_SCRIPTS
+; INTERAC_SEASON_SPIRITS_SCRIPTS
 ; ==============================================================================
 seasonsSpiritsScript_enteringTempleArea:
 	loadscript scripts2.seasonsSpirits_enteringTempleCutscene
@@ -320,7 +320,7 @@ seasonsSpiritsScript_imbueSeason:
 
 
 ; ==============================================================================
-; INTERACID_MAYORS_HOUSE_NPC
+; INTERAC_MAYORS_HOUSE_NPC
 ; ==============================================================================
 mayorsScript:
 	initcollisions
@@ -398,7 +398,7 @@ mayorsHouseLadyScript:
 
 	
 ; ==============================================================================
-; INTERACID_MRS_RUUL
+; INTERAC_MRS_RUUL
 ; ==============================================================================
 mrsRuulScript:
 	initcollisions
@@ -433,7 +433,7 @@ mrsRuulScript:
 	
 
 ; ==============================================================================
-; INTERACID_MR_WRITE
+; INTERAC_MR_WRITE
 ; ==============================================================================
 mrWriteScript:
 	setcollisionradii $0a, $06
@@ -467,7 +467,7 @@ mrWriteScript:
 	
 	
 ; ==============================================================================
-; INTERACID_FICKLE_LADY
+; INTERAC_FICKLE_LADY
 ; ==============================================================================
 fickleLadyScript_text1:
 	rungenericnpc TX_1600
@@ -486,7 +486,7 @@ fickleLadyScript_text7:
 	
 	
 ; ==============================================================================
-; INTERACID_MALON
+; INTERAC_MALON
 ; ==============================================================================
 malonScript:
 	initcollisions
@@ -524,7 +524,7 @@ malonScript:
 	showtext TX_0b15
 	scriptjump @talonNotReturned
 @talonReturned:
-	spawninteraction INTERACID_TALON, $01, $68, $78
+	spawninteraction INTERAC_TALON, $01, $68, $78
 -
 	checkabutton
 	showtext TX_0b17
@@ -532,7 +532,7 @@ malonScript:
 	
 	
 ; ==============================================================================
-; INTERACID_BATHING_SUBROSIANS
+; INTERAC_BATHING_SUBROSIANS
 ; ==============================================================================
 bathingSubrosianScript_text1:
 	writeobjectbyte $5c, $01
@@ -553,7 +553,7 @@ bathingSubrosianScript_text3:
 	
 	
 ; ==============================================================================
-; INTERACID_MASTER_DIVERS_SON
+; INTERAC_MASTER_DIVERS_SON
 ; ==============================================================================
 masterDiversSonScript:
 	settextid TX_1903
@@ -602,7 +602,7 @@ masterDiversSonScript_gameFinished:
 	
 
 ; ==============================================================================
-; INTERACID_FICKLE_MAN
+; INTERAC_FICKLE_MAN
 ; ==============================================================================
 ficklManScript_text1:
 	rungenericnpc TX_0f00
@@ -628,7 +628,7 @@ ficklManScript_textA:
 	
 	
 ; ==============================================================================
-; INTERACID_DUNGEON_WISE_OLD_MAN
+; INTERAC_DUNGEON_WISE_OLD_MAN
 ; ==============================================================================
 dungeonWiseOldManScript:
 	initcollisions
@@ -640,7 +640,7 @@ dungeonWiseOldManScript:
 	
 
 ; ==============================================================================
-; INTERACID_TREASURE_HUNTER
+; INTERAC_TREASURE_HUNTER
 ; ==============================================================================
 treasureHunterScript_text1:
 	rungenericnpc TX_1b00
@@ -653,7 +653,7 @@ treasureHunterScript_text4:
 	
 	
 ; ==============================================================================
-; INTERACID_OLD_LADY_FARMER
+; INTERAC_OLD_LADY_FARMER
 ; ==============================================================================
 oldLadyFarmerScript_text1:
 	rungenericnpc TX_1200
@@ -692,7 +692,7 @@ oldLadyFarmerScript_text7:
 	
 
 ; ==============================================================================
-; INTERACID_FOUNTAIN_OLD_MAN
+; INTERAC_FOUNTAIN_OLD_MAN
 ; ==============================================================================
 fountainOldManScript_text1:
 	settextid TX_1000
@@ -743,7 +743,7 @@ fountainOldManScript_textA:
 	
 	
 ; ==============================================================================
-; INTERACID_TICK_TOCK
+; INTERAC_TICK_TOCK
 ; ==============================================================================
 tickTockScript:
 	setcollisionradii $0f, $06
@@ -779,14 +779,14 @@ tickTockScript:
 	
 	
 ; ==============================================================================
-; INTERACID_MITTENS
+; INTERAC_MITTENS
 ; ==============================================================================
 mittensScript:
 	rungenericnpclowindex <TX_0b34
 	
 	
 ; ==============================================================================
-; INTERACID_MITTENS_OWNER
+; INTERAC_MITTENS_OWNER
 ; ==============================================================================
 mittensOwnerScript:
 	initcollisions
@@ -812,7 +812,7 @@ mittensOwnerScript:
 @givingFish:
 	wait 30
 	writememory $cfde, $00
-	spawninteraction INTERACID_TRADE_ITEM, $06, $44, $68
+	spawninteraction INTERAC_TRADE_ITEM, $06, $44, $68
 	showtextlowindex <TX_0b33
 	ormemory $cceb, $01
 	showtextlowindex <TX_0b34
@@ -830,7 +830,7 @@ mittensOwnerScript:
 
 
 ; ==============================================================================
-; INTERACID_SOKRA
+; INTERAC_SOKRA
 ; ==============================================================================
 sokraScript_inVillage:
 	initcollisions
@@ -980,7 +980,7 @@ sokraScript_needSummerForD3:
 	
 
 ; ==============================================================================
-; INTERACID_BIPIN
+; INTERAC_BIPIN
 ; ==============================================================================
 
 ; Running around when baby just born
@@ -1040,7 +1040,7 @@ bipinScript3:
 
 
 ; ==============================================================================
-; INTERACID_S_BIRD
+; INTERAC_S_BIRD
 ; ==============================================================================
 knowItAllBirdScript:
 	setcollisionradii $08, $08
@@ -1079,7 +1079,7 @@ panickingBirdScript:
 
 
 ; ==============================================================================
-; INTERACID_BLOSSOM
+; INTERAC_BLOSSOM
 ; ==============================================================================
 
 ; Blossom asking you to name her child
@@ -1437,7 +1437,7 @@ blossomScript9:
 
 
 ; ==============================================================================
-; INTERACID_FICKLE_GIRL
+; INTERAC_FICKLE_GIRL
 ; ==============================================================================
 sunkenCityFickleGirlScript_text1:
 	rungenericnpc TX_1c00
@@ -1456,7 +1456,7 @@ sunkenCityFickleGirlScript_text3:
 
 
 ; ==============================================================================
-; INTERACID_S_SUBROSIAN
+; INTERAC_S_SUBROSIAN
 ; ==============================================================================
 subrosianScript_smelterByAutumnTemple:
 	stopifroomflag80set
@@ -1744,7 +1744,7 @@ linkedGameNpcScript:
 	
 
 ; ==============================================================================
-; INTERACID_S_SUBROSIAN (cont.)
+; INTERAC_S_SUBROSIAN (cont.)
 ; ==============================================================================
 subrosianScript_signsGuy:
 	initcollisions
@@ -1798,7 +1798,7 @@ subrosianScript_signsGuy:
 
 
 ; ==============================================================================
-; INTERACID_DATING_ROSA_EVENT
+; INTERAC_DATING_ROSA_EVENT
 ; ==============================================================================
 rosaScript_goOnDate:
 	initcollisions
@@ -1851,7 +1851,7 @@ rosaScript_dateEnded:
 
 
 ; ==============================================================================
-; INTERACID_SUBROSIAN_WITH_BUCKETS
+; INTERAC_SUBROSIAN_WITH_BUCKETS
 ; ==============================================================================
 bucketSubrosianScript_text1:
 	rungenericnpc TX_2706
@@ -1875,7 +1875,7 @@ bucketSubrosianScript_text6:
 
 
 ; ==============================================================================
-; INTERACID_CHILD
+; INTERAC_CHILD
 ; ==============================================================================
 
 ; For a summary of the child's behaviour, see:
@@ -2409,7 +2409,7 @@ childScript_stage9_singer:
 
 
 ; ==============================================================================
-; INTERACID_S_GORON
+; INTERAC_S_GORON
 ; ==============================================================================
 goronScript_pacingLeftAndRight:
 	initcollisions
@@ -2520,7 +2520,7 @@ goronScript_giveSubrosianSecret:
 	
 
 ; ==============================================================================
-; INTERACID_MISC_BOY_NPCS
+; INTERAC_MISC_BOY_NPCS
 ; ==============================================================================
 boyWithDogScript_text1:
 	rungenericnpc TX_1500
@@ -2635,8 +2635,8 @@ sunkenCityBoyScript_text4:
 
 
 ; ==============================================================================
-; INTERACID_PIRATIAN
-; INTERACID_PIRATIAN_CAPTAIN
+; INTERAC_PIRATIAN
+; INTERAC_PIRATIAN_CAPTAIN
 ; ==============================================================================
 piratianCaptainScript_inHouse:
 	initcollisions
@@ -2992,7 +2992,7 @@ piratianScript_jump:
 
 
 ; ==============================================================================
-; INTERACID_PIRATE_HOUSE_SUBROSIAN
+; INTERAC_PIRATE_HOUSE_SUBROSIAN
 ; ==============================================================================
 pirateHouseSubrosianScript_piratesAround:
 	rungenericnpc TX_3a10
@@ -3001,7 +3001,7 @@ pirateHouseSubrosianScript_piratesLeft:
 
 
 ; ==============================================================================
-; INTERACID_SYRUP
+; INTERAC_SYRUP
 ; ==============================================================================
 syrupScript_notTradedMushroomYet:
 	checkabutton
@@ -3034,9 +3034,9 @@ syrupScript_notTradedMushroomYet:
 	scriptjump -
 
 syrupScript_spawnShopItems:
-	spawninteraction INTERACID_SHOP_ITEM, $0b, $28, $44
-	spawninteraction INTERACID_SHOP_ITEM, $07, $28, $4c
-	spawninteraction INTERACID_SHOP_ITEM, $08, $28, $74
+	spawninteraction INTERAC_SHOP_ITEM, $0b, $28, $44
+	spawninteraction INTERAC_SHOP_ITEM, $07, $28, $4c
+	spawninteraction INTERAC_SHOP_ITEM, $08, $28, $74
 	scriptend
 
 syrupScript_showWelcomeText:
@@ -3129,7 +3129,7 @@ syrupScript_purchaseItem:
 
 
 ; ==============================================================================
-; INTERACID_S_ZELDA
+; INTERAC_S_ZELDA
 ; ==============================================================================
 zeldaScript_ganonBeat:
 	setcollisionradii $08, $04
@@ -3234,12 +3234,12 @@ zeldaScript_healLinkIfNeeded:
 
 
 ; ==============================================================================
-; INTERACID_TALON
+; INTERAC_TALON
 ; ==============================================================================
 caveTalonScript:
 	writememory $cfde, $00
 	writememory $cfdf, $00
-	spawninteraction INTERACID_TRADE_ITEM, $08, $68, $48
+	spawninteraction INTERAC_TRADE_ITEM, $08, $68, $48
 	initcollisions
 -
 	checkabutton
@@ -3269,7 +3269,7 @@ returnedTalonScript:
 
 
 ; ==============================================================================
-; INTERACID_SYRUP_CUCCO
+; INTERAC_SYRUP_CUCCO
 ; ==============================================================================
 syrupCuccoScript_awaitingMushroomText:
 	showtext TX_0b3d
@@ -3281,7 +3281,7 @@ syrupCuccoScript_triedToSteal:
 
 
 ; ==============================================================================
-; INTERACID_PIRATE_SKULL
+; INTERAC_PIRATE_SKULL
 ; ==============================================================================
 pirateSkullScript_notYetCarried:
 	initcollisions
@@ -3302,7 +3302,7 @@ pirateSkullScript_notYetCarried:
 	
 
 ; ==============================================================================
-; INTERACID_DIN_DANCING_EVENT
+; INTERAC_DIN_DANCING_EVENT
 ; ==============================================================================
 troupeScript1:
 	initcollisions
@@ -3406,7 +3406,7 @@ troupeScript_inHoronVillage:
 
 
 ; ==============================================================================
-; INTERACID_DIN_IMPRISONED_EVENT
+; INTERAC_DIN_IMPRISONED_EVENT
 ; ==============================================================================
 dinImprisonedScript_setDinCoords:
 	setcoords $53, $82
@@ -3427,7 +3427,7 @@ dinImprisonedScript_OnoxSaysComeIfYouDare:
 
 
 ; ==============================================================================
-; INTERACID_BIGGORON
+; INTERAC_BIGGORON
 ; ==============================================================================
 biggoronScript:
 	setcollisionradii $22, $20
@@ -3544,7 +3544,7 @@ biggoronScript:
 	
 	
 ; ==============================================================================
-; INTERACID_HEAD_SMELTER
+; INTERAC_HEAD_SMELTER
 ; ==============================================================================
 headSmelterAtTempleScript:
 	initcollisions
@@ -3643,7 +3643,7 @@ headSmelterScript_danceMovementText2:
 
 
 ; ==============================================================================
-; INTERACID_SUBROSIAN_AT_D8
+; INTERAC_SUBROSIAN_AT_D8
 ; ==============================================================================
 subrosianAtD8Script_tossItemIntoHole:
 	callscript @spin2win
@@ -3681,7 +3681,7 @@ subrosianAtD8Script:
 
 
 ; ==============================================================================
-; INTERACID_INGO
+; INTERAC_INGO
 ; ==============================================================================
 ingoScript_tradingVase:
 	initcollisions
@@ -3714,7 +3714,7 @@ ingoScript_tradingVase:
 	showtextlowindex <TX_0b2d
 	disableinput
 	giveitem TREASURE_TRADEITEM, $06
-	spawninteraction INTERACID_MISC_STATIC_OBJECTS, $09, $08, $58
+	spawninteraction INTERAC_MISC_STATIC_OBJECTS, $09, $08, $58
 	orroomflag $40
 	enableinput
 @tradedVase:
@@ -3770,7 +3770,7 @@ ingoScript_yahoo:
 
 
 ; ==============================================================================
-; INTERACID_GURU_GURU
+; INTERAC_GURU_GURU
 ; ==============================================================================
 guruGuruScript:
 	initcollisions
@@ -3821,7 +3821,7 @@ guruGuruScript:
 
 
 ; ==============================================================================
-; INTERACID_LOST_WOODS_SWORD
+; INTERAC_LOST_WOODS_SWORD
 ; ==============================================================================
 lostWoodsSwordScript:
 	setcollisionradii $0c, $06
@@ -3850,7 +3850,7 @@ lostWoodsSwordScript:
 
 
 ; ==============================================================================
-; INTERACID_BLAINO_SCRIPT
+; INTERAC_BLAINO_SCRIPT
 ; ==============================================================================
 blainoScript:
 	initcollisions
@@ -4013,7 +4013,7 @@ blainoFightDoneScript:
 
 
 ; ==============================================================================
-; INTERACID_LOST_WOODS_DEKU_SCRUB
+; INTERAC_LOST_WOODS_DEKU_SCRUB
 ; ==============================================================================
 lostWoodsDekuScrubScript:
 	setcollisionradii $20, $30
@@ -4051,7 +4051,7 @@ lostWoodsDekuScrubScript:
 
 
 ; ==============================================================================
-; INTERACID_LAVA_SOUP_SUBROSIAN
+; INTERAC_LAVA_SOUP_SUBROSIAN
 ; ==============================================================================
 lavaSoupSubrosianScript:
 	initcollisions
@@ -4082,7 +4082,7 @@ lavaSoupSubrosianScript:
 	
 	
 ; ==============================================================================
-; INTERACID_D8_ARMOS_PATTERN_PUZZLE
+; INTERAC_D8_ARMOS_PATTERN_PUZZLE
 ; ==============================================================================
 d8ArmosScript_pattern1:
 	setspeed SPEED_080
@@ -4182,7 +4182,7 @@ d8ArmosScript_giveKey:
 
 
 ; ==============================================================================
-; INTERACID_DANCE_HALL_MINIGAME
+; INTERAC_DANCE_HALL_MINIGAME
 ; ==============================================================================
 dancecLeaderScript_promptToStartDancing:
 	initcollisions
@@ -4240,7 +4240,7 @@ danceLeaderScript_showLoadedText:
 
 
 ; ==============================================================================
-; INTERACID_S_MISCELLANEOUS_1
+; INTERAC_S_MISCELLANEOUS_1
 ; ==============================================================================
 subrosianScript_templeFallenText:
 	rungenericnpc TX_3e03
@@ -4314,7 +4314,7 @@ floodgateKeyholeScript_keyEntered:
 	wait 60
 	writememory $d008, $01
 	orroomflag $80
-	spawninteraction INTERACID_S_MISCELLANEOUS_1, $14, $00, $00
+	spawninteraction INTERAC_S_MISCELLANEOUS_1, $14, $00, $00
 	incstate
 	scriptend
 
@@ -4360,7 +4360,7 @@ piratesBellRoomDroppingInScript:
 
 
 ; ==============================================================================
-; INTERACID_ROSA_HIDING
+; INTERAC_ROSA_HIDING
 ; ==============================================================================
 rosaHidingScript_1stScreen:
 	jumpifroomflagset $40, @seenRosaOnce
@@ -4455,7 +4455,7 @@ rosaHidingScript_lookRightDownUp:
 
 
 ; ==============================================================================
-; INTERACID_STRANGE_BROTHERS_HIDING
+; INTERAC_STRANGE_BROTHERS_HIDING
 ; ==============================================================================
 strangeBrother1Script_1stScreen:
 	jumptable_memoryaddress $cfd0
@@ -4717,7 +4717,7 @@ strangeBrother1Script_finishedScreen:
 	xorcfc0bit 0
 	movedown $50
 	resetmusic
-	spawninteraction INTERACID_S_MISCELLANEOUS_1, $16, $48, $28
+	spawninteraction INTERAC_S_MISCELLANEOUS_1, $16, $48, $28
 	asm15 scriptHelp.strangeBrothersFunc_15_5dc4
 	enableinput
 	scriptend
@@ -4825,7 +4825,7 @@ strangeBrotherScript_lookLeftRightUpDown:
 
 
 ; ==============================================================================
-; INTERACID_STEALING_FEATHER
+; INTERAC_STEALING_FEATHER
 ; ==============================================================================
 stealingFeatherScript:
 	setcollisionradii $12, $30
@@ -4853,7 +4853,7 @@ stealingFeatherScript:
 	
 	
 ; ==============================================================================
-; INTERACID_HOLLY
+; INTERAC_HOLLY
 ; ==============================================================================
 hollyScript_enteredFromChimney:
 	initcollisions
@@ -4884,7 +4884,7 @@ hollyScript_shovelGiven:
 
 
 ; ==============================================================================
-; INTERACID_S_COMPANION_SCRIPTS
+; INTERAC_S_COMPANION_SCRIPTS
 ; ==============================================================================
 companionScript_mooshInSpoolSwamp:
 	jumpifc6xxset <wMooshState, $02, @talkedToMooshAfterSavingHere
@@ -5141,7 +5141,7 @@ companionScript_mooshInMtCucco:
 
 
 ; ==============================================================================
-; INTERACID_ANIMAL_MOBLIN_BULLIES
+; INTERAC_ANIMAL_MOBLIN_BULLIES
 ; ==============================================================================
 moblinBulliesScript_dimitriBully1BeforeSaving:
 	writememory $ccab, $01
@@ -5383,9 +5383,9 @@ moblinBulliesScript_mooshBully1:
 	scriptend
 	
 moblinBulliesScript_spawnMoblins:
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $03, $88, $30
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $04, $88, $50
-	spawninteraction INTERACID_ANIMAL_MOBLIN_BULLIES, $05, $18, $b0
+	spawninteraction INTERAC_ANIMAL_MOBLIN_BULLIES, $03, $88, $30
+	spawninteraction INTERAC_ANIMAL_MOBLIN_BULLIES, $04, $88, $50
+	spawninteraction INTERAC_ANIMAL_MOBLIN_BULLIES, $05, $18, $b0
 	retscript
 
 moblinBulliesScript_mooshBully2:
@@ -5456,7 +5456,7 @@ moblinBulliesScript_spawnMoblin:
 	jumpifmemoryset $d13e, $80, +
 	scriptjump moblinBulliesScript_spawnMoblin
 +
-	spawnenemyhere ENEMYID_MASKED_MOBLIN, $00
+	spawnenemyhere ENEMY_MASKED_MOBLIN, $00
 	scriptend
 
 moblinBulliesScript_maskedMoblin2MovingUp:
@@ -5490,7 +5490,7 @@ script6f48:
 
 
 ; ==============================================================================
-; INTERACID_SUNKEN_CITY_BULLIES
+; INTERAC_SUNKEN_CITY_BULLIES
 ; ==============================================================================
 sunkenCityBulliesScript1_bully1:
 	makeabuttonsensitive
@@ -5647,7 +5647,7 @@ sunkenCityBulliesScript3_bully3:
 
 
 ; ==============================================================================
-; INTERACID_FICKLE_OLD_MAN
+; INTERAC_FICKLE_OLD_MAN
 ; ==============================================================================
 fickleOldManScript_text1:
 	rungenericnpc TX_1100
@@ -5664,7 +5664,7 @@ fickleOldManScript_text6:
 
 
 ; ==============================================================================
-; INTERACID_SUBROSIAN_SHOP
+; INTERAC_SUBROSIAN_SHOP
 ; ==============================================================================
 subrosianShopScript_ribbon:
 	showtextnonexitable TX_2b00
@@ -5776,7 +5776,7 @@ script7102:
 
 
 ; ==============================================================================
-; INTERACID_MAKU_TREE
+; INTERAC_MAKU_TREE
 ; ==============================================================================
 script710b:
 	jumptable_memoryaddress wIsLinkedGame
@@ -5978,9 +5978,9 @@ script729c:
 
 
 ; ==============================================================================
-; INTERACID_FLOODED_HOUSE_GIRL
-; INTERACID_MASTER_DIVERS_WIFE
-; INTERACID_S_MASTER_DIVER
+; INTERAC_FLOODED_HOUSE_GIRL
+; INTERAC_MASTER_DIVERS_WIFE
+; INTERAC_S_MASTER_DIVER
 ; ==============================================================================
 floodedHouseGirlScript_text1:
 	initcollisions
@@ -6070,7 +6070,7 @@ masterDiverScript_text5:
 
 
 ; ==============================================================================
-; INTERACID_OLD_MAN_WITH_JEWEL
+; INTERAC_OLD_MAN_WITH_JEWEL
 ; ==============================================================================
 
 oldManWithJewelScript:
@@ -6100,7 +6100,7 @@ oldManWithJewelScript:
 
 
 ; ==============================================================================
-; INTERACID_JEWEL_HELPER
+; INTERAC_JEWEL_HELPER
 ; ==============================================================================
 
 jewelHelperScript_insertedJewel:
@@ -6181,7 +6181,7 @@ jewelHelperScript_stub:
 
 
 ; ==============================================================================
-; INTERACID_KING_MOBLIN
+; INTERAC_KING_MOBLIN
 ; ==============================================================================
 script73ab:
 	setcollisionradii $11, $0e
@@ -6234,7 +6234,7 @@ script73d8:
 
 
 ; ==============================================================================
-; INTERACID_S_MOBLIN
+; INTERAC_S_MOBLIN
 ; ==============================================================================
 script73f3:
 	rungenericnpc TX_3800
@@ -6319,7 +6319,7 @@ script7469:
 
 
 ; ==============================================================================
-; INTERACID_S_OLD_MAN_WITH_RUPEES
+; INTERAC_S_OLD_MAN_WITH_RUPEES
 ; ==============================================================================
 oldManScript_givesRupees:
 	initcollisions
@@ -6364,7 +6364,7 @@ oldManScript_takesRupees:
 
 
 ; ==============================================================================
-; INTERACID_IMPA
+; INTERAC_IMPA
 ; ==============================================================================
 impaScript_afterOnoxTakesDin:
 	initcollisions
@@ -6476,7 +6476,7 @@ impaScript_afterZeldaKidnapped:
 	
 
 ; ==============================================================================
-; INTERACID_SAMASA_DESERT_GATE
+; INTERAC_SAMASA_DESERT_GATE
 ; ==============================================================================
 script7556:
 	playsound SND_RUMBLE2
@@ -6507,7 +6507,7 @@ samasaDesertGateScript_createNext7Puffs:
 
 
 ; ==============================================================================
-; INTERACID_SUBROSIAN_SMITHY
+; INTERAC_SUBROSIAN_SMITHY
 ; ==============================================================================
 subrosianSmithyScript:
 	setcollisionradii $12, $06
@@ -6677,7 +6677,7 @@ smithyScript_smithingDone:
 	
 
 ; ==============================================================================
-; INTERACID_S_DIN
+; INTERAC_S_DIN
 ; ==============================================================================
 dinScript_subid2Init:
 	loadscript scripts2.dinScript_subid2Init_body
@@ -6764,7 +6764,7 @@ script76dc:
 
 
 ; ==============================================================================
-; INTERACID_MOBLIN_KEEP_SCENES
+; INTERAC_MOBLIN_KEEP_SCENES
 ; ==============================================================================
 moblinKeepSceneScript_linkSeenOnRightSide:
 	setcoords $40, $70
@@ -6867,8 +6867,8 @@ script779e:
 
 
 ; ==============================================================================
-; INTERACID_SHIP_PIRATIAN
-; INTERACID_SHIP_PIRATIAN_CAPTAIN
+; INTERAC_SHIP_PIRATIAN
+; INTERAC_SHIP_PIRATIAN_CAPTAIN
 ; ==============================================================================
 pirateShipLoop:
 	wait 30
@@ -6878,7 +6878,7 @@ shipPirationScript_piratianComingDownHandler:
 	setstate $03
 	setdisabledobjectsto11
 	wait 240
-	spawninteraction INTERACID_SHIP_PIRATIAN, $02, $98, $78
+	spawninteraction INTERAC_SHIP_PIRATIAN, $02, $98, $78
 	checkcfc0bit 0
 	xorcfc0bit 0
 	wait 240
@@ -6959,7 +6959,7 @@ shipPiratianScript_dizzyPirate1Spawner:
 	setdisabledobjectsto11
 	wait 180
 	setmusic MUS_PIRATES
-	spawninteraction INTERACID_SHIP_PIRATIAN, $0a, $98, $78
+	spawninteraction INTERAC_SHIP_PIRATIAN, $0a, $98, $78
 	checkcfc0bit 7
 	wait 30
 	showtextlowindex <TX_4e11
@@ -6992,7 +6992,7 @@ shipPiratianScript_1stDizzyPirateDescending:
 	writememory $d008, $00
 	wait 30
 	showtextlowindex <TX_4e0b
-	spawninteraction INTERACID_SHIP_PIRATIAN, $0b, $98, $78
+	spawninteraction INTERAC_SHIP_PIRATIAN, $0b, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump pirateShipLoop
@@ -7026,7 +7026,7 @@ shipPirationScript_2ndDizzyPirateDescending:
 	writememory $d008, $00
 	wait 30
 	showtextlowindex <TX_4e0d
-	spawninteraction INTERACID_SHIP_PIRATIAN, $0c, $98, $78
+	spawninteraction INTERAC_SHIP_PIRATIAN, $0c, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump pirateShipLoop
@@ -7051,7 +7051,7 @@ shipPirationScript_3rdDizzyPirateDescending:
 	wait 30
 	writememory $d008, $03
 	showtextlowindex <TX_4e0f
-	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN, $01, $98, $78
+	spawninteraction INTERAC_SHIP_PIRATIAN_CAPTAIN, $01, $98, $78
 	checkcfc0bit 7
 	setzspeed -$01c0
 	scriptjump pirateShipLoop
@@ -7164,7 +7164,7 @@ shipPiratianCaptainScript_arrivingInWestCoast:
 	wait 60
 	showtextlowindex <TX_4e12
 	wait 60
-	spawninteraction INTERACID_SHIP_PIRATIAN_CAPTAIN, $03, $68, $68
+	spawninteraction INTERAC_SHIP_PIRATIAN_CAPTAIN, $03, $68, $68
 	orroomflag $40
 	scriptend
 @arrived:
@@ -7187,7 +7187,7 @@ shipPiratianCaptainScript_inWestCoast:
 
 
 ; ==============================================================================
-; INTERACID_LINKED_CUTSCENE
+; INTERAC_LINKED_CUTSCENE
 ; ==============================================================================
 linkedCutsceneScript_witches1:
 	checkflagset $00, wScrollMode
@@ -7278,7 +7278,7 @@ linkedCutsceneScript_flamesOfDestruction:
 
 
 ; ==============================================================================
-; INTERACID_S_AMBI
+; INTERAC_S_AMBI
 ; ==============================================================================
 ambiScript_mrsRuulsHouse:
 	initcollisions
@@ -7346,7 +7346,7 @@ script7a81:
 	
 	
 ; ==============================================================================
-; INTERACID_ba
+; INTERAC_ba
 ; ==============================================================================
 zeldaNPCScript_stub:
 	scriptend
@@ -7384,9 +7384,9 @@ zeldaNPCScript_ba_subid3:
 	
 	
 ; ==============================================================================
-; INTERACID_bc
-; INTERACID_bd
-; INTERACID_be
+; INTERAC_bc
+; INTERAC_bd
+; INTERAC_be
 ; ==============================================================================
 zeldaNPCScript_bc_subid1:
 	settextid TX_0601
@@ -7423,7 +7423,7 @@ zeldaNPCScript_be_subid2:
 	
 	
 ; ==============================================================================
-; INTERACID_MAYORS_HOUSE_UNLINKED_GIRL
+; INTERAC_MAYORS_HOUSE_UNLINKED_GIRL
 ; ==============================================================================
 mayorsHouseGirlScript:
 	initcollisions
@@ -7439,21 +7439,21 @@ mayorsHouseGirlScript:
 
 
 ; ==============================================================================
-; INTERACID_ZELDA_KIDNAPPED_ROOM
+; INTERAC_ZELDA_KIDNAPPED_ROOM
 ; ==============================================================================
 ZeldaBeingKidnappedScript:
 	loadscript scripts2.ZeldaBeingKidnappedEvent_body
 
 
 ; ==============================================================================
-; INTERACID_BOOMERANG_SUBROSIAN
+; INTERAC_BOOMERANG_SUBROSIAN
 ; ==============================================================================
 boomerangSubrosianScript:
 	rungenericnpc TX_3e18
 
 
 ; ==============================================================================
-; INTERACID_TROY
+; INTERAC_TROY
 ; ==============================================================================
 troyScript_beginningSecret:
 	initcollisions
@@ -7628,7 +7628,7 @@ troyScript_doneSecret:
 
 
 ; ==============================================================================
-; INTERACID_S_LINKED_GAME_GHINI
+; INTERAC_S_LINKED_GAME_GHINI
 ; ==============================================================================
 linkedGhiniScript_beginningSecret:
 	initcollisions
@@ -7727,7 +7727,7 @@ linkedGhiniScript_startRound:
 	wait 30
 	giveitem TREASURE_HEART_CONTAINER, $02
 	wait 60
-	spawninteraction INTERACID_PUFF, $00, $68, $18
+	spawninteraction INTERAC_PUFF, $00, $68, $18
 	wait 4
 	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	setcounter1 $2d
@@ -7750,7 +7750,7 @@ linkedGhiniScript_startRound:
 	playsound SND_ERROR
 	showtextlowindex <TX_4c18
 	jumpiftextoptioneq $00, linkedGhiniScript_begunSecret@startGame
-	spawninteraction INTERACID_PUFF, $00, $68, $18
+	spawninteraction INTERAC_PUFF, $00, $68, $18
 	wait 4
 	settileat $61, TILEINDEX_INDOOR_UPSTAIRCASE
 	wait 15
@@ -7763,7 +7763,7 @@ linkedGhiniScript_doneSecret:
 
 
 ; ==============================================================================
-; INTERACID_GOLDEN_CAVE_SUBROSIAN
+; INTERAC_GOLDEN_CAVE_SUBROSIAN
 ; ==============================================================================
 goldenCaveSubrosianScript_beginningSecret:
 	initcollisions
@@ -7916,7 +7916,7 @@ goldenCaveSubrosianScript_givenSecret:
 	
 	
 ; ==============================================================================
-; INTERACID_LINKED_MASTER_DIVER
+; INTERAC_LINKED_MASTER_DIVER
 ; ==============================================================================
 masterDiverScript_beginningSecret:
 	initcollisions
@@ -7969,7 +7969,7 @@ masterDiverScript_begunSecret:
 	jumpiftextoptioneq $00, @startingChallenge
 	scriptjump -
 @startingChallenge:
-	spawninteraction INTERACID_PUFF, $00, $58, $88
+	spawninteraction INTERAC_PUFF, $00, $58, $88
 	wait 4
 	settileat $58, TILEINDEX_INDOOR_DOWNSTAIRCASE
 	setcounter1 $2d
@@ -8052,7 +8052,7 @@ masterDiverScript_spawnFakeStarOre:
 	
 	
 ; ==============================================================================
-; INTERACID_S_GREAT_FAIRY
+; INTERAC_S_GREAT_FAIRY
 ; Temple fairy that awaits a secret
 ; ==============================================================================
 templeGreatFairyScript_beginningSecret:
@@ -8091,7 +8091,7 @@ templeGreatFairyScript_doneSecret:
 
 
 ; ==============================================================================
-; INTERACID_DEKU_SCRUB
+; INTERAC_DEKU_SCRUB
 ; ==============================================================================
 dekuScrubScript_notFinishedGame:
 	initcollisions
@@ -8178,7 +8178,7 @@ dekuScrubScript_gaveSecret:
 
 
 ; ==============================================================================
-; INTERACID_GOLDEN_BEAST_OLD_MAN
+; INTERAC_GOLDEN_BEAST_OLD_MAN
 ; ==============================================================================
 goldenBeastOldManScript:
 	initcollisions
@@ -8205,7 +8205,7 @@ goldenBeastOldManScript:
 
 
 ; ==============================================================================
-; INTERACID_S_VIRE
+; INTERAC_S_VIRE
 ; ==============================================================================
 vireScript:
 	wait 30
@@ -8217,7 +8217,7 @@ vireScript:
 
 
 ; ==============================================================================
-; INTERACID_LINKED_HEROS_CAVE_OLD_MAN
+; INTERAC_LINKED_HEROS_CAVE_OLD_MAN
 ; ==============================================================================
 linkedHerosCaveOldManScript:
 	initcollisions
@@ -8254,7 +8254,7 @@ linkedHerosCaveOldManScript:
 
 
 ; ==============================================================================
-; INTERACID_GET_ROD_OF_SEASONS
+; INTERAC_GET_ROD_OF_SEASONS
 ; ==============================================================================
 gettingRodOfSeasonsScript:
 	loadscript scripts2.gettingRodOfSeasons_body

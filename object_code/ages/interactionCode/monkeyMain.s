@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MONKEY
+; INTERAC_MONKEY
 ;
 ; Variables:
 ;   var38/39: Copied to speedZ?
@@ -107,7 +107,7 @@ interactionCode39_body:
 	call getFreeInteractionSlot
 	jr nz,@doneSpawning
 
-	ld (hl),INTERACID_MONKEY
+	ld (hl),INTERAC_MONKEY
 	inc l
 	ld e,Interaction.subid
 	ld a,(de)
@@ -227,7 +227,7 @@ interactionCode39_body:
 	; Create a bowtie
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_ACCESSORY
+	ld (hl),INTERAC_ACCESSORY
 	inc l
 	ld (hl),$3d
 	inc l

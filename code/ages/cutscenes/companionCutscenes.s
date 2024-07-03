@@ -2,7 +2,7 @@
 specialObjectCode_companionCutscene:
 	ld hl,w1Companion.id
 	ld a,(hl)
-	sub SPECIALOBJECTID_RICKY_CUTSCENE
+	sub SPECIALOBJECT_RICKY_CUTSCENE
 	rst_jumpTable
 	.dw specialObjectCode_rickyCutscene
 	.dw specialObjectCode_dimitriCutscene
@@ -259,7 +259,7 @@ specialObjectCode_mooshCutscene:
 
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_BANANA
+	ld (hl),INTERAC_BANANA
 	ld l,Interaction.relatedObj1+1
 	ld (hl),d
 +
@@ -338,7 +338,7 @@ specialObjectCode_mooshCutscene:
 	ld b,$3f
 	call clearMemory
 	ld hl,w1Companion.id
-	ld (hl),SPECIALOBJECTID_DIMITRI_CUTSCENE
+	ld (hl),SPECIALOBJECT_DIMITRI_CUTSCENE
 	ld l,SpecialObject.yh
 	ld (hl),$e8
 	inc l
@@ -496,7 +496,7 @@ specialObjectCode_dimitriCutscene:
 	ld b,$3f
 	call clearMemory
 	ld hl,w1Companion.id
-	ld (hl),SPECIALOBJECTID_RICKY_CUTSCENE
+	ld (hl),SPECIALOBJECT_RICKY_CUTSCENE
 	inc l
 	ld (hl),$01
 	ld l,SpecialObject.yh

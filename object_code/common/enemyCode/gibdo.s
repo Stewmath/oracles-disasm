@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_GIBDO
+; ENEMY_GIBDO
 ; ==============================================================================
 enemyCode12:
 	; a = ENEMY_STATUS
@@ -102,7 +102,7 @@ enemyCode12:
 @stateA:
 	call ecom_decCounter1
 	ret nz
-	ldbc ENEMYID_STALFOS,$02
+	ldbc ENEMY_STALFOS,$02
 	jp enemyReplaceWithID
 
 

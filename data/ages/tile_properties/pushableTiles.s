@@ -1,4 +1,4 @@
-; Table defining properties of pushable tiles, used by INTERACID_PUSHBLOCK.
+; Table defining properties of pushable tiles, used by INTERAC_PUSHBLOCK.
 ;
 ; Does not make tiles pushable by itself. See data/{game}/tile_properties/interactableTiles.s for where
 ; that happens.

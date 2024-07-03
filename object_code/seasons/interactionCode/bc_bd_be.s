@@ -129,7 +129,7 @@ table_78a9:
 func_78b3:
 	call getFreeInteractionSlot ; $78b3
 	ret nz
-	ld (hl),INTERACID_D1_RISING_STONES
+	ld (hl),INTERAC_D1_RISING_STONES
 	inc l
 	ld (hl),$02
 	ld l,$46
@@ -139,7 +139,7 @@ func_78b3:
 func_78c3:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl)
 	jp objectCopyPosition

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_KING_MOBLIN
+; INTERAC_KING_MOBLIN
 ; ==============================================================================
 interactionCode95:
 	ld e,$44
@@ -50,7 +50,7 @@ interactionCode95:
 	call interactionSetScript
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_MOBLIN
+	ld (hl),INTERAC_MOBLIN
 	inc l
 	ld (hl),$01
 	ld e,$57
@@ -143,7 +143,7 @@ interactionCode95:
 @@@func_5517:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_97
+	ld (hl),INTERAC_97
 	ld bc,$0c02
 	call objectCopyPositionWithOffset
 	ld e,$57

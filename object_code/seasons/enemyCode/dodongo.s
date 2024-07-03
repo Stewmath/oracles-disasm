@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_DODONGO
+; ENEMY_DODONGO
 ;
 ; Variables:
 ;   var30: Animation base?
@@ -37,7 +37,7 @@ dodongo_state_uninitialized:
 	call enemyBoss_spawnShadow
 	ret nz
 
-	ld a,ENEMYID_DODONGO
+	ld a,ENEMY_DODONGO
 	ld b,PALH_SEASONS_81
 	call enemyBoss_initializeRoom
 
@@ -278,7 +278,7 @@ dodongo_stateB:
 	ld (de),a ; [animParameter] = 0
 
 	; Fire projectile
-	ld b,PARTID_DODONGO_FIREBALL
+	ld b,PART_DODONGO_FIREBALL
 	call ecom_spawnProjectile
 
 	ld a,SND_BEAM2
@@ -492,14 +492,14 @@ dodongo_updateAnimationWhileSlimmingDown:
 ;;
 dodongo_checkEatBomb:
 	; Check bomb 1
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID
 	jr nz,@animate
 	call @checkBombInRangeToEat
 	jr z,@eatBomb
 
 	; Check bomb 2
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID_startingAfterH
 	jr nz,@animate
 	call @checkBombInRangeToEat

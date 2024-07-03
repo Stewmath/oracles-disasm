@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_PLASMARINE
+; ENEMY_PLASMARINE
 ;
 ; Variables:
 ;   counter2: Number of times to do shock attack before firing projectiles
@@ -67,7 +67,7 @@ plasmarine_state_uninitialized:
 	ld (wMenuDisabled),a
 	ld (wDisabledObjects),a
 
-	ld a,ENEMYID_PLASMARINE
+	ld a,ENEMY_PLASMARINE
 	ld b,$00
 	call enemyBoss_initializeRoom
 	jp objectSetVisible83
@@ -339,7 +339,7 @@ plasmarine_stateE:
 
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_PLASMARINE_PROJECTILE
+	ld (hl),PART_PLASMARINE_PROJECTILE
 	inc l
 	ld e,Enemy.oamFlags
 	ld a,(de)

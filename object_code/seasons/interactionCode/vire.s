@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_S_VIRE
+; INTERAC_S_VIRE
 ; ==============================================================================
 interactionCodee3:
 	ld e,$44
@@ -73,7 +73,7 @@ interactionCodee3:
 @substate3:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_JEWEL_HELPER
+	ld (hl),INTERAC_JEWEL_HELPER
 	inc l
 	ld (hl),$07
 	ld l,$4b
@@ -82,7 +82,7 @@ interactionCodee3:
 	ld (hl),$78
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld a,$78
 	ld l,$4b
 	ldi (hl),a

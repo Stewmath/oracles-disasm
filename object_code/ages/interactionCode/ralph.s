@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_RALPH
+; INTERAC_RALPH
 ;
 ; Variables:
 ;   var3f: for some subids, ralph's animations only updates when this is 0.
@@ -765,7 +765,7 @@ ralphSubid0a:
 	; Create an exclamation mark above Link
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXCLAMATION_MARK
+	ld (hl),INTERAC_EXCLAMATION_MARK
 	ld l,Interaction.counter1
 	ld (hl),$1e
 	ld l,Interaction.yh
@@ -928,7 +928,7 @@ ralphSubid10:
 	call getFreeInteractionSlot
 	jr nz,ralphRunScriptWithConditionalAnimation
 
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	inc l
 	ld (hl),$81
 	ld bc,$0804

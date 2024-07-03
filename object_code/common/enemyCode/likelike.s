@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_LIKE_LIKE
+; ENEMY_LIKE_LIKE
 ;
 ; Variables:
 ;   relatedObj1: Pointer to the like-like spawner (subid 1), if one exists.
@@ -467,7 +467,7 @@ likelike_subid03:
 ;
 ; @param	e	Subid of like-like to spwan
 likelike_spawn:
-	ld b,ENEMYID_LIKE_LIKE
+	ld b,ENEMY_LIKE_LIKE
 	call ecom_spawnEnemyWithSubid01
 	ret nz
 	ld (hl),e
@@ -510,7 +510,7 @@ likelike_findAllLikelikesWithSubid0:
 @nextEnemy:
 	; Find like-like with subid 0
 	ld a,(hl)
-	cp ENEMYID_LIKE_LIKE
+	cp ENEMY_LIKE_LIKE
 	jr nz,++
 	inc l
 	ldd a,(hl)

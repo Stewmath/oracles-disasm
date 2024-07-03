@@ -1,9 +1,9 @@
 ; ==============================================================================
-; PARTID_BLUE_STALFOS_PROJECTILE
+; PART_BLUE_STALFOS_PROJECTILE
 ;
 ; Variables:
 ;   var03: 0 for reflectable ball type, 1 otherwise
-;   relatedObj1: Instance of ENEMYID_BLUE_STALFOS
+;   relatedObj1: Instance of ENEMY_BLUE_STALFOS
 ; ==============================================================================
 partCode3d:
 	jr z,@normalStatus
@@ -287,13 +287,13 @@ blueStalfosProjectile_explode:
 	ld c,$06
 @next:
 	call getFreePartSlot
-	ld (hl),PARTID_BLUE_STALFOS_PROJECTILE
+	ld (hl),PART_BLUE_STALFOS_PROJECTILE
 	inc l
 	inc (hl) ; [subid] = 1
 
 	call objectCopyPosition
 
-	; Copy ENEMYID_BLUE_STALFOS reference to new projectile
+	; Copy ENEMY_BLUE_STALFOS reference to new projectile
 	ld l,Part.relatedObj1
 	ld e,l
 	ld a,(de)

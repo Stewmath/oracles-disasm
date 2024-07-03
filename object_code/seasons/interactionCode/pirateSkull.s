@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_PIRATE_SKULL
+; INTERAC_PIRATE_SKULL
 ; ==============================================================================
 interactionCode4d:
 	ld e,$42
@@ -20,7 +20,7 @@ interactionCode4d:
 	ld a,GLOBALFLAG_TALKED_WITH_GHOST_PIRATE
 	call checkGlobalFlag
 	jp z,interactionDelete
-	ld c,INTERACID_PIRATE_SKULL
+	ld c,INTERAC_PIRATE_SKULL
 	call objectFindSameTypeObjectWithID
 	jr nz,+
 	; delete if carrying the skull

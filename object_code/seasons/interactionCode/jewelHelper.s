@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_JEWEL_HELPER
+; INTERAC_JEWEL_HELPER
 ; ==============================================================================
 interactionCode90:
 	ld e,Interaction.state
@@ -67,7 +67,7 @@ interactionCode90:
 @label_0a_131:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTABLE_TORCH
+	ld (hl),PART_LIGHTABLE_TORCH
 	ld l,$cb
 	ld (hl),$78
 	ld l,$cd
@@ -304,7 +304,7 @@ interactionCode90:
 @@substate1:
 	call interactionDecCounter1
 	ret nz
-	ldbc INTERACID_PUFF $80
+	ldbc INTERAC_PUFF $80
 	call objectCreateInteraction
 	ret nz
 	ld l,$4b
@@ -410,7 +410,7 @@ interactionCode90:
 @spawnJewelGraphic:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_JEWEL
+	ld (hl),INTERAC_JEWEL
 	inc l
 	ld (hl),c
 	ret
@@ -425,7 +425,7 @@ interactionCode90:
 	ldh (<hFF8B),a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	ld a,(bc)
 	ld (hl),a

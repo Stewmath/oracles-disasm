@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_WALLMASTER
+; ENEMY_WALLMASTER
 ;
 ; Variables:
 ;   relatedObj1: For actual wallmaster (subid 1): reference to spawner.
@@ -121,7 +121,7 @@ wallmaster_state1:
 	ret nz
 
 	push bc
-	ld b,ENEMYID_WALLMASTER
+	ld b,ENEMY_WALLMASTER
 	call ecom_spawnUncountedEnemyWithSubid01
 	pop bc
 	ret nz
@@ -168,7 +168,7 @@ wallmaster_state8:
 	inc (hl) ; [state]++
 
 	ld l,Enemy.collisionType
-	ld (hl),$80|ENEMYID_FLOORMASTER
+	ld (hl),$80|ENEMY_FLOORMASTER
 
 	; Copy Link's position, set high Z position
 	ld l,Enemy.zh
@@ -235,7 +235,7 @@ wallmaster_stateA:
 	ld l,Enemy.collisionType
 	ld a,(hl)
 	and $80
-	or ENEMYID_WALLMASTER
+	or ENEMY_WALLMASTER
 	ld (hl),a
 ++
 	ld l,Enemy.var30

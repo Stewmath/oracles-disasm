@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_DARK_ROOM_HANDLER
+; PART_DARK_ROOM_HANDLER
 ;
 ; Variables:
 ;   counter1: Number of lightable torches in the room
@@ -55,7 +55,7 @@ partCode08:
 	ld c,l
 	call getFreePartSlot
 	jr nz,+++
-	ld (hl),PARTID_LIGHTABLE_TORCH
+	ld (hl),PART_LIGHTABLE_TORCH
 	inc l
 	ld e,l
 	ld a,(de)

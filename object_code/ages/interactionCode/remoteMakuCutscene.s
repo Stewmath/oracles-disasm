@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_REMOTE_MAKU_CUTSCENE
+; INTERAC_REMOTE_MAKU_CUTSCENE
 ;
 ; Variables:
 ;   var3e: Doesn't do anything

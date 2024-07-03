@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_WALL_ARROW_SHOOTER
+; PART_WALL_ARROW_SHOOTER
 ; ==============================================================================
 partCode25:
 	ld e,$c4
@@ -46,7 +46,7 @@ partCode25:
 	ld c,(hl)
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_ENEMY_ARROW
+	ld (hl),PART_ENEMY_ARROW
 	inc l
 	inc (hl)
 	call objectCopyPositionWithOffset

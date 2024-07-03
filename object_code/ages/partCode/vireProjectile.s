@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_VIRE_PROJECTILE
+; PART_VIRE_PROJECTILE
 ; ==============================================================================
 partCode3a:
 	jr z,+	 
@@ -58,7 +58,7 @@ partCode3a:
 ; @param	e	subid of new part
 @func_6d22:
 	call getFreePartSlot
-	ld (hl),PARTID_VIRE_PROJECTILE
+	ld (hl),PART_VIRE_PROJECTILE
 	inc l
 	ld (hl),e
 	inc l
@@ -142,7 +142,7 @@ partCode3a:
 	add $02
 	cp $05
 	jr nc,@func_6dba
-	ldbc INTERACID_PUFF $02
+	ldbc INTERAC_PUFF $02
 	call objectCreateInteraction
 	ret nz
 	ld e,$d8

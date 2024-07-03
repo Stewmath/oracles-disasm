@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_FIREBALL_SHOOTER
+; ENEMY_FIREBALL_SHOOTER
 ; ==============================================================================
 enemyCode50:
 	dec a
@@ -55,7 +55,7 @@ fireballShooter_state1:
 	push hl
 	ld c,l
 	dec c
-	ld b,ENEMYID_FIREBALL_SHOOTER
+	ld b,ENEMY_FIREBALL_SHOOTER
 	call ecom_spawnUncountedEnemyWithSubid01
 	jr nz,@delete
 
@@ -129,7 +129,7 @@ fireballShooter_state9:
 	call ecom_decCounter1
 	ret nz
 
-	ld b,PARTID_GOPONGA_PROJECTILE
+	ld b,PART_GOPONGA_PROJECTILE
 	call ecom_spawnProjectile
 
 	; Random cooldown between $c0-$c7

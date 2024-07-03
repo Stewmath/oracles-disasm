@@ -1,6 +1,6 @@
 m_section_free TreasureObjectData NAMESPACE treasureData
 
-; Treasure objects are a kind of Interaction (INTERACID_TREASURE). Each "Treasure Object" contains
+; Treasure objects are a kind of Interaction (INTERAC_TREASURE). Each "Treasure Object" contains
 ; the information necessary to display a specific treasure (see "constants/treasure.s") and give it
 ; to Link. Many treasures need a "parameter" to go with them (ie. level, amount). All of this "extra
 ; data" is defined here.

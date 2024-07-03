@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_BLUE_ENERGY_BEAD
+; PART_BLUE_ENERGY_BEAD
 ; Used by "createEnergySwirl" functions
 ; ==============================================================================
 partCode53:
@@ -93,7 +93,7 @@ createEnergySwirlGoingIn_body:
 	jr nz,@end
 
 	; Part.id
-	ld (hl),PARTID_BLUE_ENERGY_BEAD
+	ld (hl),PART_BLUE_ENERGY_BEAD
 
 	; Set duration
 	ld l,Part.counter1

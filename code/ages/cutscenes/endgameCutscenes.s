@@ -142,7 +142,7 @@ endgameCutsceneHandler_09_stage0:
 	ret nz
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION_WITH_DEBRIS
+	ld (hl),INTERAC_EXPLOSION_WITH_DEBRIS
 	inc l
 	inc l
 	inc (hl) ; [var03] = $01
@@ -885,12 +885,12 @@ endgameCutsceneHandler_20:
 	ldh (<hDirtyBgPalettes),a
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_NAYRU
+	ld (hl),INTERAC_NAYRU
 	inc l
 	ld (hl),$12
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_DIN
+	ld (hl),INTERAC_DIN
 	inc l
 	ld (hl),$02
 +
@@ -1170,12 +1170,12 @@ endgameCutsceneHandler_0f:
 @@func_5cb0:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_ROOM_OF_RITES_FALLING_BOULDER
+	ld (hl),PART_ROOM_OF_RITES_FALLING_BOULDER
 	ret
 @@func_5cb7:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_CONFETTI
+	ld (hl),INTERAC_MAKU_CONFETTI
 	ret
 
 @state1:
@@ -1542,7 +1542,7 @@ endgameCutsceneHandler_0a:
 	call incCbc2
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CREDITS_TEXT_HORIZONTAL
+	ld (hl),INTERAC_CREDITS_TEXT_HORIZONTAL
 	inc l
 	ld a,($cfde)
 	ldi (hl),a

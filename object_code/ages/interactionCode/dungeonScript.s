@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DUNGEON_SCRIPT
+; INTERAC_DUNGEON_SCRIPT
 ; ==============================================================================
 interactionCode20:
 	call interactionDeleteAndRetIfEnabled02

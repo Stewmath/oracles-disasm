@@ -117,7 +117,7 @@ partCode3e:
 	ld (de),a
 	ret
 @substate3:
-	ld b,INTERACID_SNOWDEBRIS
+	ld b,INTERAC_SNOWDEBRIS
 	call objectCreateInteractionWithSubid00
 	ret nz
 	jp partDelete
@@ -166,7 +166,7 @@ func_6e13:
 	ret nc
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_3d
+	ld (hl),PART_3d
 	inc l
 	ld e,l
 	ld a,(de)

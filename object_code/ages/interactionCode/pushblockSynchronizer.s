@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_PUSHBLOCK_SYNCHRONIZER
+; INTERAC_PUSHBLOCK_SYNCHRONIZER
 ; ==============================================================================
 interactionCodebd:
 	ld e,Interaction.state
@@ -63,7 +63,7 @@ interactionCodebd:
 	call getFreeInteractionSlot
 	jr nz,@return
 
-	ld (hl),INTERACID_PUSHBLOCK
+	ld (hl),INTERAC_PUSHBLOCK
 	ld l,Interaction.angle
 	ld e,l
 	ld a,(de)

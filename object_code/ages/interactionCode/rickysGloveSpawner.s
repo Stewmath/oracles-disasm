@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_RICKYS_GLOVE_SPAWNER
+; INTERAC_RICKYS_GLOVE_SPAWNER
 ; ==============================================================================
 interactionCode74:
 	; Delete self if already returned gloves, haven't talked to Ricky, or already got
@@ -13,7 +13,7 @@ interactionCode74:
 	call checkTreasureObtained
 	jr c,@delete
 
-	ldbc INTERACID_TREASURE, TREASURE_RICKY_GLOVES
+	ldbc INTERAC_TREASURE, TREASURE_RICKY_GLOVES
 	call objectCreateInteraction
 	ret nz
 @delete:

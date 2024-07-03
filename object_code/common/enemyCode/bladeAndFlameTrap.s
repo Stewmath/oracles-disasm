@@ -1,6 +1,6 @@
 ; ==============================================================================
-; ENEMYID_BLADE_TRAP
-; ENEMYID_FLAME_TRAP
+; ENEMY_BLADE_TRAP
+; ENEMY_FLAME_TRAP
 ;
 ; Variables for normal traps:
 ;   var30: Speed

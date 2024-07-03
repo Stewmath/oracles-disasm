@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_INTRO_SCENE_MUSIC
+; INTERAC_INTRO_SCENE_MUSIC
 ; ==============================================================================
 interactionCode85:
 	ld e,Interaction.state

@@ -1,5 +1,5 @@
 ;;
-; ITEMID_BOMBCHUS ($0d)
+; ITEM_BOMBCHUS ($0d)
 parentItemCode_bombchu:
 	ld e,Item.state
 	ld a,(de)
@@ -14,7 +14,7 @@ parentItemCode_bombchu:
 	jp nz,clearParentItem
 	; Can't be on raft
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jp z,clearParentItem
 .endif
 
@@ -35,7 +35,7 @@ parentItemCode_bombchu:
 	jp itemCreateChildAndDeleteOnFailure
 
 ;;
-; ITEMID_BOMB ($03)
+; ITEM_BOMB ($03)
 parentItemCode_bomb:
 	ld e,Item.state
 	ld a,(de)
@@ -53,7 +53,7 @@ parentItemCode_bomb:
 	jp nz,clearParentItem
 	; If Link is riding something other than a raft, don't allow usage of bombs
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jr z,+
 .endif
 	ld a,(wLinkObjectIndex)
@@ -99,7 +99,7 @@ tryPickupBombs:
 	jr nz,@setZFlag
 
 	; Return with zflag set if there is no existing bomb object
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID
 	jr nz,@setZFlag
 
@@ -107,7 +107,7 @@ tryPickupBombs:
 	ret nz
 
 	; Try to find a second bomb object & pick that up
-	ld c,ITEMID_BOMB
+	ld c,ITEM_BOMB
 	call findItemWithID_startingAfterH
 	jr nz,@setZFlag
 
@@ -147,7 +147,7 @@ makeLinkPickupObjectH:
 ;;
 ; Bracelet's code is also heavily used by bombs.
 ;
-; ITEMID_BRACELET ($16)
+; ITEM_BRACELET ($16)
 parentItemCode_bracelet:
 	ld e,Item.state
 	ld a,(de)
@@ -244,7 +244,7 @@ parentItemCode_bracelet:
 	ld hl,w1ReservedItemC.enabled
 	ld a,$03
 	ldi (hl),a
-	ld (hl),ITEMID_BRACELET
+	ld (hl),ITEM_BRACELET
 
 	; Set subid to former tile ID
 	inc l
@@ -398,7 +398,7 @@ parentItemCode_bracelet:
 	ld hl,w1ReservedItemC.enabled
 	inc (hl)
 	inc l
-	ld a,ITEMID_BRACELET
+	ld a,ITEM_BRACELET
 	ldi (hl),a
 
 	; Copy over this parent item's former relatedObj2 & Y/X to the new "physical" item
@@ -439,7 +439,7 @@ parentItemCode_bracelet:
 .ifdef ROM_AGES ; TODO: why does only ages check this?
 	; Load animation depending on whether Link's riding a minecart
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	jr nz,+
 .endif
 

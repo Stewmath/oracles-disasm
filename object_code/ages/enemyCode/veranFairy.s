@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_VERAN_FAIRY
+; ENEMY_VERAN_FAIRY
 ;
 ; Variables:
 ;   var03: Attack index
@@ -57,7 +57,7 @@ enemyCode06:
 	.dw veranFairy_state5
 
 veranFairy_state0:
-	ld a,ENEMYID_VERAN_FAIRY
+	ld a,ENEMY_VERAN_FAIRY
 	ld (wEnemyIDToLoadExtraGfx),a
 	call ecom_incState
 	ld l,Enemy.counter1
@@ -125,7 +125,7 @@ veranFairy_state1:
 @strikeLightning:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	ld l,Part.yh
 	jp setShortPosition_paramC
 
@@ -186,7 +186,7 @@ veranFairy_state1:
 	push hl
 	call getFreeEnemySlot
 	jr nz,++
-	ld (hl),ENEMYID_LINK_MIMIC
+	ld (hl),ENEMY_LINK_MIMIC
 	ld l,Enemy.yh
 	call setShortPosition_paramC
 ++
@@ -391,7 +391,7 @@ veranFairy_state5:
 	ld b,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION
+	ld (hl),INTERAC_EXPLOSION
 	ld l,Interaction.var03
 	inc (hl) ; [explosion.var03] = $01
 	jp objectCopyPositionWithOffset
@@ -579,7 +579,7 @@ attack0:
 	ld l,Enemy.counter1
 	ld (hl),30
 
-	ld b,PARTID_VERAN_FAIRY_PROJECTILE
+	ld b,PART_VERAN_FAIRY_PROJECTILE
 	call ecom_spawnProjectile
 	ld a,$06
 	jp enemySetAnimation
@@ -620,7 +620,7 @@ attack1:
 	ld l,Enemy.var36
 	ld (hl),$01
 
-	ld b,PARTID_VERAN_PROJECTILE
+	ld b,PART_VERAN_PROJECTILE
 	call ecom_spawnProjectile
 	ld a,$06
 	call enemySetAnimation
@@ -650,7 +650,7 @@ attack2:
 	ld (hl),$01
 	ld l,Enemy.counter1
 	ld (hl),30
-	ld b,PARTID_BABY_BALL
+	ld b,PART_BABY_BALL
 	call ecom_spawnProjectile
 	ld a,$06
 	call enemySetAnimation

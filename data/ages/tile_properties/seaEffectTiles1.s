@@ -1,4 +1,4 @@
-; This is a list of tiles which cause PARTID_SEA_EFFECTS to spawn in the room if any of the tiles
+; This is a list of tiles which cause PART_SEA_EFFECTS to spawn in the room if any of the tiles
 ; exist. See seaEffectTiles2.s for details.
 
 seaEffectTileTable:

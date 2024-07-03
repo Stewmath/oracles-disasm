@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_ORB
+; PART_ORB
 ;
 ; Variables:
 ;   var03: Bitset to use with wToggleBlocksState (derived from subid)

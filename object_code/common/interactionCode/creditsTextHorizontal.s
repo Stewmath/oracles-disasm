@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_CREDITS_TEXT_HORIZONTAL
+; INTERAC_CREDITS_TEXT_HORIZONTAL
 ;
 ; Variables:
 ;   var03: ?
@@ -275,7 +275,7 @@ interactionCodeae:
 creditsTextHorizontal_6537:
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_CREDITS_TEXT_HORIZONTAL
+	ld (hl),INTERAC_CREDITS_TEXT_HORIZONTAL
 	inc l
 	ld e,Interaction.var32
 	ld a,(de)

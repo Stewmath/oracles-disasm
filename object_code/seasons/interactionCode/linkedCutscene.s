@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_LINKED_CUTSCENE
+; INTERAC_LINKED_CUTSCENE
 ; ==============================================================================
 interactionCodeb3:
 	ld e,Interaction.state

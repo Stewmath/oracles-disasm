@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_SHADOW
+; PART_SHADOW
 ;
 ; Variables:
 ;   relatedObj1: Object that this shadow is for

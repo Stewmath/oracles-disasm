@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_MOTHULA_PROJECTILE_2
+; PART_MOTHULA_PROJECTILE_2
 ; ==============================================================================
 partCode42:
 	jr z,@normalStatus
@@ -109,7 +109,7 @@ func_7174:
 -
 	push bc
 	call getFreePartSlot
-	ld (hl),PARTID_MOTHULA_PROJECTILE_2
+	ld (hl),PART_MOTHULA_PROJECTILE_2
 	call objectCopyPosition
 	pop bc
 	ld l,$c9
@@ -153,7 +153,7 @@ func_71b5:
 func_71e2:
 	push bc
 	call getFreePartSlot
-	ld (hl),PARTID_MOTHULA_PROJECTILE_2
+	ld (hl),PART_MOTHULA_PROJECTILE_2
 	inc l
 	ld (hl),$02
 	call objectCopyPosition

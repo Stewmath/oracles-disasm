@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TOGGLE_FLOOR: red/yellow/blue floor tiles that change color when jumped over.
+; INTERAC_TOGGLE_FLOOR: red/yellow/blue floor tiles that change color when jumped over.
 ; ==============================================================================
 interactionCode15:
 	ld e,Interaction.subid
@@ -60,7 +60,7 @@ interactionCode15:
 	; Spawn an instance of this object with subid 1.
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TOGGLE_FLOOR
+	ld (hl),INTERAC_TOGGLE_FLOOR
 	inc l
 	ld (hl),$01 ; [subid] = $01
 	inc l

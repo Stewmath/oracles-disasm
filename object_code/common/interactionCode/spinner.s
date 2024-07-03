@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SPINNER
+; INTERAC_SPINNER
 ;
 ; Variables:
 ;   var3a: Bitmask for wSpinnerState (former value of "xh")
@@ -59,7 +59,7 @@ interactionCode7d:
 	call objectSetVisible82
 
 	; Create "arrow" object and set it as relatedObj1
-	ldbc INTERACID_SPINNER, $02
+	ldbc INTERAC_SPINNER, $02
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.relatedObj1

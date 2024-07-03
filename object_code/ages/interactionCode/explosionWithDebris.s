@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_EXPLOSION_WITH_DEBRIS
+; INTERAC_EXPLOSION_WITH_DEBRIS
 ; ==============================================================================
 interactionCode99:
 	ld e,Interaction.state
@@ -109,7 +109,7 @@ interactionCode99:
 --
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION_WITH_DEBRIS
+	ld (hl),INTERAC_EXPLOSION_WITH_DEBRIS
 	inc l
 	inc (hl)
 	inc l

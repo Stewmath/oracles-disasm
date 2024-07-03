@@ -31,7 +31,7 @@ enemyBoss_dead:
 	; Spawn explosion
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BOSS_DEATH_EXPLOSION
+	ld (hl),PART_BOSS_DEATH_EXPLOSION
 	inc l
 	ld e,Enemy.id
 	ld a,(de)
@@ -60,7 +60,7 @@ enemyBoss_dead:
 enemyBoss_spawnShadow:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_SHADOW
+	ld (hl),PART_SHADOW
 	inc l
 	ld (hl),b ; [subid]
 	inc l

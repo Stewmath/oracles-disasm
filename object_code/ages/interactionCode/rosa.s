@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ROSA
+; INTERAC_ROSA
 ; ==============================================================================
 interactionCode68:
 	ld e,Interaction.subid
@@ -29,7 +29,7 @@ interactionCode68:
 	; Spawn shovel object
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MISCELLANEOUS_1
+	ld (hl),INTERAC_MISCELLANEOUS_1
 	inc l
 	ld (hl),$09
 	ld l,Interaction.relatedObj1+1

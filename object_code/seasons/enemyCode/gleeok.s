@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_GLEEOK
+; ENEMY_GLEEOK
 ; ==============================================================================
 enemyCode06:
 	jr z,@normalStatus
@@ -109,7 +109,7 @@ enemyCode06:
 	ld b,$09
 	call checkBEnemySlotsAvailable
 	ret nz
-	ld b,ENEMYID_GLEEOK
+	ld b,ENEMY_GLEEOK
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,$80
 	ld e,l
@@ -474,7 +474,7 @@ enemyCode06:
 	ld a,(hl)
 	sub $04
 	ld (hl),a
-	ld b,PARTID_43
+	ld b,PART_43
 	jp ecom_spawnProjectile
 +
 	ld l,$8b
@@ -556,7 +556,7 @@ enemyCode06:
 	ld (hl),a
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_43
+	ld (hl),PART_43
 	inc l
 	inc (hl)
 	ld e,$86
@@ -582,7 +582,7 @@ enemyCode06:
 	ldi (hl),a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld bc,$0800
 	jp objectCopyPositionWithOffset
 
@@ -618,7 +618,7 @@ enemyCode06:
 	ret
 
 @@@@substate2:
-	ld b,PARTID_43
+	ld b,PART_43
 	call ecom_spawnProjectile
 	ret nz
 	ld l,$c2
@@ -1035,7 +1035,7 @@ func_6cbf:
 	ld e,$9a
 	ld a,(de)
 	rlca
-	ld b,INTERACID_KILLENEMYPUFF
+	ld b,INTERAC_KILLENEMYPUFF
 	call c,objectCreateInteractionWithSubid00
 	jp objectSetInvisible
 	

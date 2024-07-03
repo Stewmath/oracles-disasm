@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_ARROW_DARKNUT
+; ENEMY_ARROW_DARKNUT
 ; ==============================================================================
 enemyCode21:
 .ifdef ROM_AGES
@@ -62,7 +62,7 @@ arrowDarknut_fireArrowEveryOtherTime:
 	ld l,Enemy.angle
 	cp (hl)
 	ret nz
-	ld b,PARTID_ENEMY_ARROW
+	ld b,PART_ENEMY_ARROW
 	jp ecom_spawnProjectile
 
 

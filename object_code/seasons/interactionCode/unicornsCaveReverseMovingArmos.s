@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_D5_REVERSE_MOVING_ARMOS
+; INTERAC_D5_REVERSE_MOVING_ARMOS
 ; ==============================================================================
 interactionCode63:
 	ld e,Interaction.state
@@ -30,7 +30,7 @@ interactionCode63:
 	jr nz,@func_50e3
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUSHBLOCK
+	ld (hl),INTERAC_PUSHBLOCK
 	ld l,$49
 	ld a,(wBlockPushAngle)
 	add $10

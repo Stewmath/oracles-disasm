@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_ROOM_OF_RITES_FALLING_BOULDER
+; PART_ROOM_OF_RITES_FALLING_BOULDER
 ; ==============================================================================
 partCode54:
 	ld e,$c2
@@ -17,7 +17,7 @@ partCode54:
 	ret nz
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_ROOM_OF_RITES_FALLING_BOULDER
+	ld (hl),PART_ROOM_OF_RITES_FALLING_BOULDER
 	inc l
 	inc (hl)
 	ret
@@ -69,7 +69,7 @@ func_7b0a:
 	jp nz,partAnimate
 	call objectReplaceWithAnimationIfOnHazard
 	jr c,@delete
-	ld b,INTERACID_ROCKDEBRIS
+	ld b,INTERAC_ROCKDEBRIS
 	call objectCreateInteractionWithSubid00
 @delete:
 	jp partDelete

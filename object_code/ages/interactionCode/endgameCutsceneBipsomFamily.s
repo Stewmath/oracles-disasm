@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_ENDGAME_CUTSCENE_BIPSOM_FAMILY
+; INTERAC_ENDGAME_CUTSCENE_BIPSOM_FAMILY
 ; ==============================================================================
 interactionCodea7:
 	ld e,Interaction.state
@@ -27,7 +27,7 @@ interactionCodea7:
 	call interactionSetAnimation
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CHILD
+	ld (hl),INTERAC_CHILD
 	inc l
 	ld a,(wChildStage)
 	ld b,$00

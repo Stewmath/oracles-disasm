@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TIMEPORTAL
+; INTERAC_TIMEPORTAL
 ;
 ; Variables:
 ;   var03: Short-form position
@@ -23,7 +23,7 @@ interactionCodede:
 	; Delete self if a timeportal exists already.
 	; BUG: This only checks for timeportals in object slots before the current one. This makes
 	; it possible to "stack" timeportals.
-	ld c,INTERACID_TIMEPORTAL
+	ld c,INTERAC_TIMEPORTAL
 	call objectFindSameTypeObjectWithID
 	ld a,h
 	cp d
@@ -72,7 +72,7 @@ interactionCodede:
 	; Fall through
 
 ;;
-; Also called by INTERACID_TIMEPORTAL_SPAWNER.
+; Also called by INTERAC_TIMEPORTAL_SPAWNER.
 interactionBeginTimewarp:
 	call resetLinkInvincibility
 	ld hl,w1Link

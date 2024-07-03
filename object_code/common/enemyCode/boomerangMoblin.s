@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_BOOMERANG_MOBLIN
+; ENEMY_BOOMERANG_MOBLIN
 ; ==============================================================================
 enemyCode0a:
 	call ecom_checkHazards
@@ -115,7 +115,7 @@ enemyCode0a:
 	ret nz
 
 	; Spawn projectile
-	ld b,PARTID_MOBLIN_BOOMERANG
+	ld b,PART_MOBLIN_BOOMERANG
 	call ecom_spawnProjectile
 	ret nz
 	ld h,d

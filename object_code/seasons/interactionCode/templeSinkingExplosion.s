@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TEMPLE_SINKING_EXPLOSION
+; INTERAC_TEMPLE_SINKING_EXPLOSION
 ; ==============================================================================
 interactionCode86:
 	call checkInteractionState

@@ -1,8 +1,8 @@
 ; ==============================================================================
-; ENEMYID_VIRE
+; ENEMY_VIRE
 ;
 ; Variables (for main form, subid 0):
-;   relatedObj2: INTERACID_PUFF?
+;   relatedObj2: INTERAC_PUFF?
 ;   var30: Rotation angle?
 ;   var32: Used for animations?
 ;   var33: Health?
@@ -187,11 +187,11 @@ vire_mainForm_state8:
 	or a
 	ret nz
 
-	ldbc INTERACID_PUFF, $02
+	ldbc INTERAC_PUFF, $02
 	call objectCreateInteraction
 	ret nz
 
-	; [relatedObj2] = INTERACID_PUFF
+	; [relatedObj2] = INTERAC_PUFF
 	ld e,Enemy.relatedObj2+1
 	ld a,h
 	ld (de),a
@@ -551,7 +551,7 @@ vire_mainForm_stateD:
 	ld l,e
 	inc (hl) ; [substate]
 
-	ld b,PARTID_VIRE_PROJECTILE
+	ld b,PART_VIRE_PROJECTILE
 	call ecom_spawnProjectile
 
 	ld a,SND_SPLASH
@@ -673,7 +673,7 @@ vire_mainForm_stateF:
 	call objectCreatePuff
 
 	; Spawn bats
-	ld b,ENEMYID_VIRE
+	ld b,ENEMY_VIRE
 	call ecom_spawnUncountedEnemyWithSubid01
 	call @initBat
 
@@ -759,7 +759,7 @@ vire_mainForm_stateF:
 	jr nz,++
 	inc a
 	ld (de),a
-	ld b,PARTID_ITEM_DROP
+	ld b,PART_ITEM_DROP
 	call ecom_spawnProjectile
 ++
 	call enemyAnimate
@@ -1169,7 +1169,7 @@ vire_mainForm_fireProjectile:
 vire_mainForm_fireProjectileWithSubid:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_VIRE_PROJECTILE
+	ld (hl),PART_VIRE_PROJECTILE
 	inc l
 	ld (hl),b ; [subid]
 

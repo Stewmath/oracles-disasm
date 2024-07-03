@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TWINROVA_IN_CUTSCENE
+; INTERAC_TWINROVA_IN_CUTSCENE
 ; ==============================================================================
 interactionCodeb0:
 	ld e,Interaction.state

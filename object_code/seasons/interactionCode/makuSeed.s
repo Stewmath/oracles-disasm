@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_S_MAKU_SEED
+; INTERAC_S_MAKU_SEED
 ; ==============================================================================
 interactionCode93:
 	ld e,Interaction.subid
@@ -25,7 +25,7 @@ interactionCode93:
 +
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$04
 	call objectCopyPosition
@@ -93,7 +93,7 @@ interactionCode93:
 @func_52f3:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$03
 	ld e,$4b
@@ -137,7 +137,7 @@ interactionCode93:
 	.db $06 $f5
 
 @func_5338:
-	ldbc INTERACID_SPARKLE $08
+	ldbc INTERAC_SPARKLE $08
 	call objectCreateInteraction
 	ret nz
 	ld l,Interaction.relatedObj1

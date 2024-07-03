@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MINECART
+; INTERAC_MINECART
 ; ==============================================================================
 interactionCode16:
 	ld e,Interaction.state
@@ -112,7 +112,7 @@ interactionCode16:
 	; Presumably this is necessary for it to persist between rooms?
 	ld hl,w1Companion.enabled
 	ldi (hl),a
-	ld (hl),SPECIALOBJECTID_MINECART
+	ld (hl),SPECIALOBJECT_MINECART
 
 	; Copy direction, angle
 	ld e,Interaction.direction

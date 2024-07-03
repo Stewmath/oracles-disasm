@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_STALFOS
+; ENEMY_STALFOS
 ; ==============================================================================
 enemyCode31:
 	call ecom_checkHazards
@@ -139,7 +139,7 @@ stalfos_state0b:
 
 ; Firing a projectile, then immediately going to state 9 to keep moving
 stalfos_state0c:
-	ld b,PARTID_STALFOS_BONE
+	ld b,PART_STALFOS_BONE
 	call ecom_spawnProjectile
 	jr stalfos_moveInRandomAngle
 

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM
+; INTERAC_DISAPPEARING_SIDESCROLL_PLATFORM
 ; ==============================================================================
 interactionCodea3:
 	ld e,Interaction.state

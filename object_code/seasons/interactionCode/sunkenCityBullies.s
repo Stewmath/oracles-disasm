@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_SUNKEN_CITY_BULLIES
+; INTERAC_SUNKEN_CITY_BULLIES
 ; ==============================================================================
 interactionCode76:
 	ld e,Interaction.state
@@ -51,10 +51,10 @@ interactionCode76:
 @func_7375:
 	ld hl,$d101
 	ld a,(hl)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr nz,@delete
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr z,@delete
 	ld a,(wDimitriState)
 	bit 5,a

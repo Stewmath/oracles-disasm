@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_TIMEPORTAL_SPAWNER
+; INTERAC_TIMEPORTAL_SPAWNER
 ; ==============================================================================
 interactionCodee1:
 	ld e,Interaction.state

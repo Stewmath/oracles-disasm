@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_COLOR_CHANGING_GEL
+; ENEMY_COLOR_CHANGING_GEL
 ;
 ; Variables:
 ;   var30/var31: Target position while hopping

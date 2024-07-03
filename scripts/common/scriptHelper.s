@@ -1,7 +1,7 @@
  m_section_free Bank_15 NAMESPACE scriptHelp
 
 ; ==============================================================================
-; INTERACID_FARORE
+; INTERAC_FARORE
 ; ==============================================================================
 faroreCheckSecretValidity:
 	ld a,(wSecretInputType)
@@ -76,7 +76,7 @@ faroreShowTextForSecretHint:
 faroreSpawnSecretChest:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FARORE_GIVEITEM
+	ld (hl),INTERAC_FARORE_GIVEITEM
 	inc l
 	ld a,(wTextInputResult)
 	and $0f
@@ -91,7 +91,7 @@ faroreGenerateGameTransferSecret:
 
 
 ; ==============================================================================
-; INTERACID_DOOR_CONTROLLER
+; INTERAC_DOOR_CONTROLLER
 ; ==============================================================================
 
 ; Update Link's respawn position in case it's on a door that's just about to close
@@ -252,7 +252,7 @@ doorController_checkEnoughTorchesLit:
 
 
 ; ==============================================================================
-; INTERACID_SHOPKEEPER
+; INTERAC_SHOPKEEPER
 ; ==============================================================================
 
 ;;
@@ -275,13 +275,13 @@ shopkeeper_take10Rupees:
 createBossDeathExplosion:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BOSS_DEATH_EXPLOSION
+	ld (hl),PART_BOSS_DEATH_EXPLOSION
 	jp objectCopyPosition
 .endif
 
 
 ; ==============================================================================
-; INTERACID_MOVING_PLATFORM
+; INTERAC_MOVING_PLATFORM
 ; ==============================================================================
 
 ;;
@@ -446,7 +446,7 @@ movingPlatform_setScript:
 .include {"{GAME_DATA_DIR}/movingPlatformScriptTable.s"}
 
 ; ==============================================================================
-; INTERACID_ESSENCE
+; INTERAC_ESSENCE
 ; ==============================================================================
 
 ;;
@@ -462,14 +462,14 @@ essence_stopEnergySwirl:
 	ret
 
 ; ==============================================================================
-; INTERACID_VASU
+; INTERAC_VASU
 ; ==============================================================================
 
 ;;
 vasu_giveRingBox:
 	call getFreeInteractionSlot
 	ldbc TREASURE_RING_BOX, $00
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -602,7 +602,7 @@ vasu_giveRingInVar3a:
 
 
 ; ==============================================================================
-; INTERACID_GAME_COMPLETE_DIALOG
+; INTERAC_GAME_COMPLETE_DIALOG
 ; ==============================================================================
 gameCompleteDialog_markGameAsComplete:
 	xor a

@@ -1,5 +1,5 @@
 ;;
-; ITEMID_ROD_OF_SEASONS ($07)
+; ITEM_ROD_OF_SEASONS ($07)
 parentItemCode_rodOfSeasons:
 .ifdef ROM_SEASONS
 	call clearParentItemIfCantUseSword
@@ -11,7 +11,7 @@ parentItemCode_rodOfSeasons:
 .endif
 
 ;;
-; ITEMID_BIGGORON_SWORD ($0c)
+; ITEM_BIGGORON_SWORD ($0c)
 parentItemCode_biggoronSword:
 	call clearParentItemIfCantUseSword
 
@@ -23,7 +23,7 @@ parentItemCode_biggoronSword:
 	; Biggoron's sword falls through to fool's ore code
 
 ;;
-; ITEMID_FOOLS_ORE ($1e)
+; ITEM_FOOLS_ORE ($1e)
 parentItemCode_foolsOre:
 	ld e,Item.state
 	ld a,(de)
@@ -49,7 +49,7 @@ parentItemCode_foolsOre:
 	jp itemCreateChild
 
 ;;
-; ITEMID_PUNCH ($02)
+; ITEM_PUNCH ($02)
 parentItemCode_punch:
 	ld e,Item.state
 	ld a,(de)
@@ -99,7 +99,7 @@ parentItemCode_punch:
 
 	; If riding something other than the raft, use LINK_ANIM_MODE_35
 	ld a,(w1Companion.id)
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jr z,@setAnimation
 	inc c
 	jr @setAnimation

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_WILD_TOKAY_CONTROLLER
+; INTERAC_WILD_TOKAY_CONTROLLER
 ;
 ; Variables:
 ;   var03: Set to $ff when the game is lost?
@@ -66,9 +66,9 @@ interactionCode70:
 	inc e
 	ld (de),a
 
-	ld (hl),ITEMID_NONE
+	ld (hl),ITEM_NONE
 	inc l
-	ld (hl),ITEMID_BRACELET
+	ld (hl),ITEM_BRACELET
 
 	; Replace tiles to start game
 	ld b,$06
@@ -142,7 +142,7 @@ interactionCode70:
 	ld (hl),60
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TOKAY_MEAT
+	ld (hl),INTERAC_TOKAY_MEAT
 	ld a,SND_WHISTLE
 	jp playSound
 

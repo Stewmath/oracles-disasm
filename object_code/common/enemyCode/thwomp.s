@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_THWOMP
+; ENEMY_THWOMP
 ;
 ; Variables:
 ;   var30: Original y-position (where it returns to after stomping)

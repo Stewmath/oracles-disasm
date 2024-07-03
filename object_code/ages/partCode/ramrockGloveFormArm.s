@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_RAMROCK_GLOVE_FORM_ARM
+; PART_RAMROCK_GLOVE_FORM_ARM
 ; ==============================================================================
 partCode35:
 	ld a,Object.health
@@ -477,7 +477,7 @@ state0func_6956:
 	cp $02
 	ret z
 	call getFreePartSlot
-	ld a,PARTID_RAMROCK_GLOVE_FORM_ARM
+	ld a,PART_RAMROCK_GLOVE_FORM_ARM
 	ldi (hl),a
 	ld a,(de)
 	inc a

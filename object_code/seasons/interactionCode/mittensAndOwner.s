@@ -1,6 +1,6 @@
 ; ==============================================================================
-; INTERACID_MITTENS
-; INTERACID_MITTENS_OWNER
+; INTERAC_MITTENS
+; INTERAC_MITTENS_OWNER
 ; ==============================================================================
 interactionCode25:
 interactionCode26:
@@ -16,7 +16,7 @@ interactionCode26:
 	call interactionSetHighTextIndex
 	ld e,$41
 	ld a,(de)
-	cp INTERACID_MITTENS_OWNER
+	cp INTERAC_MITTENS_OWNER
 	jr z,@mittensOwner
 	call getThisRoomFlags
 	and $40

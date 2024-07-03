@@ -1,14 +1,14 @@
 ; ==============================================================================
-; ENEMYID_EYESOAR_CHILD
+; ENEMY_EYESOAR_CHILD
 ;
 ; Variables:
-;   relatedObj1: Pointer to ENEMYID_EYESOAR
-;   relatedObj2: Pointer to INTERACID_0b?
+;   relatedObj1: Pointer to ENEMY_EYESOAR
+;   relatedObj2: Pointer to INTERAC_0b?
 ;   var30: Distance away from Eyesoar (position in "circle arc")
 ;   var31: "Target" distance away from Eyesoar (var30 is moving toward this value)
 ;   var32: Angle offset for this child (each subid is a quarter circle apart)
 ;
-; See also ENEMYID_EYESOAR variables.
+; See also ENEMY_EYESOAR variables.
 ; ==============================================================================
 enemyCode11:
 	jr z,@normalStatus
@@ -64,7 +64,7 @@ enemyCode11:
 	ld (hl),$18
 
 @runState:
-	; Note: b == parent (ENEMYID_EYESOAR), which is used in some of the states below.
+	; Note: b == parent (ENEMY_EYESOAR), which is used in some of the states below.
 	ld a,(de)
 	rst_jumpTable
 	.dw eyesoarChild_state_uninitialized
@@ -125,7 +125,7 @@ eyesoarChild_state_stub:
 eyesoarChild_state8:
 	call ecom_decCounter1
 	ret nz
-	ldbc INTERACID_0b,$02
+	ldbc INTERAC_0b,$02
 	call objectCreateInteraction
 	ret nz
 	ld e,Enemy.relatedObj2

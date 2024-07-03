@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_SMOG
+; ENEMY_SMOG
 ;
 ; Variables:
 ;   var03: Phase of fight (0-3)
@@ -129,7 +129,7 @@ smog_state_uninitialized:
 
 @subid5Init:
 @subid6Init:
-	ld a,ENEMYID_SMOG
+	ld a,ENEMY_SMOG
 	ld b,$00
 	call enemyBoss_initializeRoom
 	call ecom_setSpeedAndState8
@@ -179,14 +179,14 @@ smog_state8_subid0:
 	ret nz
 
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_SMOG
+	ld (hl),ENEMY_SMOG
 	inc l
 	ld (hl),$01 ; [child.subid]
 	ld bc,$00f0
 	call objectCopyPositionWithOffset
 
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_SMOG
+	ld (hl),ENEMY_SMOG
 	inc l
 	ld (hl),$01 ; [child.subid]
 	ld bc,$0010
@@ -246,7 +246,7 @@ smog_state8_subid3:
 	add -4
 	call enemySetAnimation
 	call smog_setCounterToFireProjectile
-	ld b,PARTID_SMOG_PROJECTILE
+	ld b,PART_SMOG_PROJECTILE
 	call ecom_spawnProjectile
 	call objectCopyPosition
 
@@ -449,7 +449,7 @@ smog_state8_subid4:
 	jp smog_setCounterToFireProjectile
 
 @parameter1:
-	ld b,PARTID_SMOG_PROJECTILE
+	ld b,PART_SMOG_PROJECTILE
 	call ecom_spawnProjectile
 	ld l,Part.subid
 	inc (hl)

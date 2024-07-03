@@ -1,7 +1,7 @@
-; This is a list of tiles which have some special effect when PARTID_SEA_EFFECTS has been spawned in
+; This is a list of tiles which have some special effect when PART_SEA_EFFECTS has been spawned in
 ; the current room.
 ;
-; This is a bit of a weird system. First, in seaEffectTiles1.s, the PARTID_SEA_EFFECTS object is
+; This is a bit of a weird system. First, in seaEffectTiles1.s, the PART_SEA_EFFECTS object is
 ; automatically spawned in if any of the tiles in that file exist.
 ;
 ; Then, so long as that object exists, it checks the data in this file to apply pollution,

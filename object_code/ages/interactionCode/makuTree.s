@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_MAKU_TREE
+; INTERAC_MAKU_TREE
 ;
 ; Variables:
 ;   var3b: Animation
@@ -273,7 +273,7 @@ interactionCode87:
 @spawnMakuFlower:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_FLOWER
+	ld (hl),INTERAC_MAKU_FLOWER
 	ld l,Interaction.relatedObj2
 	ld a,Interaction.start
 	ldi (hl),a

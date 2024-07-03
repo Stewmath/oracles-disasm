@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_IMPA
+; INTERAC_IMPA
 ; ==============================================================================
 interactionCode9d:
 	ld e,$44
@@ -118,7 +118,7 @@ interactionCode9d:
 	ld (hl),$56
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_S_BIRD
+	ld (hl),INTERAC_S_BIRD
 	inc l
 	ld (hl),$0a
 	ld l,$56

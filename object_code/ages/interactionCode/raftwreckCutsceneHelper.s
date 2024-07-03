@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_RAFTWRECK_CUTSCENE_HELPER
+; INTERAC_RAFTWRECK_CUTSCENE_HELPER
 ; ==============================================================================
 interactionCode64:
 	ld e,Interaction.state
@@ -106,7 +106,7 @@ interactionCode64:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_RAFTWRECK_CUTSCENE_HELPER
+	ld (hl),INTERAC_RAFTWRECK_CUTSCENE_HELPER
 	inc l
 	ld (hl),e
 	inc l
@@ -179,7 +179,7 @@ interactionCode64:
 	; Create lightning
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	ld (hl),e
 	inc l
@@ -198,7 +198,7 @@ interactionCode64:
 	inc (hl)
 	ret
 +
-	; Signal to INTERACID_RAFTWRECK_CUTSCENE that the cutscene is done
+	; Signal to INTERAC_RAFTWRECK_CUTSCENE that the cutscene is done
 	ld a,$03
 	ld (wTmpcfc0.genericCutscene.state),a
 	jp interactionDelete

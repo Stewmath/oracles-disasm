@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_OWL_STATUE
+; PART_OWL_STATUE
 ; ==============================================================================
 partCode13:
 	jr z,@normalStatus
@@ -61,7 +61,7 @@ partCode13:
 	ld c,(hl)
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 .ifdef ROM_SEASONS
 	; substate
 	inc l

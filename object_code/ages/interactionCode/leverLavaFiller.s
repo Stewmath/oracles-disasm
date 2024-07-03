@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_LEVER_LAVA_FILLER
+; INTERAC_LEVER_LAVA_FILLER
 ;
 ; Variables:
 ;   counter2: Number of frames between two lava tiles being filled. Effectively this sets the

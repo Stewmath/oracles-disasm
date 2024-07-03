@@ -1,9 +1,9 @@
 ; ==============================================================================
-; ENEMYID_ARROW_MOBLIN
-; ENEMYID_MASKED_MOBLIN
-; ENEMYID_ARROW_SHROUDED_STALFOS
+; ENEMY_ARROW_MOBLIN
+; ENEMY_MASKED_MOBLIN
+; ENEMY_ARROW_SHROUDED_STALFOS
 ;
-; These enemies and ENEMYID_ARROW_DARKNUT share some code.
+; These enemies and ENEMY_ARROW_DARKNUT share some code.
 ; ==============================================================================
 enemyCode0c:
 enemyCode20:

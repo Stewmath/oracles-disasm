@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_BIGBANG_BOMB_SPAWNER
+; PART_BIGBANG_BOMB_SPAWNER
 ; ==============================================================================
 partCode49:
 	ld e,$c4
@@ -218,7 +218,7 @@ func_786f:
 	jr nz,func_786f
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BIGBANG_BOMB_SPAWNER
+	ld (hl),PART_BIGBANG_BOMB_SPAWNER
 	inc l
 	ldh a,(<hFF8B)
 	ld (hl),a

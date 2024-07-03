@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_PIRATE_CAPTAIN
+; INTERAC_PIRATE_CAPTAIN
 ; ==============================================================================
 interactionCodec3:
 	call checkInteractionState

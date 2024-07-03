@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_BALL_THROWN_TO_DOG
+; INTERAC_BALL_THROWN_TO_DOG
 ; ==============================================================================
 interactionCode83:
 	call checkInteractionState
@@ -14,7 +14,7 @@ interactionCode83:
 	ld (hl),$18
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_DOG_PLAYING_WITH_BOY
+	ld (hl),INTERAC_DOG_PLAYING_WITH_BOY
 	ld l,$57
 	ld (hl),d
 	ld bc,$00f4

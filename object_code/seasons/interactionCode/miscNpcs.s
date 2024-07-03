@@ -1,18 +1,18 @@
 ; ==============================================================================
-; INTERACID_MAYORS_HOUSE_NPC
-; INTERACID_MRS_RUUL
-; INTERACID_MR_WRITE
-; INTERACID_FICKLE_LADY
-; INTERACID_MALON
-; INTERACID_BATHING_SUBROSIANS
-; INTERACID_MASTER_DIVERS_SON
-; INTERACID_FICKLE_MAN
-; INTERACID_DUNGEON_WISE_OLD_MAN
-; INTERACID_TREASURE_HUNTER
+; INTERAC_MAYORS_HOUSE_NPC
+; INTERAC_MRS_RUUL
+; INTERAC_MR_WRITE
+; INTERAC_FICKLE_LADY
+; INTERAC_MALON
+; INTERAC_BATHING_SUBROSIANS
+; INTERAC_MASTER_DIVERS_SON
+; INTERAC_FICKLE_MAN
+; INTERAC_DUNGEON_WISE_OLD_MAN
+; INTERAC_TREASURE_HUNTER
 ; $3a: Unused
-; INTERACID_OLD_LADY_FARMER
-; INTERACID_FOUNTAIN_OLD_MAN
-; INTERACID_TICK_TOCK
+; INTERAC_OLD_LADY_FARMER
+; INTERAC_FOUNTAIN_OLD_MAN
+; INTERAC_TICK_TOCK
 ; ==============================================================================
 interactionCode24:
 interactionCode29:
@@ -65,7 +65,7 @@ miscNPC_state0:
 	call interactionInitGraphics
 	ld e,$41
 	ld a,(de)
-	cp INTERACID_MAYORS_HOUSE_NPC
+	cp INTERAC_MAYORS_HOUSE_NPC
 	jr nz,+
 	call checkMayorsHouseNPCshouldBeSeen
 	jp z,interactionDelete
@@ -85,15 +85,15 @@ miscNPC_state0:
 	call interactionSetScript
 	ld e,$41
 	ld a,(de)
-	cp INTERACID_DUNGEON_WISE_OLD_MAN
+	cp INTERAC_DUNGEON_WISE_OLD_MAN
 	jp z,dungeonWiseOldMan_textLookup
-	cp INTERACID_MR_WRITE
+	cp INTERAC_MR_WRITE
 	jp z,mrWrite_spawnLightableTorch
-	cp INTERACID_BATHING_SUBROSIANS
+	cp INTERAC_BATHING_SUBROSIANS
 	call z,func_572c
 	ld e,$41
 	ld a,(de)
-	cp INTERACID_MASTER_DIVERS_SON
+	cp INTERAC_MASTER_DIVERS_SON
 	call z,func_572c
 func_5723:
 	xor a
@@ -115,7 +115,7 @@ mrWrite_spawnLightableTorch:
 +
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_LIGHTABLE_TORCH
+	ld (hl),PART_LIGHTABLE_TORCH
 	ld l,$cb
 	ld (hl),$38
 	ld l,$cd
@@ -200,10 +200,10 @@ checkHoronVillageNPCShouldBeSeen:
 	ld e,$41
 	ld a,(de)
 	ld b,$00
-	cp INTERACID_FICKLE_LADY
+	cp INTERAC_FICKLE_LADY
 	jr z,checkHoronVillageNPCShouldBeSeen_body@main
 	inc b
-	cp INTERACID_FICKLE_MAN
+	cp INTERAC_FICKLE_MAN
 	jr nz,checkHoronVillageNPCShouldBeSeen_body
 	ld e,$42
 	ld a,(de)
@@ -349,9 +349,9 @@ checkNPCStage:
 getSunkenCityNPCVisibleSubId:
 	ld e,$41
 	ld a,(de)
-	cp INTERACID_MASTER_DIVERS_SON
+	cp INTERAC_MASTER_DIVERS_SON
 	jr z,@main
-	cp INTERACID_TREASURE_HUNTER
+	cp INTERAC_TREASURE_HUNTER
 	jr z,@main
 	ld a,$ff
 	ret

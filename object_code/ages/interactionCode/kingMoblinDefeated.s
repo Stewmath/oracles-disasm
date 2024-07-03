@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_KING_MOBLIN_DEFEATED
+; INTERAC_KING_MOBLIN_DEFEATED
 ; ==============================================================================
 interactionCode72:
 	ld e,Interaction.subid
@@ -24,7 +24,7 @@ interactionCode72:
 	ret nz
 
 	; Spawn instance of this object with subid 2
-	ld (hl),INTERACID_KING_MOBLIN_DEFEATED
+	ld (hl),INTERAC_KING_MOBLIN_DEFEATED
 	inc l
 	ld (hl),$02
 	ld l,Interaction.yh
@@ -74,7 +74,7 @@ interactionCode72:
 @spawnSubservientMoblin:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_KING_MOBLIN_DEFEATED
+	ld (hl),INTERAC_KING_MOBLIN_DEFEATED
 	inc l
 	inc (hl)
 	ld l,Interaction.yh
@@ -155,7 +155,7 @@ interactionCode72:
 @spawnGoronInstance:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_KING_MOBLIN_DEFEATED
+	ld (hl),INTERAC_KING_MOBLIN_DEFEATED
 	inc l
 	ld (hl),$02
 	inc l

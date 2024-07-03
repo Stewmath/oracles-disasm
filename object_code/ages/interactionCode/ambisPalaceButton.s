@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_AMBIS_PALACE_BUTTON
+; INTERAC_AMBIS_PALACE_BUTTON
 ; ==============================================================================
 interactionCodebe:
 	ld e,Interaction.state

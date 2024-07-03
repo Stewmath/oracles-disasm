@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_PINCER
+; ENEMY_PINCER
 ;
 ; Variables:
 ;   relatedObj1: Pointer to "head", aka subid 1 (only for body parts, subids 2+)
@@ -53,7 +53,7 @@ pincer_state1:
 	ret nz
 
 	; Spawn head
-	ld b,ENEMYID_PINCER
+	ld b,ENEMY_PINCER
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,Enemy.enabled
 	ld e,l
@@ -159,7 +159,7 @@ pincer_head_stateA:
 
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_SPLASH
+	ld (hl),INTERAC_SPLASH
 	ld bc,$fa00
 	call objectCopyPositionWithOffset
 ++

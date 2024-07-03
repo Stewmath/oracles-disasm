@@ -1,9 +1,9 @@
 ; ==============================================================================
-; ENEMYID_SWORD_MOBLIN
-; ENEMYID_SWORD_SHROUDED_STALFOS
-; ENEMYID_SWORD_MASKED_MOBLIN
+; ENEMY_SWORD_MOBLIN
+; ENEMY_SWORD_SHROUDED_STALFOS
+; ENEMY_SWORD_MASKED_MOBLIN
 ;
-; Shares some code with ENEMYID_SWORD_DARKNUT.
+; Shares some code with ENEMY_SWORD_DARKNUT.
 ;
 ; Variables:
 ;   var30: Nonzero if enemyCollisionMode was changed to ignore sword damage (due to the
@@ -52,7 +52,7 @@ enemyCode4a:
 
 
 swordEnemy_state_uninitialized:
-	ld b,PARTID_ENEMY_SWORD
+	ld b,PART_ENEMY_SWORD
 	call ecom_spawnProjectile
 	ret nz
 

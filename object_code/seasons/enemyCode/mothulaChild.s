@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_MOTHULA_CHILD
+; ENEMY_MOTHULA_CHILD
 ; ==============================================================================
 enemyCode47:
 	jr z,+
@@ -53,7 +53,7 @@ enemyCode47:
 	call addAToBc
 -
 	push bc
-	ld b,ENEMYID_MOTHULA_CHILD
+	ld b,ENEMY_MOTHULA_CHILD
 	call ecom_spawnUncountedEnemyWithSubid01
 	dec (hl)
 	call objectCopyPosition

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_LEEVER
+; ENEMY_LEEVER
 ; ==============================================================================
 enemyCode0b:
 	call ecom_checkHazards
@@ -18,7 +18,7 @@ enemyCode0b:
 	jr nz,@die
 
 	; This is a respawning leever (subid 2), so spawn a new one
-	ld b,ENEMYID_LEEVER
+	ld b,ENEMY_LEEVER
 	call ecom_spawnEnemyWithSubid01
 	ret nz
 

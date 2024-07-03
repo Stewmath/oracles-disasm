@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_KING_MOBLINS_CANNONS
+; PART_KING_MOBLINS_CANNONS
 ; ==============================================================================
 partCode2d:
 	jr z,@normalStatus
@@ -66,7 +66,7 @@ partCode2d:
 func_6797:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_KING_MOBLIN_BOMB
+	ld (hl),PART_KING_MOBLIN_BOMB
 	inc l
 	inc (hl)
 	call objectCopyPositionWithOffset
@@ -77,7 +77,7 @@ func_67a4:
 	call playSound
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,$42
 	ld (hl),$80
 	jp objectCopyPositionWithOffset
@@ -115,7 +115,7 @@ seasonsFunc_10_67cc:
 	ld b,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION
+	ld (hl),INTERAC_EXPLOSION
 	jp objectCopyPositionWithOffset
 table_67f0:
 	.db $f8 $04 $08 $fe

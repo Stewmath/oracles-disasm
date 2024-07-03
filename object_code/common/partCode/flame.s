@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_FLAME
+; PART_FLAME
 ;
 ; Variables:
 ;   var30: ID of enemy hit (relatedObj1)

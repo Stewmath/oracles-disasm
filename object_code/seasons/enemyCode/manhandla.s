@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_MANHANDLA
+; ENEMY_MANHANDLA
 ; ==============================================================================
 enemyCode7d:
 	jr z,@normalStatus
@@ -86,7 +86,7 @@ enemyCode7d:
 	ld b,$06
 	call checkBEnemySlotsAvailable
 	ret nz
-	ld b,ENEMYID_MANHANDLA
+	ld b,ENEMY_MANHANDLA
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld l,$80
 	ld e,l
@@ -389,7 +389,7 @@ enemyCode7d:
 	ld a,(hl)
 	cp $5a
 	jr nz,@@toFunc7ad6
-	ld b,PARTID_GOPONGA_PROJECTILE
+	ld b,PART_GOPONGA_PROJECTILE
 	call ecom_spawnProjectile
 	jr @@toFunc7ad6
 +

@@ -3487,7 +3487,7 @@ updateStatusBar_body:
 .ifdef ROM_AGES
 	; If harp is equipped, adjust sprite X-position 8 pixels right
 	ld hl,wInventoryB
-	ld a,ITEMID_HARP
+	ld a,ITEM_HARP
 	cp (hl)
 	jr nz,+
 	set 3,e
@@ -4166,7 +4166,7 @@ loadStatusBarMap:
 +
 	; Check if biggoron's sword equipped
 	ld a,(wInventoryB)
-	cp ITEMID_BIGGORON_SWORD
+	cp ITEM_BIGGORON_SWORD
 	jr nz,+
 	set 7,c
 +
@@ -4413,19 +4413,19 @@ inventoryMenuState1:
 
 	; Satchel or shooter?
 	ld c,$1f
-	cp ITEMID_SEED_SATCHEL
+	cp ITEM_SEED_SATCHEL
 	jr z,@hasSubmenu
 
 .ifdef ROM_AGES
-	cp ITEMID_SHOOTER
+	cp ITEM_SHOOTER
 	jr z,@hasSubmenu
 
-	cp ITEMID_HARP
+	cp ITEM_HARP
 	jr nz,@finalizeEquip
 	ld c,$e0
 
 .else; ROM_SEASONS
-	cp ITEMID_SLINGSHOT
+	cp ITEM_SLINGSHOT
 	jr nz,@finalizeEquip
 .endif
 
@@ -4460,7 +4460,7 @@ inventoryMenuState1:
 	ld a,(wInventorySubmenu0CursorPos)
 	add <wInventoryStorage
 	ld l,a
-	ld b,ITEMID_BIGGORON_SWORD
+	ld b,ITEM_BIGGORON_SWORD
 	ld a,(hl)
 	cp b
 	jr z,@@equipBiggoron
@@ -4639,7 +4639,7 @@ inventoryMenuState2:
 	ld a,(wInventory.selectedItem)
 .endif
 
-	cp ITEMID_SEED_SATCHEL
+	cp ITEM_SEED_SATCHEL
 	jr z,+
 	inc l
 +
@@ -4730,9 +4730,9 @@ inventoryMenuState2:
 	ld a,(wInventory.selectedItem)
 
 .ifdef ROM_AGES
-	cp ITEMID_SHOOTER
+	cp ITEM_SHOOTER
 .else
-	cp ITEMID_SLINGSHOT
+	cp ITEM_SLINGSHOT
 .endif
 
 	ld a,$00
@@ -4755,7 +4755,7 @@ inventoryMenuState2:
 	jr ++
 +
 	ld e,<wSatchelSelectedSeeds
-	cp ITEMID_SEED_SATCHEL
+	cp ITEM_SEED_SATCHEL
 	jr z,+
 	inc e
 +
@@ -4763,7 +4763,7 @@ inventoryMenuState2:
 
 	ld a,(wInventory.selectedItem)
 	ld e,<wSatchelSelectedSeeds
-	cp ITEMID_SEED_SATCHEL
+	cp ITEM_SEED_SATCHEL
 	jr z,+
 	inc e
 +
@@ -5428,7 +5428,7 @@ table_5ae5:
 ; Set z flag if selected inventory item is the harp.
 cpInventorySelectedItemToHarp:
 	ld a,(wInventory.selectedItem)
-	cp ITEMID_HARP
+	cp ITEM_HARP
 	ret
 .endif
 
@@ -6077,7 +6077,7 @@ inventoryMenuDrawHarpSprites:
 	ld bc,$1000
 --
 	ldi a,(hl)
-	cp ITEMID_HARP
+	cp ITEM_HARP
 	jr z,+
 	inc c
 	dec b
@@ -6566,7 +6566,7 @@ mapMenu_state0:
 @present:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_DIMITRI
+	sub SPECIALOBJECT_DIMITRI
 	call nc,mapMenu_performTileSubstitutions
 
 	; Perform tile substitutions if symmetry city has been saved
@@ -6596,7 +6596,7 @@ mapMenu_state0:
 @overworld:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_DIMITRI
+	sub SPECIALOBJECT_DIMITRI
 	call nc,mapMenu_performTileSubstitutions
 
 	; Check whether floodgates have been opened
@@ -7087,7 +7087,7 @@ mapGetRoomText:
 ; Animal companion regions (not used in ages)
 @specialCode3:
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 .ifdef ROM_AGES
 	add <TX_032d
 .else; ROM_SEASONS

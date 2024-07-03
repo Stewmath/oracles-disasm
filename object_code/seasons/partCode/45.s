@@ -55,7 +55,7 @@ partCode45:
 	ret nz
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_S_45
+	ld (hl),PART_S_45
 	inc l
 	inc (hl)
 	ld l,$d6

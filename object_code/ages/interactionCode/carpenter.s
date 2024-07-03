@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_CARPENTER
+; INTERAC_CARPENTER
 ;
 ; Variables:
 ;   var3f: Nonzero if the carpenter has returned to the boss
@@ -135,7 +135,7 @@ interactionCode9a:
 	ld a,(hl)
 
 .ifdef REGION_JP
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	ret nz
 	ld l,SpecialObject.state
 	; Fall through to @@dimitri label below
@@ -143,7 +143,7 @@ interactionCode9a:
 .else
 
 	ld l,SpecialObject.state
-	cp SPECIALOBJECTID_RICKY
+	cp SPECIALOBJECT_RICKY
 	jr nz,++
 
 @@ricky:
@@ -156,7 +156,7 @@ interactionCode9a:
 	ret
 
 ++
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	ret nz
 
 .endif

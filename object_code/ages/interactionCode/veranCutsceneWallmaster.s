@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_VERAN_CUTSCENE_WALLMASTER
+; INTERAC_VERAN_CUTSCENE_WALLMASTER
 ; ==============================================================================
 interactionCode2c:
 	ld e,Interaction.state

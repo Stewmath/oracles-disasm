@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_GOPONGA_FLOWER
+; ENEMY_GOPONGA_FLOWER
 ; ==============================================================================
 enemyCode25:
 	jr z,@normalStatus
@@ -78,7 +78,7 @@ enemyCode25:
 	call nz,getRandomNumber_noPreserveVars
 	and $03
 	ret nz
-	ld b,PARTID_GOPONGA_PROJECTILE
+	ld b,PART_GOPONGA_PROJECTILE
 	jp ecom_spawnProjectile
 
 @closeFlower:

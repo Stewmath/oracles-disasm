@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_MAKU_TREE_BUBBLE
+; ENEMY_MAKU_TREE_BUBBLE
 ;
 ; Variables:
 ;   $cfc0: bit 7 set when popped

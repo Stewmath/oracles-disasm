@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_PODOBOO_TOWER
+; ENEMY_PODOBOO_TOWER
 ;
 ; Variables:
 ;   var30: Base y-position. (Actual y-position changes as it emerges from the ground.)
@@ -109,7 +109,7 @@ enemyCode2d:
 	cp $b4
 	jr nc,@animate
 
-	ld b,PARTID_GOPONGA_PROJECTILE
+	ld b,PART_GOPONGA_PROJECTILE
 	call ecom_spawnProjectile
 @animate:
 	jp enemyAnimate

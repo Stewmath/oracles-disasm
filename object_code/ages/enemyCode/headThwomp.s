@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_HEAD_THWOMP
+; ENEMY_HEAD_THWOMP
 ;
 ; Variables:
 ;   direction: Current animation. Even numbers are face colors; odd numbers are
@@ -41,7 +41,7 @@ enemyCode79:
 
 
 headThwomp_state_uninitialized:
-	ld a,ENEMYID_HEAD_THWOMP
+	ld a,ENEMY_HEAD_THWOMP
 	ld b,PALH_81
 	call enemyBoss_initializeRoom
 
@@ -278,7 +278,7 @@ headThwomp_stateD:
 	ld a,(hl)
 	and $1f
 	ret nz
-	ld b,PARTID_HEAD_THWOMP_FIREBALL
+	ld b,PART_HEAD_THWOMP_FIREBALL
 	jp ecom_spawnProjectile
 
 @resumeSpinning:
@@ -336,7 +336,7 @@ headThwomp_stateE:
 
 	call getFreePartSlot
 	jr nz,++
-	ld (hl),PARTID_HEAD_THWOMP_CIRCULAR_PROJECTILE
+	ld (hl),PART_HEAD_THWOMP_CIRCULAR_PROJECTILE
 	inc l
 	ld e,Enemy.var33
 	ld a,(de)
@@ -450,7 +450,7 @@ headThwomp_stateF:
 	ret nz
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_3b
+	ld (hl),PART_3b
 	ret
 
 @beginMovingUp:
@@ -654,7 +654,7 @@ headThwomp_checkBombThrownIntoHead:
 @itemLoop:
 	ld l,Item.id
 	ld a,(hl)
-	cp ITEMID_BOMB
+	cp ITEM_BOMB
 	jr nz,@nextItem
 
 	ld l,Item.state
@@ -739,7 +739,7 @@ headThwomp_checkBombThrownIntoHead:
 headThwomp_dropHeart:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_ITEM_DROP
+	ld (hl),PART_ITEM_DROP
 	inc l
 	ld (hl),ITEM_DROP_HEART
 	ld bc,$1400
@@ -767,7 +767,7 @@ headThwomp_checkShootProjectile:
 	and $07
 	jr z,@dropBomb
 
-	ld b,PARTID_HEAD_THWOMP_FIREBALL
+	ld b,PART_HEAD_THWOMP_FIREBALL
 	jp ecom_spawnProjectile
 
 @dropBomb:
@@ -777,7 +777,7 @@ headThwomp_checkShootProjectile:
 
 	; Spawn bomb drop
 	call getFreePartSlot
-	ld (hl),PARTID_ITEM_DROP
+	ld (hl),PART_ITEM_DROP
 	inc l
 	ld (hl),ITEM_DROP_BOMBS
 	call objectCopyPosition
@@ -785,7 +785,7 @@ headThwomp_checkShootProjectile:
 	; Spawn bomb drop "physics" object?
 	ld b,h
 	call getFreePartSlot
-	ld (hl),PARTID_HEAD_THWOMP_BOMB_DROPPER
+	ld (hl),PART_HEAD_THWOMP_BOMB_DROPPER
 
 	ld l,Part.relatedObj1
 	ld a,Part.start

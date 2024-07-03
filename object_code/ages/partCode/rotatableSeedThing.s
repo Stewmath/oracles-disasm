@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_ROTATABLE_SEED_THING
+; PART_ROTATABLE_SEED_THING
 ; ==============================================================================
 partCode33:
 	ld e,$c2
@@ -56,7 +56,7 @@ partCode33:
 	call objectSetVisible83
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_ROTATABLE_SEED_THING
+	ld (hl),PART_ROTATABLE_SEED_THING
 	inc l
 	ld (hl),$03
 	ld l,$d6

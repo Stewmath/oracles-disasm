@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_D8_ARMOS_PATTERN_PUZZLE
+; INTERAC_D8_ARMOS_PATTERN_PUZZLE
 ; ==============================================================================
 interactionCode67:
 	ld e,Interaction.state

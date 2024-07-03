@@ -1,5 +1,5 @@
 ; ==============================================================================
-; PARTID_HOLES_FLOORTRAP
+; PART_HOLES_FLOORTRAP
 ; Variables:
 ;   var30 - pointer to tile at part's position
 ;   $ccbf - set to 1 when button in hallway to D3 miniboss is pressed

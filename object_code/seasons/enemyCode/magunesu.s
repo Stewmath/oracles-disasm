@@ -1,5 +1,5 @@
 ; ==============================================================================
-; ENEMYID_MAGUNESU
+; ENEMY_MAGUNESU
 ; ==============================================================================
 enemyCode3c:
 	jr z,+
@@ -170,7 +170,7 @@ magunesuFunc_0d_6cb7:
 	ret nz
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_GOPONGA_PROJECTILE
+	ld (hl),PART_GOPONGA_PROJECTILE
 	ld bc,$0400
 	call objectCopyPositionWithOffset
 	or d

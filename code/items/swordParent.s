@@ -1,5 +1,5 @@
 ;;
-; ITEMID_SWORD ($05)
+; ITEM_SWORD ($05)
 parentItemCode_sword:
 	call clearParentItemIfCantUseSword
 	ld e,Item.state
@@ -341,7 +341,7 @@ parentItemCode_sword:
 	ret c
 
 @createSwordBeam:
-	ldbc ITEMID_SWORD_BEAM,$00
+	ldbc ITEM_SWORD_BEAM,$00
 	ld e,$01
 	call getFreeItemSlotWithObjectCap
 	ret c

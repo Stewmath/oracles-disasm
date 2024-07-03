@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERACID_S_MISC_PUZZLES
+; INTERAC_S_MISC_PUZZLES
 ; ==============================================================================
 interactionCodedc:
 	ld e,$42
@@ -65,7 +65,7 @@ interactionCodedc_subidF:
 @func_66d2:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,$4b
 	jp setShortPosition_paramC
 
@@ -139,7 +139,7 @@ func_6744:
 	call setTile
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,$4b
 	call setShortPosition_paramC
 	ld h,d
@@ -287,7 +287,7 @@ interactionCodedc_subid4:
 	ret nz
 	ld a,$4d
 	call playSound
-	ldbc INTERACID_MINIBOSS_PORTAL $02
+	ldbc INTERAC_MINIBOSS_PORTAL $02
 	call objectCreateInteraction
 	ret nz
 	jp interactionDelete
@@ -367,7 +367,7 @@ interactionCodedc_subid6:
 	ret z
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_SMALL_KEY
 	inc l
@@ -411,7 +411,7 @@ interactionCodedc_subid7:
 	call @func_6923
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,$4b
 	call setShortPosition_paramC
 	dec b
@@ -439,14 +439,14 @@ interactionCodedc_subid7:
 	ld d,a
 	ret
 @table_693a:
-	.db ENEMYID_SPIKED_BEETLE $00
-	.db ENEMYID_GIBDO $00
-	.db ENEMYID_ARROW_DARKNUT $01
-	.db ENEMYID_MAGUNESU $00
-	.db ENEMYID_LYNEL $01
-	.db ENEMYID_IRON_MASK $00
-	.db ENEMYID_POLS_VOICE $00
-	.db ENEMYID_STALFOS $02
+	.db ENEMY_SPIKED_BEETLE $00
+	.db ENEMY_GIBDO $00
+	.db ENEMY_ARROW_DARKNUT $01
+	.db ENEMY_MAGUNESU $00
+	.db ENEMY_LYNEL $01
+	.db ENEMY_IRON_MASK $00
+	.db ENEMY_POLS_VOICE $00
+	.db ENEMY_STALFOS $02
 @state3:
 	call interactionDecCounter1
 	ret nz
@@ -539,7 +539,7 @@ interactionCodedc_subid8:
 @spawnRupeeTreasure:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -573,7 +573,7 @@ interactionCodedc_subid9:
 func_6a18:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PORTAL_SPAWNER
+	ld (hl),INTERAC_PORTAL_SPAWNER
 	inc l
 	ld (hl),$01
 	ld c,$57

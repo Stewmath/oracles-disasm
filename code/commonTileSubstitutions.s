@@ -110,7 +110,7 @@ replaceShutterForLinkEntering:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_DOOR_CONTROLLER
+	ld (hl),INTERAC_DOOR_CONTROLLER
 	inc l
 	ld (hl),e
 	ld l,Interaction.yh
