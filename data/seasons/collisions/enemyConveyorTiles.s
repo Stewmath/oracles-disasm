@@ -1,20 +1,20 @@
 enemyConveyorTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
 
 
-@collisions4:
+@dungeons:
 	.db $54, ANGLE_UP
 	.db $55, ANGLE_RIGHT
 	.db $56, ANGLE_DOWN
 	.db $57, ANGLE_LEFT
-@collisions0:
-@collisions1:
-@collisions2:
-@collisions3:
-@collisions5:
+@overworld:
+@subrosia:
+@makutree:
+@indoors:
+@sidescrolling:
 	.db $00

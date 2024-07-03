@@ -2,12 +2,12 @@
 ; (In order for this to work, the corresponding bit in the "_breakableTileModes" table
 ; must be set so that it calls "updateRoomFlagsForBrokenTile")
 tileUpdateRoomFlagsOnBreakTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
 
 ; Data format:
 ; b0: tile index
@@ -18,26 +18,26 @@ tileUpdateRoomFlagsOnBreakTable:
 ;               If bits 6 and 7 aren't set, this is the bit to set in the room flags (ie.
 ;               value of 2 will set bit 2).
 
-@collisions0:
+@overworld:
 	.db $c6 $07
 	.db $c1 $07
 	.db $c2 $07
 	.db $e3 $07
-@collisions1:
+@subrosia:
 	.db $e2 $07
 	.db $cb $07
 	.db $c5 $07
-@collisions2:
+@makutree:
 	.db $00
 
-@collisions3:
+@indoors:
 	.db $30 $00
 	.db $31 $44
 	.db $32 $02
 	.db $33 $4c
 	.db $00
 
-@collisions4:
+@dungeons:
 	.db $30 $80
 	.db $31 $84
 	.db $32 $88
@@ -46,5 +46,5 @@ tileUpdateRoomFlagsOnBreakTable:
 	.db $39 $84
 	.db $3a $88
 	.db $3b $8c
-@collisions5:
+@sidescrolling:
 	.db $00

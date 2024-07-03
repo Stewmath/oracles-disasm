@@ -1,18 +1,18 @@
 ; This is a list of tiles that can be landed on when jumping down a cliff, despite being
 ; solid.
 landableTileFromCliffExceptions:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
 
-@collisions0:
+@overworld:
 	.db $eb $20
-@collisions1:
-@collisions2:
-@collisions3:
-@collisions4:
-@collisions5:
+@subrosia:
+@makutree:
+@indoors:
+@dungeons:
+@sidescrolling:
 	.db $00

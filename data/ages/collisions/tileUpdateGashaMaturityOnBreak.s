@@ -1,18 +1,18 @@
 ; List of tiles which add values to wGashaMaturity (increases value of gasha nuts up to a point)
 tileIncreaseGashaMaturityOnBreakTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
 ; Data format:
 ; b0: tile index
 ; b1: amount to add to wGashaMaturity
 
-@collisions0:
-@collisions4:
+@overworld:
+@underwater:
 	.db $c7 50
 	.db $c2 50
 	.db $cb 50
@@ -22,14 +22,14 @@ tileIncreaseGashaMaturityOnBreakTable:
 	.db $c4 30
 	.db $c9 30
 	.db $00
-@collisions1:
+@indoors:
 	.db $30 100
 	.db $31 100
 	.db $32 100
 	.db $33 100
 	.db $00
-@collisions2:
-@collisions5:
+@dungeons:
+@five:
 	.db $30 50
 	.db $31 50
 	.db $32 50
@@ -40,5 +40,5 @@ tileIncreaseGashaMaturityOnBreakTable:
 	.db $3b 100
 	.db $68 50
 	.db $69 50
-@collisions3:
+@sidescrolling:
 	.db $00

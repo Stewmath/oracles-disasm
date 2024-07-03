@@ -1,15 +1,15 @@
 breakableTileCollisionTable:
-	.dw breakableTileCollision0Data
-	.dw breakableTileCollision1Data
-	.dw breakableTileCollision2Data
-	.dw breakableTileCollision3Data
-	.dw breakableTileCollision4Data
-	.dw breakableTileCollision5Data
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
 ; 1st byte is the tile index, 2nd is an index for "breakableTileModes".
 
-breakableTileCollision0Data:
-breakableTileCollision4Data:
+@overworld:
+@underwater:
 	.db $da $32
 	.db $f8 $00
 	.db $f2 $0d
@@ -72,9 +72,9 @@ breakableTileCollision4Data:
 	.db $af $11
 	.db $bf $11
 	.db $00
-breakableTileCollision1Data:
-breakableTileCollision2Data:
-breakableTileCollision5Data:
+@indoors:
+@dungeons:
+@five:
 	.db $da $32
 	.db $f2 $16
 	.db $f8 $2a
@@ -103,7 +103,7 @@ breakableTileCollision5Data:
 	.db $68 $2e
 	.db $69 $2f
 	.db $00
-breakableTileCollision3Data:
+@sidescrolling:
 	.db $da $32
 	.db $12 $30
 	.db $71 $31

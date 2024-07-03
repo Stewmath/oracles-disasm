@@ -1,19 +1,19 @@
 itemDropConveyorTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
-@collisions2:
-@collisions5:
+@dungeons:
+@five:
 	.db TILEINDEX_CONVEYOR_UP    $00
 	.db TILEINDEX_CONVEYOR_RIGHT $08
 	.db TILEINDEX_CONVEYOR_DOWN  $10
 	.db TILEINDEX_CONVEYOR_LEFT  $18
-@collisions0:
-@collisions1:
-@collisions3:
-@collisions4:
+@overworld:
+@indoors:
+@sidescrolling:
+@underwater:
 	.db $00

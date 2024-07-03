@@ -1,35 +1,35 @@
 ; List of tiles which add values to wGashaMaturity (increases value of gasha nuts up to a point)
 tileIncreaseGashaMaturityOnBreakTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
 
 ; Data format:
 ; b0: tile index
 ; b1: amount to add to wGashaMaturity
 
-@collisions0:
+@overworld:
 	.db $c6 $32
 	.db $c2 $32
 	.db $e3 $32
-@collisions1:
+@subrosia:
 	.db $e2 $32
 	.db $cb $1e
 	.db $c5 $1e
-@collisions2:
+@makutree:
 	.db $00
 
-@collisions3:
+@indoors:
 	.db $30 $64
 	.db $31 $64
 	.db $32 $64
 	.db $33 $64
 	.db $00
 
-@collisions4:
+@dungeons:
 	.db $30 $32
 	.db $31 $32
 	.db $32 $32
@@ -38,5 +38,5 @@ tileIncreaseGashaMaturityOnBreakTable:
 	.db $39 $64
 	.db $3a $64
 	.db $3b $64
-@collisions5:
+@sidescrolling:
 	.db $00

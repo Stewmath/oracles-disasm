@@ -1,22 +1,27 @@
-itemConveyorTilesTable:
-	.dw itemConveyorTiles_collisions0
-	.dw itemConveyorTiles_collisions1
-	.dw itemConveyorTiles_collisions2
-	.dw itemConveyorTiles_collisions3
-	.dw itemConveyorTiles_collisions4
-	.dw itemConveyorTiles_collisions5
-
+; Lists tiles which behave as conveyors when bombs and bombchus owned by the player are resting on
+; them.
+;
+; Data format:
+;
 ; b0: tile index
 ; b1: angle to move in
 
-itemConveyorTiles_collisions4:
-	.db TILEINDEX_CONVEYOR_UP	$00
-	.db TILEINDEX_CONVEYOR_RIGHT	$08
-	.db TILEINDEX_CONVEYOR_DOWN	$10
-	.db TILEINDEX_CONVEYOR_LEFT	$18
-itemConveyorTiles_collisions0:
-itemConveyorTiles_collisions1:
-itemConveyorTiles_collisions2:
-itemConveyorTiles_collisions3:
-itemConveyorTiles_collisions5:
+itemConveyorTilesTable:
+	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+
+@dungeons:
+	.db TILEINDEX_CONVEYOR_UP,    ANGLE_UP
+	.db TILEINDEX_CONVEYOR_RIGHT, ANGLE_RIGHT
+	.db TILEINDEX_CONVEYOR_DOWN,  ANGLE_DOWN
+	.db TILEINDEX_CONVEYOR_LEFT,  ANGLE_LEFT
+@overworld:
+@subrosia:
+@makutree:
+@indoors:
+@sidescrolling:
 	.db $00

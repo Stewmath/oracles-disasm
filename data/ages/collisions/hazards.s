@@ -1,14 +1,14 @@
 ; Lists the water, hole, and lava tiles for each collision mode.
 hazardCollisionTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
-@collisions0:
-@collisions4:
+@overworld:
+@underwater:
 	.db $fa $01
 	.db $fc $01
 	.db $fe $01
@@ -26,9 +26,9 @@ hazardCollisionTable:
 	.db $e9 $01
 	.db $00
 
-@collisions1:
-@collisions2:
-@collisions5:
+@indoors:
+@dungeons:
+@five:
 	.db $fa $01
 	.db $fc $01
 	.db $f3 $02
@@ -47,7 +47,7 @@ hazardCollisionTable:
 	.db $4b $02
 	.db $00
 
-@collisions3:
+@sidescrolling:
 	.db $1a $01
 	.db $1b $01
 	.db $1c $01

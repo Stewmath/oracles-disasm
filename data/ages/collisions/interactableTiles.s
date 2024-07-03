@@ -25,15 +25,15 @@
 ;        8: Spawns a ghini when approached. Used in the graveyard in Seasons.
 
 interactableTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
-@collisions0:
-@collisions4:
+@overworld:
+@underwater:
 	.db $d3 $80
 	.db $f1 $04
 	.db $f2 $05
@@ -43,10 +43,10 @@ interactableTilesTable:
 	.db $da $80
 	.db $00
 
-@collisions1:
+@indoors:
 	.db $ae $06
-@collisions2:
-@collisions5:
+@dungeons:
+@five:
 	.db $18 $00
 	.db $19 $10
 	.db $1a $20
@@ -79,6 +79,6 @@ interactableTilesTable:
 	.db $08 $33
 	.db $f1 $04
 	.db $f2 $05
-@collisions3:
+@sidescrolling:
 	.db $da $80
 	.db $00

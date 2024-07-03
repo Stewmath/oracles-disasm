@@ -20,25 +20,25 @@
 ;                      from the "interactableTilesTable".
 
 pushableTilePropertiesTable:
-	.db @collisions0-CADDR
-	.db @collisions1-CADDR
-	.db @collisions2-CADDR
-	.db @collisions3-CADDR
-	.db @collisions4-CADDR
-	.db @collisions5-CADDR
+	.db @overworld-CADDR
+	.db @indoors-CADDR
+	.db @dungeons-CADDR
+	.db @sidescrolling-CADDR
+	.db @underwater-CADDR
+	.db @five-CADDR
 
-@collisions0:
+@overworld:
 	.db $d3 $3a $02 $01
 	.db $d8 $3a $02 $05
 	.db $d9 $dc $02 $85
 	.db $02 $3a $02 $05
 
-@collisions4:
-@collisions5:
+@underwater:
+@five:
 	.db $00
 
-@collisions1:
-@collisions2:
+@indoors:
+@dungeons:
 	.db $18 $a0 $1d $01
 	.db $19 $a0 $1d $01
 	.db $1a $a0 $1d $01
@@ -55,5 +55,5 @@ pushableTilePropertiesTable:
 	.db $25 $a0 $25 $01
 	.db $07 $a0 $06 $01
 
-@collisions3:
+@sidescrolling:
 	.db $00

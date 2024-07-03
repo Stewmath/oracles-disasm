@@ -7,125 +7,117 @@
 standardTileSubstitutions:
 
 @bit0:
-	.dw @bit0Group0
-	.dw @bit0Group1
-	.dw @bit0Group2
-	.dw @bit0Group3
-	.dw @bit0Group4
-	.dw @bit0Group5
-	.dw @bit0Group6
-	.dw @bit0Group7
+	.dw @bit0Overworld
+	.dw @bit0Subrosia
+	.dw @bit0Makutree
+	.dw @bit0Indoors
+	.dw @bit0Dungeons
+	.dw @bit0Dungeons
+	.dw @bit0Sidescrolling
+	.dw @bit0Sidescrolling
 
 @bit1:
-	.dw @bit1Group0
-	.dw @bit1Group1
-	.dw @bit1Group2
-	.dw @bit1Group3
-	.dw @bit1Group4
-	.dw @bit1Group5
-	.dw @bit1Group6
-	.dw @bit1Group7
+	.dw @bit1Overworld
+	.dw @bit1Subrosia
+	.dw @bit1Makutree
+	.dw @bit1Indoors
+	.dw @bit1Dungeons
+	.dw @bit1Dungeons
+	.dw @bit1Sidescrolling
+	.dw @bit1Sidescrolling
 
 @bit2:
-	.dw @bit2Group0
-	.dw @bit2Group1
-	.dw @bit2Group2
-	.dw @bit2Group3
-	.dw @bit2Group4
-	.dw @bit2Group5
-	.dw @bit2Group6
-	.dw @bit2Group7
+	.dw @bit2Overworld
+	.dw @bit2Subrosia
+	.dw @bit2Makutree
+	.dw @bit2Indoors
+	.dw @bit2Dungeons
+	.dw @bit2Dungeons
+	.dw @bit2Sidescrolling
+	.dw @bit2Sidescrolling
 
 @bit3:
-	.dw @bit3Group0
-	.dw @bit3Group1
-	.dw @bit3Group2
-	.dw @bit3Group3
-	.dw @bit3Group4
-	.dw @bit3Group5
-	.dw @bit3Group6
-	.dw @bit3Group7
+	.dw @bit3Overworld
+	.dw @bit3Subrosia
+	.dw @bit3Makutree
+	.dw @bit3Indoors
+	.dw @bit3Dungeons
+	.dw @bit3Dungeons
+	.dw @bit3Sidescrolling
+	.dw @bit3Sidescrolling
 
 @bit7:
-	.dw @bit7Group0
-	.dw @bit7Group1
-	.dw @bit7Group2
-	.dw @bit7Group3
-	.dw @bit7Group4
-	.dw @bit7Group5
-	.dw @bit7Group6
-	.dw @bit7Group7
+	.dw @bit7Overworld
+	.dw @bit7Subrosia
+	.dw @bit7Makutree
+	.dw @bit7Indoors
+	.dw @bit7Dungeons
+	.dw @bit7Dungeons
+	.dw @bit7Sidescrolling
+	.dw @bit7Sidescrolling
 
-@bit0Group0:
-@bit0Group1:
-@bit0Group2:
+@bit0Overworld:
+@bit0Subrosia:
+@bit0Makutree:
 	.db $00
 
-@bit0Group3:
-@bit0Group4:
-@bit0Group5:
+@bit0Indoors:
+@bit0Dungeons:
 	.db $34 $30 ; Bombable walls, key doors (up)
 	.db $34 $38
 	.db $a0 $70
 	.db $a0 $74
 	.db $00
 
-@bit0Group6:
-@bit0Group7:
+@bit0Sidescrolling:
 	.db $00
 
-@bit1Group0:
-@bit1Group1:
-@bit1Group2:
+@bit1Overworld:
+@bit1Subrosia:
+@bit1Makutree:
 	.db $00
 
-@bit1Group3:
-@bit1Group4:
-@bit1Group5:
+@bit1Indoors:
+@bit1Dungeons:
 	.db $35 $31 ; Bombable walls, key doors (right)
 	.db $35 $39
 	.db $a0 $71
 	.db $a0 $75
 
-@bit1Group6:
-@bit1Group7:
+@bit1Sidescrolling:
 	.db $00
 
-@bit2Group0:
-@bit2Group1:
-@bit2Group2:
+@bit2Overworld:
+@bit2Subrosia:
+@bit2Makutree:
 	.db $00
 
-@bit2Group3:
-@bit2Group4:
-@bit2Group5:
+@bit2Indoors:
+@bit2Dungeons:
 	.db $36 $32 ; Bombable walls, key doors (down)
 	.db $36 $3a
 	.db $a0 $72
 	.db $a0 $76
 
-@bit2Group6:
-@bit2Group7:
+@bit2Sidescrolling:
 	.db $00
 
-@bit3Group0:
-@bit3Group1:
-@bit3Group2:
+@bit3Overworld:
+@bit3Subrosia:
+@bit3Makutree:
 	.db $00
 
-@bit3Group3:
-@bit3Group4:
-@bit3Group5:
+@bit3Indoors:
+@bit3Dungeons:
 	.db $37 $33 ; Bombable walls, key doors (left)
 	.db $37 $3b
 	.db $a0 $73
 	.db $a0 $77
 
-@bit3Group6:
-@bit3Group7:
+@bit3Sidescrolling:
 	.db $00
 
-@bit7Group0:
+@bit7Overworld:
 	.db $e7 $c1 ; TODO
 	.db $e0 $c6
 	.db $e0 $c2
@@ -134,17 +126,16 @@ standardTileSubstitutions:
 	.db $e7 $cb
 	.db $e8 $e2
 
-@bit7Group1:
+@bit7Subrosia:
 	.db $00
 
-@bit7Group2:
+@bit7Makutree:
 	.db $00
 
-@bit7Group3:
+@bit7Indoors:
 	.db $00
 
-@bit7Group4:
-@bit7Group5:
+@bit7Dungeons:
 	.db $a0 $1e
 	.db $44 $42
 	.db $45 $43
@@ -152,6 +143,5 @@ standardTileSubstitutions:
 	.db $47 $41
 	.db $45 $8d
 
-@bit7Group6:
-@bit7Group7:
+@bit7Sidescrolling:
 	.db $00

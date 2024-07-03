@@ -3,23 +3,23 @@
 ;   b1: unused?
 
 enemyUnspawnableTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
-@collisions0:
-@collisions4:
+@overworld:
+@underwater:
 	.db $f3 $01
 	.db $fd $01
 	.db $e9 $01
 	.db $00
 
-@collisions1:
-@collisions2:
-@collisions5:
+@indoors:
+@dungeons:
+@five:
 	.db $f3 $01
 	.db $f4 $01
 	.db $f5 $01
@@ -40,5 +40,5 @@ enemyUnspawnableTilesTable:
 	.db $3e $01
 	.db $3f $01
 
-@collisions3:
+@sidescrolling:
 	.db $00

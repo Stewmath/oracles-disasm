@@ -1,14 +1,14 @@
 ; This table maps a tile index to a tileType (see constants/tileTypes.s).
 tileTypesTable:
-	.dw tileTypes_collisions0
-	.dw tileTypes_collisions1
-	.dw tileTypes_collisions2
-	.dw tileTypes_collisions3
-	.dw tileTypes_collisions4
-	.dw tileTypes_collisions5
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
-tileTypes_collisions0:
-tileTypes_collisions4:
+@overworld:
+@underwater:
 	.db $f3 TILETYPE_HOLE
 	.db $d4 TILETYPE_VINES
 	.db $d5 TILETYPE_VINES
@@ -33,12 +33,12 @@ tileTypes_collisions4:
 	.db $e8 TILETYPE_LAVA
 	.db $00
 
-tileTypes_collisions2:
+@dungeons:
 	.db $0e TILETYPE_RAISABLE_FLOOR
 	.db $0f TILETYPE_RAISABLE_FLOOR
 
-tileTypes_collisions1:
-tileTypes_collisions5:
+@indoors:
+@five:
 	.db $f3 TILETYPE_HOLE
 	.db $f4 TILETYPE_HOLE
 	.db $f5 TILETYPE_HOLE
@@ -71,7 +71,7 @@ tileTypes_collisions5:
 	.db $8a TILETYPE_ICE
 	.db $00
 
-tileTypes_collisions3:
+@sidescrolling:
 	.db $16 TILETYPE_SS_LADDER
 	.db $18 TILETYPE_SS_LADDER
 	.db $17 TILETYPE_SS_LADDER | TILETYPE_SS_LADDER_TOP

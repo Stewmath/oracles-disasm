@@ -8,22 +8,22 @@
 ;   b1: key type (0=small key, 1=boss key)
 
 keyDoorGraphicTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
 
-@collisions0:
+@overworld:
 	.db $00
-@collisions1:
+@subrosia:
 	.db $ec $00 ; Subrosia key door
-@collisions2:
-@collisions3:
-@collisions5:
+@makutree:
+@indoors:
+@sidescrolling:
 	.db $00
-@collisions4:
+@dungeons:
 	.db $1e $00 ; Keyblock
 	.db $70 $00 ; Small key doors
 	.db $71 $00

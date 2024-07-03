@@ -1,16 +1,17 @@
 cliffTilesTable:
-	.dw cliffTilesCollisions0Data
-	.dw cliffTilesCollisions1Data
-	.dw cliffTilesCollisions2Data
-	.dw cliffTilesCollisions3Data
-	.dw cliffTilesCollisions4Data
-	.dw cliffTilesCollisions5Data
+	.dw @overworld
+	.dw @subrosia
+	.dw @makutree
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+
 
 ; Data format:
 ; b0: Tile index
 ; b1: Angle value from which the tile can be jumped off of.
 
-cliffTilesCollisions0Data:
+@overworld:
 	.db $54 $10
 	.db $25 $18
 	.db $26 $08
@@ -28,16 +29,16 @@ cliffTilesCollisions0Data:
 	.db $ff $10
 	.db $00
 
-cliffTilesCollisions1Data:
+@subrosia:
 	.db $ea $10
 	.db $eb $10
 	.db $54 $10
 	.db $00
 
-cliffTilesCollisions2Data:
+@makutree:
 	.db $00
-cliffTilesCollisions3Data:
-cliffTilesCollisions4Data:
+@indoors:
+@dungeons:
 	.db $b0 $10
 	.db $b1 $18
 	.db $b2 $00
@@ -45,5 +46,5 @@ cliffTilesCollisions4Data:
 	.db $05 $00
 	.db $06 $10
 
-cliffTilesCollisions5Data:
+@sidescrolling:
 	.db $00

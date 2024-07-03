@@ -1,19 +1,19 @@
 ; If you want to change which tiles are cliff tiles, see also "itemPassibleCliffTilesTable.s".
 
 cliffTilesTable:
-	.dw cliffTiles_collisions0
-	.dw cliffTiles_collisions1
-	.dw cliffTiles_collisions2
-	.dw cliffTiles_collisions3
-	.dw cliffTiles_collisions4
-	.dw cliffTiles_collisions5
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
 ; Data format:
 ; b0: Tile index
 ; b1: Angle value from which the tile can be jumped off of.
 
-cliffTiles_collisions0:
-cliffTiles_collisions4:
+@overworld:
+@underwater:
 	.db $05 $10
 	.db $06 $10
 	.db $07 $10
@@ -23,9 +23,9 @@ cliffTiles_collisions4:
 	.db $ff $10
 	.db $00
 
-cliffTiles_collisions1:
-cliffTiles_collisions2:
-cliffTiles_collisions5:
+@indoors:
+@dungeons:
+@five:
 	.db $b0 $10
 	.db $b1 $18
 	.db $b2 $00
@@ -34,5 +34,5 @@ cliffTiles_collisions5:
 	.db $c2 $18
 	.db $c3 $00
 	.db $c4 $08
-cliffTiles_collisions3:
+@sidescrolling:
 	.db $00

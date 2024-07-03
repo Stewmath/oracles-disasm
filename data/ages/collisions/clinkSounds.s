@@ -4,15 +4,15 @@
 ; * The second is a list of tiles which don't produce clinks at all.
 
 clinkSoundTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
+	.dw @overworld
+	.dw @indoors
+	.dw @dungeons
+	.dw @sidescrolling
+	.dw @underwater
+	.dw @five
 
-@collisions0:
-@collisions4:
+@overworld:
+@underwater:
 	.db $c1 $c2 $c4 $d1 $cf
 	.db $00
 
@@ -20,16 +20,16 @@ clinkSoundTable:
 	.db $00
 	.db $00
 
-@collisions1:
-@collisions2:
-@collisions5:
+@indoors:
+@dungeons:
+@five:
 	.db $1f $30 $31 $32 $33 $38 $39 $3a $3b $68 $69
 	.db $00
 
 	.db $0a $0b
 	.db $00
 
-@collisions3:
+@sidescrolling:
 	.db $12
 	.db $00
 

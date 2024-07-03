@@ -20,23 +20,22 @@
 ;                      from the "interactableTilesTable".
 
 pushableTilePropertiesTable:
-	.db @collisions0-CADDR
-	.db @collisions1-CADDR
-	.db @collisions2-CADDR
-	.db @collisions3-CADDR
-	.db @collisions4-CADDR
-	.db @collisions5-CADDR
-	.db @collisions6-CADDR
-	.db @collisions7-CADDR
+	.db @overworld-CADDR
+	.db @subrosia-CADDR
+	.db @makutree-CADDR
+	.db @indoors-CADDR
+	.db @dungeons-CADDR
+	.db @dungeons-CADDR
+	.db @sidescrolling-CADDR
+	.db @sidescrolling-CADDR
 
-@collisions0:
-@collisions1:
+@overworld:
+@subrosia:
 	.db $d6 $04 $9c $01
-@collisions2:
+@makutree:
 	.db $00
-@collisions3:
-@collisions4:
-@collisions5:
+@indoors:
+@dungeons:
 	.db $18 $a0 $1d $01
 	.db $19 $a0 $1d $01
 	.db $1a $a0 $1d $01
@@ -51,6 +50,5 @@ pushableTilePropertiesTable:
 	.db $13 $0d $10 $01
 	.db $25 $a0 $25 $01
 	.db $2f $8c $2f $02
-@collisions6:
-@collisions7:
+@sidescrolling:
 	.db $00
