@@ -1,4 +1,12 @@
-; This table maps a tile index to a tileType (see constants/tileTypes.s).
+; This table maps a tile index to a tileType (see constants/tileTypes.s), which is one of the main
+; ways that special tile effects are implemented.
+;
+; This has no effect on anything other than Link himself. For holes, water, and lava to work with
+; enemies and other object types, see "hazards.s".
+;
+; Data format:
+;   b0: Tile index ($00 to end the list)
+;   b1: Tile type
 tileTypesTable:
 	.dw @overworld
 	.dw @indoors
@@ -36,7 +44,6 @@ tileTypesTable:
 @dungeons:
 	.db $0e TILETYPE_RAISABLE_FLOOR
 	.db $0f TILETYPE_RAISABLE_FLOOR
-
 @indoors:
 @five:
 	.db $f3 TILETYPE_HOLE
@@ -74,12 +81,12 @@ tileTypesTable:
 @sidescrolling:
 	.db $16 TILETYPE_SS_LADDER
 	.db $18 TILETYPE_SS_LADDER
-	.db $17 TILETYPE_SS_LADDER | TILETYPE_SS_LADDER_TOP
-	.db $19 TILETYPE_SS_LADDER | TILETYPE_SS_LADDER_TOP
+	.db $17 TILETYPE_SS_LADDER|TILETYPE_SS_LADDER_TOP
+	.db $19 TILETYPE_SS_LADDER|TILETYPE_SS_LADDER_TOP
 	.db $f4 TILETYPE_SS_HOLE
 	.db $0f TILETYPE_SS_HOLE
 	.db $0c TILETYPE_SS_HOLE
-	.db $1a TILETYPE_SS_LADDER | TILETYPE_SS_WATER
+	.db $1a TILETYPE_SS_LADDER|TILETYPE_SS_WATER
 	.db $1b TILETYPE_SS_WATER
 	.db $1c TILETYPE_SS_WATER
 	.db $1d TILETYPE_SS_WATER

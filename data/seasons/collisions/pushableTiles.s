@@ -34,6 +34,7 @@ pushableTilePropertiesTable:
 	.db $d6 $04 $9c $01
 @makutree:
 	.db $00
+
 @indoors:
 @dungeons:
 	.db $18 $a0 $1d $01

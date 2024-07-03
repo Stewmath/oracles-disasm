@@ -1,4 +1,9 @@
 ; List of tiles which add values to wGashaMaturity (increases value of gasha nuts up to a point)
+;
+; Data format:
+; b0: tile index
+; b1: amount to add to wGashaMaturity
+
 tileIncreaseGashaMaturityOnBreakTable:
 	.dw @overworld
 	.dw @subrosia
@@ -7,36 +12,32 @@ tileIncreaseGashaMaturityOnBreakTable:
 	.dw @dungeons
 	.dw @sidescrolling
 
-; Data format:
-; b0: tile index
-; b1: amount to add to wGashaMaturity
-
 @overworld:
-	.db $c6 $32
-	.db $c2 $32
-	.db $e3 $32
+	.db $c6 50
+	.db $c2 50
+	.db $e3 50
 @subrosia:
-	.db $e2 $32
-	.db $cb $1e
-	.db $c5 $1e
+	.db $e2 50
+	.db $cb 30
+	.db $c5 30
 @makutree:
 	.db $00
 
 @indoors:
-	.db $30 $64
-	.db $31 $64
-	.db $32 $64
-	.db $33 $64
+	.db $30 100
+	.db $31 100
+	.db $32 100
+	.db $33 100
 	.db $00
 
 @dungeons:
-	.db $30 $32
-	.db $31 $32
-	.db $32 $32
-	.db $33 $32
-	.db $38 $64
-	.db $39 $64
-	.db $3a $64
-	.db $3b $64
+	.db $30 50
+	.db $31 50
+	.db $32 50
+	.db $33 50
+	.db $38 100
+	.db $39 100
+	.db $3a 100
+	.db $3b 100
 @sidescrolling:
 	.db $00

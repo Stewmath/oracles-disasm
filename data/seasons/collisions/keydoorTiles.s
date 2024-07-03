@@ -17,12 +17,15 @@ keyDoorGraphicTable:
 
 @overworld:
 	.db $00
+
 @subrosia:
 	.db $ec $00 ; Subrosia key door
+
 @makutree:
 @indoors:
 @sidescrolling:
 	.db $00
+
 @dungeons:
 	.db $1e $00 ; Keyblock
 	.db $70 $00 ; Small key doors

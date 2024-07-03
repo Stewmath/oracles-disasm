@@ -5,7 +5,7 @@
 ; have timewarped from with something non-solid. Otherwise, Link could get caught in an infinite
 ; timewarp loop.
 ;
-; Contrast with timewarpEntryTileReplacement.s, which applies only when applying the tune of
+; Contrast with timewarpEntryTileReplacement.s, which applies only when playing the tune of
 ; currents/ages.
 
 timewarpReturnTileReplacementDict:

@@ -1,8 +1,12 @@
-; Tile substitutions which occur when the corresponding bits of wRoomFlags is set. This is a way to
+; Tile substitutions which occur when the corresponding bits of wRoomFlags are set. This is a way to
 ; remember when keydoors have been opened, walls have been bombed, etc.
 ;
 ; NOTE: In Ages these tables are indexed with wActiveCollisions, but in Seasons, they're indexed
 ; with wActiveGroup.
+;
+; Data format:
+;   b0: New tile index to use ($00 for end of list)
+;   b1: Tile index to replace with value "b0" when corresponding room flag bit is set
 
 standardTileSubstitutions:
 
@@ -15,7 +19,6 @@ standardTileSubstitutions:
 	.dw @bit0Dungeons
 	.dw @bit0Sidescrolling
 	.dw @bit0Sidescrolling
-
 @bit1:
 	.dw @bit1Overworld
 	.dw @bit1Subrosia
@@ -25,7 +28,6 @@ standardTileSubstitutions:
 	.dw @bit1Dungeons
 	.dw @bit1Sidescrolling
 	.dw @bit1Sidescrolling
-
 @bit2:
 	.dw @bit2Overworld
 	.dw @bit2Subrosia
@@ -35,7 +37,6 @@ standardTileSubstitutions:
 	.dw @bit2Dungeons
 	.dw @bit2Sidescrolling
 	.dw @bit2Sidescrolling
-
 @bit3:
 	.dw @bit3Overworld
 	.dw @bit3Subrosia
@@ -45,7 +46,6 @@ standardTileSubstitutions:
 	.dw @bit3Dungeons
 	.dw @bit3Sidescrolling
 	.dw @bit3Sidescrolling
-
 @bit7:
 	.dw @bit7Overworld
 	.dw @bit7Subrosia
@@ -55,6 +55,7 @@ standardTileSubstitutions:
 	.dw @bit7Dungeons
 	.dw @bit7Sidescrolling
 	.dw @bit7Sidescrolling
+
 
 @bit0Overworld:
 @bit0Subrosia:
@@ -72,6 +73,7 @@ standardTileSubstitutions:
 @bit0Sidescrolling:
 	.db $00
 
+
 @bit1Overworld:
 @bit1Subrosia:
 @bit1Makutree:
@@ -83,9 +85,9 @@ standardTileSubstitutions:
 	.db $35 $39
 	.db $a0 $71
 	.db $a0 $75
-
 @bit1Sidescrolling:
 	.db $00
+
 
 @bit2Overworld:
 @bit2Subrosia:
@@ -98,9 +100,9 @@ standardTileSubstitutions:
 	.db $36 $3a
 	.db $a0 $72
 	.db $a0 $76
-
 @bit2Sidescrolling:
 	.db $00
+
 
 @bit3Overworld:
 @bit3Subrosia:
@@ -113,19 +115,18 @@ standardTileSubstitutions:
 	.db $37 $3b
 	.db $a0 $73
 	.db $a0 $77
-
 @bit3Sidescrolling:
 	.db $00
 
-@bit7Overworld:
-	.db $e7 $c1 ; TODO
-	.db $e0 $c6
-	.db $e0 $c2
-	.db $e0 $e3
-	.db $e6 $c5
-	.db $e7 $cb
-	.db $e8 $e2
 
+@bit7Overworld:
+	.db $e7 $c1 ; Stairs under rock
+	.db $e0 $c6 ; Soil under bush
+	.db $e0 $c2 ; Soil under rock
+	.db $e0 $e3 ; Soil under earth
+	.db $e6 $c5 ; Portal under bush (actually just dirt by itself)
+	.db $e7 $cb ; Stairs under burnable tree
+	.db $e8 $e2 ; Bombable cave door
 @bit7Subrosia:
 	.db $00
 
@@ -136,12 +137,11 @@ standardTileSubstitutions:
 	.db $00
 
 @bit7Dungeons:
-	.db $a0 $1e
-	.db $44 $42
-	.db $45 $43
-	.db $46 $40
-	.db $47 $41
-	.db $45 $8d
-
+	.db $a0 $1e ; Keyblock
+	.db $44 $42 ; Appearing upward stairs
+	.db $45 $43 ; Appearing downward stairs
+	.db $46 $40 ; Appearing upward stairs in wall
+	.db $47 $41 ; Appearing downward stairs in wall
+	.db $45 $8d ; ?
 @bit7Sidescrolling:
 	.db $00

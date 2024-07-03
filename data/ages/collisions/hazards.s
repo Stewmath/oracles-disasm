@@ -1,4 +1,10 @@
 ; Lists the water, hole, and lava tiles for each collision mode.
+;
+; These tiles must have corresponding entries in tileTypeMappings.s to work properly.
+;
+; Data format:
+;   b0: Tile index
+;   b1: $01 = water, $02 = hole, $04 = lava
 hazardCollisionTable:
 	.dw @overworld
 	.dw @indoors

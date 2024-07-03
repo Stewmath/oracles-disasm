@@ -1,6 +1,8 @@
 ; This lists the tiles that an enemy can't spawn on (despite being non-solid).
-;   b0: tile index
-;   b1: unused?
+;
+; Data format:
+;   b0: Tile index
+;   b1: Unused? (always $01)
 
 enemyUnspawnableTilesTable:
 	.dw @overworld
@@ -39,6 +41,5 @@ enemyUnspawnableTilesTable:
 	.db $3d $01
 	.db $3e $01
 	.db $3f $01
-
 @sidescrolling:
 	.db $00

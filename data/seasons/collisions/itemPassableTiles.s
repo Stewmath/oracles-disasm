@@ -1,8 +1,8 @@
 ; This lists the tiles that are passible from a single direction - usually cliffs.
 ;
 ; Data format:
-; b0: Tile index
-; b1: Specifies whether the item has to go up or down a level of elevation in order to pass it.
+;   b0: Tile index
+;   b1: Specifies whether the item has to go up ($01) or down ($ff) a level of elevation in order to pass it.
 
 itemPassableCliffTilesTable:
 	.dw @overworld
@@ -30,6 +30,7 @@ itemPassableCliffTilesTable:
 	.db $95 $ff
 	.db $2a $01
 	.db $00
+
 @overworldDown:
 	.db $54 $01
 	.db $cf $01
@@ -40,12 +41,14 @@ itemPassableCliffTilesTable:
 	.db $95 $01
 	.db $2a $ff
 	.db $00
+
 @overworldRight:
 	.db $27 $01
 	.db $26 $01
 	.db $25 $ff
 	.db $28 $ff
 	.db $00
+
 @overworldLeft:
 	.db $27 $ff
 	.db $26 $ff
@@ -77,22 +80,26 @@ itemPassableCliffTilesTable:
 	.db @dungeonsDown-CADDR
 	.db @dungeonsLeft-CADDR
 	.db @dungeonsUp-CADDR
+
 @dungeonsUp:
 	.db $b2 $01
 	.db $b0 $ff
 	.db $05 $01
 	.db $06 $ff
 	.db $00
+
 @dungeonsDown:
 	.db $b0 $01
 	.db $b2 $ff
 	.db $05 $ff
 	.db $06 $01
 	.db $00
+
 @dungeonsRight:
 	.db $b3 $01
 	.db $b1 $ff
 	.db $00
+
 @dungeonsLeft:
 	.db $b1 $01
 	.db $b3 $ff
@@ -114,8 +121,10 @@ itemPassableTilesTable:
 	.db $fd
 @makutree:
 	.db $00
+
 @indoors:
 	.db $cf $00
+
 @dungeons:
 	.db $90 $91 $92 $93 $94 $95 $96 $97
 	.db $98 $99 $9a $9b $0a $0b

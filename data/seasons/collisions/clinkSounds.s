@@ -1,7 +1,9 @@
+; Defines tiles which have different "sword clink" behaviour.
+;
 ; 2 lists per entry, each ending with $00:
-; * The first is a list of tiles which produce an alternate "clinking" sound indicating
-; they're bombable.
-; * The second is a list of tiles which don't produce clinks at all.
+; - The first is a list of tiles which produce an alternate "clinking" sound indicating they're
+; bombable.
+; - The second is a list of tiles which don't produce clinks at all.
 
 clinkSoundTable:
 	.dw @overworld

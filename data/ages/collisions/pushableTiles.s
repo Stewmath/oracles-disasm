@@ -32,7 +32,6 @@ pushableTilePropertiesTable:
 	.db $d8 $3a $02 $05
 	.db $d9 $dc $02 $85
 	.db $02 $3a $02 $05
-
 @underwater:
 @five:
 	.db $00
@@ -54,6 +53,5 @@ pushableTilePropertiesTable:
 	.db $13 $0d $10 $01
 	.db $25 $a0 $25 $01
 	.db $07 $a0 $06 $01
-
 @sidescrolling:
 	.db $00

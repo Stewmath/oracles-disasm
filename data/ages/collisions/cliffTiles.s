@@ -1,4 +1,10 @@
-; If you want to change which tiles are cliff tiles, see also "itemPassibleCliffTilesTable.s".
+; Determines which tiles function as cliffs which Link can jump down.
+;
+; Data format:
+;   b0: Tile index ($00 for end of list)
+;   b1: Angle value from which the tile can be jumped off of.
+;
+; See also "itemPassibleTiles.s" which allows projectiles to pass through cliffs.
 
 cliffTilesTable:
 	.dw @overworld
@@ -8,31 +14,27 @@ cliffTilesTable:
 	.dw @underwater
 	.dw @five
 
-; Data format:
-; b0: Tile index
-; b1: Angle value from which the tile can be jumped off of.
-
 @overworld:
 @underwater:
-	.db $05 $10
-	.db $06 $10
-	.db $07 $10
-	.db $0a $18
-	.db $0b $08
-	.db $64 $10
-	.db $ff $10
+	.db $05, ANGLE_DOWN
+	.db $06, ANGLE_DOWN
+	.db $07, ANGLE_DOWN
+	.db $0a, ANGLE_LEFT
+	.db $0b, ANGLE_RIGHT
+	.db $64, ANGLE_DOWN
+	.db $ff, ANGLE_DOWN
 	.db $00
 
 @indoors:
 @dungeons:
 @five:
-	.db $b0 $10
-	.db $b1 $18
-	.db $b2 $00
-	.db $b3 $08
-	.db $c1 $10
-	.db $c2 $18
-	.db $c3 $00
-	.db $c4 $08
+	.db $b0, ANGLE_DOWN
+	.db $b1, ANGLE_LEFT
+	.db $b2, ANGLE_UP
+	.db $b3, ANGLE_RIGHT
+	.db $c1, ANGLE_DOWN
+	.db $c2, ANGLE_LEFT
+	.db $c3, ANGLE_UP
+	.db $c4, ANGLE_RIGHT
 @sidescrolling:
 	.db $00

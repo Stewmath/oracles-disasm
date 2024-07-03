@@ -1,21 +1,23 @@
-seaEffectTileTable:
-	.db @data0-CADDR
-	.db @data1-CADDR
-	.db @data1-CADDR
-	.db @data2-CADDR
-	.db @data0-CADDR
-	.db @data1-CADDR
+; This is a list of tiles which cause PARTID_SEA_EFFECTS to spawn in the room if any of the tiles
+; exist. See seaEffectTiles2.s for details.
 
-; Outside, underwater collisions
-@data0:
-	.db $eb ; Pollution tile
-	.db $e9 ; Whirlpool tile
+seaEffectTileTable:
+	.db @overworld-CADDR
+	.db @indoors-CADDR
+	.db @dungeons-CADDR
+	.db @sidescrolling-CADDR
+	.db @underwater-CADDR
+	.db @five-CADDR
+
+@overworld:
+@underwater:
+	.db TILEINDEX_POLLUTION
+	.db TILEINDEX_WHIRLPOOL
 	.db $00
 
-; Dungeon & Indoor collisions
-@data1:
-	.db $3c $3d $3e $3f ; All whirlpool tiles?
-
-; Sidescrolling collisions
-@data2:
+@indoors:
+@dungeons:
+@five:
+	.db $3c $3d $3e $3f ; Whirlpool tiles
+@sidescrolling:
 	.db $00

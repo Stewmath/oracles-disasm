@@ -495,3 +495,19 @@
 	.db f_DungeonLayoutToIndex(\3)
 	.db \4, \5, \6, \7, \8
 .endm
+
+; See data/ages/collisions/breakableTiles.s for documentation of parameters to this.
+.macro m_BreakableTileData
+	.if \3 > $f
+	.fail
+	.endif
+	.if \4 > $f
+	.fail
+	.endif
+
+	; Parameters 1-3 have their bits reversed, so that they can be read left-to-right.
+	dbrev \1, \2
+	revb \3
+	.db (_out >> 4) | ((\4)<<4) ; "_out" is the output from the revb macro ("\3" with bits flipped).
+	.db \5, \6
+.endm

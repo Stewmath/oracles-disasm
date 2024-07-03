@@ -1,3 +1,9 @@
+; Defines tiles which behave as conveyors when enemies are on them.
+;
+; Data format:
+;   b0: Tile index
+;   b1: Angle to move the enemy
+
 enemyConveyorTilesTable:
 	.dw @overworld
 	.dw @indoors
@@ -9,10 +15,10 @@ enemyConveyorTilesTable:
 
 @dungeons:
 @five:
-	.db $54, ANGLE_UP
-	.db $55, ANGLE_RIGHT
-	.db $56, ANGLE_DOWN
-	.db $57, ANGLE_LEFT
+	.db TILEINDEX_CONVEYOR_UP,    ANGLE_UP
+	.db TILEINDEX_CONVEYOR_RIGHT, ANGLE_RIGHT
+	.db TILEINDEX_CONVEYOR_DOWN,  ANGLE_DOWN
+	.db TILEINDEX_CONVEYOR_LEFT,  ANGLE_LEFT
 @overworld:
 @indoors:
 @sidescrolling:

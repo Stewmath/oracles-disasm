@@ -1,8 +1,8 @@
 ; The following is a table indicating what should happen when Link is standing right in front of a
 ; tile of a particular type.
 ;
-; This determines which blocks are pushable. See also data/{game}/collisions/pushableTiles.s for
-; more properties of pushable tiles.
+; Among other things, this determines which blocks are pushable. See also
+; data/{game}/collisions/pushableTiles.s for more properties of pushable tiles.
 ;
 ; Data format:
 ;
