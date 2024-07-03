@@ -2,12 +2,12 @@
 ; exist. See seaEffectTiles2.s for details.
 
 seaEffectTileTable:
-	.db @overworld-CADDR
-	.db @indoors-CADDR
-	.db @dungeons-CADDR
-	.db @sidescrolling-CADDR
-	.db @underwater-CADDR
-	.db @five-CADDR
+	dbrel @overworld
+	dbrel @indoors
+	dbrel @dungeons
+	dbrel @sidescrolling
+	dbrel @underwater
+	dbrel @five
 
 @overworld:
 @underwater:

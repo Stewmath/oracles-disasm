@@ -4940,10 +4940,10 @@ interactionCode33:
 	ret
 
 @tileReplacementTable:
-	.db @phase0Tiles - CADDR
-	.db @phase1Tiles - CADDR
-	.db @phase2Tiles - CADDR
-	.db @phase3Tiles - CADDR
+	dbrel @phase0Tiles
+	dbrel @phase1Tiles
+	dbrel @phase2Tiles
+	dbrel @phase3Tiles
 
 ; Data format:
 ;   b0: position

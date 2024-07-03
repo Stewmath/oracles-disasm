@@ -1334,39 +1334,39 @@ interactionCodeb6:
 ; Each row defines which type of gasha spot each subid is (rank 0 = best).
 @gashaSpotRanks:
 .ifdef ROM_AGES
-	.db @rank1Spot-CADDR ; $00
-	.db @rank2Spot-CADDR ; $01
-	.db @rank2Spot-CADDR ; $02
-	.db @rank1Spot-CADDR ; $03
-	.db @rank4Spot-CADDR ; $04
-	.db @rank1Spot-CADDR ; $05
-	.db @rank1Spot-CADDR ; $06
-	.db @rank0Spot-CADDR ; $07
-	.db @rank3Spot-CADDR ; $08
-	.db @rank2Spot-CADDR ; $09
-	.db @rank2Spot-CADDR ; $0a
-	.db @rank1Spot-CADDR ; $0b
-	.db @rank4Spot-CADDR ; $0c
-	.db @rank3Spot-CADDR ; $0d
-	.db @rank1Spot-CADDR ; $0e
-	.db @rank0Spot-CADDR ; $0f
+	dbrel @rank1Spot ; $00
+	dbrel @rank2Spot ; $01
+	dbrel @rank2Spot ; $02
+	dbrel @rank1Spot ; $03
+	dbrel @rank4Spot ; $04
+	dbrel @rank1Spot ; $05
+	dbrel @rank1Spot ; $06
+	dbrel @rank0Spot ; $07
+	dbrel @rank3Spot ; $08
+	dbrel @rank2Spot ; $09
+	dbrel @rank2Spot ; $0a
+	dbrel @rank1Spot ; $0b
+	dbrel @rank4Spot ; $0c
+	dbrel @rank3Spot ; $0d
+	dbrel @rank1Spot ; $0e
+	dbrel @rank0Spot ; $0f
 .else
-	.db @rank1Spot-CADDR ; $00
-	.db @rank0Spot-CADDR ; $01
-	.db @rank0Spot-CADDR ; $02
-	.db @rank3Spot-CADDR ; $03
-	.db @rank2Spot-CADDR ; $04
-	.db @rank3Spot-CADDR ; $05
-	.db @rank2Spot-CADDR ; $06
-	.db @rank4Spot-CADDR ; $07
-	.db @rank1Spot-CADDR ; $08
-	.db @rank2Spot-CADDR ; $09
-	.db @rank4Spot-CADDR ; $0a
-	.db @rank3Spot-CADDR ; $0b
-	.db @rank2Spot-CADDR ; $0c
-	.db @rank2Spot-CADDR ; $0d
-	.db @rank3Spot-CADDR ; $0e
-	.db @rank4Spot-CADDR ; $0f
+	dbrel @rank1Spot ; $00
+	dbrel @rank0Spot ; $01
+	dbrel @rank0Spot ; $02
+	dbrel @rank3Spot ; $03
+	dbrel @rank2Spot ; $04
+	dbrel @rank3Spot ; $05
+	dbrel @rank2Spot ; $06
+	dbrel @rank4Spot ; $07
+	dbrel @rank1Spot ; $08
+	dbrel @rank2Spot ; $09
+	dbrel @rank4Spot ; $0a
+	dbrel @rank3Spot ; $0b
+	dbrel @rank2Spot ; $0c
+	dbrel @rank2Spot ; $0d
+	dbrel @rank3Spot ; $0e
+	dbrel @rank4Spot ; $0f
 .endif
 
 
@@ -1412,15 +1412,15 @@ interactionCodeb6:
 ; Each entry consists of a 4x4 block of subtiles (8x8 tiles) to draw while the tree is
 ; disappearing.
 @treeDisappearanceFrames:
-	.db @frame1-CADDR
-	.db @frame1-CADDR
-	.db @frame2-CADDR
-	.db @frame3-CADDR
-	.db @frame4-CADDR
-	.db @frame5-CADDR
-	.db @frame5-CADDR
-	.db @frame6-CADDR
-	.db @frame7-CADDR
+	dbrel @frame1
+	dbrel @frame1
+	dbrel @frame2
+	dbrel @frame3
+	dbrel @frame4
+	dbrel @frame5
+	dbrel @frame5
+	dbrel @frame6
+	dbrel @frame7
 
 @frame1:
 	.db $20 $21 $22 $23

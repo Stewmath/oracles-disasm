@@ -9721,25 +9721,25 @@ smog_setCounterToFireProjectile:
 	ret
 
 @table:
-	.db @subid2 - CADDR
-	.db @subid3 - CADDR
-	.db @subid4 - CADDR
+	dbrel @subid2
+	dbrel @subid3
+	dbrel @subid4
 
 @subid2:
-	.db @subid2_0 - CADDR
-	.db @subid2_1 - CADDR
-	.db @subid2_2 - CADDR
-	.db @subid2_3 - CADDR
+	dbrel @subid2_0
+	dbrel @subid2_1
+	dbrel @subid2_2
+	dbrel @subid2_3
 @subid3:
-	.db @subid3_0 - CADDR
-	.db @subid3_1 - CADDR
-	.db @subid3_2 - CADDR
-	.db @subid3_3 - CADDR
+	dbrel @subid3_0
+	dbrel @subid3_1
+	dbrel @subid3_2
+	dbrel @subid3_3
 @subid4:
-	.db @subid4_0 - CADDR
-	.db @subid4_1 - CADDR
-	.db @subid4_2 - CADDR
-	.db @subid4_3 - CADDR
+	dbrel @subid4_0
+	dbrel @subid4_1
+	dbrel @subid4_2
+	dbrel @subid4_3
 
 @subid2_0:
 	.db $78 $f0 $ff $ff

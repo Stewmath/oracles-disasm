@@ -254,9 +254,9 @@ drawCrownDungeonOpeningTiles:
 	jp drawRectangleToVramTiles
 
 @tileReplacementTable:
-	.db @tiles0-CADDR
-	.db @tiles1-CADDR
-	.db @tiles2-CADDR
+	dbrel @tiles0
+	dbrel @tiles1
+	dbrel @tiles2
 
 @tiles0:
 	.dw w3VramTiles+$6c

@@ -15,11 +15,11 @@ itemPassableCliffTilesTable:
 
 @overworld:
 @underwater:
-	.db @overworldUp-CADDR
-	.db @overworldRight-CADDR
-	.db @overworldDown-CADDR
-	.db @overworldLeft-CADDR
-	.db @overworldUp-CADDR
+	dbrel @overworldUp
+	dbrel @overworldRight
+	dbrel @overworldDown
+	dbrel @overworldLeft
+	dbrel @overworldUp
 
 @overworldUp:
 	.db $64 $ff
@@ -49,11 +49,11 @@ itemPassableCliffTilesTable:
 
 
 @indoors:
-	.db @indoorsUp-CADDR
-	.db @indoorsRight-CADDR
-	.db @indoorsDown-CADDR
-	.db @indoorsLeft-CADDR
-	.db @indoorsUp-CADDR
+	dbrel @indoorsUp
+	dbrel @indoorsRight
+	dbrel @indoorsDown
+	dbrel @indoorsLeft
+	dbrel @indoorsUp
 
 @indoorsUp:
 	.db $b2 $01
@@ -78,11 +78,11 @@ itemPassableCliffTilesTable:
 
 @dungeons:
 @five:
-	.db @dungeonsUp-CADDR
-	.db @dungeonsRight-CADDR
-	.db @dungeonsDown-CADDR
-	.db @dungeonsLeft-CADDR
-	.db @dungeonsUp-CADDR
+	dbrel @dungeonsUp
+	dbrel @dungeonsRight
+	dbrel @dungeonsDown
+	dbrel @dungeonsLeft
+	dbrel @dungeonsUp
 
 @dungeonsUp:
 	.db $b0 $ff
@@ -114,11 +114,11 @@ itemPassableCliffTilesTable:
 
 
 @sidescrolling:
-	.db @sidescrollingUp-CADDR
-	.db @sidescrollingRight-CADDR
-	.db @sidescrollingDown-CADDR
-	.db @sidescrollingLeft-CADDR
-	.db @sidescrollingUp-CADDR
+	dbrel @sidescrollingUp
+	dbrel @sidescrollingRight
+	dbrel @sidescrollingDown
+	dbrel @sidescrollingLeft
+	dbrel @sidescrollingUp
 
 @sidescrollingUp:
 @sidescrollingRight:

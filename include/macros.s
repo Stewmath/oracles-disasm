@@ -263,6 +263,11 @@
 	.ENDR
 .ENDM
 
+; Define a byte which is a relative offset from the current address
+.macro dbrel
+	.db (\1) - CADDR ; CADDR = current address
+.endm
+
 ; Args 1-3: color components
 .macro m_RGB16
 	.IF \1 > $1f

@@ -4662,12 +4662,12 @@ interactionCodeb4:
 
 ; List of tiles to become solid for each book
 @bookPathLists:
-	.db @subid0 - CADDR
-	.db @subid1 - CADDR
-	.db @subid2 - CADDR
-	.db @subid3 - CADDR
-	.db @subid4 - CADDR
-	.db @subid5 - CADDR
+	dbrel @subid0
+	dbrel @subid1
+	dbrel @subid2
+	dbrel @subid3
+	dbrel @subid4
+	dbrel @subid5
 @subid0:
 	.db $99 $9a $9b $8b $7b $7c
 	.db $00

@@ -3931,9 +3931,9 @@ targetCartCrystal_loadPosition:
 
 ; Lists positions of the 12 targets for each of the 3 configurations.
 @configurationTable:
-	.db @configuration0 - CADDR
-	.db @configuration1 - CADDR
-	.db @configuration2 - CADDR
+	dbrel @configuration0
+	dbrel @configuration1
+	dbrel @configuration2
 
 @configuration0:
 	.db $18 $38 ; 0 == [subid]

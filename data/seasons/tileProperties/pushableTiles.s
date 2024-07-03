@@ -20,14 +20,14 @@
 ;                      from the "interactableTilesTable".
 
 pushableTilePropertiesTable:
-	.db @overworld-CADDR
-	.db @subrosia-CADDR
-	.db @makutree-CADDR
-	.db @indoors-CADDR
-	.db @dungeons-CADDR
-	.db @dungeons-CADDR
-	.db @sidescrolling-CADDR
-	.db @sidescrolling-CADDR
+	dbrel @overworld
+	dbrel @subrosia
+	dbrel @makutree
+	dbrel @indoors
+	dbrel @dungeons
+	dbrel @dungeons
+	dbrel @sidescrolling
+	dbrel @sidescrolling
 
 @overworld:
 @subrosia:

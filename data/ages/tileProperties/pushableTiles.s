@@ -20,12 +20,12 @@
 ;                      from the "interactableTilesTable".
 
 pushableTilePropertiesTable:
-	.db @overworld-CADDR
-	.db @indoors-CADDR
-	.db @dungeons-CADDR
-	.db @sidescrolling-CADDR
-	.db @underwater-CADDR
-	.db @five-CADDR
+	dbrel @overworld
+	dbrel @indoors
+	dbrel @dungeons
+	dbrel @sidescrolling
+	dbrel @underwater
+	dbrel @five
 
 @overworld:
 	.db $d3 $3a $02 $01

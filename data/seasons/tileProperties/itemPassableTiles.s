@@ -14,11 +14,11 @@ itemPassableCliffTilesTable:
 
 
 @overworld:
-	.db @overworldUp-CADDR
-	.db @overworldRight-CADDR
-	.db @overworldDown-CADDR
-	.db @overworldLeft-CADDR
-	.db @overworldUp-CADDR
+	dbrel @overworldUp
+	dbrel @overworldRight
+	dbrel @overworldDown
+	dbrel @overworldLeft
+	dbrel @overworldUp
 
 @overworldUp:
 	.db $54 $ff
@@ -61,11 +61,11 @@ itemPassableCliffTilesTable:
 @makutree:
 @indoors:
 @sidescrolling:
-	.db @stubUp-CADDR
-	.db @stubRight-CADDR
-	.db @stubDown-CADDR
-	.db @stubLeft-CADDR
-	.db @stubUp-CADDR
+	dbrel @stubUp
+	dbrel @stubRight
+	dbrel @stubDown
+	dbrel @stubLeft
+	dbrel @stubUp
 
 @stubUp:
 @stubRight:
@@ -75,11 +75,11 @@ itemPassableCliffTilesTable:
 
 
 @dungeons:
-	.db @dungeonsUp-CADDR
-	.db @dungeonsRight-CADDR
-	.db @dungeonsDown-CADDR
-	.db @dungeonsLeft-CADDR
-	.db @dungeonsUp-CADDR
+	dbrel @dungeonsUp
+	dbrel @dungeonsRight
+	dbrel @dungeonsDown
+	dbrel @dungeonsLeft
+	dbrel @dungeonsUp
 
 @dungeonsUp:
 	.db $b2 $01

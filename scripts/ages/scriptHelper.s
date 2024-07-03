@@ -4161,9 +4161,9 @@ goron_determineTextForGenericNpc:
 	ret
 
 @textTable:
-	.db @subid0c-CADDR
-	.db @subid0d-CADDR
-	.db @subid0e-CADDR
+	dbrel @subid0c
+	dbrel @subid0d
+	dbrel @subid0e
 
 ; Each row has 4 bytes:
 ;   b0: text before saving elder (past) or before beating d4 (present)

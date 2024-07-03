@@ -927,9 +927,9 @@ retryPacket:
 
 
 ringFortuneTable:
-	.db @rings0 - CADDR
-	.db @rings1 - CADDR
-	.db @rings2 - CADDR
+	dbrel @rings0
+	dbrel @rings1
+	dbrel @rings2
 
 ; Good rings
 @rings0:
