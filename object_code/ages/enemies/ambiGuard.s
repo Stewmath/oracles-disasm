@@ -330,7 +330,7 @@ ambiGuard_attacksLink_state11:
 ;
 ; @param[out]	zflag	nz if caller should return immediately (deleted self)
 ambiGuard_commonInitialization:
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	jr z,++
 	call enemyDelete

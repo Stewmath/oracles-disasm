@@ -210,7 +210,7 @@ roomTileChangesAfterLoad06:
 	ret z
 
 	; Check a flag in the room Veran is fought in
-	ld a,(wGroup4Flags+$fc)
+	ld a,(wGroup4RoomFlags+$fc)
 	and $80
 	ret z
 

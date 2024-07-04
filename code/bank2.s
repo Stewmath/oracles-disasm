@@ -6600,7 +6600,7 @@ mapMenu_state0:
 	call nc,mapMenu_performTileSubstitutions
 
 	; Check whether floodgates have been opened
-	ld a,(wPresentRoomFlags+$81)
+	ld a,(wOverworldRoomFlags+$81)
 	rlca
 	ld a,$05
 	call c,mapMenu_performTileSubstitutions
@@ -7123,7 +7123,7 @@ mapGetRoomText:
 	ldi a,(hl)
 	ld e,a
 	bit 7,(hl)
-	ld d,>wGroup4Flags
+	ld d,>wGroup4RoomFlags
 	jr nz,+
 	inc d
 +
@@ -7318,12 +7318,23 @@ minimapPopupType_gashaSpot:
 
 ; Area on map with dormant time portal (or subrosia portal for seasons?)
 minimapPopupType_portalSpot:
+.ifdef ROM_AGES
 	ld hl,wPresentRoomFlags
+.else
+	ld hl,wOverworldRoomFlags
+.endif
+
 	ld a,(wMapMenu.mode)
 	rrca
-	jr nc,+
+	jr nc,++
+
+.ifdef ROM_AGES
 	ld hl,wPastRoomFlags
-+
+.else
+	ld hl,wSubrosiaRoomFlags
+.endif
+
+++
 	ld a,(wMapMenu.cursorIndex)
 	rst_addAToHl
 	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)
@@ -8126,16 +8137,23 @@ mapMenu_checkRoomVisited:
 	ld a,(wMapMenu.mode)
 	rrca
 	ld a,h
+
+.ifdef ROM_AGES
 	ld hl,wPastRoomFlags
 	jr c,++
 
 	ld hl,wPresentRoomFlags
 
-.ifdef ROM_SEASONS
+.else ;ROM_SEASONS
+	ld hl,wSubrosiaRoomFlags
+	jr c,++
+
+	ld hl,wOverworldRoomFlags
+
 	; Special-case for the sword upgrade screen (read the maku tree screen's flag instead)
 	cp <ROOM_SEASONS_0c9
 	jr nz,++
-	ld hl,wPastRoomFlags + <ROOM_SEASONS_10b
+	ld hl,wSubrosiaRoomFlags + (<ROOM_SEASONS_10b)
 	xor a
 .endif
 
@@ -8510,7 +8528,7 @@ checkAdvanceShopVisited:
 .ifdef ROM_AGES
 	ld a,(wPastRoomFlags+$fe)
 .else
-	ld a,(wPastRoomFlags+$af)
+	ld a,(wSubrosiaRoomFlags+$af)
 .endif
 	and ROOMFLAG_VISITED
 	ret

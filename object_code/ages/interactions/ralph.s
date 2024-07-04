@@ -275,7 +275,7 @@ ralphState0:
 	jr ralphRunSubid
 
 @initSubid0c:
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	jp nz,interactionDelete
 
@@ -293,7 +293,7 @@ ralphState0:
 @initSubid12:
 	call checkIsLinkedGame
 	jp z,interactionDelete
-	ld hl,wGroup4Flags + (<ROOM_AGES_4fc)
+	ld hl,wGroup4RoomFlags + (<ROOM_AGES_4fc)
 	bit 7,(hl)
 	jp z,interactionDelete
 	call objectSetVisiblec2

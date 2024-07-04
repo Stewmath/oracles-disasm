@@ -1763,7 +1763,7 @@ floodgateKeeper_checkStage:
 	bit 7,(hl)
 	ld a,$03
 	jr nz,+
-	ld hl,wPresentRoomFlags|<ROOM_SEASONS_081
+	ld hl,wOverworldRoomFlags+(<ROOM_SEASONS_081)
 	bit 7,(hl)
 	ld a,$02
 	jr nz,+
@@ -1828,7 +1828,7 @@ subrosianHiding_store02Intocc9e:
 	ret
 
 rosaHiding_hidingFinishedSetInitialRoomsFlags:
-	ld hl,wPresentRoomFlags|<ROOM_SEASONS_0cb
+	ld hl,wOverworldRoomFlags+(<ROOM_SEASONS_0cb)
 	set 7,(hl)
 	xor a
 	ld ($cc9e),a

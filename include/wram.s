@@ -911,36 +911,38 @@ wSecretType: ; $c6fe
 
 .RAMSECTION Wram0_c700
 
-; Flags shared for above water and underwater
-wPresentRoomFlags: ; $c700
+; In Ages, flags are shared for above water and underwater. In Seasons, groups 1/2/3 are all
+; basically the same. So, groups 2 and 3 don't have their own flags.
+wGroup0RoomFlags: ; $c700
 	dsb $100
-wPastRoomFlags: ; $c800
+wGroup1RoomFlags: ; $c800
 	dsb $100
-
-wGroup4Flags: ; $c900
+wGroup4RoomFlags: ; $c900
 	dsb $100
-wGroup5Flags: ; $ca00
+wGroup5RoomFlags: ; $ca00
 	dsb $100
 
 .ENDS
 
-; "group 2" = present underwater in Ages, or indoor rooms in Seasons (shared with subrosia map). Set
-; room flags accordingly.
-.ifdef ROM_AGES
-	.define wGroup2Flags wPresentRoomFlags
-.else
-	.define wGroup2Flags wPastRoomFlags
-.endif
 
+; Per-game aliases for room flags
 .ifdef ROM_AGES
+	.define wPresentRoomFlags, wGroup0RoomFlags
+	.define wPastRoomFlags,    wGroup1RoomFlags
+
 	; Steal 6 of the past room flags for vine seed positions.
 	; (Only 5 vines exist, but 6 bytes are used?)
-	.define wVinePositions wPastRoomFlags+$f0
-.else; ROM_SEASONS
+	.define wVinePositions, wPastRoomFlags+$f0
+
+.else ;ROM_SEASONS
+	.define wOverworldRoomFlags, wGroup0RoomFlags
+	.define wSubrosiaRoomFlags,  wGroup1RoomFlags
+
 	; Steal 16 of subrosia's room flags for rupee room rupees gotten
-	.define wD2RupeeRoomRupees wPastRoomFlags+$f0
-	.define wD6RupeeRoomRupees wPastRoomFlags+$f8
+	.define wD2RupeeRoomRupees, wSubrosiaRoomFlags+$f0
+	.define wD6RupeeRoomRupees, wSubrosiaRoomFlags+$f8
 .endif
+
 
 ; ========================================================================================
 ; $cb00: END of data that goes into the save file
@@ -1782,7 +1784,7 @@ wDungeonMapData: ; $cc3d
 	.db
 
 wDungeonFlagsAddressH: ; $cc3d/$cc59
-; The high byte of the dungeon flags (wGroup4Flags/wGroup5Flags)
+; The high byte of the dungeon flags (wGroup4RoomFlags/wGroup5RoomFlags)
 	db
 wDungeonWallmasterDestRoom: ; $cc3e
 ; Warp destination index to use when a wallmaster grabs you

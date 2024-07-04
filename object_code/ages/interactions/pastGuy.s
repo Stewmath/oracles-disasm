@@ -148,7 +148,7 @@ interactionCode43:
 @subid6:
 	call checkInteractionState
 	jr nz,@initialized
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	jr nz,@@initAndLoadScript
 

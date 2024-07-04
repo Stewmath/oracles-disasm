@@ -107,7 +107,7 @@ interactionCode3c:
 
 @initSubid0e:
 	; Was Veran defeated?
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	ld a,<TX_251e
 	jr nz,@@notStone

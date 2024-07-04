@@ -2011,10 +2011,17 @@ _initialThreadStates:
 
 ; Upper bytes of addresses of flags for each group
 flagLocationGroupTable:
+.ifdef ROM_AGES
 	.db >wPresentRoomFlags, >wPastRoomFlags
-	.db >wGroup2Flags, >wPastRoomFlags
-	.db >wGroup4Flags, >wGroup5Flags
-	.db >wGroup4Flags, >wGroup5Flags
+	.db >wPresentRoomFlags, >wPastRoomFlags
+	.db >wGroup4RoomFlags,  >wGroup5RoomFlags
+	.db >wGroup4RoomFlags,  >wGroup5RoomFlags
+.else ;ROM_SEASONS
+	.db >wOverworldRoomFlags, >wSubrosiaRoomFlags
+	.db >wSubrosiaRoomFlags,  >wSubrosiaRoomFlags
+	.db >wGroup4RoomFlags,    >wGroup5RoomFlags
+	.db >wGroup4RoomFlags,    >wGroup5RoomFlags
+.endif
 
 ;;
 ; @param	hActiveFileSlot	File index
@@ -3838,7 +3845,13 @@ setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 	rst_addAToHl
 	ld a,(wActiveRoom)
 	ld c,a
-	ld b,>wGroup2Flags
+
+.ifdef ROM_AGES
+	ld b,>wPresentRoomFlags
+.else
+	ld b,>wSubrosiaRoomFlags
+.endif
+
 	ld a,(bc)
 	or (hl)
 	ld (bc),a

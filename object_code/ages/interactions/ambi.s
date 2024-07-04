@@ -144,7 +144,7 @@ interactionCode4d:
 @initSubid0a:
 	call checkIsLinkedGame
 	jp z,interactionDelete
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	jp z,interactionDelete
 	jp ambi_loadScript

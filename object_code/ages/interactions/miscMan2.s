@@ -171,7 +171,7 @@ getGameProgress_2:
 	dec b
 	call checkIsLinkedGame
 	jr z,+
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	ret nz
 +

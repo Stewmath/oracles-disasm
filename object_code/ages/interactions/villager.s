@@ -146,7 +146,7 @@ interactionCode3a:
 	; Check whether the villager should be stone right now
 
 	; Have we beaten Veran?
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	jr nz,@initAnimationAndLoadScript
 
@@ -434,7 +434,7 @@ interactionCode3a:
 	xor a
 	ld (de),a
 	ld bc,TX_1442
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl) ; Has Veran been beaten?
 	jr z,+
 	ld c,<TX_1443

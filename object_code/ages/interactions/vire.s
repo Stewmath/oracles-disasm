@@ -68,7 +68,7 @@ vire_subid1:
 	.dw @state2
 
 @state0:
-	ld a,(wGroup5Flags+(<ROOM_AGES_5e7))
+	ld a,(wGroup5RoomFlags+(<ROOM_AGES_5e7))
 	bit 6,a
 	jp nz,interactionDelete
 

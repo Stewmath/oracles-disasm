@@ -39,9 +39,9 @@ func_6e06:
 	ret nz
 	ld a,(wActiveRoom)
 	cp $a8
-	ld hl,wPresentRoomFlags | <ROOM_SEASONS_004
+	ld hl,wOverworldRoomFlags + (<ROOM_SEASONS_004)
 	jr z,+
-	ld hl,wPresentRoomFlags | <ROOM_SEASONS_0f7
+	ld hl,wOverworldRoomFlags + (<ROOM_SEASONS_0f7)
 +
 	set 3,(hl)
 	ret

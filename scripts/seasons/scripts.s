@@ -1682,7 +1682,7 @@ subrosianScript_wildsNorthOfStrangeBrothersHouse:
 subrosianScript_wildsOutsideStrangeBrothersHouse:
 	writeobjectbyte $5c, $01
 	; Place where roc's feather is gotten
-	jumpifmemoryset wPastRoomFlags|<ROOM_SEASONS_160, $20, @gotFeatherBack
+	jumpifmemoryset wSubrosiaRoomFlags+(<ROOM_SEASONS_160), $20, @gotFeatherBack
 	rungenericnpc TX_3e29
 @gotFeatherBack:
 	rungenericnpc TX_3e16

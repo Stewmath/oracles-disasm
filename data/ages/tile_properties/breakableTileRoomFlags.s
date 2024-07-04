@@ -5,9 +5,9 @@
 ;
 ; Data format:
 ; b0: tile index
-; b1: bit 7:    Set if it's a door linked between two rooms in a dungeon (will update the
+; b1: bit 7:    Set if it's a door/bomb wall linked between two rooms in a dungeon (will update the
 ;               room flags in both rooms)
-;     bit 6:    Set if it's a door linked between two rooms in the overworld
+;     bit 6:    Set if it's a door/bomb wall linked between two rooms indoors
 ;     bits 0-3: If bit 6 or 7 is set, this is the "direction" of the room link ($0, $4, $8, or $c).
 ;               If bits 6 and 7 aren't set, this is the bit to set in the room flags (ie.
 ;               value of 2 will set bit 2).

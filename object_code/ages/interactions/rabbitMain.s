@@ -61,7 +61,7 @@ interactionCode4b_body:
 
 @initSubid6:
 	; Delete if veran defeated
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	jp nz,interactionDelete
 

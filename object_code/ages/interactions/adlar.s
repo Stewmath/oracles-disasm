@@ -20,7 +20,7 @@ interactionCode29:
 	ld a,$04
 	jr nz,@setVar38
 
-	ld hl,wGroup4Flags+$fc
+	ld hl,wGroup4RoomFlags+$fc
 	bit 7,(hl)
 	ld a,$03
 	jr nz,@setVar38

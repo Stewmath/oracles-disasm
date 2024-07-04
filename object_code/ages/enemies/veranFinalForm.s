@@ -456,7 +456,7 @@ veranFinal_turtleForm_stateA:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	ld hl,wGroup4Flags+(<ROOM_AGES_4fc)
+	ld hl,wGroup4RoomFlags+(<ROOM_AGES_4fc)
 	set 7,(hl)
 	ld a,CUTSCENE_BLACK_TOWER_ESCAPE
 	ld (wCutsceneTrigger),a
