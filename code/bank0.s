@@ -12182,7 +12182,7 @@ checkDungeonUsesToggleBlocks:
 	ld hl,dungeonsUsingToggleBlocks
 	jp checkFlag
 
-	.include "data/dungeonsUsingToggleBlocks.s"
+	.include "data/ages/dungeonsUsingToggleBlocks.s"
 
 .else ; ROM_SEASONS
 seasonsFunc_35cc:
