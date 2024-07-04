@@ -177,7 +177,7 @@ cutsceneHandler_0b_stage3:
 	call seasonsFunc_03_6d8b
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERAC_S_MISC_PUZZLES
+	ld (hl),INTERAC_MISCELLANEOUS_2
 	inc l
 	ld (hl),$0e
 +

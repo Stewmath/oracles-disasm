@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERAC_HORON_DOG
+; INTERAC_HORON_DOG_CREDITS
 ;
 ; Variables:
 ;   subid: Used as a sort of "state" variable?
@@ -108,7 +108,7 @@ interactionCodeb9:
 	ret
 
 @subid7Init:
-	ld hl,mainScripts.horonDogScript
+	ld hl,mainScripts.horonDogCreditsScript
 	jp interactionSetScript
 
 

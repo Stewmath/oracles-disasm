@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERAC_VILLAGER
+; INTERAC_MALE_VILLAGER
 ;
 ; Variables:
 ;   var03: Nonzero if he's turned to stone

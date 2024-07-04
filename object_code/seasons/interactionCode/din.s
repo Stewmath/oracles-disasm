@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERAC_S_DIN
+; INTERAC_DIN
 ; ==============================================================================
 interactionCodea5:
 	ld e,$44
@@ -73,7 +73,7 @@ dinState0:
 	jp z,interactionDelete
 	ld a,$06
 	call interactionSetAnimation
-	ld a,INTERAC_S_DIN
+	ld a,INTERAC_DIN
 	ld (wInteractionIDToLoadExtraGfx),a
 	ld (wLoadedTreeGfxIndex),a
 	ld hl,mainScripts.dinScript_subid8Init

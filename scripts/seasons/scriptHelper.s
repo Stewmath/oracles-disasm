@@ -838,7 +838,7 @@ blossom_openNameEntryMenu:
 
 
 ; ==============================================================================
-; INTERAC_S_SUBROSIAN
+; INTERAC_SUBROSIAN
 ; ==============================================================================
 subrosianFunc_58ac:
 	ld hl,$cfde
@@ -957,7 +957,7 @@ linkedNpc_calcLowTextIndex:
 
 
 ; ==============================================================================
-; INTERAC_S_SUBROSIAN (cont.)
+; INTERAC_SUBROSIAN (cont.)
 ; ==============================================================================
 subrosian_checkSignsDestroyed:
 	ld a,(wTotalSignsDestroyed)
@@ -1094,7 +1094,7 @@ child_giveRupees:
 
 ; ==============================================================================
 ; INTERAC_MAYORS_HOUSE_NPC
-; INTERAC_S_GORON
+; INTERAC_GORON
 ; ==============================================================================
 getNextRingboxLevel:
 	ld a,(wRingBoxLevel)
@@ -1181,7 +1181,7 @@ piratesDeparting_spawnPirateFromShip:
 linkedGame_spawnAmbi:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERAC_S_AMBI
+	ld (hl),INTERAC_AMBI
 	inc l
 	ld (hl),$03
 	ld l,Interaction.yh
@@ -1266,7 +1266,7 @@ unluckySailor_increaseBombCapacityAndCount:
 
 
 ; ==============================================================================
-; INTERAC_S_ZELDA
+; INTERAC_ZELDA
 ; ==============================================================================
 zelda_checkIfLinkFullyHealed:
 	ld hl,wLinkMaxHealth
@@ -1479,13 +1479,13 @@ headSmelter_enableScreenTransitions:
 
 
 ; ==============================================================================
-; INTERAC_SUBROSIAN_AT_D8
+; INTERAC_SUBROSIAN_AT_VOLCANO
 ; ==============================================================================
 subrosianAtD8_spawnitem:
 	call refreshObjectGfx
 	ldh a,(<hActiveObject)
 	ld d,a
-	ld b,INTERAC_SUBROSIAN_AT_D8_ITEMS
+	ld b,INTERAC_SUBROSIAN_AT_VOLCANO_ITEMS
 	jp objectCreateInteractionWithSubid00
 
 
@@ -1756,7 +1756,7 @@ seasonsFunc_15_5d45:
 
 
 ; ==============================================================================
-; INTERAC_S_MISCELLANEOUS_1
+; INTERAC_MISCELLANEOUS_1
 ; ==============================================================================
 floodgateKeeper_checkStage:
 	call getThisRoomFlags
@@ -1885,7 +1885,7 @@ strangeBrothersFunc_15_5e0a:
 strangeBrothersFunc_15_5e13:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERAC_S_MISCELLANEOUS_1
+	ld (hl),INTERAC_MISCELLANEOUS_1
 	inc l
 	ld (hl),$09
 	inc l
@@ -1964,7 +1964,7 @@ stealingFeather_spawnStrangeBrothers:
 func_5e82:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERAC_S_SUBROSIAN
+	ld (hl),INTERAC_SUBROSIAN
 	inc l
 	ld (hl),e
 	ld l,Interaction.yh
@@ -1975,7 +1975,7 @@ func_5e82:
 
 
 ; ==============================================================================
-; INTERAC_S_COMPANION_SCRIPTS
+; INTERAC_COMPANION_SCRIPTS
 ; ==============================================================================
 seasonsFunc_15_5e91:
 	ld hl,w1Companion.speedZ
@@ -2445,7 +2445,7 @@ makuTree_spawnBubble:
 	ret
 
 makuTree_dropMakuSeed:
-	ldbc INTERAC_S_MAKU_SEED $01
+	ldbc INTERAC_MAKU_SEED $01
 	jp objectCreateInteraction
 
 makuTree_OnoxTauntingAfterMakuSeedGet:
@@ -2533,7 +2533,7 @@ kingMoblin_func_61eb:
 
 
 ; ==============================================================================
-; INTERAC_S_MOBLIN
+; INTERAC_MOBLIN
 ; ==============================================================================
 moblin_spawnMaskedMoblin:
 	call getFreeEnemySlot
@@ -2551,7 +2551,7 @@ moblin_spawnSwordMaskedMoblin:
 
 
 ; ==============================================================================
-; INTERAC_S_OLD_MAN_WITH_RUPEES
+; INTERAC_OLD_MAN_WITH_RUPEES
 ; ==============================================================================
 oldMan_takeRupees:
 	ld hl,wNumRupees
@@ -2698,7 +2698,7 @@ subrosianSmith_giveUpgradedShield:
 
 
 ; ==============================================================================
-; INTERAC_S_DIN
+; INTERAC_DIN
 ; ==============================================================================
 din_animateAndLookAtLink:
 	call objectGetAngleTowardLink
@@ -2952,16 +2952,16 @@ zeldaKidnapped_kingMoblinData:
 	.db INTERAC_KING_MOBLIN, $05 $00 $14 $50
 
 zeldaKidnapped_zeldaData:
-	.db INTERAC_S_ZELDA,     $06 $00 $48 $50
+	.db INTERAC_ZELDA,     $06 $00 $48 $50
 
 zeldaKidnapped_impaData:
 	.db INTERAC_ba,          $03 $00 $88 $40
 
 zeldaKidnapped_moblinData:
-	.db INTERAC_S_MOBLIN,    $06 $00 $48 $38
-	.db INTERAC_S_MOBLIN,    $06 $01 $48 $68
-	.db INTERAC_S_MOBLIN,    $05 $02 $28 $30
-	.db INTERAC_S_MOBLIN,    $05 $03 $28 $70
+	.db INTERAC_MOBLIN,    $06 $00 $48 $38
+	.db INTERAC_MOBLIN,    $06 $01 $48 $68
+	.db INTERAC_MOBLIN,    $05 $02 $28 $30
+	.db INTERAC_MOBLIN,    $05 $03 $28 $70
 
 
 linkedFunc_15_6430:
@@ -3039,7 +3039,7 @@ troyMinigame_createSparkle:
 
 
 ; ==============================================================================
-; INTERAC_S_LINKED_GAME_GHINI
+; INTERAC_LINKED_GAME_GHINI
 ; ==============================================================================
 seasonsFunc_15_64a0:
 	ld h,d
@@ -3168,7 +3168,7 @@ seasonsFunc_15_6545:
 
 
 ; ==============================================================================
-; INTERAC_S_MASTER_DIVER
+; INTERAC_MASTER_DIVER
 ; ==============================================================================
 seasonsFunc_15_654e:
 	ld hl,wcce1

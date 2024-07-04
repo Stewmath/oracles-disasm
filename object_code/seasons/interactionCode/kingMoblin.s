@@ -50,7 +50,7 @@ interactionCode95:
 	call interactionSetScript
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERAC_S_MOBLIN
+	ld (hl),INTERAC_MOBLIN
 	inc l
 	ld (hl),$01
 	ld e,$57

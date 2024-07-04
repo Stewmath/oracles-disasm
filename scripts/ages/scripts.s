@@ -2576,7 +2576,7 @@ monkeySubid7Script_3:
 
 
 ; ==============================================================================
-; INTERAC_VILLAGER
+; INTERAC_MALE_VILLAGER
 ; ==============================================================================
 
 villagerSubid01Script:
@@ -8854,9 +8854,9 @@ vireSubid2Script:
 
 
 ; ==============================================================================
-; INTERAC_HORON_DOG
+; INTERAC_HORON_DOG_CREDITS
 ; ==============================================================================
-horonDogScript:
+horonDogCreditsScript:
 	setspeed SPEED_080
 	wait 180
 @loop:

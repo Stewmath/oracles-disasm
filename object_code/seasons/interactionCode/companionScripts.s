@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERAC_S_COMPANION_SCRIPTS
+; INTERAC_COMPANION_SCRIPTS
 ; ==============================================================================
 interactionCode71:
 	ld a,(wLinkDeathTrigger)

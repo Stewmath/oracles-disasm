@@ -439,7 +439,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 	.include "object_code/ages/interactionCode/bookOfSealsPodium.s"
 	.include "object_code/common/interactionCode/finalDungeonEnergy.s"
 	.include "object_code/ages/interactionCode/vire.s"
-	.include "object_code/common/interactionCode/horonDog.s"
+	.include "object_code/common/interactionCode/horonDogCredits.s"
 	.include "object_code/ages/interactionCode/childJabu.s"
 	.include "object_code/ages/interactionCode/humanVeran.s"
 	.include "object_code/ages/interactionCode/twinrova3.s"

@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERAC_DOG_PLAYING_WITH_BOY
+; INTERAC_HORON_DOG
 ; ==============================================================================
 interactionCode82:
 	call checkInteractionState

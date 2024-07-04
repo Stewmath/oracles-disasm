@@ -417,8 +417,8 @@
 .define INTERAC_KISS_HEART $b7
 
 ;;
-; Dog in Horon Village (unused in Ages)
-.define INTERAC_HORON_DOG $b9
+; Dog in Horon Village credits cutscene (unused in Ages)
+.define INTERAC_HORON_DOG_CREDITS $b9
 
 ;;
 ; Banana carried by Moosh in credits cutscene.
@@ -805,7 +805,7 @@
 ; @subid_0c{Villager playing catch with son}
 ; @subid_0d{Cutscene when you first enter the past}
 ; @subid_0e{Stone villager - during Zelda kidnapped event}
-.define INTERAC_VILLAGER $3a
+.define INTERAC_MALE_VILLAGER $3a
 
 ;;
 ; Like male villager, this person's appearance changes based on subid, with present and
@@ -1623,6 +1623,7 @@
 .define INTERAC_CIRCULAR_SIDESCROLL_PLATFORM $a4
 
 ;;
+; Given to Maple
 .define INTERAC_TOUCHING_BOOK $a5
 
 ;;
@@ -1967,7 +1968,7 @@
 ; @subid_0b{ROOM_SEASONS_4f4, desert?}
 ; @subid_0c{ROOM_SEASONS_4f5, desert?}
 ; @subid_0d{Sunken City south dive spot}
-.define INTERAC_S_SPECIAL_WARP $1f
+.define INTERAC_SPECIAL_WARP $1f
 
 ;;
 .define INTERAC_GNARLED_KEYHOLE $21
@@ -2013,7 +2014,7 @@
 ; @subid_00-09{Know-it-all birds}
 ; @subid_0a{Bird with Impa when Zelda gets kidnapped}
 ; @subid_0b{Panicking bird in Horon village entrance screen}
-.define INTERAC_S_BIRD $2a
+.define INTERAC_BIRD $2a
 
 ;;
 .define INTERAC_MR_WRITE $2c
@@ -2073,7 +2074,7 @@
 ; @subid_24{Top-right screen of subrosian beach}
 ; @subid_25{Golden subrosian giving secret}
 ; @subid_26{Signs guy}
-.define INTERAC_S_SUBROSIAN $30
+.define INTERAC_SUBROSIAN $30
 
 ;;
 ; @subid_00{Rosa}
@@ -2142,7 +2143,7 @@
 ; @subid_15{Regular goron - 2F}
 ; @subid_16{Red goron who upgrades ringbox}
 ; @subid_07{Red goron giving secret}
-.define INTERAC_S_GORON $3b
+.define INTERAC_GORON $3b
 
 ;;
 .define INTERAC_OLD_LADY_FARMER $3c
@@ -2205,7 +2206,7 @@
 ; @subid_07{After Zelda Villagers cutscene, she's there with animals}
 ; @subid_08{By Maku tree, before fighting Onox}
 ; @subid_09{In Impa's house after saving her from vire}
-.define INTERAC_S_ZELDA $44
+.define INTERAC_ZELDA $44
 
 ;;
 ; @subid_00{In cave, sleeping}
@@ -2291,11 +2292,11 @@
 .define INTERAC_HEAD_SMELTER $53
 
 ;;
-.define INTERAC_SUBROSIAN_AT_D8_ITEMS $54
+.define INTERAC_SUBROSIAN_AT_VOLCANO_ITEMS $54
 
 ;;
 ; The subrosian trying to blow up the volcano leading to d8
-.define INTERAC_SUBROSIAN_AT_D8 $55
+.define INTERAC_SUBROSIAN_AT_VOLCANO $55
 
 ;;
 .define INTERAC_INGO $57
@@ -2418,7 +2419,7 @@
 ; @subid_24{TODO:}
 ; @subid_25{TODO:}
 ; @subid_26{TODO:}
-.define INTERAC_S_MISCELLANEOUS_1 $6b
+.define INTERAC_MISCELLANEOUS_1 $6b
 
 ;;
 ; @subid_00{Event starter}
@@ -2458,7 +2459,7 @@
 ; @subid_07{Moblin rest house - point where bullies will appear}
 ; @subid_08{Leaving Sunken City with Dimitri}
 ; @subid_09{1st screen of North Horon from eyeglass lake - determining animal companion}
-.define INTERAC_S_COMPANION_SCRIPTS $71
+.define INTERAC_COMPANION_SCRIPTS $71
 
 ;;
 .define INTERAC_BLAINO $72
@@ -2525,7 +2526,7 @@
 .define INTERAC_SUBROSIAN_SHOP $81
 
 ;;
-.define INTERAC_DOG_PLAYING_WITH_BOY $82
+.define INTERAC_HORON_DOG $82
 
 ;;
 .define INTERAC_BALL_THROWN_TO_DOG $83
@@ -2567,7 +2568,7 @@
 
 ;;
 ; @subid_00-04{}
-.define INTERAC_S_MASTER_DIVER $8d
+.define INTERAC_MASTER_DIVER $8d
 
 ;;
 ; Bubbles?
@@ -2594,11 +2595,11 @@
 ;;
 ; @subid_00{Hanging on Maku tree}
 ; @subid_01{Given by Maku tree}
-.define INTERAC_S_MAKU_SEED $93
+.define INTERAC_MAKU_SEED $93
 
 ;;
-; Given by Maple
-.define INTERAC_GHASTLY_DOLL $94
+; Given to Maple
+.define INTERAC_LON_LON_EGG $94
 
 ;;
 ; In rest house
@@ -2618,7 +2619,7 @@
 ; @subid_00-03{}
 ; @subid04{Spawned by INTERAC_MOBLIN_KEEP_SCENES}
 ; @subid05-06{Spawned by interactionCodec3 as part of the spawned minions}
-.define INTERAC_S_MOBLIN $96
+.define INTERAC_MOBLIN $96
 
 ;;
 ; moblin house-related?
@@ -2626,7 +2627,7 @@
 
 ;;
 ; @subid_00-07{}
-.define INTERAC_S_OLD_MAN_WITH_RUPEES $99
+.define INTERAC_OLD_MAN_WITH_RUPEES $99
 
 ;;
 ; Same room as moblin rest house - event when moblin house explodes?
@@ -2663,7 +2664,7 @@
 ; @subid_06{TODO: part of intro cutscenes (after being captured by Onox?)
 ; @subid_08{Horon village field, after game beat}
 ; @subid_09{1st Din (sees you collapsed)}
-.define INTERAC_S_DIN $a5
+.define INTERAC_DIN $a5
 
 ;;
 ; @subid_00-04{subid determines angle that each of the 4 fade towards}
@@ -2753,7 +2754,7 @@
 ; @subid_02{On the way to Samasa desert gate}
 ; @subid_03{When pirates are leaving for West Coast}
 ; @subid_04{Pirate house 1F}
-.define INTERAC_S_AMBI $b8
+.define INTERAC_AMBI $b8
 
 ; TODO: the following people are 5 that hang around Zelda
 
@@ -2823,7 +2824,7 @@
 ; @subid_01{Red/Blue(?) ghini during minigame}
 ; @subid_02{Red/Blue(?) ghini during minigame}
 ; @subid_03{In Western Coast house, giving secret}
-.define INTERAC_S_LINKED_GAME_GHINI $cb
+.define INTERAC_LINKED_GAME_GHINI $cb
 
 ;;
 .define INTERAC_GOLDEN_CAVE_SUBROSIAN $cc
@@ -2837,7 +2838,7 @@
 ;;
 ; @subid_00{In Temple of Seasons, awaiting a secret}
 ; @subid_01{Linked game NPC near d2 (gives a secret)}
-.define INTERAC_S_GREAT_FAIRY $d5
+.define INTERAC_GREAT_FAIRY $d5
 
 ;;
 .define INTERAC_DEKU_SCRUB $d6
@@ -2874,7 +2875,7 @@
 ; @subid_0d{Linked hero's cave, room above entrance - initializes dungeon on side entrance entry}
 ; @subid_0e{In most screens of Temple Remains, replaces some lava tiles with animated lava?}
 ; @subid_0f{Creates a chest on a purple tile in a linked hero's cave room}
-.define INTERAC_S_MISC_PUZZLES $dc
+.define INTERAC_MISCELLANEOUS_2 $dc
 
 ;;
 .define INTERAC_GOLDEN_BEAST_OLD_MAN $dd
@@ -2894,7 +2895,7 @@
 
 ;;
 ; In linked game, places pyramid jewel
-.define INTERAC_S_VIRE $e3
+.define INTERAC_VIRE $e3
 
 ;;
 .define INTERAC_LINKED_HEROS_CAVE_OLD_MAN $e4

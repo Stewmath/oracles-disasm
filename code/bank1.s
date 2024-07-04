@@ -2263,7 +2263,7 @@ cutscene17:
 .ifdef ROM_AGES
 	cp INTERAC_ZELDA
 .else
-	cp INTERAC_S_ZELDA
+	cp INTERAC_ZELDA
 .endif
 	jr z,++
 +

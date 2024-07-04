@@ -1160,7 +1160,7 @@ createFlamePart:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PART_FLAME
+	ld (hl),PART_BURNING_ENEMY
 	ld l,Part.relatedObj1
 	ldh a,(<hActiveObjectType)
 	ldi (hl),a

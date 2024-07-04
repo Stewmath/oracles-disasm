@@ -1040,7 +1040,7 @@ bipinScript3:
 
 
 ; ==============================================================================
-; INTERAC_S_BIRD
+; INTERAC_BIRD
 ; ==============================================================================
 knowItAllBirdScript:
 	setcollisionradii $08, $08
@@ -1456,7 +1456,7 @@ sunkenCityFickleGirlScript_text3:
 
 
 ; ==============================================================================
-; INTERAC_S_SUBROSIAN
+; INTERAC_SUBROSIAN
 ; ==============================================================================
 subrosianScript_smelterByAutumnTemple:
 	stopifroomflag80set
@@ -1744,7 +1744,7 @@ linkedGameNpcScript:
 	
 
 ; ==============================================================================
-; INTERAC_S_SUBROSIAN (cont.)
+; INTERAC_SUBROSIAN (cont.)
 ; ==============================================================================
 subrosianScript_signsGuy:
 	initcollisions
@@ -2409,7 +2409,7 @@ childScript_stage9_singer:
 
 
 ; ==============================================================================
-; INTERAC_S_GORON
+; INTERAC_GORON
 ; ==============================================================================
 goronScript_pacingLeftAndRight:
 	initcollisions
@@ -3129,7 +3129,7 @@ syrupScript_purchaseItem:
 
 
 ; ==============================================================================
-; INTERAC_S_ZELDA
+; INTERAC_ZELDA
 ; ==============================================================================
 zeldaScript_ganonBeat:
 	setcollisionradii $08, $04
@@ -3643,7 +3643,7 @@ headSmelterScript_danceMovementText2:
 
 
 ; ==============================================================================
-; INTERAC_SUBROSIAN_AT_D8
+; INTERAC_SUBROSIAN_AT_VOLCANO
 ; ==============================================================================
 subrosianAtD8Script_tossItemIntoHole:
 	callscript @spin2win
@@ -4240,7 +4240,7 @@ danceLeaderScript_showLoadedText:
 
 
 ; ==============================================================================
-; INTERAC_S_MISCELLANEOUS_1
+; INTERAC_MISCELLANEOUS_1
 ; ==============================================================================
 subrosianScript_templeFallenText:
 	rungenericnpc TX_3e03
@@ -4314,7 +4314,7 @@ floodgateKeyholeScript_keyEntered:
 	wait 60
 	writememory $d008, $01
 	orroomflag $80
-	spawninteraction INTERAC_S_MISCELLANEOUS_1, $14, $00, $00
+	spawninteraction INTERAC_MISCELLANEOUS_1, $14, $00, $00
 	incstate
 	scriptend
 
@@ -4717,7 +4717,7 @@ strangeBrother1Script_finishedScreen:
 	xorcfc0bit 0
 	movedown $50
 	resetmusic
-	spawninteraction INTERAC_S_MISCELLANEOUS_1, $16, $48, $28
+	spawninteraction INTERAC_MISCELLANEOUS_1, $16, $48, $28
 	asm15 scriptHelp.strangeBrothersFunc_15_5dc4
 	enableinput
 	scriptend
@@ -4884,7 +4884,7 @@ hollyScript_shovelGiven:
 
 
 ; ==============================================================================
-; INTERAC_S_COMPANION_SCRIPTS
+; INTERAC_COMPANION_SCRIPTS
 ; ==============================================================================
 companionScript_mooshInSpoolSwamp:
 	jumpifc6xxset <wMooshState, $02, @talkedToMooshAfterSavingHere
@@ -5980,7 +5980,7 @@ script729c:
 ; ==============================================================================
 ; INTERAC_FLOODED_HOUSE_GIRL
 ; INTERAC_MASTER_DIVERS_WIFE
-; INTERAC_S_MASTER_DIVER
+; INTERAC_MASTER_DIVER
 ; ==============================================================================
 floodedHouseGirlScript_text1:
 	initcollisions
@@ -6234,7 +6234,7 @@ script73d8:
 
 
 ; ==============================================================================
-; INTERAC_S_MOBLIN
+; INTERAC_MOBLIN
 ; ==============================================================================
 script73f3:
 	rungenericnpc TX_3800
@@ -6319,7 +6319,7 @@ script7469:
 
 
 ; ==============================================================================
-; INTERAC_S_OLD_MAN_WITH_RUPEES
+; INTERAC_OLD_MAN_WITH_RUPEES
 ; ==============================================================================
 oldManScript_givesRupees:
 	initcollisions
@@ -6677,7 +6677,7 @@ smithyScript_smithingDone:
 	
 
 ; ==============================================================================
-; INTERAC_S_DIN
+; INTERAC_DIN
 ; ==============================================================================
 dinScript_subid2Init:
 	loadscript scripts2.dinScript_subid2Init_body
@@ -7278,7 +7278,7 @@ linkedCutsceneScript_flamesOfDestruction:
 
 
 ; ==============================================================================
-; INTERAC_S_AMBI
+; INTERAC_AMBI
 ; ==============================================================================
 ambiScript_mrsRuulsHouse:
 	initcollisions
@@ -7331,9 +7331,9 @@ ambiScript_pirateHouseAfterTheyLeft:
 
 
 ; ==============================================================================
-; INTERAC_HORON_DOG
+; INTERAC_HORON_DOG_CREDITS
 ; ==============================================================================
-horonDogScript:
+horonDogCreditsScript:
 	setspeed SPEED_080
 	wait 180
 -
@@ -7629,7 +7629,7 @@ troyScript_doneSecret:
 
 
 ; ==============================================================================
-; INTERAC_S_LINKED_GAME_GHINI
+; INTERAC_LINKED_GAME_GHINI
 ; ==============================================================================
 linkedGhiniScript_beginningSecret:
 	initcollisions
@@ -8053,7 +8053,7 @@ masterDiverScript_spawnFakeStarOre:
 	
 	
 ; ==============================================================================
-; INTERAC_S_GREAT_FAIRY
+; INTERAC_GREAT_FAIRY
 ; Temple fairy that awaits a secret
 ; ==============================================================================
 templeGreatFairyScript_beginningSecret:
@@ -8206,7 +8206,7 @@ goldenBeastOldManScript:
 
 
 ; ==============================================================================
-; INTERAC_S_VIRE
+; INTERAC_VIRE
 ; ==============================================================================
 vireScript:
 	wait 30

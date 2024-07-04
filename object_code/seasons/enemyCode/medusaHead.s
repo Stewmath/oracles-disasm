@@ -229,7 +229,7 @@ enemyCode7f:
 	ld (hl),$00
 	or a
 	jr z,@@animate
-	ld b,PART_S_46
+	ld b,PART_46
 	call ecom_spawnProjectile
 	ld a,$01
 	jp enemySetAnimation
@@ -364,7 +364,7 @@ enemyCode7f:
 	ld (hl),$05
 	ld l,e
 	inc (hl)
-	ld b,PART_S_45
+	ld b,PART_45
 	call ecom_spawnProjectile
 	ld a,$02
 	jp enemySetAnimation
@@ -586,7 +586,7 @@ func_7eb5:
 	cp $60
 	ret nc
 	ld (hl),$5a
-	ld b,PART_S_46
+	ld b,PART_46
 	call ecom_spawnProjectile
 	ld a,$01
 	jp enemySetAnimation

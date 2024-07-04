@@ -679,12 +679,12 @@ loadGroupOfInteractions:
 
 	; id - subid - var03 - yh - xh
 @interacGroup1:
-	.db INTERAC_S_ZELDA $02 $00 $18 $18
+	.db INTERAC_ZELDA $02 $00 $18 $18
 	.db $00
 @interacGroup2:
 	.db INTERAC_bd $00 $01 $28 $38
 	.db INTERAC_be $00 $01 $40 $38
-	.db INTERAC_S_ZELDA $03 $00 $20 $50
+	.db INTERAC_ZELDA $03 $00 $20 $50
 	.db INTERAC_bc $00 $00 $48 $50
 	.db INTERAC_ba $00 $03 $28 $68
 	.db INTERAC_bb $00 $00 $40 $68
@@ -692,7 +692,7 @@ loadGroupOfInteractions:
 @interacGroup3:
 	.db INTERAC_bd $00 $01 $2c $38
 	.db INTERAC_be $00 $00 $44 $40
-	.db INTERAC_S_ZELDA $03 $00 $20 $50
+	.db INTERAC_ZELDA $03 $00 $20 $50
 	.db INTERAC_bc $00 $00 $50 $58
 	.db INTERAC_ba $00 $02 $20 $64
 	.db INTERAC_bb $00 $03 $38 $68

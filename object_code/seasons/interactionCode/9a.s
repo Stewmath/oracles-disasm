@@ -216,13 +216,13 @@ interactionCode9a:
 
 @table_59d8:
 	.db INTERAC_KING_MOBLIN, $01 $40 $78
-	.db INTERAC_S_MOBLIN,    $02 $48 $68
-	.db INTERAC_S_MOBLIN,    $02 $48 $88
+	.db INTERAC_MOBLIN,      $02 $48 $68
+	.db INTERAC_MOBLIN,      $02 $48 $88
 
 @table_59e4:
 	.db INTERAC_KING_MOBLIN, $02 $68 $78
-	.db INTERAC_S_MOBLIN,    $03 $60 $58
-	.db INTERAC_S_MOBLIN,    $03 $40 $58
+	.db INTERAC_MOBLIN,      $03 $60 $58
+	.db INTERAC_MOBLIN,      $03 $40 $58
 
 state1_subid3:
 	ld e,$45

@@ -159,7 +159,7 @@ seasonsSpirits_createBridgeOnOrbHit:
 
 
 ; ==============================================================================
-; INTERAC_S_SUBROSIAN
+; INTERAC_SUBROSIAN
 ; ==============================================================================
 subrosianScript_steaLinksFeather:
 	stopifroomflag40set
@@ -318,7 +318,7 @@ piratianCaptain_preCutsceneScene:
 
 
 ; ==============================================================================
-; INTERAC_S_ZELDA
+; INTERAC_ZELDA
 ; ==============================================================================
 zelda_triforceOnHandText:
 	asm15 objectSetInvisible
@@ -732,7 +732,7 @@ danceLeaderScript_danceTutorial:
 
 
 ; ==============================================================================
-; INTERAC_S_MISCELLANEOUS_1
+; INTERAC_MISCELLANEOUS_1
 ; ==============================================================================
 simpleScript_unblockingD3Dam:
 	ss_wait $1e
@@ -1442,7 +1442,7 @@ impaScript_askedToSaveZeldaButHavent_body:
 
 
 ; ==============================================================================
-; INTERAC_S_DIN
+; INTERAC_DIN
 ; ==============================================================================
 dinScript_subid2Init_body:
 	delay 8

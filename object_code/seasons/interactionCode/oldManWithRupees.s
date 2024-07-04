@@ -1,5 +1,5 @@
 ; ==============================================================================
-; INTERAC_S_OLD_MAN_WITH_RUPEES
+; INTERAC_OLD_MAN_WITH_RUPEES
 ; ==============================================================================
 interactionCode99:
 	call checkInteractionState

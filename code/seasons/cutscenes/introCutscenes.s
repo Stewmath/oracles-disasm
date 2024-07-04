@@ -1291,7 +1291,7 @@ cutscene0eFunc2:
 	call disableLcd
 	call getFreeInteractionSlot
 	jr nz,+
-	ld a,INTERAC_S_DIN
+	ld a,INTERAC_DIN
 	ld ($cc1d),a
 	ldi (hl),a
 	ld (hl),$06

@@ -603,7 +603,7 @@ table_7c4e:
 	.db INTERAC_IMPA_IN_CUTSCENE, $08 $03 $48 $58
 	.db INTERAC_ZELDA,            $09 $02 $38 $50
 table_7c5d:
-	.db INTERAC_VILLAGER,         $0e $01 $48 $38
+	.db INTERAC_MALE_VILLAGER,    $0e $01 $48 $38
 	.db INTERAC_PAST_GUY,         $07 $00 $28 $78
 	.db $00
 

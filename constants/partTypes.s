@@ -158,7 +158,7 @@
 
 ;;
 ; Created when an enemy is burned.
-.define PART_FLAME $12
+.define PART_BURNING_ENEMY $12
 
 ;;
 .define PART_OWL_STATUE $13
@@ -514,7 +514,7 @@
 
 ;;
 ; Part of object data, spawned by interaction $95, in Moblin's rest house
-.define PART_S_16 $16
+.define PART_16 $16
 
 .define PART_SHOOTING_DRAGON_HEAD $24
 
@@ -599,10 +599,10 @@
 .define PART_44 $44
 
 ;;
-.define PART_S_45 $45
+.define PART_45 $45
 
 ;;
-.define PART_S_46 $46
+.define PART_46 $46
 
 ;;
 ; relating to General Onox boss fight?

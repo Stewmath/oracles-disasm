@@ -1,7 +1,7 @@
 ; ==============================================================================
 ; INTERAC_FLOODED_HOUSE_GIRL
 ; INTERAC_MASTER_DIVERS_WIFE
-; INTERAC_S_MASTER_DIVER
+; INTERAC_MASTER_DIVER
 ; ==============================================================================
 interactionCode8a:
 interactionCode8b:
@@ -12,7 +12,7 @@ interactionCode8d:
 	ld (de),a
 	ld e,$41
 	ld a,(de)
-	cp INTERAC_S_MASTER_DIVER
+	cp INTERAC_MASTER_DIVER
 	jr nz,+
 	ld a,TREASURE_ESSENCE
 	call checkTreasureObtained

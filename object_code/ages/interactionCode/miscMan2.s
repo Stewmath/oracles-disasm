@@ -287,7 +287,7 @@ checkNpcShouldExistAtGameStage_body:
 	.db $00 $01 $02 $03 $05 $06 $ff
 
 
-@data3: ; INTERAC_VILLAGER subids 4-5
+@data3: ; INTERAC_MALE_VILLAGER subids 4-5
 	.dw @@subid4
 	.dw @@subid5
 @@subid4:
@@ -296,7 +296,7 @@ checkNpcShouldExistAtGameStage_body:
 	.db $04 $ff
 
 
-@data4: ; INTERAC_VILLAGER subids 6-7
+@data4: ; INTERAC_MALE_VILLAGER subids 6-7
 	.dw @@subid6
 	.dw @@subid7
 

@@ -14,7 +14,7 @@ interactionCode83:
 	ld (hl),$18
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERAC_DOG_PLAYING_WITH_BOY
+	ld (hl),INTERAC_HORON_DOG
 	ld l,$57
 	ld (hl),d
 	ld bc,$00f4

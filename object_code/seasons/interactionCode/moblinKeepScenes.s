@@ -99,7 +99,7 @@ moblinKeepScene_spawn2MoblinsAfterKeepDestroyed:
 --
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERAC_S_MOBLIN
+	ld (hl),INTERAC_MOBLIN
 	inc l
 	ld (hl),$04
 	inc l

@@ -77,7 +77,7 @@ zeldaVillagersRoom_interactionsTableLookup:
 @villagersSeenInteractions:
 	.db $05
 	; interactioncode - subid - yh - xh
-	.db INTERAC_S_ZELDA $07 $28 $48
+	.db INTERAC_ZELDA $07 $28 $48
 	.db INTERAC_IMPA $02 $30 $60
 	.db INTERAC_bc $01 $48 $60
 	.db INTERAC_be $01 $48 $30
