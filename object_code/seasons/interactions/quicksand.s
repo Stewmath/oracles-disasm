@@ -207,5 +207,3 @@ _objectIsItem:
 	ld l,Item.zh
 	ld e,Item.var31
 	jr _moveObjectIfGrounded
-
-.include "object_code/common/interactions/companionSpawner.s"

@@ -37,9 +37,10 @@ interactionCode10:
 	jp interactionAnimate
 
 
-.ifdef ROM_AGES
-.include "object_code/common/interactions/faroreMakeChest.s"
-.else
+.ifdef ROM_SEASONS
+
+; Indirect caller for INTERAC_FARORE_MAKECHEST
 interactionCode11_caller:
 	jpab bank3f.interactionCode11
+
 .endif

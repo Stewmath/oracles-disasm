@@ -305,6 +305,7 @@ m_section_free Interaction_Code_Group3 NAMESPACE commonInteractions3
 
 m_section_free Seasons_Interactions_Bank09 NAMESPACE seasonsInteractionsBank09
 	.include "object_code/seasons/interactions/quicksand.s"
+	.include "object_code/common/interactions/companionSpawner.s"
 	.include "object_code/seasons/interactions/unicornsCave4ChestPuzzle.s"
 	.include "object_code/seasons/interactions/unicornsCaveReverseMovingArmos.s"
 	.include "object_code/seasons/interactions/unicornsCaveFallingMagnetBall.s"

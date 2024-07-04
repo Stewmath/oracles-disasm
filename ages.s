@@ -249,6 +249,7 @@ m_section_free Interaction_Code_Group1 NAMESPACE commonInteractions1
 	.include "object_code/common/interactions/breakTileDebris.s"
 	.include "object_code/common/interactions/fallDownHole.s"
 	.include "object_code/common/interactions/farore.s"
+	.include "object_code/common/interactions/faroreMakeChest.s"
 	.include "object_code/common/interactions/dungeonStuff.s"
 	.include "object_code/common/interactions/pushblockTrigger.s"
 	.include "object_code/common/interactions/pushblock.s"
