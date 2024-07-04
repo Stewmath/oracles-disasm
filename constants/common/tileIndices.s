@@ -1,8 +1,17 @@
-; Note: the tiles listed here may not apply for all tilesets.
-; TODO: Rename "up/down/left/right" to "north/south/east/west" (the distinction between
-; "up" and "north" is useful)
-; TODO: Figure out differences between ages and seasons, and categorize better based on
-; tileset type (outdoors / indoors / cave / dungeon).
+; This file contains defines for tile indices that are used in the code somewhere. In other words
+; any tile index with a .define listed here probably has some kind of hardcoded behaviour.
+;
+; This file is rather messy and needs to be reworked. Considerations for future reformatting
+; include:
+;
+; - Properly separating defines for ages & seasons (many ages-specific defines are not wrapped in
+;   ifdefs)
+; - Specifying which collision modes the defines are valid for (see wActiveCollisions variable)
+;   - Maybe come up with a naming scheme that categorizes tile indices by collision mode
+; - If some of these are only valid for specific tilesets, mention that
+; - Rename "up/down/left/right" to "north/south/east/west" (the distinction between "up" and "north"
+;   is useful)
+
 
 ; Tiles in normal tilesets
 
