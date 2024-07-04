@@ -106,12 +106,6 @@
 ; Directive macros
 ; =======================================================================================
 
-.ifdef BUILD_VANILLA
-	.ifndef FORCE_SECTIONS
-	.define FORCE_SECTIONS
-	.endif
-.endif
-
 ; These are sections which need to be in specific places. Currently unused since (in theory) all
 ; labels are now moveable.
 .macro m_section_force

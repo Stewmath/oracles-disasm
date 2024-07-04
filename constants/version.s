@@ -9,6 +9,14 @@
 ;.define REGION_EU
 
 
+; FORCE_SECTIONS causes all sections to be of type "FORCE", preventing the linker from moving them.
+.ifdef BUILD_VANILLA
+	.ifndef FORCE_SECTIONS
+	.define FORCE_SECTIONS
+	.endif
+.endif
+
+
 ; "AGES_ENGINE" is like "ROM_AGES", but anything wrapped in this define could potentially be used in
 ; Seasons as well. Generally this enables extra engine features added in Ages. However, it could
 ; also cause subtle differences in how certain things work. In general though I'm trying to be
