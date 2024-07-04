@@ -7330,9 +7330,10 @@ ambiScript_pirateHouseAfterTheyLeft:
 	rungenericnpclowindex <TX_3a2b
 
 
-; interactionCodeb9
-; goron subid7?
-script7a81:
+; ==============================================================================
+; INTERAC_HORON_DOG
+; ==============================================================================
+horonDogScript:
 	setspeed SPEED_080
 	wait 180
 -
