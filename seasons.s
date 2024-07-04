@@ -398,7 +398,7 @@ m_section_free Seasons_Interactions_Bank0a NAMESPACE seasonsInteractionsBank0a
 
 m_section_free Enemy_Code_Bank0c NAMESPACE bank0c
 
-	.include "code/enemyCommon.s"
+	.include "object_code/common/enemies/commonCode.s"
 
 	.include "object_code/common/enemies/riverZora.s"
 	.include "object_code/common/enemies/octorok.s"
@@ -447,7 +447,7 @@ m_section_superfree Enemy_Animations
 
 m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
-	.include "code/enemyCommon.s"
+	.include "object_code/common/enemies/commonCode.s"
 
 	.include "object_code/common/enemies/tektite.s"
 	.include "object_code/common/enemies/stalfos.s"
@@ -506,8 +506,8 @@ m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
 m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
-	.include "code/enemyCommon.s"
-	.include "code/enemyBossCommon.s"
+	.include "object_code/common/enemies/commonCode.s"
+	.include "object_code/common/enemies/commonBossCode.s"
 
 	.include "object_code/seasons/enemies/brotherGoriyas.s"
 	.include "object_code/seasons/enemies/facade.s"
@@ -533,8 +533,8 @@ m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
-	.include "code/enemyCommon.s"
-	.include "code/enemyBossCommon.s"
+	.include "object_code/common/enemies/commonCode.s"
+	.include "object_code/common/enemies/commonBossCode.s"
 
 	.include "object_code/common/enemies/mergedTwinrova.s"
 	.include "object_code/common/enemies/twinrova.s"
@@ -586,7 +586,7 @@ m_section_free Seasons_Interactions_Bank0f NAMESPACE seasonsInteractionsBank0f
 	.export PART_BANK
 
 m_section_free Part_Code NAMESPACE partCode
-	.include "code/partCommon.s"
+	.include "object_code/common/parts/commonCode.s"
 
 	.include "object_code/common/parts/itemDrop.s"
 	.include "object_code/common/parts/enemyDestroyed.s"

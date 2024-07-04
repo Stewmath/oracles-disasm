@@ -483,7 +483,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 
 m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
-	.include "code/enemyCommon.s"
+	.include "object_code/common/enemies/commonCode.s"
 
 	.include "object_code/common/enemies/riverZora.s"
 	.include "object_code/common/enemies/octorok.s"
@@ -537,7 +537,7 @@ m_section_superfree Enemy_Animations
 
 m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
-	.include "code/enemyCommon.s"
+	.include "object_code/common/enemies/commonCode.s"
 
 	.include "object_code/common/enemies/tektite.s"
 	.include "object_code/common/enemies/stalfos.s"
@@ -598,8 +598,8 @@ m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
-	.include "code/enemyCommon.s"
-	.include "code/enemyBossCommon.s"
+	.include "object_code/common/enemies/commonCode.s"
+	.include "object_code/common/enemies/commonBossCode.s"
 
 	.include "object_code/ages/enemies/giantGhini.s"
 	.include "object_code/ages/enemies/swoop.s"
@@ -625,8 +625,8 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 m_section_free Enemy_Code_Bank10 NAMESPACE bank10
 
-	.include "code/enemyCommon.s"
-	.include "code/enemyBossCommon.s"
+	.include "object_code/common/enemies/commonCode.s"
+	.include "object_code/common/enemies/commonBossCode.s"
 
 	.include "object_code/common/enemies/mergedTwinrova.s"
 	.include "object_code/common/enemies/twinrova.s"
@@ -678,7 +678,7 @@ m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
 	.export PART_BANK
 
 m_section_free Bank_11 NAMESPACE partCode
-	.include "code/partCommon.s"
+	.include "object_code/common/parts/commonCode.s"
 
 	.include "object_code/common/parts/itemDrop.s"
 	.include "object_code/common/parts/enemyDestroyed.s"
