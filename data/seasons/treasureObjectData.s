@@ -11,7 +11,7 @@ m_section_free TreasureObjectData NAMESPACE treasureData
 ;       bit 3    = ?
 ;       bits 0-2 = grab mode
 ;   b1: Parameter (value of 'c' to pass to "giveTreasure")
-;   b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
+;   b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00, TX_00XX)
 ;   b3: Graphics to use. (Gets copied to object's subid, so graphics are determined by the
 ;       corresponding value for interaction $60 in data/{game}/interactionData.s.)
 ;
@@ -22,38 +22,6 @@ m_section_free TreasureObjectData NAMESPACE treasureData
 ; For documentation of spawn modes and grab modes, see "constants/common/treasureSpawnModes.s".
 ;
 ; See also constants/common/treasure.s for treasure lists.
-
-
-.macro m_BeginTreasureSubids
-	.redefine CURRENT_TREASURE_INDEX, (\1)<<8
-.endm
-
-.macro m_TreasureSubid
-	.db \1, \2, \3, \4
-
-	.IF CURRENT_TREASURE_INDEX >= $10000
-		; Within the "treasureObjectData" table, "CURRENT_TREASURE_INDEX" corresponds to
-		; values from "constants/common/treasure.s". (We add $10000 just to make it easy to
-		; differentiate which mode we're in.)
-		.define \5, (CURRENT_TREASURE_INDEX - $10000) << 8
-	.ELSE
-		; Within a subid table, "CURRENT_TREASURE_INDEX" corresponds to a treasure object
-		; index (2-byte number)
-		.define \5, CURRENT_TREASURE_INDEX
-	.ENDIF
-
-	.export \5
-	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
-.endm
-
-.macro m_TreasurePointer
-	.db $80
-	.dw \1
-	.db $00
-
-	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
-.endm
-
 
 .define CURRENT_TREASURE_INDEX $10000
 

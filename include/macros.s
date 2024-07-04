@@ -603,3 +603,35 @@
 .macro m_EnemySubidDataEnd
 	m_ContinueBitHelperUnsetLast
 .endm
+
+
+; Macros for data/{game}/treasureObjectData.s
+.macro m_BeginTreasureSubids
+	.redefine CURRENT_TREASURE_INDEX, (\1)<<8
+.endm
+
+.macro m_TreasureSubid
+	.db \1, \2, \3, \4
+
+	.IF CURRENT_TREASURE_INDEX >= $10000
+		; Within the "treasureObjectData" table, "CURRENT_TREASURE_INDEX" corresponds to
+		; values from "constants/common/treasure.s". (We add $10000 just to make it easy to
+		; differentiate which mode we're in.)
+		.define \5, (CURRENT_TREASURE_INDEX - $10000) << 8
+	.ELSE
+		; Within a subid table, "CURRENT_TREASURE_INDEX" corresponds to a treasure object
+		; index (2-byte number)
+		.define \5, CURRENT_TREASURE_INDEX
+	.ENDIF
+
+	.export \5
+	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
+.endm
+
+.macro m_TreasurePointer
+	.db $80
+	.dw \1
+	.db $00
+
+	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
+.endm
