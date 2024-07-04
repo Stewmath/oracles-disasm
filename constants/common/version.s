@@ -1,6 +1,6 @@
-; This file should be the first thing included in any of the main code files
-; (ages.s, seasons.s, and audio.s). It is included at the top of "constants.s"
-; for this reason.
+; This file should be the first thing included in any of the main code files (ages.s, seasons.s, and
+; audio.s). It is included at the top of "constants.s" for this reason.
+
 
 ; Pick one. (For now, the regions other than "US" only activate code changes, not asset changes, and
 ; they aren't complete.)
@@ -10,10 +10,9 @@
 
 
 ; FORCE_SECTIONS causes all sections to be of type "FORCE", preventing the linker from moving them.
-.ifdef BUILD_VANILLA
-	.ifndef FORCE_SECTIONS
+; This will allow us to build a vanilla ROM.
+.if defined(BUILD_VANILLA) && !defined(FORCE_SECTIONS)
 	.define FORCE_SECTIONS
-	.endif
 .endif
 
 
@@ -23,7 +22,7 @@
 ; conservative with using this, so as not to risk breaking anything.
 ;
 ; This is enabled by default in the hack-base branch for seasons.
-.ifdef ROM_AGES
+.if defined(ROM_AGES) && !defined(AGES_ENGINE)
 	.define AGES_ENGINE
 .endif
 
@@ -48,6 +47,14 @@
 	.ifndef ENABLE_EU_BUGFIXES
 		.define ENABLE_EU_BUGFIXES
 	.endif
+.endif
+
+
+; Oracle of Ages has some "garbage" data, possibly a side-effect of the build process that caused
+; data from previous builds (even from seasons!) to leak into the final ROM. We'll include that data
+; only when building vanilla ROMs.
+.if defined(BUILD_VANILLA) && defined(REGION_US)
+	.define INCLUDE_GARBAGE
 .endif
 
 

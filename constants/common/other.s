@@ -1,10 +1,3 @@
-; "Garbage" files get included in the vanilla, US version of Ages only
-.ifdef BUILD_VANILLA
-.ifdef REGION_US
-	.define INCLUDE_GARBAGE
-.endif
-.endif
-
 ; Room sizes (in 16x16 tiles)
 ; LARGE_ROOM_WIDTH/LARGE_ROOM_HEIGHT shouldn't be increased because it could overflow into
 ; buffers used immediately after the room layout in RAM.
@@ -17,7 +10,7 @@
 .define SCREEN_WIDTH		$0a
 .define SCREEN_HEIGHT		$08
 
-; Amount used for heart reflils (great fairy)
+; Amount used for heart refills (great fairy)
 .define MAX_LINK_HEALTH		$40
 
 ; Overworld size
