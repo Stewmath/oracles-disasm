@@ -112,7 +112,7 @@
 .ORG 0
 
 	 m_section_free Bank_5 NAMESPACE bank5
-		.include "code/bank5.s"
+		.include "code/specialObjects.s"
 
 		.include {"{GAME_DATA_DIR}/tile_properties/tileTypeMappings.s"}
 		.include {"{GAME_DATA_DIR}/tile_properties/cliffTiles.s"}
