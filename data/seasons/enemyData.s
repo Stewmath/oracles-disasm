@@ -1,14 +1,10 @@
-; See notes in data/ages/enemyData.s.
-
-.macro m_EnemyData
-	.if NARGS == 4
-		.db \1 \2 \3 \4
-	.else
-		.db \1 \2
-		dwbe \3 | $8000
-	.endif
-.endm
-
+; Data format:
+;   b0: object gfx header to use (see data/objectGfxHeaders.s)
+;   b1: Value for Enemy.enemyCollisionMode (bit 7 must be set for collisions to work)
+;   b2: value for Enemy.damage (how much damage it deals)
+;   b3: value for Enemy.health
+;
+;   Or, parameters 2/3 can be replaced with a pointer to subid data (see below).
 
 enemyData:
 	/* 0x00 */ m_EnemyData $00 $00 $00 $00
@@ -141,161 +137,208 @@ enemyData:
 	/* 0x7f */ m_EnemyData $ba $4d $30 $00
 
 enemy09SubidData:
-	.db $88 $20
-	.db $88 $20
-	.db $8c $10
-	.db $8c $10
-	.db $3f $30
+	m_EnemySubidData $08 $20
+	m_EnemySubidData $08 $20
+	m_EnemySubidData $0c $10
+	m_EnemySubidData $0c $10
+	m_EnemySubidData $3f $30
+	m_EnemySubidDataEnd
+
 enemy0aSubidData:
-	.db $8c $20
-	.db $11 $10
+	m_EnemySubidData $0c $20
+	m_EnemySubidData $11 $10
+	m_EnemySubidDataEnd
+
 enemy0bSubidData:
-	.db $8c $27
-	.db $8e $17
-	.db $0c $37
+	m_EnemySubidData $0c $27
+	m_EnemySubidData $0e $17
+	m_EnemySubidData $0c $37
+	m_EnemySubidDataEnd
+
 enemy0cSubidData:
-	.db $8c $20
-	.db $91 $10
-	.db $3f $30
+	m_EnemySubidData $0c $20
+	m_EnemySubidData $11 $10
+	m_EnemySubidData $3f $30
+	m_EnemySubidDataEnd
+
 enemy0dSubidData:
-	.db $97 $20
-	.db $9b $10
-	.db $3f $30
+	m_EnemySubidData $17 $20
+	m_EnemySubidData $1b $10
+	m_EnemySubidData $3f $30
+	m_EnemySubidDataEnd
+
 enemy0eSubidData:
-	.db $82 $20
-	.db $82 $10
-	.db $82 $30
-	.db $82 $00
-	.db $82 $00
-	.db $02 $00
+	m_EnemySubidData $02 $20
+	m_EnemySubidData $02 $10
+	m_EnemySubidData $02 $30
+	m_EnemySubidData $02 $00
+	m_EnemySubidData $02 $00
+	m_EnemySubidData $02 $00
+	m_EnemySubidDataEnd
+
 enemy17SubidData:
-	.db $9a $2b
-	.db $14 $2b
+	m_EnemySubidData $1a $2b
+	m_EnemySubidData $14 $2b
+	m_EnemySubidDataEnd
+
 enemy20SubidData:
 enemy4aSubidData:
-	.db $8a $20
-	.db $0c $10
+	m_EnemySubidData $0a $20
+	m_EnemySubidData $0c $10
+	m_EnemySubidDataEnd
+
 enemy21SubidData:
 enemy48SubidData:
-	.db $94 $20
-	.db $99 $10
-	.db $3f $30
-enemy2aSubidData:
-	.db $b8 $08
-	.db $b8 $18
-	.db $b8 $28
-	.db $38 $38
-enemy30SubidData:
-	.db $8a $3b
-	.db $0c $1b
-enemy31SubidData:
-	.db $8a $12
-	.db $8c $22
-	.db $8e $32
-	.db $0e $02
-enemy34SubidData:
-	.db $8a $00
-	.db $0c $20
-; Unused data?
-	.db $80 $1b
-	.db $00 $1b
-enemy3dSubidData:
-	.db $8d $20
-	.db $12 $10
-enemy40SubidData:
-	.db $8e $00
-	.db $91 $20
-	.db $15 $10
-enemy46SubidData:
-	.db $c3 $0e
-	.db $c3 $1e
-	.db $c3 $2e
-	.db $43 $3e
-enemy70SubidData:
-	.db $9c $10
-	.db $1c $20
-enemy7bSubidData:
-	.db $80 $00
-	.db $a7 $10
-	.db $a8 $10
-	.db $29 $10
-enemy7cSubidData:
-	.db $80 $60
-	.db $bb $10
-	.db $2b $60
-enemy7dSubidData:
-	.db $80 $00
-	.db $ac $60
-	.db $ad $60
-	.db $2e $60
+	m_EnemySubidData $14 $20
+	m_EnemySubidData $19 $10
+	m_EnemySubidData $3f $30
+	m_EnemySubidDataEnd
 
+enemy2aSubidData:
+	m_EnemySubidData $38 $08
+	m_EnemySubidData $38 $18
+	m_EnemySubidData $38 $28
+	m_EnemySubidData $38 $38
+	m_EnemySubidDataEnd
+
+enemy30SubidData:
+	m_EnemySubidData $0a $3b
+	m_EnemySubidData $0c $1b
+	m_EnemySubidDataEnd
+
+enemy31SubidData:
+	m_EnemySubidData $0a $12
+	m_EnemySubidData $0c $22
+	m_EnemySubidData $0e $32
+	m_EnemySubidData $0e $02
+	m_EnemySubidDataEnd
+
+enemy34SubidData:
+	m_EnemySubidData $0a $00
+	m_EnemySubidData $0c $20
+	m_EnemySubidDataEnd
+
+; Unused data?
+	m_EnemySubidData $00 $1b
+	m_EnemySubidData $00 $1b
+	m_EnemySubidDataEnd
+
+enemy3dSubidData:
+	m_EnemySubidData $0d $20
+	m_EnemySubidData $12 $10
+	m_EnemySubidDataEnd
+
+enemy40SubidData:
+	m_EnemySubidData $0e $00
+	m_EnemySubidData $11 $20
+	m_EnemySubidData $15 $10
+	m_EnemySubidDataEnd
+
+enemy46SubidData:
+	m_EnemySubidData $43 $0e
+	m_EnemySubidData $43 $1e
+	m_EnemySubidData $43 $2e
+	m_EnemySubidData $43 $3e
+	m_EnemySubidDataEnd
+
+enemy70SubidData:
+	m_EnemySubidData $1c $10
+	m_EnemySubidData $1c $20
+	m_EnemySubidDataEnd
+
+enemy7bSubidData:
+	m_EnemySubidData $00 $00
+	m_EnemySubidData $27 $10
+	m_EnemySubidData $28 $10
+	m_EnemySubidData $29 $10
+	m_EnemySubidDataEnd
+
+enemy7cSubidData:
+	m_EnemySubidData $00 $60
+	m_EnemySubidData $3b $10
+	m_EnemySubidData $2b $60
+	m_EnemySubidDataEnd
+
+enemy7dSubidData:
+	m_EnemySubidData $00 $00
+	m_EnemySubidData $2c $60
+	m_EnemySubidData $2d $60
+	m_EnemySubidData $2e $60
+	m_EnemySubidDataEnd
+
+
+; Data format:
+;   b0: value for Enemy.collisionRadiusY
+;   b1: value for Enemy.collisionRadiusX
+;   b2: value for Enemy.damage (how much damage it deals)
+;   b3: value for Enemy.health
 
 extraEnemyData:
-	.db $00 $00 $00 $7f
-	.db $06 $06 $00 $7f
-	.db $04 $04 $fc $7f
-	.db $06 $06 $fc $7f
-	.db $04 $04 $f8 $7f
-	.db $06 $06 $f8 $7f
-	.db $02 $02 $fc $01
-	.db $04 $06 $fc $01
-	.db $06 $06 $fe $02
-	.db $04 $06 $fc $02
-	.db $06 $06 $fc $02
-	.db $04 $06 $fc $03
-	.db $06 $06 $fc $03
-	.db $06 $06 $fa $03
-	.db $06 $06 $fc $04
-	.db $06 $06 $f8 $04
-	.db $04 $04 $fc $05
-	.db $06 $06 $fc $05
-	.db $06 $06 $fa $05
-	.db $06 $06 $f8 $05
-	.db $06 $06 $fc $06
-	.db $06 $06 $fc $07
-	.db $06 $06 $fc $08
-	.db $06 $06 $f8 $08
-	.db $06 $06 $fa $09
-	.db $06 $06 $f8 $09
-	.db $06 $06 $fc $0a
-	.db $06 $06 $f8 $0c
-	.db $06 $06 $fc $10
-	.db $06 $06 $00 $14
-	.db $06 $06 $fc $08
-	.db $09 $04 $fe $0e
-	.db $06 $06 $fc $10
-	.db $06 $06 $fe $12
-	.db $06 $06 $fe $0c
-	.db $0a $0a $f8 $0f
-	.db $04 $04 $fc $14
-	.db $0c $0c $fc $7f
-	.db $09 $09 $fa $1a
-	.db $06 $03 $fa $1e
-	.db $06 $11 $fa $7f
-	.db $06 $06 $fa $14
-	.db $03 $03 $fc $02
-	.db $0a $0a $fc $04
-	.db $0c $06 $f8 $7f
-	.db $04 $04 $fc $02
-	.db $06 $06 $f8 $06
-	.db $06 $03 $f8 $19
-	.db $0a $0a $f8 $30
-	.db $0c $0c $f8 $50
-	.db $04 $03 $00 $30
-	.db $06 $06 $fc $03
-	.db $0e $07 $f8 $14
-	.db $12 $12 $f4 $64
-	.db $0c $0c $00 $05
-	.db $03 $02 $00 $01
-	.db $0d $0d $f8 $7f
-	.db $06 $06 $fc $14
-	.db $04 $04 $00 $01
-	.db $08 $08 $fc $7f
-	.db $0f $0c $f8 $7f
-	.db $06 $06 $fc $01
-	.db $07 $0c $fc $40
-	.db $06 $06 $f8 $34
-	.db $07 $07 $f8 $04
-	.db $06 $06 $00 $20
-	.db $04 $06 $f8 $06
-	.db $02 $02 $fc $02
+	.db $00 $00 $00 $7f ; 0x00
+	.db $06 $06 $00 $7f ; 0x01
+	.db $04 $04 $fc $7f ; 0x02
+	.db $06 $06 $fc $7f ; 0x03
+	.db $04 $04 $f8 $7f ; 0x04
+	.db $06 $06 $f8 $7f ; 0x05
+	.db $02 $02 $fc $01 ; 0x06
+	.db $04 $06 $fc $01 ; 0x07
+	.db $06 $06 $fe $02 ; 0x08
+	.db $04 $06 $fc $02 ; 0x09
+	.db $06 $06 $fc $02 ; 0x0a
+	.db $04 $06 $fc $03 ; 0x0b
+	.db $06 $06 $fc $03 ; 0x0c
+	.db $06 $06 $fa $03 ; 0x0d
+	.db $06 $06 $fc $04 ; 0x0e
+	.db $06 $06 $f8 $04 ; 0x0f
+	.db $04 $04 $fc $05 ; 0x10
+	.db $06 $06 $fc $05 ; 0x11
+	.db $06 $06 $fa $05 ; 0x12
+	.db $06 $06 $f8 $05 ; 0x13
+	.db $06 $06 $fc $06 ; 0x14
+	.db $06 $06 $fc $07 ; 0x15
+	.db $06 $06 $fc $08 ; 0x16
+	.db $06 $06 $f8 $08 ; 0x17
+	.db $06 $06 $fa $09 ; 0x18
+	.db $06 $06 $f8 $09 ; 0x19
+	.db $06 $06 $fc $0a ; 0x1a
+	.db $06 $06 $f8 $0c ; 0x1b
+	.db $06 $06 $fc $10 ; 0x1c
+	.db $06 $06 $00 $14 ; 0x1d
+	.db $06 $06 $fc $08 ; 0x1e
+	.db $09 $04 $fe $0e ; 0x1f
+	.db $06 $06 $fc $10 ; 0x20
+	.db $06 $06 $fe $12 ; 0x21
+	.db $06 $06 $fe $0c ; 0x22
+	.db $0a $0a $f8 $0f ; 0x23
+	.db $04 $04 $fc $14 ; 0x24
+	.db $0c $0c $fc $7f ; 0x25
+	.db $09 $09 $fa $1a ; 0x26
+	.db $06 $03 $fa $1e ; 0x27
+	.db $06 $11 $fa $7f ; 0x28
+	.db $06 $06 $fa $14 ; 0x29
+	.db $03 $03 $fc $02 ; 0x2a
+	.db $0a $0a $fc $04 ; 0x2b
+	.db $0c $06 $f8 $7f ; 0x2c
+	.db $04 $04 $fc $02 ; 0x2d
+	.db $06 $06 $f8 $06 ; 0x2e
+	.db $06 $03 $f8 $19 ; 0x2f
+	.db $0a $0a $f8 $30 ; 0x30
+	.db $0c $0c $f8 $50 ; 0x31
+	.db $04 $03 $00 $30 ; 0x32
+	.db $06 $06 $fc $03 ; 0x33
+	.db $0e $07 $f8 $14 ; 0x34
+	.db $12 $12 $f4 $64 ; 0x35
+	.db $0c $0c $00 $05 ; 0x36
+	.db $03 $02 $00 $01 ; 0x37
+	.db $0d $0d $f8 $7f ; 0x38
+	.db $06 $06 $fc $14 ; 0x39
+	.db $04 $04 $00 $01 ; 0x3a
+	.db $08 $08 $fc $7f ; 0x3b
+	.db $0f $0c $f8 $7f ; 0x3c
+	.db $06 $06 $fc $01 ; 0x3d
+	.db $07 $0c $fc $40 ; 0x3e
+	.db $06 $06 $f8 $34 ; 0x3f
+	.db $07 $07 $f8 $04 ; 0x40
+	.db $06 $06 $00 $20 ; 0x41
+	.db $04 $06 $f8 $06 ; 0x42
+	.db $02 $02 $fc $02 ; 0x43

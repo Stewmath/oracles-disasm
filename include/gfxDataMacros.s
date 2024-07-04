@@ -38,13 +38,10 @@
 ; Optionally, a gfx header can end with a palette header (see constants/common/paletteHeaders.s). So this
 ; macro takes one optional parameter for that. (Unique GFX headers only?)
 .macro m_GfxHeaderEnd
-	.ifdef CURRENT_GFX_HEADER_INDEX
-		.if NARGS >= 1 ; Set last entry's continue bit
-			.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT, $80
-		.else ; Unset last entry's continue bit
-			.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT, $00
-		.endif
-		.undefine CURRENT_GFX_HEADER_INDEX
+	.if NARGS >= 1 ; Set last entry's continue bit
+		m_ContinueBitHelperSetLast
+	.else ; Unset last entry's continue bit
+		m_ContinueBitHelperUnsetLast
 	.endif
 	.if NARGS >= 1
 		.db $00
@@ -57,24 +54,6 @@
 	GFX_HEADER_MODE_ANIM:	db
 	GFX_HEADER_MODE_FORCE:	db
 .ende
-
-; Helper macro, defines the size/continue byte for gfx headers. The value for the "continue bit" is
-; defined later, either when this is invoked again or when m_GfxHeaderEnd is invoked.
-;
-; As it's using a define with "\@" in its name, which is the number of times the current macro has
-; been called, it's important to not copy/paste this into multiple macros.
-.macro m_GfxHeaderContinueHelper
-	.assert \1 >= 0 && \1 <= $7f
-
-	; Mark "continue" bit on last defined gfx header entry
-	.ifdef CURRENT_GFX_HEADER_INDEX
-		.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT $80
-	.endif
-
-	; Define size/continue byte for current gfx header entry
-	.redefine CURRENT_GFX_HEADER_INDEX \@
-	.db (\1) | GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT
-.endm
 
 ; Helper macro used for defining other macros with slightly varying parameters. See the other macros
 ; (ie. m_GfxHeader) for descriptions.
@@ -132,7 +111,7 @@
 
 	; Byte 6: Size / continue bit
 	.if m_GfxHeaderMode == GFX_HEADER_MODE_NORMAL
-		m_GfxHeaderContinueHelper size_byte
+		m_ContinueBitHelper size_byte, $80
 	.else
 		.db size_byte
 	.endif
@@ -199,7 +178,7 @@
 	.endif
 
 	dwbe \2
-	m_GfxHeaderContinueHelper (\3) - 1
+	m_ContinueBitHelper (\3) - 1, $80
 .endm
 
 ; Define object gfx header entry.
@@ -241,23 +220,12 @@
 	paletteHeader{%.2x{\1}}:
 .endm
 
-.macro m_PaletteHeaderHelper
-	; Mark "continue" bit on last defined gfx header entry
-	.ifdef CURRENT_PALETTE_HEADER_INDEX
-		.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT $80
-	.endif
-
-	; Define size/continue byte for current gfx header entry
-	.redefine CURRENT_PALETTE_HEADER_INDEX \@
-	.db (\1) | PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT
-.endm
-
 ; Macro to define palette headers for the background
 ; ARG 1: index of first palette to load the data into
 ; ARG 2: number of palettes to load
 ; ARG 3: address of palette data
 .macro m_PaletteHeaderBg
-	m_PaletteHeaderHelper ((\2)-1) | ((\1)<<3)
+	m_ContinueBitHelper ((\2)-1) | ((\1)<<3), $80
 	.dw \3
 .endm
 
@@ -266,17 +234,10 @@
 ; ARG 2: number of palettes to load
 ; ARG 3: address of palette data
 .macro m_PaletteHeaderSpr
-	m_PaletteHeaderHelper ((\2)-1) | ((\1)<<3) | $40
+	m_ContinueBitHelper ((\2)-1) | ((\1)<<3) | $40, $80
 	.dw \3
 .endm
 
 .macro m_PaletteHeaderEnd
-	.ifdef CURRENT_PALETTE_HEADER_INDEX
-		.if NARGS >= 1 ; Set last entry's continue bit
-			.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT, $80
-		.else ; Unset last entry's continue bit
-			.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT, $00
-		.endif
-		.undefine CURRENT_PALETTE_HEADER_INDEX
-	.endif
+	m_ContinueBitHelperUnsetLast
 .endm

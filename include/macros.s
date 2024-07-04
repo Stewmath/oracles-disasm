@@ -510,3 +510,96 @@
 	.db (_out >> 4) | ((\4)<<4) ; "_out" is the output from the revb macro ("\3" with bits flipped).
 	.db \5, \6
 .endm
+
+
+; There are a number of data structures that use bit 7 of a particular byte to mean "continue
+; reading the next entry if set". Examples include gfx headers and interaction data
+; (data/{game}/interactionData.s). It is very ugly to bake that data directly into the data, though,
+; as it's basically unreadable.
+;
+; This macro can be used to define bytes like that more elegantly. The value for the "continue bit"
+; is defined later, either when this is invoked again, or when m_ContinueBitHelperSetLast/UnsetLast
+; is used. (It is important to use SetLast/UnsetLast at least once after this, otherwise the value
+; of the preceding continue bit will never be defined.)
+;
+; As it's using a define with "\@" in its name, which is the number of times the current macro has
+; been called, it's important to not copy/paste this into multiple macros.
+;
+; Parameters:
+;   \1: Byte to define
+;   \2: Default "continue bit value" to apply to the last entry if it exists when this is called
+.macro m_ContinueBitHelper
+	.if !(\1 >= 0 && \1 <= $7f)
+		.fail {"m_ContinueBitHelper: Invalid byte ${%.2x{\1}}"}
+	.endif
+
+	; Mark "continue" bit on last defined entry
+	.ifdef CURRENT_CONTINUE_INDEX
+		.define CONTINUE_BIT_{CURRENT_CONTINUE_INDEX}, \2
+	.endif
+
+	; Define byte for current entry
+	.redefine CURRENT_CONTINUE_INDEX \@
+	.db (\1) | CONTINUE_BIT_{CURRENT_CONTINUE_INDEX}
+.endm
+
+.macro m_ContinueBitHelperSetLast
+	.ifdef CURRENT_CONTINUE_INDEX
+		.define CONTINUE_BIT_{CURRENT_CONTINUE_INDEX} $80
+		.undefine CURRENT_CONTINUE_INDEX
+	.endif
+.endm
+
+.macro m_ContinueBitHelperUnsetLast
+	.ifdef CURRENT_CONTINUE_INDEX
+		.define CONTINUE_BIT_{CURRENT_CONTINUE_INDEX} $00
+		.undefine CURRENT_CONTINUE_INDEX
+	.endif
+.endm
+
+
+; Macro for data/{game}/interactionData.s
+.macro m_InteractionData
+	.if NARGS == 3
+		.db \1, \2, \3
+	.elif NARGS == 1
+		; Pointer to subid data
+		.db \1&$ff, $80, \1>>8
+	.else
+		.fail "Invalid number of arguments to m_InteractionData."
+	.endif
+.endm
+
+; Basically the same as above, except it uses a "continue bit" to mark where the data ends
+.macro m_InteractionSubidData
+	.assert NARGS == 3
+
+	.db \1
+	m_ContinueBitHelper \2, $00
+	.db \3
+.endm
+
+.macro m_InteractionSubidDataEnd
+	m_ContinueBitHelperSetLast
+.endm
+
+
+; Macros for data/{game}/enemyData.s, similar to above
+.macro m_EnemyData
+	.if NARGS == 4
+		.db \1 \2 \3 \4
+	.else
+		.db \1 \2
+		dwbe \3 | $8000
+	.endif
+.endm
+
+.macro m_EnemySubidData
+	.assert NARGS == 2
+	m_ContinueBitHelper \1, $80
+	.db \2
+.endm
+
+.macro m_EnemySubidDataEnd
+	m_ContinueBitHelperUnsetLast
+.endm
