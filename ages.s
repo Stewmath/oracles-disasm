@@ -131,22 +131,22 @@
 	.include "code/specialObjectAnimationsAndDamage.s"
 	.include "code/breakableTiles.s"
 
-	.include "code/items/parentItemUsage.s"
+	.include "object_code/common/items/parentItemUsage.s"
 
-	.include "code/items/shieldParent.s"
-	.include "code/items/otherSwordsParent.s"
-	.include "code/items/switchHookParent.s"
-	.include "code/items/caneOfSomariaParent.s"
-	.include "code/items/swordParent.s"
-	.include "code/items/harpFluteParent.s"
-	.include "code/items/seedsParent.s"
-	.include "code/items/shovelParent.s"
-	.include "code/items/boomerangParent.s"
-	.include "code/items/bombsBraceletParent.s"
-	.include "code/items/featherParent.s"
-	.include "code/items/magnetGloveParent.s"
+	.include "object_code/common/items/shieldParent.s"
+	.include "object_code/common/items/otherSwordsParent.s"
+	.include "object_code/common/items/switchHookParent.s"
+	.include "object_code/common/items/caneOfSomariaParent.s"
+	.include "object_code/common/items/swordParent.s"
+	.include "object_code/common/items/harpFluteParent.s"
+	.include "object_code/common/items/seedsParent.s"
+	.include "object_code/common/items/shovelParent.s"
+	.include "object_code/common/items/boomerangParent.s"
+	.include "object_code/common/items/bombsBraceletParent.s"
+	.include "object_code/common/items/featherParent.s"
+	.include "object_code/common/items/magnetGloveParent.s"
 
-	.include "code/items/parentItemCommon.s"
+	.include "object_code/common/items/parentItemCommon.s"
 	.include {"{GAME_DATA_DIR}/itemUsageTables.s"}
 
 	.include "object_code/common/specialObjects/minecart.s"
@@ -199,7 +199,7 @@ specialObjectLoadAnimationFrameToBuffer:
 
 		.include {"{GAME_DATA_DIR}/tile_properties/conveyorItemTiles.s"}
 		.include {"{GAME_DATA_DIR}/tile_properties/itemPassableTiles.s"}
-		.include "code/itemCodes.s"
+		.include "code/itemCode.s"
 		.include {"{GAME_DATA_DIR}/itemAttributes.s"}
 		.include "data/itemAnimations.s"
 	.ends
