@@ -208,4 +208,4 @@ _objectIsItem:
 	ld e,Item.var31
 	jr _moveObjectIfGrounded
 
-.include "object_code/common/interactionCode/companionSpawner.s"
+.include "object_code/common/interactions/companionSpawner.s"

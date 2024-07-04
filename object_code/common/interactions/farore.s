@@ -38,7 +38,7 @@ interactionCode10:
 
 
 .ifdef ROM_AGES
-.include "object_code/common/interactionCode/faroreMakeChest.s"
+.include "object_code/common/interactions/faroreMakeChest.s"
 .else
 interactionCode11_caller:
 	jpab bank3f.interactionCode11
