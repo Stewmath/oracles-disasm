@@ -172,10 +172,35 @@ m_section_free Bank_6 NAMESPACE bank6
 
 	 m_section_superfree Item_Code namespace itemCode
 		.include "code/updateItems.s"
+		.include "object_code/common/items/commonCode1.s"
 
 		.include {"{GAME_DATA_DIR}/tile_properties/conveyorItemTiles.s"}
 		.include {"{GAME_DATA_DIR}/tile_properties/itemPassableTiles.s"}
-		.include "code/itemCode.s"
+
+		.include "object_code/common/items/seeds.s"
+		.include "object_code/common/items/dimitriMouth.s"
+		.include "object_code/common/items/bombchus.s"
+		.include "object_code/common/items/bombs.s"
+		.include "object_code/common/items/boomerang.s"
+		.include "object_code/common/items/rickyTornado.s"
+		.include "object_code/common/items/magnetBall.s"
+		.include "object_code/common/items/rickyMooshAttack.s"
+		.include "object_code/common/items/shovel.s"
+		.include "object_code/seasons/items/rodOfSeasons.s"
+		.include "object_code/common/items/minecartCollision.s"
+		.include "object_code/common/items/slingshot.s"
+		.include "object_code/seasons/items/magnetGloves.s"
+		.include "object_code/common/items/foolsOre.s"
+		.include "object_code/common/items/biggoronSword.s"
+		.include "object_code/common/items/sword.s"
+		.include "object_code/common/items/punch.s"
+		.include "object_code/common/items/swordBeam.s"
+		.include "object_code/common/items/postUpdate.s"
+		.include "object_code/common/items/commonCode2.s"
+		.include "object_code/common/items/bracelet.s"
+		.include "object_code/common/items/commonBombAndBraceletCode.s"
+		.include "object_code/common/items/dust.s"
+
 		.include {"{GAME_DATA_DIR}/itemAttributes.s"}
 		.include "data/itemAnimations.s"
 	.ends
