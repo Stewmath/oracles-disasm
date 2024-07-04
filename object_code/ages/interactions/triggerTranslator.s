@@ -37,7 +37,7 @@ interactionCode24:
 	ld (wActiveTriggers),a
 	ret
 
-; Subid 0: control a bit in wActiveTriggers based on wSwitchState.
+; Subid 1: control a bit in wActiveTriggers based on wSwitchState.
 @subid1:
 	ld a,(wSwitchState)
 	ld c,a

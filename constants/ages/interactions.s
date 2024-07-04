@@ -102,7 +102,7 @@
 ;   1: Control a bit in wActiveTriggers based on wSwitchState.\n
 ;   2: Control a bit in wActiveTriggers based on if [wNumLitTorches] == Y.
 ;
-; Subit bits 0-4: Index of a bit to check in wToggleBlocksState or wSwitchState (subids 0 and
+; Subid bits 4-7: Index of a bit to check in wToggleBlocksState or wSwitchState (subids 0 and
 ;                 1 only)
 ;
 ; @Y{Number of torches to be lit (subid 2 only)}
