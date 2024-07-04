@@ -1,7 +1,9 @@
-; The first $20 treasures correspond to items (see constants/common/items.s). Beyond that, they
-; differ.
+; Treasures are things that link can collect and go into his inventory. Contrast with items
+; (constants/common/items.s) which have some kind of physical representation.
 
-; Item indices from $00-$1f can be used as inventory items; ones above that can't be.
+
+; The first $20 treasures correspond to items (see constants/common/items.s). Beyond that, they
+; differ. In addition, only those first $20 items can work as inventory items.
 .define NUM_INVENTORY_ITEMS	$20
 
 
@@ -143,8 +145,7 @@
 	TREASURE_57			db ; $57
 	TREASURE_BOMB_FLOWER_LOWER_HALF	db ; $58: Lower half of bomb flower (uses different palette)
 
-	; The remainder appear as seeds in seed satchel/slingshot, but that probably
-	; doesn't mean anything. These may not be valid treasures.
+	; Invalid treasures
 	TREASURE_59			db ; $59
 	TREASURE_5a			db ; $5a
 	TREASURE_5b			db ; $5b

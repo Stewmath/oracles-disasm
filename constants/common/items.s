@@ -1,9 +1,11 @@
-; Each index in this file corresponds to a physical "item object" which can exist in-game.
-; This is slightly different from "treasures" (see constants/common/treasures.s), which only
-; represent items collectable by Link.
+; Item objects are a type of object which can collide with enemy and part objects. This includes
+; weapons like swords, as well as some more unexpected things like ricky's tornado.
 ;
-; Item indices from $00-$1f correspond to treasure indices. Indices $20 and above appear
-; to be different.
+; The item objects described here are "physical" objects which can exist in-game. This is slightly
+; different from "treasures" (see constants/common/treasures.s), which only represent things
+; collectable by Link, and which may not have any physical representation.
+;
+; Item IDs from $00-$1f correspond to treasures, while IDs $20 and above are different.
 
 .enum 0
 	ITEM_NONE			db ; 0x00
@@ -29,10 +31,7 @@
 	ITEM_10				db ; 0x10
 	ITEM_HARP			db ; 0x11
 	ITEM_12				db ; 0x12
-
-	; Slingshot leftovers maybe?
 	ITEM_SLINGSHOT			db ; 0x13
-
 	ITEM_14				db ; 0x14
 	ITEM_SHOVEL			db ; 0x15
 	ITEM_BRACELET			db ; 0x16
@@ -49,9 +48,7 @@
 	; Used to give minecarts collisions with enemies
 	ITEM_MINECART_COLLISION		db ; 0x1d
 
-	; Code used is similar to biggoron sword?
 	ITEM_FOOLS_ORE			db ; 0x1e
-
 	ITEM_1f				db ; 0x1f
 
 	; Item IDs $20 and above can't be used directly as items in link's inventory.

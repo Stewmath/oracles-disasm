@@ -1,3 +1,15 @@
+; Special objects are, well, special. There can only be two special objects on the screen at any
+; given time, and one of them is always Link.
+;
+; The reason for this is that unlike other object types, special objects have a section of VRAM
+; reserved exclusively for their use. Because their animations tend to be quite complicated, each
+; frame of animation is loaded into VRAM on-demand from the spritesheet, unlike other object types
+; which keep all of their animation frames loaded in VRAM at once. This allows these objects to have
+; much more complicated animations than other object types.
+;
+; As a consequence of this, all special object graphics must be stored uncompressed in the ROM, so
+; that each needed frame can be loaded at a moment's notice.
+
 .enum 0
 
 	; $00-$09 occupy vram at $8600
@@ -38,7 +50,9 @@
 	SPECIALOBJECT_MOOSH_CUTSCENE		db ; $11
 	SPECIALOBJECT_MAPLE_CUTSCENE		db ; $12
 
+.ifdef ROM_AGES
 	SPECIALOBJECT_RAFT			db ; $13
+.endif
 
 .ende
 

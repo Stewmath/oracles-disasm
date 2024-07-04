@@ -40,6 +40,18 @@
 .include "constants/common/treeGfxHeaders.s"
 .include "constants/common/uncmpGfxHeaders.s"
 
-.ifdef ROM_SEASONS
+.ifdef ROM_AGES
+
+.include "constants/ages/interactions.s"
+.include "constants/ages/enemies.s"
+.include "constants/ages/parts.s"
+
+.else ;ROM_SEASONS
+
+.include "constants/seasons/interactions.s"
+.include "constants/seasons/enemies.s"
+.include "constants/seasons/parts.s"
+
 .include "constants/seasons/seasons.s"
+
 .endif
