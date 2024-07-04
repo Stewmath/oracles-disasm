@@ -1,4 +1,4 @@
- m_section_free Objects_1 namespace objectData
+m_section_free Objects_1 namespace objectData
 
 .ifdef ROM_AGES
 .include "objects/ages/extraData1.s"

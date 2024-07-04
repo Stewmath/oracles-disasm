@@ -121,7 +121,7 @@
 .BANK $06 SLOT 1
 .ORG 0
 
- m_section_free Bank_6 NAMESPACE bank6
+m_section_free Bank_6 NAMESPACE bank6
 
 	.include "code/interactableTiles.s"
 	.include "code/specialObjectAnimationsAndDamage.s"
@@ -191,7 +191,7 @@
 .BANK $08 SLOT 1
 .ORG 0
 
- m_section_free Interaction_Code_Group1 NAMESPACE commonInteractions1
+m_section_free Interaction_Code_Group1 NAMESPACE commonInteractions1
 	.include "object_code/common/interactions/breakTileDebris.s"
 	.include "object_code/common/interactions/fallDownHole.s"
 	.include "object_code/common/interactions/farore.s"
@@ -206,7 +206,7 @@
 	.include "object_code/common/interactions/doorController.s"
 .ends
 
- m_section_free Interaction_Code_Group2 NAMESPACE commonInteractions2
+m_section_free Interaction_Code_Group2 NAMESPACE commonInteractions2
 	.include "object_code/common/interactions/shopkeeper.s"
 	.include "object_code/common/interactions/shopItem.s"
 	.include "object_code/common/interactions/introSprites1.s"
@@ -214,7 +214,7 @@
 	.include "object_code/common/interactions/explosion.s"
 .ends
 
- m_section_free Seasons_Interactions_Bank08 NAMESPACE seasonsInteractionsBank08
+m_section_free Seasons_Interactions_Bank08 NAMESPACE seasonsInteractionsBank08
 	.include "object_code/seasons/interactions/usedRodOfSeasons.s"
 	.include "object_code/seasons/interactions/specialWarp.s"
 	.include "object_code/seasons/interactions/dungeonScript.s"
@@ -267,7 +267,7 @@
 
 	.include "object_code/common/interactions/treasure.s"
 
- m_section_free Interaction_Code_Group3 NAMESPACE commonInteractions3
+m_section_free Interaction_Code_Group3 NAMESPACE commonInteractions3
 	.include "object_code/common/interactions/bombFlower.s"
 	.include "object_code/common/interactions/switchTileToggler.s"
 	.include "object_code/common/interactions/movingPlatform.s"
@@ -277,7 +277,7 @@
 	.include "object_code/common/interactions/essence.s"
 .ends
 
- m_section_free Seasons_Interactions_Bank09 NAMESPACE seasonsInteractionsBank09
+m_section_free Seasons_Interactions_Bank09 NAMESPACE seasonsInteractionsBank09
 	.include "object_code/seasons/interactions/quicksand.s"
 	.include "object_code/seasons/interactions/unicornsCave4ChestPuzzle.s"
 	.include "object_code/seasons/interactions/unicornsCaveReverseMovingArmos.s"
@@ -316,12 +316,12 @@
 .BANK $0a SLOT 1
 .ORG 0
 
- m_section_free Interaction_Code_Group4 NAMESPACE commonInteractions4
+m_section_free Interaction_Code_Group4 NAMESPACE commonInteractions4
 	.include "object_code/common/interactions/vasu.s"
 	.include "object_code/common/interactions/bubble.s"
 .ends
 
- m_section_free Interaction_Code_Group5 NAMESPACE commonInteractions5
+m_section_free Interaction_Code_Group5 NAMESPACE commonInteractions5
 	.include "object_code/common/interactions/woodenTunnel.s"
 	.include "object_code/common/interactions/exclamationMark.s"
 	.include "object_code/common/interactions/floatingImage.s"
@@ -332,7 +332,7 @@
 	.include "object_code/common/interactions/createObjectAtEachTileindex.s"
 .ends
 
- m_section_free Seasons_Interactions_Bank0a NAMESPACE seasonsInteractionsBank0a
+m_section_free Seasons_Interactions_Bank0a NAMESPACE seasonsInteractionsBank0a
 	.include "object_code/seasons/interactions/sunkenCityNpcs.s"
 	.include "object_code/seasons/interactions/flyingRooster.s"
 	.include "object_code/seasons/interactions/8e.s"
@@ -556,7 +556,7 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 	.ENDR
 .endif
 
- m_section_free Interaction_Code_Group6 NAMESPACE commonInteractions6
+m_section_free Interaction_Code_Group6 NAMESPACE commonInteractions6
 	.include "object_code/common/interactions/businessScrub.s"
 	.include "object_code/common/interactions/cf.s"
 	.include "object_code/common/interactions/companionTutorial.s"
@@ -566,7 +566,7 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 	.include "object_code/common/interactions/linkShip.s"
 .ends
 
- m_section_free Seasons_Interactions_Bank0f NAMESPACE seasonsInteractionsBank0f
+m_section_free Seasons_Interactions_Bank0f NAMESPACE seasonsInteractionsBank0f
 	.include "object_code/seasons/interactions/boomerangSubrosian.s"
 	.include "object_code/seasons/interactions/boomerang.s"
 	.include "object_code/seasons/interactions/troy.s"
@@ -585,7 +585,7 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 	.define PART_BANK $10
 	.export PART_BANK
 
- m_section_free Part_Code NAMESPACE partCode
+m_section_free Part_Code NAMESPACE partCode
 	.include "code/partCommon.s"
 
 	.include "object_code/common/parts/itemDrop.s"
@@ -635,7 +635,7 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "code/roomInitialization.s"
 
- m_section_free Part_Code_2 NAMESPACE partCode
+m_section_free Part_Code_2 NAMESPACE partCode
 	.include "code/updateParts.s"
 	.include "data/partCodeTable.s"
 
@@ -679,7 +679,7 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "code/objectLoading.s"
 
- m_section_free Objects_2 namespace objectData
+m_section_free Objects_2 namespace objectData
 	.include "objects/seasons/pointers.s"
 	.include "objects/seasons/mainData.s"
 	.include "objects/seasons/extraData3.s"
@@ -700,7 +700,7 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 .BANK $13 SLOT 1
 .ORG 0
 
- m_section_superfree Terrain_Effects NAMESPACE terrainEffects
+m_section_superfree Terrain_Effects NAMESPACE terrainEffects
 	.include "data/terrainEffects.s"
 .ends
 
@@ -728,12 +728,12 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "scripts/common/scriptHelper.s"
 
- m_section_free Interaction_Code_Group7 NAMESPACE commonInteractions7
+m_section_free Interaction_Code_Group7 NAMESPACE commonInteractions7
 	.include "object_code/common/interactions/faroreGiveItem.s"
 	.include "object_code/common/interactions/zeldaApproachTrigger.s"
 .ends
 
- m_section_free Interaction_Code_Group8 NAMESPACE commonInteractions8
+m_section_free Interaction_Code_Group8 NAMESPACE commonInteractions8
 	.include "object_code/common/interactions/eraOrSeasonInfo.s"
 	.include "object_code/common/interactions/statueEyeball.s"
 	.include "object_code/common/interactions/ringHelpBook.s"
@@ -793,7 +793,7 @@ oamData_15_4e0c:
 		.include "scripts/seasons/scriptHelper.s"
 	.ends
 
- m_section_free Seasons_Interactions_Bank15 NAMESPACE seasonsInteractionsBank15
+m_section_free Seasons_Interactions_Bank15 NAMESPACE seasonsInteractionsBank15
 	.include "object_code/seasons/interactions/linkedFountainLady.s"
 	.include "object_code/seasons/interactions/linkedSecredGivers.s"
 	.include "object_code/seasons/interactions/miscPuzzles.s"
@@ -821,7 +821,7 @@ oamData_15_4e0c:
 .BANK $17 SLOT 1
 .ORG 0
 
- m_section_free Tile_Mappings
+m_section_free Tile_Mappings
 
 	tileMappingIndexDataPointer:
 		.dw tileMappingIndexData
@@ -853,7 +853,7 @@ oamData_15_4e0c:
 .BANK $19 SLOT 1
 .ORG 0
 
- m_section_superfree Tile_mappings
+m_section_superfree Tile_mappings
 	.include {"{GAME_DATA_DIR}/tilesetMappings.s"}
 .ends
 
@@ -899,7 +899,7 @@ oamData_15_4e0c:
 .BANK $3f SLOT 1
 .ORG 0
 
- m_section_free Bank3f NAMESPACE bank3f
+m_section_free Bank3f NAMESPACE bank3f
 
 .define BANK_3f $3f
 

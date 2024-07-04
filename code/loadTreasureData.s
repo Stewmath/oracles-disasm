@@ -1,6 +1,6 @@
 ; The only reason this gets its own file is because it moves around between Ages and Seasons.
 
- m_section_free LoadTreasureData NAMESPACE treasureData
+m_section_free LoadTreasureData NAMESPACE treasureData
 
 ;;
 ; @param	d	Interaction index (should be of type INTERAC_TREASURE)

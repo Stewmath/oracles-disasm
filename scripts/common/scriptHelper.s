@@ -1,4 +1,4 @@
- m_section_free Bank_15 NAMESPACE scriptHelp
+m_section_free Bank_15 NAMESPACE scriptHelp
 
 ; ==============================================================================
 ; INTERAC_FARORE
@@ -268,7 +268,7 @@ shopkeeper_take10Rupees:
 .endif
 
 
- m_section_free Bank_15_2 NAMESPACE scriptHelp
+m_section_free Bank_15_2 NAMESPACE scriptHelp
 
 .ifdef ROM_SEASONS
 

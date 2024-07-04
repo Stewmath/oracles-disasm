@@ -1,4 +1,4 @@
- m_section_free Interaction_Code_Treasure NAMESPACE treasureInteraction
+m_section_free Interaction_Code_Treasure NAMESPACE treasureInteraction
 
 ; ==============================================================================
 ; INTERAC_TREASURE

@@ -1,6 +1,6 @@
 ; TODO: Some code in this file is shared with "code/seasons/cutscenes/endgameCutscenes.s"
 
- m_section_superfree Cutscenes_Bank10 NAMESPACE cutscenesBank10
+m_section_superfree Cutscenes_Bank10 NAMESPACE cutscenesBank10
 
 ; Input values for the intro cutscene in the temple
 templeIntro_simulatedInput:

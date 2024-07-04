@@ -125,7 +125,7 @@
 .ORG 0
 
 
- m_section_free Bank_6 NAMESPACE bank6
+m_section_free Bank_6 NAMESPACE bank6
 
 	.include "code/interactableTiles.s"
 	.include "code/specialObjectAnimationsAndDamage.s"
@@ -218,7 +218,7 @@ specialObjectLoadAnimationFrameToBuffer:
 .BANK $08 SLOT 1
 .ORG 0
 
- m_section_free Interaction_Code_Group1 NAMESPACE commonInteractions1
+m_section_free Interaction_Code_Group1 NAMESPACE commonInteractions1
 	.include "object_code/common/interactions/breakTileDebris.s"
 	.include "object_code/common/interactions/fallDownHole.s"
 	.include "object_code/common/interactions/farore.s"
@@ -272,7 +272,7 @@ m_section_free Ages_Interactions_Bank8 NAMESPACE agesInteractionsBank08
 .BANK $09 SLOT 1
 .ORG 0
 
- m_section_free Interaction_Code_Group2 NAMESPACE commonInteractions2
+m_section_free Interaction_Code_Group2 NAMESPACE commonInteractions2
 	.include "object_code/common/interactions/shopkeeper.s"
 	.include "object_code/common/interactions/shopItem.s"
 	.include "object_code/common/interactions/introSprites1.s"
@@ -324,7 +324,7 @@ m_section_free Ages_Interactions_Bank9 NAMESPACE agesInteractionsBank09
 .BANK $0a SLOT 1
 .ORG 0
 
- m_section_free Interaction_Code_Group3 NAMESPACE commonInteractions3
+m_section_free Interaction_Code_Group3 NAMESPACE commonInteractions3
 	.include "object_code/common/interactions/bombFlower.s"
 	.include "object_code/common/interactions/switchTileToggler.s"
 	.include "object_code/common/interactions/movingPlatform.s"
@@ -334,7 +334,7 @@ m_section_free Ages_Interactions_Bank9 NAMESPACE agesInteractionsBank09
 	.include "object_code/common/interactions/essence.s"
 .ends
 
- m_section_free Interaction_Code_Group4 NAMESPACE commonInteractions4
+m_section_free Interaction_Code_Group4 NAMESPACE commonInteractions4
 	.include "object_code/common/interactions/vasu.s"
 	.include "object_code/common/interactions/bubble.s"
 .ends
@@ -385,7 +385,7 @@ m_section_free Ages_Interactions_BankA NAMESPACE agesInteractionsBank0a
 .BANK $0b SLOT 1
 .ORG 0
 
- m_section_free Interaction_Code_Group5 NAMESPACE commonInteractions5
+m_section_free Interaction_Code_Group5 NAMESPACE commonInteractions5
 	.include "object_code/common/interactions/woodenTunnel.s"
 	.include "object_code/common/interactions/exclamationMark.s"
 	.include "object_code/common/interactions/floatingImage.s"
@@ -396,7 +396,7 @@ m_section_free Ages_Interactions_BankA NAMESPACE agesInteractionsBank0a
 	.include "object_code/common/interactions/createObjectAtEachTileindex.s"
 .ends
 
- m_section_free Interaction_Code_Group6 NAMESPACE commonInteractions6
+m_section_free Interaction_Code_Group6 NAMESPACE commonInteractions6
 	.include "object_code/common/interactions/businessScrub.s"
 	.include "object_code/common/interactions/cf.s"
 	.include "object_code/common/interactions/companionTutorial.s"
@@ -406,7 +406,7 @@ m_section_free Ages_Interactions_BankA NAMESPACE agesInteractionsBank0a
 	.include "object_code/common/interactions/linkShip.s"
 .ends
 
- m_section_free Interaction_Code_Group7 NAMESPACE commonInteractions7
+m_section_free Interaction_Code_Group7 NAMESPACE commonInteractions7
 	.include "object_code/common/interactions/faroreGiveItem.s"
 	.include "object_code/common/interactions/zeldaApproachTrigger.s"
 .ends
@@ -481,7 +481,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 .BANK $0d SLOT 1
 .ORG 0
 
- m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
+m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
 	.include "code/enemyCommon.s"
 
@@ -527,7 +527,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 
 .ends
 
- m_section_superfree Enemy_Animations
+m_section_superfree Enemy_Animations
 	.include {"{GAME_DATA_DIR}/enemyAnimations.s"}
 .ends
 
@@ -535,7 +535,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 .BANK $0e SLOT 1
 .ORG 0
 
- m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
+m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 	.include "code/enemyCommon.s"
 
@@ -596,7 +596,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 .BANK $0f SLOT 1
 .ORG 0
 
- m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
+m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
@@ -623,7 +623,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 .BANK $10 SLOT 1
 .ORG 0
 
- m_section_free Enemy_Code_Bank10 NAMESPACE bank10
+m_section_free Enemy_Code_Bank10 NAMESPACE bank10
 
 	.include "code/enemyCommon.s"
 	.include "code/enemyBossCommon.s"
@@ -652,7 +652,7 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 .endif
 .endif
 
- m_section_free Interaction_Code_Group8 NAMESPACE commonInteractions8
+m_section_free Interaction_Code_Group8 NAMESPACE commonInteractions8
 	.include "object_code/common/interactions/eraOrSeasonInfo.s"
 	.include "object_code/common/interactions/statueEyeball.s"
 	.include "object_code/common/interactions/ringHelpBook.s"
@@ -677,7 +677,7 @@ m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
 	.define PART_BANK $11
 	.export PART_BANK
 
- m_section_free Bank_11 NAMESPACE partCode
+m_section_free Bank_11 NAMESPACE partCode
 	.include "code/partCommon.s"
 
 	.include "object_code/common/parts/itemDrop.s"
@@ -779,27 +779,27 @@ m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
 
 	.include "code/objectLoading.s"
 
- m_section_superfree Room_Code namespace roomSpecificCode
+m_section_superfree Room_Code namespace roomSpecificCode
 
 	.include "code/ages/roomSpecificCode.s"
 
 .ends
 
- m_section_free Objects_2 namespace objectData
+m_section_free Objects_2 namespace objectData
 
 	.include "objects/ages/mainData.s"
 	.include "objects/ages/extraData3.s"
 
 .ends
 
- m_section_superfree Underwater_Surface_Data namespace underwaterSurfacing
+m_section_superfree Underwater_Surface_Data namespace underwaterSurfacing
 
 	.include "code/ages/underwaterSurfacing.s"
 	.include "data/ages/underwaterSurfaceData.s"
 
 .ENDS
 
- m_section_free Objects_3 namespace objectData
+m_section_free Objects_3 namespace objectData
 
 	.include "objects/ages/extraData4.s"
 
@@ -820,7 +820,7 @@ m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
 .BANK $14 SLOT 1
 .ORG 0
 
- m_section_superfree Terrain_Effects NAMESPACE terrainEffects
+m_section_superfree Terrain_Effects NAMESPACE terrainEffects
 	.include "data/terrainEffects.s"
 .ends
 
@@ -880,7 +880,7 @@ m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
 	.include {"{GAME_DATA_DIR}/chestData.s"}
 	.include {"{GAME_DATA_DIR}/treasureObjectData.s"}
 
- m_section_free Bank16_2 NAMESPACE bank16
+m_section_free Bank16_2 NAMESPACE bank16
 
 ;;
 ; Used in the room in present Mermaid's Cave with the changing floor
@@ -969,7 +969,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $18 SLOT 1
 .ORG 0
 
- m_section_free Tile_Mappings
+m_section_free Tile_Mappings
 
 	tileMappingIndexDataPointer:
 		.dw tileMappingIndexData
@@ -993,15 +993,15 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $19 SLOT 1
 .ORG 0
 
- m_section_free Gfx_19_1 ALIGN $10
+m_section_free Gfx_19_1 ALIGN $10
 	.include {"{GAME_DATA_DIR}/gfxDataBank19_1.s"}
 .ends
 
- m_section_superfree Tile_mappings
+m_section_superfree Tile_mappings
 	.include {"{GAME_DATA_DIR}/tilesetMappings.s"}
 .ends
 
- m_section_free Gfx_19_2 ALIGN $10
+m_section_free Gfx_19_2 ALIGN $10
 	.include {"{GAME_DATA_DIR}/gfxDataBank19_2.s"}
 .ends
 
@@ -1010,7 +1010,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .ORG 0
 
 
- m_section_free Gfx_1a ALIGN $20
+m_section_free Gfx_1a ALIGN $20
 	.include "data/gfxDataBank1a.s"
 .ends
 
@@ -1018,7 +1018,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $1b SLOT 1
 .ORG 0
 
- m_section_free Gfx_1b ALIGN $20
+m_section_free Gfx_1b ALIGN $20
 	.include "data/gfxDataBank1b.s"
 .ends
 
@@ -1060,7 +1060,7 @@ loadD6ChangingFloorPatternToBigBuffer:
 .BANK $3f SLOT 1
 .ORG 0
 
- m_section_free Bank3f NAMESPACE bank3f
+m_section_free Bank3f NAMESPACE bank3f
 
 .define BANK_3f $3f
 
