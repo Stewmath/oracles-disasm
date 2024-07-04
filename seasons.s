@@ -115,7 +115,7 @@
 		.include {"{GAME_DATA_DIR}/tile_properties/tileTypeMappings.s"}
 		.include {"{GAME_DATA_DIR}/tile_properties/cliffTiles.s"}
 
-		.include "code/seasons/subrosiaDanceLink.s"
+		.include "object_code/seasons/specialObjects/subrosiaDanceLink.s"
 	.ends
 
 .BANK $06 SLOT 1
@@ -148,8 +148,8 @@
 	.include "object_code/common/specialObjects/minecart.s"
 
 	.include {"{GAME_DATA_DIR}/specialObjectAnimationData.s"}
-	.include "code/seasons/cutscenes/companionCutscenes.s"
-	.include "code/seasons/cutscenes/linkCutscenes.s"
+	.include "object_code/seasons/specialObjects/companionCutscene.s"
+	.include "object_code/seasons/specialObjects/linkInCutscene.s"
 	.include {"{GAME_DATA_DIR}/signText.s"}
 	.include {"{GAME_DATA_DIR}/tile_properties/breakableTiles.s"}
 

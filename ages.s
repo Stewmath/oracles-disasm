@@ -150,11 +150,11 @@
 	.include {"{GAME_DATA_DIR}/itemUsageTables.s"}
 
 	.include "object_code/common/specialObjects/minecart.s"
-	.include "object_code/common/specialObjects/raft.s"
+	.include "object_code/ages/specialObjects/raft.s"
 
 	.include {"{GAME_DATA_DIR}/specialObjectAnimationData.s"}
-	.include "code/ages/cutscenes/companionCutscenes.s"
-	.include "code/ages/cutscenes/linkCutscenes.s"
+	.include "object_code/ages/specialObjects/companionCutscene.s"
+	.include "object_code/ages/specialObjects/linkInCutscene.s"
 	.include {"{GAME_DATA_DIR}/signText.s"}
 	.include {"{GAME_DATA_DIR}/tile_properties/breakableTiles.s"}
 
