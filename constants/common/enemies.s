@@ -1,4 +1,4 @@
-; See interactionTypes.s for documentation on comment format.
+; See interactions.s for documentation on comment format.
 ;
 ; Enemies $00-$07, and $68-$7f, count as bosses. (These ID ranges are checked in
 ; enemyBossCommon.s.)

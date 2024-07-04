@@ -187,7 +187,7 @@ faroresMemoryScript:
 ;   $03: closes the door
 ;
 ; Variables:
-;   angle: the type and direction of door (see interactionTypes.s)
+;   angle: the type and direction of door (see interactions.s)
 ;   speed: for subids $14-$17, this is the number of torches that must be lit.
 ;   var3d: Bitmask to check on wActiveTriggers (value of "X" parameter converted to
 ;          a bitmask)

@@ -799,7 +799,7 @@
 .ENDM
 
 ; Spawn an enemy at this interaction's position.
-; param1:	The ID of the enemy to spawn (see constants/common/enemyTypes.s)
+; param1:	The ID of the enemy to spawn (see constants/common/enemies.s)
 ; param2:	The Subid of the enemy to spawn
 .MACRO spawnenemyhere
 	.db $e6

@@ -22,7 +22,7 @@ enemyCode3b:
 
 	; NOTE: The cucco starts with 0 health. It's constantly reset to $40 here. This
 	; isn't a problem in Seasons, but in Ages this seems to trigger a bug causing its
-	; collisions to get disabled. See enemyTypes.s for details.
+	; collisions to get disabled. See enemies.s for details.
 	ld l,Enemy.health
 	ld (hl),$40
 

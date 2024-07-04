@@ -1,4 +1,4 @@
-; The first $20 treasures correspond to items (see constants/common/itemTypes.s). Beyond that, they
+; The first $20 treasures correspond to items (see constants/common/items.s). Beyond that, they
 ; differ.
 
 ; Item indices from $00-$1f can be used as inventory items; ones above that can't be.

@@ -1,4 +1,4 @@
-; See constants/common/itemTypes.s.
+; See constants/common/items.s.
 ;
 ; Data format:
 ; b0: object gfx index (see data/objectGfxHeaders.s)

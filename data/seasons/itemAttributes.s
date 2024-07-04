@@ -1,4 +1,4 @@
-; See constants/common/itemsTypes.s.
+; See constants/common/items.s.
 
 ; b0: Item.collisionType (see constants/common/collisionTypes.s)
 ;     bit 7 set if collisions should be enabled?

@@ -9970,7 +9970,7 @@ linkApplyDamage:
 ; This will force Link's ID to change next time "updateSpecialObjects" is called. Also
 ; clears subid, var03, state, and substate.
 ;
-; @param	a	Link ID value (see constants/common/specialObjectTypes.s)
+; @param	a	Link ID value (see constants/common/specialObjects.s)
 setLinkIDOverride:
 	or $80
 	ld (wLinkIDOverride),a
