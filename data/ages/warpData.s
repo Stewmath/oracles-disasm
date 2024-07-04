@@ -1,4 +1,4 @@
-warpDestTable: ; $12f5b
+warpDestTable:
 	.dw group0WarpDestTable
 	.dw group1WarpDestTable
 	.dw group2WarpDestTable
@@ -563,7 +563,7 @@ group7WarpDestTable:
 	m_WarpDest $76 $ad $9 $3
 
 
-warpSourcesTable: ; $1359e
+warpSourcesTable:
 	.dw group0WarpSources
 	.dw group1WarpSources
 	.dw group2WarpSources
@@ -609,7 +609,7 @@ warpSourcesTable: ; $1359e
 ;   Param 3: Warp Dest Group.
 ;   Param 4: Transition source type.
 
-group0WarpSources: ; $135ae
+group0WarpSources:
 	m_StandardWarp $04 $38 $06 $0 $3
 	m_StandardWarp $08 $38 $06 $0 $3
 	m_StandardWarp $01 $48 $07 $0 $3
@@ -721,7 +721,7 @@ warpSource771e:
 	m_PointedWarp $00 $26 $10 $2 $4
 	m_PointedWarp $80 $53 $11 $2 $4
 
-group1WarpSources: ; $13726
+group1WarpSources:
 	m_StandardWarp $00 $48 $01 $4 $4
 	m_StandardWarp $00 $83 $03 $4 $4
 	m_StandardWarp $00 $5c $02 $5 $4
@@ -814,7 +814,7 @@ warpSource786a:
 	m_PointedWarp $00 $34 $2e $2 $4
 	m_PointedWarp $80 $21 $27 $2 $4
 
-group2WarpSources: ; $13872
+group2WarpSources:
 	m_StandardWarp $00 $90 $01 $5 $4
 	m_StandardWarp $04 $0e $33 $0 $3
 	m_StandardWarp $04 $0f $34 $1 $3
@@ -902,7 +902,7 @@ warpSource79aa:
 	m_PointedWarp $00 $61 $64 $5 $2
 	m_PointedWarp $00 $68 $65 $5 $2
 
-group3WarpSources: ; $139b2
+group3WarpSources:
 	m_StandardWarp $00 $0f $06 $5 $4
 	m_StandardWarp $04 $0f $1f $1 $3
 	m_StandardWarp $08 $0f $1f $1 $3
@@ -980,7 +980,7 @@ warpSource7ac6:
 	m_PointedWarp $00 $22 $2f $3 $4
 	m_PointedWarp $00 $25 $30 $3 $4
 
-group4WarpSources: ; $13ace
+group4WarpSources:
 	m_StandardWarp $04 $24 $01 $0 $3
 	m_StandardWarp $04 $46 $01 $1 $3
 	m_StandardWarp $04 $66 $02 $0 $3
@@ -1085,7 +1085,7 @@ warpSource7c3e:
 	m_PointedWarp $00 $64 $09 $6 $2
 	m_WarpSourcesEnd
 
-group5WarpSources: ; $13c46
+group5WarpSources:
 	m_StandardWarp $04 $26 $06 $1 $3
 	m_StandardWarp $00 $20 $0e $7 $2
 	m_StandardWarp $00 $25 $0d $7 $2
@@ -1211,7 +1211,7 @@ warpSource7e06:
 	m_PointedWarp $00 $57 $1c $7 $2
 	m_WarpSourcesEnd
 
-group6WarpSources: ; $13e0e
+group6WarpSources:
 	m_StandardWarp $01 $05 $08 $4 $3
 	m_StandardWarp $01 $10 $0b $4 $3
 	m_StandardWarp $04 $27 $0c $4 $3
@@ -1234,7 +1234,7 @@ group6WarpSources: ; $13e0e
 	m_WarpSourcesEnd
 
 
-group7WarpSources: ; $13e5e
+group7WarpSources:
 	m_StandardWarp $01 $01 $11 $0 $3
 	m_StandardWarp $02 $01 $02 $7 $3
 	m_StandardWarp $04 $02 $01 $7 $3

@@ -1,6 +1,6 @@
 ; See data/ages/warpData.s for documentation
 
-warpDestTable: ; $12d4e
+warpDestTable:
 	.dw group0WarpDestTable
 	.dw group1WarpDestTable
 	.dw group2WarpDestTable
@@ -621,7 +621,7 @@ group7WarpDestTable:
 	m_WarpDest $e5 $07 $f $3
 	m_WarpDest $e8 $06 $f $3
 
-warpSourcesTable: ; $13457
+warpSourcesTable:
 	.dw group0WarpSources
 	.dw group1WarpSources
 	.dw group2WarpSources
@@ -631,7 +631,7 @@ warpSourcesTable: ; $13457
 	.dw group6WarpSources
 	.dw group7WarpSources
 
-group0WarpSources: ; $13467
+group0WarpSources:
 	m_PointerWarp  $40 $d4 warpSource764b
 	m_StandardWarp $00 $96 $02 $4 $4
 	m_PointerWarp  $40 $8d warpSource7657
@@ -770,7 +770,7 @@ warpSource763f:
 warpSource764b:
 	m_PointedWarp $00 $57 $01 $4 $9
 	m_PointedWarp $80 $54 $00 $4 $4
-warpSource7653: ; $52 retrieved through getLinkedHerosCaveSideEntranceRoom
+warpSource7653: ; hardcoded usage of this through getLinkedHerosCaveSideEntranceRoom
 	m_PointedWarp $00 $57 $52 $5 $9
 warpSource7657:
 	m_PointedWarp $00 $24 $03 $4 $4
@@ -797,7 +797,7 @@ warpSource768b:
 	m_PointedWarp $00 $22 $73 $5 $4
 	m_PointedWarp $80 $57 $81 $5 $4
 
-group1WarpSources: ; $1369b
+group1WarpSources:
 	m_StandardWarp $00 $00 $01 $5 $4
 	m_StandardWarp $00 $09 $48 $3 $4
 	m_PointerWarp  $40 $28 warpSource7733
@@ -847,7 +847,7 @@ warpSource773b:
 	m_PointedWarp $00 $43 $58 $4 $4
 	m_PointedWarp $80 $46 $59 $4 $4
 
-group2WarpSources: ; $13743
+group2WarpSources:
 	m_StandardWarp $04 $0b $19 $0 $3
 	m_StandardWarp $08 $0b $19 $0 $3
 	m_StandardWarp $04 $0c $19 $0 $3
@@ -898,7 +898,7 @@ warpSource77ef:
 	m_PointedWarp $00 $06 $45 $4 $4
 	m_PointedWarp $80 $56 $43 $4 $4
 
-group3WarpSources: ; $137f7
+group3WarpSources:
 	m_StandardWarp $04 $80 $0b $0 $3
 	m_StandardWarp $04 $81 $0c $0 $3
 	m_StandardWarp $04 $82 $0d $0 $3
@@ -973,7 +973,7 @@ warpSource78ff:
 	m_PointedWarp $00 $66 $52 $0 $4
 	m_PointedWarp $80 $44 $0c $1 $8
 
-group4WarpSources: ; $13907
+group4WarpSources:
 	m_StandardWarp $04 $04 $00 $0 $3
 	m_StandardWarp $04 $1c $01 $0 $3
 	m_StandardWarp $04 $39 $02 $0 $3
@@ -1078,7 +1078,7 @@ warpSource7a7f:
 	m_PointedWarp $00 $7b $3f $4 $2
 	m_PointedWarp $80 $86 $3c $4 $2
 
-group5WarpSources: ; $13a87
+group5WarpSources:
 	m_StandardWarp $04 $5b $07 $0 $3
 	m_StandardWarp $04 $87 $00 $1 $3
 	m_StandardWarp $04 $97 $08 $0 $3
@@ -1293,7 +1293,7 @@ warpSource7d83:
 	m_PointedWarp $00 $22 $39 $0 $2
 	m_PointedWarp $80 $3b $6e $5 $2
 
-group6WarpSources: ; $13d8b
+group6WarpSources:
 	m_StandardWarp $01 $01 $08 $4 $3
 	m_StandardWarp $01 $09 $09 $4 $3
 	m_StandardWarp $01 $1d $0a $4 $3
@@ -1313,7 +1313,7 @@ group6WarpSources: ; $13d8b
 	m_StandardWarp $80 $b6 $7b $0 $4
 	m_WarpSourcesEnd
 
-group7WarpSources: ; $13dcf
+group7WarpSources:
 	m_StandardWarp $01 $5c $30 $5 $3
 	m_StandardWarp $02 $5d $2e $5 $3
 	m_StandardWarp $01 $60 $3a $5 $3
