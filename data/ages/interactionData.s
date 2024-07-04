@@ -1,4 +1,4 @@
-; See constants/interactions.s.
+; See constants/common/interactions.s.
 ;
 ; Data format:
 ; b0: object gfx index (see data/objectGfxHeaders.s)

@@ -233,7 +233,7 @@
 ;;
 ; This is an object that Link can collect.
 ;
-;   Subid: treasure index (see constants/treasure.s)
+;   Subid: treasure index (see constants/common/treasure.s)
 ;
 ;   var03: index in "treasureObjectData.s" indicating graphic, text when obtained, etc.
 ;

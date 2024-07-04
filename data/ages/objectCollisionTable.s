@@ -21,9 +21,9 @@
 ; The value of the byte itself is a CollisionEffect.
 ;
 ; See also:
-;  constants/itemCollisionTypes.s  (Values for Item.collisionType)
-;  constants/enemyCollisionModes.s (Values for Enemy.enemyCollisionMode)
-;  constants/collisionEffects.s    (Each byte's value corresponds to a CollisionEffect)
+;  constants/common/itemCollisionTypes.s  (Values for Item.collisionType)
+;  constants/common/enemyCollisionModes.s (Values for Enemy.enemyCollisionMode)
+;  constants/common/collisionEffects.s    (Each byte's value corresponds to a CollisionEffect)
 ;
 ;  data/{game}/enemyActiveCollisions.s (Collisions here don't work unless the
 ;                                      corresponding bit in this file is set)

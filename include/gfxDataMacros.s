@@ -35,7 +35,7 @@
 ; Its actual effect is to ensure the "continue" bit of the previous gfx header entry remains unset,
 ; so it does not attempt to read any data after this.
 ;
-; Optionally, a gfx header can end with a palette header (see constants/paletteHeaders.s). So this
+; Optionally, a gfx header can end with a palette header (see constants/common/paletteHeaders.s). So this
 ; macro takes one optional parameter for that. (Unique GFX headers only?)
 .macro m_GfxHeaderEnd
 	.ifdef CURRENT_GFX_HEADER_INDEX

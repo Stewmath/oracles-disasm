@@ -1,5 +1,5 @@
-This is a list of collision modes (constants/enemyCollisionModes.s) along with
-which enemies use that collision mode. Eg. "B: ENEMY_GANON" means that
+This is a list of collision modes (constants/common/enemyCollisionModes.s) along
+with which enemies use that collision mode. Eg. "B: ENEMY_GANON" means that
 collision mode B ("ENEMYCOLLISION_GANON") is used by ENEMY_GANON.
 
 If it has "(d)" is brackets, that means bit 7 is unset, which means the

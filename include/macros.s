@@ -471,7 +471,7 @@
 ;
 ; TODO: Figure out what bit 7 of the group index does (and hence why we need 2 of these)
 ;
-; Arg 1: Warp destination (see constants/rooms.s)
+; Arg 1: Warp destination (see constants/common/rooms.s)
 ; Arg 2: wWarpTransition
 ; Arg 3: wWarpDestPos
 ; Arg 4: wWarpTransition2

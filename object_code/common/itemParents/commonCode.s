@@ -148,7 +148,7 @@ itemCreateChild:
 	ld b,(hl)
 
 ;;
-; @param	b	Item ID to create (see constants/itemTypes.s)
+; @param	b	Item ID to create (see constants/common/itemTypes.s)
 ; @param	c	Subid for item
 ; @param	d	Points to w1ParentItem2, or some parent item?
 ; @param	e	Max # instances of the object that can exist (0 means 256)

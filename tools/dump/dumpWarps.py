@@ -93,7 +93,7 @@ outFile.write('\
 ; Byte 1: Y/X position to spawn at.\n\
 ; Param 2: Parameter. What this does depends on the transition type? (ie. walk\n\
 ;   in from top or bottom of screen?)\n\
-; Param 3: Transition dest type (see constants/transitions.s).\n\
+; Param 3: Transition dest type (see constants/common/transitions.s).\n\
 \n')
 
 for group in range(8):

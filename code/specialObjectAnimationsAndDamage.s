@@ -406,7 +406,7 @@ func_4553:
 
 ;;
 ; Gets the ID to use for the Link object based on what transformation rings he's wearing
-; (see constants/specialObjectTypes.s).
+; (see constants/common/specialObjectTypes.s).
 ; Under normal circumstances, this will return 0 (SPECIALOBJECT_LINK).
 ; @param[out] b Special object ID to use, based on the ring Link is wearing
 getTransformedLinkID:

@@ -795,7 +795,7 @@ checkc6e2BitSet:
 	ret
 
 ;;
-; @param	a	Rupee value (see constants/rupeeValues.s)
+; @param	a	Rupee value (see constants/common/rupeeValues.s)
 blossom_checkHasRupees:
 	call cpRupeeValue
 	ld e,Interaction.var3c

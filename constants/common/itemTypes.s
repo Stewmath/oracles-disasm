@@ -1,5 +1,5 @@
 ; Each index in this file corresponds to a physical "item object" which can exist in-game.
-; This is slightly different from "treasures" (see constants/treasures.s), which only
+; This is slightly different from "treasures" (see constants/common/treasures.s), which only
 ; represent items collectable by Link.
 ;
 ; Item indices from $00-$1f correspond to treasure indices. Indices $20 and above appear

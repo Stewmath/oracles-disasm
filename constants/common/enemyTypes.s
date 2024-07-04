@@ -499,7 +499,7 @@
 ; The reason this is an enemy is probably so it can use the "markEnemyAsKilledInRoom"
 ; function to prevent item drops from respawning for a while.
 ;
-; Subid corresponds to constants/itemDrops.s.
+; Subid corresponds to constants/common/itemDrops.s.
 ;
 ; @subid_00{Fairy}
 ; @subid_01{Heart}

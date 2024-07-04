@@ -172,8 +172,8 @@ breakableTileCollisionTable:
 ;
 ;  Parameters 1-3:
 ;    The ways the tile can be broken. Each bit corresponds to a different method (see
-;    "constants/breakableTileSources.s"). Bit order can be read left-to-right, so that the first bit
-;    corresponds to breakable tile source "$00" and the last corresponds to source "$13".
+;    "constants/common/breakableTileSources.s"). Bit order can be read left-to-right, so that the
+;    first bit corresponds to breakable tile source "$00" and the last corresponds to source "$13".
 ;
 ;  4th parameter:
 ;    If nonzero, determines types of items that can drop & probabilities of them dropping

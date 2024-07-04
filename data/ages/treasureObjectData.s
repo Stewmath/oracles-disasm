@@ -1,9 +1,9 @@
 m_section_free TreasureObjectData NAMESPACE treasureData
 
 ; Treasure objects are a kind of Interaction (INTERAC_TREASURE). Each "Treasure Object" contains
-; the information necessary to display a specific treasure (see "constants/treasure.s") and give it
-; to Link. Many treasures need a "parameter" to go with them (ie. level, amount). All of this "extra
-; data" is defined here.
+; the information necessary to display a specific treasure (see "constants/common/treasure.s") and
+; give it to Link. Many treasures need a "parameter" to go with them (ie. level, amount). All of
+; this "extra data" is defined here.
 ;
 ; The "m_TreasureSubid" macro takes 4 bytes as parameters:
 ;   b0: bit 7    = next 2 bytes are a pointer
@@ -19,9 +19,9 @@ m_section_free TreasureObjectData NAMESPACE treasureData
 ; index. This name will resolve to a 4-digit hex number (XXYY, where XX = treasure index and YY
 ; = subid).
 ;
-; For documentation of spawn modes and grab modes, see "constants/treasureSpawnModes.s".
+; For documentation of spawn modes and grab modes, see "constants/common/treasureSpawnModes.s".
 ;
-; See also constants/treasure.s for treasure lists.
+; See also constants/common/treasure.s for treasure lists.
 
 
 .macro m_BeginTreasureSubids
@@ -33,7 +33,7 @@ m_section_free TreasureObjectData NAMESPACE treasureData
 
 	.IF CURRENT_TREASURE_INDEX >= $10000
 		; Within the "treasureObjectData" table, "CURRENT_TREASURE_INDEX" corresponds to
-		; values from "constants/treasure.s". (We add $10000 just to make it easy to
+		; values from "constants/common/treasure.s". (We add $10000 just to make it easy to
 		; differentiate which mode we're in.)
 		.define \5, (CURRENT_TREASURE_INDEX - $10000) << 8
 	.ELSE

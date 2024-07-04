@@ -22,7 +22,7 @@ tryBreakTileWithSword_calculateLevel:
 ;;
 ; Deals with sword slashing / spinning / poking against tiles, breaking them
 ;
-; @param	a	See constants/breakableTileSources.s
+; @param	a	See constants/common/breakableTileSources.s
 ; @param	c	Direction (0-7 are 45-degree increments, 8 is link's center)
 tryBreakTileWithSword:
 	; Check link is close enough to the ground

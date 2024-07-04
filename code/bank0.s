@@ -4423,7 +4423,7 @@ checkGivenCollision_allowHoles:
 	ld hl,@specialCollisions
 	jr _complexCollision
 
-; See constants/specialCollisionValues.s for what each of these bytes is for.
+; See constants/common/specialCollisionValues.s for what each of these bytes is for.
 ; ie. The first defined byte is for holes.
 @specialCollisions:
 	.db %00000000 %11000011 %00000011 %11000000 %00000000 %11000011 %11000011 %00000000
@@ -4829,7 +4829,7 @@ loadTreasureDisplayData:
 
 ;;
 ; @param	a
-; @param[out]	a,c	Subid for PART_ITEM_DROP (see constants/itemDrops.s)
+; @param[out]	a,c	Subid for PART_ITEM_DROP (see constants/common/itemDrops.s)
 ; @param[out]	zflag	z if there is no item drop
 decideItemDrop:
 	ld c,a
@@ -4845,7 +4845,7 @@ decideItemDrop:
 ;;
 ; Checks whether an item drop of a given type can spawn.
 ;
-; @param	a	Item drop index (see constants/itemDrops.s)
+; @param	a	Item drop index (see constants/common/itemDrops.s)
 ; @param[out]	zflag	z if item cannot spawn (Link doesn't have it)
 checkItemDropAvailable:
 	ld c,a
@@ -4862,7 +4862,7 @@ checkItemDropAvailable:
 	ret
 
 ;;
-; @param	a	Treasure for Link to obtain (see constants/treasure.s)
+; @param	a	Treasure for Link to obtain (see constants/common/treasure.s)
 ; @param	c	Parameter (ie. item level, ring index, etc...)
 ; @param[out]	a	Sound to play on obtaining the treasure (if nonzero)
 giveTreasure:
@@ -4877,7 +4877,7 @@ giveTreasure:
 	ret
 
 ;;
-; @param	a	Treasure for Link to lose (see constants/treasure.s)
+; @param	a	Treasure for Link to lose (see constants/common/treasure.s)
 loseTreasure:
 	ld b,a
 	ldh a,(<hRomBank)
@@ -4888,7 +4888,7 @@ loseTreasure:
 	ret
 
 ;;
-; @param	a	Item to check for (see constants/treasure.s)
+; @param	a	Item to check for (see constants/common/treasure.s)
 ; @param[out]	cflag	Set if you have that item
 ; @param[out]	a	The value of the treasure's "related variable" (ie. item level)
 checkTreasureObtained:
@@ -4975,7 +4975,7 @@ getRupeeValue:
 	pop hl
 	ret
 
-; Each number here corresponds to a value in constants/rupeeValues.s.
+; Each number here corresponds to a value in constants/common/rupeeValues.s.
 @rupeeValues:
 	.dw $0000 ; $00
 	.dw $0001 ; $01
@@ -5693,7 +5693,7 @@ copyW4PaletteDataToW2TilesetBgPalettes:
 ;;
 ; @param[in]	b	Room
 ; @param[out]	b	Dungeon property byte for the given room (see
-;			constants/dungeonRoomProperties.s)
+;			constants/common/dungeonRoomProperties.s)
 getRoomDungeonProperties:
 	ldh a,(<hRomBank)
 	push af
@@ -8311,7 +8311,7 @@ slideAngleTable:
 ; Used in bank6._checkTileIsPassableFromDirection for the specific purpose of determining
 ; whether an item can pass through a cliff facing a certain direction. Odd values can pass
 ; through 2 directions, whereas even values can only pass through the direction
-; corresponding to the value divided by 2 (see constants/directions.s).
+; corresponding to the value divided by 2 (see constants/common/directions.s).
 ;
 angleTable:
 	.db $00 $00 $00 $01 $01 $01 $02 $02
@@ -9525,7 +9525,7 @@ enemyDie:
 ; The returned value of 'c' from here is moved to 'a' before the enemy-specific code is
 ; called, so that code can check the return value of this function.
 ;
-; @param[out]	c	"Enemy status" (see constants/enemyStates.s).
+; @param[out]	c	"Enemy status" (see constants/common/enemyStates.s).
 ;			$00 normally
 ;			$02 if stunned
 ;			$03 if health is 0
@@ -9970,7 +9970,7 @@ linkApplyDamage:
 ; This will force Link's ID to change next time "updateSpecialObjects" is called. Also
 ; clears subid, var03, state, and substate.
 ;
-; @param	a	Link ID value (see constants/specialObjectTypes.s)
+; @param	a	Link ID value (see constants/common/specialObjectTypes.s)
 setLinkIDOverride:
 	or $80
 	ld (wLinkIDOverride),a
@@ -10022,7 +10022,7 @@ specialObjectAnimate:
 	ret
 
 ;;
-; @param	a	Animation (see constants/linkAnimations.s)
+; @param	a	Animation (see constants/common/linkAnimations.s)
 ; @param	d	Special object index
 specialObjectSetAnimation:
 	ld e,SpecialObject.animMode
@@ -10245,7 +10245,7 @@ checkPegasusSeedCounter:
 ;;
 ; Try to break a tile at the given item's position.
 ;
-; @param	a	The type of collision (see constants/breakableTileSources.s)
+; @param	a	The type of collision (see constants/common/breakableTileSources.s)
 ; @param[out]	cflag	Set if the tile was broken (or can be broken)
 itemTryToBreakTile:
 	ld h,d
@@ -10256,7 +10256,7 @@ itemTryToBreakTile:
 ;;
 ; See bank6.tryToBreakTile for a better description.
 ;
-; @param	a	The type of collision (see constants/breakableTileSources.s)
+; @param	a	The type of collision (see constants/common/breakableTileSources.s)
 ;			If bit 7 is set, it will only check if the tile is breakable; it
 ;			won't actually break it.
 ; @param	bc	The YYXX position
@@ -11156,7 +11156,7 @@ objectDeleteRelatedObj1AsStaticObject:
 ;;
 ; Saves an object to a "static object" slot, which persists between rooms.
 ;
-; @param	a	Static object type (see constants/staticObjectTypes.s)
+; @param	a	Static object type (see constants/common/staticObjectTypes.s)
 ; @param	d	Object
 ; @param	hl	Address in wStaticObjects
 objectSaveAsStaticObject:
@@ -11200,7 +11200,7 @@ objectSaveAsStaticObject:
 	ret
 
 ;;
-; @param	a	Global flag to check (see constants/globalFlags.s)
+; @param	a	Global flag to check (see constants/common/globalFlags.s)
 checkGlobalFlag:
 	ld hl,wGlobalFlags
 	jp checkFlag
@@ -12449,7 +12449,7 @@ loadTilesetLayout:
 ;;
 ; Loads the address of unique header gfx (a&$7f) into wUniqueGfxHeaderAddress.
 ;
-; @param	a	Unique gfx header (see constants/uniqueGfxHeaders.s).
+; @param	a	Unique gfx header (see constants/common/uniqueGfxHeaders.s).
 ;			Bit 7 is ignored.
 loadUniqueGfxHeader:
 	and $7f

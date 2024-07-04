@@ -1,6 +1,6 @@
-; See constants/itemsTypes.s.
+; See constants/common/itemsTypes.s.
 
-; b0: Item.collisionType (see constants/collisionTypes.s)
+; b0: Item.collisionType (see constants/common/collisionTypes.s)
 ;     bit 7 set if collisions should be enabled?
 ; b1: Item.collisionRadiusY/X (1st digit is Y, 2nd is X)
 ; b2: Item.damage (how much it deals to enemies)

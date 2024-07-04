@@ -162,7 +162,7 @@ sidescrollUpdateActiveTile:
 
 ;;
 ; Does various things based on the tile type of the tile Link is standing on (see
-; constants/tileTypes.s).
+; constants/common/tileTypes.s).
 ;
 ; @param	d	Link object
 linkApplyTileTypes:
@@ -419,7 +419,7 @@ linkApplyTileTypes:
 	jr @swimming
 
 ;;
-; Gets the tile type of the tile link is standing on (see constants/tileTypes.s).
+; Gets the tile type of the tile link is standing on (see constants/common/tileTypes.s).
 ; Also updates wActiveTilePos, wActiveTileIndex and wLastActiveTileType, but not
 ; wActiveTileType.
 ;

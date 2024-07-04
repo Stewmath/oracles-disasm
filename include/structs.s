@@ -102,14 +102,14 @@
 	subid			db ; $02
 	var03			db ; $03
 
-	; Enemy states below $08 behave differently? (See constants/enemyStates.s)
+	; Enemy states below $08 behave differently? (See constants/common/enemyStates.s)
 	state			db ; $04
 
 	substate		db ; $05
 	counter1		db ; $06
 	counter2		db ; $07
 
-	; A value from 0-3. See constants/directions.s.
+	; A value from 0-3. See constants/common/directions.s.
 	; This is sometimes treated as an animation index which could go beyond those
 	; values? (Particularly for enemies?)
 	direction		db ; $08

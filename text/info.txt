@@ -142,7 +142,7 @@ Below is a list of these commands.
 \secret1, \secret2:
   Display the secret at "w7SecretBuffer1" or "w7SecretBuffer2".
 \sfx(X):
-  Plays sound effect "X" (see constants/music.s for values)
+  Plays sound effect "X" (see constants/common/music.s for values)
 \slow:
   Disable fast-forwarding to the end of a line for a certain amount of time.
   The game uses this when you get an essence.

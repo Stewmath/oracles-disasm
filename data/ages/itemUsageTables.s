@@ -59,7 +59,7 @@ itemUsageParameterTable:
 ;      bits 4-6: Value for bits 0-2 of Item.var3f
 ;      bits 0-3: Determines parent item's relatedObj2?
 ;                A value of $6 refers to w1WeaponItem.
-;  b1: Animation to set Link to? (see constants/linkAnimations.s)
+;  b1: Animation to set Link to? (see constants/common/linkAnimations.s)
 ;
 linkItemAnimationTable:
 	.db $00, LINK_ANIM_MODE_NONE    ; ITEM_NONE

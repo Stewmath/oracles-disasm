@@ -6,7 +6,7 @@
 ; ==============================================================================
 
 ;;
-; Subids correspond to "constants/itemDrops.s".
+; Subids correspond to "constants/common/itemDrops.s".
 ;
 ; @var03{Nonzero if came from the ground?}
 ;
@@ -122,7 +122,7 @@
 ;;
 ; Respawnable bush that drops something when cut. Used in Ages D3 and Ramrock boss.
 ;
-; Subid corresponts to constants/itemDrops.s.
+; Subid corresponts to constants/common/itemDrops.s.
 ;
 ; @subid_00{Fairy}
 ; @subid_01{Heart}

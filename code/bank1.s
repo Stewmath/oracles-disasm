@@ -258,7 +258,7 @@ screenTransitionState2:
 
 ;;
 ; @param	b	Direction button to check
-; @param	c	Direction of transition (see constants/directions.s)
+; @param	c	Direction of transition (see constants/common/directions.s)
 @transition:
 	ld a,(w1Link.enabled)
 	or a

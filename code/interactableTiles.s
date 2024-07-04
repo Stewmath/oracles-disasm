@@ -526,7 +526,7 @@ nextToOverworldKeyhole:
 
 ; Data format:
 ; b0: room index
-; b1: Item needed to unlock the room (see constants/treasure.s)
+; b1: Item needed to unlock the room (see constants/common/treasure.s)
 @group0:
 	.db <ROOM_AGES_05c TREASURE_GRAVEYARD_KEY
 	.db <ROOM_AGES_00a TREASURE_CROWN_KEY

@@ -1,4 +1,4 @@
-; This table maps a tile index to a tileType (see constants/tileTypes.s), which is one of the main
+; This table maps a tile index to a tileType (see constants/common/tileTypes.s), which is one of the main
 ; ways that special tile effects are implemented.
 ;
 ; This has no effect on anything other than Link himself. For holes, water, and lava to work with

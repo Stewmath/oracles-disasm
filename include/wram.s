@@ -184,7 +184,7 @@ wThreadStateBuffer: ; $c2e0
 .define wGameState	 wThreadStateBuffer + $e ; $c2ee
 
 ; Writing a value here triggers a cutscene.
-; (See constants/cutsceneIndices.s)
+; (See constants/common/cutsceneIndices.s)
 .define wCutsceneIndex		wThreadStateBuffer + $f ; $c2ef
 
 ; This is the amount to add to each color component to produce the "faded" palettes.
@@ -1574,7 +1574,7 @@ wCutsceneState: ; $cc03
 
 wCutsceneTrigger: ; $cc04/$cc04
 ; Gets copied to wCutsceneIndex. So, writing a value here triggers a cutscene.
-; (See constants/cutsceneIndices.s)
+; (See constants/common/cutsceneIndices.s)
 	db
 
 .ifdef ROM_AGES
@@ -1717,7 +1717,7 @@ wRoomPack: ; $cc31/$cc4d
 	db
 
 wRoomStateModifier: ; $cc32/$cc4e
-; In Seasons: This is the current season. Value from 00-03 (see constants/seasons.s).
+; In Seasons: This is the current season. Value from 00-03 (see constants/seasons/seasons.s).
 ;
 ; In Ages, this can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is
 ; set. Also set to $00-$02 depending on the animal companion region.
@@ -1736,7 +1736,7 @@ wActiveCollisions: ; $cc33/$cc4f
 	db
 
 wTilesetFlags: ; $cc34/$cc50
-; See constants/tilesetFlags.s.
+; See constants/common/tilesetFlags.s.
 	db
 
 wActiveMusic: ; $cc35/$cc51
@@ -1823,7 +1823,7 @@ wWarpDestRoom: ; $cc48/$cc64
 ; This first holds the warp destination index, then (later) the room index.
 	db
 wWarpTransition: ; $cc49/$cc65
-; Bits 0-3 are the half-byte given in WarpDest or StandardWarp macros. See "constants/transitions.s".
+; Bits 0-3 are the half-byte given in WarpDest or StandardWarp macros. See "constants/common/transitions.s".
 ; Bit 6 determines link's direction for screen-edge warps (0 for up, 1 for down)?
 ; Bit 7 set if this is the "destination" part of the warp?
 	db
@@ -2445,7 +2445,7 @@ wcd01: ; $cd01
 	db
 
 wScreenTransitionDirection: ; $cd02
-; See constants/directions.s for what the directions are.
+; See constants/common/directions.s for what the directions are.
 ; Set bit 7 to force a transition to occur.
 	db
 

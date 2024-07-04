@@ -15,7 +15,7 @@ warpDestTable: ; $12f5b
 ; Byte 1: Y/X position to spawn at.
 ; Param 2: Parameter. What this does depends on the transition type? (ie. walk
 ;   in from top or bottom of screen?)
-; Param 3: Transition dest type (see constants/transitions.s).
+; Param 3: Transition dest type (see constants/common/transitions.s).
 
 group0WarpDestTable:
 	m_WarpDest $48 $21 $0 $1
@@ -596,7 +596,7 @@ warpSourcesTable: ; $1359e
 ;     Warp Dest Group. Determines the map group to be warped to. Goes with Warp
 ;     Dest Index (see above)
 ;   Param 4: (half-byte)
-;     Transition source type. See constants/transitions.s.
+;     Transition source type. See constants/common/transitions.s.
 ;
 ; For m_PointerWarp:
 ;   Param 3 points to a list of "PointedWarps". Data at that location is defined

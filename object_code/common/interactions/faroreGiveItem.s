@@ -280,7 +280,7 @@ interactiond9_state2:
 @satchelUpgrade:
 	ld a,(wSeedSatchelLevel)
 
-	; This index differs in ages and seasons (see constants/treasure.s)
+	; This index differs in ages and seasons (see constants/common/treasure.s)
 	ld bc,TREASURE_OBJECT_SEED_SATCHEL_UPGRADE
 	jr @createTreasureAndIncSubstate
 
