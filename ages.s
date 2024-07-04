@@ -131,22 +131,23 @@ m_section_free Bank_6 NAMESPACE bank6
 	.include "code/specialObjectAnimationsAndDamage.s"
 	.include "code/breakableTiles.s"
 
-	.include "object_code/common/items/parentItemUsage.s"
+	.include "code/parentItemUsage.s"
 
-	.include "object_code/common/items/shieldParent.s"
-	.include "object_code/common/items/otherSwordsParent.s"
-	.include "object_code/common/items/switchHookParent.s"
-	.include "object_code/common/items/caneOfSomariaParent.s"
-	.include "object_code/common/items/swordParent.s"
-	.include "object_code/common/items/harpFluteParent.s"
-	.include "object_code/common/items/seedsParent.s"
-	.include "object_code/common/items/shovelParent.s"
-	.include "object_code/common/items/boomerangParent.s"
-	.include "object_code/common/items/bombsBraceletParent.s"
-	.include "object_code/common/items/featherParent.s"
-	.include "object_code/common/items/magnetGloveParent.s"
+	.include "object_code/common/itemParents/shieldParent.s"
+	.include "object_code/common/itemParents/otherSwordsParent.s"
+	.include "object_code/common/itemParents/switchHookParent.s"
+	.include "object_code/common/itemParents/caneOfSomariaParent.s"
+	.include "object_code/common/itemParents/swordParent.s"
+	.include "object_code/common/itemParents/harpFluteParent.s"
+	.include "object_code/common/itemParents/seedsParent.s"
+	.include "object_code/common/itemParents/shovelParent.s"
+	.include "object_code/common/itemParents/boomerangParent.s"
+	.include "object_code/common/itemParents/bombsBraceletParent.s"
+	.include "object_code/common/itemParents/featherParent.s"
+	.include "object_code/common/itemParents/magnetGloveParent.s"
 
-	.include "object_code/common/items/parentItemCommon.s"
+	.include "object_code/common/itemParents/commonCode.s"
+
 	.include {"{GAME_DATA_DIR}/itemUsageTables.s"}
 
 	.include "object_code/common/specialObjects/minecart.s"
