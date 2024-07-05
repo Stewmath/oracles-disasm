@@ -2,22 +2,25 @@ root = true
 
 [*]
 insert_final_newline = true
+end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
+# There is some inconsistency with this in the disassembly, but over time I gradually increased my
+# line length setting from 80 to 100. Let's keep it there.
+max_line_length = 100
+
 [*.s]
-indent_size = 8
+tab_width = 8
 indent_style = tab
+indent_size = tab
 
-# There is some inconsistency with this in the disassembly, but over time I
-# gradually increased my line length setting to 100. Let's keep it there.
-max_line_length = 100
-
-[*.yaml]
-
-max_line_length = 100
+[Makefile]
+tab_width = 4
+indent_size = tab
+indent_style = tab
 
 [Dockerfile]
 indent_size = 4
