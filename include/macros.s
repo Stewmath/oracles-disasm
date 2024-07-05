@@ -398,48 +398,6 @@
 .endm
 
 
-; Args:
-; 1 - Byte: Opcode
-; 2 - Byte: Src map
-; 3 - Byte: Index
-; 4 - 4bit: Y or Group src
-; 5 - 4bit: X or Entrance mode
-.macro m_StandardWarp
-	.db \1, \2, \3, ((\4)<<4)|\5
-.endm
-
-; Same as StandardWarp, except \2 represents YX.
-; This only exists to help LynnaLab distinguish the 2.
-.macro m_PointedWarp
-	.db \1, \2, \3, ((\4)<<4)|\5
-.endm
-
-; Args:
-; 1 - Byte: Opcode
-; 2 - Byte: Src map
-; 3 - Pointer
-.macro m_PointerWarp
-	.db \1, \2
-	.dw \3
-.endm
-
-.macro m_WarpSourcesEnd ; Does nothing in seasons
-.ifdef ROM_AGES
-	.db $ff $00 $00 $00
-.endif
-.endm
-
-; Args:
-; 1 - Byte: map
-; 2 - Byte: YX
-; 3 - 4bit: parameter
-; 4 - 4bit: param
-.macro m_WarpDest
-	.db \1, \2
-	.db ((\3)<<4) | (\4)
-.endm
-
-
 ; Used in interactionAnimations.s, partAnimations, etc.
 .macro m_AnimationLoop
 	.db ((\1)-CADDR)>>8
@@ -558,7 +516,9 @@
 .endm
 
 
+; ==============================================================================
 ; Macro for data/{game}/interactionData.s
+; ==============================================================================
 .macro m_InteractionData
 	.if NARGS == 3
 		.db \1, \2, \3
@@ -584,7 +544,9 @@
 .endm
 
 
+; ==============================================================================
 ; Macros for data/{game}/enemyData.s, similar to above
+; ==============================================================================
 .macro m_EnemyData
 	.if NARGS == 4
 		.db \1 \2 \3 \4
@@ -605,7 +567,9 @@
 .endm
 
 
+; ==============================================================================
 ; Macros for data/{game}/treasureObjectData.s
+; ==============================================================================
 .macro m_BeginTreasureSubids
 	.redefine CURRENT_TREASURE_INDEX, (\1)<<8
 .endm
@@ -634,4 +598,77 @@
 	.db $00
 
 	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
+.endm
+
+
+; ==============================================================================
+; Macros for warp data
+; ==============================================================================
+
+; Some additional documentation for these macros can be found in data/ages/warpSources.s and
+; data/ages/warpDestinations.s.
+
+; Args:
+;   \1 - 4bit: Opcode
+;   \2 - Byte: Source room index
+;   \3 - Byte: Index
+;   \4 - 4bit: Y or Group src
+;   \5 - 4bit: X or Entrance mode
+.macro m_StandardWarp
+	.assert \1 >= 0 && \1 <= $f
+	.assert \4 >= 0 && \4 <= $f
+	.assert \5 >= 0 && \5 <= $f
+
+	m_ContinueBitHelper \1, $00
+	.db \2, \3, ((\4)<<4)|\5
+.endm
+
+; Args:
+;   \1 - Byte: Source room index
+;   \2 - Pointer
+.macro m_PointerWarp
+	m_ContinueBitHelper $40, $00
+	.db \1
+	.dw \2
+.endm
+
+; Basically the same as m_StandardWarp, except \2 represents YX.
+; Should only be used in a list pointed to by m_PointerWarp.
+.macro m_PositionWarp
+	.assert \3 >= 0 && \3 <= $f
+	.assert \4 >= 0 && \4 <= $f
+
+	m_ContinueBitHelper $00, $00
+	.db \1, \2, ((\3)<<4)|\4
+.endm
+
+; End the list of warps, indicating that the last defined value should be used as a warp if nothing
+; else was found.
+.macro m_WarpListEndWithDefault
+	m_ContinueBitHelperSetLast
+.endm
+
+; End the list of warps, indicating no warp was found.
+; This only works in Ages. This became necessary when they implemented the automatic warps for
+; dungeon stairs - they needed to explicitly NOT have default warp values for it to work.
+.macro m_WarpListEndNoDefault
+	.db $ff $00 $00 $00
+	m_ContinueBitHelperUnsetLast
+.endm
+
+; Sometimes the devs seemingly forgot to end a warp list with their equivalent of m_WarpListEnd.
+; This usually doesn't cause problems in the game. But our system needs something there, so use this
+; macro in that case.
+.macro m_WarpListFallThrough
+	m_ContinueBitHelperUnsetLast
+.endm
+
+; Args:
+;   \1 - Byte: room index
+;   \2 - Byte: YX
+;   \3 - 4bit: parameter
+;   \4 - 4bit: Transition type
+.macro m_WarpDest
+	.db \1, \2
+	.db ((\3)<<4) | (\4)
 .endm

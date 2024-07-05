@@ -102,7 +102,8 @@
 
 		; Must be in same bank as "code/bank4.s"
 	 m_section_free Warp_Data NAMESPACE bank4
-		.include {"{GAME_DATA_DIR}/warpData.s"}
+		.include {"{GAME_DATA_DIR}/warpDestinations.s"}
+		.include {"{GAME_DATA_DIR}/warpSources.s"}
 	.ends
 
 	.include "code/ages/garbage/bank04End.s"
