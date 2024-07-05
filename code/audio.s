@@ -2413,20 +2413,10 @@ waveformTable:
 
 
 
+	.include {"audio/{GAME}/soundChannelPointers.s"}
+	.include {"audio/{GAME}/soundPointers.s"}
 
-.ifdef ROM_AGES
-	.include "audio/ages/soundChannelPointers.s"
-	.include "audio/ages/soundPointers.s"
+.ends ; End of section AudioCode
 
-	.ends ; End of section AudioCode
 
-	.include "audio/ages/soundChannelData.s"
-
-.else; ROM_SEASONS
-	.include "audio/seasons/soundChannelPointers.s"
-	.include "audio/seasons/soundPointers.s"
-
-	.ends ; End of section AudioCode
-
-	.include "audio/seasons/soundChannelData.s"
-.endif
+.include {"audio/{GAME}/soundChannelData.s"}
