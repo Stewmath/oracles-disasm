@@ -1,5 +1,7 @@
 ; Incbin gfx data, can cross over banks. Pass filename without extension as parameter.
 .macro m_GfxData
+	.assert NARGS == 1
+
 	\1:
 	m_IncbinCrossBankData {"{BUILD_DIR}/gfx/\1.cmp"}, 3
 .endm
@@ -10,6 +12,7 @@
 	.if NARGS == 2
 		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3+(\2)
 	.else
+		.assert NARGS == 1
 		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3
 	.endif
 .endm
@@ -20,12 +23,16 @@
 ;   \1: Index of gfx header
 ;   \2: Name of gfx header, resolves to the index when used in code
 .macro m_GfxHeaderStart
+	.assert NARGS == 2
+
 	.define \2 (\1) EXPORT
 	gfxHeader{%.2x{\1}}:
 .endm
 
 ; Same as above but for a unique gfx header.
 .macro m_UniqueGfxHeaderStart
+	.assert NARGS == 2
+
 	.define \2 (\1) EXPORT
 	uniqueGfxHeader{%.2x{\1}}:
 .endm
@@ -38,6 +45,8 @@
 ; Optionally, a gfx header can end with a palette header (see constants/common/paletteHeaders.s). So this
 ; macro takes one optional parameter for that. (Unique GFX headers only?)
 .macro m_GfxHeaderEnd
+	.assert NARGS == 0 || NARGS == 1
+
 	.if NARGS >= 1 ; Set last entry's continue bit
 		m_ContinueBitHelperSetLast
 	.else ; Unset last entry's continue bit
@@ -141,6 +150,7 @@
 	.elif NARGS == 3
 		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2,\3
 	.else
+		.assert NARGS == 2
 		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2
 	.endif
 .endm
@@ -151,6 +161,7 @@
 	.if NARGS == 4
 		m_GfxHeaderHelper GFX_HEADER_MODE_ANIM,\1,\2,\3,\4
 	.else
+		.assert NARGS == 3
 		m_GfxHeaderHelper GFX_HEADER_MODE_ANIM,\1,\2,\3
 	.endif
 .endm
@@ -159,6 +170,7 @@
 ; important, there's just an unusable gfx header in ages that needs the mode override to be able to
 ; define it. Obviously, it doesn't do anything useful.
 .macro m_GfxHeaderForceMode
+	.assert NARGS == 4
 	m_GfxHeaderHelper GFX_HEADER_MODE_FORCE,\1,\2,\3,\4
 .endm
 
@@ -177,6 +189,8 @@
 		dwbe \1
 	.endif
 
+	.assert NARGS == 3
+
 	dwbe \2
 	m_ContinueBitHelper (\3) - 1, $80
 .endm
@@ -189,6 +203,8 @@
 ;                  Defaults to 0.
 ;   \3 (optional): Skips into part of the graphics (only works if uncompressed)
 .macro m_ObjectGfxHeader
+	.assert NARGS >= 1 && NARGS <= 3
+
 	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
 	.fread m_GfxHeaderFile mode ; First byte of .cmp file is compression mode
 	.fclose m_GfxHeaderFile
@@ -216,6 +232,8 @@
 ; ==================================================================================================
 
 .macro m_PaletteHeaderStart
+	.assert NARGS == 2
+
 	.define \2 (\1) EXPORT
 	paletteHeader{%.2x{\1}}:
 .endm
@@ -225,6 +243,8 @@
 ; ARG 2: number of palettes to load
 ; ARG 3: address of palette data
 .macro m_PaletteHeaderBg
+	.assert NARGS == 3
+
 	m_ContinueBitHelper ((\2)-1) | ((\1)<<3), $80
 	.dw \3
 .endm
@@ -234,10 +254,13 @@
 ; ARG 2: number of palettes to load
 ; ARG 3: address of palette data
 .macro m_PaletteHeaderSpr
+	.assert NARGS == 3
+
 	m_ContinueBitHelper ((\2)-1) | ((\1)<<3) | $40, $80
 	.dw \3
 .endm
 
 .macro m_PaletteHeaderEnd
+	.assert NARGS == 0
 	m_ContinueBitHelperUnsetLast
 .endm
