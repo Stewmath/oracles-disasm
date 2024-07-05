@@ -187,10 +187,10 @@ m_section_free Bank_6 NAMESPACE bank6
 		.include "object_code/common/items/magnetBall.s"
 		.include "object_code/common/items/rickyMooshAttack.s"
 		.include "object_code/common/items/shovel.s"
-		.include "object_code/seasons/items/rodOfSeasons.s"
+		.include "object_code/common/items/rodOfSeasons.s"
 		.include "object_code/common/items/minecartCollision.s"
 		.include "object_code/common/items/slingshot.s"
-		.include "object_code/seasons/items/magnetGloves.s"
+		.include "object_code/common/items/magnetGloves.s"
 		.include "object_code/common/items/foolsOre.s"
 		.include "object_code/common/items/biggoronSword.s"
 		.include "object_code/common/items/sword.s"
@@ -203,9 +203,9 @@ m_section_free Bank_6 NAMESPACE bank6
 		.include "object_code/common/items/dust.s"
 
 		; CROSSITEMS
-		.include "object_code/ages/items/caneOfSomaria.s"
-		.include "object_code/ages/items/switchHook.s"
-		.include "object_code/ages/items/seedShooter.s"
+		.include "object_code/common/items/caneOfSomaria.s"
+		.include "object_code/common/items/switchHook.s"
+		.include "object_code/common/items/seedShooter.s"
 
 		.include {"{GAME_DATA_DIR}/itemAttributes.s"}
 		.include "data/itemAnimations.s"

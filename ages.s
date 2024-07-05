@@ -209,13 +209,13 @@ specialObjectLoadAnimationFrameToBuffer:
 		.include "object_code/common/items/bombchus.s"
 		.include "object_code/common/items/bombs.s"
 		.include "object_code/common/items/boomerang.s"
-		.include "object_code/ages/items/switchHook.s"
+		.include "object_code/common/items/switchHook.s"
 		.include "object_code/common/items/rickyTornado.s"
 		.include "object_code/common/items/magnetBall.s"
-		.include "object_code/ages/items/seedShooter.s"
+		.include "object_code/common/items/seedShooter.s"
 		.include "object_code/common/items/rickyMooshAttack.s"
 		.include "object_code/common/items/shovel.s"
-		.include "object_code/ages/items/caneOfSomaria.s"
+		.include "object_code/common/items/caneOfSomaria.s"
 		.include "object_code/common/items/minecartCollision.s"
 		.include "object_code/common/items/slingshot.s"
 		.include "object_code/common/items/foolsOre.s"
@@ -230,8 +230,8 @@ specialObjectLoadAnimationFrameToBuffer:
 		.include "object_code/common/items/dust.s"
 
 		; CROSSITEMS
-		.include "object_code/seasons/items/magnetGloves.s"
-		.include "object_code/seasons/items/rodOfSeasons.s"
+		.include "object_code/common/items/magnetGloves.s"
+		.include "object_code/common/items/rodOfSeasons.s"
 
 		.include {"{GAME_DATA_DIR}/itemAttributes.s"}
 		.include "data/itemAnimations.s"
