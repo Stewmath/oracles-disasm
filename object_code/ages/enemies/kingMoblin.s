@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_KING_MOBLIN
 ;
 ; Variables:
@@ -7,7 +7,7 @@
 ;   var30/var31: Object indices for two ENEMY_KING_MOBLIN_MINION instances
 ;   var32: Target x-position to walk toward to grab bomb
 ;   var33: Signal from ENEMY_KING_MOBLIN_MINION to trigger warp to the outside
-; ==============================================================================
+; ==================================================================================================
 enemyCode7f:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

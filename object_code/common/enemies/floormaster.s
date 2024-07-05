@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_FLOORMASTER
 ;
 ; Variables for subids other than 0:
@@ -16,7 +16,7 @@
 ;   var33: # floormasters to spawn. Children decrement this when they're killed.
 ;          (High nibble of original Y value.)
 ;   var34: Subid for child objects (high nibble of original X value, plus one)
-; ==============================================================================
+; ==================================================================================================
 enemyCode35:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

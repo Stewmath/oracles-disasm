@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_PODOBOO
 ;
 ; Variables:
 ;   relatedObj1: "Parent" (for subid 1, the lava particle)
 ;   var30: Animation index
 ;   var31: Initial Y position; the point at which the podoboo returns back to the lava
-; ==============================================================================
+; ==================================================================================================
 enemyCode29:
 	; Return for ENEMYSTATUS_01 or ENEMYSTATUS_STUNNED
 	dec a

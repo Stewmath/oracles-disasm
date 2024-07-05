@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_CHILD
 ;
 ; Variables:
@@ -11,7 +11,7 @@
 ;   var3c: current index in "position list" data
 ;   var3d: number of entries in "position list" data (minus one)?
 ;   var3e/3f: pointer to "position list" data for when the child moves around
-; ==============================================================================
+; ==================================================================================================
 interactionCode35:
 	ld e,Interaction.state
 	ld a,(de)

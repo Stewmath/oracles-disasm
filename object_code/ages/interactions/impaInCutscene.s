@@ -1,10 +1,10 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_IMPA_IN_CUTSCENE
 ;
 ; Variables:
 ;   var3b: For subid 1, saves impa's "oamTileIndexBase" so it can be restored after Impa
 ;          gets up (she references a different sprite sheet for her "collapsed" sprite)
-; ==============================================================================
+; ==================================================================================================
 interactionCode31:
 	ld e,Interaction.state
 	ld a,(de)

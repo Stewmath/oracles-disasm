@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_VINE_SPROUT
 ;
 ; Variables:
 ;   var31: Tile index underneath the sprout?
 ;   var32: Short-form position of vine sprout
 ;   var33: Nonzero if the "tile properties" underneath this sprout have been modified
-; ==============================================================================
+; ==================================================================================================
 enemyCode62:
 	call objectReplaceWithAnimationIfOnHazard
 	ret c

@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_BALL_AND_CHAIN_SOLDIER
 ;
 ; Variables:
@@ -9,7 +9,7 @@
 ;          1: Ball should rotate at double speed.
 ;          2: Ball should be thrown at Link.
 ;   var31: State to return to after switch hook is used on enemy
-; ==============================================================================
+; ==================================================================================================
 enemyCode4b:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_HEAD_THWOMP
 ;
 ; Variables:
@@ -9,7 +9,7 @@
 ;   var32: Bit 0 triggers the effect of a bomb being thrown into head thwomp.
 ;   var33: Determines the initial angle of the circular projectiles' initial angle
 ;   var34: Counter which determines when head thwomp starts shooting fireballs / bombs
-; ==============================================================================
+; ==================================================================================================
 enemyCode79:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_TINGLE
 ;
 ; Variables:
 ;   var3d: Satchel level (minus one); used by script.
 ;   var3e: Nonzero if Link has 3 seed types or more
 ;   var3f: Signal for the script, set to 1 when his "kooloo-limpah" animation ends
-; ==============================================================================
+; ==================================================================================================
 interactionCodec8:
 	ld e,Interaction.state
 	ld a,(de)

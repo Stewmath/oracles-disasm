@@ -1,10 +1,10 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_LEVER_LAVA_FILLER
 ;
 ; Variables:
 ;   counter2: Number of frames between two lava tiles being filled. Effectively this sets the
 ;             "speed" of the lava filler (lower is faster).
-; ==============================================================================
+; ==================================================================================================
 interactionCoded8:
 	ld e,Interaction.state
 	ld a,(de)

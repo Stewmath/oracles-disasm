@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; PART_DETECTION_HELPER
 ;
 ; Variables (for subid 0, the "controller"):
 ;   counter1: Countdown until firing another detection projectile forward
 ;   counter2: Countdown until firing another detection projectile in an arbitrary
 ;             direction (for close-range detection)
-; ==============================================================================
+; ==================================================================================================
 partCode0e:
 	jp nz,partDelete
 	ld e,Part.subid

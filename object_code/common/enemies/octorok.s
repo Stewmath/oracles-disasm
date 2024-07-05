@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_OCTOROK
 ;
 ; Variables:
 ;   counter1: How many frames to wait after various actions.
 ;   var30: How many frames to walk for.
 ;   var32: Should be 1, 3, or 7. Lower values make the octorok move and shoot more often.
-; ==============================================================================
+; ==================================================================================================
 enemyCode09:
 	call ecom_checkHazards
 	jr z,@normalStatus

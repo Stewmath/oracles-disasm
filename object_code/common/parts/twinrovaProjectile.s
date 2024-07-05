@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; PART_RED_TWINROVA_PROJECTILE
 ; PART_BLUE_TWINROVA_PROJECTILE
 ;
 ; Variables:
 ;   relatedObj1: Instance of ENEMY_TWINROVA that fired the projectile
 ;   relatedObj2: Instance of ENEMY_TWINROVA that could be hit by the projectile
-; ==============================================================================
+; ==================================================================================================
 partCode4b:
 partCode4d:
 	jr z,@normalStatus

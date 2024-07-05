@@ -1,6 +1,6 @@
 m_section_free Interaction_Code_Treasure NAMESPACE treasureInteraction
 
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_TREASURE
 ;
 ; State $04 is used as a way to delete a treasure? (Bomb flower cutscene with goron elder
@@ -19,7 +19,7 @@ m_section_free Interaction_Code_Treasure NAMESPACE treasureInteraction
 ;   var35: low text ID
 ;
 ;   var39: If set, this is part of the chest minigame? Gets written to "wDisabledObjects"?
-; ==============================================================================
+; ==================================================================================================
 interactionCode60:
 	ld e,Interaction.state
 	ld a,(de)

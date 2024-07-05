@@ -1,10 +1,10 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_ZOL
 ;
 ; Variables:
 ;   var30: 1 when the zol is out of the ground, 0 otherwise. (only for subid 0, and only
 ;          used to prevent the "jump" sound effect from playing more than once.)
-; ==============================================================================
+; ==================================================================================================
 enemyCode34:
 	call ecom_checkHazardsNoAnimationForHoles
 	jr z,@normalStatus

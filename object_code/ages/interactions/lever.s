@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_LEVER
 ;
 ; subid:    Bit 7 set if this is the "child" object (the part that links the lever base to
@@ -9,7 +9,7 @@
 ; var32/33: Address of something in wram (wLever1PullDistance or wLever2PullDistance)
 ; var34:    Y offset of Link relative to lever when he's pulling it
 ; var35:    Nonzero if lever was pulled last frame.
-; ==============================================================================
+; ==================================================================================================
 interactionCode61:
 	ld e,Interaction.subid
 	ld a,(de)

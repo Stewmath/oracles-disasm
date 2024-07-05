@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_BARI
 ;
 ; Variables:
 ;   var30/var31: Initial Y/X position (aka target position; they always hover around this
 ;                area. For subid 0 (large baris) only.)
 ;   var32: Counter for "bobbing" of Z position
-; ==============================================================================
+; ==================================================================================================
 enemyCode3c:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

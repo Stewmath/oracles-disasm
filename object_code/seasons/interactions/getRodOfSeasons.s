@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_GET_ROD_OF_SEASONS
 ;
 ; Variables:
 ;   var03:    Index of a seasons' sparkle from 0 to 3
 ;   var3b:    Initial time for each seasons' sparkle to start dropping sparkles
 ;   $cceb:    Set to 1 when Rod disappears, to remove its aura, and continue cutscene
-; ==============================================================================
+; ==================================================================================================
 interactionCodee6:
 	ld e,Interaction.state
 	ld a,(de)

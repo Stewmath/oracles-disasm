@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_WIZZROBE
 ;
 ; Variables:
 ;   var30: The low byte of wWizzrobePositionReservations that this wizzrobe is using
 ;          (red wizzrobes only)
 ;   var31/var32: Target position (blue wizzrobes only)
-; ==============================================================================
+; ==================================================================================================
 enemyCode40:
 	call ecom_checkHazardsNoAnimationForHoles
 	jr z,@normalStatus

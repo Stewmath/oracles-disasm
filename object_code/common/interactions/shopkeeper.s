@@ -17,7 +17,7 @@ checkReloadShopItemTiles:
 	ret
 
 
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_SHOPKEEPER
 ;
 ; Variables:
@@ -28,7 +28,7 @@ checkReloadShopItemTiles:
 ;   var3b: Object index of item that Link is holding
 ;   var3c: The current round in the chest minigame.
 ;   var3f: If nonzero, this is the tier of the ring Link is buying.
-; ==============================================================================
+; ==================================================================================================
 interactionCode46:
 	call checkReloadShopItemTiles
 	call @runState

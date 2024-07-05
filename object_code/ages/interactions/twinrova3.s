@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_TWINROVA_3
 ;
 ; Variables:
 ;   var3c: A target position index for the data in var3e/var3f.
 ;   var3d: # of values in the position list (var3c must stop here).
 ;   var3e/var3f: A pointer to a list of target positions.
-; ==============================================================================
+; ==================================================================================================
 interactionCodebc:
 	ld e,Interaction.state
 	ld a,(de)

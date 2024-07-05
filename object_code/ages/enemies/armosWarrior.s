@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_ARMOS_WARRIOR
 ;
 ; Variables (for parent only, subid 1):
@@ -20,7 +20,7 @@
 ;   var32/var33: Base position (yh and xh are manipulated by the animation to fix their
 ;                collision box, so need to be reset to these values each frame)
 ;   var34: If nonzero, checks for collision with shield
-; ==============================================================================
+; ==================================================================================================
 enemyCode73:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

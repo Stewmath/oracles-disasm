@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_SHADOW_HAG
 ;
 ; Variables:
 ;   counter2: Number of times to spawn bugs before shadows separate
 ;   var30: Number of bugs on-screen
 ;   var31: Set if the hag couldn't spawn because Link was in a bad position
-; ==============================================================================
+; ==================================================================================================
 enemyCode7a:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

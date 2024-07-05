@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_EYESOAR
 ;
 ; Variables:
@@ -20,7 +20,7 @@
 ;                    relative to eyesoar after using the switch hook on him?
 ;   var3b: Current "angle" (rotation offset for children)
 ;   var3c: Counter until bit 0 of var39 gets reset
-; ==============================================================================
+; ==================================================================================================
 enemyCode7b:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

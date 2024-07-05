@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_GIANT_GHINI
 ;
 ; Variables:
@@ -7,7 +7,7 @@
 ;   var33: Counter for Z-axis movement (reverses direction every 16 frames)
 ;   var34: The current "vertical half" of the screen it's moving toward
 ;   var35: Position the ghini is currently charging toward
-; ==============================================================================
+; ==================================================================================================
 enemyCode70:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

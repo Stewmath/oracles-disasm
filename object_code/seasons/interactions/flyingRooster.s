@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_FLYING_ROOSTER
 ;
 ; Variables:
@@ -8,7 +8,7 @@
 ;   var34: Direction chicken is hopping in (up or down; when moving back to "base"
 ;          position)
 ;   var35: X-position at which the "destination" is (Link loses control)
-; ==============================================================================
+; ==================================================================================================
 interactionCode8c:
 	ld e,Interaction.subid
 	ld a,(de)

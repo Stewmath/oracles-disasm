@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_MOLDORM
 ;
 ; Variables for head (subid 1):
@@ -12,7 +12,7 @@
 ;   var30: Index for offset buffer
 ;   var31/var32: Parent object's position last frame
 ;   var33-var3b: Offset buffer. Stores the parent's movement offsets for up to 8 frames.
-; ==============================================================================
+; ==================================================================================================
 enemyCode4f:
 	call moldorm_checkHazards
 	jr z,@normalStatus

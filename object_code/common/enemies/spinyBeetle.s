@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_SPINY_BEETLE
 ;
 ; Variables:
 ;   var03: $80 when stationary, $81 when charging Link. Child object (bush or rock) reads
 ;          this to determine relative Z position. Bit 7 is set to indicate it's grabbable.
 ;   var3b: Probably unused?
-; ==============================================================================
+; ==================================================================================================
 enemyCode1b:
 	call ecom_checkHazards
 	jr z,@normalStatus

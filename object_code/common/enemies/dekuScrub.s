@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_DEKU_SCRUB
 ;
 ; Variables:
@@ -7,7 +7,7 @@
 ;   var31: Index of ENEMY_BUSH_OR_ROCK
 ;   var32: "pressedAButton" variable (nonzero when player presses A)
 ;   var33: Former var03 value (low byte of text index, TX_45XX)
-; ==============================================================================
+; ==================================================================================================
 enemyCode27:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_MAKU_CONFETTI
 ;
 ; This object uses component speed (instead of using one byte for speed value, two words
@@ -17,7 +17,7 @@
 ;   var3a:    Counter until another sparkle is created
 ;   var3c/3d: Y acceleration?
 ;   var3e/3f: X acceleration?
-; ==============================================================================
+; ==================================================================================================
 interactionCode62:
 	ld e,Interaction.subid
 	ld a,(de)

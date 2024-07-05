@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_CUCCO
 ;
 ; Shares some code with ENEMY_GIANT_CUCCO.
@@ -10,7 +10,7 @@
 ;   var31: Enemy ID to transform into, when a mystery seed is used on it
 ;   var32: Counter used while being held
 ;   var33: Counter until next PART_CUCCO_ATTACKER is spawned
-; ==============================================================================
+; ==================================================================================================
 enemyCode36:
 	jr z,@normalStatus
 

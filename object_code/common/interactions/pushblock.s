@@ -1,10 +1,10 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_PUSHBLOCK
 ;
 ; Variables:
 ;   var30: Initial position of block being pushed (set by whatever spawn the object)
 ;   var31: Tile index being pushed (this is also read by INTERAC_PUSHBLOCK_SYNCHRONIZER)
-; ==============================================================================
+; ==================================================================================================
 interactionCode14:
 	ld e,Interaction.state
 	ld a,(de)

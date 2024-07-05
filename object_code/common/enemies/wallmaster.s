@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_WALLMASTER
 ;
 ; Variables:
 ;   relatedObj1: For actual wallmaster (subid 1): reference to spawner.
 ;   relatedObj2: For spawner (subid 0): reference to actual wallmaster.
 ;   var30: Nonzero if collided with Link (currently warping him out)
-; ==============================================================================
+; ==================================================================================================
 enemyCode28:
 	jr z,@normalStatus
 	sub $03

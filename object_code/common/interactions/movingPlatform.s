@@ -1,10 +1,10 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_MOVING_PLATFORM
 ;
 ; Variables:
 ;   Subid: After being processed, this just represents the size (see @collisionRadii).
 ;   var32: Formerly bits 3-7 of subid; the index of the "script" to use.
-; ==============================================================================
+; ==================================================================================================
 interactionCode79:
 	ld e,Interaction.state
 	ld a,(de)

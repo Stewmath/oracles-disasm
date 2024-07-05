@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_AMBI_GUARD
 ;
 ; Variables:
@@ -16,7 +16,7 @@
 ;   var3a: When set to $ff, faces PART_DETECTION_HELPER?
 ;   var3b: When set to $ff, the guard immediately notices Link. (Written to by
 ;          PART_DETECTION_HELPER.)
-; ==============================================================================
+; ==================================================================================================
 enemyCode54:
 	jr z,@normalStatus	 
 	sub ENEMYSTATUS_NO_HEALTH

@@ -1,9 +1,9 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_KEESE
 ;
 ; Variables (for subid 1 only, the one that moves as Link approaches):
 ;   var30: Amount to add to angle each frame. (Clockwise or counterclockwise turning)
-; ==============================================================================
+; ==================================================================================================
 enemyCode32:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

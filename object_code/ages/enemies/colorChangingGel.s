@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_COLOR_CHANGING_GEL
 ;
 ; Variables:
 ;   var30/var31: Target position while hopping
 ;   var32: Tile index at current position (purposely outdated so there's lag in updating
 ;          the color)
-; ==============================================================================
+; ==================================================================================================
 enemyCode47:
 	call ecom_checkHazards
 	jr z,@normalStatus

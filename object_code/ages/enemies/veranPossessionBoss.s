@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; ENEMY_VERAN_POSSESSION_BOSS
 ;
 ; Variables:
@@ -9,7 +9,7 @@
 ;   var33: Number of hits remaining
 ;   var34: Current pillar index
 ;   var35: Bit 0 set if already showed veran's "taunting" text after using switch hook
-; ==============================================================================
+; ==================================================================================================
 enemyCode61:
 	jr z,@normalStatus
 	sub ENEMYSTATUS_NO_HEALTH

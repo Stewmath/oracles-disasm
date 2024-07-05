@@ -1,4 +1,4 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_SYRUP
 ;
 ; Variables:
@@ -6,7 +6,7 @@
 ;   var38: Set to 1 if Link can't purchase an item (because he has too many of it)
 ;   var3a: "Return value" from purchase script (if $ff, the purchase failed)
 ;   var3b: Object index of item that Link is holding
-; ==============================================================================
+; ==================================================================================================
 .ifdef ROM_AGES
 interactionCode5f:
 	callab commonInteractions2.checkReloadShopItemTiles

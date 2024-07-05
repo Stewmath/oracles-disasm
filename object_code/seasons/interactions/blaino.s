@@ -1,11 +1,11 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_BLAINO
 ; var37 - 0 if enough rupees, else 1
 ; var38 - RUPEEVAL_10 if cheated, otherwise RUPEEVAL_20
 ; var39 - pointer to Blaino / script ???
 ; $ccec - result of fight - $01 if won, $02 if lost, $03 if cheated
 ; $cced - $00 on init, $01 when starting fight, $03 when fight done
-; ==============================================================================
+; ==================================================================================================
 interactionCode72:
 	ld e,Interaction.subid
 	ld a,(de)

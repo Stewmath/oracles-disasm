@@ -1,10 +1,10 @@
-; ==============================================================================
+; ==================================================================================================
 ; INTERAC_BUSINESS_SCRUB
 ;
 ; Variables:
 ;   var38: Number of rupees to spend (1-byte value, converted with "rupeeValue" methods)
 ;   var39: Set when Link is close to the scrub (he pops out of his bush)
-; ==============================================================================
+; ==================================================================================================
 interactionCodece:
 	ld e,Interaction.state
 	ld a,(de)
