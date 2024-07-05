@@ -123,7 +123,7 @@ nextToChestTile:
 	ld hl,w1ReservedInteraction0.enabled
 	ld a,$81
 	ldi (hl),a
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 
 	; Write contents to Interaction.subid, Interaction.var03
 	inc l
@@ -300,7 +300,7 @@ nextToPushableBlock:
 
 	; Set id
 	inc l
-	ld (hl),INTERACID_PUSHBLOCK
+	ld (hl),INTERAC_PUSHBLOCK
 
 	; Set angle
 	ld a,(wLinkPushingDirection)
@@ -341,7 +341,7 @@ nextToPushableBlock:
 
 	; For the somaria block, use its dedicated object to move it around.
 @somariaBlock:
-	ld c,ITEMID_18
+	ld c,ITEM_18
 	call findItemWithID
 	jr nz,@end
 
@@ -380,7 +380,7 @@ nextToKeyBlock:
 	; Create a "puff" at the keyblock's former position
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_PUFF
+	ld (hl),INTERAC_PUFF
 	ld l,Interaction.yh
 	ldh a,(<hFF8D)
 	call setShortPosition
@@ -414,7 +414,7 @@ nextToKeyDoor:
 	ld hl,w1ReservedInteraction0.enabled
 	ld (hl),$01
 	inc l
-	ld (hl),INTERACID_DOOR_CONTROLLER
+	ld (hl),INTERAC_DOOR_CONTROLLER
 
 	; Copy position to Interaction.yh
 	ldh a,(<hFF8D)
@@ -512,7 +512,7 @@ nextToOverworldKeyhole:
 	; Create the key sprite
 	call createKeySpriteInteraction
 
-	; Increment id to change it to INTERACID_OVERWORLD_KEY_SPRITE
+	; Increment id to change it to INTERAC_OVERWORLD_KEY_SPRITE
 	ld l,Interaction.id
 	inc (hl)
 
@@ -542,7 +542,7 @@ nextToOverworldKeyhole:
 
 ; Data format:
 ; b0: room index
-; b1: Item needed to unlock the room (see constants/treasure.s)
+; b1: Item needed to unlock the room (see constants/common/treasure.s)
 @group0:
 	.db <ROOM_AGES_05c TREASURE_GRAVEYARD_KEY
 	.db <ROOM_AGES_00a TREASURE_CROWN_KEY
@@ -583,7 +583,7 @@ jumpToShowInfoText:
 createKeySpriteInteraction:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_DUNGEON_KEY_SPRITE
+	ld (hl),INTERAC_DUNGEON_KEY_SPRITE
 	inc l
 
 	; Store tile index in subid
@@ -654,7 +654,7 @@ nextToGhiniSpawner:
 	; Create the ghini
 	call getFreeEnemySlot
 	ret nz
-	ld (hl),ENEMYID_GHINI
+	ld (hl),ENEMY_GHINI
 
 	; Set subid to $01 to tell it to do a slow spawn, instead of being active right
 	; away
@@ -900,157 +900,4 @@ checkTileAfterNext:
 	.db $00 $eb
 
 
-; The following is a table indicating what should happen when Link is standing right in
-; front of a tile of a particular type
-;
-; Data format:
-; b0: tile index
-; b1:
-;    Second digit: How to behave when Link is next to this kind of tile
-;        0: Pushable tile
-;           First digit:
-;             bit 3 (7): Set if it's pushable in all directions. Otherwise, Bits 0-1 (4-5)
-;                        are the direction it can be pushed in.
-;             bit 2 (6): Set if the power bracelet is needed to push it.
-;        1: Keyblock
-;        2: Key door
-;           First digit is 0-3 indicating direction, or 4-7 for boss key doors
-;        3: Should show text when pushing against the tile.
-;           First digit is an index for which text to show.
-;        4: Chest (handle opening)
-;        5: Sign (handle reading)
-;        6: Overworld keyhole (ie. Yoll Graveyard, Crown Dungeon)
-;        7: Does nothing?
-;        8: Spawns a ghini when approached. Used in the graveyard in Seasons, but not in
-;           Ages.
-
-
-.ifdef ROM_AGES
-
-interactableTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-
-@collisions0:
-@collisions4:
-	.db $d3 $80
-	.db $f1 $04
-	.db $f2 $05
-	.db $d8 $80
-	.db $d9 $80
-	.db $ec $06
-	.db $da $80
-	.db $00
-
-@collisions1:
-	.db $ae $06
-
-@collisions2:
-@collisions5:
-	.db $18 $00
-	.db $19 $10
-	.db $1a $20
-	.db $1b $30
-	.db $1c $80
-	.db $2a $80
-	.db $2c $80
-	.db $2d $80
-	.db $2e $80
-	.db $10 $c0
-	.db $11 $c0
-	.db $12 $c0
-	.db $13 $c0
-	.db $25 $80
-	.db $07 $80
-	.db $1e $01
-	.db $70 $02
-	.db $71 $12
-	.db $72 $22
-	.db $73 $32
-	.db $74 $42
-	.db $75 $52
-	.db $76 $62
-	.db $77 $72
-	.db $1f $13
-	.db $30 $23
-	.db $31 $23
-	.db $32 $23
-	.db $33 $23
-	.db $08 $33
-	.db $f1 $04
-	.db $f2 $05
-@collisions3:
-	.db $da $80
-	.db $00
-
-.else; ROM_SEASONS
-
-interactableTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-@collisions0:
-	.db $d6 $80
-	.db $c0 $03
-	.db $c1 $03
-	.db $c2 $03
-	.db $96 $43
-	.db $f1 $04
-	.db $f2 $05
-	.db $ec $06
-	.db $d5 $08
-	.db $00
-
-@collisions1:
-	.db $f1 $04
-	.db $f2 $05
-	.db $ec $07
-@collisions2:
-	.db $00
-
-@collisions3:
-@collisions4:
-	.db $18 $00
-	.db $19 $10
-	.db $1a $20
-	.db $1b $30
-	.db $1c $80
-	.db $2a $80
-	.db $2c $80
-	.db $2d $80
-	.db $10 $c0
-	.db $11 $c0
-	.db $12 $c0
-	.db $13 $c0
-	.db $25 $80
-	.db $2f $80
-	.db $1e $01
-	.db $70 $02
-	.db $71 $12
-	.db $72 $22
-	.db $73 $32
-	.db $74 $42
-	.db $75 $52
-	.db $76 $62
-	.db $77 $72
-	.db $1f $13
-	.db $30 $23
-	.db $31 $23
-	.db $32 $23
-	.db $33 $23
-	.db $08 $33
-	.db $f1 $04
-	.db $f2 $05
-@collisions5:
-	.db $00
-
-.endif
+.include {"{GAME_DATA_DIR}/tile_properties/interactableTiles.s"}

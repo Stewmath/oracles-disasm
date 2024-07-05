@@ -84,9 +84,9 @@
 
 
 
-; ========================================================================================
+; ==================================================================================================
 ; Object structures
-; ========================================================================================
+; ==================================================================================================
 
 ; Definitions which can apply to any kind of object
 .STRUCT ObjectStruct
@@ -102,14 +102,14 @@
 	subid			db ; $02
 	var03			db ; $03
 
-	; Enemy states below $08 behave differently? (See constants/enemyStates.s)
+	; Enemy states below $08 behave differently? (See constants/common/enemyStates.s)
 	state			db ; $04
 
 	substate		db ; $05
 	counter1		db ; $06
 	counter2		db ; $07
 
-	; A value from 0-3. See constants/directions.s.
+	; A value from 0-3. See constants/common/directions.s.
 	; This is sometimes treated as an animation index which could go beyond those
 	; values? (Particularly for enemies?)
 	direction		db ; $08
@@ -403,7 +403,7 @@
 	;   Gets updated when you first use it, and when closing a menu (in case the button
 	;   assignment changes)
 	; Throwable items: Sets the animation that will play on breakage.
-	;   bits 0-3 are the main byte of the ID ($0-$f) (ie. INTERACID_GRASSDEBRIS)
+	;   bits 0-3 are the main byte of the ID ($0-$f) (ie. INTERAC_GRASSDEBRIS)
 	;   bit 4 controls whether to flicker (bit 0 of the subid).
 	var03			db ; $03
 
@@ -468,7 +468,7 @@
 	;  Bit 5: Deletes the bomb? (used by maple, head thwomp)
 	;  Bit 4: Triggers explosion?
 	;
-	; ITEMID_18:
+	; ITEM_18:
 	;  Bit 5: Delete self due to another somaria block appearing?
 	;  Bit 4: If set, no "poof" is created on destruction?
 	;  Bit 0: Set when Link pushes on the block
@@ -487,7 +487,7 @@
 	var31			db ; $31
 
 	; Bombchus: set to 1 when clinging to a wall in a sidescrolling area
-	; ITEMID_18: tile index the block is on
+	; ITEM_18: tile index the block is on
 	; Bombs/scent seeds: var31/var32 are Y/X positions the object is pulled toward.
 	var32			db ; $32
 
@@ -644,7 +644,7 @@
 
 	var3a			db ; $3a
 
-	; Objects use this if they have an INTERACID_ACCESSORY; accessory deletes itself
+	; Objects use this if they have an INTERAC_ACCESSORY; accessory deletes itself
 	; when this is nonzero.
 	var3b			db ; $3b
 

@@ -172,7 +172,7 @@ MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 COMMONDATAFILES = $(shell find data/ -name '*.s' | grep -v '/ages/\|/seasons/')
 
 # Game-specific data files
-GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
+GAMEDATAFILES = $(shell find data/$(GAME)/ -name '*.s')
 
 MAIN_ASM_FILES = $(shell find code/ object_code/ objects/ scripts/ -name '*.s' | grep -v '/$(OTHERGAME)/')
 AUDIO_FILES = $(shell find audio/ -name '*.s' -o -name '*.bin' | grep -v '/$(OTHERGAME)/')

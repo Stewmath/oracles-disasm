@@ -1257,7 +1257,7 @@ createInteraction90:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_MISC_PUZZLES
+	ld (hl),INTERAC_MISC_PUZZLES
 	inc l
 	ld (hl),c
 	ret

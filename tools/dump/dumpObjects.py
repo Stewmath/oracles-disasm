@@ -53,10 +53,10 @@ if romIsAges(rom):
     garbageOffsets = []
 
     pointerAliases = {
-            bankedAddress(0x12, 0x4000): 'faroreSparkleObjectData',
+            bankedAddress(0x12, 0x4000): 'objectData_faroreSparkle',
             bankedAddress(0x12, 0x4068): 'objectData_makeAllTorchesLightable',
-            bankedAddress(0x12, 0x540c): 'blackTowerEscape_nayruAndRalph',
-            bankedAddress(0x12, 0x5416): 'blackTowerEscape_ambiAndGuards',
+            bankedAddress(0x12, 0x540c): 'objectData_blackTowerEscape_nayruAndRalph',
+            bankedAddress(0x12, 0x5416): 'objectData_blackTowerEscape_ambiAndGuards',
             bankedAddress(0x12, 0x77c3): 'moonlitGrotto_orb',
             bankedAddress(0x12, 0x77c8): 'moonlitGrotto_onOrbActivation',
             bankedAddress(0x12, 0x77da): 'moonlitGrotto_onArmosSwitchPressed',

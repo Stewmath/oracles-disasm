@@ -58,7 +58,7 @@ objectGfxHeaderTable:
 	/* $35 */ m_ObjectGfxHeader spr_twinrova_2
 	/* $36 */ m_ObjectGfxHeader spr_twinrova_3, 1
 	/* $37 */ m_ObjectGfxHeader spr_veran_human
-	/* $38 */ m_ObjectGfxHeader spr_veranbeetleandwing
+	/* $38 */ m_ObjectGfxHeader spr_veranbeetle_wing
 	/* $39 */ m_ObjectGfxHeader spr_twinrova_5
 	/* $3a */ m_ObjectGfxHeader spr_link, $00, $1c00
 	/* $3b */ m_ObjectGfxHeader spr_link, $00, $1a00
@@ -69,13 +69,13 @@ objectGfxHeaderTable:
 	/* $40 */ m_ObjectGfxHeader spr_gymnast_troy_scrub
 	/* $41 */ m_ObjectGfxHeader spr_mailman_wiseman
 	/* $42 */ m_ObjectGfxHeader spr_hobos
-	/* $43 */ m_ObjectGfxHeader spr_mustacheguy_cat_weirdo
+	/* $43 */ m_ObjectGfxHeader spr_mustachemen_cat
 	/* $44 */ m_ObjectGfxHeader spr_villagezora_plen_whitemustache
 	/* $45 */ m_ObjectGfxHeader spr_zz_bubble_exclamation_heart_kid
 	/* $46 */ m_ObjectGfxHeader spr_bipin_glassesguy
 	/* $47 */ m_ObjectGfxHeader spr_blossom_otherlady
 	/* $48 */ m_ObjectGfxHeader spr_bipsom_1
-	/* $49 */ m_ObjectGfxHeader spr_bipsom_2_and_lady
+	/* $49 */ m_ObjectGfxHeader spr_bipsom_2_old_lady
 	/* $4a */ m_ObjectGfxHeader spr_lady_butterfly_pickaxeworker
 	/* $4b */ m_ObjectGfxHeader spr_fairy_toilethand
 	/* $4c */ m_ObjectGfxHeader spr_chickens_dog_forestfairy_other
@@ -88,7 +88,7 @@ objectGfxHeaderTable:
 	/* $53 */ m_ObjectGfxHeader spr_mamamu_dog
 	/* $54 */ m_ObjectGfxHeader spr_goron
 	/* $55 */ m_ObjectGfxHeader spr_gorondance_tingle_write
-	/* $56 */ m_ObjectGfxHeader spr_navi_ambi
+	/* $56 */ m_ObjectGfxHeader spr_seasonfairy_ambi
 	/* $57 */ m_ObjectGfxHeader spr_farore_1
 	/* $58 */ m_ObjectGfxHeader spr_lady_guitarist
 	/* $59 */ m_ObjectGfxHeader spr_oldzora_cheval
@@ -100,7 +100,7 @@ objectGfxHeaderTable:
 	/* $5f */ m_ObjectGfxHeader spr_kingzora_tokkey
 	/* $60 */ m_ObjectGfxHeader spr_carpenters
 	/* $61 */ m_ObjectGfxHeader spr_pirateship
-	/* $62 */ m_ObjectGfxHeader spr_shopkeeper_oldzoramaybe_veranmask
+	/* $62 */ m_ObjectGfxHeader spr_shopkeeper_adlar_veranmask
 	/* $63 */ m_ObjectGfxHeader spr_piratians
 	/* $64 */ m_ObjectGfxHeader spr_swords
 	/* $65 */ m_ObjectGfxHeader spr_subrosian
@@ -112,10 +112,10 @@ objectGfxHeaderTable:
 	/* $6b */ m_ObjectGfxHeader spr_triforce_sparkle_vineseed_bookofseals
 	/* $6c */ m_ObjectGfxHeader spr_makuflower_book_seedling_weirdswirl_block
 	/* $6d */ m_ObjectGfxHeader spr_linkstatue
-	/* $6e */ m_ObjectGfxHeader spr_unknown_2
+	/* $6e */ m_ObjectGfxHeader spr_lightning
 	/* $6f */ m_ObjectGfxHeader spr_fountain
 	/* $70 */ m_ObjectGfxHeader spr_present_past_symbols
-	/* $71 */ m_ObjectGfxHeader spr_tentthing_seasonsymbols
+	/* $71 */ m_ObjectGfxHeader spr_woodentunnel_seasonsymbols
 	/* $72 */ m_ObjectGfxHeader spr_dungeon_sprites
 	/* $73 */ m_ObjectGfxHeader spr_spinner_seedbouncer
 	/* $74 */ m_ObjectGfxHeader spr_roller_owl_barrier_orb
@@ -137,7 +137,7 @@ objectGfxHeaderTable:
 	/* $84 */ m_ObjectGfxHeader spr_boomerang
 	/* $85 */ m_ObjectGfxHeader spr_obj_intro_tree
 	/* $86 */ m_ObjectGfxHeader spr_obj_intro_clouds
-	/* $87 */ m_ObjectGfxHeader spr_circlethingsunknown
+	/* $87 */ m_ObjectGfxHeader spr_circlebeads
 	/* $88 */ m_ObjectGfxHeader spr_twinrova_4
 	/* $89 */ m_ObjectGfxHeader spr_flame
 	/* $8a */ m_ObjectGfxHeader spr_evilflame
@@ -170,7 +170,7 @@ objectGfxHeaderTable:
 	/* $a5 */ m_ObjectGfxHeader spr_waterbubble
 	/* $a6 */ m_ObjectGfxHeader spr_projectiles_2
 	/* $a7 */ m_ObjectGfxHeader spr_projectiles_3
-	/* $a8 */ m_ObjectGfxHeader spr_unknownfireball
+	/* $a8 */ m_ObjectGfxHeader spr_fireballs
 	/* $a9 */ m_ObjectGfxHeader spr_kingmoblin_2
 	/* $aa */ m_ObjectGfxHeader spr_kingmoblin_3
 	/* $ab */ m_ObjectGfxHeader spr_kingmoblin_4
@@ -182,7 +182,7 @@ objectGfxHeaderTable:
 	/* $b1 */ m_ObjectGfxHeader spr_subterror_1
 	/* $b2 */ m_ObjectGfxHeader spr_subterror_2
 	/* $b3 */ m_ObjectGfxHeader spr_subterror_3, 1
-	/* $b4 */ m_ObjectGfxHeader spr_armoswarrior_1
+	/* $b4 */ m_ObjectGfxHeader spr_armoswarrior
 	/* $b5 */ m_ObjectGfxHeader spr_armoswarriorshield
 	/* $b6 */ m_ObjectGfxHeader spr_armoswarriorsword, 1
 	/* $b7 */ m_ObjectGfxHeader spr_smasher
@@ -213,12 +213,12 @@ objectGfxHeaderTable:
 	/* $d0 */ m_ObjectGfxHeader spr_nayru_ambi_possessed
 	/* $d1 */ m_ObjectGfxHeader spr_veran_human
 	/* $d2 */ m_ObjectGfxHeader spr_darklink
-	/* $d3 */ m_ObjectGfxHeader spr_veranbeetleandwing, 1
+	/* $d3 */ m_ObjectGfxHeader spr_veranbeetle_wing, 1
 	/* $d4 */ m_ObjectGfxHeader spr_veran_human
 	/* $d5 */ m_ObjectGfxHeader spr_darklink
 	/* $d6 */ m_ObjectGfxHeader spr_fairyveran_1, 1
-	/* $d7 */ m_ObjectGfxHeader spr_beetleveran_1
-	/* $d8 */ m_ObjectGfxHeader spr_spiderveran_1
+	/* $d7 */ m_ObjectGfxHeader spr_beetleveran
+	/* $d8 */ m_ObjectGfxHeader spr_spiderveran
 	/* $d9 */ m_ObjectGfxHeader spr_spiderbeeveran_1
 	/* $da */ m_ObjectGfxHeader spr_spiderbeeveran_2, 1
 	/* $db */ m_ObjectGfxHeader spr_twinrova_6

@@ -1,3 +1,5 @@
+m_section_superfree AudioData1
+
 snddeStart:
 
 snddeChannel0:
@@ -23,54 +25,58 @@ bank39ChannelFallback:
 .redefine MUSIC_CHANNEL_FALLBACK bank39ChannelFallback
 
 
-.include "audio/sfx/common/fairyCutscene.s"
-.include "audio/sfx/common/baseball.s"
+.include "audio/common/sfx/fairyCutscene.s"
+.include "audio/common/sfx/baseball.s"
 
 .ifdef BUILD_VANILLA
 	.dsb 12 $ff
 .endif
 
-.include "audio/sfx/common/beam.s"
-.include "audio/sfx/common/breakRock.s"
-.include "audio/sfx/common/wave.s"
-.include "audio/sfx/common/swordObtained.s"
-.include "audio/sfx/seasons/magnetGloves.s"
-.include "audio/sfx/common/pieceOfPower.s"
-.include "audio/sfx/common/linkSwim.s"
-.include "audio/sfx/common/poof.s"
-.include "audio/sfx/common/bigSword.s"
-.include "audio/sfx/seasons/b5.s" ; TODO
-.include "audio/sfx/common/rumble.s"
-.include "audio/sfx/seasons/frypolarMovement.s"
-.include "audio/sfx/common/veranProjectile.s"
-.include "audio/sfx/common/shock.s"
-.include "audio/sfx/common/beam1.s"
-.include "audio/sfx/common/fadeout.s"
-.include "audio/sfx/common/pickUp.s"
-.include "audio/sfx/common/chicken.s"
-.include "audio/sfx/common/makuDisappear.s"
-.include "audio/sfx/common/beam2.s"
-.include "audio/sfx/seasons/b7.s" ; TODO
-.include "audio/sfx/common/veranFairyAttack.s"
-.include "audio/sfx/common/rumble2.s"
-.include "audio/sfx/common/opening.s"
-.include "audio/sfx/common/warpStart.s"
-.include "audio/sfx/common/endless.s"
-.include "audio/sfx/common/bigExplosion2.s"
-.include "audio/sfx/seasons/bd.s" ; TODO
-.include "audio/mus/common/mapleGame.s"
-.include "audio/mus/common/finalBoss.s"
-.include "audio/mus/common/essence.s"
+.include "audio/common/sfx/beam.s"
+.include "audio/common/sfx/breakRock.s"
+.include "audio/common/sfx/wave.s"
+.include "audio/common/sfx/swordObtained.s"
+.include "audio/seasons/sfx/magnetGloves.s"
+.include "audio/common/sfx/pieceOfPower.s"
+.include "audio/common/sfx/linkSwim.s"
+.include "audio/common/sfx/poof.s"
+.include "audio/common/sfx/bigSword.s"
+.include "audio/seasons/sfx/b5.s" ; TODO
+.include "audio/common/sfx/rumble.s"
+.include "audio/seasons/sfx/frypolarMovement.s"
+.include "audio/common/sfx/veranProjectile.s"
+.include "audio/common/sfx/shock.s"
+.include "audio/common/sfx/beam1.s"
+.include "audio/common/sfx/fadeout.s"
+.include "audio/common/sfx/pickUp.s"
+.include "audio/common/sfx/chicken.s"
+.include "audio/common/sfx/makuDisappear.s"
+.include "audio/common/sfx/beam2.s"
+.include "audio/seasons/sfx/b7.s" ; TODO
+.include "audio/common/sfx/veranFairyAttack.s"
+.include "audio/common/sfx/rumble2.s"
+.include "audio/common/sfx/opening.s"
+.include "audio/common/sfx/warpStart.s"
+.include "audio/common/sfx/endless.s"
+.include "audio/common/sfx/bigExplosion2.s"
+.include "audio/seasons/sfx/bd.s" ; TODO
+.include "audio/common/mus/mapleGame.s"
+.include "audio/common/mus/finalBoss.s"
+.include "audio/common/mus/essence.s"
 
-.include "audio/sfx/ages/switch2.s" ; CROSSITEMS: Added this
+.include "audio/ages/sfx/switch2.s" ; CROSSITEMS: Added this
 
 .ifdef BUILD_VANILLA
 	.dsb 13 $ff
 .endif
 
+.ends
+
 
 .BANK $3a SLOT 1
 .ORG 0
+
+m_section_superfree AudioData2
 
 mus41Start:
 mus42Start:
@@ -89,76 +95,76 @@ bank3aChannelFallback:
 .redefine MUSIC_CHANNEL_FALLBACK bank3aChannelFallback
 
 
-.include "audio/mus/common/indoors.s"
-.include "audio/mus/common/titlescreen.s"
-.include "audio/mus/common/miniboss.s"
-.include "audio/mus/common/gameover.s"
-.include "audio/mus/common/cave.s"
-.include "audio/mus/common/getEssence.s"
-.include "audio/sfx/common/selectItem.s"
-.include "audio/sfx/common/solvePuzzle.s"
-.include "audio/sfx/common/getItem.s"
-.include "audio/sfx/common/chargeSword.s"
-.include "audio/sfx/common/clink.s"
-.include "audio/sfx/common/throw.s"
-.include "audio/sfx/common/bombLand.s"
-.include "audio/sfx/common/jump.s"
-.include "audio/sfx/common/damageEnemy.s"
-.include "audio/sfx/common/gainHeart.s"
-.include "audio/sfx/common/clink2.s"
-.include "audio/sfx/common/fallInHole.s"
-.include "audio/sfx/common/error.s"
-.include "audio/sfx/common/solvePuzzle2.s"
-.include "audio/sfx/common/getSeed.s"
-.include "audio/sfx/common/damageLink.s"
-.include "audio/sfx/common/heartBeep.s"
-.include "audio/sfx/common/rupee.s"
-.include "audio/sfx/common/gohmaSpawnGel.s"
-.include "audio/sfx/seasons/freezeLava.s"
-.include "audio/sfx/common/slash.s"
-.include "audio/sfx/common/swordSpin.s"
-.include "audio/sfx/common/openChest.s"
-.include "audio/sfx/common/cutGrass.s"
-.include "audio/sfx/common/enterCave.s"
-.include "audio/sfx/common/bigExplosion.s"
-.include "audio/sfx/common/boomerang.s"
-.include "audio/sfx/common/dropEssence.s"
-.include "audio/sfx/common/shield.s"
-.include "audio/sfx/common/unknown5.s"
-.include "audio/sfx/common/swordSlash.s"
-.include "audio/sfx/common/killEnemy.s"
-.include "audio/sfx/common/openMenu.s"
-.include "audio/sfx/common/closeMenu.s"
-.include "audio/sfx/common/energyThing.s"
-.include "audio/sfx/common/swordBeam.s"
-.include "audio/sfx/common/linkDead.s"
-.include "audio/sfx/common/linkFall.s"
-.include "audio/sfx/common/text.s"
-.include "audio/sfx/common/bossDamage.s"
-.include "audio/sfx/common/explosion.s"
-.include "audio/sfx/common/doorClose.s"
-.include "audio/sfx/common/moveBlock.s"
-.include "audio/sfx/common/lightTorch.s"
-.include "audio/sfx/common/unknown3.s"
-.include "audio/sfx/common/minecart.s"
-.include "audio/sfx/common/strongPound.s"
-.include "audio/sfx/common/roller.s"
-.include "audio/sfx/common/mysterySeed.s"
-.include "audio/sfx/seasons/7d.s" ; TODO
-.include "audio/sfx/common/switch.s"
-.include "audio/sfx/common/aquamentusHover.s"
-.include "audio/sfx/common/unknown4.s"
-.include "audio/sfx/common/bossDead.s"
-.include "audio/sfx/common/lightning.s"
-.include "audio/sfx/seasons/wind.s"
-.include "audio/sfx/seasons/d1.s" ; TODO
-.include "audio/sfx/common/pirateBell.s"
-.include "audio/sfx/seasons/dodongoOpenMouth.s"
-.include "audio/sfx/common/magicPowder.s"
-.include "audio/sfx/common/menuMove.s"
-.include "audio/sfx/common/scentSeed.s"
-.include "audio/sfx/seasons/86.s" ; TODO
-.include "audio/sfx/common/teleport.s"
+.include "audio/common/mus/indoors.s"
+.include "audio/common/mus/titlescreen.s"
+.include "audio/common/mus/miniboss.s"
+.include "audio/common/mus/gameover.s"
+.include "audio/common/mus/cave.s"
+.include "audio/common/mus/getEssence.s"
+.include "audio/common/sfx/selectItem.s"
+.include "audio/common/sfx/solvePuzzle.s"
+.include "audio/common/sfx/getItem.s"
+.include "audio/common/sfx/chargeSword.s"
+.include "audio/common/sfx/clink.s"
+.include "audio/common/sfx/throw.s"
+.include "audio/common/sfx/bombLand.s"
+.include "audio/common/sfx/jump.s"
+.include "audio/common/sfx/damageEnemy.s"
+.include "audio/common/sfx/gainHeart.s"
+.include "audio/common/sfx/clink2.s"
+.include "audio/common/sfx/fallInHole.s"
+.include "audio/common/sfx/error.s"
+.include "audio/common/sfx/solvePuzzle2.s"
+.include "audio/common/sfx/getSeed.s"
+.include "audio/common/sfx/damageLink.s"
+.include "audio/common/sfx/heartBeep.s"
+.include "audio/common/sfx/rupee.s"
+.include "audio/common/sfx/gohmaSpawnGel.s"
+.include "audio/seasons/sfx/freezeLava.s"
+.include "audio/common/sfx/slash.s"
+.include "audio/common/sfx/swordSpin.s"
+.include "audio/common/sfx/openChest.s"
+.include "audio/common/sfx/cutGrass.s"
+.include "audio/common/sfx/enterCave.s"
+.include "audio/common/sfx/bigExplosion.s"
+.include "audio/common/sfx/boomerang.s"
+.include "audio/common/sfx/dropEssence.s"
+.include "audio/common/sfx/shield.s"
+.include "audio/common/sfx/unknown5.s"
+.include "audio/common/sfx/swordSlash.s"
+.include "audio/common/sfx/killEnemy.s"
+.include "audio/common/sfx/openMenu.s"
+.include "audio/common/sfx/closeMenu.s"
+.include "audio/common/sfx/energyThing.s"
+.include "audio/common/sfx/swordBeam.s"
+.include "audio/common/sfx/linkDead.s"
+.include "audio/common/sfx/linkFall.s"
+.include "audio/common/sfx/text.s"
+.include "audio/common/sfx/bossDamage.s"
+.include "audio/common/sfx/explosion.s"
+.include "audio/common/sfx/doorClose.s"
+.include "audio/common/sfx/moveBlock.s"
+.include "audio/common/sfx/lightTorch.s"
+.include "audio/common/sfx/unknown3.s"
+.include "audio/common/sfx/minecart.s"
+.include "audio/common/sfx/strongPound.s"
+.include "audio/common/sfx/roller.s"
+.include "audio/common/sfx/mysterySeed.s"
+.include "audio/seasons/sfx/7d.s" ; TODO
+.include "audio/common/sfx/switch.s"
+.include "audio/common/sfx/aquamentusHover.s"
+.include "audio/common/sfx/unknown4.s"
+.include "audio/common/sfx/bossDead.s"
+.include "audio/common/sfx/lightning.s"
+.include "audio/seasons/sfx/wind.s"
+.include "audio/seasons/sfx/d1.s" ; TODO
+.include "audio/common/sfx/pirateBell.s"
+.include "audio/seasons/sfx/dodongoOpenMouth.s"
+.include "audio/common/sfx/magicPowder.s"
+.include "audio/common/sfx/menuMove.s"
+.include "audio/common/sfx/scentSeed.s"
+.include "audio/seasons/sfx/86.s" ; TODO
+.include "audio/common/sfx/teleport.s"
 
 sndd4Start:
 sndd4Channel2:
@@ -170,32 +176,36 @@ sndd5Start:
 sndd5Channel2:
 	cmdff
 
-.include "audio/sfx/common/transform.s"
-.include "audio/sfx/common/blueStalfosCharge.s"
-.include "audio/sfx/seasons/makuTreeSnore.s"
-.include "audio/sfx/common/fluteRicky.s"
-.include "audio/sfx/common/fluteDimitri.s"
-.include "audio/sfx/common/fluteMoosh.s"
-.include "audio/mus/common/preCredits.s"
-.include "audio/mus/common/twinrova.s"
-.include "audio/sfx/common/makuTreePast.s"
-.include "audio/sfx/common/restore.s"
-.include "audio/sfx/seasons/creepyLaugh.s"
-.include "audio/sfx/common/moosh.s"
-.include "audio/sfx/common/ding.s"
-.include "audio/sfx/common/dekuScrub.s"
-.include "audio/sfx/common/floodgates.s"
-.include "audio/sfx/common/ricky.s"
-.include "audio/sfx/common/circling.s"
-.include "audio/sfx/common/dig.s"
+.include "audio/common/sfx/transform.s"
+.include "audio/common/sfx/blueStalfosCharge.s"
+.include "audio/seasons/sfx/makuTreeSnore.s"
+.include "audio/common/sfx/fluteRicky.s"
+.include "audio/common/sfx/fluteDimitri.s"
+.include "audio/common/sfx/fluteMoosh.s"
+.include "audio/common/mus/preCredits.s"
+.include "audio/common/mus/twinrova.s"
+.include "audio/common/sfx/makuTreePast.s"
+.include "audio/common/sfx/restore.s"
+.include "audio/seasons/sfx/creepyLaugh.s"
+.include "audio/common/sfx/moosh.s"
+.include "audio/common/sfx/ding.s"
+.include "audio/common/sfx/dekuScrub.s"
+.include "audio/common/sfx/floodgates.s"
+.include "audio/common/sfx/ricky.s"
+.include "audio/common/sfx/circling.s"
+.include "audio/common/sfx/dig.s"
 
 .ifdef BUILD_VANILLA
 	.dsb 4 $ff
 .endif
 
+.ends
+
 
 .BANK $3b SLOT 1
 .ORG 0
+
+m_section_superfree AudioData3
 
 mus43Start:
 mus44Start:
@@ -219,36 +229,40 @@ bank3bChannelFallback:
 .redefine MUSIC_CHANNEL_FALLBACK bank3bChannelFallback
 
 
-.include "audio/mus/seasons/horonVillage.s"
-.include "audio/mus/common/minigame.s"
-.include "audio/mus/common/fileSelect.s"
-.include "audio/mus/common/fairyFountain.s"
-.include "audio/mus/common/overworld.s"
-.include "audio/mus/seasons/hideAndSeek.s"
-.include "audio/mus/seasons/sunkenCity.s"
-.include "audio/mus/common/essenceRoom.s"
-.include "audio/mus/seasons/templeRemains.s"
-.include "audio/mus/seasons/unused1.s"
-.include "audio/mus/seasons/tarmRuins.s"
-.include "audio/mus/seasons/carnival.s"
-.include "audio/mus/common/ganon.s"
-.include "audio/mus/seasons/samasaDesert.s"
-.include "audio/sfx/common/splash.s"
-.include "audio/sfx/common/text2.s"
-.include "audio/sfx/common/filledHeartContainer.s"
-.include "audio/sfx/common/seedShooter.s"
-.include "audio/sfx/common/unknown7.s"
-.include "audio/sfx/seasons/8e.s" ; TODO
-.include "audio/sfx/common/enemyJump.s"
-.include "audio/sfx/common/galeSeed.s"
+.include "audio/seasons/mus/horonVillage.s"
+.include "audio/common/mus/minigame.s"
+.include "audio/common/mus/fileSelect.s"
+.include "audio/common/mus/fairyFountain.s"
+.include "audio/common/mus/overworld.s"
+.include "audio/seasons/mus/hideAndSeek.s"
+.include "audio/seasons/mus/sunkenCity.s"
+.include "audio/common/mus/essenceRoom.s"
+.include "audio/seasons/mus/templeRemains.s"
+.include "audio/seasons/mus/unused1.s"
+.include "audio/seasons/mus/tarmRuins.s"
+.include "audio/seasons/mus/carnival.s"
+.include "audio/common/mus/ganon.s"
+.include "audio/seasons/mus/samasaDesert.s"
+.include "audio/common/sfx/splash.s"
+.include "audio/common/sfx/text2.s"
+.include "audio/common/sfx/filledHeartContainer.s"
+.include "audio/common/sfx/seedShooter.s"
+.include "audio/common/sfx/unknown7.s"
+.include "audio/seasons/sfx/8e.s" ; TODO
+.include "audio/common/sfx/enemyJump.s"
+.include "audio/common/sfx/galeSeed.s"
 
 .ifdef BUILD_VANILLA
 	.dsb 10 $ff
 .endif
 
+.ends
+
 
 .BANK $3c SLOT 1
 .ORG 0
+
+m_section_superfree AudioData4
 
 bank3cChannelFallback:
 	cmdff
@@ -256,33 +270,37 @@ bank3cChannelFallback:
 .redefine MUSIC_CHANNEL_FALLBACK bank3cChannelFallback
 
 
-.include "audio/mus/seasons/makuTree.s"
-.include "audio/mus/seasons/swordAndShieldMaze.s"
-.include "audio/mus/seasons/gnarledRootDungeon.s"
-.include "audio/mus/seasons/snakesRemains.s"
-.include "audio/mus/seasons/herosCave.s"
-.include "audio/mus/seasons/explorersCrypt.s"
-.include "audio/mus/seasons/unicornsCave.s"
-.include "audio/mus/seasons/poisonMothsLair.s"
-.include "audio/mus/seasons/dancingDragonDungeon.s"
-.include "audio/mus/common/onoxCastle.s"
-.include "audio/mus/seasons/subrosianDance.s"
-.include "audio/mus/seasons/ancientRuins.s"
-.include "audio/mus/common/sadness.s"
-.include "audio/mus/common/intro2.s"
-.include "audio/sfx/common/goron.s"
-.include "audio/sfx/common/ghost.s"
-.include "audio/sfx/common/becomeBaby.s"
-.include "audio/sfx/common/jingle.s"
-.include "audio/sfx/common/strike.s"
+.include "audio/seasons/mus/makuTree.s"
+.include "audio/seasons/mus/swordAndShieldMaze.s"
+.include "audio/seasons/mus/gnarledRootDungeon.s"
+.include "audio/seasons/mus/snakesRemains.s"
+.include "audio/seasons/mus/herosCave.s"
+.include "audio/seasons/mus/explorersCrypt.s"
+.include "audio/seasons/mus/unicornsCave.s"
+.include "audio/seasons/mus/poisonMothsLair.s"
+.include "audio/seasons/mus/dancingDragonDungeon.s"
+.include "audio/common/mus/onoxCastle.s"
+.include "audio/seasons/mus/subrosianDance.s"
+.include "audio/seasons/mus/ancientRuins.s"
+.include "audio/common/mus/sadness.s"
+.include "audio/common/mus/intro2.s"
+.include "audio/common/sfx/goron.s"
+.include "audio/common/sfx/ghost.s"
+.include "audio/common/sfx/becomeBaby.s"
+.include "audio/common/sfx/jingle.s"
+.include "audio/common/sfx/strike.s"
 
 .ifdef BUILD_VANILLA
 	.dsb 4 $ff
 .endif
 
+.ends
+
 
 .BANK $3d SLOT 1
 .ORG 0
+
+m_section_superfree AudioData5
 
 bank3dChannelFallback:
 mus24Channel6:
@@ -290,8 +308,8 @@ mus24Channel6:
 
 .redefine MUSIC_CHANNEL_FALLBACK bank3dChannelFallback
 
-.include "audio/mus/common/triumphant.s"
-.include "audio/mus/common/disaster.s"
+.include "audio/common/mus/triumphant.s"
+.include "audio/common/mus/disaster.s"
 
 mus24Start:
 mus24Channel1:
@@ -301,29 +319,33 @@ mus24Channel0:
 mus24Channel4:
 	cmdff
 
-.include "audio/mus/common/pirates.s"
-.include "audio/mus/common/finalDungeon.s"
-.include "audio/mus/seasons/subrosianShop.s"
-.include "audio/mus/common/rosaDate.s"
-.include "audio/mus/common/roomOfRites.s"
-.include "audio/mus/common/blackTowerEntrance.s"
-.include "audio/mus/common/zeldaSaved.s"
-.include "audio/mus/common/mapleTheme.s"
-.include "audio/mus/common/intro1.s"
-.include "audio/mus/common/crazyDance.s"
-.include "audio/sfx/seasons/93.s"
-.include "audio/sfx/seasons/dodongoEat.s"
-.include "audio/sfx/common/compass.s"
-.include "audio/sfx/common/land.s"
-.include "audio/sfx/common/switchHook.s"
+.include "audio/common/mus/pirates.s"
+.include "audio/common/mus/finalDungeon.s"
+.include "audio/seasons/mus/subrosianShop.s"
+.include "audio/common/mus/rosaDate.s"
+.include "audio/common/mus/roomOfRites.s"
+.include "audio/common/mus/blackTowerEntrance.s"
+.include "audio/common/mus/zeldaSaved.s"
+.include "audio/common/mus/mapleTheme.s"
+.include "audio/common/mus/intro1.s"
+.include "audio/common/mus/crazyDance.s"
+.include "audio/seasons/sfx/93.s"
+.include "audio/seasons/sfx/dodongoEat.s"
+.include "audio/common/sfx/compass.s"
+.include "audio/common/sfx/land.s"
+.include "audio/common/sfx/switchHook.s"
 
 .ifdef BUILD_VANILLA
 	.dsb 4 $ff
 .endif
 
+.ends
+
 
 .BANK $3e SLOT 1
 .ORG 0
+
+m_section_superfree AudioData6
 
 mus30Start:
 mus37Start:
@@ -363,10 +385,10 @@ bank3eChannelFallback:
 
 .redefine MUSIC_CHANNEL_FALLBACK bank3eChannelFallback
 
-.include "audio/sfx/seasons/danceMove.s"
-.include "audio/sfx/common/dimitri.s"
-.include "audio/sfx/common/whistle.s"
-.include "audio/sfx/common/goronDanceB.s"
+.include "audio/seasons/sfx/danceMove.s"
+.include "audio/common/sfx/dimitri.s"
+.include "audio/common/sfx/whistle.s"
+.include "audio/common/sfx/goronDanceB.s"
 
 ; Undefined sounds
 sndd6Start:
@@ -418,7 +440,7 @@ snddcChannel6:
 sndddChannel6:
 	cmdff
 
-.include "audio/mus/common/greatMoblin.s"
+.include "audio/common/mus/greatMoblin.s"
 
 mus37Channel1:
 	cmdff
@@ -432,12 +454,12 @@ mus30Channel1:
 mus30Channel0:
 	cmdff
 
-.include "audio/mus/common/ladxSideview.s"
-.include "audio/mus/common/syrup.s"
-.include "audio/mus/seasons/songOfStorms.s"
-.include "audio/mus/common/goronCave.s"
-.include "audio/mus/common/credits2.s"
-.include "audio/mus/common/boss.s"
+.include "audio/common/mus/ladxSideview.s"
+.include "audio/common/mus/syrup.s"
+.include "audio/seasons/mus/songOfStorms.s"
+.include "audio/common/mus/goronCave.s"
+.include "audio/common/mus/credits2.s"
+.include "audio/common/mus/boss.s"
 
 mus3aChannel1:
 	cmdff
@@ -450,12 +472,15 @@ mus3aChannel4:
 	.dsb 7 $ff
 .endif
 
-.include "audio/mus/seasons/subrosia.s"
-.include "audio/mus/common/credits1.s"
-.include "audio/mus/seasons/unused2.s"
+.include "audio/seasons/mus/subrosia.s"
+.include "audio/common/mus/credits1.s"
+.include "audio/seasons/mus/unused2.s"
 
 .ifdef BUILD_VANILLA
 	.dsb 10 $ff
 .endif
+
+.ends
+
 
 .undefine MUSIC_CHANNEL_FALLBACK

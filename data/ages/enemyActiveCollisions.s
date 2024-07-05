@@ -1,10 +1,10 @@
 ; Technically, this table is indexed by Enemy.collisionType. But, Enemy.collisionType is
-; almost always the same as Enemy.id, except in rare cases (ie. ENEMYID_SPINY_BEETLE
-; borrows ENEMYID_BEAMOS's value when hiding under rock).
+; almost always the same as Enemy.id, except in rare cases (ie. ENEMY_SPINY_BEETLE
+; borrows ENEMY_BEAMOS's value when hiding under rock).
 
 ; Each 4 bytes here is a bitset which determines which item collisions the Enemy will
 ; respond to. If a bit is unset, it won't do anything when it collides with an object with
-; that item collision. (See constants/itemCollisions.s.)
+; that item collision. (See constants/common/itemCollisions.s.)
 
 ; Note: the bits are reversed to make it easier to look at (ie. collisionType 0 is at the
 ; far left)

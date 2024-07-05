@@ -62,7 +62,7 @@ func_03_6103:
 @spawnForestFairy:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FOREST_FAIRY
+	ld (hl),INTERAC_FOREST_FAIRY
 	ld l,Interaction.var03
 	ld (hl),b
 	jp fairyCutscene_incState
@@ -453,7 +453,7 @@ nayruSingingCutsceneHandler:
 	ld ($cfd2),a
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl)
 	inc l
@@ -766,7 +766,7 @@ blackTowerExplanationCutsceneHandler:
 	call resetCamera
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_REMOTE_MAKU_CUTSCENE
+	ld (hl),INTERAC_REMOTE_MAKU_CUTSCENE
 	inc l
 	ld (hl),$00
 	inc l
@@ -1045,7 +1045,7 @@ nayruWarpToMakuTreeCutsceneHandler:
 	jr z,+
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TWINROVA
+	ld (hl),INTERAC_TWINROVA
 +
 	call reloadObjectGfx
 	ld a,MUS_MAKU_TREE
@@ -1087,7 +1087,7 @@ nayruWarpToMakuTreeCutsceneHandler:
 @func_692b:
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl)
 	inc l
@@ -1099,7 +1099,7 @@ nayruWarpToMakuTreeCutsceneHandler:
 +
 	call getFreeInteractionSlot
 	jr nz,@incCutsceneState
-	ld (hl),INTERACID_CLOAKED_TWINROVA
+	ld (hl),INTERAC_CLOAKED_TWINROVA
 @incCutsceneState:
 	jp cutscene_incCutsceneState
 @func_6948:
@@ -1219,7 +1219,7 @@ blackTowerCompleteCutsceneHandler:
 	call clearOam
 	ld a,$05
 	ld (wCutsceneState),a
-	ldbc INTERACID_CLOAKED_TWINROVA $01
+	ldbc INTERAC_CLOAKED_TWINROVA $01
 	jp createInteraction
 @state3:
 	call decCbb3
@@ -1555,7 +1555,7 @@ twinrovaRevealCutsceneHandler:
 	ld a,$f0
 	ld (wGfxRegs2.SCY),a
 	call fadeinFromBlack
-	ldbc INTERACID_MAKU_TREE $06
+	ldbc INTERAC_MAKU_TREE $06
 	call createInteraction
 	ld bc,$4050
 	call interactionHSetPosition
@@ -2219,7 +2219,7 @@ func_7168:
 	call d2Collapse_incState
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_97
+	ld (hl),INTERAC_97
 	ld l,Interaction.yh
 	ld (hl),$2c
 	ld l,Interaction.xh
@@ -2436,7 +2436,7 @@ func_03_7244:
 	jp timewarpCutscene_incCBB3
 @@cbb3_01:
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_TIMEWARP
+	ld (hl),INTERAC_TIMEWARP
 	ld l,Interaction.counter1
 	ld a,120
 	ld (hl),a
@@ -2459,7 +2459,7 @@ func_03_7244:
 	ld (hl),$3c
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TIMEWARP
+	ld (hl),INTERAC_TIMEWARP
 	inc l
 	ld (hl),$02
 	ld de,w1Link.yh
@@ -2677,7 +2677,7 @@ func_03_7493:
 	ld c,a
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_PUSHBLOCK
+	ld (hl),INTERAC_PUSHBLOCK
 	ld l,Interaction.angle
 	ld (hl),b
 	ld l,Interaction.yh
@@ -2783,7 +2783,7 @@ func_03_7565:
 	ret nz
 	ld (hl),$3c
 	call jabuOpen_incCBB3
-	ldbc, INTERACID_97 $01
+	ldbc, INTERAC_97 $01
 	call objectCreateInteraction
 	ld a,GFXH_JABU_OPENING_1
 --
@@ -2897,7 +2897,7 @@ func_03_7619:
 	jr nz,+
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_SPARKLE
+	ld (hl),PART_SPARKLE
 	call getRandomNumber
 	and $7f
 	ld c,a
@@ -3247,7 +3247,7 @@ func_03_7cb7:
 @func_7dbc:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXCLAMATION_MARK
+	ld (hl),INTERAC_EXCLAMATION_MARK
 	ld l,Interaction.counter1
 	ld a,30
 	ld (hl),a
@@ -3279,11 +3279,11 @@ func_03_7cb7:
 	xor a
 	ld ($cfde),a
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_FALLING_ROCK
+	ld (hl),INTERAC_FALLING_ROCK
 	ld l,Interaction.var03
 	ld (hl),$01
 	call getFreeInteractionSlot
-	ld (hl),INTERACID_VERAN_CUTSCENE_WALLMASTER
+	ld (hl),INTERAC_VERAN_CUTSCENE_WALLMASTER
 	ld l,Interaction.yh
 	ld a,(w1Link.yh)
 	add $10

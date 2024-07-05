@@ -1,17 +1,10 @@
-.macro m_EnemyData
-	.if NARGS == 4
-		.db \1 \2 \3 \4
-	.else
-		.db \1 \2
-		dwbe \3 | $8000
-	.endif
-.endm
-
 ; Data format:
-; 0: object gfx header to use (see data/objectGfxHeaders.s)
-; 1: Value for Enemy.enemyCollisionMode (bit 7 must be set for collisions to work)
-; 2/3: Either a pointer to subID-specific data, or 2 values which apply to all
-; subIDs. See below for what those 2 bytes do.
+;   b0: object gfx header to use (see data/objectGfxHeaders.s)
+;   b1: Value for Enemy.enemyCollisionMode (bit 7 must be set for collisions to work)
+;   b2: value for Enemy.damage (how much damage it deals)
+;   b3: value for Enemy.health
+;
+;   Or, parameters 2/3 can be replaced with a pointer to subid data (see below).
 
 enemyData:
 	/* 0x00 */ m_EnemyData $00 $00 $00 $00
@@ -143,6 +136,7 @@ enemyData:
 	/* 0x7e */ m_EnemyData $cb $4f $2a $10
 	/* 0x7f */ m_EnemyData $a9 $d0 $36 $00
 
+
 ; Each 2 bytes are for a particular subID.
 ; 0: Bits 0-6 are an index for the extraEnemyData table below.
 ;    If bit 7 is set, the next subID is valid.
@@ -150,86 +144,122 @@ enemyData:
 ;    bits 0-3: oamTileIndexBase/2
 
 enemy09SubidData:
-	.db $88 $20
-	.db $88 $20
-	.db $8c $10
-	.db $8c $10
-	.db $3f $30
+	m_EnemySubidData $08 $20
+	m_EnemySubidData $08 $20
+	m_EnemySubidData $0c $10
+	m_EnemySubidData $0c $10
+	m_EnemySubidData $3f $30
+	m_EnemySubidDataEnd
+
 enemy0aSubidData:
-	.db $8c $20
-	.db $11 $10
+	m_EnemySubidData $0c $20
+	m_EnemySubidData $11 $10
+	m_EnemySubidDataEnd
+
 enemy0bSubidData:
-	.db $8c $27
-	.db $8e $17
-	.db $0c $37
+	m_EnemySubidData $0c $27
+	m_EnemySubidData $0e $17
+	m_EnemySubidData $0c $37
+	m_EnemySubidDataEnd
+
 enemy0cSubidData:
-	.db $8c $20
-	.db $91 $10
-	.db $3f $30
+	m_EnemySubidData $0c $20
+	m_EnemySubidData $11 $10
+	m_EnemySubidData $3f $30
+	m_EnemySubidDataEnd
+
 enemy0dSubidData:
-	.db $97 $20
-	.db $9b $10
-	.db $3f $30
+	m_EnemySubidData $17 $20
+	m_EnemySubidData $1b $10
+	m_EnemySubidData $3f $30
+	m_EnemySubidDataEnd
+
 enemy0eSubidData:
-	.db $82 $20
-	.db $82 $10
-	.db $82 $30
-	.db $82 $00
-	.db $82 $00
-	.db $02 $00
+	m_EnemySubidData $02 $20
+	m_EnemySubidData $02 $10
+	m_EnemySubidData $02 $30
+	m_EnemySubidData $02 $00
+	m_EnemySubidData $02 $00
+	m_EnemySubidData $02 $00
+	m_EnemySubidDataEnd
+
 enemy17SubidData:
-	.db $9a $2b
-	.db $94 $2b
-	.db $16 $2b
+	m_EnemySubidData $1a $2b
+	m_EnemySubidData $14 $2b
+	m_EnemySubidData $16 $2b
+	m_EnemySubidDataEnd
+
 enemy20SubidData:
 enemy4aSubidData:
-	.db $8a $20
-	.db $0c $10
+	m_EnemySubidData $0a $20
+	m_EnemySubidData $0c $10
+	m_EnemySubidDataEnd
+
 enemy21SubidData:
 enemy48SubidData:
-	.db $94 $20
-	.db $99 $10
-	.db $3f $30
+	m_EnemySubidData $14 $20
+	m_EnemySubidData $19 $10
+	m_EnemySubidData $3f $30
+	m_EnemySubidDataEnd
+
 enemy2aSubidData:
-	.db $b8 $08
-	.db $b8 $18
-	.db $b8 $28
-	.db $38 $38
+	m_EnemySubidData $38 $08
+	m_EnemySubidData $38 $18
+	m_EnemySubidData $38 $28
+	m_EnemySubidData $38 $38
+	m_EnemySubidDataEnd
+
 enemy30SubidData:
-	.db $8a $3b
-	.db $0c $1b
+	m_EnemySubidData $0a $3b
+	m_EnemySubidData $0c $1b
+	m_EnemySubidDataEnd
+
 enemy31SubidData:
-	.db $8a $12
-	.db $8c $22
-	.db $8e $32
-	.db $0e $02
+	m_EnemySubidData $0a $12
+	m_EnemySubidData $0c $22
+	m_EnemySubidData $0e $32
+	m_EnemySubidData $0e $02
+	m_EnemySubidDataEnd
+
 enemy34SubidData:
-	.db $8a $00
-	.db $0c $20
+	m_EnemySubidData $0a $00
+	m_EnemySubidData $0c $20
+	m_EnemySubidDataEnd
+
 ; Unused data?
-	.db $80 $1b
-	.db $00 $1b
+	m_EnemySubidData $00 $1b
+	m_EnemySubidData $00 $1b
+	m_EnemySubidDataEnd
+
 enemy3cSubidData:
-	.db $8e $1c
-	.db $43 $1c
+	m_EnemySubidData $0e $1c
+	m_EnemySubidData $43 $1c
+	m_EnemySubidDataEnd
+
 enemy3dSubidData:
-	.db $8d $20
-	.db $12 $10
+	m_EnemySubidData $0d $20
+	m_EnemySubidData $12 $10
+	m_EnemySubidDataEnd
+
 enemy40SubidData:
-	.db $8e $00
-	.db $91 $20
-	.db $15 $10
+	m_EnemySubidData $0e $00
+	m_EnemySubidData $11 $20
+	m_EnemySubidData $15 $10
+	m_EnemySubidDataEnd
+
 enemy73SubidData:
-	.db $9a $10
-	.db $9a $10
-	.db $b1 $20
-	.db $32 $30
+	m_EnemySubidData $1a $10
+	m_EnemySubidData $1a $10
+	m_EnemySubidData $31 $20
+	m_EnemySubidData $32 $30
+	m_EnemySubidDataEnd
+
 
 ; Data format:
-; 0: value for Enemy.collisionRadiusY
-; 1: value for Enemy.collisionRadiusX
-; 2: value for Enemy.damage (how much damage it deals)
-; 3: value for Enemy.health
+;   b0: value for Enemy.collisionRadiusY
+;   b1: value for Enemy.collisionRadiusX
+;   b2: value for Enemy.damage (how much damage it deals)
+;   b3: value for Enemy.health
 
 extraEnemyData:
 	.db $00 $00 $00 $7f ; 0x00

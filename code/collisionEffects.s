@@ -459,10 +459,10 @@ collisionEffect3c:
 	ret
 
 @ringProtections:
-	.db ENEMYID_BLADE_TRAP		$80|GREEN_LUCK_RING
-	.db PARTID_OCTOROK_PROJECTILE	$00|RED_HOLY_RING
-	.db PARTID_ZORA_FIRE		$00|BLUE_HOLY_RING
-	.db PARTID_BEAM			$80|BLUE_LUCK_RING
+	.db ENEMY_BLADE_TRAP		$80|GREEN_LUCK_RING
+	.db PART_OCTOROK_PROJECTILE	$00|RED_HOLY_RING
+	.db PART_ZORA_FIRE		$00|BLUE_HOLY_RING
+	.db PART_BEAM			$80|BLUE_LUCK_RING
 	.db $00
 
 ;;
@@ -680,7 +680,7 @@ collisionEffect20:
 	ld h,b
 	ld l,Item.id
 	ld a,(hl)
-	cp ITEMID_28
+	cp ITEM_28
 	jr nc,+
 
 	ld l,Item.collisionType
@@ -1160,7 +1160,7 @@ createFlamePart:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_FLAME
+	ld (hl),PART_BURNING_ENEMY
 	ld l,Part.relatedObj1
 	ldh a,(<hActiveObjectType)
 	ldi (hl),a
@@ -1172,7 +1172,7 @@ createClinkInteraction:
 	call getFreeInteractionSlot
 	jr nz,@ret
 
-	ld (hl),INTERACID_CLINK
+	ld (hl),INTERAC_CLINK
 	ldh a,(<hFF8F)
 	ld l,a
 	ldh a,(<hFF8D)
@@ -1353,7 +1353,7 @@ applyDamageToEnemyOrPart:
 func_07_47b7:
 	ld c,Item.id
 	ld a,(bc)
-	cp ITEMID_MYSTERY_SEED
+	cp ITEM_MYSTERY_SEED
 	ret nz
 
 	ldh a,(<hActiveObjectType)

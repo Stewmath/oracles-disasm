@@ -1,4 +1,4 @@
- m_section_free Bank_3 NAMESPACE bank3
+m_section_free Bank_3 NAMESPACE bank3
 
 ;;
 ; This is the first thing the game jumps to on startup.

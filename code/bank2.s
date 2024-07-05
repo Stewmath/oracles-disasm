@@ -1,4 +1,4 @@
- m_section_free Bank_2 NAMESPACE bank2
+m_section_free Bank_2 NAMESPACE bank2
 
 ;;
 ; This function checks if the game is run on a dmg (instead of a gbc) and, if so, displays
@@ -2554,31 +2554,31 @@ fileSelectDrawLink:
 
 @spriteTable:
 	; Seasons (frame 0)
-	.db @sprites0-CADDR ; $00 - link standing still (blank file)
-	.db @sprites3-CADDR ; $01 - linked file (rod of seasons)
-	.db @sprites7-CADDR ; $02 - completed file (with din)
-	.db @sprites1-CADDR ; $03 - unlinked file
+	dbrel @sprites0 ; $00 - link standing still (blank file)
+	dbrel @sprites3 ; $01 - linked file (rod of seasons)
+	dbrel @sprites7 ; $02 - completed file (with din)
+	dbrel @sprites1 ; $03 - unlinked file
 
 	; Ages (frame 0)
-	.db @sprites0-CADDR ; $04 - link standing still (blank file)
-	.db @sprites5-CADDR ; $05 - linked file (harp of ages)
-	.db @sprites9-CADDR ; $06 - completed file (with nayru)
-	.db @sprites1-CADDR ; $07 - unlinked file
+	dbrel @sprites0 ; $04 - link standing still (blank file)
+	dbrel @sprites5 ; $05 - linked file (harp of ages)
+	dbrel @sprites9 ; $06 - completed file (with nayru)
+	dbrel @sprites1 ; $07 - unlinked file
 
 	; Seasons (frame 1)
-	.db @sprites0-CADDR
-	.db @sprites4-CADDR
-	.db @sprites8-CADDR
-	.db @sprites2-CADDR
+	dbrel @sprites0
+	dbrel @sprites4
+	dbrel @sprites8
+	dbrel @sprites2
 
 	; Ages (frame 1)
-	.db @sprites0-CADDR
-	.db @sprites6-CADDR
-	.db @spritesa-CADDR
-	.db @sprites2-CADDR
+	dbrel @sprites0
+	dbrel @sprites6
+	dbrel @spritesa
+	dbrel @sprites2
 
 	; $10 - Triforce symbol for hero's file
-	.db @spritesb-CADDR
+	dbrel @spritesb
 
 ;;
 @sprites0:
@@ -3185,9 +3185,9 @@ reloadGraphicsOnExitMenu_body:
 	call nz,loadPaletteHeader
 
 .ifdef ROM_SEASONS
-	; Checking for room $07ff?
+	; Checking for ROOM_SEASONS_7ff (onox fight?)
 	ld a,(wActiveGroup)
-	cp $07
+	cp >ROOM_SEASONS_7ff
 	jr nz,++
 	ld a,(wActiveRoom)
 	inc a
@@ -3492,7 +3492,7 @@ updateStatusBar_body:
 
 	; If harp is equipped, adjust sprite X-position 8 pixels right
 	ld hl,wInventoryB
-	ld a,ITEMID_HARP
+	ld a,ITEM_HARP
 	cp (hl)
 	jr nz,+
 	set 3,e
@@ -4264,7 +4264,7 @@ loadStatusBarMap:
 +
 	; Check if biggoron's sword equipped
 	ld a,(wInventoryB)
-	cp ITEMID_BIGGORON_SWORD
+	cp ITEM_BIGGORON_SWORD
 	jr nz,+
 	set 7,c
 +
@@ -4528,15 +4528,15 @@ inventoryMenuState1:
 
 	; Satchel or shooter?
 	ld c,$1f
-	cp ITEMID_SEED_SATCHEL
+	cp ITEM_SEED_SATCHEL
 	jr z,@hasSubmenu
 
-	cp ITEMID_SLINGSHOT
+	cp ITEM_SLINGSHOT
 	jr z,@hasSubmenu
-	cp ITEMID_SHOOTER
+	cp ITEM_SHOOTER
 	jr z,@hasSubmenu
 
-	cp ITEMID_HARP
+	cp ITEM_HARP
 	jr nz,@finalizeEquip
 	ld c,$e0
 
@@ -4571,7 +4571,7 @@ inventoryMenuState1:
 	ld a,(wInventorySubmenu0CursorPos)
 	add <wInventoryStorage
 	ld l,a
-	ld b,ITEMID_BIGGORON_SWORD
+	ld b,ITEM_BIGGORON_SWORD
 	ld a,(hl)
 	cp b
 	jr z,@@equipBiggoron
@@ -4748,10 +4748,10 @@ inventoryMenuState2:
 	call cpInventorySelectedItemToHarp
 	jr z,++
 
-	cp ITEMID_SEED_SATCHEL
+	cp ITEM_SEED_SATCHEL
 	jr z,+
 	inc l
-	cp ITEMID_SHOOTER
+	cp ITEM_SHOOTER
 	jr z,+
 	inc l
 +
@@ -4833,9 +4833,9 @@ inventoryMenuState2:
 	rst_addAToHl
 	ld a,(wInventory.selectedItem)
 
-	cp ITEMID_SHOOTER
+	cp ITEM_SHOOTER
 	jr z,+
-	cp ITEMID_SLINGSHOT
+	cp ITEM_SLINGSHOT
 	jr z,+
 	xor a
 	jr ++
@@ -4858,10 +4858,10 @@ inventoryMenuState2:
 
 	ld a,(wInventory.selectedItem)
 	ld e,<wSatchelSelectedSeeds
-	cp ITEMID_SEED_SATCHEL
+	cp ITEM_SEED_SATCHEL
 	jr z,+
 	inc e
-	cp ITEMID_SHOOTER
+	cp ITEM_SHOOTER
 	jr z,+
 	inc e
 +
@@ -5447,14 +5447,14 @@ func_02_5a35:
 	.db $28 $0c $0e $03
 
 seedAndHarpSpriteTable:
-	.db @sprite0-CADDR
-	.db @sprite1-CADDR
-	.db @sprite2-CADDR
-	.db @sprite3-CADDR
-	.db @sprite4-CADDR
-	.db @sprite5-CADDR
-	.db @sprite6-CADDR
-	.db @sprite7-CADDR
+	dbrel @sprite0
+	dbrel @sprite1
+	dbrel @sprite2
+	dbrel @sprite3
+	dbrel @sprite4
+	dbrel @sprite5
+	dbrel @sprite6
+	dbrel @sprite7
 
 @sprite0:
 	.db $01
@@ -5512,7 +5512,7 @@ table_5ae5:
 ; Set z flag if selected inventory item is the harp.
 cpInventorySelectedItemToHarp:
 	ld a,(wInventory.selectedItem)
-	cp ITEMID_HARP
+	cp ITEM_HARP
 	ret
 
 
@@ -6156,7 +6156,7 @@ inventoryMenuDrawHarpSprites:
 	ld bc,$1000
 --
 	ldi a,(hl)
-	cp ITEMID_HARP
+	cp ITEM_HARP
 	jr z,+
 	inc c
 	dec b
@@ -6264,9 +6264,9 @@ createBlankSpritesForItemSubmenu:
 	ret
 
 @spritesTable:
-	.db @sprites0-CADDR
-	.db @sprites1-CADDR
-	.db @sprites2-CADDR
+	dbrel @sprites0
+	dbrel @sprites1
+	dbrel @sprites2
 
 
 .ifdef ROM_AGES
@@ -6653,7 +6653,7 @@ mapMenu_state0:
 @present:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_DIMITRI
+	sub SPECIALOBJECT_DIMITRI
 	call nc,mapMenu_performTileSubstitutions
 
 	; Perform tile substitutions if symmetry city has been saved
@@ -6683,11 +6683,11 @@ mapMenu_state0:
 @overworld:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_DIMITRI
+	sub SPECIALOBJECT_DIMITRI
 	call nc,mapMenu_performTileSubstitutions
 
 	; Check whether floodgates have been opened
-	ld a,(wPresentRoomFlags+$81)
+	ld a,(wOverworldRoomFlags+$81)
 	rlca
 	ld a,$05
 	call c,mapMenu_performTileSubstitutions
@@ -6830,10 +6830,10 @@ loadMinimapDisplayRoom:
 @group4:
 	; Check for the top of dungeon 6; change the minimap to the overworld.
 	ld a,(wActiveGroup)
-	cp $03
+	cp >ROOM_SEASONS_398
 	jr nz,@setRoom
 	ld a,(wActiveRoom)
-	cp $98
+	cp <ROOM_SEASONS_398
 	jr nz,@setRoom
 	ld bc,$0000
 
@@ -7174,7 +7174,7 @@ mapGetRoomText:
 ; Animal companion regions (not used in ages)
 @specialCode3:
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 .ifdef ROM_AGES
 	add <TX_032d
 .else; ROM_SEASONS
@@ -7210,7 +7210,7 @@ mapGetRoomText:
 	ldi a,(hl)
 	ld e,a
 	bit 7,(hl)
-	ld d,>wGroup4Flags
+	ld d,>wGroup4RoomFlags
 	jr nz,+
 	inc d
 +
@@ -7405,12 +7405,23 @@ minimapPopupType_gashaSpot:
 
 ; Area on map with dormant time portal (or subrosia portal for seasons?)
 minimapPopupType_portalSpot:
+.ifdef ROM_AGES
 	ld hl,wPresentRoomFlags
+.else
+	ld hl,wOverworldRoomFlags
+.endif
+
 	ld a,(wMapMenu.mode)
 	rrca
-	jr nc,+
+	jr nc,++
+
+.ifdef ROM_AGES
 	ld hl,wPastRoomFlags
-+
+.else
+	ld hl,wSubrosiaRoomFlags
+.endif
+
+++
 	ld a,(wMapMenu.cursorIndex)
 	rst_addAToHl
 	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)
@@ -8213,16 +8224,23 @@ mapMenu_checkRoomVisited:
 	ld a,(wMapMenu.mode)
 	rrca
 	ld a,h
+
+.ifdef ROM_AGES
 	ld hl,wPastRoomFlags
 	jr c,++
 
 	ld hl,wPresentRoomFlags
 
-.ifdef ROM_SEASONS
+.else ;ROM_SEASONS
+	ld hl,wSubrosiaRoomFlags
+	jr c,++
+
+	ld hl,wOverworldRoomFlags
+
 	; Special-case for the sword upgrade screen (read the maku tree screen's flag instead)
 	cp <ROOM_SEASONS_0c9
 	jr nz,++
-	ld hl,wPastRoomFlags + <ROOM_SEASONS_10b
+	ld hl,wSubrosiaRoomFlags + (<ROOM_SEASONS_10b)
 	xor a
 .endif
 
@@ -8597,7 +8615,7 @@ checkAdvanceShopVisited:
 .ifdef ROM_AGES
 	ld a,(wPastRoomFlags+$fe)
 .else
-	ld a,(wPastRoomFlags+$af)
+	ld a,(wSubrosiaRoomFlags+$af)
 .endif
 	and ROOMFLAG_VISITED
 	ret
@@ -9044,11 +9062,11 @@ dungeonMapSymbolPositions:
 ; This is a table of oam data for a map icon's "border". Entries 0-3 are for while the
 ; icon is still expanding; entry 4 is for when it's at full size.
 mapIconBorderOamTable:
-	.db @entry0 - CADDR
-	.db @entry1 - CADDR
-	.db @entry2 - CADDR
-	.db @entry3 - CADDR
-	.db @entry4 - CADDR
+	dbrel @entry0
+	dbrel @entry1
+	dbrel @entry2
+	dbrel @entry3
+	dbrel @entry4
 
 @entry0:
 	.db $00
@@ -9084,32 +9102,32 @@ mapIconBorderOamTable:
 ; This is a table of OAM data for map icons, ie. showing screens with houses, shops, etc.
 ; The output of the "getMinimapPopupType" function corresponds to an entry in this table.
 mapIconOamTable:
-	.db @mapIcon00 - CADDR
-	.db @mapIcon01 - CADDR
-	.db @mapIcon02 - CADDR
-	.db @mapIcon03 - CADDR
-	.db @mapIcon04 - CADDR
-	.db @mapIcon05 - CADDR
-	.db @mapIcon06 - CADDR
-	.db @mapIcon07 - CADDR
-	.db @mapIcon08 - CADDR
-	.db @mapIcon09 - CADDR
-	.db @mapIcon0A - CADDR
-	.db @mapIcon0B - CADDR
-	.db @mapIcon0C - CADDR
-	.db @mapIcon0D - CADDR
-	.db @mapIcon0E - CADDR
-	.db @mapIcon0F - CADDR
-	.db @mapIcon10 - CADDR
-	.db @mapIcon11 - CADDR
-	.db @mapIcon12 - CADDR
-	.db @mapIcon13 - CADDR
-	.db @mapIcon14 - CADDR
-	.db @mapIcon15 - CADDR
-	.db @mapIcon16 - CADDR
-	.db @mapIcon17 - CADDR
-	.db @mapIcon18 - CADDR
-	.db @mapIcon19 - CADDR
+	dbrel @mapIcon00
+	dbrel @mapIcon01
+	dbrel @mapIcon02
+	dbrel @mapIcon03
+	dbrel @mapIcon04
+	dbrel @mapIcon05
+	dbrel @mapIcon06
+	dbrel @mapIcon07
+	dbrel @mapIcon08
+	dbrel @mapIcon09
+	dbrel @mapIcon0A
+	dbrel @mapIcon0B
+	dbrel @mapIcon0C
+	dbrel @mapIcon0D
+	dbrel @mapIcon0E
+	dbrel @mapIcon0F
+	dbrel @mapIcon10
+	dbrel @mapIcon11
+	dbrel @mapIcon12
+	dbrel @mapIcon13
+	dbrel @mapIcon14
+	dbrel @mapIcon15
+	dbrel @mapIcon16
+	dbrel @mapIcon17
+	dbrel @mapIcon18
+	dbrel @mapIcon19
 
 .ifdef ROM_AGES
 
@@ -9326,95 +9344,95 @@ mapIconOamTable:
 
 .ifdef ROM_AGES
 
-	; This is a table of tile substitutions to perform on the overworld map in various
-	; situations.
-	mapMenu_tileSubstitutionTable:
-		.db @subst0 - CADDR
-		.db @subst1 - CADDR
-		.db @subst2 - CADDR
-		.db @subst3 - CADDR
-		.db @subst4 - CADDR
-		.db @subst5 - CADDR
-		.db @subst6 - CADDR
+; This is a table of tile substitutions to perform on the overworld map in various
+; situations.
+mapMenu_tileSubstitutionTable:
+	dbrel @subst0
+	dbrel @subst1
+	dbrel @subst2
+	dbrel @subst3
+	dbrel @subst4
+	dbrel @subst5
+	dbrel @subst6
 
-	; Data format:
-	;  b0: Height/width of rectangular area to copy (or $00 to stop)
-	;  w1: Address to write to
-	;  w2: Address to read from (alternate layouts are stored just off-screen)
+; Data format:
+;  b0: Height/width of rectangular area to copy (or $00 to stop)
+;  w1: Address to write to
+;  w2: Address to read from (alternate layouts are stored just off-screen)
 
-	@subst0: ; Animal companion region: dimitri
-		dbww $33 w4TileMap+$068 w4TileMap+$075
-		.db  $00
+@subst0: ; Animal companion region: dimitri
+	dbww $33 w4TileMap+$068 w4TileMap+$075
+	.db  $00
 
-	@subst1: ; Animal companion region: moosh
-		dbww $33 w4TileMap+$068 w4TileMap+$078
-		.db  $00
+@subst1: ; Animal companion region: moosh
+	dbww $33 w4TileMap+$068 w4TileMap+$078
+	.db  $00
 
-	@subst2: ; Ring appraisal screen: L-1 ring box
-		dbww $2d w4TileMap+$207 w4TileMap+$213
-		.db  $00
+@subst2: ; Ring appraisal screen: L-1 ring box
+	dbww $2d w4TileMap+$207 w4TileMap+$213
+	.db  $00
 
-	@subst3: ; Ring appraisal screen: L-2 ring box
-		dbww $2d w4TileMap+$20d w4TileMap+$213
-	@subst4: ; Ring appraisal screen: L-3 ring box
-		.db  $00
+@subst3: ; Ring appraisal screen: L-2 ring box
+	dbww $2d w4TileMap+$20d w4TileMap+$213
+@subst4: ; Ring appraisal screen: L-3 ring box
+	.db  $00
 
-	@subst5: ; Symmetry city: restored to balance
-		dbww $23 w4TileMap+$045 w4TileMap+$07b
-		.db  $00
+@subst5: ; Symmetry city: restored to balance
+	dbww $23 w4TileMap+$045 w4TileMap+$07b
+	.db  $00
 
-	@subst6: ; Talus peaks: water shifted
-		dbww $23 w4TileMap+$0c3 w4TileMap+$0d5
-		.db  $00
+@subst6: ; Talus peaks: water shifted
+	dbww $23 w4TileMap+$0c3 w4TileMap+$0d5
+	.db  $00
 
 .else; ROM_SEASONS
 
-	; This is a table of tile substitutions to perform on the overworld map in various
-	; situations.
-	mapMenu_tileSubstitutionTable:
-		.db @subst0 - CADDR
-		.db @subst1 - CADDR
-		.db @subst2 - CADDR
-		.db @subst3 - CADDR
-		.db @subst4 - CADDR
-		.db @subst5 - CADDR
-		.db @subst6 - CADDR
-		.db @subst7 - CADDR
+; This is a table of tile substitutions to perform on the overworld map in various
+; situations.
+mapMenu_tileSubstitutionTable:
+	dbrel @subst0
+	dbrel @subst1
+	dbrel @subst2
+	dbrel @subst3
+	dbrel @subst4
+	dbrel @subst5
+	dbrel @subst6
+	dbrel @subst7
 
-	; Data format:
-	;  b0: Height/width of rectangular area to copy (or $00 to stop)
-	;  w1: Address to write to
-	;  w2: Address to read from (alternate layouts are stored just off-screen)
+; Data format:
+;  b0: Height/width of rectangular area to copy (or $00 to stop)
+;  w1: Address to write to
+;  w2: Address to read from (alternate layouts are stored just off-screen)
 
-	@subst0: ; Companion region: dimitri
-		dbww $45 w4TileMap+$0a8 w4TileMap+$0b6
-		.db $00
+@subst0: ; Companion region: dimitri
+	dbww $45 w4TileMap+$0a8 w4TileMap+$0b6
+	.db $00
 
-	@subst1: ; Companion region: moosh
-		dbww $45 w4TileMap+$0a8 w4TileMap+$0bb
-		.db $00
+@subst1: ; Companion region: moosh
+	dbww $45 w4TileMap+$0a8 w4TileMap+$0bb
+	.db $00
 
-	@subst2: ; Ring appraisal screen: L-1 ring box
-		dbww $2d w4TileMap+$207 w4TileMap+$213
-		.db $00
+@subst2: ; Ring appraisal screen: L-1 ring box
+	dbww $2d w4TileMap+$207 w4TileMap+$213
+	.db $00
 
-	@subst3: ; Ring appraisal screen: L-2 ring box
-		dbww $2d w4TileMap+$20d w4TileMap+$213
-	@subst4: ; Ring appraisal screen: L-3 ring box
-		.db $00
+@subst3: ; Ring appraisal screen: L-2 ring box
+	dbww $2d w4TileMap+$20d w4TileMap+$213
+@subst4: ; Ring appraisal screen: L-3 ring box
+	.db $00
 
-	@subst5: ; Replace floodgates section with dried version
-		dbww $22 w4TileMap+$0e2 w4TileMap+$0f4
-		.db $00
+@subst5: ; Replace floodgates section with dried version
+	dbww $22 w4TileMap+$0e2 w4TileMap+$0f4
+	.db $00
 
-	@subst6: ; Overworld: replace pirate ship tiles after moving
-		dbww $21 w4TileMap+$1e4 w4TileMap+$1fe
-		dbww $11 w4TileMap+$1f0 w4TileMap+$1ff
-		.db $00
+@subst6: ; Overworld: replace pirate ship tiles after moving
+	dbww $21 w4TileMap+$1e4 w4TileMap+$1fe
+	dbww $11 w4TileMap+$1f0 w4TileMap+$1ff
+	.db $00
 
-	@subst7: ; Subrosia: replace pirate ship tiles after moving
-		dbww $21 w4TileMap+$168 w4TileMap+$178
-		.db $00
+@subst7: ; Subrosia: replace pirate ship tiles after moving
+	dbww $21 w4TileMap+$168 w4TileMap+$178
+	.db $00
 
 .endif; ROM_SEASONS
 

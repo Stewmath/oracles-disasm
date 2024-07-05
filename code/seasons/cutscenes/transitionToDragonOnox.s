@@ -21,12 +21,12 @@ seasonsFunc_0f_6f75:
 	call setScreenShakeCounter
 
 	call getFreeEnemySlot_uncounted
-	ld (hl),ENEMYID_GENERAL_ONOX
+	ld (hl),ENEMY_GENERAL_ONOX
 	inc l
 	ld (hl),$02
 
 	call getFreePartSlot
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	inc l
 	ld (hl),$04
 
@@ -113,7 +113,7 @@ seasonsFunc_0f_6f75:
 @state2:
 	call clearEnemies
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_DRAGON_ONOX
+	ld (hl),ENEMY_DRAGON_ONOX
 	ld hl,$cfca
 	call seasons_func_0f_712a
 	ld hl,$cfcb

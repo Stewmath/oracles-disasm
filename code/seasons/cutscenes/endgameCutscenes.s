@@ -79,7 +79,7 @@ endgameCutsceneHandler_09_stage0_body:
 @state0Func0:
 	call getFreeInteractionSlot
 	jr nz,+
-	ld a,INTERACID_S_DIN
+	ld a,INTERAC_DIN
 	ld (wInteractionIDToLoadExtraGfx),a
 	ldi (hl),a
 	ld (hl),c
@@ -323,7 +323,7 @@ endgameCutsceneHandler_09_stage0_body:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TWINROVA_FLAME
+	ld (hl),INTERAC_TWINROVA_FLAME
 	inc l
 	dec b
 	ld (hl),b
@@ -518,7 +518,7 @@ endgameCutsceneHandler_09_stage0_body:
 	ld c,$40
 	ld a,TREASURE_HEART_REFILL
 	call giveTreasure
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	ld a,SPECIALOBJECT_LINK_CUTSCENE
 	call setLinkIDOverride
 	ld l,<w1Link.subid
 	ld (hl),$07
@@ -568,7 +568,7 @@ endgameCutsceneHandler_09_stage0_body:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TWINROVA_FLAME
+	ld (hl),INTERAC_TWINROVA_FLAME
 	inc l
 	ld a,$05
 	add b
@@ -1073,13 +1073,13 @@ seasonsFunc_03_5d00:
 seasonsFunc_03_5d0b:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	ret
 
 seasonsFunc_03_5d12:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_LEAF
+	ld (hl),INTERAC_MAKU_LEAF
 	inc l
 	ld (hl),$00
 	inc l
@@ -1487,7 +1487,7 @@ endgameCutsceneHandler_0a_stage1:
 	call incCbc2
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CREDITS_TEXT_HORIZONTAL
+	ld (hl),INTERAC_CREDITS_TEXT_HORIZONTAL
 	inc l
 	ld a,($cbb4)
 	sub $04
@@ -1569,7 +1569,7 @@ endgameCutsceneHandler_0a_stage2:
 	call fadeinFromWhite
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL
+	ld (hl),INTERAC_CREDITS_TEXT_VERTICAL
 	ld l,Interaction.yh
 	ld (hl),$e8
 	inc l
@@ -1611,7 +1611,7 @@ endgameCutsceneHandler_0a_stage2:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_INTRO_SPRITES_1
+	ld (hl),INTERAC_INTRO_SPRITES_1
 	inc l
 	ld (hl),$09
 	inc l
@@ -1660,7 +1660,7 @@ endgameCutsceneHandler_0a_stage2:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_cf
+	ld (hl),INTERAC_cf
 	inc l
 	dec b
 	ld (hl),b
@@ -1917,7 +1917,7 @@ endgameCutsceneHandler_0a_stage3:
 	jr nz,+
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_d1
+	ld (hl),INTERAC_GAME_COMPLETE_DIALOG
 	xor a
 	ld ($cfde),a
 +

@@ -59,7 +59,7 @@ flameOfSorrowState1:
 	call func_7bab
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TWINROVA_FLAME
+	ld (hl),INTERAC_TWINROVA_FLAME
 	inc l
 	ld (hl),$01
 +
@@ -83,7 +83,7 @@ flameOfSorrowState1:
 @substate3:
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TWINROVA_FLAME
+	ld (hl),INTERAC_TWINROVA_FLAME
 +
 	ld a,SNDCTRL_STOPMUSIC
 	call playSound
@@ -503,7 +503,7 @@ func_7bd0:
 func_7bd9:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TWINROVA_IN_CUTSCENE
+	ld (hl),INTERAC_TWINROVA_IN_CUTSCENE
 	inc l
 	ld a,(bc)
 	inc bc
@@ -529,7 +529,7 @@ func_7bf6:
 func_7bff:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TWINROVA_3
+	ld (hl),INTERAC_TWINROVA_3
 	inc l
 	ld a,(bc)
 	inc bc
@@ -599,12 +599,12 @@ spawnZeldaKidnappedNPCs:
 
 table_7c4e:
 	; id - subid - var03 - yh - xh
-	.db INTERACID_BOY,              $0f $03 $48 $48
-	.db INTERACID_IMPA_IN_CUTSCENE, $08 $03 $48 $58
-	.db INTERACID_ZELDA,            $09 $02 $38 $50
+	.db INTERAC_BOY,              $0f $03 $48 $48
+	.db INTERAC_IMPA_IN_CUTSCENE, $08 $03 $48 $58
+	.db INTERAC_ZELDA,            $09 $02 $38 $50
 table_7c5d:
-	.db INTERACID_VILLAGER,         $0e $01 $48 $38
-	.db INTERACID_PAST_GUY,         $07 $00 $28 $78
+	.db INTERAC_MALE_VILLAGER,    $0e $01 $48 $38
+	.db INTERAC_PAST_GUY,         $07 $00 $28 $78
 	.db $00
 
 
@@ -613,7 +613,7 @@ func_7c68:
 	call addDoubleIndexToBc
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl)
 	ld l,Part.yh
@@ -634,7 +634,7 @@ func_7c83:
 	call addDoubleIndexToBc
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MISCELLANEOUS_1
+	ld (hl),INTERAC_MISCELLANEOUS_1
 	inc l
 	ld (hl),$16
 	ld l,Interaction.counter1

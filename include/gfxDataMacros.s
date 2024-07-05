@@ -1,5 +1,7 @@
 ; Incbin gfx data, can cross over banks. Pass filename without extension as parameter.
 .macro m_GfxData
+	.assert NARGS == 1
+
 	\1:
 	m_IncbinCrossBankData {"{BUILD_DIR}/gfx/\1.cmp"}, 3
 .endm
@@ -10,6 +12,7 @@
 	.if NARGS == 2
 		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3+(\2)
 	.else
+		.assert NARGS == 1
 		\1: .incbin {"{BUILD_DIR}/gfx/\1.cmp"} SKIP 3
 	.endif
 .endm
@@ -20,12 +23,16 @@
 ;   \1: Index of gfx header
 ;   \2: Name of gfx header, resolves to the index when used in code
 .macro m_GfxHeaderStart
+	.assert NARGS == 2
+
 	.define \2 (\1) EXPORT
 	gfxHeader{%.2x{\1}}:
 .endm
 
 ; Same as above but for a unique gfx header.
 .macro m_UniqueGfxHeaderStart
+	.assert NARGS == 2
+
 	.define \2 (\1) EXPORT
 	uniqueGfxHeader{%.2x{\1}}:
 .endm
@@ -35,16 +42,15 @@
 ; Its actual effect is to ensure the "continue" bit of the previous gfx header entry remains unset,
 ; so it does not attempt to read any data after this.
 ;
-; Optionally, a gfx header can end with a palette header (see constants/paletteHeaders.s). So this
+; Optionally, a gfx header can end with a palette header (see constants/common/paletteHeaders.s). So this
 ; macro takes one optional parameter for that. (Unique GFX headers only?)
 .macro m_GfxHeaderEnd
-	.ifdef CURRENT_GFX_HEADER_INDEX
-		.if NARGS >= 1 ; Set last entry's continue bit
-			.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT, $80
-		.else ; Unset last entry's continue bit
-			.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT, $00
-		.endif
-		.undefine CURRENT_GFX_HEADER_INDEX
+	.assert NARGS == 0 || NARGS == 1
+
+	.if NARGS >= 1 ; Set last entry's continue bit
+		m_ContinueBitHelperSetLast
+	.else ; Unset last entry's continue bit
+		m_ContinueBitHelperUnsetLast
 	.endif
 	.if NARGS >= 1
 		.db $00
@@ -57,24 +63,6 @@
 	GFX_HEADER_MODE_ANIM:	db
 	GFX_HEADER_MODE_FORCE:	db
 .ende
-
-; Helper macro, defines the size/continue byte for gfx headers. The value for the "continue bit" is
-; defined later, either when this is invoked again or when m_GfxHeaderEnd is invoked.
-;
-; As it's using a define with "\@" in its name, which is the number of times the current macro has
-; been called, it's important to not copy/paste this into multiple macros.
-.macro m_GfxHeaderContinueHelper
-	.assert \1 >= 0 && \1 <= $7f
-
-	; Mark "continue" bit on last defined gfx header entry
-	.ifdef CURRENT_GFX_HEADER_INDEX
-		.define GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT $80
-	.endif
-
-	; Define size/continue byte for current gfx header entry
-	.redefine CURRENT_GFX_HEADER_INDEX \@
-	.db (\1) | GFX_HEADER_{CURRENT_GFX_HEADER_INDEX}_CONT
-.endm
 
 ; Helper macro used for defining other macros with slightly varying parameters. See the other macros
 ; (ie. m_GfxHeader) for descriptions.
@@ -132,7 +120,7 @@
 
 	; Byte 6: Size / continue bit
 	.if m_GfxHeaderMode == GFX_HEADER_MODE_NORMAL
-		m_GfxHeaderContinueHelper size_byte
+		m_ContinueBitHelper size_byte, $80
 	.else
 		.db size_byte
 	.endif
@@ -162,6 +150,7 @@
 	.elif NARGS == 3
 		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2,\3
 	.else
+		.assert NARGS == 2
 		m_GfxHeaderHelper GFX_HEADER_MODE_NORMAL,\1,\2
 	.endif
 .endm
@@ -172,6 +161,7 @@
 	.if NARGS == 4
 		m_GfxHeaderHelper GFX_HEADER_MODE_ANIM,\1,\2,\3,\4
 	.else
+		.assert NARGS == 3
 		m_GfxHeaderHelper GFX_HEADER_MODE_ANIM,\1,\2,\3
 	.endif
 .endm
@@ -180,6 +170,7 @@
 ; important, there's just an unusable gfx header in ages that needs the mode override to be able to
 ; define it. Obviously, it doesn't do anything useful.
 .macro m_GfxHeaderForceMode
+	.assert NARGS == 4
 	m_GfxHeaderHelper GFX_HEADER_MODE_FORCE,\1,\2,\3,\4
 .endm
 
@@ -198,8 +189,10 @@
 		dwbe \1
 	.endif
 
+	.assert NARGS == 3
+
 	dwbe \2
-	m_GfxHeaderContinueHelper (\3) - 1
+	m_ContinueBitHelper (\3) - 1, $80
 .endm
 
 ; Define object gfx header entry.
@@ -210,6 +203,8 @@
 ;                  Defaults to 0.
 ;   \3 (optional): Skips into part of the graphics (only works if uncompressed)
 .macro m_ObjectGfxHeader
+	.assert NARGS >= 1 && NARGS <= 3
+
 	.fopen {"{BUILD_DIR}/gfx/\1.cmp"} m_GfxHeaderFile
 	.fread m_GfxHeaderFile mode ; First byte of .cmp file is compression mode
 	.fclose m_GfxHeaderFile
@@ -232,24 +227,15 @@
 	.undefine m_ObjectGfxHeader_Cont
 .endm
 
-; ================================================================================
+; ==================================================================================================
 ; Palette macros. Continue bit handled similarly to gfx header macros above.
-; ================================================================================
+; ==================================================================================================
 
 .macro m_PaletteHeaderStart
+	.assert NARGS == 2
+
 	.define \2 (\1) EXPORT
 	paletteHeader{%.2x{\1}}:
-.endm
-
-.macro m_PaletteHeaderHelper
-	; Mark "continue" bit on last defined gfx header entry
-	.ifdef CURRENT_PALETTE_HEADER_INDEX
-		.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT $80
-	.endif
-
-	; Define size/continue byte for current gfx header entry
-	.redefine CURRENT_PALETTE_HEADER_INDEX \@
-	.db (\1) | PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT
 .endm
 
 ; Macro to define palette headers for the background
@@ -257,7 +243,9 @@
 ; ARG 2: number of palettes to load
 ; ARG 3: address of palette data
 .macro m_PaletteHeaderBg
-	m_PaletteHeaderHelper ((\2)-1) | ((\1)<<3)
+	.assert NARGS == 3
+
+	m_ContinueBitHelper ((\2)-1) | ((\1)<<3), $80
 	.dw \3
 .endm
 
@@ -266,17 +254,13 @@
 ; ARG 2: number of palettes to load
 ; ARG 3: address of palette data
 .macro m_PaletteHeaderSpr
-	m_PaletteHeaderHelper ((\2)-1) | ((\1)<<3) | $40
+	.assert NARGS == 3
+
+	m_ContinueBitHelper ((\2)-1) | ((\1)<<3) | $40, $80
 	.dw \3
 .endm
 
 .macro m_PaletteHeaderEnd
-	.ifdef CURRENT_PALETTE_HEADER_INDEX
-		.if NARGS >= 1 ; Set last entry's continue bit
-			.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT, $80
-		.else ; Unset last entry's continue bit
-			.define PALETTE_HEADER_{CURRENT_PALETTE_HEADER_INDEX}_CONT, $00
-		.endif
-		.undefine CURRENT_PALETTE_HEADER_INDEX
-	.endif
+	.assert NARGS == 0
+	m_ContinueBitHelperUnsetLast
 .endm

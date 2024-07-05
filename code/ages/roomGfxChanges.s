@@ -210,7 +210,7 @@ roomTileChangesAfterLoad06:
 	ret z
 
 	; Check a flag in the room Veran is fought in
-	ld a,(wGroup4Flags+$fc)
+	ld a,(wGroup4RoomFlags+$fc)
 	and $80
 	ret z
 
@@ -254,9 +254,9 @@ drawCrownDungeonOpeningTiles:
 	jp drawRectangleToVramTiles
 
 @tileReplacementTable:
-	.db @tiles0-CADDR
-	.db @tiles1-CADDR
-	.db @tiles2-CADDR
+	dbrel @tiles0
+	dbrel @tiles1
+	dbrel @tiles2
 
 @tiles0:
 	.dw w3VramTiles+$6c

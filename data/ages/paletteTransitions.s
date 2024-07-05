@@ -14,14 +14,14 @@
 
 
 paletteTransitionData:
-	.db paletteTransitionGroup0-CADDR
-	.db paletteTransitionGroup1-CADDR
-	.db paletteTransitionGroup2-CADDR
-	.db paletteTransitionGroup3-CADDR
-	.db paletteTransitionGroup4-CADDR
-	.db paletteTransitionGroup5-CADDR
-	.db paletteTransitionGroup6-CADDR
-	.db paletteTransitionGroup7-CADDR
+	dbrel paletteTransitionGroup0
+	dbrel paletteTransitionGroup1
+	dbrel paletteTransitionGroup2
+	dbrel paletteTransitionGroup3
+	dbrel paletteTransitionGroup4
+	dbrel paletteTransitionGroup5
+	dbrel paletteTransitionGroup6
+	dbrel paletteTransitionGroup7
 
 
 paletteTransitionGroup3:
