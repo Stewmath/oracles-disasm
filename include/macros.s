@@ -749,3 +749,35 @@
 	.db \1, \2
 	.db ((\3)<<4) | (\4)
 .endm
+
+; ==================================================================================================
+; Macro for data/{game}/chestData.s (see there for documentation)
+; ==================================================================================================
+
+.macro m_ChestData
+	.assert NARGS == 3
+
+	.if \1 == $ff
+		; $ff is the "end of data" marker so we can't have that
+		.PRINTT "ERROR: Chest Y/X position can't be $ff!\n"
+		.FAIL
+	.endif
+	.db \1 \2
+	dwbe \3
+.endm
+
+; ==================================================================================================
+; Macro for data/{game}/seedTreeRefillData.s (see there for documentation)
+; ==================================================================================================
+
+.macro m_TreeRefillData
+	.assert NARGS == 2
+
+	.ifdef ROM_AGES
+		.assert \1 >= 0 && \1 <= 0x1ff
+	.else
+		.assert \1 >= 0 && \1 <= 0xff
+	.endif
+
+	.db \1&$ff, \2|(\1>>8)
+.endm
