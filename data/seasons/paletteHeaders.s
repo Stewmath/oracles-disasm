@@ -71,7 +71,7 @@ m_PaletteHeaderStart $0a, PALH_0a
 	m_PaletteHeaderBg  0, 2, paletteData4830
 	m_PaletteHeaderBg  2, 6, standardSpritePaletteData
 	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData
-	m_PaletteHeaderSpr 6, 1, paletteData4830+2, $80 ; CROSSITEMS: for "blank sprites" covering harp
+	m_PaletteHeaderSpr 6, 1, paletteData4830+2 ; CROSSITEMS: for "blank sprites" covering harp
 	m_PaletteHeaderSpr 7, 1, paletteData5e48
 	m_PaletteHeaderEnd
 
