@@ -652,6 +652,9 @@
 ; This only works in Ages. This became necessary when they implemented the automatic warps for
 ; dungeon stairs - they needed to explicitly NOT have default warp values for it to work.
 .macro m_WarpListEndNoDefault
+	.ifndef AGES_ENGINE
+		.fail "m_WarpListEndNoDefault cannot be used in Seasons unless AGES_ENGINE is defined."
+	.endif
 	.db $ff $00 $00 $00
 	m_ContinueBitHelperUnsetLast
 .endm
