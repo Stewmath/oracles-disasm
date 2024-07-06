@@ -1,4 +1,4 @@
- m_section_superfree roomInitialization NAMESPACE roomInitialization
+m_section_superfree roomInitialization NAMESPACE roomInitialization
 
 ; Most functions in this file are called from the "initializeRoom" function in bank
 ; 0 (perhaps indirectly).
@@ -33,7 +33,7 @@ loadRememberedCompanion:
 	ld a,c
 
 .ifdef ROM_AGES
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jr z,@raft
 .endif
 
@@ -67,7 +67,7 @@ loadRememberedCompanion:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_RAFT
+	ld (hl),INTERAC_RAFT
 	inc l
 	ld (hl),$02
 
@@ -115,7 +115,7 @@ checkAndSpawnMaple:
 	or a
 	jr z,+
 .endif
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 +
 	ld hl,maplePresentLocationsTable
 	rst_addDoubleIndex
@@ -186,7 +186,7 @@ updateRosaDateStatus:
 	ld hl,w1ReservedInteraction1.id
 @nextInteraction:
 	ld a,(hl)
-	cp INTERACID_ROSA
+	cp INTERAC_ROSA
 	ret z
 
 	inc h
@@ -196,7 +196,7 @@ updateRosaDateStatus:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_ROSA
+	ld (hl),INTERAC_ROSA
 	inc l
 	ld (hl),$01 ; [subid] = 1
 	ret
@@ -427,7 +427,7 @@ checkPositionValidForEnemySpawn:
 
 @scrollingTransition:
 	ld a,(wActiveGroup)
-	and $04
+	and $04 ; Less than NUM_SMALL_GROUPS
 	ld hl,@smallRoom
 	jr z,+
 	ld hl,@largeRoom
@@ -537,94 +537,7 @@ checkPositionValidForEnemySpawn:
 	ret
 
 
-; This lists the tiles that an enemy can't spawn on (despite being non-solid).
-;   b0: tile index
-;   b1: unused?
-
-.ifdef ROM_AGES
-
-enemyUnspawnableTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-@collisions0:
-@collisions4:
-	.db $f3 $01
-	.db $fd $01
-	.db $e9 $01
-	.db $00
-
-@collisions1:
-@collisions2:
-@collisions5:
-	.db $f3 $01
-	.db $f4 $01
-	.db $f5 $01
-	.db $f6 $01
-	.db $f7 $01
-	.db $fd $01
-	.db $59 $01
-	.db $5a $01
-	.db $5b $01
-	.db $5c $01
-	.db $5d $01
-	.db $5e $01
-	.db $5f $01
-	.db $44 $01
-	.db $45 $01
-	.db $3c $01
-	.db $3d $01
-	.db $3e $01
-	.db $3f $01
-
-@collisions3:
-	.db $00
-
-
-.else; ROM_SEASONS
-
-
-enemyUnspawnableTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-@collisions0:
-@collisions1:
-	.db $f3 $01
-	.db $fd $01
-	.db $00
-@collisions2:
-@collisions3:
-@collisions4:
-	.db $f3 $01
-	.db $f4 $01
-	.db $f5 $01
-	.db $f6 $01
-	.db $f7 $01
-	.db $fd $01
-	.db $d0 $01
-	.db $59 $01
-	.db $5a $01
-	.db $5b $01
-	.db $5c $01
-	.db $5d $01
-	.db $5e $01
-	.db $5f $01
-	.db $44 $01
-	.db $45 $01
-
-@collisions5:
-	.db $00
-
-.endif
+.include {"{GAME_DATA_DIR}/tile_properties/enemyUnspawnableTiles.s"}
 
 
 ;;
@@ -651,7 +564,7 @@ getNextValueFromRandomBuffer:
 ; @param[out]	a	Candidate position for an enemy
 getCandidatePositionForEnemy:
 	ld a,(wActiveGroup)
-	and $04
+	and $04 ; Less than NUM_SMALL_GROUPS
 	jr nz,@dungeon
 
 @overworld:
@@ -747,7 +660,7 @@ checkSpawnTimeportalInteraction:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_TIMEPORTAL
+	ld (hl),INTERAC_TIMEPORTAL
 	ld a,$01
 	ld (wcddd),a
 	ld l,Interaction.yh
@@ -788,16 +701,16 @@ calculateRoomStateModifier:
 	or a
 	jr z,@standard
 
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 	ld (wRoomStateModifier),a
 	ret
 
 ;;
 ; If there are whirlpools or pollution tiles on the screen, this creates a part of type
-; PARTID_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
+; PART_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
 createSeaEffectsPartIfApplicable:
 	ld a,(wActiveCollisions)
-	ld hl,@table
+	ld hl,seaEffectTileTable
 	rst_addAToHl
 	ld a,(hl)
 	rst_addAToHl
@@ -814,31 +727,10 @@ createSeaEffectsPartIfApplicable:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_SEA_EFFECTS
+	ld (hl),PART_SEA_EFFECTS
 	ret
 
-@table:
-	.db @data0-CADDR
-	.db @data1-CADDR
-	.db @data1-CADDR
-	.db @data2-CADDR
-	.db @data0-CADDR
-	.db @data1-CADDR
-
-; Outside, underwater collisions
-@data0:
-	.db $eb ; Pollution tile
-	.db $e9 ; Whirlpool tile
-	.db $00
-
-; Dungeon & Indoor collisions
-@data1:
-	.db $3c $3d $3e $3f ; All whirlpool tiles?
-
-; Sidescrolling collisions
-@data2:
-	.db $00
-
+.include {"{GAME_DATA_DIR}/tile_properties/seaEffectTiles1.s"}
 
 ;;
 func_02_7a3a:
@@ -854,7 +746,7 @@ func_02_7a3a:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_TIMEPORTAL
+	ld (hl),INTERAC_TIMEPORTAL
 	ld a,(wPortalPos)
 	ld l,Interaction.yh
 	jp setShortPosition

@@ -75,7 +75,7 @@
 ; Generates a secret, which can later be displayed in a textbox. Only works for secrets which are
 ; "outgoing" for this game (ie. can't generate a linked seasons secret in ages).
 ;
-; param1:	The index of the secret (see constants/secrets.s or wShortSecretIndex).
+; param1:	The index of the secret (see constants/common/secrets.s or wShortSecretIndex).
 .MACRO generatesecret
 	.ifdef ROM_AGES
 		.IF \1 < $10
@@ -98,7 +98,7 @@
 ; Brings up a text prompt to input a secret. Only works for secrets which are "incoming" for this
 ; game (ie. can't ask for a linked ages secret in ages).
 ;
-; param1:	The index of the secret (see constants/secrets.s or wShortSecretIndex).
+; param1:	The index of the secret (see constants/common/secrets.s or wShortSecretIndex).
 ;		If $ff, it asks for and accepts any valid secret (used with farore).
 .MACRO askforsecret
 	.IF \1 == $ff
@@ -157,7 +157,7 @@
 	.db $8a
 .ENDM
 
-; param1:   Value for Interaction.speed (see constants/objectSpeeds.s)
+; param1:   Value for Interaction.speed (see constants/common/objectSpeeds.s)
 .MACRO setspeed
 	.db $8b, \1
 .ENDM
@@ -433,7 +433,7 @@
 .ENDM
 
 ; Jump to the specified address if the given global flag is set.
-; A list of global flags can be found in "constants/globalFlags.s".
+; A list of global flags can be found in "constants/common/globalFlags.s".
 ;
 ; param1:	The global flag to check
 ; param2[16]:	Destination address to jump to if the flag is set
@@ -443,7 +443,7 @@
 .ENDM
 
 ; Sets the specified global flag.
-; A list of global flags can be found in "constants/globalFlags.s".
+; A list of global flags can be found in "constants/common/globalFlags.s".
 ;
 ; param1:	The global flag to set
 .MACRO setglobalflag
@@ -451,7 +451,7 @@
 .ENDM
 
 ; Unsets the specified global flag.
-; A list of global flags can be found in "constants/globalFlags.s".
+; A list of global flags can be found in "constants/common/globalFlags.s".
 ;
 ; param1:	The global flag to unset
 .MACRO unsetglobalflag
@@ -562,7 +562,7 @@
 ;
 ; param1:	Value to check for the trade item. (For some reason this is subtracted by
 ;               one... but that's adjusted for here, so one can use defines from
-;               "constants/tradeitems.s" just fine.)
+;               "constants/common/tradeitems.s" just fine.)
 ; param2[16]:	Destination to jump to
 .MACRO jumpiftradeitemeq
 	.db $c8, \1+1
@@ -710,7 +710,7 @@
 ; $DC: no command
 
 ; Spawn an item at the interaction's coordinates.
-; param1:	High byte of ID (see constants/treasure.s)
+; param1:	High byte of ID (see constants/common/treasure.s)
 ; param2:	Low byte of ID
 .MACRO spawnitem
 	.db $dd
@@ -734,7 +734,7 @@
 ; Option B (1 parameter) uses the TREASURE_OBJECT constant as defined in
 ; "data/{game}/treasureObjectData.s".
 ;
-; param1:	High byte of ID (see constants/treasure.s)
+; param1:	High byte of ID (see constants/common/treasure.s)
 ; param2:	Low byte of ID
 .MACRO giveitem
 	.db $de
@@ -745,7 +745,7 @@
 	.endif
 .ENDM
 
-; Jump if an item is obtained (see constants/treasure.s).
+; Jump if an item is obtained (see constants/common/treasure.s).
 ; param1:	The item to check
 ; param2[16]:	Where to jump to
 .MACRO jumpifitemobtained
@@ -773,14 +773,14 @@
 	.db $e2
 .ENDM
 
-; Play the sound effect specified (see constants/music.s)
+; Play the sound effect specified (see constants/common/music.s)
 ; param1:	The sound effect to play
 .MACRO playsound
 	.db $e3
 	.db \1
 .ENDM
 
-; Set the music (see constants/music.s)
+; Set the music (see constants/common/music.s)
 ; param1:	The music to play.
 .MACRO setmusic
 	.db $e4
@@ -799,7 +799,7 @@
 .ENDM
 
 ; Spawn an enemy at this interaction's position.
-; param1:	The ID of the enemy to spawn (see constants/enemyTypes.s)
+; param1:	The ID of the enemy to spawn (see constants/common/enemies.s)
 ; param2:	The Subid of the enemy to spawn
 .MACRO spawnenemyhere
 	.db $e6

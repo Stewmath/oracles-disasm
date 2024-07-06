@@ -1,4 +1,4 @@
-; These are a bunch of scripts used by INTERACID_DUNGEON_SCRIPT.
+; These are a bunch of scripts used by INTERAC_DUNGEON_SCRIPT.
 
 dungeonScript_spawnChestOnTriggerBit0:
 	stopifitemflagset
@@ -58,7 +58,7 @@ spiritsGraveScript_spawnMovingPlatform:
 	setcoords $58, $78
 	asm15 objectCreatePuff
 	wait 30
-	spawninteraction INTERACID_MOVING_PLATFORM, $09, $50, $78
+	spawninteraction INTERAC_MOVING_PLATFORM, $09, $50, $78
 	playsound SND_SOLVEPUZZLE
 	scriptend
 
@@ -74,7 +74,7 @@ dungeonScript_minibossDeath:
 	checknoenemies
 	orroomflag $80
 	wait 20
-	spawninteraction INTERACID_MINIBOSS_PORTAL, $00, $00, $00
+	spawninteraction INTERAC_MINIBOSS_PORTAL, $00, $00, $00
 
 
 enableLinkAndMenu:

@@ -487,7 +487,7 @@ tileReplacement_group0Map7f:
 
 ; Floodgate-keeper's house - water outside
 tileReplacement_group0Map62:
-	ld h,>wPastRoomFlags
+	ld h,>wSubrosiaRoomFlags
 	ld l,<ROOM_SEASONS_2b5
 	bit 6,(hl)
 	ret nz
@@ -800,7 +800,7 @@ tileReplacement_group0Mapee:
 
 ; Screen with linked locked doors in Subrosia
 tileReplacement_group1Map35:
-	ld a,(wGroup4Flags|<ROOM_SEASONS_4f9)
+	ld a,(wGroup4RoomFlags|<ROOM_SEASONS_4f9)
 	and $04
 	ret z
 	ld hl,wRoomLayout+$43
@@ -812,7 +812,7 @@ tileReplacement_group0Map56:
 	xor a
 	ld (wSwitchState),a
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	ret z
 
 	call getThisRoomFlags

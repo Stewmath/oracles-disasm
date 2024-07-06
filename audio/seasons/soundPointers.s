@@ -1,5 +1,5 @@
 ; If adding/removing any music, remember to update soundChannelPointers.s, soundChannelData.s, and
-; constants/music.s.
+; constants/common/music.s.
 soundPointers:
 	/* 0x00 */ m_soundPointer musNone
 	/* 0x01 */ m_soundPointer musTitlescreen

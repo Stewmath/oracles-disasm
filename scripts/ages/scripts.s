@@ -1,17 +1,17 @@
 ; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
-; assembly code to get the full picture (run "git grep INTERACID_X" to search for its code).
+; assembly code to get the full picture (run "git grep INTERAC_X" to search for its code).
 
 .include "scripts/common/commonScripts.s"
 
-; ==============================================================================
-; INTERACID_DUNGEON_SCRIPT
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DUNGEON_SCRIPT
+; ==================================================================================================
 .include "scripts/ages/dungeonScripts.s"
 
 
-; ==============================================================================
-; INTERACID_BIPIN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BIPIN
+; ==================================================================================================
 
 ; Running around when baby just born
 bipinScript0:
@@ -69,9 +69,9 @@ bipinScript3:
 .endif
 
 
-; ==============================================================================
-; INTERACID_ADLAR
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ADLAR
+; ==================================================================================================
 adlarScript:
 	initcollisions
 	jumptable_objectbyte Interaction.var38
@@ -106,9 +106,9 @@ adlarScript:
 	scriptjump @queenBackToNormal
 
 
-; ==============================================================================
-; INTERACID_LIBRARIAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_LIBRARIAN
+; ==================================================================================================
 librarianScript:
 	makeabuttonsensitive
 @loop:
@@ -117,9 +117,9 @@ librarianScript:
 	scriptjump @loop
 
 
-; ==============================================================================
-; INTERACID_BLOSSOM
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BLOSSOM
+; ==================================================================================================
 
 ; Blossom asking you to name her child
 blossomScript0:
@@ -487,16 +487,16 @@ blossomScript9:
 
 
 
-; ==============================================================================
-; INTERACID_VERAN_CUTSCENE_FACE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_VERAN_CUTSCENE_FACE
+; ==================================================================================================
 veranFaceCutsceneScript:
 	loadscript scriptHelp.veranFaceCutsceneScript
 
 
-; ==============================================================================
-; INTERACID_OLD_MAN_WITH_RUPEES
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_OLD_MAN_WITH_RUPEES
+; ==================================================================================================
 
 oldManScript_givesRupees:
 	initcollisions
@@ -541,9 +541,9 @@ oldManScript_takesRupees:
 	scriptjump @alreadyTookMoney
 
 
-; ==============================================================================
-; INTERACID_SHOOTING_GALLERY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SHOOTING_GALLERY
+; ==================================================================================================
 
 shootingGalleryScript_humanNpc:
 	setcollisionradii $06, $16
@@ -931,9 +931,9 @@ scriptFunc_doEnergySwirlCutscene:
 	retscript
 
 
-; ==============================================================================
-; INTERACID_IMPA_IN_CUTSCENE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_IMPA_IN_CUTSCENE
+; ==================================================================================================
 
 jumpAndWaitUntilLanded:
 	asm15 scriptHelp.beginJump
@@ -1159,9 +1159,9 @@ impaScript9:
 
 
 
-; ==============================================================================
-; INTERACID_FAKE_OCTOROK
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_FAKE_OCTOROK
+; ==================================================================================================
 impaOctorokScript:
 	scriptend
 
@@ -1190,9 +1190,9 @@ greatFairyOctorokScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_CHILD
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_CHILD
+; ==================================================================================================
 
 ; For a summary of the child's behaviour, see:
 ; http://wiki.zeldahacking.net/oracle/Bipin_and_Blossom's_son
@@ -1724,9 +1724,9 @@ childScript_stage9_singer:
 	scriptjump @loop
 
 
-; ==============================================================================
-; INTERACID_NAYRU
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_NAYRU
+; ==================================================================================================
 
 ; Subid $00: Cutscene at the beginning of game (talking to Link, then gets possessed)
 nayruScript00_part1:
@@ -1976,9 +1976,9 @@ nayruScript13:
 	loadscript scriptHelp.nayruScript13
 
 
-; ==============================================================================
-; INTERACID_RALPH
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_RALPH
+; ==================================================================================================
 
 ; Cutscene where Nayru gets possessed
 ralphSubid00Script:
@@ -2049,7 +2049,7 @@ ralphSubid00Script:
 	; Back away again
 	setanimation $00
 	writeobjectbyte Interaction.var3f, $ff
-	writememory wInteractionIDToLoadExtraGfx, INTERACID_IMPA_IN_CUTSCENE
+	writememory wInteractionIDToLoadExtraGfx, INTERAC_IMPA_IN_CUTSCENE
 	writememory wLoadedTreeGfxIndex, $01
 	setspeed SPEED_020
 	setangle $10
@@ -2460,9 +2460,9 @@ ralphSubid12Script:
 	rungenericnpc TX_2a23
 
 
-; ==============================================================================
-; INTERACID_PAST_GIRL
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PAST_GIRL
+; ==================================================================================================
 
 pastGirlScript_earlyGame:
 	rungenericnpclowindex <TX_1a00
@@ -2486,9 +2486,9 @@ pastGirlScript_gameFinished:
 	rungenericnpclowindex <TX_1a07
 
 
-; ==============================================================================
-; INTERACID_MONKEY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MONKEY
+; ==================================================================================================
 
 ; Listening to Nayru sing at beginning of game
 monkeySubid0Script:
@@ -2575,9 +2575,9 @@ monkeySubid7Script_3:
 	scriptjump @npcLoop
 
 
-; ==============================================================================
-; INTERACID_VILLAGER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MALE_VILLAGER
+; ==================================================================================================
 
 villagerSubid01Script:
 	initcollisions
@@ -2765,9 +2765,9 @@ villagerSubid0dScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_FEMALE_VILLAGER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_FEMALE_VILLAGER
+; ==================================================================================================
 
 ; Cutscene where guy is struck by lightning in intro
 villagerGalSubid00Script:
@@ -2856,9 +2856,9 @@ villagerGalSubid05Script_twinrovaKidnappedZelda:
 	rungenericnpc TX_1518
 
 
-; ==============================================================================
-; INTERACID_BOY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BOY
+; ==================================================================================================
 
 ; Watching Nayru sing in intro
 boySubid00Script:
@@ -3109,9 +3109,9 @@ boySubid0fScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_OLD_LADY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_OLD_LADY
+; ==================================================================================================
 
 ; NPC with a son that is stone for part of the game
 oldLadySubid0Script:
@@ -3143,9 +3143,9 @@ oldLadySubid3Script:
 	scriptjump boyRunAroundHouse
 
 
-; ==============================================================================
-; INTERACID_VERAN_GHOST
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_VERAN_GHOST
+; ==================================================================================================
 
 ghostVeranSubid0Script_part1:
 	loadscript scriptHelp.ghostVeranSubid0Script_part1
@@ -3176,9 +3176,9 @@ ghostVeranSubid1Script:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_BOY_2
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BOY_2
+; ==================================================================================================
 
 boy2Subid0Script:
 	rungenericnpclowindex <TX_2910
@@ -3195,9 +3195,9 @@ boy2Subid2Script:
 	scriptjump boyShakeWithFearThenRun
 
 
-; ==============================================================================
-; INTERACID_SOLDIER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SOLDIER
+; ==================================================================================================
 
 soldierSubid00Script:
 	jumpifglobalflagset $0b, script5df5
@@ -3477,9 +3477,9 @@ soldierSubid0dScript:
 	scriptjump @moveForVar3cFrames
 
 
-; ==============================================================================
-; INTERACID_MISC_MAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MISC_MAN
+; ==================================================================================================
 
 manOutsideD2Script:
 	rungenericnpclowindex <TX_2606
@@ -3503,9 +3503,9 @@ lynnaManScript_postGame:
 	rungenericnpclowindex <TX_2605
 
 
-; ==============================================================================
-; INTERACID_MUSTACHE_MAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MUSTACHE_MAN
+; ==================================================================================================
 mustacheManScript:
 	jumpifglobalflagset GLOBALFLAG_0b, ++
 	rungenericnpclowindex <TX_0f00
@@ -3513,9 +3513,9 @@ mustacheManScript:
 	rungenericnpclowindex <TX_0f01
 
 
-; ==============================================================================
-; INTERACID_PAST_GUY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PAST_GUY
+; ==================================================================================================
 
 ; Guy who wants to find something Ambi desires
 pastGuySubid0Script:
@@ -3554,9 +3554,9 @@ pastGuySubid6Script:
 	rungenericnpclowindex <TX_1712
 
 
-; ==============================================================================
-; INTERACID_MISC_MAN_2
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MISC_MAN_2
+; ==================================================================================================
 
 pastHobo2Script:
 	jumpifglobalflagset GLOBALFLAG_0b, +
@@ -3619,9 +3619,9 @@ pastHoboScript_postGame:
 	rungenericnpc TX_160a
 
 
-; ==============================================================================
-; INTERACID_PAST_OLD_LADY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PAST_OLD_LADY
+; ==================================================================================================
 ;
 ; Lady whose husband was sent to work on black tower
 pastOldLadySubid0Script:
@@ -3640,9 +3640,9 @@ pastOldLadySubid1Script_afterSavedNayru:
 	rungenericnpclowindex <TX_1803
 
 
-; ==============================================================================
-; INTERACID_TOKAY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_TOKAY
+; ==================================================================================================
 
 ; Script for tokay thieves (except for one "main" thief, see below).
 ; Subids $00,$01,$03,$04.
@@ -3904,8 +3904,8 @@ tokayWithDimitri1Script:
 	showtextlowindex <TX_0a23
 	asm15 scriptHelp.tokayDecNumEmberSeeds
 	ormemory w1Companion.var3e, $04
-	spawninteraction INTERACID_TOKAY_CUTSCENE_EMBER_SEED, $00, $48, $18
-	spawninteraction INTERACID_TOKAY_CUTSCENE_EMBER_SEED, $00, $58, $38
+	spawninteraction INTERAC_TOKAY_CUTSCENE_EMBER_SEED, $00, $48, $18
+	spawninteraction INTERAC_TOKAY_CUTSCENE_EMBER_SEED, $00, $58, $38
 	wait 30
 
 	showtextlowindex <TX_0a24
@@ -3987,7 +3987,7 @@ tokayAtSeedlingPlotScript:
 
 	asm15 scriptHelp.tokayFlipDirection
 	asm15 scriptHelp.tokayPlantScentSeedling
-	spawninteraction INTERACID_DECORATION, $04, $38, $48
+	spawninteraction INTERAC_DECORATION, $04, $38, $48
 	playsound SND_GETSEED
 	wait 120
 
@@ -4136,9 +4136,9 @@ tokayExplainingVinesScript:
 	loadscript scriptHelp.tokayExplainingVinesScript
 
 
-; ==============================================================================
-; INTERACID_FOREST_FAIRY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_FOREST_FAIRY
+; ==================================================================================================
 
 ; NPC for first fairy on "main" forest screen, after being found
 forestFairyScript_firstDiscovered:
@@ -4212,9 +4212,9 @@ forestFairyScript_heartContainerSecret:
 	scriptjump @npcLoop
 
 
-; ==============================================================================
-; INTERACID_RABBIT
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_RABBIT
+; ==================================================================================================
 
 ; Subid 0: Listening to Nayru at the start of the game
 rabbitScript_listeningToNayruGameStart:
@@ -4243,9 +4243,9 @@ rabbitScript_waitingForNayru2:
 	rungenericnpc TX_5718
 
 
-; ==============================================================================
-; INTERACID_BIRD
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BIRD
+; ==================================================================================================
 
 ; Subid 0: Listening to Nayru at the start of the game
 birdScript_listeningToNayruGameStart:
@@ -4303,9 +4303,9 @@ birdScript_zeldaKidnapped:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_AMBI
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_AMBI
+; ==================================================================================================
 
 ; Cutscene where you give mystery seeds to Ambi
 ambiSubid00Script:
@@ -4465,7 +4465,7 @@ ambiSubid05Script:
 ambiSubid06Script:
 	disableinput
 	checkcfc0bit 0
-	spawnenemyhere ENEMYID_VERAN_POSSESSION_BOSS, $01
+	spawnenemyhere ENEMY_VERAN_POSSESSION_BOSS, $01
 	wait 1
 	enableinput
 	scriptend
@@ -4480,7 +4480,7 @@ ambiSubid07Script:
 	writememory wLinkForceState, LINK_STATE_AMBI_UNPOSSESSED_CUTSCENE
 	setspeed SPEED_180
 	movedown $3c
-	spawninteraction INTERACID_GHOST_VERAN, $02, $00, $28
+	spawninteraction INTERAC_GHOST_VERAN, $02, $00, $28
 	scriptend
 
 
@@ -4501,9 +4501,9 @@ ambiSubid0aScript:
 	rungenericnpc TX_131a
 
 
-; ==============================================================================
-; INTERACID_SUBROSIAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SUBROSIAN
+; ==================================================================================================
 
 subrosianInVillageScript_afterGotMakuSeed:
 	rungenericnpclowindex <TX_1c05
@@ -4524,9 +4524,9 @@ subrosianAtGoronDanceScript_redNpc:
 	rungenericnpclowindex <TX_1c15
 
 
-; ==============================================================================
-; INTERACID_IMPA_NPC
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_IMPA_NPC
+; ==================================================================================================
 impaNpcScript_lookingAtPassage:
 	initcollisions
 @npcLoop:
@@ -4537,16 +4537,16 @@ impaNpcScript_lookingAtPassage:
 	setanimation $00
 	scriptjump @npcLoop
 
-; ==============================================================================
-; INTERACID_DUMBBELL_MAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DUMBBELL_MAN
+; ==================================================================================================
 dumbbellManScript:
 	loadscript scriptHelp.dumbbellManScript
 
 
-; ==============================================================================
-; INTERACID_OLD_MAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_OLD_MAN
+; ==================================================================================================
 oldManScript_givesShieldUpgrade:
 	loadscript scriptHelp.oldManScript_givesShieldUpgrade
 
@@ -4566,16 +4566,16 @@ oldManScript_generic:
 	scriptjump @npcLoop
 
 
-; ==============================================================================
-; INTERACID_MAMAMU_YAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MAMAMU_YAN
+; ==================================================================================================
 mamamuYanScript:
 	loadscript scriptHelp.mamamuYanScript
 
 
-; ==============================================================================
-; INTERACID_MAMAMU_DOG
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MAMAMU_DOG
+; ==================================================================================================
 dogInMamamusHouseScript:
 	asm15 scriptHelp.mamamuDog_setCounterRandomly
 @loop:
@@ -4593,16 +4593,16 @@ dogInMamamusHouseScript:
 	scriptjump dogInMamamusHouseScript
 
 
-; ==============================================================================
-; INTERACID_POSTMAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_POSTMAN
+; ==================================================================================================
 postmanScript:
 	loadscript scriptHelp.postmanScript
 
 
-; ==============================================================================
-; INTERACID_PICKAXE_WORKER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PICKAXE_WORKER
+; ==================================================================================================
 
 ; Worker below Maku Tree screen in past
 pickaxeWorkerSubid00Script:
@@ -4719,9 +4719,9 @@ pickaxeWorkerSubid03Script:
 	scriptjump @npcLoop
 
 
-; ==============================================================================
-; INTERACID_HARDHAT_WORKER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_HARDHAT_WORKER
+; ==================================================================================================
 
 ; NPC who gives you the shovel. If var03 is nonzero, he's just a generic guy.
 hardhatWorkerSubid00Script:
@@ -4808,23 +4808,23 @@ hardhatWorkerFunc_patrol:
 	scriptjump hardhatWorkerFunc_patrol
 
 
-; ==============================================================================
-; INTERACID_POE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_POE
+; ==================================================================================================
 poeScript:
 	loadscript scriptHelp.poeScript
 
 
-; ==============================================================================
-; INTERACID_OLD_ZORA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_OLD_ZORA
+; ==================================================================================================
 oldZoraScript:
 	loadscript scriptHelp.oldZoraScript
 
 
-; ==============================================================================
-; INTERACID_TOILET_HAND
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_TOILET_HAND
+; ==================================================================================================
 toiletHandScript:
 	asm15 objectSetInvisible
 	initcollisions
@@ -4983,16 +4983,16 @@ toiletHandScript_reactToObjectInHole:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_MASK_SALESMAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MASK_SALESMAN
+; ==================================================================================================
 maskSalesmanScript:
 	loadscript scriptHelp.maskSalesmanScript
 
 
-; ==============================================================================
-; INTERACID_BEAR
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BEAR
+; ==================================================================================================
 
 ; Bear listening to Nayru at start of game.
 bearSubid00Script_part1:
@@ -5043,14 +5043,14 @@ bearSubid02Script:
 	scriptjump @npcLoop
 
 
-; ==============================================================================
-; INTERACID_SYRUP
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SYRUP
+; ==================================================================================================
 
 syrupScript_spawnShopItems:
-	spawninteraction INTERACID_SHOP_ITEM, $0b, $28, $44
-	spawninteraction INTERACID_SHOP_ITEM, $07, $28, $4c
-	spawninteraction INTERACID_SHOP_ITEM, $08, $28, $74
+	spawninteraction INTERAC_SHOP_ITEM, $0b, $28, $44
+	spawninteraction INTERAC_SHOP_ITEM, $07, $28, $4c
+	spawninteraction INTERAC_SHOP_ITEM, $08, $28, $74
 	scriptend
 
 syrupScript_showWelcomeText:
@@ -5142,16 +5142,16 @@ syrupScript_purchaseItem:
 .endif
 
 
-; ==============================================================================
-; INTERACID_COMEDIAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_COMEDIAN
+; ==================================================================================================
 comedianScript:
 	loadscript scriptHelp.comedianScript
 
 
-; ==============================================================================
-; INTERACID_GORON
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_GORON
+; ==================================================================================================
 
 ; Graceful goron.
 goron_subid00Script:
@@ -5869,7 +5869,7 @@ goron_subid06Script_B:
 @screenFullyWhite:
 	wait 30
 	writememory wTmpcfc0.genericCutscene.cfde, $00
-	spawninteraction INTERACID_GORON_ELDER, $00, $50, $38
+	spawninteraction INTERAC_GORON_ELDER, $00, $50, $38
 	writememory wTmpcfc0.genericCutscene.state, $01
 	asm15 scriptHelp.goron_faceDown
 	asm15 scriptHelp.goron_clearRockBarrier
@@ -5897,7 +5897,7 @@ goron_subid06Script_B:
 
 
 @alreadySavedElder:
-	spawninteraction INTERACID_GORON_ELDER, $00, $50, $38
+	spawninteraction INTERAC_GORON_ELDER, $00, $50, $38
 @savedElderLoop:
 	checkabutton
 	showtext TX_2481
@@ -6081,7 +6081,7 @@ goron_subid09Script_A:
 	asm15 scriptHelp.goron_targetCarts_setLinkPositionToCartPlatform
 	asm15 scriptHelp.goron_targetCarts_configureInventory
 
-	spawninteraction INTERACID_MINECART, $00, $78, $38
+	spawninteraction INTERAC_MINECART, $00, $78, $38
 	wait 20
 
 	asm15 scriptHelp.goron_targetCarts_loadCrystals
@@ -6590,9 +6590,9 @@ goron_subid10Script:
 .endif
 
 
-; ==============================================================================
-; INTERACID_ROSA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ROSA
+; ==================================================================================================
 
 ; Gives you the shovel on tokay island, linked only
 rosa_subid00Script:
@@ -6641,9 +6641,9 @@ rosa_subid01Script:
 	rungenericnpclowindex <TX_1c13
 
 
-; ==============================================================================
-; INTERACID_RAFTON
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_RAFTON
+; ==================================================================================================
 
 ; Rafton in left part of house
 rafton_subid00Script:
@@ -6747,9 +6747,9 @@ rafton_subid01Script:
 	loadscript scriptHelp.rafton_subid01Script
 
 
-; ==============================================================================
-; INTERACID_CHEVAL
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_CHEVAL
+; ==================================================================================================
 cheval_subid00Script:
 	initcollisions
 	setcollisionradii $0c, $06
@@ -6768,9 +6768,9 @@ cheval_subid00Script:
 	scriptjump @gotChevalRope
 
 
-; ==============================================================================
-; INTERACID_MISCELLANEOUS_1
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MISCELLANEOUS_1
+; ==================================================================================================
 
 ; Unused?
 script71a3:
@@ -6791,7 +6791,7 @@ interaction6b_subid02Script:
 	asm15 scriptHelp.setLinkToState08
 	wait 40
 
-	spawninteraction INTERACID_RALPH, $01, $50, $b0
+	spawninteraction INTERAC_RALPH, $01, $50, $b0
 	checkmemoryeq wTmpcfc0.genericCutscene.state, $01
 	wait 40
 
@@ -6923,9 +6923,9 @@ interaction6b_subid10Script:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_FAIRY_HIDING_MINIGAME
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_FAIRY_HIDING_MINIGAME
+; ==================================================================================================
 fairyHidingMinigame_subid00Script:
 	loadscript scriptHelp.fairyHidingMinigame_subid00Script
 
@@ -6936,9 +6936,9 @@ fairyHidingMinigame_subid02Script:
 	loadscript scriptHelp.fairyHidingMinigame_subid02Script
 
 
-; ==============================================================================
-; INTERACID_POSSESSED_NAYRU
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_POSSESSED_NAYRU
+; ==================================================================================================
 possessedNayru_beginFightScript:
 	asm15 scriptHelp.possessedNayru_makeExclamationMark
 	wait 30
@@ -6974,14 +6974,14 @@ possessedNayru_veranGhostScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_NAYRU_SAVED_CUTSCENE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_NAYRU_SAVED_CUTSCENE
+; ==================================================================================================
 
 ; Nayru waking up after being freed from possession
 interaction6e_subid00Script:
 	wait 30
-	spawninteraction INTERACID_NAYRU_SAVED_CUTSCENE, $01, $b0, $78
+	spawninteraction INTERAC_NAYRU_SAVED_CUTSCENE, $01, $b0, $78
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
 	wait 30
 
@@ -7027,7 +7027,7 @@ interaction6e_subid01Script_part1:
 
 	showtext TX_1309
 	writememory   wTmpcfc0.genericCutscene.cfd0, $02
-	spawninteraction INTERACID_NAYRU_SAVED_CUTSCENE, $02, $00, $34 ; Spawn ghost veran
+	spawninteraction INTERAC_NAYRU_SAVED_CUTSCENE, $02, $00, $34 ; Spawn ghost veran
 	scriptend
 
 
@@ -7051,7 +7051,7 @@ interaction6e_subid01Script_part2:
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $08
 	wait 30
 
-	spawninteraction INTERACID_NAYRU_SAVED_CUTSCENE, $03, $b0, $78 ; Spawn ralph
+	spawninteraction INTERAC_NAYRU_SAVED_CUTSCENE, $03, $b0, $78 ; Spawn ralph
 
 	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $03
 	setanimation $06
@@ -7193,9 +7193,9 @@ interaction6e_guard5Script:
 	scriptjump interaction6e_guardCommon
 
 
-; ==============================================================================
-; INTERACID_COMPANION_SCRIPTS
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_COMPANION_SCRIPTS
+; ==================================================================================================
 
 ; Moosh script while being attacked by ghosts
 companionScript_subid00Script:
@@ -7236,7 +7236,7 @@ companionScript_subid00Script:
 	wait 60
 
 	jumpifmemoryeq wIsLinkedGame, $00, @meetingMooshFirstTime
-	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECTID_MOOSH, @meetingMooshAgain
+	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECT_MOOSH, @meetingMooshAgain
 	scriptjump @meetingMooshFirstTime
 
 @meetingMooshAgain:
@@ -7304,9 +7304,9 @@ companionScript_subid0bScript:
 	loadscript scriptHelp.companionScript_subid0bScript_body
 
 
-; ==============================================================================
-; INTERACID_KING_MOBLIN_DEFEATED
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_KING_MOBLIN_DEFEATED
+; ==================================================================================================
 
 ; Subid 0: King moblin / "parent" for other subids
 kingMoblinDefeated_kingScript:
@@ -7384,9 +7384,9 @@ kingMoblinDefeated_goron3:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_GHINI_HARASSING_MOOSH
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_GHINI_HARASSING_MOOSH
+; ==================================================================================================
 
 ghiniHarassingMoosh_subid00Script:
 	setdisabledobjectsto11
@@ -7405,7 +7405,7 @@ ghiniHarassingMoosh_subid00Script:
 	scriptjump @waitUntilCutsceneDone
 ++
 	enableallobjects
-	spawnenemyhere ENEMYID_GHINI, $00
+	spawnenemyhere ENEMY_GHINI, $00
 	scriptend
 
 
@@ -7437,7 +7437,7 @@ ghiniHarassingMoosh_subid01Script:
 	playsound SND_DING
 	setmusic MUS_MINIBOSS
 	ormemory w1Companion.var3e, $10
-	spawnenemyhere ENEMYID_GHINI, $00
+	spawnenemyhere ENEMY_GHINI, $00
 	scriptend
 
 
@@ -7457,13 +7457,13 @@ ghiniHarassingMoosh_subid02Script:
 	jumpifmemoryset w1Companion.var3e, $10, ++
 	scriptjump @wait
 ++
-	spawnenemyhere ENEMYID_GHINI, $00
+	spawnenemyhere ENEMY_GHINI, $00
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_TOKAY_SHOP_ITEM
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_TOKAY_SHOP_ITEM
+; ==================================================================================================
 tokayShopItemScript:
 	enableinput
 	wait 1
@@ -7621,16 +7621,16 @@ tokayShopItemScript:
 	scriptjump tokayShopItemScript
 
 
-; ==============================================================================
-; INTERACID_BOMB_UPGRADE_FAIRY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BOMB_UPGRADE_FAIRY
+; ==================================================================================================
 bombUpgradeFairyScript:
 	loadscript scriptHelp.bombUpgradeFairyScript_body
 
 
-; ==============================================================================
-; INTERACID_MAKU_TREE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MAKU_TREE
+; ==================================================================================================
 
 makuTree_subid00Script:
 	loadscript scriptHelp.makuTree_subid00Script_body
@@ -7737,9 +7737,9 @@ makuTree_subid06Script_part3:
 	rungenericnpclowindex <TX_0560
 
 
-; ==============================================================================
-; INTERACID_MAKU_SPROUT
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MAKU_SPROUT
+; ==================================================================================================
 
 makuSprout_subid00Script:
 	loadscript scriptHelp.makuSprout_subid00Script_body
@@ -7750,7 +7750,7 @@ makuSprout_subid01Script:
 	jumpifglobalflagset GLOBALFLAG_MAKU_TREE_SAVED, @alreadySaved
 
 	; Maku tree not saved yet. Spawn the moblins attacking her
-	spawninteraction INTERACID_MISCELLANEOUS_1, $04, $40, $50
+	spawninteraction INTERAC_MISCELLANEOUS_1, $04, $40, $50
 	setanimation $02
 	setcollisionradii $08, $08
 	checkmemoryeq wTmpcfc0.genericCutscene.state, $09
@@ -7783,9 +7783,9 @@ makuSprout_subid01Script:
 	scriptjump @npcLoop
 
 
-; ==============================================================================
-; INTERACID_REMOTE_MAKU_CUTSCENE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_REMOTE_MAKU_CUTSCENE
+; ==================================================================================================
 remoteMakuCutsceneScript:
 	disableinput
 	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
@@ -7800,12 +7800,12 @@ remoteMakuCutsceneScript:
 	jumpifobjectbyteeq Interaction.subid, $01, @past
 
 @present:
-	spawninteraction INTERACID_MAKU_CONFETTI, $00, $00, $00
+	spawninteraction INTERAC_MAKU_CONFETTI, $00, $00, $00
 	wait 240
 	wait 180
 	scriptjump ++
 @past:
-	spawninteraction INTERACID_MAKU_CONFETTI, $01, $00, $00
+	spawninteraction INTERAC_MAKU_CONFETTI, $01, $00, $00
 	wait 240
 	wait 60
 ++
@@ -7825,13 +7825,13 @@ remoteMakuCutsceneScript:
 	scriptend
 
 @spawnGoronAfterCrownDungeon:
-	spawninteraction INTERACID_GORON, $03, $58, $a8
+	spawninteraction INTERAC_GORON, $03, $58, $a8
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_GORON_ELDER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_GORON_ELDER
+; ==================================================================================================
 goronElderScript_subid00:
 	loadscript scriptHelp.goronElderScript_subid00_body
 
@@ -7839,9 +7839,9 @@ goronElderScript_subid01:
 	loadscript scriptHelp.goronElderScript_subid01_body
 
 
-; ==============================================================================
-; INTERACID_CLOAKED_TWINROVA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_CLOAKED_TWINROVA
+; ==================================================================================================
 cloakedTwinrova_subid00Script:
 	loadscript scriptHelp.cloakedTwinrova_subid00Script_body
 
@@ -7849,9 +7849,9 @@ cloakedTwinrova_subid02Script:
 	loadscript scriptHelp.cloakedTwinrova_subid02Script_body
 
 
-; ==============================================================================
-; INTERACID_MISC_PUZZLES
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MISC_PUZZLES
+; ==================================================================================================
 
 ; Subid $11
 miscPuzzles_crownDungeonOpeningScript:
@@ -7895,9 +7895,9 @@ miscPuzzles_eyeglassLibraryOpeningScript:
 	scriptjump miscPuzzles_justOpenedKeyDoor
 
 
-; ==============================================================================
-; INTERACID_TWINROVA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_TWINROVA
+; ==================================================================================================
 twinrova_subid00Script:
 	loadscript scriptHelp.twinrova_subid00Script_body
 
@@ -7911,9 +7911,9 @@ twinrova_subid06Script:
 	loadscript scriptHelp.twinrova_subid06Script_body
 
 
-; ==============================================================================
-; INTERACID_PATCH
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PATCH
+; ==================================================================================================
 
 patch_upstairsRepairTuniNutScript:
 	loadscript scriptHelp.patch_upstairsRepairTuniNutScript
@@ -8027,9 +8027,9 @@ patch_downstairsAfterBeatingMinigameScript:
 	scriptjump @npcLoop
 
 
-; ==============================================================================
-; INTERACID_MOBLIN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MOBLIN
+; ==================================================================================================
 
 moblin_subid00Script:
 	setanimation DIR_LEFT
@@ -8076,9 +8076,9 @@ moblin_subid01Script:
 	scriptjump moblin_jumpUntilLinkApproaches
 
 
-; ==============================================================================
-; INTERACID_CARPENTER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_CARPENTER
+; ==================================================================================================
 
 carpenter_subid00Script:
 	loadscript scriptHelp.carpenter_subid00Script_body
@@ -8314,16 +8314,16 @@ carpenter_talkedWhileWithBoss:
 
 
 
-; ==============================================================================
-; INTERACID_RAFTWRECK_CUTSCENE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_RAFTWRECK_CUTSCENE
+; ==================================================================================================
 raftwreckCutsceneScript:
 	loadscript scriptHelp.raftwreckCutsceneScript_body
 
 
-; ==============================================================================
-; INTERACID_KING_ZORA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_KING_ZORA
+; ==================================================================================================
 
 kingZoraScript_present_firstTime:
 	checkabutton
@@ -8441,7 +8441,7 @@ kingZoraScript_past_havePotion:
 
 	disableinput
 	wait 8
-	spawninteraction INTERACID_KING_ZORA, $02, $34, $78
+	spawninteraction INTERAC_KING_ZORA, $02, $34, $78
 	asm15 loseTreasure, TREASURE_POTION
 	asm15 playSound, SND_NONE
 	wait 30
@@ -8476,9 +8476,9 @@ kingZoraScript_past_afterD7:
 
 
 
-; ==============================================================================
-; INTERACID_TOKKEY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_TOKKEY
+; ==================================================================================================
 tokkeyScript:
 	initcollisions
 	setcollisionradii $14, $06
@@ -8535,9 +8535,9 @@ tokkeyScriptFunc_hopAcrossDesk:
 	retscript
 
 
-; ==============================================================================
-; INTERACID_DIN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DIN
+; ==================================================================================================
 ; Unused? (Identical to "zeldaSubid00Script")
 dinScript:
 	setanimation $05
@@ -8553,9 +8553,9 @@ dinScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_ZORA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ZORA
+; ==================================================================================================
 
 zoraSubid0cScript:
 	wait 60
@@ -8669,9 +8669,9 @@ zoraSubid11And12Script:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_ZELDA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ZELDA
+; ==================================================================================================
 
 ; In room of rites, waiting to be rescued by talking to her
 zeldaSubid00Script:
@@ -8792,15 +8792,15 @@ zeldaSubid09Script:
 
 
 ; ==============================================================================$08
-; INTERACID_TWINROVA_IN_CUTSCENE
+; INTERAC_TWINROVA_IN_CUTSCENE
 ; ==============================================================================$08
 twinrovaInCutsceneScript:
 	loadscript scriptHelp.twinrovaInCutsceneScript_body
 
 
-; ==============================================================================
-; INTERACID_BOOK_OF_SEALS_PODIUM
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BOOK_OF_SEALS_PODIUM
+; ==================================================================================================
 bookOfSealsPodiumScript:
 	checkabutton
 	jumpifitemobtained TREASURE_BOOK_OF_SEALS, @askToPlaceBook
@@ -8814,9 +8814,9 @@ bookOfSealsPodiumScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_VIRE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_VIRE
+; ==================================================================================================
 
 ; Vire at black tower entrance
 vireSubid0Script:
@@ -8853,10 +8853,10 @@ vireSubid2Script:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_HORON_DOG
-; ==============================================================================
-horonDogScript:
+; ==================================================================================================
+; INTERAC_HORON_DOG_CREDITS
+; ==================================================================================================
+horonDogCreditsScript:
 	setspeed SPEED_080
 	wait 180
 @loop:
@@ -8869,9 +8869,9 @@ horonDogScript:
 	scriptjump @loop
 
 
-; ==============================================================================
-; INTERACID_CHILD_JABU
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_CHILD_JABU
+; ==================================================================================================
 childJabuScript:
 	rungenericnpc TX_5711
 
@@ -8880,9 +8880,9 @@ script7d8e:
 	scriptjump childJabuScript
 
 
-; ==============================================================================
-; INTERACID_HUMAN_VERAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_HUMAN_VERAN
+; ==================================================================================================
 humanVeranScript:
 	wait 240
 	setanimation $01
@@ -8896,9 +8896,9 @@ humanVeranScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_SYMMETRY_NPC
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SYMMETRY_NPC
+; ==================================================================================================
 
 symmetryNpcSubid0And1Script:
 	rungenericnpclowindex <TX_2d0c
@@ -8933,16 +8933,16 @@ symmetryNpcSubidCScript:
 	rungenericnpclowindex <TX_2d2c
 
 
-; ==============================================================================
-; INTERACID_PIRATE_CAPTAIN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PIRATE_CAPTAIN
+; ==================================================================================================
 pirateCaptainScript:
 	loadscript scriptHelp.pirateCaptainScript
 
 
-; ==============================================================================
-; INTERACID_PIRATE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PIRATE
+; ==================================================================================================
 pirateSubid0Script:
 	rungenericnpc TX_3608
 pirateSubid1Script:
@@ -8964,7 +8964,7 @@ pirateSubid4Script:
 
 pirateSubid4Script_insertEyeball:
 	orroomflag ROOMFLAG_80
-	spawninteraction INTERACID_DECORATION, $06, $52, $6a
+	spawninteraction INTERAC_DECORATION, $06, $52, $6a
 	playsound SND_OPENCHEST
 	wait 60
 	playsound SND_OPENING
@@ -8980,9 +8980,9 @@ pirateSubid4Script_insertEyeball:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_TINGLE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_TINGLE
+; ==================================================================================================
 tingleScript:
 .ifndef REGION_JP
 	enableinput
@@ -9139,18 +9139,18 @@ tingleScript:
 	retscript
 
 
-; ==============================================================================
-; INTERACID_SYRUP_CUCCO
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SYRUP_CUCCO
+; ==================================================================================================
 syrupCuccoScript_awaitingMushroomText:
 syrupCuccoScript_triedToSteal:
 	showtext TX_0d09
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_TROY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_TROY
+; ==================================================================================================
 
 troySubid0Script:
 	loadscript scriptHelp.troySubid0Script
@@ -9159,7 +9159,7 @@ troySubid1Script:
 	loadscript scriptHelp.troySubid1Script
 
 
-; ==============================================================================
+; ==================================================================================================
 
 ; Used by linked game NPCs that give secrets.
 ; The npcs set "var3f" to the "secret index" (corresponds to wShortSecretIndex) before
@@ -9215,16 +9215,16 @@ linkedGameNpcScript:
 	scriptjump @answeredYes
 
 
-; ==============================================================================
-; INTERACID_PLEN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PLEN
+; ==================================================================================================
 plenSubid0Script:
 	loadscript scriptHelp.plenSubid0Script
 
 
-; ==============================================================================
-; INTERACID_GREAT_FAIRY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_GREAT_FAIRY
+; ==================================================================================================
 greatFairySubid0Script:
 	asm15 scriptHelp.linkedNpc_checkShouldSpawn
 	jumpifmemoryset wcddb, $80, stubScript
@@ -9247,9 +9247,9 @@ greatFairySubid0Script:
 	scriptjump linkedGameNpcScript
 
 
-; ==============================================================================
-; INTERACID_SLATE_SLOT
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SLATE_SLOT
+; ==================================================================================================
 slateSlotScript:
 	rungenericnpc TX_5111
 
@@ -9259,9 +9259,9 @@ slateSlotScript_placeSlate:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_MISCELLANEOUS_2
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MISCELLANEOUS_2
+; ==================================================================================================
 
 ; Graveyard gate opening cutscene
 interactiondcSubid01Script:
@@ -9278,9 +9278,9 @@ interactiondcSubid01Script:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_KNOW_IT_ALL_BIRD
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_KNOW_IT_ALL_BIRD
+; ==================================================================================================
 knowItAllBirdScript:
 	setcollisionradii $08, $08
 	makeabuttonsensitive

@@ -177,7 +177,7 @@ cutsceneHandler_0b_stage3:
 	call seasonsFunc_03_6d8b
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_S_MISC_PUZZLES
+	ld (hl),INTERAC_MISCELLANEOUS_2
 	inc l
 	ld (hl),$0e
 +
@@ -285,7 +285,7 @@ seasonsFunc_03_6db1:
 	ld (hl),a
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_VOLCANO_ROCK
+	ld (hl),PART_VOLCANO_ROCK
 	inc l
 	ld (hl),$01
 	ld l,Part.yh
@@ -303,7 +303,7 @@ seasonsFunc_03_6dcb:
 	ld (hl),a
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_VOLCANO_ROCK
+	ld (hl),PART_VOLCANO_ROCK
 	inc l
 	ld (hl),$02
 	ret

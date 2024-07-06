@@ -208,7 +208,7 @@ seasonsFunc_03_74b6:
 	ld e,l
 	call getFreePartSlot
 	jr nz,+
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	ld l,Part.subid
 	inc (hl)
 	inc l
@@ -343,7 +343,7 @@ cutscene06Func8:
 	ret z
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_DIN_DANCING_EVENT
+	ld (hl),INTERAC_DIN_DANCING_EVENT
 	inc l
 	ld (hl),$07
 +
@@ -496,13 +496,13 @@ cutsceneDinImprisoned:
 	call loadAnimationData
 	call getFreeInteractionSlot
 	jr nz,+
-	ld a,INTERACID_DIN_IMPRISONED_EVENT
+	ld a,INTERAC_DIN_IMPRISONED_EVENT
 	ldi (hl),a
 	ld (hl),$00
 	ld ($cc1d),a
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_DIN_IMPRISONED_EVENT
+	ld (hl),INTERAC_DIN_IMPRISONED_EVENT
 	inc l
 	ld (hl),$01
 +
@@ -524,7 +524,7 @@ cutsceneDinImprisoned:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_DIN_IMPRISONED_EVENT
+	ld (hl),INTERAC_DIN_IMPRISONED_EVENT
 	inc l
 	ld (hl),$02
 	inc l
@@ -651,7 +651,7 @@ cutscene08Func0:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_77
+	ld (hl),INTERAC_77
 	inc l
 	dec b
 	ld (hl),b
@@ -694,7 +694,7 @@ cutscene08Func1:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TEMPLE_SINKING_EXPLOSION
+	ld (hl),INTERAC_TEMPLE_SINKING_EXPLOSION
 	inc l
 	dec b
 	ld a,b
@@ -1082,7 +1082,7 @@ seasonsFunc_03_7aa9:
 	pop de
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_88
+	ld (hl),INTERAC_88
 	inc l
 	ld (hl),e
 +
@@ -1139,7 +1139,7 @@ cutscene0dFunc0:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TWINROVA_FLAME
+	ld (hl),INTERAC_TWINROVA_FLAME
 	inc l
 	ld (hl),b
 	dec b
@@ -1291,7 +1291,7 @@ cutscene0eFunc2:
 	call disableLcd
 	call getFreeInteractionSlot
 	jr nz,+
-	ld a,INTERACID_S_DIN
+	ld a,INTERAC_DIN
 	ld ($cc1d),a
 	ldi (hl),a
 	ld (hl),$06
@@ -1378,7 +1378,7 @@ cutscene0eFunc6:
 	ret nz
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_DIN_IMPRISONED_EVENT
+	ld (hl),INTERAC_DIN_IMPRISONED_EVENT
 	inc l
 	ld (hl),$05
 +

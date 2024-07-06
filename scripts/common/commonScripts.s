@@ -1,5 +1,5 @@
 ; Scripts for interactions are in this file. You may want to cross-reference with the corresponding
-; assembly code to get the full picture (run "git grep INTERACID_X" to search for its code).
+; assembly code to get the full picture (run "git grep INTERAC_X" to search for its code).
 
 stubScript:
 	scriptend
@@ -12,9 +12,9 @@ genericNpcScript:
 	scriptjump --
 
 
-; ==============================================================================
-; INTERACID_FARORE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_FARORE
+; ==================================================================================================
 
 faroreScript:
 	jumptable_memoryaddress wIsLinkedGame
@@ -127,9 +127,9 @@ faroreLinked:
 	scriptjump @npcLoop
 
 
-; ==============================================================================
-; INTERACID_DUNGEON_STUFF
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DUNGEON_STUFF
+; ==================================================================================================
 
 dropSmallKeyWhenNoEnemiesScript:
 	stopifitemflagset ; Stop if already got the key
@@ -155,9 +155,9 @@ setRoomFlagBit7WhenNoEnemiesScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_FARORES_MEMORY
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_FARORES_MEMORY
+; ==================================================================================================
 faroresMemoryScript:
 	initcollisions
 --
@@ -176,7 +176,7 @@ faroresMemoryScript:
 
 
 ; ==================================================
-; INTERACID_DOOR_CONTROLLER.
+; INTERAC_DOOR_CONTROLLER.
 ; ==================================================
 ;
 ; Door opener/closer scripts.
@@ -187,7 +187,7 @@ faroresMemoryScript:
 ;   $03: closes the door
 ;
 ; Variables:
-;   angle: the type and direction of door (see interactionTypes.s)
+;   angle: the type and direction of door (see interactions.s)
 ;   speed: for subids $14-$17, this is the number of torches that must be lit.
 ;   var3d: Bitmask to check on wActiveTriggers (value of "X" parameter converted to
 ;          a bitmask)
@@ -431,9 +431,9 @@ doorController_openWhenTorchesLit_left_1Torch:
 .endif
 
 
-; ==============================================================================
-; INTERACID_SHOPKEEPER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SHOPKEEPER
+; ==================================================================================================
 
 .ifdef ROM_SEASONS
 shopkeeperScript_blockLinkAccess:
@@ -852,9 +852,9 @@ shopkeeperScript_notOpenYet:
 
 
 .ifdef ROM_SEASONS
-; ==============================================================================
-; INTERACID_BOMB_FLOWER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BOMB_FLOWER
+; ==================================================================================================
 
 ; bomb flower placed on rocks blocking temple of autumn
 bombflower_unblockAutumnTemple:
@@ -889,9 +889,9 @@ bombflower_unblockAutumnTemple:
 .endif ; ROM_SEASONS
 
 
-; ==============================================================================
-; INTERACID_SPINNER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SPINNER
+; ==================================================================================================
 
 spinnerScript_initialization:
 	setcollisionradii $09, $09
@@ -908,9 +908,9 @@ spinnerScript_waitForLink:
 	; Script stops here since we changed to state 2 (which reloads the script)
 
 
-; ==============================================================================
-; INTERACID_ESSENCE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ESSENCE
+; ==================================================================================================
 essenceScript_essenceGetCutscene:
 	playsound MUS_ESSENCE
 	asm15 scriptHelp.essence_createEnergySwirl
@@ -927,9 +927,9 @@ essenceScript_essenceGetCutscene:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_VASU
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_VASU
+; ==================================================================================================
 
 vasuScript:
 	setcollisionradii $12, $06
@@ -1170,9 +1170,9 @@ blueSnakeScript_successfulRingTransfer:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_GAME_COMPLETE_DIALOG
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_GAME_COMPLETE_DIALOG
+; ==================================================================================================
 gameCompleteDialogScript:
 	wait 30
 	showtext TX_550d
@@ -1193,9 +1193,9 @@ gameCompleteDialogScript:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_RING_HELP_BOOK
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_RING_HELP_BOOK
+; ==================================================================================================
 
 ringHelpBookSubid1Reset:
 	writememory wTextIsActive, $01

@@ -1,8 +1,8 @@
- m_section_free Bank_15 NAMESPACE scriptHelp
+m_section_free Bank_15 NAMESPACE scriptHelp
 
-; ==============================================================================
-; INTERACID_FARORE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_FARORE
+; ==================================================================================================
 faroreCheckSecretValidity:
 	ld a,(wSecretInputType)
 	inc a
@@ -76,7 +76,7 @@ faroreShowTextForSecretHint:
 faroreSpawnSecretChest:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FARORE_GIVEITEM
+	ld (hl),INTERAC_FARORE_GIVEITEM
 	inc l
 	ld a,(wTextInputResult)
 	and $0f
@@ -90,9 +90,9 @@ faroreGenerateGameTransferSecret:
 	jpab bank3.generateGameTransferSecret
 
 
-; ==============================================================================
-; INTERACID_DOOR_CONTROLLER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DOOR_CONTROLLER
+; ==================================================================================================
 
 ; Update Link's respawn position in case it's on a door that's just about to close
 doorController_updateLinkRespawn:
@@ -251,9 +251,9 @@ doorController_checkEnoughTorchesLit:
 	ret
 
 
-; ==============================================================================
-; INTERACID_SHOPKEEPER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SHOPKEEPER
+; ==================================================================================================
 
 ;;
 shopkeeper_take10Rupees:
@@ -268,21 +268,21 @@ shopkeeper_take10Rupees:
 .endif
 
 
- m_section_free Bank_15_2 NAMESPACE scriptHelp
+m_section_free Bank_15_2 NAMESPACE scriptHelp
 
 .ifdef ROM_SEASONS
 
 createBossDeathExplosion:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BOSS_DEATH_EXPLOSION
+	ld (hl),PART_BOSS_DEATH_EXPLOSION
 	jp objectCopyPosition
 .endif
 
 
-; ==============================================================================
-; INTERACID_MOVING_PLATFORM
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MOVING_PLATFORM
+; ==================================================================================================
 
 ;;
 ; The moving platform has a custom "script format".
@@ -445,9 +445,9 @@ movingPlatform_setScript:
 
 .include {"{GAME_DATA_DIR}/movingPlatformScriptTable.s"}
 
-; ==============================================================================
-; INTERACID_ESSENCE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ESSENCE
+; ==================================================================================================
 
 ;;
 essence_createEnergySwirl:
@@ -461,15 +461,15 @@ essence_stopEnergySwirl:
 	ld (wDeleteEnergyBeads),a
 	ret
 
-; ==============================================================================
-; INTERACID_VASU
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_VASU
+; ==================================================================================================
 
 ;;
 vasu_giveRingBox:
 	call getFreeInteractionSlot
 	ldbc TREASURE_RING_BOX, $00
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -601,9 +601,9 @@ vasu_giveRingInVar3a:
 	jp giveRingToLink
 
 
-; ==============================================================================
-; INTERACID_GAME_COMPLETE_DIALOG
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_GAME_COMPLETE_DIALOG
+; ==================================================================================================
 gameCompleteDialog_markGameAsComplete:
 	xor a
 	ld (wMapleKillCounter),a

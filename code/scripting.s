@@ -909,7 +909,7 @@ scriptCmd_spawnItem:
 	push hl
 	call getFreeInteractionSlot
 	jp nz,scriptFunc_restoreActiveObject
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l

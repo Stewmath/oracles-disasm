@@ -2,7 +2,7 @@
 ;   b0: bits 4-7: Value for wActiveCollisions variable.
 ;                 Affects most collision properties other than basic solidity.
 ;       bits 0-3: Value for wDungeonIndex ($f = no dungeon)
-;   b1 (wTilesetFlags):       Flags (see constants/tilesetFlags.s)
+;   b1 (wTilesetFlags):       Flags (see constants/common/tilesetFlags.s)
 ;   b2 (wTilesetUniqueGfx):   Unique GFX index (see data/{game}/uniqueGfxHeaders.s)
 ;   b3 (wTilesetGfx):         Main GFX index (see data/{game}/gfxHeaders.s)
 ;   b4 (wTilesetPalette):     Palette index (see data/{game}/paletteHeaders.s)

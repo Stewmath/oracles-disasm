@@ -160,7 +160,7 @@ specialObjectCode_minecart:
 	call setCameraFocusedObjectToLink
 
 	; Create the "interaction" minecart to replace the "special object" minecart
-	ld b,INTERACID_MINECART
+	ld b,INTERAC_MINECART
 	call objectCreateInteractionWithSubid00
 	jp objectDelete_useActiveObjectType
 
@@ -338,7 +338,7 @@ minecartCheckCollisions:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_DOOR_CONTROLLER
+	ld (hl),INTERAC_DOOR_CONTROLLER
 
 	ld l,Interaction.angle
 	ld (hl),b
@@ -372,5 +372,5 @@ minecartCreateCollisionItem:
 	ldi (hl),a
 
 	; Set Item.id
-	ld (hl),ITEMID_MINECART_COLLISION
+	ld (hl),ITEM_MINECART_COLLISION
 	ret

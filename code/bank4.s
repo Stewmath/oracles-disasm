@@ -1,4 +1,4 @@
- m_section_free Bank_4 NAMESPACE bank4
+m_section_free Bank_4 NAMESPACE bank4
 
 ; At the start of this bank, there are 32 variations of the same function.
 
@@ -210,7 +210,7 @@ findWarpSourceAndDest:
 @nextWarpSource:
 	ldi a,(hl)
 
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	cp $ff
 	jr z,@warpSourceNotFound
 .endif
@@ -268,7 +268,7 @@ findWarpSourceAndDest:
 	ld (wWarpTransition),a
 	ret
 
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 
 @warpSourceNotFound:
 	ld a,(wTilesetFlags)
@@ -318,7 +318,7 @@ setWarpDestDefault:
 	ld (hl),$03
 	ret
 
-.endif ; ROM_AGES
+.endif ; AGES_ENGINE
 
 ;;
 findScreenEdgeWarpSource:

@@ -110,7 +110,7 @@ checkTilesetOverride:
 	jr nz,@@noChange
 
 	ld a,(wAnimalCompanion)
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 	jr z,@@noChange
 
 	; Change tileset for dimitri/moosh

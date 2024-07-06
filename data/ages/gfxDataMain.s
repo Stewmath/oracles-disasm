@@ -70,13 +70,13 @@
 	m_GfxData spr_gymnast_troy_scrub ; $0a8db3
 	m_GfxData spr_mailman_wiseman ; $0a8f39
 	m_GfxData spr_hobos ; $0a9107
-	m_GfxData spr_mustacheguy_cat_weirdo ; $0a9307
+	m_GfxData spr_mustachemen_cat ; $0a9307
 	m_GfxData spr_villagezora_plen_whitemustache ; $0a9467
 	m_GfxData spr_zz_bubble_exclamation_heart_kid ; $0a9630
 	m_GfxData spr_bipin_glassesguy ; $0a978b
 	m_GfxData spr_blossom_otherlady ; $0a9954
 	m_GfxData spr_bipsom_1 ; $0a9afd
-	m_GfxData spr_bipsom_2_and_lady ; $0a9cb4
+	m_GfxData spr_bipsom_2_old_lady ; $0a9cb4
 	m_GfxData spr_lady_butterfly_pickaxeworker ; $0a9e86
 	m_GfxData spr_fairy_toilethand ; $0aa01b
 	m_GfxData spr_chickens_dog_forestfairy_other ; $0aa182
@@ -91,7 +91,7 @@
 	m_GfxData spr_gorondance_tingle_write ; $0ab069
 	m_GfxData spr_ralph_1 ; $0ab20b
 	m_GfxData spr_ralph_2 ; $0ab3d5
-	m_GfxData spr_navi_ambi ; $0ab495
+	m_GfxData spr_seasonfairy_ambi ; $0ab495
 	m_GfxData gfx_blank_2 ; $0ab5ff (unused)
 	m_GfxData spr_farore_1 ; $0ab605
 	m_GfxData spr_nayru_1 ; $0ab652
@@ -107,7 +107,7 @@
 	m_GfxData spr_tokay ; $0ac578
 	m_GfxData spr_carpenters ; $0ac736
 	m_GfxData spr_pirateship ; $0ac8e1
-	m_GfxData spr_shopkeeper_oldzoramaybe_veranmask ; $0aca23
+	m_GfxData spr_shopkeeper_adlar_veranmask ; $0aca23
 	m_GfxData spr_piratians ; $0acbed
 	m_GfxData spr_zelda_1 ; $0acd4f
 	m_GfxData spr_zelda_2 ; $0acef3
@@ -126,12 +126,12 @@
 	m_GfxData spr_triforce_sparkle_vineseed_bookofseals ; $0adb88
 	m_GfxData spr_makuflower_book_seedling_weirdswirl_block ; $0adcbe
 	m_GfxData spr_linkstatue ; $0ade8a
-	m_GfxData spr_unknown_2 ; $0ae009
+	m_GfxData spr_lightning ; $0ae009
 	m_GfxData spr_fountain ; $0ae101
-	m_GfxData spr_tentthing_seasonsymbols ; $0ae200
+	m_GfxData spr_woodentunnel_seasonsymbols ; $0ae200
 	m_GfxData spr_flame ; $0ae309
 	m_GfxData spr_evilflame ; $0ae4b4
-	m_GfxData spr_circlethingsunknown ; $0ae673
+	m_GfxData spr_circlebeads ; $0ae673
 	m_GfxData spr_moblin_ghini ; $0ae700
 	m_GfxData spr_pincer_pokey_armos ; $0ae8a5
 	m_GfxData spr_crows_buzzblob ; $0aea1a
@@ -157,7 +157,7 @@
 	m_GfxData spr_projectiles_1 ; $0b055e
 	m_GfxData spr_projectiles_2 ; $0b0662
 	m_GfxData spr_projectiles_3 ; $0b0806
-	m_GfxData spr_unknownfireball ; $0b08ff
+	m_GfxData spr_fireballs ; $0b08ff
 	m_GfxData spr_giantghini_1 ; $0b09e8
 	m_GfxData spr_giantghini_2 ; $0b0b3c
 	m_GfxData spr_swoop ; $0b0c6e
@@ -165,7 +165,7 @@
 	m_GfxData spr_subterror_1 ; $0b0e17
 	m_GfxData spr_subterror_2 ; $0b0fb9
 	m_GfxData spr_subterror_3 ; $0b1127
-	m_GfxData spr_armoswarrior_1 ; $0b11be
+	m_GfxData spr_armoswarrior ; $0b11be
 	m_GfxData spr_armoswarriorshield ; $0b1342
 	m_GfxData spr_armoswarriorsword ; $0b14df
 	m_GfxData spr_smasher ; $0b1627
@@ -197,10 +197,10 @@
 	m_GfxData spr_nayru_ambi_possessed ; $0b3720
 	m_GfxData spr_veran_human ; $0b38c8
 	m_GfxData spr_darklink ; $0b3a2b
-	m_GfxData spr_veranbeetleandwing ; $0b3bc3
+	m_GfxData spr_veranbeetle_wing ; $0b3bc3
 	m_GfxData spr_fairyveran_1 ; $0b3c5e
-	m_GfxData spr_beetleveran_1 ; $0b3dd2
-	m_GfxData spr_spiderveran_1 ; $0b3f3d
+	m_GfxData spr_beetleveran ; $0b3dd2
+	m_GfxData spr_spiderveran ; $0b3f3d
 	m_GfxData spr_spiderbeeveran_1 ; $0b40f0
 	m_GfxData spr_spiderbeeveran_2 ; $0b42c7
 	m_GfxData spr_kingmoblin_1 ; $0b43db

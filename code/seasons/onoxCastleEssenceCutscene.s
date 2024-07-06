@@ -153,7 +153,7 @@ cutscene14:
 	call @incSubstate
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_SEED_AND_ESSENCES
+	ld (hl),INTERAC_MAKU_SEED_AND_ESSENCES
 	ret
 
 ; Unused?

@@ -15,11 +15,11 @@ oldname=$2
 newname=$3
 
 if [[ "$game" == "both" ]]; then
-	files="audio/ages/*.s audio/seasons/*.s audio/mus/common/*.s audio/mus/ages/*.s audio/mus/seasons/*.s audio/sfx/common/*.s audio/sfx/ages/*.s audio/sfx/seasons/*.s" 
+	files="audio/ages/*.s audio/seasons/*.s audio/common/mus/*.s audio/ages/mus/*.s audio/seasons/mus/*.s audio/common/sfx/*.s audio/ages/sfx/*.s audio/seasons/sfx/*.s"
 elif [[ "$game" == "seasons" ]]; then
-	files="audio/seasons/*.s audio/mus/seasons/*.s audio/sfx/seasons/*.s" 
+	files="audio/seasons/*.s audio/seasons/mus/*.s audio/seasons/sfx/*.s"
 elif [[ "$game" == "ages" ]]; then
-	files="audio/ages/*.s audio/mus/ages/*.s audio/sfx/ages/*.s" 
+	files="audio/ages/*.s audio/ages/mus/*.s audio/ages/sfx/*.s"
 else
 	echo "Invalid game."
 	exit 1

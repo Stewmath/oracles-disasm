@@ -1796,5 +1796,3 @@
 	m_RoomLayoutData room06fd
 	m_RoomLayoutData room06fe
 	m_RoomLayoutData room06ff
-
-; Data ends at $9f90d

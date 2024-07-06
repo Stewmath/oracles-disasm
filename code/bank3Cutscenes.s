@@ -162,7 +162,7 @@ cutscene18_state5:
 	call twinrovaCutscene_fadeinToRoom
 
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_TWINROVA
+	ld (hl),ENEMY_TWINROVA
 	ld l,Enemy.var03
 	set 7,(hl)
 
@@ -195,7 +195,7 @@ twinrovaCutscene_deleteAllInteractionsExceptFlames:
 	or a
 	jr z,+
 	ldi a,(hl)
-	cp INTERACID_TWINROVA_FLAME
+	cp INTERAC_TWINROVA_FLAME
 	call z,@delete
 +
 	inc h
@@ -312,7 +312,7 @@ cutscene19_state9:
 	ld (wScrollMode),a
 
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_GANON
+	ld (hl),ENEMY_GANON
 
 	ld a,SNDCTRL_STOPMUSIC
 	jp playSound
@@ -322,7 +322,7 @@ cutscene19_state9:
 twinrovaCutscene_createLightningStrike:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_LIGHTNING
+	ld (hl),PART_LIGHTNING
 	inc l
 	inc (hl)
 	ld l,Part.yh
@@ -851,7 +851,7 @@ introCinematic_ridingHorse_state3:
 	ldh (<hCameraY),a
 	ld (wTmpcbbc),a
 
-	ldbc INTERACID_INTRO_SPRITE, $03
+	ldbc INTERAC_INTRO_SPRITE, $03
 	call createInteraction
 
 	ld a,$0d
@@ -950,7 +950,7 @@ introCinematic_ridingHorse_state5:
 	ld hl,wTmpcbb3
 	ld (hl),24 ; Linger for another 24 frames
 
-	ldbc INTERACID_INTRO_SPRITE, $04
+	ldbc INTERAC_INTRO_SPRITE, $04
 	jp createInteraction
 
 ;;
@@ -1026,7 +1026,7 @@ introCinematic_ridingHorse_state0:
 
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_INTRO_SPRITE
+	ld (hl),INTERAC_INTRO_SPRITE
 	inc l
 	ld (hl),$00
 ++
@@ -1174,13 +1174,13 @@ introCinematic_ridingHorse_state8:
 	call loadGfxRegisterStateIndex
 	call introCinematic_ridingHorse_drawTempleSprites
 
-	; Create 2 interactions of type INTERACID_INTRO_SPRITE with subid's 2 and 1.
+	; Create 2 interactions of type INTERAC_INTRO_SPRITE with subid's 2 and 1.
 	; (These are the horse and cliff sprites.)
 	ld b,$02
 --
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_INTRO_SPRITE
+	ld (hl),INTERAC_INTRO_SPRITE
 	inc l
 	ld (hl),b
 	dec b
@@ -1274,7 +1274,7 @@ introCinematic_preTitlescreen_updateScrollingTree:
 --
 	call getFreeInteractionSlot
 	jr nz,@ret
-	ld (hl),INTERACID_TITLESCREEN_CLOUDS
+	ld (hl),INTERAC_TITLESCREEN_CLOUDS
 	inc l
 	dec b
 	ld (hl),b
@@ -1351,7 +1351,7 @@ introCinematic_inTemple_state0:
 	ld a,$01
 	ld (wScrollMode),a
 
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	ld a,SPECIALOBJECT_LINK_CUTSCENE
 	call setLinkID
 	ld l,<w1Link.enabled
 	ld (hl),$01
@@ -1379,7 +1379,7 @@ introCinematic_inTemple_state0:
 @nextTriforce:
 	call getFreeInteractionSlot
 	jr nz,@doneSpawningTriforce
-	ld (hl),INTERACID_INTRO_SPRITES_1
+	ld (hl),INTERAC_INTRO_SPRITES_1
 	inc l
 	ld a,b
 	dec a
@@ -1640,7 +1640,7 @@ clearFadingPalettes_body:
 	;  Even bytes are the frame numbers on which to turn the screen white; odd bytes
 	;  are when to restore it to normal? $ff signals end of data.
 
-	; Used by "raftwreck" cutscene before tokay island (INTERACID_RAFTWRECK_CUTSCENE)
+	; Used by "raftwreck" cutscene before tokay island (INTERAC_RAFTWRECK_CUTSCENE)
 	@data1:
 		.db $02 $04 $06 $08 $0a $0c $ff
 
@@ -1717,7 +1717,7 @@ introCinematic_preTitlescreen_state0:
 	; Create the "tree branches" object
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_INTRO_SPRITES_1
+	ld (hl),INTERAC_INTRO_SPRITES_1
 	inc l
 	ld (hl),$08
 	ld l,Interaction.y
@@ -1734,7 +1734,7 @@ introCinematic_preTitlescreen_state0:
 --
 	call getFreeInteractionSlot
 	jr nz,++
-	ld (hl),INTERACID_INTRO_BIRD
+	ld (hl),INTERAC_INTRO_BIRD
 	inc l
 	dec b
 	ld (hl),b

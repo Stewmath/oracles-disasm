@@ -1,9 +1,3 @@
-; .BANK $27 SLOT 1
-; .ORGA $790d
-
-; .REDEFINE DATA_CURBANK $27
-; .REDEFINE DATA_ADDR $790d
-
 	m_GfxData gfx_scent_tree ; $09f90d
 	m_GfxData gfx_pegasus_tree ; $09f9cd
 	m_GfxData gfx_gale_tree ; $09fa8d
@@ -73,10 +67,10 @@
 	m_GfxData spr_boy ; $0a43d9
 	m_GfxData spr_sokra_masterdiver ; $0a455c
 	m_GfxData spr_shopkeeper_dekuscrub ; $0a46db
-	m_GfxData spr_talon_oldman ; $0a487a
+	m_GfxData spr_ruul_wiseman ; $0a487a
 	m_GfxData spr_oldshopkeeper_gardener_villager ; $0a4a42
 	m_GfxData spr_mittens_malon ; $0a4bdf
-	m_GfxData spr_mrs_ruul_villagers ; $0a4db1
+	m_GfxData spr_mrsruul_villagers ; $0a4db1
 	m_GfxData spr_zz_bubble_exclamation_heart ; $0a4f56
 	m_GfxData spr_bipin ; $0a4ff0
 	m_GfxData spr_blossom ; $0a5159
@@ -90,7 +84,7 @@
 	m_GfxData spr_guruguru ; $0a5cb9
 	m_GfxData spr_vasu_floodgatekeeper ; $0a5e3e
 	m_GfxData spr_ingo ; $0a5fd3
-	m_GfxData spr_talon_lady ; $0a617b
+	m_GfxData spr_talon_sunkencitygirl ; $0a617b
 	m_GfxData spr_goron_parrot ; $0a633f
 	m_GfxData spr_bluecucco ; $0a64df
 	m_GfxData spr_piratians ; $0a65c6
@@ -111,16 +105,16 @@
 	m_GfxData spr_din_1 ; $0a79e5
 	m_GfxData spr_din_2 ; $0a7b60
 	m_GfxData spr_windmill_l2sword ; $0a7d12
-	m_GfxData spr_portal_unknown ; $0a7e3a
+	m_GfxData spr_biggoron_dustcloud_subrosiaportal ; $0a7e3a
 	m_GfxData spr_triforce_sparkle ; $0a7fa4
 	m_GfxData spr_springflower_makuleaf_farorebook ; $0a8036
-	m_GfxData spr_moblincannon_unknown ; $0a8188
-	m_GfxData spr_moblinflag_fountain_orb_unknown ; $0a8358
+	m_GfxData spr_lightning_moblincannon_makubranch ; $0a8188
+	m_GfxData spr_moblinflag_fountain_orb ; $0a8358
 	m_GfxData spr_pirate_ship ; $0a84f5
-	m_GfxData spr_woodentunnel_seasons ; $0a8656
+	m_GfxData spr_woodentunnel_seasonsymbols ; $0a8656
 	m_GfxData spr_flame ; $0a8769
 	m_GfxData spr_evilflame ; $0a8914
-	m_GfxData spr_circlethingsunknown ; $0a8ad3
+	m_GfxData spr_circlebeads ; $0a8ad3
 	m_GfxData spr_moblin_ghini ; $0a8b60
 	m_GfxData spr_pincer_pokey_armos ; $0a8d05
 	m_GfxData spr_crows_buzzblob ; $0a8e7a
@@ -134,7 +128,7 @@
 	m_GfxData spr_giantcucco ; $0a9a08
 	m_GfxData spr_gibdo_stalfos_rope_whisp_spark_bubble_beetle ; $0a9aff
 	m_GfxData spr_polsvoice_hardhatbeetle_spikedbeetle_beamon ; $0a9cc6
-	m_GfxData spr_shroudedstalfos_tile ; $0a9e35
+	m_GfxData spr_shroudedstalfos_floortile ; $0a9e35
 	m_GfxData spr_keese_firekeese_unknownbeams ; $0a9f8a
 	m_GfxData spr_bladetraps ; $0aa0c1
 	m_GfxData spr_wizzrobe ; $0aa240

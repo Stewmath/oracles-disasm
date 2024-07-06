@@ -1,7 +1,7 @@
 ;;
 ; Called from checkTreasureObtained in bank 0.
 ;
-; @param	l	Item to check for (see constants/treasure.s)
+; @param	l	Item to check for (see constants/common/treasure.s)
 ; @param[out]	h	Bit 0 set if link has the item
 ; @param[out]	l	Value of the treasure's "related variable" (ie. item level)
 checkTreasureObtained_body:
@@ -93,7 +93,7 @@ loseTreasure_helper:
 ;;
 ; Called from giveTreasure in bank 0.
 ;
-; @param	b	Item to give (see constants/treasure)
+; @param	b	Item to give (see constants/common/treasure)
 ; @param	c	"Parameter"
 ; @param[out]	b	Sound to play
 giveTreasure_body:
@@ -734,7 +734,7 @@ loadTreasureDisplayData:
 	jr -
 
 +
-	cp ITEMID_SLINGSHOT
+	cp ITEM_SLINGSHOT
 	jr nz,+
 	ld a,(wSlingshotLevel)
 	cp $02
@@ -757,7 +757,7 @@ loadTreasureDisplayData:
 ; Decides what an enemy will drop.
 ;
 ; @param	c
-; @param[out]	c	Subid for PARTID_ITEM_DROP (see constants/itemDrops.s) or $ff if no item
+; @param[out]	c	Subid for PART_ITEM_DROP (see constants/common/itemDrops.s) or $ff if no item
 ;			should drop
 decideItemDrop_body:
 	ld a,c
@@ -766,7 +766,7 @@ decideItemDrop_body:
 	jr nz,+
 
 	; If parameter == 0, assume it's an enemy; use the enemy's ID for the drop table. (Assumes
-	; that 'd' points to an instance of PARTID_ENEMY_DESTROYED or PARTID_BOSS_DEATH_EXPLOSION,
+	; that 'd' points to an instance of PART_ENEMY_DESTROYED or PART_BOSS_DEATH_EXPLOSION,
 	; whose subid refers to the enemy that was killed? TODO: verify.)
 	ldh a,(<hActiveObjectType)
 	add Object.subid
@@ -809,7 +809,7 @@ decideItemDrop_body:
 ;;
 ; Checks whether an item drop of a given type can spawn.
 ;
-; @param	c	Item drop index (see constants/itemDrops.s)
+; @param	c	Item drop index (see constants/common/itemDrops.s)
 ; @param[out]	c	$ff if item cannot spawn (Link doesn't have it), otherwise the item itself
 checkItemDropAvailable_body:
 .ifdef ROM_SEASONS
@@ -887,7 +887,7 @@ itemDropSetTable:
 	.dw itemDropSetF
 
 
-; Each row corresponds to an item drop (see constants/itemDrops.s).
+; Each row corresponds to an item drop (see constants/common/itemDrops.s).
 ;   Byte 0: Variable in $c600 block to check
 ;   Byte 1: Value to AND with that variable to check availability; if nonzero, the item
 ;           can drop.
@@ -969,7 +969,7 @@ subrosiaDropSet:
 	.db ITEM_DROP_100_RUPEES_OR_ENEMY
 .endif
 
-; See constants/itemDrops.s for what these values are
+; See constants/common/itemDrops.s for what these values are
 itemDropSet0:
 	.db $01 $01 $01 $01 $01 $01 $01 $01
 	.db $01 $01 $01 $01 $01 $01 $01 $01

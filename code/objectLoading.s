@@ -1,4 +1,4 @@
- m_section_free Objects_1 namespace objectData
+m_section_free Objects_1 namespace objectData
 
 .ifdef ROM_AGES
 .include "objects/ages/extraData1.s"
@@ -77,7 +77,7 @@ parseGivenObjectData:
 	.dw objectDataOp7
 	.dw objectDataOp8
 	.dw objectDataOp9
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	.dw objectDataOpA
 .endif
 
@@ -104,7 +104,7 @@ objectDataOpcodeSizes:
 	.db $02 $04
 	.db $01 $03
 	.db $01 $06
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	.db $02 $02 ; Item drop ($0a)
 .else
 	.db $00 $00
@@ -517,9 +517,10 @@ objectDataOp9:
 	.dw getFreePartSlot
 
 
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
+
 ;;
-; Item drops
+; Item drops. Seasons uses ENEMY_ITEM_DROP_PRODUCER directly instead of this.
 objectDataOpA:
 	ld a,(de)
 	inc de
@@ -548,7 +549,7 @@ objectDataOpA:
 	jp nz,skipToOpEnd_2byte
 
 	; Set ID
-	ld (hl),ENEMYID_ITEM_DROP_PRODUCER
+	ld (hl),ENEMY_ITEM_DROP_PRODUCER
 	inc l
 	ld a,(de)
 	inc de
