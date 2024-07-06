@@ -4,11 +4,11 @@
 .include "include/musicMacros.s"
 
 ; HACK-BASE: Bank of sound engine (and of data in "audio/{game}/soundChannelData.s") changed to
-; allocate more space to the compressed data section (text, graphics, room layouts). Now using a
-; superfree section which will go wherever there's space.
+; allocate more space to the compressed data section (text, graphics, room layouts).
+.BANK $39 SLOT 1
+.ORG 0
 
-.SLOT 1
-.SECTION AudioCode NAMESPACE audio SUPERFREE
+m_section_superfree AudioCode NAMESPACE audio
 
 ;;
 b39_initSound:
@@ -2420,14 +2420,15 @@ waveformTable:
 	.include "audio/ages/soundChannelPointers.s"
 	.include "audio/ages/soundPointers.s"
 
+	.ends ; End of section AudioCode
+
+	.include "audio/ages/soundChannelData.s"
 
 .else; ROM_SEASONS
 	.include "audio/seasons/soundChannelPointers.s"
 	.include "audio/seasons/soundPointers.s"
 
+	.ends ; End of section AudioCode
+
+	.include "audio/seasons/soundChannelData.s"
 .endif
-
-.ends ; End of section AudioCode
-
-
-.include {"audio/{GAME}/soundChannelData.s"}

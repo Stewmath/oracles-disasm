@@ -1,5 +1,3 @@
-.SECTION AudioDataInitial SUPERFREE
-
 snddeStart:
 
 snddeChannel0:
@@ -74,10 +72,9 @@ sndbdChannel2:
 	.dsb 162 $ff
 .endif
 
-.ends
 
-
-.section AudioData1 SUPERFREE
+.BANK $73 SLOT 1
+.ORG 0
 
 bank3aChannelFallback:
 	cmdff
@@ -181,10 +178,9 @@ sndcfChannel2:
 	.db $ff $ff
 .endif
 
-.ends
 
-
-.section AudioData2 SUPERFREE
+.BANK $74 SLOT 1
+.ORG 0
 
 bank3bChannelFallback:
 	cmdff
@@ -227,10 +223,9 @@ sndcaChannel7:
 	.dsb 152 $ff
 .endif
 
-.ends
 
-
-.section AudioData3 SUPERFREE
+.BANK $75 SLOT 1
+.ORG 0
 
 bank3cChannelFallback:
 	cmdff
@@ -269,10 +264,9 @@ bank3cChannelFallback:
 	.dsb 678 $ff
 .endif
 
-.ends
 
-
-.section AudioData4 SUPERFREE
+.BANK $76 SLOT 1
+.ORG 0
 
 bank3dChannelFallback:
 	cmdff
@@ -316,10 +310,9 @@ snd94Channel2:
 	.dsb 93 $ff
 .endif
 
-.ends
 
-
-.section AudioData5 SUPERFREE
+.BANK $77 SLOT 1
+.ORG 0
 
 bank3eChannelFallback:
 	cmdff
@@ -472,5 +465,3 @@ sndddChannel6:
 .endif
 
 .undefine MUSIC_CHANNEL_FALLBACK
-
-.ends
