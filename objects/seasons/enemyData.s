@@ -2240,11 +2240,12 @@ group5Map61EnemyObjectData:
 	obj_EndPointer
 
 group5Map62EnemyObjectData:
-	obj_Part $f7 $02 $0e
-	obj_Part $02 $98 $18
-	obj_Part $0e $02 $98
-	obj_Part $c8 $f6 $64
-	obj_Part $32 $00 $fe
+	obj_Garbage $f8 ; Garbage opcode (ignored)
+	obj_SpecificEnemyA $02 $0e $02 $98 $18
+	obj_SpecificEnemyA     $0e $02 $98 $c8
+	obj_RandomEnemy $64 $32 $00
+	obj_EndPointer
+
 group5Map63EnemyObjectData:
 	obj_SpecificEnemyB $0f $02 $30 $68 $f0
 	obj_SpecificEnemyB $0f $02 $60 $a8 $f0
