@@ -15,7 +15,7 @@ BLUE=\033[1;34m
 NC=\033[0m
 
 # Sets the default target. Can be "ages", "seasons", or "all" (both).
-.DEFAULT_GOAL = ages
+.DEFAULT_GOAL = all
 
 SHELL := /bin/bash
 
