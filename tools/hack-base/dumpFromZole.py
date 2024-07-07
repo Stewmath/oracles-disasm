@@ -14,7 +14,7 @@ if len(sys.argv) < 3:
     print('Dumps data from a ZOLE rom into the disassembly.')
     print('\nOptions:')
     print('\t-a: All of the below')
-    print('\t-d: Dungeon layouts')
+#    print('\t-d: Dungeon layouts')
     print('\t-g: Tileset Graphics')
     print('\t-i: Tileset IDs')
     print('\t-m: Music IDs')
@@ -96,7 +96,7 @@ for arg in sys.argv[2:]:
         sys.exit(1)
 
 if '-a' in args:
-    args.append('-d')
+#    args.append('-d')
     args.append('-g')
     args.append('-i')
     args.append('-m')
