@@ -43,6 +43,8 @@
 ;;
 .define ENEMY_3f $3f
 
+.define ENEMY_STUB_42 $42
+
 ;;
 .define ENEMY_GOHMA_GEL $46
 

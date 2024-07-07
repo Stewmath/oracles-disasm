@@ -352,61 +352,65 @@ initialFileVariablesTable:
 
 ; Initial values for variables in the c6xx block.
 initialFileVariables:
-	.db <wTextSpeed				$02
-	.db <wc608				$01
-	.db <wLinkName+5			$00 ; Ensure names have null terminator
-	.db <wKidName+5				$00
-	.db <wObtainedTreasureFlags		1<<TREASURE_PUNCH
-	.db <wMaxBombs				$10
-	.db <wLinkHealth			$10 ; 4 hearts (gets overwritten in standard game)
-	.db <wLinkMaxHealth			$10
+	.db <wTextSpeed,			$02
+	.db <wc608,				$01
+	.db <wLinkName+5,			$00 ; Ensure names have null terminator
+	.db <wKidName+5,			$00
+	.db <wObtainedTreasureFlags,		1<<TREASURE_PUNCH
+	.db <wMaxBombs,				$10
+	.db <wLinkHealth,			$10 ; 4 hearts (gets overwritten in standard game)
+	.db <wLinkMaxHealth,			$10
+
 .ifdef ROM_AGES
-	.db <wDeathRespawnBuffer.group		$00
-	.db <wDeathRespawnBuffer.room		$8a
-	.db <wDeathRespawnBuffer.y		$38
-	.db <wDeathRespawnBuffer.x		$48
-	.db <wDeathRespawnBuffer.facingDir	$00
-	.db <wJabuWaterLevel			$21
-	.db <wPortalGroup			$ff
-	.db <wPirateShipRoom			$b6
-	.db <wPirateShipY			$48
-	.db <wPirateShipX			$48
-	.db <wPirateShipAngle			$02
-.else
-	.db <wDeathRespawnBuffer.group		$00
-	.db <wDeathRespawnBuffer.room       $a7
-	.db <wDeathRespawnBuffer.y          $38
-	.db <wDeathRespawnBuffer.x          $48
-	.db <wDeathRespawnBuffer.facingDir  $02
+	; Initial spawn location
+	.db <wDeathRespawnBuffer.group,		$00
+	.db <wDeathRespawnBuffer.room,		$8a
+	.db <wDeathRespawnBuffer.y,		$38
+	.db <wDeathRespawnBuffer.x,		$48
+	.db <wDeathRespawnBuffer.facingDir,	$00
+
+	.db <wJabuWaterLevel,			$21
+	.db <wPortalGroup,			$ff
+	.db <wPirateShipRoom,			$b6
+	.db <wPirateShipY,			$48
+	.db <wPirateShipX,			$48
+	.db <wPirateShipAngle,			$02
+.else ;ROM_SEASONS
+	; Initial spawn location
+	.db <wDeathRespawnBuffer.group,		$00
+	.db <wDeathRespawnBuffer.room,		$a7
+	.db <wDeathRespawnBuffer.y,		$38
+	.db <wDeathRespawnBuffer.x,		$48
+	.db <wDeathRespawnBuffer.facingDir,	$02
 .endif
 	.db $00
 
 ; Standard game (not linked or hero)
 initialFileVariables_standardGame:
-	.db <wLinkHealth			$0c
-	.db <wLinkMaxHealth			$0c
+	.db <wLinkHealth,			$0c ; 3 hearts
+	.db <wLinkMaxHealth,			$0c
 	; Continue reading the following data
 
 ; Hero game (not linked+hero game)
 initialFileVariables_heroGame:
-	.db <wChildStatus			$00
-	.db <wShieldLevel			$01
+	.db <wChildStatus,			$00
+	.db <wShieldLevel,			$01
 .ifdef ROM_AGES
-	.db <wAnimalCompanion			$00
+	.db <wAnimalCompanion,			$00
 .else
-	.db <wAnimalCompanion			$0b
+	.db <wAnimalCompanion,			SPECIALOBJECT_RICKY
 .endif
 	.db $00
 
 ; Linked game, or linked+hero game
 initialFileVariables_linkedGame:
-	.db <wSwordLevel			$01
-	.db <wShieldLevel			$01
-	.db <wInventoryStorage			ITEM_SWORD
+	.db <wSwordLevel,			$01
+	.db <wShieldLevel,			$01
+	.db <wInventoryStorage,			ITEM_SWORD
 	.db <wObtainedTreasureFlags,		(1<<TREASURE_PUNCH) | (1<<TREASURE_SWORD)
 .ifdef ROM_AGES
-	.db <wPirateShipY			$58
-	.db <wPirateShipX			$78
+	.db <wPirateShipY,			$58
+	.db <wPirateShipX,			$78
 .endif
 	.db $00
 
