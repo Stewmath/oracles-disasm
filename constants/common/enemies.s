@@ -371,7 +371,6 @@
 ; ENEMY_ZOL splits into ENEMY_GEL's after being attacked.
 .define ENEMY_GEL $43
 
-.define ENEMY_STUB_42 $42
 .define ENEMY_STUB_44 $44
 
 ;;
