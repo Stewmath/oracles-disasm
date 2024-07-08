@@ -3455,6 +3455,10 @@ initializeGame:
 	ld (wActiveMusic),a
 .endif
 
+; HACK-BASE: Disable pregame intro when quickstart is enabled
+.ifdef QUICKSTART_ENABLE
+	jr func_5a60
+.else
 	ld a,GLOBALFLAG_PREGAME_INTRO_DONE
 	call checkGlobalFlag
 	jr nz,func_5a60
@@ -3462,6 +3466,7 @@ initializeGame:
 	ld a,GLOBALFLAG_3d
 	call checkGlobalFlag
 	jr nz,@summonLinkCutscene
+.endif
 
 	ld a,$02
 	ld (wGameState),a
@@ -4141,9 +4146,12 @@ setCutsceneIndexIfCutsceneTriggerSet:
 
 ;;
 checkPlayRoomMusic:
+; HACK-BASE: This define allows music to play before finishing the intro
+.ifndef HACK_DISABLE_INTRO_LOCKS
 	ld a, GLOBALFLAG_INTRO_DONE
 	call checkGlobalFlag
 	ret z
+.endif
 
 .ifdef ROM_SEASONS
 	; Override subrosia music if on a date with Rosa

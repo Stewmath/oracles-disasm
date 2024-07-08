@@ -741,8 +741,11 @@ warpTransitionB:
 	ret nz
 
 	; Done falling. Set Link's initial state depending on the game.
+	;
+	; HACK-BASE: Link in Seasons normally starts unconscious. Disable that when
+	; HACK_DISABLE_INTRO_LOCKS is set.
 
-.ifdef ROM_AGES
+.if defined(ROM_AGES) || defined(HACK_DISABLE_INTRO_LOCKS)
 	call itemIncSubstate
 	call animateLinkStanding
 	ld a,SND_SPLASH

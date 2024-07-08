@@ -3011,6 +3011,8 @@ b2_updateMenus:
 	or b
 	ret nz
 
+; HACK-BASE: This define allows opening the inventory without finishing the intro
+.ifndef HACK_DISABLE_INTRO_LOCKS
 	ld a,(wKeysJustPressed)
 	and BTN_START | BTN_SELECT
 	jr z,+
@@ -3021,6 +3023,8 @@ b2_updateMenus:
 	ld a, SND_ERROR
 	jp z,playSound
 +
+.endif
+
 	ld a,(wMenuDisabled)
 	ld b,a
 	ld a,(wDisableLinkCollisionsAndMenu)
