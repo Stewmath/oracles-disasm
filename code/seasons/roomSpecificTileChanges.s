@@ -1,3 +1,5 @@
+; See data/ages/roomSpecificTileChanges.s for documentation.
+
 applyRoomSpecificTileChanges:
 	ld a,(wActiveRoom)
 	ld hl,roomTileChangerCodeGroupTable
