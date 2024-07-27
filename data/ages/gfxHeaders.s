@@ -24,6 +24,11 @@
 ;
 ; If this doesn't make sense, you should read some technical documentation on the gameboy's
 ; graphical hardware (ie. gameboy pandocs).
+;
+; The gameboy screen should be off when the "loadGfxHeader" function is called; this is because
+; writes to VRAM will fail except during the vblank and hblank periods, and it is not designed to
+; copy the data quickly enough to fit within vblank. If you need to draw stuff while the screen is
+; on, see the "queueDmaTransfer" function or "data/{game}/uniqueGfxHeaders.s".
 
 .define NUM_GFX_HEADERS $bb
 
