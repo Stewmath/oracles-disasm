@@ -1128,7 +1128,7 @@ loadPaletteHeader:
 queueDmaTransfer:
 	ld a,($ff00+R_LCDC)
 	rlca
-	jr nc,++
+	jr nc,@lcdOff
 
 	push de
 	push hl
