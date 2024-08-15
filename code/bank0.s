@@ -4706,7 +4706,7 @@ interactionInitGraphics:
 	jp interactionSetAnimation
 
 ;;
-func_1613:
+refreshLoadedTreeGfx:
 	ld a,(wLoadedTreeGfxIndex)
 	or a
 	ret z
