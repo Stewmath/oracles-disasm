@@ -352,7 +352,7 @@ initialFileVariablesTable:
 
 ; Initial values for variables in the c6xx block.
 initialFileVariables:
-	.db <wTextSpeed,			$02
+	.db <wTextSpeed,			$04
 	.db <wc608,				$01
 	.db <wLinkName+5,			$00 ; Ensure names have null terminator
 	.db <wKidName+5,			$00
