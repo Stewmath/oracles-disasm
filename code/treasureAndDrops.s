@@ -1071,8 +1071,8 @@ itemDropSetF:
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
 ; Data format (per byte):
-;   Bits 0-2: Index for itemDropProbabilityTable
-;   Bits 3-7: Index for itemDropSetTable
+;   Bits 5-7: Index for itemDropProbabilityTable
+;   Bits 0-4: Index for itemDropSetTable
 ; Or it can be $ff for no item drop.
 ; Comments show changes in Seasons
 itemDropTables:
