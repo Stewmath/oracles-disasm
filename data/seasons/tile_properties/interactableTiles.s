@@ -21,7 +21,7 @@
 ;        4: Chest (handle opening)
 ;        5: Sign (handle reading)
 ;        6: Overworld keyhole (ie. Yoll Graveyard, Crown Dungeon)
-;        7: Does nothing?
+;        7: Subrosia keydoor
 ;        8: Spawns a ghini when approached. Used in the graveyard in Seasons.
 
 interactableTilesTable:
