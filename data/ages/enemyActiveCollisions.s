@@ -4,7 +4,7 @@
 
 ; Each 4 bytes here is a bitset which determines which item collisions the Enemy will
 ; respond to. If a bit is unset, it won't do anything when it collides with an object with
-; that item collision. (See constants/common/itemCollisions.s.)
+; that item collision. (See constants/common/itemCollisionTypes.s.)
 
 ; Note: the bits are reversed to make it easier to look at (ie. collisionType 0 is at the
 ; far left)
