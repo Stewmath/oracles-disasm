@@ -1,8 +1,9 @@
 ; Data format:
 ;   b0: object gfx header to use (see data/objectGfxHeaders.s)
 ;   b1: Value for Enemy.enemyCollisionMode (bit 7 must be set for collisions to work)
-;   b2: value for Enemy.damage (how much damage it deals)
-;   b3: value for Enemy.health
+;   b2: Bits 0-6 are an index for the extraEnemyData table below.
+;   b3: bits 4-7: palette + bank bit
+;       bits 0-3: oamTileIndexBase/2
 ;
 ;   Or, parameters 2/3 can be replaced with a pointer to subid data (see below).
 
@@ -138,10 +139,9 @@ enemyData:
 
 
 ; Each 2 bytes are for a particular subID.
-; 0: Bits 0-6 are an index for the extraEnemyData table below.
-;    If bit 7 is set, the next subID is valid.
-; 1: bits 4-7: palette + bank bit
-;    bits 0-3: oamTileIndexBase/2
+; The two bytes are the same as bytes 2 & 3 documented at the top of the file.
+; The difference is that if subid tables are used, bytes 2 & 3 are specified differently for
+; different enemy subid values.
 
 enemy09SubidData:
 	m_EnemySubidData $08 $20
