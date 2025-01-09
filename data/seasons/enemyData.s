@@ -1,10 +1,4 @@
-; Data format:
-;   b0: object gfx header to use (see data/objectGfxHeaders.s)
-;   b1: Value for Enemy.enemyCollisionMode (bit 7 must be set for collisions to work)
-;   b2: value for Enemy.damage (how much damage it deals)
-;   b3: value for Enemy.health
-;
-;   Or, parameters 2/3 can be replaced with a pointer to subid data (see below).
+; See data/ages/enemyData.s for documentation.
 
 enemyData:
 	/* 0x00 */ m_EnemyData $00 $00 $00 $00
