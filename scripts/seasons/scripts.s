@@ -2813,16 +2813,16 @@ unluckySailorScript:
 	askforsecret PIRATE_SECRET
 	wait 30
 	jumptable_memoryaddress $cca3
-	.dw @incorrectSecret
 	.dw @correctSecret
-@correctSecret:
+	.dw @incorrectSecret
+@incorrectSecret:
 	showtextlowindex <TX_3a2d
 	enableinput
 	scriptjump --
 @beganPiratesSecret:
 	checkabutton
 	disableinput
-@incorrectSecret:
+@correctSecret:
 	setglobalflag GLOBALFLAG_BEGAN_PIRATE_SECRET
 	showtextlowindex <TX_3a2f
 	wait 30
