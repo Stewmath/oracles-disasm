@@ -8,7 +8,7 @@
 ;   var31: ?
 ;   var32: Value from 0-7, determines what attack to use in lava phase
 ;   var33: Minimum # frames of movement before attacking?
-;   var34: Nonzero if dead?
+;   var34: Twinrova boss health (only reduced by seeds when vulnerable)
 ;   var36: Target position index (multiple of 2)
 ;   var37/var38: Target position to move to?
 ;   var39: Room swapping is disabled while this is nonzero.
