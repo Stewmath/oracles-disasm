@@ -675,7 +675,7 @@ m_section_free Part_Code_2 NAMESPACE partCode
 	.include "object_code/seasons/parts/wallFlameShooterFlames.s"
 	.include "object_code/seasons/parts/buriedMoldorm.s"
 	.include "object_code/seasons/parts/kingMoblinsCannons.s"
-	.include "object_code/seasons/parts/2e.s"
+	.include "object_code/seasons/parts/facadeHoleMaker.s"
 	.include "object_code/seasons/parts/2f.s"
 	.include "object_code/seasons/parts/poppableBubble.s"
 	.include "object_code/seasons/parts/33.s"
