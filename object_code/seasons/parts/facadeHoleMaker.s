@@ -1,13 +1,17 @@
 ; ==================================================================================================
 ; PART_FACADE_HOLE_MAKER
+;
 ; Facade spawns this to make temporary holes under link.
 ;
-; animParameter has the following values:
+; animParameter has the following values, which are critical to the function of this part:
 ;   $00 (24 frames)  : animation only.
 ;   $01 (90 frames)  : change the tile to hole, storing current tile in var30.
 ;   $02 (10 frames)  : revert the tile to original.
 ;   $00 (20 frames)  : animation only.
 ;   $ff (128 frames) : despawn.
+;
+; Variables:
+;   var30: Used to store the kind of tile that has been replaced by a hole, so that it can be reset later.
 ; ==================================================================================================
 partCode2e:
 	ld e,Part.state
@@ -55,7 +59,7 @@ partCode2e:
 ; Either make a hole or reset the tile at this position, depending on the value
 ; of animParameter.
 @modifyTile:
-	; Set animParameter to 0 so we only run this once. TODO: confirm this.
+	; Set animParameter to 0 so we only run this once.
 	push af
 	xor a
 	ld (de),a

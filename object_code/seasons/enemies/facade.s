@@ -1,6 +1,9 @@
 ; ==================================================================================================
 ; ENEMY_FACADE
-; TODO: Add more detail.
+;
+; Variables:
+;   var03: The attack that has been randomly chosen.
+;   var30: The number of Beetles that have been spawned by the Beetle attack.
 ; ==================================================================================================
 enemyCode71:
 	jr z,@normalStatus
@@ -33,10 +36,10 @@ enemyCode71:
 	.dw facade_state_stub
 	.dw facade_state_stub
 	.dw facade_state_waiting
-	.dw facade_state_chooseAttack
+	.dw facade_state_chooseAttackAndBecomeVisible
 	.dw facade_state_waitAndRumble
 	.dw facade_state_attack
-	.dw facade_state_reset
+	.dw facade_state_resetAndInvisible
 
 ; Do different initialization depending on [subId]:
 ;   zero:     Just wait.
@@ -49,7 +52,7 @@ facade_state_uninitialized:
 	ld l,Enemy.xh
 	ld (hl),$78
 
-	; If subid == 0, jump to enemyBoss_initializeRoom
+	; If subid == 0, jump to enemyBoss_initializeRoom.
 	ld e,Enemy.subid
 	ld a,(de)
 	or a
@@ -69,9 +72,9 @@ facade_state_uninitialized:
 facade_state_stub:
 	ret
 
-; Waiting for link to enter the fight. Only entered when subId is 0.
+; Waiting for Link to enter the fight. Only entered when subId is 0.
 facade_state_waiting:
-	; If link is below $58, the fight is triggered.
+	; If Link is below $58, the fight is triggered.
 	ldh a,(<hEnemyTargetY)
 	cp $58
 	ret c
@@ -81,9 +84,8 @@ facade_state_waiting:
 	ld l,e
 	inc (hl)
 
-	; [counter1] = 1 - facade_state_chooseAttack decrements counter1, and we
-	; don't want it to go below 0.
-	; TODO: confirm this.
+	; [counter1] = 1
+	; facade_state_chooseAttackAndBecomeVisible decrements counter1, and we don't want it to go below 0.
 	ld l,Enemy.counter1
 	inc (hl)
 
@@ -91,7 +93,7 @@ facade_state_waiting:
 	ld (wActiveMusic),a
 	jp playSound
 
-facade_state_chooseAttack:
+facade_state_chooseAttackAndBecomeVisible:
 	; Wait for [counter1] to be zero.
 	call ecom_decCounter1
 	ret nz
@@ -203,9 +205,10 @@ facade_state_attack:
 	inc (hl)
 	ret
 
+; Spawn 5 Beetles that fall from the ceiling.
 @@attack_beetle_spawn:
 	call ecom_decCounter1
-	jp z,facadeIncrementStateAndSetAnimation2
+	jp z,facadeIncrementStateAndFadeOut
 
 	; Spawn Beetles when ([counter1] & $0f) == 0.
 	ld a,(hl)
@@ -233,13 +236,12 @@ facade_state_attack:
 	ld a,$01
 	ld (de),a
 
-	; Animation $02:
-	;   TODO: investigate this anim.
+	; Set animation $02.
 	inc a
 	jp enemySetAnimation
 
 @@attack_holeMaker_animateAndInvisible:
-	; Wait for [animParameter] == ??
+	; Wait for [animParameter] == $7f. This happens in 24 frames.
 	ld h,d
 	ld l,Enemy.animParameter
 	bit 7,(hl)
@@ -260,7 +262,7 @@ facade_state_attack:
 
 @@attack_holeMaker_spawn:
 	call ecom_decCounter1
-	jp z,facadeIncrementStateAndSetAnimation2
+	jp z,facadeIncrementStateAndFadeOut
 
 	; Wait for ([counter1] & $1f) == 0
 	ld a,(hl)
@@ -286,13 +288,16 @@ facade_state_attack:
 	inc l
 	ld (hl),$f0
 
-	; TODO: investigate this anim.
+	; Load animation $01.
+	; animParameter is 28 frames of $00 and 32 of $01 in a loop.
 	ld a,$01
 	jp enemySetAnimation
 
+; Spawn Volcano Rocks.
+; The combination of criteria ([counter1] & $0f == 0 && [animParameter] == 1) leads to us spawning 3 groups of 2.
 @@attack_volcanoRock_spawn:
 	call ecom_decCounter1
-	jp z,facadeIncrementStateAndSetAnimation2
+	jp z,facadeIncrementStateAndFadeOut
 
 	; Only spawn if (counter1 & $0f) == 0
 	ld a,(hl)
@@ -310,8 +315,10 @@ facade_state_attack:
 
 	jp facade_spawnVolcanoRock
 
-facade_state_reset:
-	; TODO: investigate this anim.
+; After the attack, Facade closes its eyes and goes invisible, before choosing another attack.
+facade_state_resetAndInvisible:
+	; Facade is on animation 2 here.
+	; Wait for animParameter to be $ff (24 frames).
 	ld h,d
 	ld l,Enemy.animParameter
 	bit 7,(hl)
@@ -415,15 +422,16 @@ facade_spawnVolcanoRock:
 
 	ret
 
-facadeIncrementStateAndSetAnimation2:
+; This is used by the attack states to move to the next state and set the animation that closes its eyes.
+facadeIncrementStateAndFadeOut:
 	ld l,Enemy.state
 	inc (hl)
 
 	ld a,$02
 	jp enemySetAnimation
 
+; Kill all the Beetles that were spawned.
 facadeKillSpawnedBeetles:
-	; Kill all the Beetles that were spawned.
 	ld hl,$d080
 @loop:
 	ld l,Enemy.id
