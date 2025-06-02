@@ -8770,7 +8770,7 @@ dungeonMap_updateScroll:
 	pop af
 	ld ($ff00+R_SVBK),a
 
-	; Missing a "ret" opcode here.
+	; BUG: Missing a "ret" opcode here.
 	; This normally doesn't seem to cause any problems, though perhaps it's related to
 	; the dungeon map crashes on the VBA emulator?
 

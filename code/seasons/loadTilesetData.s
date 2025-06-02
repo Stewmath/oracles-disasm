@@ -108,7 +108,7 @@ checkIsTempleRemains:
 	or a
 	ret nz
 	ld a,(wActiveRoom)
-	cp $14
+	cp $14 ; ROOM_SEASONS_014
 	jr c,+
 	sub $04
 	cp $30
@@ -159,4 +159,4 @@ getMoblinKeepScreenIndex:
 	ret
 
 moblinKeepRooms:
-	.db $5b $5c $6b $6c $7b
+	.db <ROOM_SEASONS_05b, <ROOM_SEASONS_05c, <ROOM_SEASONS_06b, <ROOM_SEASONS_06c, <ROOM_SEASONS_07b
