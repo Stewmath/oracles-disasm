@@ -15,7 +15,7 @@ enemyCode71:
 	ld e,Enemy.collisionType
 	ld a,(de)
 	or a
-	call nz,facadeKillSpawnedBeetles
+	call nz,facade_killSpawnedBeetles
 
 	ld e,Enemy.subid
 	ld a,(de)
@@ -41,7 +41,7 @@ enemyCode71:
 	.dw facade_state_attack
 	.dw facade_state_resetAndInvisible
 
-; Do different initialization depending on [subId]:
+; Do different initialization depending on [subid]:
 ;   zero:     Just wait.
 ;   non-zero: Start the fight.
 facade_state_uninitialized:
@@ -62,7 +62,7 @@ facade_state_uninitialized:
 
 	; If subid is non-zero, start the fight.
 	ld l,Enemy.counter1
-	ld (hl),$3c
+	ld (hl),60
 
 	; [state] = 9
 	ld l,Enemy.state
@@ -72,7 +72,7 @@ facade_state_uninitialized:
 facade_state_stub:
 	ret
 
-; Waiting for Link to enter the fight. Only entered when subId is 0.
+; Waiting for Link to enter the fight. Only entered when subid is 0.
 facade_state_waiting:
 	; If Link is below $58, the fight is triggered.
 	ldh a,(<hEnemyTargetY)
@@ -115,7 +115,7 @@ facade_state_chooseAttackAndBecomeVisible:
 	; Choose a random attack, biased towards Volcano Rock. Put it in var03.
 	call getRandomNumber_noPreserveVars
 	and $03
-	ld hl,table_facade_attack
+	ld hl,facade_attack_table
 	rst_addAToHl
 	ld e,Enemy.var03
 	ld a,(hl)
@@ -129,7 +129,7 @@ facade_state_chooseAttackAndBecomeVisible:
 
 	jp objectSetVisible83
 
-table_facade_attack:
+facade_attack_table:
 	; Spawn Beetles.
 	.db $00
 	; Make holes under Link.
@@ -189,16 +189,16 @@ facade_state_attack:
 	inc (hl)
 	inc l
 
-	; [counter1] = $14
-	ld (hl),$14
+	; [counter1] = 20
+	ld (hl),20
 	ret
 
 @@attack_beetle_wait:
 	call ecom_decCounter1
 	ret nz
 
-	; [counter1] = $46
-	ld (hl),$46
+	; [counter1] = 70
+	ld (hl),70
 
 	; [substate]++
 	ld l,e
@@ -208,7 +208,7 @@ facade_state_attack:
 ; Spawn 5 Beetles that fall from the ceiling.
 @@attack_beetle_spawn:
 	call ecom_decCounter1
-	jp z,facadeIncrementStateAndFadeOut
+	jp z,facade_incrementStateAndFadeOut
 
 	; Spawn Beetles when ([counter1] & $0f) == 0.
 	ld a,(hl)
@@ -262,7 +262,7 @@ facade_state_attack:
 
 @@attack_holeMaker_spawn:
 	call ecom_decCounter1
-	jp z,facadeIncrementStateAndFadeOut
+	jp z,facade_incrementStateAndFadeOut
 
 	; Wait for ([counter1] & $1f) == 0
 	ld a,(hl)
@@ -297,7 +297,7 @@ facade_state_attack:
 ; The combination of criteria ([counter1] & $0f == 0 && [animParameter] == 1) leads to us spawning 3 groups of 2.
 @@attack_volcanoRock_spawn:
 	call ecom_decCounter1
-	jp z,facadeIncrementStateAndFadeOut
+	jp z,facade_incrementStateAndFadeOut
 
 	; Only spawn if (counter1 & $0f) == 0
 	ld a,(hl)
@@ -329,7 +329,7 @@ facade_state_resetAndInvisible:
 	ld (hl),$09
 
 	ld l,Enemy.counter1
-	ld (hl),$78
+	ld (hl),120
 
 	; Disable collision.
 	ld l,Enemy.collisionType
@@ -423,7 +423,7 @@ facade_spawnVolcanoRock:
 	ret
 
 ; This is used by the attack states to move to the next state and set the animation that closes its eyes.
-facadeIncrementStateAndFadeOut:
+facade_incrementStateAndFadeOut:
 	ld l,Enemy.state
 	inc (hl)
 
@@ -431,18 +431,18 @@ facadeIncrementStateAndFadeOut:
 	jp enemySetAnimation
 
 ; Kill all the Beetles that were spawned.
-facadeKillSpawnedBeetles:
-	ld hl,$d080
+facade_killSpawnedBeetles:
+	ldhl FIRST_ENEMY_INDEX, Enemy.start
 @loop:
 	ld l,Enemy.id
 	ld a,(hl)
 	cp ENEMY_BEETLE
 	call z,ecom_killObjectH
 
-	; Loop h from $d0 to $e0.
+	; Loop h from $d0 to $df (all enemy object slots).
 	inc h
 	ld a,h
-	cp $e0
+	cp LAST_ENEMY_INDEX + 1
 	jr c,@loop
 
 	ret
