@@ -4370,7 +4370,7 @@ animateLinkWalking:
 	call playSound
 ++
 	ld h,d
-	ld a,$10
+	ld a,LINK_ANIM_MODE_WALK
 	ld l,<w1Link.animMode
 	cp (hl)
 	jp nz,specialObjectSetAnimation
@@ -4381,37 +4381,41 @@ updateLinkSpeed_standard:
 	ld c,$00
 
 ;;
-; @param	c	Bit 7 set if speed shouldn't be modified?
+; @param	c	Bit 7 set if speed shouldn't be updated directly (only speedTmp, the target speed?)
+;			Lower bits are: $00 for normal terrain, $08 for ice, $10 for mermaid suit movement.
 updateLinkSpeed_withParam:
 	ld e,<w1Link.var36
 	ld a,(de)
 	cp c
-	jr z,++
+	jr z,@determineSpeed
 
+	; Just started walking on a new terrain type.
 	ld a,c
 	ld (de),a
 	and $7f
-	ld hl,@data
+	ld hl,@speedTable
 	rst_addAToHl
 
+	; Set Link's initial speed value if it was zero?
 	ld e,<w1Link.speed
 	ldi a,(hl)
 	or a
 	jr z,+
-
 	ld (de),a
 +
+	; Set var12 to zero, and var13 to the value of the 2nd byte in the table?
 	xor a
 	ld e,<w1Link.var12
 	ld (de),a
 	inc e
 	ldi a,(hl)
-	ld (de),a
-++
+	ld (de),a ; [var13]
+
+@determineSpeed:
 	; 'b' will be added to the index for the below table, depending on whether Link is
 	; slowed down by grass, stairs, etc.
 	ld b,$02
-	; 'e' will be added to the index in the same way as 'b'. It will be $04 if Link is
+	; 'e' will be added to the index in the same way as 'b'. It will be $03 if Link is
 	; using pegasus seeds.
 	ld e,$00
 
@@ -4445,7 +4449,7 @@ updateLinkSpeed_withParam:
 	add b
 	add c
 	and $7f
-	ld hl,@data
+	ld hl,@speedTable
 	rst_addAToHl
 	ld a,(hl)
 	ld h,d
@@ -4456,12 +4460,20 @@ updateLinkSpeed_withParam:
 	ld (hl),a
 	ret
 
-@data:
-	.db $28 $00 $1e $14 $28 $2d $1e $3c
-	.db $00 $06 $28 $28 $28 $3c $3c $3c
-	.db $14 $03 $1e $14 $28 $2d $1e $3c
+@speedTable:
+	; Normal
+	.db SPEED_100, $00, SPEED_0c0, SPEED_080, SPEED_100, SPEED_120, SPEED_0c0, SPEED_180
+	;                   Grass      Stairs     Normal     P. Grass   P. Stairs  P. Normal
+
+	; Slippery
+	.db SPEED_000, $06, SPEED_100, SPEED_100, SPEED_100, SPEED_180, SPEED_180, SPEED_180,
+
+	; Unused?
+	.db SPEED_080, $03, SPEED_0c0, SPEED_080, SPEED_100, SPEED_120, SPEED_0c0, SPEED_180
+
 .ifdef ROM_AGES
-	.db $00 $05 $2d $2d $2d $2d $2d $2d
+	; Mermaid suit movement
+	.db SPEED_000, $05, SPEED_120, SPEED_120, SPEED_120, SPEED_120, SPEED_120, SPEED_120
 .endif
 
 ;;

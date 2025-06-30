@@ -344,7 +344,8 @@
 	; Dimitri: set to $01 when his "eating" attack swallows something.
 	var35			db ; $35
 
-	; Link: this is an index for a table in the updateLinkSpeed function?
+	; Link: Seems to remember last terrain type (normal, slippery, or water) Link walked on for
+	; the "updateLinkSpeed_withParam" function?
 	; Ricky: this stores the tile 2 spaces away, to see if Ricky can land on it?
 	var36			db ; $36
 

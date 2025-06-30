@@ -1927,11 +1927,17 @@ wLinkGrabState2: ; $cc5b/$cc76
 
 
 wLinkInAir: ; $cc5c/$cc77
-; Bit 7: lock link's movement direction, prevent jumping. (Jumping down a cliff, using
-;        gale seed, jumping into bed in Nayru's house, etc...)
-; Bit 5: If set, Link's gravity is reduced
-; Bit 1: set when link is jumping
-; Bit 0: set when jumping down a cliff
+; Upper nibble:
+;   Bit 7: lock link's movement direction, prevent jumping. (Jumping down a cliff, using
+;          gale seed, jumping into bed in Nayru's house, etc...)
+;   Bit 6: If set, Link has a 2nd jump available with the roc's cape
+;   Bit 5: If set, Link's gravity is reduced (2nd half of roc's cape jump)
+; Lower nibble:
+;   0: Not in the air
+;   1: Just started jumping
+;   2: In the air
+;   3+: Invalid
+;
 ; If nonzero, Link's knockback durations are halved.
 	db
 

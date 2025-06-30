@@ -10292,7 +10292,7 @@ tryToBreakTile:
 	ret
 
 ;;
-; Calls bank6._clearAllParentItems.
+; Calls bank6.clearAllParentItems_body.
 clearAllParentItems:
 	ld c,$00
 	jr ++
