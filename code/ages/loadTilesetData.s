@@ -78,7 +78,7 @@ getAdjustedRoomGroup:
 	cp $02
 	ret nc
 	call getThisRoomFlags
-	rrca
+	rrca ; Check ROOMFLAG_LAYOUTSWAP
 	jr nc,+
 	set 1,b
 +
