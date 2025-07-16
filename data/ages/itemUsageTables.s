@@ -56,9 +56,9 @@ itemUsageParameterTable:
 
 ; Data format:
 ;  b0: bit 7:    If set, the corresponding bit in wLinkUsingItem1 will be set.
-;      bits 4-6: Value for bits 0-2 of Item.var3f
-;      bits 0-3: Determines parent item's relatedObj2?
-;                A value of $6 refers to w1WeaponItem.
+;      bits 4-6: Value for bits 0-2 of Item.var3f (animation priority?)
+;      bits 0-3: Determines parent item's relatedObj2 (what slot the child item should use).
+;                A value of $6 refers to w1WeaponItem, otherwise it's one of the dynamic item slots.
 ;  b1: Animation to set Link to? (see constants/common/linkAnimations.s)
 ;
 linkItemAnimationTable:
