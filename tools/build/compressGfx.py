@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 3:
-    print('Usage: ' + sys.argv[0] + '[--mode 0-3] gfxFile outFile')
+    print('Usage: ' + sys.argv[0] + '[--bit-perfect] [--mode 0-3] gfxFile outFile')
     sys.exit(1)
 
 
@@ -40,6 +40,173 @@ def mode3FindLastBasePos(compressedData):
 
 compressionCache = {}
 charPositionLists = {}
+
+# Bit-perfect LZ compression based on greedy algorithm
+def compressMode1Or3BitPerfect(data, mode):
+    """
+    Bit-perfect LZ compression using greedy algorithm that matches the original compressor.
+    This searches for the longest match at each position and always takes it.
+    """
+    commands = []
+    pos = 0
+    
+    while pos < len(data):
+        # Find best match at current position
+        match_offset, match_len = findBestMatchGreedy(data, pos, mode)
+        
+        if match_len > 0:
+            commands.append({
+                'is_backref': True,
+                'offset': match_offset,
+                'length': match_len
+            })
+            pos += match_len
+        else:
+            commands.append({
+                'is_backref': False,
+                'literal': data[pos]
+            })
+            pos += 1
+    
+    # Encode commands into compressed data
+    return encodeCommands(commands, mode)
+
+def findBestMatchGreedy(data, pos, mode):
+    """
+    Find the best back-reference match at the current position.
+    Returns (offset, length) where offset is 1-based distance back.
+    Returns (0, 0) if no suitable match is found.
+    """
+    if pos == 0:
+        return 0, 0
+    
+    # Mode 1: 5-bit offset (0-31), distance 1-32
+    # Mode 3: 11-bit offset (0-2047), distance 1-2048
+    max_offset = 0x800 if mode == 3 else 0x20
+    
+    min_len = 3 if mode == 3 else 2  # Minimum worthwhile match length
+    max_len = 256
+    
+    best_offset = 0
+    best_len = 0
+    
+    # Search for matches by trying each possible distance from 1 to max_offset
+    for dist in range(1, min(pos + 1, max_offset + 1)):
+        search_pos = pos - dist
+        
+        # Try to match starting from search_pos
+        match_len = 0
+        while pos + match_len < len(data) and match_len < max_len:
+            # The decompressor copies byte-by-byte from the output buffer,
+            # so it can replicate short patterns (e.g., "AAAA" from a single "A")
+            # Use modulo to wrap around for matches shorter than the distance
+            src_idx = search_pos + (match_len % dist)
+            if data[src_idx] != data[pos + match_len]:
+                break
+            match_len += 1
+        
+        if match_len >= min_len and match_len > best_len:
+            best_len = match_len
+            best_offset = dist
+    
+    # Check if the match is worthwhile based on encoding cost
+    if best_len < min_len:
+        return 0, 0
+    
+    # Encoding cost analysis:
+    # Mode 1 backref: 1 byte for length 2-8, 2 bytes for length 1 or 9-256
+    # Mode 3 backref: 2 bytes for length 2-33, 3 bytes for length 1 or 34-256
+    if mode == 1:
+        if best_len <= 8:
+            if best_len < 2:
+                return 0, 0
+        else:
+            if best_len < 3:
+                return 0, 0
+    else:  # mode == 3
+        if best_len <= 33:
+            if best_len < 3:
+                return 0, 0
+        else:
+            if best_len < 4:
+                return 0, 0
+    
+    return best_offset, best_len
+
+def encodeCommands(commands, mode):
+    """
+    Encode a list of LZ commands into compressed data.
+    """
+    result = bytearray()
+    cmd_idx = 0
+    
+    while cmd_idx < len(commands):
+        # Determine how many commands this control byte covers
+        cmd_count = min(8, len(commands) - cmd_idx)
+        
+        # Build control byte
+        control_byte = 0
+        for i in range(cmd_count):
+            if commands[cmd_idx + i]['is_backref']:
+                control_byte |= (0x80 >> i)
+        
+        # If this is a partial control byte (less than 8 commands),
+        # set the next bit to 1 (backref) to signal end-of-stream
+        if cmd_count < 8:
+            control_byte |= (0x80 >> cmd_count)
+        
+        result.append(control_byte)
+        
+        # Emit the data for each command
+        for i in range(cmd_count):
+            cmd = commands[cmd_idx + i]
+            if cmd['is_backref']:
+                offset = cmd['offset'] - 1  # Convert to 0-based
+                length = cmd['length']
+                
+                if mode == 1:
+                    # Mode 1: Short back-reference
+                    if 2 <= length <= 8:
+                        # Length fits in 3 bits: ((len-1) << 5) | offset
+                        b = ((length - 1) << 5) | offset
+                        result.append(b)
+                    else:
+                        # Extended format: length = 0 in high bits, next byte is length
+                        b = offset  # high 3 bits = 0
+                        result.append(b)
+                        # Length 256 is encoded as 0 (wraps around in 8-bit value)
+                        if length == 256:
+                            result.append(0)
+                        else:
+                            result.append(length)
+                else:  # mode == 3
+                    # Mode 3: Long back-reference
+                    low_offset = offset & 0xFF
+                    high_offset_bits = (offset >> 8) & 0x07
+                    
+                    if 2 <= length <= 33:
+                        # Length fits in 5 bits: ((len-2) << 3) | high_offset_bits
+                        length_bits = length - 2
+                        high_byte = (length_bits << 3) | high_offset_bits
+                        result.append(low_offset)
+                        result.append(high_byte)
+                    else:
+                        # Extended format: length = 0 in high bits, next byte is length
+                        high_byte = high_offset_bits  # high 5 bits = 0
+                        result.append(low_offset)
+                        result.append(high_byte)
+                        # Length 256 is encoded as 0 (wraps around in 8-bit value)
+                        if length == 256:
+                            result.append(0)
+                        else:
+                            result.append(length)
+            else:
+                # Literal byte
+                result.append(cmd['literal'])
+        
+        cmd_idx += cmd_count
+    
+    return result
 
 def compressMode1Or3(data, mode):
     global compressionCache
@@ -185,17 +352,32 @@ def compressMode2(data):
     for row in range(0, numRows):
         numberRepeats = {}
         highestRepeatCount = 0
+        highestRepeatNumber = 0
+        firstPosition = {}  # Track first position of each byte for bit-perfect mode
+        
         for i in range(0, 16):
             if row*16+i >= len(data):
                 break
             num = data[row*16+i]
             if num not in numberRepeats:
                 numberRepeats[num] = 1
+                firstPosition[num] = i
             else:
                 numberRepeats[num] += 1
-            if numberRepeats[num] >= highestRepeatCount:
-                highestRepeatCount = numberRepeats[num]
-                highestRepeatNumber = num
+            
+            # Bit-perfect mode: only update if count is strictly greater,
+            # or if equal count and this byte appears earlier
+            if BIT_PERFECT:
+                if numberRepeats[num] > highestRepeatCount:
+                    highestRepeatCount = numberRepeats[num]
+                    highestRepeatNumber = num
+                elif numberRepeats[num] == highestRepeatCount and firstPosition[num] < firstPosition[highestRepeatNumber]:
+                    highestRepeatNumber = num
+            else:
+                # Original behavior: use >= which favors later bytes in ties
+                if numberRepeats[num] >= highestRepeatCount:
+                    highestRepeatCount = numberRepeats[num]
+                    highestRepeatNumber = num
 
         if highestRepeatCount < 2:
             retData.append(0)
@@ -221,30 +403,44 @@ def compressMode2(data):
             retData[startPos+1] = repeatBits&0x00ff
     return retData
 
-argNumber = 1
-def nextArg():
-    global argNumber
-    argNumber = argNumber + 1
-    return sys.argv[argNumber - 1]
-
 def compressMode(inBuf, mode):
     if mode == 0:
         return inBuf
     elif mode == 2:
         return compressMode2(inBuf)
     else:  # mode == 1 or mode == 3
-        return compressMode1Or3(inBuf, mode)
+        if BIT_PERFECT:
+            return compressMode1Or3BitPerfect(inBuf, mode)
+        else:
+            return compressMode1Or3(inBuf, mode)
 
 # Main
 
 forceMode = -1
-if sys.argv[1] == '--mode':
-    nextArg()
-    forceMode = int(nextArg())
-    sys.argv
+BIT_PERFECT = False
 
-inFile = open(nextArg(), 'rb')
+# Parse command-line arguments
+argNumber = 1
+while argNumber < len(sys.argv) - 2:
+    arg = sys.argv[argNumber]
+    if arg == '--bit-perfect':
+        BIT_PERFECT = True
+        argNumber += 1
+    elif arg == '--mode':
+        argNumber += 1
+        forceMode = int(sys.argv[argNumber])
+        argNumber += 1
+    else:
+        break
+
+# Get input and output file names
+if argNumber >= len(sys.argv) - 1:
+    print('Usage: ' + sys.argv[0] + ' [--bit-perfect] [--mode 0-3] gfxFile outFile')
+    sys.exit(1)
+
+inFile = open(sys.argv[argNumber], 'rb')
 inBuf = bytearray(inFile.read())
+outFileName = sys.argv[argNumber + 1]
 
 if forceMode != -1:
     outBuf = compressMode(inBuf, forceMode)
@@ -262,7 +458,7 @@ else:
 length = len(inBuf)
 assert(length < 0x10000)
 
-outFile = open(nextArg(), 'wb')
+outFile = open(outFileName, 'wb')
 outFile.write(bytes([mode, length & 0xff, (length >> 8) & 0xff]))
 outFile.write(outBuf)
 outFile.close()
