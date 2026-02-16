@@ -8,6 +8,8 @@ jobs:
     parameters:
       game:
         type: string
+      region:
+        type: string
     steps:
       - checkout
       - run: make << parameters.game >>
@@ -16,7 +18,7 @@ jobs:
       # Only do it if the makefile is in BUILD_VANILLA mode, though.
       - run:
           name: Verify checksum (if applicable)
-          command: grep 'BUILD_VANILLA = false' Makefile || tools/build/verify-checksum.sh << parameters.game >>
+          command: grep 'BUILD_VANILLA = false' Makefile || tools/build/verify-checksum.sh << parameters.game >> << parameters.region >>
 
 
 workflows:
@@ -25,6 +27,8 @@ workflows:
       - build-game:
           name: build-ages
           game: ages
+          region: us
       - build-game:
           name: build-seasons
           game: seasons
+          region: us
