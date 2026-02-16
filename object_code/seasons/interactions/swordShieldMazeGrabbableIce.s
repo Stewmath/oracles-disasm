@@ -19,12 +19,14 @@ interactionCode68:
 @state1:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
+.ifndef REGION_JP ; TODO - why?
 	ld a,($cc77)
 	or a
 	jr nz,+
 	ld a,($cc48)
 	rrca
 	call nc,objectPushLinkAwayOnCollision
+.endif
 +
 	call objectAddToGrabbableObjectBuffer
 @func_5833:

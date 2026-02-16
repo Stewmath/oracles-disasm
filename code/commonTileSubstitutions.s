@@ -227,7 +227,11 @@ replaceSwitchTiles:
 		.db $70 $04 $5b $84
 		.db $76 $08 $0b $17
 		.db $76 $08 $5d $25
+.ifdef REGION_JP
+		.db $7e $10 $0b $46
+.else
 		.db $7e $10 $0b $56
+.endif
 		.db $7e $10 $5c $66
 		.db $a0 $01 $5e $44
 		.db $a0 $02 $5e $37

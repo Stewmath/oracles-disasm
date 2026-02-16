@@ -39,7 +39,9 @@ gfxHeaderTable:
 
 
 m_GfxHeaderStart $00, GFXH_DMG_SCREEN
+.ifndef REGION_JP
 	m_GfxHeader gfx_dmg_text, $8800
+.endif
 	m_GfxHeader gfx_dmg_gametitle, $9000
 	m_GfxHeader map_dmg_message, $9800
 	m_GfxHeaderEnd
@@ -67,6 +69,13 @@ m_GfxHeaderStart $03, GFXH_DONE
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $04, GFXH_JAPANESE_INTRO_SCREEN
+.ifdef REGION_JP
+	m_GfxHeader flg_jp_intro_screen_1, $9801
+	m_GfxHeader map_jp_intro_screen_1, $9800
+	m_GfxHeader gfx_jp_intro_screen_1, $8800
+	m_GfxHeader gfx_jp_intro_screen_2, $9000
+	m_GfxHeaderEnd
+.else
 	; This used to be the data for the japanese intro graphics, but now it points to
 	; gfx_capcom_nintendo with the wrong compression mode. Who knows what would happen if you
 	; tried to load it.
@@ -74,6 +83,7 @@ m_GfxHeaderStart $04, GFXH_JAPANESE_INTRO_SCREEN
 	m_GfxHeaderForceMode gfx_capcom_nintendo, $9800, $80, $00
 	m_GfxHeaderForceMode gfx_capcom_nintendo, $8800, $80, $00
 	m_GfxHeaderForceMode gfx_capcom_nintendo, $9000, $80, $00
+.endif
 
 m_GfxHeaderStart $05, GFXH_SECRET_LIST_MENU
 	m_GfxHeader spr_minimap_icons, $8000, $20
@@ -811,9 +821,11 @@ m_GfxHeaderStart $95, GFXH_CREDITS_SCROLL
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $96, GFXH_TO_BE_CONTINUED
+.ifndef REGION_JP
 	m_GfxHeader gfx_tobecontinued, $8800
 	m_GfxHeader map_tobecontinued, $9800
 	m_GfxHeader flg_tobecontinued, $9801
+.endif
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $97, GFXH_SECRET_FOR_LINKED_GAME
@@ -973,8 +985,13 @@ m_GfxHeaderStart $a5, GFXH_NAME_ENTRY
 	m_GfxHeader gfx_name, $8801
 	m_GfxHeader map_name_entry_top, w4TileMap
 	m_GfxHeader flg_name_entry_top, w4AttributeMap
+.ifdef REGION_JP
+	m_GfxHeader map_secret_entry_middle, w4TileMap+$0a0
+	m_GfxHeader flg_secret_entry_middle, w4AttributeMap+$0a0
+.else
 	m_GfxHeader map_name_entry_middle, w4TileMap+$0a0
 	m_GfxHeader flg_name_entry_middle, w4AttributeMap+$0a0
+.endif
 	m_GfxHeader map_name_entry_bottom, w4TileMap+$1e0
 	m_GfxHeader flg_name_entry_bottom, w4AttributeMap+$1e0
 	m_GfxHeaderEnd

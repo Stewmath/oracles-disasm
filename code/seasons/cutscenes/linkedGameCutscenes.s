@@ -529,7 +529,7 @@ zeldaKidnappedCutscene_state1Handler:
 	jp setWarpDestVariables
 
 @warpDest:
-    ; 1st screen on path to Onox?
+	; 1st screen on path to Onox?
 	.db $c0 $23 $00 $45 $83
 
 

@@ -92,7 +92,9 @@
 	m_GfxData spr_ralph_1 ; $0ab20b
 	m_GfxData spr_ralph_2 ; $0ab3d5
 	m_GfxData spr_seasonfairy_ambi ; $0ab495
+.ifndef REGION_JP
 	m_GfxData gfx_blank_2 ; $0ab5ff (unused)
+.endif
 	m_GfxData spr_farore_1 ; $0ab605
 	m_GfxData spr_nayru_1 ; $0ab652
 	m_GfxData spr_nayru_2 ; $0ab7d6
@@ -327,9 +329,18 @@
 	m_GfxData gfx_tileset_zora_palace ; $0c2961
 	m_GfxData gfx_tileset_zora_palace_replacement_1 ; $0c2d31
 	m_GfxData gfx_tileset_zora_palace_replacement_2 ; $0c2d71
+.ifndef REGION_JP
 	m_GfxData gfx_dmg_text ; $0c2dec
+.endif
 	m_GfxData gfx_dmg_gametitle ; $0c2ec8
 	m_GfxData map_dmg_message ; $0c312b
+.ifdef REGION_JP
+	; Intro graphics for JP.
+	m_GfxData gfx_jp_intro_screen_2
+	m_GfxData gfx_jp_intro_screen_1
+	m_GfxData map_jp_intro_screen_1
+	m_GfxData flg_jp_intro_screen_1
+.endif
 	m_GfxData gfx_capcom_nintendo ; $0c3215
 	m_GfxData map_capcom_nintendo ; $0c35a7
 	m_GfxData flg_capcom_nintendo ; $0c361c
@@ -538,9 +549,11 @@
 	m_GfxData spr_boat_theend ; $0dedc0
 	m_GfxData gfx_credits_linked_theend_1 ; $0def24
 	m_GfxData gfx_credits_linked_theend_2 ; $0df2b9
+.ifndef REGION_JP
 	m_GfxData gfx_tobecontinued ; $0df544
 	m_GfxData map_tobecontinued ; $0dfb1a
 	m_GfxData flg_tobecontinued ; $0dfbb9
+.endif
 	m_GfxData spr_fileselect_decorations ; $0dfbe4
 	m_GfxData gfx_pickafile_2 ; $0dfcba
 	m_GfxData gfx_copy ; $0dfe5d
@@ -555,8 +568,13 @@
 	m_GfxData gfx_gameover ; $0e1274
 	m_GfxData gfx_secret_thatswrong ; $0e1426
 	m_GfxData gfx_name ; $0e15bb
+.ifdef REGION_JP
+	m_GfxData gfx_herossecret ; $0e17cd
+	m_GfxData gfx_secrettoholodrum ; $0e1641
+.else
 	m_GfxData gfx_secrettoholodrum ; $0e1641
 	m_GfxData gfx_herossecret ; $0e17cd
+.endif
 	m_GfxData gfx_linking ; $0e1982
 	m_GfxData gfx_quit ; $0e1b12
 	m_GfxData gfx_done ; $0e1b90
@@ -587,8 +605,10 @@
 	m_GfxData flg_name_entry_top ; $0e246d
 	m_GfxData map_name_entry_bottom ; $0e248d
 	m_GfxData flg_name_entry_bottom ; $0e24b8
+.ifndef REGION_JP
 	m_GfxData map_name_entry_middle ; $0e24c9
 	m_GfxData flg_name_entry_middle ; $0e2589
+.endif
 	m_GfxData map_secret_for_linked_game ; $0e25a4
 	m_GfxData flg_secret_for_linked_game ; $0e262f
 	m_GfxData gfx_secret_list_menu ; $0e264f

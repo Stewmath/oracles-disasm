@@ -1526,7 +1526,12 @@ group4Map70EnemyObjectData:
 	obj_EndPointer
 
 group4Map7eEnemyObjectData:
+.ifdef REGION_JP
+	obj_Part $05 $10 $46
+.else
 	obj_Part $05 $10 $56
+.endif
+
 group4Map71EnemyObjectData:
 	obj_RandomEnemy $84 $32 $00
 	obj_EndPointer
@@ -2326,11 +2331,23 @@ group5Map72BeforeEventObjectData:
 	obj_EndPointer
 
 group5Map73EnemyObjectData:
+
+.ifdef REGION_JP
+	obj_SpecificEnemyA $01 $34 $00 $58 $78
+.else
 	obj_SpecificEnemyA $00 $34 $00 $58 $78
+.endif
+
 	obj_SpecificEnemyA     $34 $00 $38 $a8
 	obj_SpecificEnemyA     $40 $01 $88 $88
 	obj_SpecificEnemyA     $40 $00 $28 $c8
+
+.ifdef REGION_JP
+	obj_RandomEnemy $65 $32 $00
+.else
 	obj_RandomEnemy $64 $32 $00
+.endif
+
 	obj_Part $13 $10 $1c
 	obj_EndPointer
 

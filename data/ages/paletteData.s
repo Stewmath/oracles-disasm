@@ -18,16 +18,56 @@ paletteData4008:
 	m_RGB16 $03 $00 $17
 
 paletteData4018:
+.ifdef REGION_JP
+	m_RGB16 $00 $05 $05
+.else
 	m_RGB16 $0e $0c $04
+.endif
 	m_RGB16 $1c $1e $1f
+.ifdef REGION_JP
+	m_RGB16 $00 $11 $1a
+	m_RGB16 $03 $00 $10
+.else
 	m_RGB16 $0c $18 $1c
 	m_RGB16 $0b $00 $11
+.endif
 
 	m_RGB16 $1f $19 $10
 	m_RGB16 $1f $14 $09
 	m_RGB16 $1f $10 $03
 	m_RGB16 $1e $0d $00
 
+.ifdef REGION_JP
+	m_RGB16 $00 $05 $05
+	m_RGB16 $1f $1a $00
+	m_RGB16 $00 $11 $1a
+	m_RGB16 $00 $0b $03
+
+	m_RGB16 $00 $05 $05
+	m_RGB16 $1f $1a $00
+	m_RGB16 $00 $11 $1a
+	m_RGB16 $03 $00 $10
+
+	m_RGB16 $00 $05 $05
+	m_RGB16 $1d $1f $1f
+	m_RGB16 $00 $11 $1a
+	m_RGB16 $1d $06 $18
+
+	m_RGB16 $00 $05 $05
+	m_RGB16 $1f $1a $00
+	m_RGB16 $00 $11 $1a
+	m_RGB16 $1d $06 $18
+
+	m_RGB16 $00 $05 $05
+	m_RGB16 $03 $00 $10
+	m_RGB16 $00 $11 $1a
+	m_RGB16 $1d $06 $18
+
+	m_RGB16 $00 $05 $05
+	m_RGB16 $1f $1a $00
+	m_RGB16 $00 $11 $1a
+	m_RGB16 $1e $0d $00
+.else
 	m_RGB16 $0e $0c $04
 	m_RGB16 $1f $1c $00
 	m_RGB16 $0c $18 $1c
@@ -57,6 +97,7 @@ paletteData4018:
 	m_RGB16 $1d $1f $1f
 	m_RGB16 $0c $18 $1c
 	m_RGB16 $1e $0d $00
+.endif
 
 paletteData4058:
 	m_RGB16 $0c $12 $1f
@@ -64,6 +105,27 @@ paletteData4058:
 	m_RGB16 $03 $10 $12
 	m_RGB16 $0a $18 $1c
 
+.ifdef REGION_JP
+	m_RGB16 $0c $12 $1f
+	m_RGB16 $1f $1f $1f
+	m_RGB16 $0d $0d $0d
+	m_RGB16 $00 $05 $05
+
+	m_RGB16 $0c $12 $1f
+	m_RGB16 $0b $05 $00
+	m_RGB16 $1e $0d $00
+	m_RGB16 $1f $10 $03
+
+	m_RGB16 $0c $12 $1f
+	m_RGB16 $1f $14 $00
+	m_RGB16 $1c $0b $00
+	m_RGB16 $0d $02 $00
+
+	m_RGB16 $0c $12 $1f
+	m_RGB16 $0d $1d $00
+	m_RGB16 $05 $12 $00
+	m_RGB16 $01 $07 $00
+.else
 	m_RGB16 $0c $12 $1f
 	m_RGB16 $1f $00 $00
 	m_RGB16 $1f $00 $00
@@ -83,12 +145,24 @@ paletteData4058:
 	m_RGB16 $13 $1b $00
 	m_RGB16 $0d $10 $00
 	m_RGB16 $07 $07 $00
+.endif
 
 	m_RGB16 $0c $12 $1f
 	m_RGB16 $1f $00 $00
 	m_RGB16 $1f $00 $00
 	m_RGB16 $1f $00 $00
 
+.ifdef REGION_JP
+	m_RGB16 $0c $12 $1f
+	m_RGB16 $06 $19 $0b
+	m_RGB16 $00 $10 $05
+	m_RGB16 $00 $06 $00
+
+	m_RGB16 $0c $12 $1f
+	m_RGB16 $06 $19 $0b
+	m_RGB16 $00 $10 $04
+	m_RGB16 $14 $06 $00
+.else
 	m_RGB16 $0c $12 $1f
 	m_RGB16 $11 $18 $0b
 	m_RGB16 $09 $0f $05
@@ -98,6 +172,7 @@ paletteData4058:
 	m_RGB16 $11 $18 $0b
 	m_RGB16 $09 $0f $05
 	m_RGB16 $13 $0a $00
+.endif
 
 paletteData4098:
 	m_RGB16 $0e $08 $00

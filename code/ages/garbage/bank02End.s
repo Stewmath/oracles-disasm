@@ -1,5 +1,6 @@
 .ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 ; From here on are corrupted repeats of functions starting from
 ; "readParametersForRectangleDrawing".
 
@@ -167,5 +168,6 @@ fake_checkLoadPastSignAndChestGfx:
 fake_rectangleData_02_7de1:
 	.db $06 $06
 	.dw w3VramTiles+8 w2TmpGfxBuffer
+.endif ; REGION_US
 
 .endif ; INCLUDE_GARBAGE

@@ -5,7 +5,7 @@
 .DEFINE TEXT_END_BANK $21
 
 .BANK $1c
-.ORGA $5c00
+.ORGA TEXT_START_ADDR
 
 textTableENG:
 	.db $c8 $00 $c8 $02 $c8 $04 $c8 $06

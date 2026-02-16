@@ -205,6 +205,7 @@ oamData_4f73:
 	.db $00 $48 $38 $00
 	.db $00 $50 $3a $05
 
+.ifndef REGION_JP
 oamData_4fec:
 	.db $0a
 	.db $48 $4d $88 $05
@@ -217,3 +218,4 @@ oamData_4fec:
 	.db $3b $3c $92 $03
 	.db $49 $4c $80 $02
 	.db $49 $54 $82 $02
+.endif

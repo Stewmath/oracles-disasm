@@ -753,12 +753,18 @@ endgameCutsceneHandler_09_stage1_body:
 	jr +
 
 @seasonsFunc_03_5aa2:
+.ifdef REGION_JP
+	ld hl,seasonsOamData_03_66ff
+	ld bc,$3038
+	jr +
+.else
 	ld hl,oamData_15_4da3
 	ld e,:oamData_15_4da3
 	ld bc,$3038
 	xor a
 	ldh (<hOamTail),a
 	jp addSpritesFromBankToOam_withOffset
+.endif
 
 @seasonsFunc_03_5ab0:
 	ld hl,seasonsOamData_03_65a4
@@ -1761,9 +1767,11 @@ endgameCutsceneHandler_0a_stage3:
 	.dw @state5
 	.dw @state6
 	.dw @state7
+.ifndef REGION_JP
 	.dw @state8
 	.dw @state9
 	.dw @stateA
+.endif
 	.dw @stateB
 
 @state0:
@@ -1941,6 +1949,7 @@ endgameCutsceneHandler_0a_stage3:
 	call playSound
 	jp fadeoutToWhite
 
+.ifndef REGION_JP
 @state8:
 	call fileSelect_redrawDecorations
 	ld a,(wPaletteThread_mode)
@@ -1989,9 +1998,14 @@ endgameCutsceneHandler_0a_stage3:
 	ret z
 	call incCbc2
 	jp fadeoutToWhite
+.endif
 
 @stateB:
+.ifdef REGION_JP
+	call fileSelect_redrawDecorations
+.else
 	call @state9Func0
+.endif
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz

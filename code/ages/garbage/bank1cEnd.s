@@ -1,5 +1,6 @@
 .ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 	; Leftovers from seasons - part of its text dictionary
 	; $73dc0
 
@@ -75,5 +76,14 @@
 	.db $61 $73 $74 $73 $00 $63 $61 $6c
 	.db $6c $65 $64 $00 $62 $65 $74 $74
 	.db $65 $72 $00 $74 $72 $61 $76 $65
+.endif ; REGION_US
+
+.ifdef REGION_JP
+	; TODO : analyze this garbage data.
+	.db $0e $ff $1b $ff $11 $ff $1b $ff
+	.db $3e $ff $60 $ff $f0 $ff $a0 $ff
+	.db $1c $ff $22 $ff $4a $ff $a3 $fd
+	.db $df $a9 $ff $95 $7e $cb $3c $ff
+.endif ; REGION_JP
 
 .endif

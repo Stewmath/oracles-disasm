@@ -139,6 +139,21 @@ interactionCodeaf:
 .endif
 
 .else ;ROM_SEASONS
+
+.ifdef REGION_JP
+	.db $20 $00
+	.db $e0 $00
+	.db $20 $01
+	.db $10 $01
+	.db $e0 $00
+	.db $60 $01
+	.db $e0 $00
+	.db $00 $01
+	.db $50 $01
+	.db $30 $01
+	.db $80 $01
+	.db $ff
+.else ; REGION_US
 	.dw $0020
 	.dw $00e0
 	.dw $0120
@@ -156,4 +171,6 @@ interactionCodeaf:
 	.dw $0160
 	.dw $01a0
 	.db $ff
+.endif
+
 .endif

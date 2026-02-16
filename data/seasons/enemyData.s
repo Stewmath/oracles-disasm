@@ -114,7 +114,11 @@ enemyData:
 	/* 0x6e */ m_EnemyData $00 $00 $00 $00
 	/* 0x6f */ m_EnemyData $00 $00 $00 $00
 	/* 0x70 */ m_EnemyData $95 $41 enemy70SubidData
+.ifdef REGION_JP
+	/* 0x71 */ m_EnemyData $8a $8f $1d $10
+.else
 	/* 0x71 */ m_EnemyData $8a $0f $1d $10
+.endif
 	/* 0x72 */ m_EnemyData $96 $42 $1e $10
 	/* 0x73 */ m_EnemyData $98 $43 $1f $20
 	/* 0x74 */ m_EnemyData $9b $c4 $20 $30

@@ -388,6 +388,13 @@ gohma_stateC_substate2:
 	jp gohma_updateLunge
 
 @doneLunge:
+.ifdef REGION_JP
+	ld a,Object.state
+	call objectGetRelatedObject2Var
+	ld a,(hl)
+	cp LINK_STATE_0e
+	jr c,gohma_stateC_incSubstateAndSetAnimation14
+.else
 	; Check if grabbed Link
 	ld a,(w1Link.state)
 	cp LINK_STATE_GRABBED
@@ -399,6 +406,7 @@ gohma_stateC_substate2:
 	inc l
 	ld (hl),20 ; [counter1]
 	ret
+.endif
 
 ; Grabbed Link
 gohma_stateC_setSubstate4:
@@ -408,12 +416,23 @@ gohma_stateC_setSubstate4:
 	ld a,$0a
 	jr gohma_setAnimation
 
+.ifdef REGION_JP
+gohma_stateC_incSubstateAndSetAnimation14
+	ld h,d
+	ld l,Enemy.substate
+	inc (hl)
+	inc l
+	ld (hl),$14
+	ret
+.endif
 
 ; Standing in place after lunge
 gohma_stateC_substate3:
+.ifndef REGION_JP
 	ld a,(w1Link.state)
 	cp LINK_STATE_GRABBED
 	jr z,gohma_stateC_setSubstate4
+.endif
 
 	call ecom_decCounter1
 	ret nz
@@ -475,7 +494,11 @@ gohma_subid1_stateD:
 	ld (hl),$01 ; [counter1]
 
 	ld a,$0b
+.ifdef REGION_JP
+	jr gohma_setAnimation
+.else
 	jp gohma_setAnimation
+.endif
 
 @chooseNextMovement:
 	call ecom_setRandomCardinalAngle
@@ -657,8 +680,11 @@ gohma_subid3:
 	ld h,d
 	ld l,Enemy.animParameter
 	bit 7,(hl)
+.ifdef REGION_JP
+	jr nz,@gotoStateA
+.else
 	jr nz,@label_0e_308
-
+.endif
 	bit 0,(hl)
 	jr z,++
 
@@ -671,6 +697,7 @@ gohma_subid3:
 	ld a,(de)
 	or a
 	ret z
+.ifndef REGION_JP
 	jr @linkCaught
 
 @label_0e_308:
@@ -681,6 +708,7 @@ gohma_subid3:
 
 	xor a
 	call gohma_claw_setPositionInLunge
+.endif
 
 @linkCaught:
 	ld a,$10

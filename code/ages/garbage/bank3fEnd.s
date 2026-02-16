@@ -1,5 +1,6 @@
 .ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 ; Garbage functions appear to follow (corrupted repeats of the above functions).
 
 ;;
@@ -61,5 +62,6 @@ func_7cf8:
 	set 0,(hl)
 	inc l
 	ret
+.endif ; REGION_US
 
 .endif

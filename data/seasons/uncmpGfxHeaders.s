@@ -7,7 +7,6 @@ uncmpGfxHeaderTable:
 		.dw uncmpGfxHeader{%.2x{COUNT}}
 	.endr
 
-
 uncmpGfxHeader00:
 
 uncmpGfxHeader01:
@@ -48,7 +47,11 @@ uncmpGfxHeader08:
 	m_GfxHeaderEnd
 
 uncmpGfxHeader09:
+.ifdef REGION_JP
+	m_GfxHeaderRam w4TileMap, $8000, $58
+.else
 	m_GfxHeaderRam w4TileMap, $8000, $60
+.endif
 	m_GfxHeaderEnd
 
 uncmpGfxHeader0a:

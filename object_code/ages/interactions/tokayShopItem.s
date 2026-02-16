@@ -68,8 +68,13 @@ interactionCode81:
 	.db TREASURE_MYSTERY_SEEDS, TREASURE_SCENT_SEEDS, $00, $00,
 	.db TREASURE_SCENT_SEEDS, TREASURE_SCENT_SEEDS, TREASURE_SCENT_SEEDS
 
+.ifdef REGION_JP
+	; TODO: still don't know what this data is ($626f)
+	.db $ef $75 $33 $76 $7b $76 $8b $76
+.else
 	; TODO: what is this data? Possibly unused? ($626f)
 	.db $28 $76 $6c $76 $b4 $76 $c4 $76
+.endif
 
 @state1:
 	call interactionAnimateAsNpc

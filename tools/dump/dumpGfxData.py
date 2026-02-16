@@ -17,9 +17,10 @@ if len(sys.argv) < 2:
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
+region = getRomRegion(rom)
 
 # Constants
-if romIsAges(rom):
+if romIsAges(rom) and region == "US":
     gfxHeaderTable = 0x69da
     numGfxHeaders = 0xbb
     gfxHeaderBank = 1
@@ -41,7 +42,30 @@ if romIsAges(rom):
     dataDir = 'data/ages/'
     precmpDir = 'precompressed/gfx_compressible/ages/'
     gfxDir = 'gfx_compressible/ages/'
-elif romIsSeasons(rom):
+elif romIsAges(rom) and region == "JP":
+    gfxHeaderTable = 0x69dc
+    numGfxHeaders = 0xbb # i think this is right
+    gfxHeaderBank = 1
+
+    uncmpGfxHeaderTable = 0x6746
+    numUncmpGfxHeaders = 0x40
+    uncmpGfxHeaderBank = 1
+
+    uniqueTilesetHeaderTable = 0x3 * 0x4000 + 0x5b28
+    numUniqueTilesetHeaders = 0x15
+    uniqueTilesetHeaderBank = 4
+
+    # is this called objectGfxHeaderTable now?
+    npcGfxTable = 0x3e * 0x4000 + 0x5a14
+    numNpcGraphics = 0xe0
+
+    treeGfxTable = 0x3e * 0x4000 + 0x5cb4
+    numTreeGraphics = 0xb
+
+    dataDir = 'data/ages_jp/'
+    precmpDir = 'precompressed/gfx_compressible/ages_jp/'
+    gfxDir = 'gfx_compressible/ages_jp/'
+elif romIsSeasons(rom) and region == "US":
     gfxHeaderTable = 0x6926
     numGfxHeaders = 0xbb
     gfxHeaderBank = 1
@@ -63,6 +87,28 @@ elif romIsSeasons(rom):
     dataDir = 'data/seasons/'
     precmpDir = 'precompressed/gfx_compressible/seasons/'
     gfxDir = 'gfx_compressible/seasons/'
+elif romIsSeasons(rom) and region == "JP":
+    gfxHeaderTable = 0x6920
+    numGfxHeaders = 0xbb
+    gfxHeaderBank = 1
+
+    uncmpGfxHeaderTable = 0x66d0
+    numUncmpGfxHeaders = 0x38
+    uncmpGfxHeaderBank = 1
+
+    uniqueTilesetHeaderTable = 0x1195e
+    numUniqueTilesetHeaders = 0x29
+    uniqueTilesetHeaderBank = 4
+
+    npcGfxTable = 0xfda79
+    numNpcGraphics = 0xd2
+
+    treeGfxTable = 0xfdcce
+    numTreeGraphics = 0xb
+
+    dataDir = 'data/seasons_jp/'
+    precmpDir = 'precompressed/gfx_compressible/seasons_jp/'
+    gfxDir = 'gfx_compressible/seasons_jp/'
 else:
     print('Unrecognized ROM.')
     sys.exit(1)
@@ -302,6 +348,9 @@ for data in gfxDataList:
         romFile.seek(data.src)
         # First byte of the file indicates compression mode
         outFile.write(bytes([data.mode]))
+        # Bytes 2-3: uncompressed size (little-endian)
+        uncompressed_size = len(retData[1])
+        outFile.write(bytes([uncompressed_size & 0xFF, (uncompressed_size >> 8) & 0xFF]))
         outFile.write(romFile.read(data.physicalSize))
         outFile.close()
 

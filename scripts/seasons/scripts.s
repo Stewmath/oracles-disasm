@@ -1101,12 +1101,18 @@ blossomScript0:
 
 @invalidName:
 	showtextlowindex <TX_440a
+.ifdef REGION_JP
+	enableallobjects
+.else
 	enableinput
+.endif
 	scriptjump @loop
 
 @validName:
 	showtextlowindex <TX_4407
+.ifndef REGION_JP
 	disableinput
+.endif
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @nameConfirmed
 	.dw @askForName
@@ -1117,7 +1123,11 @@ blossomScript0:
 	asm15 scriptHelp.setNextChildStage, $01
 	wait 30
 	showtextlowindex <TX_4408
+.ifdef REGION_JP
+	enableallobjects
+.else
 	enableinput
+.endif
 
 @nameAlreadyGiven:
 	checkabutton
@@ -2506,10 +2516,10 @@ goronScript_giveSubrosianSecret:
 	scriptjump --
 @answeredYes:
 	setglobalflag GLOBALFLAG_BEGAN_ELDER_SECRET
-	 ; This should be "generatesecret SUBROSIAN_SECRET" but, for some reason, this is the only opcode in
-	 ; seasons where the parameter doesn't have "| $30" applied? This may change the xor cipher,
-	 ; but nothing else?
-	 ; TODO: figure out what's up (does this cause any problems?)
+	; This should be "generatesecret SUBROSIAN_SECRET" but, for some reason, this is the only opcode in
+	; seasons where the parameter doesn't have "| $30" applied? This may change the xor cipher,
+	; but nothing else?
+	; TODO: figure out what's up (does this cause any problems?)
 	.db $86, $08
 -
 	showtextlowindex <TX_5333
@@ -3947,6 +3957,9 @@ blainoFightDoneScript:
 	setdisabledobjectsto11
 	asm15 scriptHelp.blainoScript_setBlainoPosition
 	asm15 scriptHelp.blainoScript_setLinkPositionAndState
+.ifdef REGION_JP
+	asm15 scriptHelp.seasonsFunc_15_5cf0
+.endif
 	wait 4
 	asm15 fadeinFromWhite
 	checkpalettefadedone
@@ -8147,19 +8160,24 @@ dekuScrubScript_finishSecret:
 	giveitem TREASURE_SATCHEL_UPGRADE, $00
 	asm15 refillSeedSatchel
 	wait 20
+.ifdef REGION_JP
+	generatesecret DEKU_RETURN_SECRET
+.endif
 	showtextlowindex <TX_4c45
 	wait 20
 	setglobalflag GLOBALFLAG_DONE_DEKU_SECRET
 	scriptjump dekuScrubScript_giveReturnSecret
-
 
 dekuScrubScript_doneSecret:
 	initcollisions
 --
 	checkabutton
 	disableinput
+
 dekuScrubScript_giveReturnSecret:
+.ifndef REGION_JP
 	generatesecret DEKU_RETURN_SECRET
+.endif
 	showtextlowindex <TX_4c46
 	wait 20
 	jumpiftextoptioneq $00, dekuScrubScript_giveReturnSecret

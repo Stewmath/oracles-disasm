@@ -1,7 +1,8 @@
 ; Garbage data follows
 
-.IFDEF INCLUDE_GARBAGE
+.ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 ; Partial copy of @shipDirectionsPresent. The first few entries are missing.
 @shipDirectionsPresentCopy:
 	.db $d6 $28 DIR_UP
@@ -81,5 +82,6 @@ func_7fb5:
 	callab $03 $7d20
 	call $1ae4
 	jp $34c7
+.endif ; REGION_US
 
 .endif ; INCLUDE_GARBAGE

@@ -1,4 +1,8 @@
+.ifndef REGION_JP
 .define TEXT_OFFSET_SPLIT_INDEX $2c
+.else
+.define TEXT_OFFSET_SPLIT_INDEX $34
+.endif
 
 .define TX_0000 $0000
 .define TX_0001 $0001

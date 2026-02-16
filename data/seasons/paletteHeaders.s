@@ -600,9 +600,11 @@ m_PaletteHeaderStart $8e, PALH_TILESET_ROOM_OF_RITES_ICE
 	m_PaletteHeaderEnd
 
 m_PaletteHeaderStart $8f, PALH_SEASONS_8f
+.ifndef REGION_JP
 	m_PaletteHeaderBg  0, 6, paletteData4800
 	m_PaletteHeaderSpr 0, 6, paletteData4800
 	m_PaletteHeaderEnd
+.endif
 
 m_PaletteHeaderStart $90, PALH_SEASONS_90
 	m_PaletteHeaderBg  0, 8, paletteData41f8
@@ -610,7 +612,11 @@ m_PaletteHeaderStart $90, PALH_SEASONS_90
 	m_PaletteHeaderEnd
 
 m_PaletteHeaderStart $91, PALH_SEASONS_91
+.ifdef REGION_JP
+	m_PaletteHeaderBg  0, 1, paletteData4800
+.else
 	m_PaletteHeaderBg  0, 1, paletteData4830
+.endif
 	m_PaletteHeaderBg  2, 6, paletteData56a0
 	m_PaletteHeaderSpr 0, 6, standardSpritePaletteData
 	m_PaletteHeaderSpr 6, 1, paletteData4468

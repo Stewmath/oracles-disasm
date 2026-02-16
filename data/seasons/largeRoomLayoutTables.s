@@ -1,5 +1,9 @@
 roomLayoutGroup5Table:
+.ifdef REGION_JP
+	.incbin "rooms/seasons_jp/dictionary5.bin"
+.else
 	.incbin "rooms/seasons/dictionary5.bin"
+.endif
 
 	m_RoomLayoutDictPointer room0500 room0500
 	m_RoomLayoutDictPointer room0501 room0500
@@ -259,8 +263,11 @@ roomLayoutGroup5Table:
 	m_RoomLayoutDictPointer room05ff room0500
 
 roomLayoutGroup6Table:
+.ifdef REGION_JP
+	.incbin "rooms/seasons_jp/dictionary6.bin"
+.else
 	.incbin "rooms/seasons/dictionary6.bin"
-
+.endif
 	m_RoomLayoutDictPointer room0600 room0600
 	m_RoomLayoutDictPointer room0601 room0600
 	m_RoomLayoutDictPointer room0602 room0600

@@ -170,7 +170,12 @@ interactionCodeae:
 	ld a,b
 	ld hl,w4TileMap
 	rst_addDoubleIndex
+.ifdef REGION_JP
+	ld b,$2c
+.else
 	ld b,$30
+.endif
+
 @loop:
 	xor a
 	ldi (hl),a
@@ -228,7 +233,12 @@ interactionCodeae:
 	ld a,b
 	ld de,w3VramTiles
 	call addDoubleIndexToDe
+.ifdef REGION_JP
+	ld b,$2c
+.else
 	ld b,$30
+.endif
+
 @tileLoop:
 	push bc
 	ld a,:w3VramTiles

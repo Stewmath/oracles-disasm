@@ -1725,8 +1725,13 @@ room0610:
 	m_RoomLayoutData room0691
 	m_RoomLayoutData room0692
 room0694:
+.ifndef REGION_JP
 room0695:
+.endif
 	m_RoomLayoutData room0693
+.ifdef REGION_JP
+	m_RoomLayoutData room0695
+.endif
 	m_RoomLayoutData room0696
 	m_RoomLayoutData room0697
 	m_RoomLayoutData room0698

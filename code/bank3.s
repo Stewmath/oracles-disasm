@@ -839,7 +839,7 @@ secretXorCipher:
 	.db $04 $15 $23 $2e $32 $28 $13 $34
 	.db $10 $0d $3f $1a $37 $0f $3e $36
 	.db $38 $02 $16 $3d $2c $0e $1b $12
-
+secretSymbols:
 	; TODO: what is this? Is the cipher in the japanese version just unnecessarily longer?
 	.db $63 $65 $67 $30 $68 $71 $31 $6b
 	.db $75 $77 $6e $ae $32 $6f $6d $61

@@ -108,8 +108,10 @@ updateTextbox:
 	.dw inventoryTextCode@state03
 	.dw inventoryTextCode@state04
 	.dw inventoryTextCode@state05
+.ifndef REGION_JP
 	.dw inventoryTextCode@state06
 	.dw inventoryTextCode@state07
+.endif
 
 ;;
 ; Initializing
@@ -634,6 +636,7 @@ inventoryTextCode:
 	ld l,<w7InvTextSpaceCounter
 	ld (hl),$10
 
+@drawSpaceWithoutSavingTextAddress_jp:
 	; Go to state $03
 	ld l,<w7TextDisplayState
 	inc (hl)
@@ -714,6 +717,18 @@ inventoryTextCode:
 
 	ld a,l
 	ld b,h
+
+.ifdef REGION_JP
+	ld hl,w7InvTextSpacesAfterName
+	ld c,(hl)
+	ld l,<w7InvTextSpaceCounter
+	ld (hl),c
+	jr @drawSpaceWithoutSavingTextAddress_jp
+++
+	call handleTextControlCodeWithSpecialCase
+	jr z,@saveTextAddressAndDmaTextGfxBuffer
+	jr ---
+.else
 	ld hl,w7TextAddress
 	ld l,<w7TextAddress
 	ldi (hl),a
@@ -739,6 +754,7 @@ inventoryTextCode:
 	jr z,@saveTextAddressAndDmaTextGfxBuffer
 
 	jr ---
+.endif
 
 ;;
 ; The name of the item has been read, now it's scrolling to the middle.
@@ -760,6 +776,7 @@ inventoryTextCode:
 	ld (hl),$01
 	ret
 
+.ifndef REGION_JP
 ;;
 @state06:
 	call decInvTextScrollTimer
@@ -793,10 +810,12 @@ inventoryTextCode:
 	ld h,(hl)
 	ld l,a
 	jp @drawSpace
+.endif
 
 ;;
 ; Initializes text stuff, particularly position variables for the textbox.
 initTextboxStuff:
+.ifndef REGION_JP
 	ld a,(wActiveLanguage)
 	ld b,a
 	add a
@@ -809,6 +828,7 @@ initTextboxStuff:
 	ld (w7TextTableAddr+1),a
 	ld a,(hl)
 	ld (w7TextTableBank),a
+.endif
 	call checkInitialTextCommands
 
 	ld hl,w7TextSound
@@ -965,18 +985,31 @@ initTextboxStuff:
 ; Gets address of the text index in hl, stores bank number in [w7ActiveBank]
 getTextAddress:
 	push de
+
+.ifdef REGION_JP
+	ld a,(wTextIndexH)
+	ld hl,(textTableJP)
+.else
 	ld a,(w7TextTableAddr)
 	ld l,a
 	ld a,(w7TextTableAddr+1)
 	ld h,a
 	push hl
 	ld a,(wTextIndexH)
+.endif
+
 	rst_addDoubleIndex
 	call readByteFromW7TextTableBank
 	ld c,a
 	call readByteFromW7TextTableBank
 	ld b,a
+
+.ifdef REGION_JP
+	ld hl,(textTableJP)
+.else
 	pop hl
+.endif
+
 	add hl,bc
 	ld a,(wTextIndexL)
 	rst_addDoubleIndex
@@ -998,6 +1031,11 @@ getTextAddress:
 	ld a,(wTextIndexH)
 	cp TEXT_OFFSET_SPLIT_INDEX
 	jr c,+
+
+.ifdef REGION_JP
+	ld hl,TEXT_OFFSET_2&$3fff
+	ld e,:TEXT_OFFSET_2
+.else
 ; Else, text is relative to TEXT_OFFSET_2
 	ld a,(wActiveLanguage)
 	add a
@@ -1008,6 +1046,8 @@ getTextAddress:
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
+.endif
+
 +
 	ld a,e
 	add $04
@@ -1040,6 +1080,7 @@ textOffset1Table:
 	.db :TEXT_OFFSET_1
 	.dw TEXT_OFFSET_1&$3fff
 	.db 0
+.ifndef REGION_JP
 	.db :TEXT_OFFSET_1
 	.dw TEXT_OFFSET_1&$3fff
 	.db 0
@@ -1075,6 +1116,7 @@ textTableTable:
 	Pointer3Byte textTableENG
 	Pointer3Byte textTableENG
 	Pointer3Byte textTableENG
+.endif
 
 ;;
 ; This peeks at the text to check if the next command is something particular.

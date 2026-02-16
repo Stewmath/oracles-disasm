@@ -9,7 +9,9 @@ gfxHeaderTable:
 
 
 m_GfxHeaderStart $00, GFXH_DMG_SCREEN
+.ifndef REGION_JP
 	m_GfxHeader gfx_dmg_text, $8800
+.endif
 	m_GfxHeader gfx_dmg_gametitle, $9000
 	m_GfxHeader map_dmg_message, $9800
 	m_GfxHeaderEnd
@@ -671,9 +673,11 @@ m_GfxHeaderStart $80, GFXH_80
 m_GfxHeaderStart $81, GFXH_81
 
 m_GfxHeaderStart $82, GFXH_TO_BE_CONTINUED
+.ifndef REGION_JP
 	m_GfxHeader gfx_tobecontinued, $8800
 	m_GfxHeader map_tobecontinued, $9800
 	m_GfxHeader flg_tobecontinued, $9801
+.endif
 	m_GfxHeaderEnd
 
 m_GfxHeaderStart $83, GFXH_COMMON_SPRITES
@@ -1022,8 +1026,13 @@ m_GfxHeaderStart $a5, GFXH_NAME_ENTRY
 	m_GfxHeader gfx_name, $8801
 	m_GfxHeader map_name_entry_top, w4TileMap
 	m_GfxHeader flg_name_entry_top, w4AttributeMap
+.ifdef REGION_JP
+	m_GfxHeader map_secret_entry_middle, w4TileMap+$0a0
+	m_GfxHeader flg_secret_entry_middle, w4AttributeMap+$0a0
+.else
 	m_GfxHeader map_name_entry_middle, w4TileMap+$0a0
 	m_GfxHeader flg_name_entry_middle, w4AttributeMap+$0a0
+.endif
 	m_GfxHeader map_name_entry_bottom, w4TileMap+$1e0
 	m_GfxHeader flg_name_entry_bottom, w4AttributeMap+$1e0
 	m_GfxHeaderEnd

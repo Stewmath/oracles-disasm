@@ -247,10 +247,12 @@ dragonOnox_mainBody_state0:
 	ld (hl),$14
 	inc l
 	ld (hl),$0c
+.ifndef REGION_JP
 	call checkIsLinkedGame
 	jr nz,+
 	ld l,Enemy.health
 	ld (hl),$22
+.endif
 +
 	call objectSetVisible83
 	ld a,$04
@@ -449,10 +451,18 @@ dragonOnox_mainBody_stateC:
 dragonOnox_mainBody_state4:
 	call getRandomNumber_noPreserveVars
 	ld b,a
+
+.ifndef REGION_JP
 	call dragonOnoxLowHealthThresholdIntoC
+.endif
 	ld e,Enemy.health
 	ld a,(de)
+.ifdef REGION_JP
+	cp $18
+.else
 	cp c
+.endif
+
 	ld a,b
 	jr nc,@seasonsFunc_0f_5ee8
 	rrca
@@ -568,10 +578,17 @@ dragonOnox_mainBody_state5:
 	ret
 
 dragonOnox_mainBody_state7:
+.ifndef REGION_JP
 	call dragonOnoxLowHealthThresholdIntoC
+.endif
 	ld e,Enemy.health
 	ld a,(de)
+.ifdef REGION_JP
+	cp $18
+.else
 	cp c
+.endif
+
 	ld a,$08
 	jr nc,+
 	ld a,$0b
@@ -732,10 +749,17 @@ dragonOnox_mainBody_state8:
 	jp seasonsFunc_0f_665c
 
 dragonOnox_mainBody_stateA:
+.ifndef REGION_JP
 	call dragonOnoxLowHealthThresholdIntoC
+.endif
 	ld e,Enemy.health
 	ld a,(de)
+.ifdef REGION_JP
+	cp $18
+.else
 	cp c
+.endif
+
 	ld a,$02
 	jr nc,+
 	ld a,$0b
@@ -1881,9 +1905,11 @@ dragonOnoxLoadaIntoVar30Andcfc9:
 	ld ($cfc9),a
 	ret
 
+.ifndef REGION_JP
 dragonOnoxLowHealthThresholdIntoC:
 	call checkIsLinkedGame
 	ld c,$11
 	ret z
 	ld c,$18
 	ret
+.endif

@@ -1,5 +1,6 @@
 .ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 ; Garbage functions appear to follow (corrupted repeats of the above functions).
 
 ;;
@@ -60,5 +61,6 @@ func_7ea4:
 	ld a,$ff
 	jp z,$24f8
 	ret
+.endif ; REGION_US
 
 .endif

@@ -1,5 +1,9 @@
 roomLayoutGroup4Table:
+.ifdef REGION_JP
+	.incbin "rooms/ages_jp/dictionary4.bin"
+.else
 	.incbin "rooms/ages/dictionary4.bin"
+.endif
 
 	m_RoomLayoutDictPointer room0400 room0400
 	m_RoomLayoutDictPointer room0401 room0400

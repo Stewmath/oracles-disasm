@@ -2,10 +2,10 @@
 ; audio.s). It is included at the top of "constants.s" for this reason.
 
 
-; Pick one. (For now, the regions other than "US" only activate code changes, not asset changes, and
-; they aren't complete.)
+; Region is now set via the Makefile with -D REGION_US, -D REGION_JP, or -D REGION_EU
+; Don't uncomment these unless you want to override the Makefile setting:
 ;.define REGION_JP
-.define REGION_US
+;.define REGION_US
 ;.define REGION_EU
 
 
@@ -53,7 +53,7 @@
 ; Oracle of Ages has some "garbage" data, possibly a side-effect of the build process that caused
 ; data from previous builds (even from seasons!) to leak into the final ROM. We'll include that data
 ; only when building vanilla ROMs.
-.if defined(BUILD_VANILLA) && defined(REGION_US)
+.if defined(BUILD_VANILLA) && !defined(REGION_EU)
 	.define INCLUDE_GARBAGE
 .endif
 

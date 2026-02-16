@@ -115,7 +115,7 @@ playWaveSoundAtRandomIntervals:
 
 .endif
 
-
+.if defined(ROM_AGES) || defined(REGION_US)
 ;;
 ; Same as "addSpritesToOam_withOffset", except this changes the bank first.
 ;
@@ -131,7 +131,7 @@ addSpritesFromBankToOam_withOffset:
 	pop af
 	setrombank
 	ret
-
+.endif
 
 .ifdef ROM_AGES
 

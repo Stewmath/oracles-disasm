@@ -331,7 +331,9 @@
 	m_GfxData gfx_tileset_subrosia_indoors_1 ; $0c2305
 	m_GfxData gfx_tileset_subrosia_indoors_2 ; $0c283e
 	m_GfxData gfx_tileset_subrosia_indoors_replacement ; $0c2ddd
+.ifndef REGION_JP
 	m_GfxData gfx_dmg_text ; $0c2e3d
+.endif
 	m_GfxData gfx_dmg_gametitle ; $0c2f19
 	m_GfxData map_dmg_message ; $0c3199
 	m_GfxData gfx_jp_intro_screen_2 ; $0c3281
@@ -511,6 +513,10 @@
 	m_GfxData spr_credits_sprites_1 ; $0db1fc
 	m_GfxData gfx_credits_bg_1 ; $0db319
 	m_GfxData gfx_credits_bg_2 ; $0db9e6
+.ifdef REGION_JP
+	; REGION_US has this elsewhere.
+	m_GfxData spr_credits_sprites_2
+.endif
 	m_GfxData gfx_credits_bg_3 ; $0dc0f0
 	m_GfxData map_credits_theend ; $0dc718
 	m_GfxData flg_credits_theend ; $0dc820
@@ -530,9 +536,11 @@
 	m_GfxData spr_boat_theend ; $0decbc
 	m_GfxData gfx_credits_linked_theend_1 ; $0dee20
 	m_GfxData gfx_credits_linked_theend_2 ; $0df1b5
+.ifndef REGION_JP
 	m_GfxData gfx_tobecontinued ; $0df440
 	m_GfxData map_tobecontinued ; $0dfa1c
 	m_GfxData flg_tobecontinued ; $0dfabb
+.endif
 	m_GfxData spr_fileselect_decorations ; $0dfae6
 	m_GfxData gfx_pickafile_2 ; $0dfbbc
 	m_GfxData gfx_copy ; $0dfd5f
@@ -579,8 +587,10 @@
 	m_GfxData flg_name_entry_top ; $0e2374
 	m_GfxData map_name_entry_bottom ; $0e2394
 	m_GfxData flg_name_entry_bottom ; $0e23bf
+.ifndef REGION_JP
 	m_GfxData map_name_entry_middle ; $0e23d0
 	m_GfxData flg_name_entry_middle ; $0e2490
+.endif
 	m_GfxData map_secret_for_linked_game ; $0e24ab
 	m_GfxData flg_secret_for_linked_game ; $0e2536
 	m_GfxData gfx_secret_list_menu ; $0e2556

@@ -20,15 +20,17 @@ rom = bytearray(romFile.read())
 if romIsAges(rom):
     roomLayoutGroupTable = 0x10f6c
     numLayoutGroups = 6
-    roomDir = 'rooms/ages/'
-    dataDir = 'data/ages/'
-    precmpDir = 'precompressed/rooms/ages/'
+    game = 'ages'
 else:
     roomLayoutGroupTable = 0x10c4c
     numLayoutGroups = 7
-    roomDir = 'rooms/seasons/'
-    dataDir = 'data/seasons/'
-    precmpDir = 'precompressed/rooms/seasons/'
+    game = 'seasons'
+
+region = getRomRegion(rom)
+suffix = '_jp' if region == 'JP' else ''
+roomDir = f'rooms/{game}{suffix}/'
+dataDir = f'data/{game}{suffix}/'
+precmpDir = f'precompressed/rooms/{game}{suffix}/'
 
 
 class RoomLayout:

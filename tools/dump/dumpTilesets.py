@@ -16,38 +16,52 @@ rom = bytearray(romFile.read())
 # Constants
 if romIsAges(rom):
     tileMappingBank = 0x18
-
-    tilesetHeaderTable = bankedAddress(0x01, 0x787e)
     tilesetHeaderBank = 0x01
 
-    tilesetDictionaryTable = bankedAddress(tilesetHeaderBank, 0x7870)
+    region = getRomRegion(rom)
+    if region == "JP":
+        tilesetHeaderTable = bankedAddress(0x01, 0x7868)
+        tilesetDictionaryTable = bankedAddress(0x01, 0x785a)
+        dataDir = 'data/ages_jp/'
+        tilesetDir = 'tileset_layouts/ages_jp/'
+        precmpDir = 'precompressed/tileset_layouts/ages_jp/'
+        numTileMappings = 0x853 # idk why but jp has one more
+    else:
+        tilesetHeaderTable = bankedAddress(0x01, 0x787e)
+        tilesetDictionaryTable = bankedAddress(tilesetHeaderBank, 0x7870)
+        dataDir = 'data/ages/'
+        tilesetDir = 'tileset_layouts/ages/'
+        precmpDir = 'precompressed/tileset_layouts/ages/'
+        numTileMappings = 0x852
+
     numDictionaryPointers = 4
     numDictionaries = 2
-
     numUsedTilesets = 0x33
     numTilesets = 0x40
-    numTileMappings = 0x852
-
-    dataDir = 'data/ages/'
-    tilesetDir = 'tileset_layouts/ages/'
-    precmpDir = 'precompressed/tileset_layouts/ages/'
 elif romIsSeasons(rom):
     tileMappingBank = 0x17
-
-    tilesetHeaderTable = bankedAddress(0x01, 0x7964)
     tilesetHeaderBank = 0x01
 
-    tilesetDictionaryTable = bankedAddress(tilesetHeaderBank, 0x794e)
+    region = getRomRegion(rom)
+    if region == "JP":
+        tilesetHeaderTable = bankedAddress(0x01, 0x7946)
+        tilesetDictionaryTable = bankedAddress(tilesetHeaderBank, 0x7930)
+        dataDir = 'data/seasons_jp/'
+        tilesetDir = 'tileset_layouts/seasons_jp/'
+        precmpDir = 'precompressed/tileset_layouts/seasons_jp/'
+        numTileMappings = 0x8f1
+    else:
+        tilesetHeaderTable = bankedAddress(0x01, 0x7964)
+        tilesetDictionaryTable = bankedAddress(tilesetHeaderBank, 0x794e)
+        dataDir = 'data/seasons/'
+        tilesetDir = 'tileset_layouts/seasons/'
+        precmpDir = 'precompressed/tileset_layouts/seasons/'
+        numTileMappings = 0x8f2
+
     numDictionaryPointers = 8
     numDictionaries = 2
-
     numUsedTilesets = 0x36
     numTilesets = 0x40
-    numTileMappings = 0x8f2
-
-    dataDir = 'data/seasons/'
-    tilesetDir = 'tileset_layouts/seasons/'
-    precmpDir = 'precompressed/tileset_layouts/seasons/'
 else:
     print('Unrecognized ROM.')
     sys.exit(1)

@@ -33,7 +33,13 @@ interactionCodeb9:
 	ld hl,@positions
 	rst_addDoubleIndex
 	ld b,(hl)
+
+.ifdef REGION_JP
+	inc l
+.else
 	inc hl
+.endif
+
 	ld a,(hl)
 	ld c,a
 	ld e,Interaction.var36

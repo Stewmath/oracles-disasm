@@ -72,7 +72,7 @@ vineSprout_state0:
 	rst_addAToHl
 	ld c,(hl)
 
-	ld b,>wRoomLayout
+	ld b,>wRoomCollisions
 	ld a,(bc)
 	or a
 	jr z,++
@@ -217,7 +217,11 @@ vineSprout_linkJumpingDownCliff:
 	; Check Link is close to ground
 	ld l,SpecialObject.zh
 	ld a,(hl)
+.ifdef REGION_JP
+	add $02
+.else
 	add $03
+.endif
 	ret nc
 
 vineSprout_destroy:

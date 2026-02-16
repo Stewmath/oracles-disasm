@@ -30,6 +30,8 @@
 
 	.include "code/ages/garbage/bank01End.s"
 
+m_emptyfill
+
 
 .BANK $02 SLOT 1
 .ORG 0
@@ -42,6 +44,8 @@
 	.ends
 
 	.include "code/ages/garbage/bank02End.s"
+
+m_emptyfill
 
 
 .BANK $03 SLOT 1
@@ -58,6 +62,9 @@
 	.ends
 
 	.include "code/ages/garbage/bank03End.s"
+
+m_emptyfill
+
 
 .BANK $04 SLOT 1
 .ORG 0
@@ -108,6 +115,8 @@
 
 	.include "code/ages/garbage/bank04End.s"
 
+m_emptyfill
+
 
 .BANK $05 SLOT 1
 .ORG 0
@@ -120,6 +129,8 @@
 
 		.include "code/ages/garbage/bank05End.s"
 	.ends
+
+m_emptyfill
 
 
 .BANK $06 SLOT 1
@@ -182,6 +193,8 @@ specialObjectLoadAnimationFrameToBuffer:
 
 .ends
 
+m_emptyfill
+
 
 .BANK $07 SLOT 1
 .ORG 0
@@ -242,6 +255,8 @@ specialObjectLoadAnimationFrameToBuffer:
 		.include "code/ages/garbage/bank07End.s"
 	.ends
 
+m_emptyfill
+
 
 .BANK $08 SLOT 1
 .ORG 0
@@ -297,6 +312,10 @@ m_section_free Ages_Interactions_Bank8 NAMESPACE agesInteractionsBank08
 	.include "object_code/ages/interactions/oldLady.s"
 .ends
 
+	.include "code/ages/garbage/bank08End.s"
+
+m_emptyfill
+
 
 .BANK $09 SLOT 1
 .ORG 0
@@ -348,6 +367,10 @@ m_section_free Ages_Interactions_Bank9 NAMESPACE agesInteractionsBank09
 	.include "object_code/ages/interactions/comedian.s"
 	.include "object_code/ages/interactions/goron.s"
 .ends
+
+	.include "code/ages/garbage/bank09End.s"
+
+m_emptyfill
 
 
 .BANK $0a SLOT 1
@@ -409,6 +432,8 @@ m_section_free Ages_Interactions_BankA NAMESPACE agesInteractionsBank0a
 	.include "object_code/ages/interactions/moblin.s"
 	.include "object_code/ages/interactions/97.s"
 .ends
+
+m_emptyfill
 
 
 .BANK $0b SLOT 1
@@ -496,6 +521,8 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 
 	.include "code/ages/garbage/bank0bEnd.s"
 
+m_emptyfill
+
 
 .BANK $0c SLOT 1
 .ORG 0
@@ -505,6 +532,8 @@ m_section_free Ages_Interactions_Bank0b NAMESPACE agesInteractionsBank0b
 		.include "code/scripting.s"
 		.include "scripts/ages/scripts.s"
 	.ends
+
+m_emptyfill
 
 
 .BANK $0d SLOT 1
@@ -559,6 +588,8 @@ m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 m_section_superfree Enemy_Animations
 	.include {"{GAME_DATA_DIR}/enemyAnimations.s"}
 .ends
+
+m_emptyfill
 
 
 .BANK $0e SLOT 1
@@ -622,6 +653,9 @@ m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 .ends
 
+m_emptyfill
+
+
 .BANK $0f SLOT 1
 .ORG 0
 
@@ -648,6 +682,11 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 	.include "object_code/ages/enemies/kingMoblin.s"
 
 .ends
+
+	.include "code/ages/garbage/bank0fEnd.s"
+
+m_emptyfill
+
 
 .BANK $10 SLOT 1
 .ORG 0
@@ -698,6 +737,8 @@ m_section_free Ages_Interactions_Bank10 NAMESPACE agesInteractionsBank10
 	.include "object_code/ages/interactions/knowItAllBird.s"
 	.include "object_code/ages/interactions/raft.s"
 .ends
+
+m_emptyfill
 
 
 .BANK $11 SLOT 1
@@ -802,6 +843,8 @@ m_section_free Bank_11 NAMESPACE partCode
 	.include "code/ages/garbage/bank11End.s"
 .ends
 
+m_emptyfill
+
 
 .BANK $12 SLOT 1
 .ORG 0
@@ -834,6 +877,8 @@ m_section_free Objects_3 namespace objectData
 
 .ends
 
+m_emptyfill
+
 
 .BANK $13 SLOT 1
 .ORG 0
@@ -845,6 +890,8 @@ m_section_free Objects_3 namespace objectData
 	.include "data/itemOamData.s"
 	.include {"{GAME_DATA_DIR}/enemyOamData.s"}
 
+m_emptyfill
+
 
 .BANK $14 SLOT 1
 .ORG 0
@@ -855,6 +902,8 @@ m_section_superfree Terrain_Effects NAMESPACE terrainEffects
 
 	.include {"{GAME_DATA_DIR}/interactionOamData.s"}
 	.include {"{GAME_DATA_DIR}/partOamData.s"}
+
+m_emptyfill
 
 
 .BANK $15 SLOT 1
@@ -890,6 +939,10 @@ m_section_superfree Terrain_Effects NAMESPACE terrainEffects
 	 m_section_free Bank_15_3 NAMESPACE scriptHelp
 		.include "scripts/ages/scriptHelper.s"
 	.ends
+
+	.include "code/ages/garbage/bank15End.s"
+
+m_emptyfill
 
 
 .BANK $16 SLOT 1
@@ -984,6 +1037,8 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include {"{GAME_DATA_DIR}/interactionAnimations.s"}
 	.include {"{GAME_DATA_DIR}/partAnimations.s"}
 
+m_emptyfill
+
 
 .BANK $17 SLOT 1
 .ORG 0
@@ -993,6 +1048,8 @@ loadD6ChangingFloorPatternToBigBuffer:
 	.include {"{GAME_DATA_DIR}/smallRoomLayoutTables.s"}
 
 	.include "code/ages/garbage/bank17End.s"
+
+m_emptyfill
 
 
 .BANK $18 SLOT 1
@@ -1018,6 +1075,8 @@ m_section_free Tile_Mappings
 
 .ends
 
+m_emptyfill
+
 
 .BANK $19 SLOT 1
 .ORG 0
@@ -1034,6 +1093,10 @@ m_section_free Gfx_19_2 ALIGN $10
 	.include {"{GAME_DATA_DIR}/gfxDataBank19_2.s"}
 .ends
 
+	.include "code/ages/garbage/bank19End.s"
+
+m_emptyfill
+
 
 .BANK $1a SLOT 1
 .ORG 0
@@ -1043,6 +1106,8 @@ m_section_free Gfx_1a ALIGN $20
 	.include "data/gfxDataBank1a.s"
 .ends
 
+m_emptyfill
+
 
 .BANK $1b SLOT 1
 .ORG 0
@@ -1051,6 +1116,8 @@ m_section_free Gfx_1b ALIGN $20
 	.include "data/gfxDataBank1b.s"
 .ends
 
+m_emptyfill
+
 
 .BANK $1c SLOT 1
 .ORG 0
@@ -1058,25 +1125,58 @@ m_section_free Gfx_1b ALIGN $20
 	; The first $e characters of gfx_font are blank, so they aren't
 	; included in the rom. In order to get the offsets correct, use
 	; gfx_font_start as the label instead of gfx_font.
-
 	.define gfx_font_start gfx_font-$e0
 	.export gfx_font_start
 
+.ifdef REGION_JP
+	m_GfxDataSimple gfx_font
+.endif
 	m_GfxDataSimple gfx_font_jp ; $70000
 	m_GfxDataSimple gfx_font_tradeitems ; $70600
+.ifndef REGION_JP
 	m_GfxDataSimple gfx_font $e0 ; $70800
+.endif
 	m_GfxDataSimple gfx_font_heartpiece ; $71720
 
 	m_GfxDataSimple map_rings ; $717a0
 
+.ifdef REGION_JP
+	m_GfxDataSimple spr_item_icons_1
+	m_GfxDataSimple spr_item_icons_2
+	m_GfxDataSimple spr_item_icons_3
+.else
 	.include {"{GAME_DATA_DIR}/largeRoomLayoutTables.s"} ; $719c0
+.endif
+
 	.include "code/ages/garbage/bank1cEnd.s"
+
+m_emptyfill
+
+
+.BANK $1d SLOT 1
+.ORG 0
+
+.ifdef REGION_JP
+	.include {"{GAME_DATA_DIR}/largeRoomLayoutTables.s"}
+
+	m_GfxDataSimple gfx_animations_1
+	m_GfxDataSimple gfx_animations_2
+	m_GfxDataSimple gfx_animations_3
+	m_GfxDataSimple gfx_past_chest
+	m_GfxDataSimple gfx_past_sign
+
+	.include "code/ages/garbage/bank1dEnd.s"
+.endif
 
 	; "${BUILD_DIR}/textData.s" will determine where this data starts.
 	;   Ages:    1d:4000
 	;   Seasons: 1c:5c00
 
+.ifdef REGION_JP
+	.include {"{BUILD_DIR}/textDataJP.s"}
+.else
 	.include {"{BUILD_DIR}/textData.s"}
+.endif
 
 	.REDEFINE DATA_ADDR TEXT_END_ADDR
 	.REDEFINE DATA_BANK TEXT_END_BANK
@@ -1084,6 +1184,9 @@ m_section_free Gfx_1b ALIGN $20
 	.include {"{GAME_DATA_DIR}/roomLayoutData.s"}
 	.include {"{GAME_DATA_DIR}/gfxDataMain.s"}
 
+	.include "code/ages/garbage/bank38End.s"
+
+m_emptyfill
 
 
 .BANK $3f SLOT 1
@@ -1097,15 +1200,21 @@ m_section_free Bank3f NAMESPACE bank3f
 .include "code/treasureAndDrops.s"
 .include "code/textbox.s"
 
+.ifndef REGION_JP
 data_5951:
 	.db $3c $b4 $3c $50 $78 $b4 $3c $3c
 	.db $3c $70 $78 $78
-
+.endif
 
 ; In Seasons these sprites are located elsewhere
 
 titlescreenMakuSeedSprite:
+.ifdef REGION_JP
+	.db $19
+.else
 	.db $13
+.endif
+
 	.db $48 $90 $62 $06
 	.db $42 $8e $68 $06
 	.db $51 $7a $56 $04
@@ -1122,9 +1231,26 @@ titlescreenMakuSeedSprite:
 	.db $40 $86 $66 $06
 	.db $40 $7f $64 $06
 	.db $41 $70 $60 $06
+
+.ifdef REGION_JP
+	.db $55 $74 $5a $06
+.else
 	.db $55 $76 $5a $06
+.endif
+
 	.db $44 $68 $5e $26
+
+.ifdef REGION_JP
+	.db $68 $35 $48 $02
+	.db $68 $42 $4a $02
+	.db $74 $10 $46 $02
+	.db $71 $5a $44 $01
+	.db $71 $62 $4c $01
+	.db $71 $6a $4e $01
+	.db $71 $72 $58 $01
+.else
 	.db $74 $00 $46 $02
+.endif
 
 titlescreenPressStartSprites:
 	.db $0a
@@ -1338,3 +1464,5 @@ oamData_7249:
 .include "code/ages/garbage/bank3fEnd.s"
 
 .ends
+
+m_emptyfill

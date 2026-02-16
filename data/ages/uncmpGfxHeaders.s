@@ -53,7 +53,11 @@ uncmpGfxHeader08:
 	m_GfxHeaderEnd
 
 uncmpGfxHeader09:
+.ifdef REGION_JP
+	m_GfxHeaderRam w4TileMap, $8000, $58
+.else
 	m_GfxHeaderRam w4TileMap, $8000, $60
+.endif
 	m_GfxHeaderEnd
 
 uncmpGfxHeader0a:
@@ -62,7 +66,11 @@ uncmpGfxHeader0a:
 	m_GfxHeaderEnd
 
 uncmpGfxHeader0b:
+.ifdef REGION_JP
+	m_GfxHeaderRam w5NameEntryCharacterGfx, $8800, $76
+.else
 	m_GfxHeaderRam w5NameEntryCharacterGfx, $8800, $80
+.endif
 	m_GfxHeaderEnd
 
 uncmpGfxHeader0c:

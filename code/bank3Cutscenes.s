@@ -638,7 +638,11 @@ intro_titlescreen_state3:
 ; In Ages these sprites are located elsewhere
 
 titlescreenMakuSeedSprite:
+.ifdef REGION_JP
+	.db $19
+.else
 	.db $12
+.endif
 	.db $51 $7a $56 $04
 	.db $50 $82 $74 $04
 	.db $58 $7a $6a $07
@@ -652,11 +656,26 @@ titlescreenMakuSeedSprite:
 	.db $40 $85 $66 $06
 	.db $40 $7f $64 $06
 	.db $41 $70 $60 $06
+.ifdef REGION_JP
+	.db $54 $74 $5a $06
+	.db $44 $68 $5e $26
+	.db $68 $35 $48 $02
+	.db $68 $42 $4a $02
+	.db $74 $10 $46 $02
+	.db $71 $5b $44 $01
+	.db $71 $63 $4c $01
+	.db $71 $6b $4e $01
+	.db $71 $73 $58 $01
+	.db $64 $7a $70 $03
+	.db $64 $82 $72 $03
+	.db $64 $8a $70 $23
+.else
 	.db $54 $76 $5a $06
 	.db $44 $68 $5e $26
 	.db $64 $7a $70 $03
 	.db $64 $82 $72 $03
 	.db $64 $8a $70 $23
+.endif
 
 titlescreenPressStartSprites:
 	.db $0a
@@ -2018,12 +2037,10 @@ createInteraction:
 
 .ifdef REGION_JP
 
-; TODO: Properly update the label to be here instead of elsewhere
-;data_5951:
+data_5951:
 	.db $3c $b4 $3c $50 $78 $b4 $3c $3c
 	.db $3c $70 $78 $78
 .endif
-
 
 .else ; ROM_SEASONS
 

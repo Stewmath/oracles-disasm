@@ -1,5 +1,6 @@
 .ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 ; Garbage data/code
 
 	m_BreakableTileData %00000000 %00001000 %0000 $0 $df $37 ; $2f
@@ -38,5 +39,6 @@ fake_specialObjectLoadAnimationFrameToBuffer:
 	ld l,a
 	ld de,w6SpecialObjectGfxBuffer|(:w6SpecialObjectGfxBuffer)
 	jp $3f31
+.endif ; REGION_US
 
 .endif

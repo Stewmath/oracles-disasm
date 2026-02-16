@@ -72,7 +72,11 @@ treasureObjectData:
 	/* $2b */ m_TreasurePointer treasureObjectData2b
 	/* $2c */ m_TreasurePointer treasureObjectData2c
 	/* $2d */ m_TreasurePointer treasureObjectData2d
+.ifdef REGION_JP
+	/* $2e */ m_TreasureSubid   $0a, $00, $31, $31, TREASURE_OBJECT_FLIPPERS_00
+.else
 	/* $2e */ m_TreasureSubid   $02, $00, $31, $31, TREASURE_OBJECT_FLIPPERS_00
+.endif
 	/* $2f */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_POTION_00
 	/* $30 */ m_TreasurePointer treasureObjectData30
 	/* $31 */ m_TreasurePointer treasureObjectData31
@@ -238,7 +242,11 @@ treasureObjectData2c:
 	m_TreasureSubid $02, $02, $34, $34, TREASURE_OBJECT_RING_BOX_01
 	m_TreasureSubid $02, $03, $34, $35, TREASURE_OBJECT_RING_BOX_02
 	m_TreasureSubid $02, $02, $58, $34, TREASURE_OBJECT_RING_BOX_03
+.ifdef REGION_JP
+	m_TreasureSubid $02, $00, $59, $35, TREASURE_OBJECT_RING_BOX_04
+.else
 	m_TreasureSubid $02, $03, $59, $35, TREASURE_OBJECT_RING_BOX_04
+.endif
 
 treasureObjectData2d:
 	m_BeginTreasureSubids TREASURE_RING

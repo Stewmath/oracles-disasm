@@ -1,5 +1,6 @@
 .ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 ; Garbage data
 
 	.db $52 $06
@@ -59,13 +60,9 @@
 	.db $c3 $00
 	.db $c4 $08
 	.db $00
-
-.endif
-
+.endif ; REGION_US
 
 .ifdef REGION_JP
-.ifdef BUILD_VANILLA
-
 	; Leftovers from Seasons - subrosian dance stuff
 
 	ld hl,subrosiaDance_nextTileLookup
@@ -258,6 +255,7 @@ subrosiaDance_checkSpinOrCollapse:
 	ld a,b
 	call $2a50 ; specialObjectSetAnimation
 	jp $1e14 ; objectSetVisible80
-.endif
+.endif ; REGION_JP
+
 .endif
 

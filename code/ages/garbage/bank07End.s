@@ -1,5 +1,6 @@
 .ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 	; Garbage data follows (repeats of object collision table)
 
 	; 0x72
@@ -44,5 +45,6 @@
 	; 0x7c
 	.db $3d $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+.endif ; REGION_US
 
 .endif

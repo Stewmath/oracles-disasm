@@ -29,11 +29,15 @@
 
 	.include "code/bank1.s"
 
+m_emptyfill
+
 
 .BANK $02 SLOT 1
 .ORG 0
 
 	.include "code/bank2.s"
+
+m_emptyfill
 
 
 .BANK $03 SLOT 1
@@ -52,6 +56,8 @@
 		.include "code/seasons/cutscenes/linkedGameCutscenes.s"
 		.include "code/seasons/cutscenes/introCutscenes.s"
 	.ends
+
+m_emptyfill
 
 
 .BANK $04 SLOT 1
@@ -106,6 +112,8 @@
 		.include {"{GAME_DATA_DIR}/warpSources.s"}
 	.ends
 
+m_emptyfill
+
 
 .BANK $05 SLOT 1
 .ORG 0
@@ -118,6 +126,9 @@
 
 		.include "object_code/seasons/specialObjects/subrosiaDanceLink.s"
 	.ends
+
+m_emptyfill
+
 
 .BANK $06 SLOT 1
 .ORG 0
@@ -156,6 +167,8 @@ m_section_free Bank_6 NAMESPACE bank6
 	.include {"{GAME_DATA_DIR}/tile_properties/breakableTiles.s"}
 
 .ends
+
+m_emptyfill
 
 
 .BANK $07 SLOT 1
@@ -213,6 +226,8 @@ m_section_free Bank_6 NAMESPACE bank6
 		.include {"{GAME_DATA_DIR}/partActiveCollisions.s"}
 		.include {"{GAME_DATA_DIR}/objectCollisionTable.s"}
 	.ends
+
+m_emptyfill
 
 
 .BANK $08 SLOT 1
@@ -288,6 +303,8 @@ m_section_free Seasons_Interactions_Bank08 NAMESPACE seasonsInteractionsBank08
 	.include "object_code/seasons/interactions/tradeItem.s"
 .ends
 
+m_emptyfill
+
 
 .BANK $09 SLOT 1
 .ORG 0
@@ -339,6 +356,8 @@ m_section_free Seasons_Interactions_Bank09 NAMESPACE seasonsInteractionsBank09
 	.include "object_code/seasons/interactions/makuTree.s"
 	.include "object_code/seasons/interactions/88.s"
 .ends
+
+m_emptyfill
 
 
 .BANK $0a SLOT 1
@@ -411,6 +430,8 @@ m_section_free Seasons_Interactions_Bank0a NAMESPACE seasonsInteractionsBank0a
 	.include "object_code/seasons/interactions/herosCaveSwordChest.s"
 .ends
 
+m_emptyfill
+
 
 .BANK $0b SLOT 1
 .ORG 0
@@ -419,6 +440,8 @@ m_section_free Seasons_Interactions_Bank0a NAMESPACE seasonsInteractionsBank0a
 		.include "code/scripting.s"
 		.include "scripts/seasons/scripts.s"
 	.ends
+
+m_emptyfill
 
 
 .BANK $0c SLOT 1
@@ -469,6 +492,9 @@ m_section_free Enemy_Code_Bank0c NAMESPACE bank0c
 m_section_superfree Enemy_Animations
 	.include {"{GAME_DATA_DIR}/enemyAnimations.s"}
 .ends
+
+m_emptyfill
+
 
 .BANK $0d SLOT 1
 .ORG 0
@@ -528,6 +554,8 @@ m_section_free Enemy_Code_Bank0d NAMESPACE bank0d
 
 .ends
 
+m_emptyfill
+
 
 .BANK $0e SLOT 1
 .ORG 0
@@ -556,6 +584,9 @@ m_section_free Enemy_Code_Bank0e NAMESPACE bank0e
 
 .ends
 
+m_emptyfill
+
+
 .BANK $0f SLOT 1
 .ORG 0
 
@@ -578,10 +609,10 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 .ends
 
-.ifdef BUILD_VANILLA
-	.REPT $87
-	.db $0f ; emptyfill (TODO: replace this with ORGA, update md5 for emptyfill-0)
-	.ENDR
+.ifdef REGION_JP
+	m_emptyfill orga()+$9f
+.else
+	m_emptyfill orga()+$87
 .endif
 
 m_section_free Interaction_Code_Group6 NAMESPACE commonInteractions6
@@ -605,6 +636,8 @@ m_section_free Seasons_Interactions_Bank0f NAMESPACE seasonsInteractionsBank0f
 	.include "object_code/seasons/interactions/dekuScrub.s"
 	.include "object_code/seasons/interactions/d7.s"
 .ends
+
+m_emptyfill
 
 
 .BANK $10 SLOT 1
@@ -701,6 +734,8 @@ m_section_free Part_Code_2 NAMESPACE partCode
 	.include "object_code/seasons/parts/dinCrystal.s"
 .ends
 
+m_emptyfill
+
 
 .BANK $11 SLOT 1
 .ORG 0
@@ -713,6 +748,8 @@ m_section_free Objects_2 namespace objectData
 	.include "objects/seasons/extraData3.s"
 .ends
 
+m_emptyfill
+
 
 .BANK $12 SLOT 1
 .ORG 0
@@ -723,6 +760,8 @@ m_section_free Objects_2 namespace objectData
 	.include {"{GAME_DATA_DIR}/specialObjectOamData.s"}
 	.include "data/itemOamData.s"
 	.include {"{GAME_DATA_DIR}/enemyOamData.s"}
+
+m_emptyfill
 
 
 .BANK $13 SLOT 1
@@ -735,11 +774,15 @@ m_section_superfree Terrain_Effects NAMESPACE terrainEffects
 	.include {"{GAME_DATA_DIR}/interactionOamData.s"}
 	.include {"{GAME_DATA_DIR}/partOamData.s"}
 
+m_emptyfill
+
 
 .BANK $14 SLOT 1
 .ORG 0
 
+.ifndef REGION_JP
 	.include {"{GAME_DATA_DIR}/data_4556.s"}
+.endif
 
 	; TODO: "SIMPLE_SCRIPT_BANK" define should be tied to this section somehow
 	 m_section_free Scripts2 NAMESPACE scripts2
@@ -747,6 +790,8 @@ m_section_superfree Terrain_Effects NAMESPACE terrainEffects
 	.ends
 
 	.include {"{GAME_DATA_DIR}/interactionAnimations.s"}
+
+m_emptyfill
 
 
 .BANK $15 SLOT 1
@@ -767,7 +812,11 @@ m_section_free Interaction_Code_Group8 NAMESPACE commonInteractions8
 	.include "object_code/common/interactions/ringHelpBook.s"
 .ends
 
+.ifdef REGION_JP
+	.include {"{GAME_DATA_DIR}/data_4556.s"}
+.endif
 
+.ifndef REGION_JP
 oamData_15_4da3:
 	.db $1a
 	.db $40 $d0 $00 $02
@@ -810,7 +859,7 @@ oamData_15_4e0c:
 	.db $43 $59 $8c $03
 	.db $39 $46 $8e $03
 	.db $3b $3c $92 $03
-
+.endif
 
 	.include "code/staticObjects.s"
 	.include {"{GAME_DATA_DIR}/staticDungeonObjects.s"}
@@ -837,6 +886,8 @@ m_section_free Seasons_Interactions_Bank15 NAMESPACE seasonsInteractionsBank15
 
 	.include {"{GAME_DATA_DIR}/partAnimations.s"}
 
+m_emptyfill
+
 
 .BANK $16 SLOT 1
 .ORG 0
@@ -844,6 +895,8 @@ m_section_free Seasons_Interactions_Bank15 NAMESPACE seasonsInteractionsBank15
 	.include {"{GAME_DATA_DIR}/paletteData.s"}
 	.include {"{GAME_DATA_DIR}/tilesetCollisions.s"}
 	.include {"{GAME_DATA_DIR}/smallRoomLayoutTables.s"}
+
+m_emptyfill
 
 
 .BANK $17 SLOT 1
@@ -864,6 +917,9 @@ m_section_free Tile_Mappings
 		.incbin {"{BUILD_DIR}/tileset_layouts/tileMappingAttributeData.bin"}
 .ends
 
+m_emptyfill
+
+
 .BANK $18 SLOT 1
 .ORG 0
 
@@ -875,7 +931,11 @@ m_section_free Tile_Mappings
 	m_GfxDataSimple gfx_063940
 
 	; Compressed graphics file, for some reason doesn't go in gfxDataMain.s.
+.ifndef REGION_JP
 	m_GfxDataSimple spr_credits_sprites_2
+.endif
+
+m_emptyfill
 
 
 .BANK $19 SLOT 1
@@ -885,15 +945,21 @@ m_section_superfree Tile_mappings
 	.include {"{GAME_DATA_DIR}/tilesetMappings.s"}
 .ends
 
+m_emptyfill
+
 
 .BANK $1a SLOT 1
 .ORG 0
 	.include "data/gfxDataBank1a.s"
 
+m_emptyfill
+
 
 .BANK $1b SLOT 1
 .ORG 0
 	.include "data/gfxDataBank1b.s"
+
+m_emptyfill
 
 
 .BANK $1c SLOT 1
@@ -901,28 +967,55 @@ m_section_superfree Tile_mappings
 	; The first $e characters of gfx_font are blank, so they aren't
 	; included in the rom. In order to get the offsets correct, use
 	; gfx_font_start as the label instead of gfx_font.
-
 	.define gfx_font_start gfx_font-$e0
 	.export gfx_font_start
 
+.ifdef REGION_JP
+	m_GfxDataSimple gfx_font
+.endif
 	m_GfxDataSimple gfx_font_jp ; $70000
 	m_GfxDataSimple gfx_font_tradeitems ; $70600
+.ifndef REGION_JP
 	m_GfxDataSimple gfx_font $e0 ; $70800
+.endif
 	m_GfxDataSimple gfx_font_heartpiece ; $71720
 
 	m_GfxDataSimple map_rings ; $717a0
+
+.ifdef REGION_JP
+	m_GfxDataSimple spr_item_icons_1
+	m_GfxDataSimple spr_item_icons_2
+	m_GfxDataSimple spr_item_icons_3
+
+	m_GfxDataSimple gfx_key_orechunk
+.endif
+
+.ifdef REGION_JP
+	m_emptyfill
+.else
+	.DEFINE TEXT_START_ADDR $5c00
+	m_emptyfill TEXT_START_ADDR
+.endif
+
 
 	; "${BUILD_DIR}/textData.s" will determine where this data starts.
 	;   Ages:    1d:4000
 	;   Seasons: 1c:5c00
 
+.ifdef REGION_JP
+	.include {"{BUILD_DIR}/textDataJP.s"}
+.else
 	.include {"{BUILD_DIR}/textData.s"}
+.endif
 
 	.REDEFINE DATA_ADDR TEXT_END_ADDR
 	.REDEFINE DATA_BANK TEXT_END_BANK
 
 	.include {"{GAME_DATA_DIR}/roomLayoutData.s"}
 	.include {"{GAME_DATA_DIR}/gfxDataMain.s"}
+
+m_emptyfill
+
 
 .BANK $3f SLOT 1
 .ORG 0
@@ -948,3 +1041,5 @@ m_section_free Bank3f NAMESPACE bank3f
 	.include {"{GAME_DATA_DIR}/treasureDisplayData.s"}
 
 .ends
+
+m_emptyfill

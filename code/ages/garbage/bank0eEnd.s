@@ -1,5 +1,6 @@
 .ifdef INCLUDE_GARBAGE
 
+.ifdef REGION_US
 ; Garbage repeated data
 fake1:
 	.db $00
@@ -14,5 +15,6 @@ fake2:
 	ms_right $a0
 	ms_wait  30
 	ms_loop  @@loop
+.endif ; REGION_US
 
 .endif

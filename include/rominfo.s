@@ -10,9 +10,14 @@
 .endme
 
 .banksize $4000
-.rombanks 64
+.ifdef REGION_EU
+	.rombanks 128
+	.romsize $06
+.else
+	.rombanks 64
+	.romsize $05
+.endif
 .ramsize $02 ; 1 RAM bank
-.romsize $05
 
 .nintendologo
 .romgbconly

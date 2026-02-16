@@ -1024,10 +1024,17 @@ seasonsFunc_03_7a3b:
 	jp func_35ec
 
 seasonsTable_03_7a5e:
+.ifdef REGION_JP
+	.db $80 $49
+	.db $e0 $49
+	.db $b0 $49
+	.db $10 $4a
+.else
 	.db $b0 $49
 	.db $10 $4a
 	.db $e0 $49
 	.db $40 $4a
+.endif
 
 ;;
 ; There is an identical function named "incCutsceneState" in bank3Cutscenes.s.

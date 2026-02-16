@@ -165,9 +165,8 @@ jpHl:
 	jp hl
 
 
-secretSymbols: ; TODO
 .ifndef REGION_JP
-
+secretSymbols:
 ; Symbol list for secrets:
 ;	BDFGHJLM♠♥♦♣#
 ;	NQRSTWY!●▲■+-
@@ -5380,7 +5379,7 @@ readByteFromW7TextTableBank:
 	push af
 
 .ifdef REGION_JP
-	ld a,:textTableENG
+	ld a,:textTableJP
 .else
 	ld a,(w7TextTableBank)
 .endif
@@ -10558,18 +10557,21 @@ func_2d48:
 	ldh a,(<hRomBank)
 	push af
 
-.ifdef ROM_AGES
+.if defined(ROM_AGES) && !defined(REGION_JP)
 	ld a,:bank3f.data_5951
 .else
 	ld a,:bank3Cutscenes.data_5951
 .endif
+
 	setrombank
 	ld a,b
-.ifdef ROM_AGES
+
+.if defined(ROM_AGES) && !defined(REGION_JP)
 	ld hl,bank3f.data_5951
 .else
 	ld hl,bank3Cutscenes.data_5951
 .endif
+
 	rst_addAToHl
 	ld b,(hl)
 

@@ -35,17 +35,27 @@ class PaletteHeader:
 
 # Constants
 if romIsAges(rom):
-    paletteHeaderTable = 0x632c
+    region = getRomRegion(rom)
+    if region == "JP":
+        paletteHeaderTable = 0x6334
+        dataDir = 'data/ages_jp/'
+    else:
+        paletteHeaderTable = 0x632c
+        dataDir = 'data/ages/'
     numPaletteHeaders = 0xcb
     paletteHeaderBank = 0x01
     paletteDataBank = 0x17
-    dataDir = 'data/ages/'
 elif romIsSeasons(rom):
-    paletteHeaderTable = 0x6290
+    region = getRomRegion(rom)
+    if region == "JP":
+        paletteHeaderTable = 0x6290
+        dataDir = 'data/seasons_jp/'
+    else:
+        paletteHeaderTable = 0x6290
+        dataDir = 'data/seasons/'
     numPaletteHeaders = 0xbe
     paletteHeaderBank = 0x01
     paletteDataBank = 0x16
-    dataDir = 'data/seasons/'
 else:
     print('Unrecognized ROM.')
     exit(1)

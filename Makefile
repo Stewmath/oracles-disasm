@@ -17,6 +17,9 @@ NC=\033[0m
 # Sets the default target. Can be "ages", "seasons", or "all" (both).
 .DEFAULT_GOAL = all
 
+# Default region (can be overridden: us, jp, eu)
+REGION ?= us
+
 SHELL := /bin/bash
 
 CC = wla-gb
@@ -43,24 +46,38 @@ MAKEFLAGS += --no-print-directory
 .SUFFIXES:
 
 # Rules which don't correspond to filenames
-.PHONY: all ages seasons clean test-gfx
+.PHONY: all ages seasons clean test-gfx us jp eu ages-us ages-jp ages-eu seasons-us seasons-jp seasons-eu
 
 
 all:
-	@$(MAKE) ages
-	@$(MAKE) seasons
+	@$(MAKE) REGION=us ages
+	@$(MAKE) REGION=us seasons
+	@$(MAKE) REGION=jp ages
+	@$(MAKE) REGION=jp seasons
+	@$(MAKE) REGION=eu ages
+	@$(MAKE) REGION=eu seasons
+
+us jp eu:
+	@$(MAKE) REGION=$@ ages
+	@$(MAKE) REGION=$@ seasons
+
+ages-us ages-jp ages-eu:
+	@$(MAKE) REGION=$(subst ages-,,$@) ages
+
+seasons-us seasons-jp seasons-eu:
+	@$(MAKE) REGION=$(subst seasons-,,$@) seasons
 
 ages:
 	@echo -e "$(BOLD)====================$(NC)"
-	@echo -e "$(BOLD)Building $(BLUE)Ages$(BOLD)...$(NC)"
+	@echo -e "$(BOLD)Building $(BLUE)Ages $(REGION)$(BOLD)...$(NC)"
 	@echo -e "$(BOLD)====================$(NC)"
-	@ROM_AGES=1 $(MAKE) $@.gbc
+	@ROM_AGES=1 $(MAKE) ages_$(REGION).gbc
 
 seasons:
 	@echo -e "$(BOLD)====================$(NC)"
-	@echo -e "$(BOLD)Building $(RED)Seasons$(BOLD)...$(NC)"
+	@echo -e "$(BOLD)Building $(RED)Seasons $(REGION)$(BOLD)...$(NC)"
 	@echo -e "$(BOLD)====================$(NC)"
-	@ROM_SEASONS=1 $(MAKE) $@.gbc
+	@ROM_SEASONS=1 $(MAKE) seasons_$(REGION).gbc
 
 
 # Skip the majority of this makefile if we haven't specified the game yet.
@@ -76,12 +93,23 @@ ifeq ($(BUILD_VANILLA), true)
 	DEFINES += -D BUILD_VANILLA
 endif
 
+# Set region define based on REGION variable
+REGION_DEFINES_us = REGION_US
+REGION_DEFINES_jp = REGION_JP
+REGION_DEFINES_eu = REGION_EU
+REGION_DEFINE := $(REGION_DEFINES_$(REGION))
+ifeq ($(REGION_DEFINE),)
+	$(error REGION must be us, jp, or eu)
+endif
+
+DEFINES += -D $(REGION_DEFINE)
+
 ifeq ($(BUILD_VANILLA), true)
-	AGES_BUILD_DIR = build_ages_v
-	SEASONS_BUILD_DIR = build_seasons_v
+	AGES_BUILD_DIR = build_ages_$(REGION)_v
+	SEASONS_BUILD_DIR = build_seasons_$(REGION)_v
 else
-	AGES_BUILD_DIR = build_ages_e
-	SEASONS_BUILD_DIR = build_seasons_e
+	AGES_BUILD_DIR = build_ages_$(REGION)_e
+	SEASONS_BUILD_DIR = build_seasons_$(REGION)_e
 endif
 
 ifdef FORCE_SECTIONS
@@ -116,20 +144,33 @@ GFX_PRECMP_DIR = 'precompressed/gfx_compressible'
 OBJS = $(BUILD_DIR)/$(GAME).o $(BUILD_DIR)/audio.o
 
 
+# All .bin/.png gfx files and paths. Include _jp variants when building JP.
+GFX_UNCMP_PATHS = $(GFX_UNCMP_DIR)/common $(GFX_UNCMP_DIR)/$(GAME)
+GFX_CMP_PATHS   = $(GFX_CMP_DIR)/common $(GFX_CMP_DIR)/$(GAME)
+GFX_PRECMP_PATHS = $(GFX_PRECMP_DIR)/common $(GFX_PRECMP_DIR)/$(GAME)
+
+ifeq ($(REGION), jp)
+GFX_UNCMP_PATHS += $(GFX_UNCMP_DIR)/common_jp $(GFX_UNCMP_DIR)/$(GAME)_jp
+GFX_CMP_PATHS   += $(GFX_CMP_DIR)/common_jp $(GFX_CMP_DIR)/$(GAME)_jp
+GFX_PRECMP_PATHS += $(GFX_PRECMP_DIR)/common_jp $(GFX_PRECMP_DIR)/$(GAME)_jp
+endif
+
 # All .bin gfx files
-BIN_GFX_FILES  = $(shell find $(GFX_UNCMP_DIR)/common  $(GFX_CMP_DIR)/common \
-                              $(GFX_UNCMP_DIR)/$(GAME) $(GFX_CMP_DIR)/$(GAME) -name '*.bin')
+BIN_GFX_FILES  = $(shell find $(GFX_UNCMP_PATHS) $(GFX_CMP_PATHS) -name '*.bin')
 
 # All .png gfx files
-PNG_GFX_FILES  = $(shell find $(GFX_UNCMP_DIR)/common  $(GFX_CMP_DIR)/common \
-                              $(GFX_UNCMP_DIR)/$(GAME) $(GFX_CMP_DIR)/$(GAME) -name '*.png')
+PNG_GFX_FILES  = $(shell find $(GFX_UNCMP_PATHS) $(GFX_CMP_PATHS) -name '*.png')
+
+# Get basenames of all .bin files (without extension and path)
+BIN_BASENAMES := $(sort $(foreach file,$(BIN_GFX_FILES),$(basename $(notdir $(file)))))
+
+# Filter out .png files whose basename matches a .bin file (to avoid conflicts between regions)
+PNG_GFX_FILES := $(foreach file,$(PNG_GFX_FILES),$(if $(filter $(basename $(notdir $(file))),$(BIN_BASENAMES)),,$(file)))
 
 # All .bin & .png gfx files by category (uncompressible, compressible, precompressed)
-UNCMP_GFX_FILES  = $(shell find $(GFX_UNCMP_DIR)/common $(GFX_UNCMP_DIR)/$(GAME) \
-                     -name '*.bin' -or -name '*.png')
-CMP_GFX_FILES    = $(shell find $(GFX_CMP_DIR)/common $(GFX_CMP_DIR)/$(GAME) \
-                     -name '*.bin' -or -name '*.png')
-PRECMP_GFX_FILES = $(shell find $(GFX_PRECMP_DIR)/common $(GFX_PRECMP_DIR)/$(GAME) -name '*.cmp')
+UNCMP_GFX_FILES  = $(shell find $(GFX_UNCMP_PATHS) -name '*.bin' -or -name '*.png')
+CMP_GFX_FILES    = $(shell find $(GFX_CMP_PATHS) -name '*.bin' -or -name '*.png')
+PRECMP_GFX_FILES = $(shell find $(GFX_PRECMP_PATHS) -name '*.cmp')
 
 # List of all gfx files in their final form, ie. $(BUILD_DIR)/gfx/spr_link.cmp
 GFXFILES := $(foreach file, $(CMP_GFX_FILES) $(UNCMP_GFX_FILES), \
@@ -153,16 +194,31 @@ endif
 
 ROOMLAYOUTFILES = $(wildcard rooms/$(GAME)/small/*.bin)
 ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
+
+ifeq ($(REGION), jp)
+ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)_jp/small/*.bin)
+ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)_jp/large/*.bin)
+endif
+
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file, $(ROOMLAYOUTFILES), \
                     $(BUILD_DIR)/rooms/$(notdir $(file)))
 
 COLLISIONFILES = $(wildcard tileset_layouts/$(GAME)/tilesetCollisions*.bin)
+
+ifeq ($(REGION), jp)
+COLLISIONFILES += $(wildcard tileset_layouts/$(GAME)_jp/tilesetCollisions*.bin)
+endif
+
 COLLISIONFILES := $(COLLISIONFILES:.bin=.cmp)
 COLLISIONFILES := $(foreach file, $(COLLISIONFILES), \
                     $(BUILD_DIR)/tileset_layouts/$(notdir $(file)))
 
 MAPPINGINDICESFILES = $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin)
+
+ifeq ($(REGION), jp)
+MAPPINGINDICESFILES += $(wildcard tileset_layouts/$(GAME)_jp/tilesetMappings*.bin)
+endif
 MAPPINGINDICESFILES := $(foreach file, $(MAPPINGINDICESFILES), \
                          $(BUILD_DIR)/tileset_layouts/$(notdir $(file)))
 
@@ -186,10 +242,10 @@ OPTIMIZE := -o
 endif
 
 
-$(GAME).gbc: $(OBJS) $(BUILD_DIR)/linkfile
+$(GAME)_$(REGION).gbc: $(OBJS) $(BUILD_DIR)/linkfile
 	$(LD) -S $(BUILD_DIR)/linkfile $@
 ifeq ($(BUILD_VANILLA),true)
-	@-tools/build/verify-checksum.sh $(GAME)
+	@-tools/build/verify-checksum.sh $(GAME) $(REGION)
 endif
 	@echo -e "$(BOLD)Built $(GAME_COLOR)$@$(NC)."
 
@@ -209,11 +265,23 @@ $(BUILD_DIR)/$(GAME).o: rooms/$(GAME)/*.bin
 $(BUILD_DIR)/audio.o: $(AUDIO_FILES)
 $(BUILD_DIR)/*.o: $(COMMON_INCLUDE_FILES) Makefile
 
-$(BUILD_DIR)/$(GAME).o: $(GAME).s $(BUILD_DIR)/textData.s $(BUILD_DIR)/textDefines.s Makefile | $(BUILD_DIR)
+ifeq ($(REGION), jp)
+TEXT_DATA_FILE = $(BUILD_DIR)/textDataJP.s
+else
+TEXT_DATA_FILE = $(BUILD_DIR)/textData.s
+endif
+
+$(BUILD_DIR)/$(GAME).o: $(GAME).s $(TEXT_DATA_FILE) $(BUILD_DIR)/textDefines.s Makefile | $(BUILD_DIR)
 	$(CC) -o $@ $(CFLAGS) $<
 
 $(BUILD_DIR)/%.o: code/%.s | $(BUILD_DIR)
 	$(CC) -o $@ $(CFLAGS) $<
+
+ifeq ($(REGION), jp)
+$(BUILD_DIR)/rooms/%.cmp: rooms/$(GAME)_jp/small/%.bin | $(BUILD_DIR)/rooms
+	@echo "Compressing $< to $@..."
+	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ $(OPTIMIZE)
+endif
 
 $(BUILD_DIR)/rooms/%.cmp: rooms/$(GAME)/small/%.bin | $(BUILD_DIR)/rooms
 	@echo "Compressing $< to $@..."
@@ -283,22 +351,26 @@ endif
 
 ifeq ($(BUILD_VANILLA),true)
 
-$(BUILD_DIR)/tileset_layouts/%.bin: precompressed/tileset_layouts/$(GAME)/%.bin | $(BUILD_DIR)/tileset_layouts
-	@echo "Copying $< to $@..."
-	@cp $< $@
-$(BUILD_DIR)/tileset_layouts/%.cmp: precompressed/tileset_layouts/$(GAME)/%.cmp | $(BUILD_DIR)/tileset_layouts
-	@echo "Copying $< to $@..."
-	@cp $< $@
+# Precompressed copy rules for vanilla builds.
+# For JP, game_jp source rules are listed first to take priority over the
+# generic game rules (which serve as fallback for shared files).
+define define_precmp_copy_rule
+$(BUILD_DIR)/$(1)/%.$(2): precompressed/$(1)/$(3)/%.$(2) | $(BUILD_DIR)/$(1)
+	@echo "Copying $$< to $$@..."
+	@cp $$< $$@
+endef
 
-$(BUILD_DIR)/rooms/room%.cmp: precompressed/rooms/$(GAME)/room%.cmp | $(BUILD_DIR)/rooms
-	@echo "Copying $< to $@..."
-	@cp $< $@
+ifeq ($(REGION), jp)
+$(eval $(call define_precmp_copy_rule,tileset_layouts,bin,$(GAME)_jp))
+$(eval $(call define_precmp_copy_rule,tileset_layouts,cmp,$(GAME)_jp))
+$(eval $(call define_precmp_copy_rule,rooms,cmp,$(GAME)_jp))
+endif
 
-$(BUILD_DIR)/textData.s: precompressed/text/$(GAME)/textData.s | $(BUILD_DIR)
-	@echo "Copying $< to $@..."
-	@cp $< $@
+$(eval $(call define_precmp_copy_rule,tileset_layouts,bin,$(GAME)))
+$(eval $(call define_precmp_copy_rule,tileset_layouts,cmp,$(GAME)))
+$(eval $(call define_precmp_copy_rule,rooms,cmp,$(GAME)))
 
-$(BUILD_DIR)/textDefines.s: precompressed/text/$(GAME)/textDefines.s | $(BUILD_DIR)
+$(BUILD_DIR)/text%.s: precompressed/text/$(GAME)/text%.s | $(BUILD_DIR)
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -319,7 +391,7 @@ $(BUILD_DIR)/tileset_layouts/tileMappingAttributeData.bin: $(BUILD_DIR)/tileset_
 
 # mappingsUpdated is a stub file which is just used as a timestamp from the
 # last time parseTilesetLayouts was run.
-$(BUILD_DIR)/tileset_layouts/mappingsUpdated: $(wildcard tileset_layouts/$(GAME)/tilesetMappings*.bin) | $(BUILD_DIR)/tileset_layouts
+$(BUILD_DIR)/tileset_layouts/mappingsUpdated: $(MAPPINGINDICESFILES) | $(BUILD_DIR)/tileset_layouts
 	@echo "Compressing tileset mappings..."
 	@$(PYTHON) tools/build/parseTilesetLayouts.py $(GAME) $(BUILD_DIR)
 	@echo "Done compressing tileset mappings."
@@ -333,15 +405,22 @@ $(BUILD_DIR)/tileset_layouts/tilesetCollisions%.cmp: tileset_layouts/$(GAME)/til
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/build/compressTilesetLayoutData.py $< $@ 0 $(BUILD_DIR)/tileset_layouts/collisionsDictionary.bin
 
-$(BUILD_DIR)/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin | $(BUILD_DIR)/rooms
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
-$(BUILD_DIR)/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin | $(BUILD_DIR)/rooms
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
-$(BUILD_DIR)/rooms/room06%.cmp: rooms/$(GAME)/large/room06%.bin | $(BUILD_DIR)/rooms
-	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/build/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary6.bin
+# Generate large room compression rules for each group prefix (04, 05, 06).
+# For JP, the _jp source directory rules are listed first to take priority.
+define define_large_room_rules
+ifeq ($(REGION), jp)
+$(BUILD_DIR)/rooms/room$(1)%.cmp: rooms/$(GAME)_jp/large/room$(1)%.bin | $(BUILD_DIR)/rooms
+	@echo "Compressing $$< to $$@..."
+	@$$(PYTHON) tools/build/compressRoomLayout.py $$< $$@ -d rooms/$(GAME)/dictionary$(2).bin
+endif
+$(BUILD_DIR)/rooms/room$(1)%.cmp: rooms/$(GAME)/large/room$(1)%.bin | $(BUILD_DIR)/rooms
+	@echo "Compressing $$< to $$@..."
+	@$$(PYTHON) tools/build/compressRoomLayout.py $$< $$@ -d rooms/$(GAME)/dictionary$(2).bin
+endef
+
+$(eval $(call define_large_room_rules,04,4))
+$(eval $(call define_large_room_rules,05,5))
+$(eval $(call define_large_room_rules,06,6))
 
 # Parse & compress text
 $(BUILD_DIR)/textData.s: text/$(GAME)/text.yaml text/$(GAME)/dict.yaml tools/build/parseText.py | $(BUILD_DIR)
@@ -353,25 +432,18 @@ $(BUILD_DIR)/textDefines.s: $(BUILD_DIR)/textData.s
 endif
 
 
-$(BUILD_DIR)/gfx: | $(BUILD_DIR)
-	mkdir $(BUILD_DIR)/gfx
-$(BUILD_DIR)/rooms: | $(BUILD_DIR)
-	mkdir $(BUILD_DIR)/rooms
-$(BUILD_DIR)/debug: | $(BUILD_DIR)
-	mkdir $(BUILD_DIR)/debug
-$(BUILD_DIR)/tileset_layouts: | $(BUILD_DIR)
-	mkdir $(BUILD_DIR)/tileset_layouts
-$(BUILD_DIR)/doc: | $(BUILD_DIR)
-	mkdir $(BUILD_DIR)/doc
+$(BUILD_DIR)/gfx $(BUILD_DIR)/rooms $(BUILD_DIR)/debug $(BUILD_DIR)/tileset_layouts $(BUILD_DIR)/doc: | $(BUILD_DIR)
+	mkdir $@
 $(BUILD_DIR):
-	mkdir $(BUILD_DIR)
+	mkdir $@
 
 endif # End of check for either ROM_AGES or ROM_SEASONS being defined
 
 
 clean:
 	-rm -R build build_ages_* build_seasons_* \
-		ages.gbc ages.sym seasons.gbc seasons.sym
+		ages.gbc ages.sym ages_*.gbc ages_*.sym \
+		seasons.gbc seasons.sym seasons_*.gbc seasons_*.sym
 
 # --------------------------------------------------------------------------------
 # Testing graphics encoding: ensure that pngs are encoded correctly.

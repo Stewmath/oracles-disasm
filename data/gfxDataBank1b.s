@@ -10,13 +10,18 @@
 	m_GfxDataSimple spr_raft		; $06f620
 	m_GfxDataSimple spr_impa_fainted	; $06f6a0
 
+.ifndef REGION_JP
 	m_GfxDataSimple gfx_animations_2	; $06f6e0
+.endif
 
 .else; ROM_SEASONS
 
+.ifndef REGION_JP
 	m_GfxDataSimple spr_item_icons_1
 	m_GfxDataSimple spr_item_icons_2
 	m_GfxDataSimple spr_item_icons_3
 
 	m_GfxDataSimple gfx_key_orechunk
+.endif
+
 .endif
