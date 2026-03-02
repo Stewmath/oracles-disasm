@@ -609,10 +609,12 @@ m_section_free Enemy_Code_Bank0f NAMESPACE bank0f
 
 .ends
 
+; TODO: Remove this with 10.7.
+@emptyfillStartBank0f:
 .ifdef REGION_JP
-	m_emptyfill orga()+$9f
+	m_emptyfill @emptyfillStartBank0f+$9f
 .else
-	m_emptyfill orga()+$87
+	m_emptyfill @emptyfillStartBank0f+$87
 .endif
 
 m_section_free Interaction_Code_Group6 NAMESPACE commonInteractions6

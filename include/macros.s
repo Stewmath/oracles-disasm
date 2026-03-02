@@ -786,13 +786,14 @@
 ; Macro for emptyfilling banks
 ; ===================================================================================================
 .macro m_emptyfill ARGS end_addr
+@emptyfillStart: ; TODO: remove this with 10.7.
 	.if defined(BUILD_VANILLA) && (defined(REGION_JP) || defined(ROM_SEASONS))
 		.if NARGS == 0
 			; Bank 0 emptyfills with 0 anyway, so we won't be calling this
 			; macro for that bank and can always use $8000 here.
-			.dsb $8000-orga(),bank()
+			.dsb $8000-@emptyfillStart,:@emptyfillStart
 		.else
-			.dsb end_addr-orga(),bank()
+			.dsb end_addr-@emptyfillStart,:@emptyfillStart
 		.endif
 	.endif
 .endm
