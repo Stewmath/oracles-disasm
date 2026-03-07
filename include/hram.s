@@ -34,8 +34,11 @@
 
 	; 0: set SCX based on values in wBigBuffer at each hblank
 	; 1: set SCY based on values in wBigBuffer at each hblank
-	; 2+: ?
-	; 5: used for ring menu
+	; 2: ?
+	; 3: ?
+	; 4: Subrosia pirate ship cutscene?
+	; 5: Ring menu
+	; 6: Seasons dragon onox fight?
 	hLcdInterruptBehaviour		db	; $ff9b/$ff99
 
 	; This is a counter for how many times the LCD interrupt has been triggered this

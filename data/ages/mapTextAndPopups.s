@@ -1,5 +1,5 @@
 ; Each number corresponds to TX_03XX (see text.txt).
-; If bit 7 is set, that indicates special behaviour; see the "_mapGetRoomText" function.
+; If bit 7 is set, that indicates special behaviour; see the "mapGetRoomText" function.
 presentMapTextIndices:
 	.db $02 $02 $03 $a1 $03 $04 $04 $04 $05 $82 $a9 $05 $05 $05
 	.db $02 $02 $03 $03 $03 $04 $04 $04 $05 $05 $05 $05 $05 $42
@@ -38,7 +38,7 @@ pastMapTextIndices:
 ;
 ; b0: room index
 ; b1: popup behaviour. Each digit represents a different popup; screens with only one
-;     popup use the same digit twice. (see the "_mapMenu_LoadPopupData" function)
+;     popup use the same digit twice. (see the "mapMenu_LoadPopupData" function)
 presentMinimapPopups:
 	.db $48 $88 ; 0x00
 	.db $8d $88 ; 0x02

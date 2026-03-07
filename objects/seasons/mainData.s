@@ -1357,12 +1357,12 @@ group0Map63ObjectData:
 group0MapbdObjectData:
 	obj_Interaction $5e $00 $40 $70
 	obj_Interaction $5e $01 $60 $30
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_End
 
 group0MapbeObjectData:
 	obj_Interaction $5e $00 $50 $30
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapbeEnemyObjectData
 	obj_End
 
@@ -1374,7 +1374,7 @@ group0MapcdObjectData:
 	obj_Interaction $5e $00 $20 $40
 	obj_Interaction $5e $00 $40 $80
 	obj_Interaction $5e $00 $60 $30
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapcdEnemyObjectData
 	obj_End
 
@@ -1393,28 +1393,28 @@ group0MapcfObjectData:
 
 group0MapdcObjectData:
 	obj_Interaction $5e $02 $40 $30
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapdcEnemyObjectData
 	obj_End
 
 group0MapddObjectData:
 	obj_Interaction $5e $00 $40 $80
 	obj_Interaction $5e $03 $50 $30
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapddEnemyObjectData
 	obj_End
 
 group0MapdeObjectData:
 	obj_Interaction $5e $00 $20 $60
 	obj_Interaction $5e $00 $40 $20
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapdeEnemyObjectData
 	obj_End
 
 group0MapdfObjectData:
 	obj_Interaction $5e $00 $20 $70
 	obj_Interaction $5e $04 $50 $30
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapdfEnemyObjectData
 	obj_End
 
@@ -1429,17 +1429,17 @@ group0Mape1ObjectData:
 
 group0MapefObjectData:
 	obj_Interaction $b6 $0d $68 $68
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapefEnemyObjectData
 	obj_End
 
 group0MapecObjectData:
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapecEnemyObjectData
 	obj_End
 
 group0MapedObjectData:
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapedEnemyObjectData
 	obj_End
 
@@ -1465,7 +1465,7 @@ group0MapeeObjectData:
 
 group0MapfdObjectData:
 	obj_Interaction $5e $05 $50 $60
-	obj_Pointer objectData404e
+	obj_Pointer objectData_makeCactiDamaging
 	obj_Pointer group0MapfdEnemyObjectData
 	obj_End
 
@@ -2375,7 +2375,7 @@ group4Map15ObjectData:
 	obj_Interaction $1e $0a $a7 $00
 	obj_Interaction $1e $15 $50 $00
 	obj_Interaction $7e $00 $58 $78
-	obj_Pointer objectData405a
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer group4Map15EnemyObjectData
 	obj_End
 
@@ -2410,7 +2410,7 @@ group4Map1bObjectData:
 	obj_Interaction $1e $14 $07 $00
 	obj_Interaction $12 $01 $58 $78
 	obj_Interaction $1e $0b $50 $00
-	obj_Pointer objectData405a
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer group4Map1bEnemyObjectData
 	obj_End
 
@@ -2461,7 +2461,7 @@ group4Map24ObjectData:
 
 group4Map25ObjectData:
 	obj_Interaction $1e $09 $5e $00
-	obj_Pointer objectData403c
+	obj_Pointer objectData_respawningBushBombs
 	obj_Pointer group4Map25EnemyObjectData
 	obj_End
 
@@ -2488,13 +2488,13 @@ group4Map29ObjectData:
 	obj_Interaction $20 $02 $58 $78
 	obj_Interaction $1e $0b $70 $00
 	obj_Interaction $1e $0a $ab $00
-	obj_Pointer objectData403c
+	obj_Pointer objectData_respawningBushBombs
 	obj_BeforeEvent group4Map29BeforeEventObjectData
 	obj_End
 
 group4Map2aObjectData:
 	obj_Interaction $12 $02 $58 $b8
-	obj_Pointer objectData403c
+	obj_Pointer objectData_respawningBushBombs
 	obj_Pointer group4Map2aEnemyObjectData
 	obj_End
 
@@ -2783,7 +2783,7 @@ group4Map63ObjectData:
 
 group4Map64ObjectData:
 	obj_Interaction $20 $02 $98 $58
-	obj_Pointer objectData405a
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
 group4Map65ObjectData:
@@ -2812,7 +2812,7 @@ group4Map6aObjectData:
 	obj_Interaction $1e $0a $a7 $00
 	obj_Interaction $20 $05 $58 $78
 	obj_Interaction $7e $00 $00 $00
-	obj_Pointer objectData4042
+	obj_Pointer objectData_respawningBushEmberSeeds
 	obj_Part $08 $01 $68
 	obj_BeforeEvent group4Map6aBeforeEventObjectData
 	obj_End
@@ -3171,7 +3171,7 @@ group4Mapb4ObjectData:
 	obj_Interaction $79 $48 $98 $b0
 	obj_Interaction $20 $04 $08 $c8
 	obj_Interaction $7c $00 $18 $18
-	obj_Pointer objectData405a
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer group4Mapb4EnemyObjectData
 	obj_End
 
@@ -3429,7 +3429,7 @@ group5Map42ObjectData:
 	obj_Interaction $7e $00 $00 $00
 	obj_Interaction $1e $0b $50 $00
 	obj_Interaction $1e $09 $5e $00
-	obj_Pointer objectData4042
+	obj_Pointer objectData_respawningBushEmberSeeds
 	obj_BeforeEvent group5Map42BeforeEventObjectData
 	obj_End
 
@@ -3496,7 +3496,7 @@ group5Map4dObjectData:
 
 group5Map4eObjectData:
 	obj_Interaction $20 $08 $58 $78
-	obj_Pointer objectData4042
+	obj_Pointer objectData_respawningBushEmberSeeds
 	obj_Pointer group5Map4eEnemyObjectData
 	obj_End
 
@@ -3540,7 +3540,7 @@ group5Map55ObjectData:
 group5Map56ObjectData:
 	obj_Interaction $20 $07 $18 $d8
 	obj_Part $08 $00 $68
-	obj_Pointer objectData4042
+	obj_Pointer objectData_respawningBushEmberSeeds
 	obj_End
 
 group5Map57ObjectData:
@@ -3676,7 +3676,7 @@ group5Map72ObjectData:
 	obj_Interaction $1e $08 $07 $00
 	obj_Interaction $7e $00 $00 $00
 	obj_Interaction $20 $07 $58 $78
-	obj_Pointer objectData4048
+	obj_Pointer objectData_respawningBushMysterySeeds
 	obj_BeforeEvent group5Map72BeforeEventObjectData
 	obj_End
 
@@ -3970,13 +3970,13 @@ group5Map28ObjectData:
 	obj_Interaction $dc $04 $59 $03
 	obj_Interaction $7e $02 $58 $98
 	obj_Interaction $e1 $01 $18 $c8
-	obj_Pointer objectData405a
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
 group5Map29ObjectData:
 	obj_Interaction $e1 $01 $88 $d8
 	obj_Interaction $20 $02 $68 $28
-	obj_Pointer objectData405a
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer group5Map29EnemyObjectData
 	obj_End
 
@@ -3987,7 +3987,7 @@ group5Map2aObjectData:
 
 group5Map2bObjectData:
 	obj_Interaction $1e $15 $80 $00
-	obj_Pointer objectData405a
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer group5Map2bEnemyObjectData
 	obj_End
 

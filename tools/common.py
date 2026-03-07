@@ -161,13 +161,13 @@ def decompressGfxData(rom, address, size, mode, physicalSize=0x10000000):
     size+=1
     if mode == 0:
         size *= 0x10
-        while size > 0 and physicalSize > 0:
+        while size > 0 and physicalSize > 0 and address < len(rom):
             retData.append(rom[address])
             address+=1
             size-=1
             physicalSize-=1
     if mode == 2:
-        while size > 0 and physicalSize > 0:
+        while size > 0 and physicalSize > 0 and address < len(rom):
             c = rom[address]
             address+=1
             physicalSize-=1
@@ -218,7 +218,7 @@ def decompressGfxData(rom, address, size, mode, physicalSize=0x10000000):
     if mode == 1 or mode == 3:
         size *= 0x10
         ff8b = 1
-        while size > 0 and physicalSize > 0:
+        while size > 0 and physicalSize > 0 and address < len(rom):
             ff8b-=1
             if ff8b == 0:
                 ff8b = 8

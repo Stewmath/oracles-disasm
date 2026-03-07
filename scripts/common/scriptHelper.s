@@ -1,8 +1,8 @@
- m_section_free Bank_15 NAMESPACE scriptHelp
+m_section_free Bank_15 NAMESPACE scriptHelp
 
-; ==============================================================================
-; INTERACID_FARORE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_FARORE
+; ==================================================================================================
 faroreCheckSecretValidity:
 	ld a,(wSecretInputType)
 	inc a
@@ -76,7 +76,7 @@ faroreShowTextForSecretHint:
 faroreSpawnSecretChest:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FARORE_GIVEITEM
+	ld (hl),INTERAC_FARORE_GIVEITEM
 	inc l
 	ld a,(wTextInputResult)
 	and $0f
@@ -90,9 +90,9 @@ faroreGenerateGameTransferSecret:
 	jpab bank3.generateGameTransferSecret
 
 
-; ==============================================================================
-; INTERACID_DOOR_CONTROLLER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DOOR_CONTROLLER
+; ==================================================================================================
 
 ; Update Link's respawn position in case it's on a door that's just about to close
 doorController_updateLinkRespawn:
@@ -251,9 +251,9 @@ doorController_checkEnoughTorchesLit:
 	ret
 
 
-; ==============================================================================
-; INTERACID_SHOPKEEPER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SHOPKEEPER
+; ==================================================================================================
 
 ;;
 shopkeeper_take10Rupees:
@@ -268,21 +268,21 @@ shopkeeper_take10Rupees:
 .endif
 
 
- m_section_free Bank_15_2 NAMESPACE scriptHelp
+m_section_free Bank_15_2 NAMESPACE scriptHelp
 
 .ifdef ROM_SEASONS
 
 createBossDeathExplosion:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_BOSS_DEATH_EXPLOSION
+	ld (hl),PART_BOSS_DEATH_EXPLOSION
 	jp objectCopyPosition
 .endif
 
 
-; ==============================================================================
-; INTERACID_MOVING_PLATFORM
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MOVING_PLATFORM
+; ==================================================================================================
 
 ;;
 ; The moving platform has a custom "script format".
@@ -294,15 +294,15 @@ movingPlatform_loadScript:
 
 	; Not in dungeon
 .ifdef ROM_AGES
-	ld hl,_movingPlatform_scriptTable
+	ld hl,movingPlatform_scriptTable
 .else
-	ld hl,_movingPlatform_nonDungeonScriptTable
+	ld hl,movingPlatform_nonDungeonScriptTable
 .endif
 	jr @loadScript
 
 @inDungeon:
 	ld a,b
-	ld hl,_movingPlatform_scriptTable
+	ld hl,movingPlatform_scriptTable
 	rst_addDoubleIndex
 	ldi a,(hl)
 	ld h,(hl)
@@ -315,7 +315,7 @@ movingPlatform_loadScript:
 	ldi a,(hl)
 	ld h,(hl)
 	ld l,a
-	jr _movingPlatform_setScript
+	jr movingPlatform_setScript
 
 movingPlatform_runScript:
 	ld e,Interaction.scriptPtr
@@ -353,7 +353,7 @@ movingPlatform_runScript:
 	ld e,Interaction.substate
 	xor a
 	ld (de),a
-	jr _movingPlatform_setScript
+	jr movingPlatform_setScript
 
 ; Move at the current angle for the given number of frames
 @opcode01:
@@ -364,7 +364,7 @@ movingPlatform_runScript:
 	ld e,Interaction.substate
 	ld a,$01
 	ld (de),a
-	jr _movingPlatform_setScript
+	jr movingPlatform_setScript
 
 ; Set angle
 @opcode02:
@@ -407,7 +407,7 @@ movingPlatform_runScript:
 	xor a
 	ld e,Interaction.substate
 	ld (de),a
-	jr _movingPlatform_setScript
+	jr movingPlatform_setScript
 
 ; Move up
 @opcode08:
@@ -434,7 +434,7 @@ movingPlatform_runScript:
 	jr @opcode01
 
 ;;
-_movingPlatform_setScript:
+movingPlatform_setScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
 	ld (de),a
@@ -443,11 +443,11 @@ _movingPlatform_setScript:
 	ld (de),a
 	ret
 
-.include "build/data/movingPlatformScriptTable.s"
+.include {"{GAME_DATA_DIR}/movingPlatformScriptTable.s"}
 
-; ==============================================================================
-; INTERACID_ESSENCE
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ESSENCE
+; ==================================================================================================
 
 ;;
 essence_createEnergySwirl:
@@ -461,15 +461,15 @@ essence_stopEnergySwirl:
 	ld (wDeleteEnergyBeads),a
 	ret
 
-; ==============================================================================
-; INTERACID_VASU
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_VASU
+; ==================================================================================================
 
 ;;
 vasu_giveRingBox:
 	call getFreeInteractionSlot
 	ldbc TREASURE_RING_BOX, $00
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -601,9 +601,9 @@ vasu_giveRingInVar3a:
 	jp giveRingToLink
 
 
-; ==============================================================================
-; INTERACID_GAME_COMPLETE_DIALOG
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_GAME_COMPLETE_DIALOG
+; ==================================================================================================
 gameCompleteDialog_markGameAsComplete:
 	xor a
 	ld (wMapleKillCounter),a

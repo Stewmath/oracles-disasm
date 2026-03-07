@@ -1,16 +1,16 @@
-; These are a bunch of scripts used by INTERACID_DUNGEON_SCRIPT.
+; These are a bunch of scripts used by INTERAC_DUNGEON_SCRIPT.
 
 dungeonScript_spawnChestOnTriggerBit0:
 	stopifitemflagset
 	checkflagset $00, wActiveTriggers
-	scriptjump _spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 makuPathScript_spawnChestWhenActiveTriggersEq01:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $01
 
-_spawnChestAfterPuff:
+spawnChestAfterPuff:
 	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 15
@@ -58,7 +58,7 @@ spiritsGraveScript_spawnMovingPlatform:
 	setcoords $58, $78
 	asm15 objectCreatePuff
 	wait 30
-	spawninteraction INTERACID_MOVING_PLATFORM, $09, $50, $78
+	spawninteraction INTERAC_MOVING_PLATFORM, $09, $50, $78
 	playsound SND_SOLVEPUZZLE
 	scriptend
 
@@ -74,10 +74,10 @@ dungeonScript_minibossDeath:
 	checknoenemies
 	orroomflag $80
 	wait 20
-	spawninteraction INTERACID_MINIBOSS_PORTAL, $00, $00, $00
+	spawninteraction INTERAC_MINIBOSS_PORTAL, $00, $00, $00
 
 
-_enableLinkAndMenu:
+enableLinkAndMenu:
 	writememory wDisableLinkCollisionsAndMenu, $00
 	scriptend
 
@@ -90,9 +90,9 @@ dungeonScript_bossDeath:
 	stopifitemflagset
 	setcoords $58, $78
 
-_spawnHeartContainer:
+spawnHeartContainer:
 	spawnitem TREASURE_HEART_CONTAINER, $00
-	scriptjump _enableLinkAndMenu
+	scriptjump enableLinkAndMenu
 
 wingDungeonScript_bossDeath:
 	jumpifroomflagset $80, @spawnHeart
@@ -110,7 +110,7 @@ wingDungeonScript_bossDeath:
 @spawnHeart:
 	stopifitemflagset
 	setcoords $98, $78
-	scriptjump _spawnHeartContainer
+	scriptjump spawnHeartContainer
 
 
 ; Spawn stairs to the bracelet room when the two torches are lit.
@@ -138,27 +138,27 @@ wingDungeonScript_spawn30Rupees:
 moonlitGrottoScript_spawnChestWhen2TorchesLit:
 	stopifitemflagset
 	checkmemoryeq wNumTorchesLit, $02
-	scriptjump _spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 ; The room with the moving platform and an orb to hit
 skullDungeonScript_spawnChestWhenOrb0Hit:
 	stopifitemflagset
 	checkflagset $00, wToggleBlocksState
-	scriptjump _spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 ; The room with an orb that's being blocked by a moldorm
 skullDungeonScript_spawnChestWhenOrb1Hit:
 	stopifitemflagset
 	checkflagset $01, wToggleBlocksState
-	scriptjump _spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 ; The room with 3 eyeball-statue things that need to be hit with a seed shooter
 crownDungeonScript_spawnChestWhen3TriggersActive:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $07
-	scriptjump _spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 
 mermaidsCaveScript_spawnBridgeWhenOrbHit:
@@ -179,7 +179,7 @@ ancientTombScript_spawnSouthStairsWhenTrigger0Active:
 	checkmemoryeq wActiveTriggers, $01
 	settilehere $50
 
-_ancientTombScript_finishMakingStairs:
+ancientTombScript_finishMakingStairs:
 	orroomflag $40
 	asm15 objectCreatePuff
 	playsound SND_SOLVEPUZZLE
@@ -190,7 +190,7 @@ ancientTombScript_spawnNorthStairsWhenTrigger0Active:
 	stopifroomflag40set
 	checkmemoryeq wActiveTriggers, $01
 	settilehere $52
-	scriptjump _ancientTombScript_finishMakingStairs
+	scriptjump ancientTombScript_finishMakingStairs
 
 
 ancientTombScript_retractWallWhenTrigger0Active:
@@ -225,7 +225,7 @@ ancientTombScript_spawnVerticalBridgeWhenTorchLit:
 herosCaveScript_spawnChestWhen4TriggersActive:
 	stopifitemflagset
 	checkmemoryeq wActiveTriggers, $0f
-	scriptjump _spawnChestAfterPuff
+	scriptjump spawnChestAfterPuff
 
 herosCaveScript_spawnBridgeWhenTriggerPressed:
 	stopifroomflag40set

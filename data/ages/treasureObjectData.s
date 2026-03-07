@@ -1,9 +1,9 @@
 m_section_free TreasureObjectData NAMESPACE treasureData
 
-; Treasure objects are a kind of Interaction (INTERACID_TREASURE). Each "Treasure Object" contains
-; the information necessary to display a specific treasure (see "constants/treasure.s") and give it
-; to Link. Many treasures need a "parameter" to go with them (ie. level, amount). All of this "extra
-; data" is defined here.
+; Treasure objects are a kind of Interaction (INTERAC_TREASURE). Each "Treasure Object" contains
+; the information necessary to display a specific treasure (see "constants/common/treasure.s") and
+; give it to Link. Many treasures need a "parameter" to go with them (ie. level, amount). All of
+; this "extra data" is defined here.
 ;
 ; The "m_TreasureSubid" macro takes 4 bytes as parameters:
 ;   b0: bit 7    = next 2 bytes are a pointer
@@ -11,7 +11,7 @@ m_section_free TreasureObjectData NAMESPACE treasureData
 ;       bit 3    = ?
 ;       bits 0-2 = grab mode
 ;   b1: Parameter (value of 'c' to pass to "giveTreasure")
-;   b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
+;   b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00, TX_00XX)
 ;   b3: Graphics to use. (Gets copied to object's subid, so graphics are determined by the
 ;       corresponding value for interaction $60 in data/{game}/interactionData.s.)
 ;
@@ -19,41 +19,9 @@ m_section_free TreasureObjectData NAMESPACE treasureData
 ; index. This name will resolve to a 4-digit hex number (XXYY, where XX = treasure index and YY
 ; = subid).
 ;
-; For documentation of spawn modes and grab modes, see "constants/treasureSpawnModes.s".
+; For documentation of spawn modes and grab modes, see "constants/common/treasureSpawnModes.s".
 ;
-; See also constants/treasure.s for treasure lists.
-
-
-.macro m_BeginTreasureSubids
-	.redefine CURRENT_TREASURE_INDEX, (\1)<<8
-.endm
-
-.macro m_TreasureSubid
-	.db \1, \2, \3, \4
-
-	.IF CURRENT_TREASURE_INDEX >= $10000
-		; Within the "treasureObjectData" table, "CURRENT_TREASURE_INDEX" corresponds to
-		; values from "constants/treasure.s". (We add $10000 just to make it easy to
-		; differentiate which mode we're in.)
-		.define \5, (CURRENT_TREASURE_INDEX - $10000) << 8
-	.ELSE
-		; Within a subid table, "CURRENT_TREASURE_INDEX" corresponds to a treasure object
-		; index (2-byte number)
-		.define \5, CURRENT_TREASURE_INDEX
-	.ENDIF
-
-	.export \5
-	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
-.endm
-
-.macro m_TreasurePointer
-	.db $80
-	.dw \1
-	.db $00
-
-	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
-.endm
-
+; See also constants/common/treasure.s for treasure lists.
 
 .define CURRENT_TREASURE_INDEX $10000
 
@@ -126,7 +94,7 @@ treasureObjectData:
 	/* $41 */ m_TreasurePointer treasureObjectData41
 	/* $42 */ m_TreasureSubid   $29, $00, $23, $44, TREASURE_OBJECT_GRAVEYARD_KEY_00
 	/* $43 */ m_TreasureSubid   $09, $00, $3d, $45, TREASURE_OBJECT_CROWN_KEY_00
-	/* $44 */ m_TreasureSubid   $09, $00, $42, $46, TREASURE_OBJECT_OLD_MERMAID_KEY_00
+	/* $44 */ m_TreasureSubid   $09, $00, $42, $46, TREASURE_OBJECT_MERMAID_KEY_00
 	/* $45 */ m_TreasurePointer treasureObjectData45
 	/* $46 */ m_TreasureSubid   $02, $00, $44, $48, TREASURE_OBJECT_LIBRARY_KEY_00
 	/* $47 */ m_TreasureSubid   $00, $00, $ff, $00, TREASURE_OBJECT_47_00
@@ -305,7 +273,7 @@ treasureObjectData2c:
 	m_TreasureSubid $02, $02, $34, $34, TREASURE_OBJECT_RING_BOX_01
 	m_TreasureSubid $02, $03, $34, $35, TREASURE_OBJECT_RING_BOX_02
 	m_TreasureSubid $02, $02, $58, $34, TREASURE_OBJECT_RING_BOX_03
-.ifdef REGION_JP
+.ifndef ENABLE_US_BUGFIXES
 	; BUG: Ring box from some source (farore?) gives L-2 ring box instead of L-3
 	m_TreasureSubid $02, $02, $59, $35, TREASURE_OBJECT_RING_BOX_04
 .else
@@ -403,9 +371,9 @@ treasureObjectData41:
 	m_TreasureSubid $0a, $0b, $65, $7b, TREASURE_OBJECT_TRADEITEM_0b
 
 treasureObjectData45:
-	m_BeginTreasureSubids TREASURE_MERMAID_KEY
-	m_TreasureSubid $09, $00, $43, $47, TREASURE_OBJECT_MERMAID_KEY_00
-	m_TreasureSubid $19, $00, $43, $47, TREASURE_OBJECT_MERMAID_KEY_01
+	m_BeginTreasureSubids TREASURE_OLD_MERMAID_KEY
+	m_TreasureSubid $09, $00, $43, $47, TREASURE_OBJECT_OLD_MERMAID_KEY_00
+	m_TreasureSubid $19, $00, $43, $47, TREASURE_OBJECT_OLD_MERMAID_KEY_01
 
 treasureObjectData49:
 	m_BeginTreasureSubids TREASURE_BOMB_FLOWER

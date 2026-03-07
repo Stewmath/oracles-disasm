@@ -1,3 +1,5 @@
+; See data/ages/roomSpecificTileChanges.s for documentation.
+
 applyRoomSpecificTileChanges:
 	ld a,(wActiveRoom)
 	ld hl,roomTileChangerCodeGroupTable
@@ -487,7 +489,7 @@ tileReplacement_group0Map7f:
 
 ; Floodgate-keeper's house - water outside
 tileReplacement_group0Map62:
-	ld h,>wPastRoomFlags
+	ld h,>wSubrosiaRoomFlags
 	ld l,<ROOM_SEASONS_2b5
 	bit 6,(hl)
 	ret nz
@@ -800,7 +802,7 @@ tileReplacement_group0Mapee:
 
 ; Screen with linked locked doors in Subrosia
 tileReplacement_group1Map35:
-	ld a,(wGroup4Flags|<ROOM_SEASONS_4f9)
+	ld a,(wGroup4RoomFlags|<ROOM_SEASONS_4f9)
 	and $04
 	ret z
 	ld hl,wRoomLayout+$43
@@ -812,7 +814,7 @@ tileReplacement_group0Map56:
 	xor a
 	ld (wSwitchState),a
 	ld a,(wAnimalCompanion)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	ret z
 
 	call getThisRoomFlags
@@ -850,11 +852,11 @@ tileReplacement_group5Map9e:
 	or a
 	ret z
 	dec a
-	jr z,@val01
+	jr z,@fillWithLava
 	dec a
 	jr z,@fillWithIce
 	dec a
-	jr z,@val03
+	jr z,@normalLayout
 
 	; Fill the room with the seizure tiles?
 	xor a
@@ -863,11 +865,11 @@ tileReplacement_group5Map9e:
 	jp fillRectInRoomLayout
 
 @seizureTiles:
-	.db $00 LARGE_ROOM_HEIGHT LARGE_ROOM_WIDTH $aa
+	.db $00, LARGE_ROOM_HEIGHT, LARGE_ROOM_WIDTH, $aa
 
-@val03:
+@normalLayout:
 	ld (wTwinrovaTileReplacementMode),a
-	ld a,$b9
+	ld a,GFXH_TWINROVA_NORMAL_LAYOUT
 	jp loadGfxHeader
 
 @fillWithIce:
@@ -876,11 +878,11 @@ tileReplacement_group5Map9e:
 	jp fillRectInRoomLayout
 
 @iceTiles:
-	.db $11 LARGE_ROOM_HEIGHT-2 LARGE_ROOM_WIDTH-2 $8c
+	.db $11, LARGE_ROOM_HEIGHT-2, LARGE_ROOM_WIDTH-2, $8c
 
-@val01:
+@fillWithLava:
 	ld (wTwinrovaTileReplacementMode),a
-	ld a,$b8
+	ld a,GFXH_TWINROVA_LAVA_LAYOUT
 	jp loadGfxHeader
 
 ; Down horon village stairs leading to Subrosia portal

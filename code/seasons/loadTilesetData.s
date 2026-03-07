@@ -2,11 +2,11 @@
 ; Called from loadTilesetData in bank 0. Function differs substantially in Ages and Seasons.
 loadTilesetData_body:
 	call getTempleRemainsSeasonsTilesetData
-	jr c,+
+	jr c,@gotTilesetData
 	call getMoblinKeepSeasonsTilesetData
-	jr c,+
-	ld a,(wActiveGroup)
+	jr c,@gotTilesetData
 
+	ld a,(wActiveGroup)
 	ld hl,roomTilesetsGroupTable
 	rst_addDoubleIndex
 	ldi a,(hl)
@@ -24,9 +24,10 @@ loadTilesetData_body:
 	ld hl,tilesetData
 	add hl,bc
 
+	; If it's a seasonal tileset, then dereference the next pointer
 	ld a,(hl)
 	inc a
-	jr nz,+
+	jr nz,@gotTilesetData
 	inc hl
 	ldi a,(hl)
 	ld h,(hl)
@@ -34,7 +35,8 @@ loadTilesetData_body:
 	ld a,(wRoomStateModifier)
 	call multiplyABy8
 	add hl,bc
-+
+
+@gotTilesetData:
 	ldi a,(hl)
 	ld e,a
 	and $0f
@@ -60,13 +62,14 @@ loadTilesetData_body:
 	dec b
 	jr nz,@copyloop
 
-	ld e,wTilesetUniqueGfx&$ff
+	ld e,<wTilesetUniqueGfx
 	ld a,(de)
 	ld b,a
 	ldh a,(<hFF8B)
 	or b
 	ld (de),a
 
+	; For gnarled root dungeon entrance: load "unique graphics" when opened
 	ld a,(wActiveGroup)
 	or a
 	ret nz
@@ -92,7 +95,8 @@ getTempleRemainsSeasonsTilesetData:
 	call multiplyABy8
 	ld hl,templeRemainsSeasons
 	add hl,bc
---
+
+@returnAlteredData:
 	xor a
 	ldh (<hFF8B),a
 	scf
@@ -104,7 +108,7 @@ checkIsTempleRemains:
 	or a
 	ret nz
 	ld a,(wActiveRoom)
-	cp $14
+	cp $14 ; ROOM_SEASONS_014
 	jr c,+
 	sub $04
 	cp $30
@@ -134,7 +138,7 @@ getMoblinKeepSeasonsTilesetData:
 	call multiplyABy8
 	ld hl,moblinKeepSeasons
 	add hl,bc
-	jr --
+	jr getTempleRemainsSeasonsTilesetData@returnAlteredData
 
 ;;
 ; @param[out]	cflag	Set if active room is in Moblin keep
@@ -155,4 +159,4 @@ getMoblinKeepScreenIndex:
 	ret
 
 moblinKeepRooms:
-	.db $5b $5c $6b $6c $7b
+	.db <ROOM_SEASONS_05b, <ROOM_SEASONS_05c, <ROOM_SEASONS_06b, <ROOM_SEASONS_06c, <ROOM_SEASONS_07b

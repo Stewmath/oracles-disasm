@@ -3,6 +3,9 @@
 # (ie. ambi guards and moving platforms in sidescrolling areas).
 
 import sys
+import os
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 from io import StringIO
 

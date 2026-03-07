@@ -1,4 +1,6 @@
-faroreSparkleObjectData:
+; These are 8 "sparkles" created for the cutscene where a chest appears after telling
+; a secret to Farore.
+objectData_faroreSparkle:
 	obj_Interaction $11 $01 $78 $58
 	obj_Interaction $11 $11 $78 $58
 	obj_Interaction $11 $21 $78 $58
@@ -9,7 +11,7 @@ faroreSparkleObjectData:
 	obj_Interaction $11 $71 $78 $58
 	obj_End
 
-; _twinrovaCutscene_state1
+; twinrovaCutscene_state1
 objectData4022:
 	obj_Interaction $44 $00 $42 $78
 	obj_Interaction $b0 $08
@@ -17,7 +19,7 @@ objectData4022:
 	obj_Interaction $b0 $0a
 	obj_End
 
-; _twinrovaCutscene_loadAngryFlames
+; twinrovaCutscene_loadAngryFlames
 objectData402f:
 	obj_Interaction $b0 $0b
 	obj_Interaction $b0 $0c
@@ -29,34 +31,33 @@ objectData4037:
 	obj_RandomEnemy $24 $32 $00
 	obj_EndPointer
 
-; replenishable bombs
-objectData403c:
+; Replenishable bombs
+objectData_respawningBushBombs:
 	obj_Interaction $c7 $04 $0f $14
 	obj_EndPointer
 
-; replenishable bombs
-objectData4042:
+; Replenishable ember seeds
+objectData_respawningBushEmberSeeds:
 	obj_Interaction $c7 $04 $0f $15
 	obj_EndPointer
 
-; replenishable mystery seeds
-objectData4048:
+; Replenishable mystery seeds
+objectData_respawningBushMysterySeeds:
 	obj_Interaction $c7 $04 $0f $19
 	obj_EndPointer
 
 
-; cacti
-objectData404e:
+; Damaging cacti
+objectData_makeCactiDamaging:
 	obj_Interaction $c7 $bc $2f $10
 	obj_EndPointer
 
-; ???
+; Unused
 objectData4054:
 	obj_Interaction $c7 $a0 $06 $10
 	obj_EndPointer
 
-; lightable lanterns
-objectData405a:
+; Lightable torches
+objectData_makeAllTorchesLightable:
 	obj_Interaction $c7 $08 $06 $10
 	obj_EndPointer
-

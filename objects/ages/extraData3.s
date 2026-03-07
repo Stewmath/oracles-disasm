@@ -9,7 +9,7 @@ objectTable2:
 	.dw objectData7733
 	.dw objectData5462
 	.dw objectData5470
-	.dw blackTowerEscape_ambiAndGuards
+	.dw objectData_blackTowerEscape_ambiAndGuards
 	.dw objectData55a2
 	.dw objectData543c
 	.dw objectData774f

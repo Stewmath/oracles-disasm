@@ -134,7 +134,7 @@ subrosiaDance_storeButtonPress:
 	ld ($cfd8),a
 	ret
 
-_subrosiaDance_state2:
+subrosiaDance_state2:
 	call subrosiaDance_checkSpinOrCollapse
 	call $2a35 ; specialObjectAnimatie
 	call subrosiaDance_moveLink
@@ -219,7 +219,7 @@ subrosiaDance_05_7dd7:
 	ret c
 	jp $2098 ; objectCenterOnTile
 
-_subrosiaDance_state3:
+subrosiaDance_state3:
 	; animate $100 times, then go to state 1
 	call subrosiaDance_checkSpinOrCollapse
 	call $2a35 ; specialObjectAnimatie
@@ -232,10 +232,10 @@ _subrosiaDance_state3:
 	ld (de),a
 	ret
 
-_subrosiaDance_state4:
+subrosiaDance_state4:
 	jp $2a35 ; specialObjectAnimatie
 
-_subrosiaDance_state5:
+subrosiaDance_state5:
 	ret
 
 subrosiaDance_checkSpinOrCollapse:

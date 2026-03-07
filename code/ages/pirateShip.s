@@ -47,7 +47,7 @@ checkLoadPirateShip:
 
 	ld (hl),$01
 	inc l
-	ld (hl),INTERACID_PIRATE_SHIP
+	ld (hl),INTERAC_PIRATE_SHIP
 	ld l,Interaction.yh
 	ld a,(wPirateShipY)
 	ldi (hl),a

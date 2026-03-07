@@ -1,11 +1,11 @@
 .ifdef INCLUDE_GARBAGE
 
 ; Garbage repeated data
-_fake1:
+fake1:
 	.db $00
 	.dw $7f71
 
-_fake2:
+fake2:
 	.db SPEED_80
 	.db $00
 @@loop:

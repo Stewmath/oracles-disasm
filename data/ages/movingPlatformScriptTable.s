@@ -29,7 +29,7 @@
 	.db $0b, \1
 .endm
 
-_movingPlatform_scriptTable:
+movingPlatform_scriptTable:
 	.dw @dungeon00
 	.dw @dungeon01
 	.dw @dungeon02

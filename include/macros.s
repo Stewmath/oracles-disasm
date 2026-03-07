@@ -1,6 +1,6 @@
-; =======================================================================================
+; ==================================================================================================
 ; Code macros
-; =======================================================================================
+; ==================================================================================================
 
 ; Call Across Bank
 .MACRO callab
@@ -47,13 +47,13 @@
 .ENDM
 
 .MACRO ldbc
-	ld bc, ((\1&$ff)<<8) | (\2&$ff)
+	ld bc, (((\1)&$ff)<<8) | ((\2)&$ff)
 .endm
 .MACRO ldde
-	ld de, ((\1&$ff)<<8) | (\2&$ff)
+	ld de, (((\1)&$ff)<<8) | ((\2)&$ff)
 .endm
 .MACRO ldhl
-	ld hl, ((\1&$ff)<<8) | (\2&$ff)
+	ld hl, (((\1)&$ff)<<8) | ((\2)&$ff)
 .endm
 
 .MACRO setrombank
@@ -102,25 +102,9 @@
 	rst $18
 .ENDM
 
-; =======================================================================================
+; ==================================================================================================
 ; Directive macros
-; =======================================================================================
-
-.ifdef BUILD_VANILLA
-	.ifndef FORCE_SECTIONS
-	.define FORCE_SECTIONS
-	.endif
-.endif
-
-; These are sections which need to be in specific places. Currently unused since (in theory) all
-; labels are now moveable.
-.macro m_section_force
-	.if NARGS == 1
-		.section \1 FORCE
-	.else
-		.section \1 \2 \3 FORCE
-	.endif
-.endm
+; ==================================================================================================
 
 ; Sections which could be free (anywhere in the given bank) if you're not
 ; building the vanilla rom
@@ -132,6 +116,8 @@
 		.section \1 FREE
 		.endif
 	.else
+		.assert NARGS == 3
+
 		.ifdef FORCE_SECTIONS
 		.section \1 \2 \3 FORCE
 		.else
@@ -150,6 +136,8 @@
 		.section \1 SUPERFREE
 		.endif
 	.else
+		.assert NARGS == 3
+
 		.ifdef FORCE_SECTIONS
 		.section \1 \2 \3 FORCE
 		.else
@@ -160,6 +148,8 @@
 
 ; Include something from the "rooms" directory based on the game
 .macro m_IncRoomData
+	.assert NARGS == 1
+
 	.ifdef ROM_AGES
 		.incbin "rooms/ages/\1"
 	.else
@@ -167,16 +157,20 @@
 	.endif
 .endm
 
-; =======================================================================================
+; ==================================================================================================
 ; Data macros
-; =======================================================================================
+; ==================================================================================================
 
 ; Pointers
 .MACRO 3BytePointer
+	.assert NARGS == 1
+
 	.db :\1
 	.dw \1
 .ENDM
 .MACRO Pointer3Byte
+	.assert NARGS == 1
+
 	.dw \1
 	.db :\1
 .ENDM
@@ -193,48 +187,64 @@
 
 ; Define a byte and a word
 .macro dbw
+	.assert NARGS == 2
+
 	.db \1
 	.dw \2
 .endm
 
 ; Define a byte and 2 words
 .macro dbww
+	.assert NARGS == 3
+
 	.db \1
-	.dw \2 \3
+	.dw \2, \3
 .endm
 
 ; Define 2 bytes and a word
 .macro dbbw
-	.db \1 \2
+	.assert NARGS == 3
+
+	.db \1, \2
 	.dw \3
 .endm
 
 ; Define 2 bytes and 2 words
 .macro dbbww
-	.db \1 \2
-	.dw \3 \4
+	.assert NARGS == 4
+
+	.db \1, \2
+	.dw \3, \4
 .endm
 
 ; Define a word and a byte
 .macro dwb
+	.assert NARGS == 2
+
 	.dw \1
 	.db \2
 .endm
 
 ; Define a word a 2 bytes
 .macro dwbb
+	.assert NARGS == 3
+
 	.dw \1
-	.db \2 \3
+	.db \2, \3
 .endm
 
 ; Define a byte, a word, and a byte.
 .macro dbwb
+	.assert NARGS == 3
+
 	.db \1
 	.dw \2
 	.db \3
 .endm
 
 .MACRO revb
+	.assert NARGS == 1
+
 	.define tmp \1
 	.define tmp1
 	.define tmp2
@@ -263,8 +273,18 @@
 	.ENDR
 .ENDM
 
+; Define a byte which is a relative offset from the current address
+.macro dbrel
+	.rept NARGS
+		.db (\1) - CADDR ; CADDR = current address
+		.shift
+	.endr
+.endm
+
 ; Args 1-3: color components
 .macro m_RGB16
+	.assert NARGS == 3
+
 	.IF \1 > $1f
 		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
 		.FAIL
@@ -277,7 +297,7 @@
 		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
 		.FAIL
 	.ENDIF
-	.dw \1 | (\2<<5) | (\3<<10)
+	.dw \1 | ((\2)<<5) | ((\3)<<10)
 .endm
 
 ; Parameters:
@@ -285,6 +305,8 @@
 ; 3 - Top of stack
 ; 4 - A function
 .MACRO m_ThreadState
+	.assert NARGS == 4
+
 	.db \1 \2
 	.dw \3
 	.dw \4
@@ -294,59 +316,85 @@
 ; ARG 1: actual address
 ; ARG 2: relative address
 .MACRO m_RelativePointer
-	.dw (((\1)&$3fff+(:\1)*$4000) - (\2&$3fff+(:\2)*$4000))&$ffff
+	.assert NARGS == 2
+
+	.dw ((((\1)&$3fff)+(:\1)*$4000) - ((\2&$3fff)+(:\2)*$4000))&$ffff
 .ENDM
 
 ; Same as above but always use absolute numbers instead of labels
 .MACRO m_RelativePointerAbs
-	.dw ((\1) - \2)&$ffff
+	.assert NARGS == 2
+
+	.dw ((\1) - (\2)&$ffff
 .ENDM
 
-; Macro which allows data to cross over banks, used for map layout data.
-; Doesn't support more than 1 bank crossing at a time
-; Must have DATA_ADDR and DATA_BANK defined before use.
-; ARG 1: name
-.macro m_RoomLayoutData
-	.FOPEN "build/rooms/\1.cmp" m_DataFile
-	.FSIZE m_DataFile SIZE
-	.FCLOSE m_DataFile
-	.REDEFINE SIZE SIZE-1
+; Macro to .incbin data while allowing it to cross over banks. This depends on the use of .BANK and
+; .ORG to precisely set the address, therefore this will not work in sections.
+;
+; Must define DATA_ADDR and DATA_BANK, corresponding to the current address, prior to using this
+; (the linker gets no say in its placement).
+;
+; Arguments:
+;   \1: Filename (should be a ".cmp" file)
+;   \2: Number of bytes in ".cmp" file header (these bytes are not included)
+.macro m_IncbinCrossBankData
+	.assert NARGS == 2
 
-	\1:
+	.fopen \1 file
+	.fsize file SIZE
+	.fclose file
 
-	.IF SIZE >= 1
-	.IF DATA_ADDR + SIZE >= $8000
-		.REDEFINE DATA_READAMOUNT $8000-DATA_ADDR
-		.incbin "build/rooms/\1.cmp" SKIP 1 READ DATA_READAMOUNT
-		.REDEFINE DATA_BANK DATA_BANK+1
+	.redefine SIZE SIZE-\2 ; Skip .cmp file "header"
+
+	.if SIZE >= 1
+	.if DATA_ADDR + SIZE >= $8000
+		.define DATA_READAMOUNT $8000-DATA_ADDR
+
+		.incbin \1 SKIP \2 READ DATA_READAMOUNT
+
+		.redefine DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
-		.IF DATA_READAMOUNT < SIZE
-			.incbin "build/rooms/\1.cmp" SKIP DATA_READAMOUNT+1
-		.ENDIF
-		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
-	.ELSE
-		.incbin "build/rooms/\1.cmp" SKIP 1
-		.REDEFINE DATA_ADDR DATA_ADDR + SIZE
-	.ENDIF
-	.ENDIF
 
-	.UNDEFINE SIZE
+		.if DATA_READAMOUNT < SIZE
+			.incbin \1 SKIP DATA_READAMOUNT+\2
+		.endif
+
+		.redefine DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
+		.undefine DATA_READAMOUNT
+	.else
+		.incbin \1 SKIP \2
+		.redefine DATA_ADDR DATA_ADDR + SIZE
+	.endif
+	.endif
+
+	.undefine SIZE
+.endm
+
+; Incbin room layout data, can cross over banks.
+; ARG 1: name
+.macro m_RoomLayoutData
+	.assert NARGS == 1
+
+	\1:
+	m_IncbinCrossBankData {"{BUILD_DIR}/rooms/\1.cmp"}, 1
 .endm
 
 ; Pointer to room data defined with m_RoomLayoutData
 ; ARG 1: name
 ; ARG 2: relative offset
 .macro m_RoomLayoutPointer
-	.FOPEN "build/rooms/\1.cmp" m_DataFile
+	.assert NARGS == 2
+
+	.FOPEN {"{BUILD_DIR}/rooms/\1.cmp"} m_DataFile
 	.FREAD m_DataFile mode
 	.FCLOSE m_DataFile
 
 	.IF mode == 3
 		; Mode 3 is dictionary compression, for large rooms, handled fairly differently
-		m_RoomLayoutDictPointer \1 \2
+		m_RoomLayoutDictPointer \1, \2
 	.ELSE
-		.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
+		.dw (((:\1)*$4000)+((\1)&$3fff) - (((:\2)*$4000)+((\2)&$3fff))) | (mode<<14)
 	.ENDIF
 
 	.undefine mode
@@ -357,34 +405,18 @@
 ; ARG 1: name
 ; ARG 2: relative offset
 .macro m_RoomLayoutDictPointer
-	.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
-.ENDM
+	.assert NARGS == 2
 
-; Macro to define palette headers for the background
-; ARG 1: index of first palette to load the data into
-; ARG 2: number of palettes to load
-; ARG 3: address of palette data
-; ARG 4: $80 to continue reading palette headers, $00 to stop
-.macro m_PaletteHeaderBg
-	.db (\2-1) | (\1<<3) | \4
-	.dw \3
-.ENDM
-
-; Macro to define palette headers for sprites
-; ARG 1: index of first palette to load the data into
-; ARG 2: number of palettes to load
-; ARG 3: address of palette data
-; ARG 4: $80 to continue reading palette headers
-.macro m_PaletteHeaderSpr
-	.db (\2-1) | (\1<<3) | \4 | $40
-	.dw \3
+	.dw (((:\1)*$4000)+(\1&$3fff) - (((:\2)*$4000)+((\2)&$3fff))) + $200
 .ENDM
 
 ; Args:
 ; 1 - Label: name
 ; 2 - Byte: Compression mode ($00 or $80)
 .macro m_TilesetLayoutDictionaryHeader
-	.db :\1 | \2
+	.assert NARGS == 2
+
+	.db (:\1) | (\2)
 	dwbe \1
 .endm
 
@@ -395,60 +427,22 @@
 ; 4 - Byte: Destination wram/vram bank
 ; 5 - Word: Data size in bytes
 .macro m_TilesetLayoutHeader
+	.assert NARGS == 5
+
 	.db \1
 	.db :\2
 	dwbe \2
-	dwbe \3 | :\3
-	dwbe \4 | (\5<<8)
-.endm
-
-
-; Args:
-; 1 - Byte: Opcode
-; 2 - Byte: Src map
-; 3 - Byte: Index
-; 4 - 4bit: Y or Group src
-; 5 - 4bit: X or Entrance mode
-.macro m_StandardWarp
-	.db \1 \2 \3 (\4<<4)|\5
-.endm
-
-; Same as StandardWarp, except \2 represents YX.
-; This only exists to help LynnaLab distinguish the 2.
-.macro m_PointedWarp
-	.db \1 \2 \3 (\4<<4)|\5
-.endm
-
-; Args:
-; 1 - Byte: Opcode
-; 2 - Byte: Src map
-; 3 - Pointer
-.macro m_PointerWarp
-	.db \1 \2
-	.dw \3
-.endm
-
-.macro m_WarpSourcesEnd ; Does nothing in seasons
-.ifdef ROM_AGES
-	.db $ff $00 $00 $00
-.endif
-.endm
-
-; Args:
-; 1 - Byte: map
-; 2 - Byte: YX
-; 3 - 4bit: parameter
-; 4 - 4bit: param
-.macro m_WarpDest
-	.db \1 \2
-	.db (\3<<4) | (\4)
+	dwbe (\3) | (:\3)
+	dwbe (\4) | ((\5)<<8)
 .endm
 
 
 ; Used in interactionAnimations.s, partAnimations, etc.
 .macro m_AnimationLoop
-	.db (\1-CADDR)>>8
-	.db (\1-CADDR)&$ff
+	.assert NARGS == 1
+
+	.db ((\1)-CADDR)>>8
+	.db ((\1)-CADDR)&$ff
 .endm
 
 
@@ -465,8 +459,10 @@
 		.db \1
 		.dw \2
 	.ELSE
+		.assert NARGS == 4
+
 		.db \1
-		.dw \2+\3 | \4 | (:\2 - :gfxDataBank1a)
+		.dw (\2)+(\3) | (\4) | ((:\2) - :gfxDataBank1a)
 	.ENDIF
 .endm
 
@@ -476,23 +472,312 @@
 ;
 ; TODO: Figure out what bit 7 of the group index does (and hence why we need 2 of these)
 ;
-; Arg 1: Warp destination (see constants/rooms.s)
+; Arg 1: Warp destination (see constants/common/rooms.s)
 ; Arg 2: wWarpTransition
 ; Arg 3: wWarpDestPos
 ; Arg 4: wWarpTransition2
 .macro m_HardcodedWarpA
-	.db $80|(\1>>8), \1&$ff
+	.assert NARGS == 4
+
+	.db $80|((\1)>>8), \1&$ff
 	.db \2, \3, \4
 .endm
 
 .macro m_HardcodedWarpB
-	.db \1>>8, \1&$ff
+	.assert NARGS == 4
+
+	.db (\1)>>8, (\1)&$ff
 	.db \2, \3, \4
 .endm
 
+; Convert pointer in "data/{game}/dungeonLayouts.s" to an index, see that file for details
+.function f_DungeonLayoutToIndex(label) ((label - dungeonLayoutDataStart) / $40)
+
 ; See "data/{game}/dungeonData.s"
 .macro m_DungeonData
+	.assert NARGS == 8
+
 	.db \1, \2
-	.db ((\3) - dungeonLayoutDataStart) / $40
+	.db f_DungeonLayoutToIndex(\3)
 	.db \4, \5, \6, \7, \8
+.endm
+
+; See data/ages/tile_properties/breakableTiles.s for documentation of parameters to this.
+.macro m_BreakableTileData
+	.assert NARGS == 6
+
+	.if \3 > $f
+	.fail
+	.endif
+	.if \4 > $f
+	.fail
+	.endif
+
+	; Parameters 1-3 have their bits reversed, so that they can be read left-to-right.
+	dbrev \1, \2
+	revb \3
+	.db (_out >> 4) | ((\4)<<4) ; "_out" is the output from the revb macro ("\3" with bits flipped).
+	.db \5, \6
+.endm
+
+
+; There are a number of data structures that use bit 7 of a particular byte to mean "continue
+; reading the next entry if set". Examples include gfx headers and interaction data
+; (data/{game}/interactionData.s). It is very ugly to bake that data directly into the data, though,
+; as it's basically unreadable.
+;
+; This macro can be used to define bytes like that more elegantly. The value for the "continue bit"
+; is defined later, either when this is invoked again, or when m_ContinueBitHelperSetLast/UnsetLast
+; is used. (It is important to use SetLast/UnsetLast at least once after this, otherwise the value
+; of the preceding continue bit will never be defined.)
+;
+; As it's using a define with "\@" in its name, which is the number of times the current macro has
+; been called, it's important to not copy/paste this into multiple macros.
+;
+; Parameters:
+;   \1: Byte to define
+;   \2: Default "continue bit value" to apply to the last entry if it exists when this is called
+.macro m_ContinueBitHelper
+	.assert NARGS == 2
+
+	.if !(\1 >= 0 && \1 <= $7f)
+		.fail {"m_ContinueBitHelper: Invalid byte ${%.2x{\1}}"}
+	.endif
+
+	; Mark "continue" bit on last defined entry
+	.ifdef CURRENT_CONTINUE_INDEX
+		.define CONTINUE_BIT_{CURRENT_CONTINUE_INDEX}, \2
+	.endif
+
+	; Define byte for current entry
+	.redefine CURRENT_CONTINUE_INDEX \@
+	.db (\1) | CONTINUE_BIT_{CURRENT_CONTINUE_INDEX}
+.endm
+
+.macro m_ContinueBitHelperSetLast
+	.assert NARGS == 0
+
+	.ifdef CURRENT_CONTINUE_INDEX
+		.define CONTINUE_BIT_{CURRENT_CONTINUE_INDEX} $80
+		.undefine CURRENT_CONTINUE_INDEX
+	.endif
+.endm
+
+.macro m_ContinueBitHelperUnsetLast
+	.assert NARGS == 0
+
+	.ifdef CURRENT_CONTINUE_INDEX
+		.define CONTINUE_BIT_{CURRENT_CONTINUE_INDEX} $00
+		.undefine CURRENT_CONTINUE_INDEX
+	.endif
+.endm
+
+
+; ==================================================================================================
+; Macro for data/{game}/interactionData.s
+; ==================================================================================================
+.macro m_InteractionData
+	.if NARGS == 3
+		.db \1, \2, \3
+	.elif NARGS == 1
+		; Pointer to subid data
+		.db \1&$ff, $80, \1>>8
+	.else
+		.fail "Invalid number of arguments to m_InteractionData."
+	.endif
+.endm
+
+; Basically the same as above, except it uses a "continue bit" to mark where the data ends
+.macro m_InteractionSubidData
+	.assert NARGS == 3
+
+	.db \1
+	m_ContinueBitHelper \2, $00
+	.db \3
+.endm
+
+.macro m_InteractionSubidDataEnd
+	.assert NARGS == 0
+	m_ContinueBitHelperSetLast
+.endm
+
+
+; ==================================================================================================
+; Macros for data/{game}/enemyData.s, similar to above
+; ==================================================================================================
+.macro m_EnemyData
+	.if NARGS == 4
+		.db \1 \2 \3 \4
+	.else
+		.assert NARGS == 3
+		.db \1 \2
+		dwbe \3 | $8000
+	.endif
+.endm
+
+.macro m_EnemySubidData
+	.assert NARGS == 2
+	m_ContinueBitHelper \1, $80
+	.db \2
+.endm
+
+.macro m_EnemySubidDataEnd
+	.assert NARGS == 0
+	m_ContinueBitHelperUnsetLast
+.endm
+
+
+; ==================================================================================================
+; Macros for data/{game}/treasureObjectData.s
+; ==================================================================================================
+.macro m_BeginTreasureSubids
+	.assert NARGS == 1
+	.redefine CURRENT_TREASURE_INDEX, (\1)<<8
+.endm
+
+.macro m_TreasureSubid
+	.assert NARGS == 5
+
+	.db \1, \2, \3, \4
+
+	.IF CURRENT_TREASURE_INDEX >= $10000
+		; Within the "treasureObjectData" table, "CURRENT_TREASURE_INDEX" corresponds to
+		; values from "constants/common/treasure.s". (We add $10000 just to make it easy to
+		; differentiate which mode we're in.)
+		.define \5, (CURRENT_TREASURE_INDEX - $10000) << 8
+	.ELSE
+		; Within a subid table, "CURRENT_TREASURE_INDEX" corresponds to a treasure object
+		; index (2-byte number)
+		.define \5, CURRENT_TREASURE_INDEX
+	.ENDIF
+
+	.export \5
+	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
+.endm
+
+.macro m_TreasurePointer
+	.assert NARGS == 1
+
+	.db $80
+	.dw \1
+	.db $00
+
+	.redefine CURRENT_TREASURE_INDEX, CURRENT_TREASURE_INDEX+1
+.endm
+
+
+; ==================================================================================================
+; Macros for warp data
+; ==================================================================================================
+
+; Some additional documentation for these macros can be found in data/ages/warpSources.s and
+; data/ages/warpDestinations.s.
+
+; Args:
+;   \1 - 4bit: Opcode
+;   \2 - Byte: Source room index
+;   \3 - Byte: Index
+;   \4 - 4bit: Y or Group src
+;   \5 - 4bit: X or Entrance mode
+.macro m_StandardWarp
+	.assert NARGS == 5
+	.assert \1 >= 0 && \1 <= $f
+	.assert \4 >= 0 && \4 <= $f
+	.assert \5 >= 0 && \5 <= $f
+
+	m_ContinueBitHelper \1, $00
+	.db \2, \3, ((\4)<<4)|\5
+.endm
+
+; Args:
+;   \1 - Byte: Source room index
+;   \2 - Pointer
+.macro m_PointerWarp
+	.assert NARGS == 2
+	m_ContinueBitHelper $40, $00
+	.db \1
+	.dw \2
+.endm
+
+; Basically the same as m_StandardWarp, except \2 represents YX.
+; Should only be used in a list pointed to by m_PointerWarp.
+.macro m_PositionWarp
+	.assert NARGS == 4
+	.assert \3 >= 0 && \3 <= $f
+	.assert \4 >= 0 && \4 <= $f
+
+	m_ContinueBitHelper $00, $00
+	.db \1, \2, ((\3)<<4)|\4
+.endm
+
+; End the list of warps, indicating that the last defined value should be used as a warp if nothing
+; else was found.
+.macro m_WarpListEndWithDefault
+	.assert NARGS == 0
+	m_ContinueBitHelperSetLast
+.endm
+
+; End the list of warps, indicating no warp was found.
+; This only works in Ages. This became necessary when they implemented the automatic warps for
+; dungeon stairs - they needed to explicitly NOT have default warp values for it to work.
+.macro m_WarpListEndNoDefault
+	.assert NARGS == 0
+
+	.ifndef AGES_ENGINE
+		.fail "m_WarpListEndNoDefault cannot be used in Seasons unless AGES_ENGINE is defined."
+	.endif
+	.db $ff $00 $00 $00
+	m_ContinueBitHelperUnsetLast
+.endm
+
+; Sometimes the devs seemingly forgot to end a warp list with their equivalent of m_WarpListEnd.
+; This usually doesn't cause problems in the game. But our system needs something there, so use this
+; macro in that case.
+.macro m_WarpListFallThrough
+	.assert NARGS == 0
+	m_ContinueBitHelperUnsetLast
+.endm
+
+; Args:
+;   \1 - Byte: room index
+;   \2 - Byte: YX
+;   \3 - 4bit: parameter
+;   \4 - 4bit: Transition type
+.macro m_WarpDest
+	.assert NARGS == 4
+
+	.db \1, \2
+	.db ((\3)<<4) | (\4)
+.endm
+
+; ==================================================================================================
+; Macro for data/{game}/chestData.s (see there for documentation)
+; ==================================================================================================
+
+.macro m_ChestData
+	.assert NARGS == 3
+
+	.if \1 == $ff
+		; $ff is the "end of data" marker so we can't have that
+		.PRINTT "ERROR: Chest Y/X position can't be $ff!\n"
+		.FAIL
+	.endif
+	.db \1 \2
+	dwbe \3
+.endm
+
+; ==================================================================================================
+; Macro for data/{game}/seedTreeRefillData.s (see there for documentation)
+; ==================================================================================================
+
+.macro m_TreeRefillData
+	.assert NARGS == 2
+
+	.ifdef ROM_AGES
+		.assert \1 >= 0 && \1 <= 0x1ff
+	.else
+		.assert \1 >= 0 && \1 <= 0xff
+	.endif
+
+	.db \1&$ff, \2|(\1>>8)
 .endm

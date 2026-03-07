@@ -2505,7 +2505,7 @@ group4Mapd3ObjectData:
 
 group4Mapd4ObjectData:
 	obj_SpecificEnemyA $00 $02 $00 $40 $78
-	obj_Pointer objectData404a
+	obj_Pointer objectData_respawningBushBombs
 	obj_End
 
 group4Mape0ObjectData:
@@ -2979,7 +2979,7 @@ group4Map4cObjectData:
 	obj_Part $03 $00 $95
 	obj_Part $05 $01 $38
 	obj_Part $33 $0a $88 $88 $03
-	obj_Pointer objectData4056
+	obj_Pointer objectData_respawningBushScentSeeds
 	obj_Pointer group4Map4cEnemyObjectData
 	obj_End
 
@@ -2999,7 +2999,7 @@ group4Map4eObjectData:
 	obj_Part $03 $03 $3d
 	obj_Part $05 $02 $68
 	obj_Part $33 $0a $18 $88 $0c
-	obj_Pointer objectData4056
+	obj_Pointer objectData_respawningBushScentSeeds
 	obj_Pointer group4Map4eEnemyObjectData
 	obj_End
 

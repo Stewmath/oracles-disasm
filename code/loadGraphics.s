@@ -5,7 +5,7 @@ initGbaModePaletteData:
 	ld a,:w2GbaModePaletteData
 	ld ($ff00+R_SVBK),a
 
-	ld hl,_gbaModePaletteData
+	ld hl,gbaModePaletteData
 	ld de,w2GbaModePaletteData
 	ld b,$80
 	call copyMemory
@@ -128,7 +128,7 @@ refreshDirtyPalettes:
 	ld h,c
 	ret
 
-_gbaModePaletteData:
+gbaModePaletteData:
 	.db $00 $05 $07 $08 $0a $0b $0c $0e
 	.db $10 $11 $12 $13 $14 $15 $16 $17
 	.db $18 $19 $1a $1b $1b $1c $1c $1d
@@ -147,7 +147,7 @@ _gbaModePaletteData:
 	.db $74 $78 $78 $78 $7c $7c $7c $7c
 
 ;;
-_resumeThreadNextFrameIfLcdIsOn:
+resumeThreadNextFrameIfLcdIsOn:
 	ld a,($ff00+R_LCDC)
 	rlca
 	ret nc
@@ -176,8 +176,8 @@ agesFunc_3f_4133:
 	or a
 	jr z,+
 
-	call _insertIndexIntoLoadedObjectGfx
-	call _resumeThreadNextFrameIfLcdIsOn
+	call insertIndexIntoLoadedObjectGfx
+	call resumeThreadNextFrameIfLcdIsOn
 +
 	inc l
 	ld (hl),d
@@ -195,7 +195,7 @@ agesFunc_3f_4133:
 
 ;;
 refreshObjectGfx_body:
-	call _markAllLoadedObjectGfxUnused
+	call markAllLoadedObjectGfxUnused
 
 	; Re-check which object gfx indices are in use by checking all objects of
 	; all types.
@@ -203,8 +203,8 @@ refreshObjectGfx_body:
 	; Check enemies
 	ld d,FIRST_ENEMY_INDEX
 @nextEnemy:
-	call _enemyGetObjectGfxIndex
-	call _markLoadedObjectGfxUsed
+	call enemyGetObjectGfxIndex
+	call markLoadedObjectGfxUsed
 	inc d
 	ld a,d
 	cp LAST_ENEMY_INDEX+1
@@ -213,8 +213,8 @@ refreshObjectGfx_body:
 	; Check parts
 	ld d,FIRST_PART_INDEX
 @nextPart:
-	call _partGetObjectGfxIndex
-	call _markLoadedObjectGfxUsed
+	call partGetObjectGfxIndex
+	call markLoadedObjectGfxUsed
 	inc d
 	ld a,d
 	cp LAST_PART_INDEX+1
@@ -223,8 +223,8 @@ refreshObjectGfx_body:
 	; Check interactions
 	ld d,FIRST_INTERACTION_INDEX
 @nextInteraction:
-	call _interactionGetObjectGfxIndex
-	call _markLoadedObjectGfxUsed
+	call interactionGetObjectGfxIndex
+	call markLoadedObjectGfxUsed
 	inc d
 	ld a,d
 	cp LAST_INTERACTION_INDEX+1
@@ -233,8 +233,8 @@ refreshObjectGfx_body:
 	; Check items
 	ld d,FIRST_ITEM_INDEX
 @nextItem:
-	call _itemGetObjectGfxIndex
-	call _markLoadedObjectGfxUsed
+	call itemGetObjectGfxIndex
+	call markLoadedObjectGfxUsed
 	inc d
 	ld a,d
 	cp LAST_ITEM_INDEX+1
@@ -246,7 +246,7 @@ refreshObjectGfx_body:
 	or a
 	jr z,+
 
-	call _getObjectGfxIndexForEnemy
+	call getObjectGfxIndexForEnemy
 	jr ++
 +
 	ld hl,wInteractionIDToLoadExtraGfx
@@ -255,13 +255,13 @@ refreshObjectGfx_body:
 	ret z
 	ld e,(hl)
 	ld (hl),$00
-	call _getDataForInteraction
+	call getDataForInteraction
 	ld a,(hl)
 ++
-	call _addIndexToLoadedObjectGfx
-	call _resumeThreadNextFrameIfLcdIsOn
+	call addIndexToLoadedObjectGfx
+	call resumeThreadNextFrameIfLcdIsOn
 	ld a,e
-	call _findIndexInLoadedObjectGfx
+	call findIndexInLoadedObjectGfx
 	ld a,l
 	sub <wLoadedObjectGfx
 	srl a
@@ -280,7 +280,7 @@ refreshObjectGfx_body:
 	inc e
 
 	; Load the next gfx index
-	call _insertIndexIntoLoadedObjectGfx
+	call insertIndexIntoLoadedObjectGfx
 
 	; If there was something here before, reload it into another slot
 	ld a,d
@@ -288,10 +288,10 @@ refreshObjectGfx_body:
 	jr z,+
 	ld a,c
 	push de
-	call _addIndexToLoadedObjectGfx
+	call addIndexToLoadedObjectGfx
 	pop de
 +
-	call _updateTileIndexBaseForAllObjects
+	call updateTileIndexBaseForAllObjects
 
 	; Check if bit 7 in the second parameter of objectGfxHeaderTable is set (indicating
 	; the end of the data)
@@ -308,7 +308,7 @@ refreshObjectGfx_body:
 	xor a
 	ld (wEnemyIDToLoadExtraGfx),a
 	ld (wInteractionIDToLoadExtraGfx),a
-	jp _incLoadedObjectGfxIndex
+	jp incLoadedObjectGfxIndex
 
 ;;
 ; Forces an object gfx header to be loaded into slot 4 (address 0:8800). Handy way to load
@@ -331,11 +331,11 @@ loadTreeGfx_body:
 	cp (hl)
 	ret z
 
-	call _insertIndexIntoLoadedObjectGfx
-	jp _resumeThreadNextFrameIfLcdIsOn
+	call insertIndexIntoLoadedObjectGfx
+	jp resumeThreadNextFrameIfLcdIsOn
 
 ;;
-_updateTileIndexBaseForAllObjects:
+updateTileIndexBaseForAllObjects:
 	push bc
 	push de
 	push hl
@@ -345,7 +345,7 @@ _updateTileIndexBaseForAllObjects:
 	ldh (<hActiveObjectType),a
 	ld d,FIRST_ENEMY_INDEX
 @nextEnemy:
-	call _enemyGetObjectGfxIndex
+	call enemyGetObjectGfxIndex
 	call @updateTileIndexBase
 	inc d
 	ld a,d
@@ -357,7 +357,7 @@ _updateTileIndexBaseForAllObjects:
 	ldh (<hActiveObjectType),a
 	ld d,FIRST_PART_INDEX
 @nextPart:
-	call _partGetObjectGfxIndex
+	call partGetObjectGfxIndex
 	call @updateTileIndexBase
 	inc d
 	ld a,d
@@ -369,7 +369,7 @@ _updateTileIndexBaseForAllObjects:
 	ldh (<hActiveObjectType),a
 	ld d,FIRST_DYNAMIC_INTERACTION_INDEX
 @nextInteraction:
-	call _interactionGetObjectGfxIndex
+	call interactionGetObjectGfxIndex
 	call @updateTileIndexBase
 	inc d
 	ld a,d
@@ -381,7 +381,7 @@ _updateTileIndexBaseForAllObjects:
 	ldh (<hActiveObjectType),a
 	ld d,FIRST_ITEM_INDEX
 @nextItem:
-	call _itemGetObjectGfxIndex
+	call itemGetObjectGfxIndex
 	call @updateTileIndexBase
 	inc d
 	ld a,d
@@ -389,7 +389,7 @@ _updateTileIndexBaseForAllObjects:
 	jr c,@nextItem
 
 	call drawAllSpritesUnconditionally
-	call _resumeThreadNextFrameIfLcdIsOn
+	call resumeThreadNextFrameIfLcdIsOn
 	pop hl
 	pop de
 	pop bc
@@ -404,7 +404,7 @@ _updateTileIndexBaseForAllObjects:
 	or a
 	ret z
 
-	call _findIndexInLoadedObjectGfx
+	call findIndexInLoadedObjectGfx
 	ldh a,(<hActiveObjectType)
 	ld e,a
 	ld a,(de)
@@ -435,7 +435,7 @@ _updateTileIndexBaseForAllObjects:
 ; @param[out]	c
 ; @param[out]	hl	Address where gfx is loaded (if it is loaded)
 ; @param[out]	cflag	nc if index is loaded
-_findIndexInLoadedObjectGfx:
+findIndexInLoadedObjectGfx:
 	or a
 	ret z
 
@@ -468,16 +468,16 @@ _findIndexInLoadedObjectGfx:
 ; @param[out]	c	Relative position in wLoadedObjectGfx which is free
 ; @param[out]	hl
 ; @param[out]	cflag	Set on failure.
-_findUnusedIndexInLoadedObjectGfx:
+findUnusedIndexInLoadedObjectGfx:
 	ld b,$08
 --
-	call _getAddressOfLoadedObjectGfxIndex
+	call getAddressOfLoadedObjectGfxIndex
 	inc l
 	ldd a,(hl)
 	or a
 	jr z,+
 
-	call _incLoadedObjectGfxIndex
+	call incLoadedObjectGfxIndex
 	dec b
 	jr nz,--
 
@@ -492,7 +492,7 @@ _findUnusedIndexInLoadedObjectGfx:
 	ret
 
 ;;
-_incLoadedObjectGfxIndex:
+incLoadedObjectGfxIndex:
 	ld a,(wLoadedObjectGfxIndex)
 	inc a
 	and $07
@@ -501,7 +501,7 @@ _incLoadedObjectGfxIndex:
 
 ;;
 ; Gets an address in wLoadedObjectGfx based on wLoadedObjectGfxIndex.
-_getAddressOfLoadedObjectGfxIndex:
+getAddressOfLoadedObjectGfxIndex:
 	ld a,(wLoadedObjectGfxIndex)
 	ld hl,wLoadedObjectGfx
 	rst_addDoubleIndex
@@ -514,18 +514,18 @@ _getAddressOfLoadedObjectGfxIndex:
 ; @param[out]	a	Relative position where it's placed in wLoadedObjectGfx
 ; @param[out]	cflag	Set if graphics were queued to be loaded and lcd is
 ;			currently on
-_addIndexToLoadedObjectGfx:
+addIndexToLoadedObjectGfx:
 	or a
 	ret z
 
 	push hl
 	push bc
 	ld e,a
-	call _findIndexInLoadedObjectGfx
+	call findIndexInLoadedObjectGfx
 	jr nc,+
 
-	call _findUnusedIndexInLoadedObjectGfx
-	call nc,_insertIndexIntoLoadedObjectGfx
+	call findUnusedIndexInLoadedObjectGfx
+	call nc,insertIndexIntoLoadedObjectGfx
 +
 	ld a,c
 	pop bc
@@ -541,7 +541,7 @@ _addIndexToLoadedObjectGfx:
 ;
 ; @param	e	Object gfx index
 ; @param	hl	Address in wLoadedObjectGfx?
-_insertIndexIntoLoadedObjectGfx:
+insertIndexIntoLoadedObjectGfx:
 	ld a,l
 	cp <wLoadedTreeGfxActive
 	jr nc,++
@@ -602,7 +602,7 @@ _insertIndexIntoLoadedObjectGfx:
 ; Mark a particular object gfx index as used. This doesn't insert the index into
 ; wLoadedObjectGfx if it's not found, though.
 ; @param a Object gfx index to mark as used
-_markLoadedObjectGfxUsed:
+markLoadedObjectGfxUsed:
 	or a
 	ret z
 
@@ -632,7 +632,7 @@ _markLoadedObjectGfxUsed:
 ;;
 ; Sets the 2nd byte of every entry in the wLoadedObjectGfx buffer to $00,
 ; indicating that they are not being used.
-_markAllLoadedObjectGfxUnused:
+markAllLoadedObjectGfxUnused:
 	push bc
 	push hl
 	ld hl,wLoadedObjectGfx
@@ -652,13 +652,13 @@ _markAllLoadedObjectGfxUnused:
 ; Get an enemy's gfx index, as well as a pointer to the rest of its data.
 ; @param[out]	a	Object gfx index
 ; @param[out]	hl	Pointer to 3 more bytes of enemy data
-_enemyGetObjectGfxIndex:
+enemyGetObjectGfxIndex:
 	ld e,Enemy.id
 	ld a,(de)
 
 ;;
 ; @param	a	Enemy ID
-_getObjectGfxIndexForEnemy:
+getObjectGfxIndexForEnemy:
 	push bc
 	add a
 	ld c,a
@@ -673,7 +673,7 @@ _getObjectGfxIndexForEnemy:
 ;;
 ; @param[out]	a	Object gfx index
 ; @param[out]	hl	Pointer to 7 more bytes of part data
-_partGetObjectGfxIndex:
+partGetObjectGfxIndex:
 	push bc
 	ld e,Part.id
 	ld a,(de)
@@ -685,15 +685,15 @@ _partGetObjectGfxIndex:
 	ret
 
 ;;
-_interactionGetObjectGfxIndex:
+interactionGetObjectGfxIndex:
 	push bc
-	call _interactionGetData
+	call interactionGetData
 	pop bc
 	ldi a,(hl)
 	ret
 
 ;;
-_itemGetObjectGfxIndex:
+itemGetObjectGfxIndex:
 	ld e,Item.id
 	ld a,(de)
 
@@ -710,10 +710,10 @@ _itemGetObjectGfxIndex:
 ;;
 ; Loading an enemy?
 enemyLoadGraphicsAndProperties:
-	call _enemyGetObjectGfxIndex
-	call _addIndexToLoadedObjectGfx
+	call enemyGetObjectGfxIndex
+	call addIndexToLoadedObjectGfx
 	ld c,a
-	call c,_resumeThreadNextFrameIfLcdIsOn
+	call c,resumeThreadNextFrameIfLcdIsOn
 	ld e,Enemy.id
 	ld a,(de)
 	ld e,Enemy.collisionType
@@ -793,10 +793,10 @@ enemyLoadGraphicsAndProperties:
 ;;
 ; Loading a part?
 partLoadGraphicsAndProperties:
-	call _partGetObjectGfxIndex
-	call _addIndexToLoadedObjectGfx
+	call partGetObjectGfxIndex
+	call addIndexToLoadedObjectGfx
 	ld c,a
-	call c,_resumeThreadNextFrameIfLcdIsOn
+	call c,resumeThreadNextFrameIfLcdIsOn
 	ld e,Part.id
 	ld a,(de)
 	bit 7,(hl)
@@ -859,12 +859,12 @@ partLoadGraphicsAndProperties:
 ; @param	d	Interaction index
 ; @param[out]	a	Initial animation index to use
 interactionLoadGraphics:
-	call _interactionGetObjectGfxIndex
-	call _addIndexToLoadedObjectGfx
+	call interactionGetObjectGfxIndex
+	call addIndexToLoadedObjectGfx
 	ld c,a
 
 	; If LCD is on and graphics are queued, wait until they're loaded
-	call c,_resumeThreadNextFrameIfLcdIsOn
+	call c,resumeThreadNextFrameIfLcdIsOn
 
 	; Calculate Interaction.oamTileIndexBase, which is the offset to add to
 	; the tile index of all sprites in its animation. "c" currently
@@ -895,12 +895,12 @@ interactionLoadGraphics:
 ; Same as above function, but for items.
 ; @param d Item index
 itemLoadGraphics:
-	call _itemGetObjectGfxIndex
-	call _addIndexToLoadedObjectGfx
+	call itemGetObjectGfxIndex
+	call addIndexToLoadedObjectGfx
 	ld c,a
 
 	; If LCD is on and graphics are queued, wait until they're loaded
-	call c,_resumeThreadNextFrameIfLcdIsOn
+	call c,resumeThreadNextFrameIfLcdIsOn
 
 	; Calculate Item.oamTileIndexBase
 	ldi a,(hl)
@@ -919,7 +919,7 @@ itemLoadGraphics:
 	ret
 
 ;;
-_interactionGetData:
+interactionGetData:
 	ld h,d
 	ld l,Interaction.id
 	ldi a,(hl)
@@ -928,7 +928,7 @@ _interactionGetData:
 ;;
 ; @param	a	Interaction ID
 ; @param	e	Interaction subID
-_getDataForInteraction:
+getDataForInteraction:
 	ld c,a
 	ld b,$00
 	ld hl,interactionData+1

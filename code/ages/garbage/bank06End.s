@@ -8,7 +8,7 @@
 	m_BreakableTileData %01111100 %00000001 %1101 $0 $1f $00 ; $32
 
 
-_fake_specialObjectLoadAnimationFrameToBuffer:
+fake_specialObjectLoadAnimationFrameToBuffer:
 	ld hl,w1Companion.visible
 	bit 7,(hl)
 	ret z

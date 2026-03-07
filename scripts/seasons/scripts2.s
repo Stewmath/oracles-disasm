@@ -7,9 +7,9 @@
 ;
 ; In ages, essentially, this file and the "scriptHelper" file are the same file.
 
-; ==============================================================================
-; INTERACID_DUNGEON_SCRIPT
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DUNGEON_SCRIPT
+; ==================================================================================================
 explorersCrypt_firesGoingOut_1:
 	delay 5
 	playsound SND_GHOST
@@ -76,7 +76,7 @@ explorersCrypt_firstPoeSister:
 
 	playsound SND_GHOST
 	delay 8
-	spawnenemy ENEMYID_POE_SISTER_1, $00, $48, $c8
+	spawnenemy ENEMY_POE_SISTER_1, $00, $48, $c8
 	delay 6
 	showtext TX_0a01
 	delay 6
@@ -93,7 +93,7 @@ explorersCrypt_secondPoeSister:
 
 	playsound SND_GHOST
 	delay 8
-	spawnenemy ENEMYID_POE_SISTER_2, $00, $58, $78
+	spawnenemy ENEMY_POE_SISTER_2, $00, $58, $78
 	delay 6
 	showtext TX_0a03
 	delay 6
@@ -104,26 +104,26 @@ explorersCrypt_secondPoeSister:
 
 
 startCrystalTrapRoomSequence:
-	spawninteraction INTERACID_DOOR_CONTROLLER, $13, $30, $00
-	spawninteraction INTERACID_PUFF, $00, $18, $48
+	spawninteraction INTERAC_DOOR_CONTROLLER, $13, $30, $00
+	spawninteraction INTERAC_PUFF, $00, $18, $48
 	delay 4
 	settileat $14, TILEINDEX_STANDARD_FLOOR
-	spawninteraction INTERACID_PUFF, $00, $38, $48
+	spawninteraction INTERAC_PUFF, $00, $38, $48
 	delay 4
 	settileat $34, TILEINDEX_STANDARD_FLOOR
-	spawninteraction INTERACID_PUFF, $00, $28, $48
+	spawninteraction INTERAC_PUFF, $00, $28, $48
 	delay 4
 	settileat $24, TILEINDEX_STANDARD_FLOOR
-	spawninteraction INTERACID_PUFF, $00, $48, $48
+	spawninteraction INTERAC_PUFF, $00, $48, $48
 	delay 4
 	settileat $44, TILEINDEX_STANDARD_FLOOR
-	spawninteraction INTERACID_D6_CRYSTAL_TRAP_ROOM, $00, $00, $00
+	spawninteraction INTERAC_D6_CRYSTAL_TRAP_ROOM, $00, $00, $00
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_SEASON_SPIRITS_SCRIPTS
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SEASON_SPIRITS_SCRIPTS
+; ==================================================================================================
 seasonsSpirits_enteringTempleCutscene:
 	stopifroomflag40set
 	setcollisionradii $08, $20
@@ -158,9 +158,9 @@ seasonsSpirits_createBridgeOnOrbHit:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_S_SUBROSIAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_SUBROSIAN
+; ==================================================================================================
 subrosianScript_steaLinksFeather:
 	stopifroomflag40set
 	writeobjectbyte Interaction.oamFlags, $01
@@ -209,9 +209,9 @@ subrosianScript_inHouseRunFromLink:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_PIRATIAN_CAPTAIN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_PIRATIAN_CAPTAIN
+; ==================================================================================================
 linkedPirateCaptainScript_sayingByeToAmbi:
 	asm15 scriptHelp.forceLinkState8AndSetDirection, DIR_DOWN
 	delay 6
@@ -317,9 +317,9 @@ piratianCaptain_preCutsceneScene:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_S_ZELDA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ZELDA
+; ==================================================================================================
 zelda_triforceOnHandText:
 	asm15 objectSetInvisible
 	checkmemoryeq $cfc0, $01
@@ -349,7 +349,7 @@ zelda_kidnapped:
 	delay 1
 	showtext TX_500d ; Zelda! No!
 	delay 6
-	spawninteraction INTERACID_ba, $01, $18, $18
+	spawninteraction INTERAC_ba, $01, $18, $18
 	checkcfc0bit 0
 	applyspeed $51
 	xorcfc0bit 1
@@ -381,12 +381,12 @@ script_14_49c8:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_TALON
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_TALON
+; ==================================================================================================
 talon_giveMushroomAfterWaking:
 	disableinput
-	spawninteraction INTERACID_TRADE_ITEM, $07, $68, $58
+	spawninteraction INTERAC_TRADE_ITEM, $07, $68, $58
 	writeobjectbyte Interaction.var39, $00
 	playsound $69
 	setanimation $04
@@ -410,9 +410,9 @@ talon_giveMushroomAfterWaking:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_DIN_DANCING_EVENT
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DIN_DANCING_EVENT
+; ==================================================================================================
 tornadoScript_startDestruction:
 	setcoords $70, $18
 	setspeed $50
@@ -459,9 +459,9 @@ tornadoScript_endDestruction:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_DIN_IMPRISONED_EVENT
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DIN_IMPRISONED_EVENT
+; ==================================================================================================
 dinImprisoned_OnoxExplainsMotive:
 	setcoords $e0, $80
 	delay 6
@@ -495,9 +495,9 @@ dinImprisoned_OnoxSaysComeIfYouDare:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_BIGGORON
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_BIGGORON
+; ==================================================================================================
 biggoronScript_giveBiggoronSword:
 	setglobalflag GLOBALFLAG_BEGAN_BIGGORON_SECRET
 	asm15 scriptHelp.biggoron_loadAnimationData, $0d
@@ -533,9 +533,9 @@ biggoronScript_giveBiggoronSword:
 	scriptjump mainScripts.biggoronScript@generateSecret
 
 
-; ==============================================================================
-; INTERACID_HEAD_SMELTER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_HEAD_SMELTER
+; ==================================================================================================
 script_14_4aea:
 	disablemenu
 	setdisabledobjectsto11
@@ -590,7 +590,7 @@ headSmelterScript_blowUpRocks:
 	asm15 scriptHelp.headSmelter_loseBombFlower
 	setanimation $00
 	delay 8
-	spawninteraction INTERACID_BOMB_FLOWER, $01, $38, $38
+	spawninteraction INTERAC_BOMB_FLOWER, $01, $38, $38
 	playsound $6c
 	delay 4
 	incstate
@@ -621,9 +621,9 @@ headSmelterScript_blowUpRocks:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_LAVA_SOUP_SUBROSIAN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_LAVA_SOUP_SUBROSIAN
+; ==================================================================================================
 lavaSoupSubrosianScript_fillPot:
 	delay 6
 	showtextlowindex <TX_0b21
@@ -670,9 +670,9 @@ lavaSoupSubrosianScript_fillPot:
 	scriptjump mainScripts.lavaSoupSubrosianScript@filledPot
 
 
-; ==============================================================================
-; INTERACID_DANCE_HALL_MINIGAME
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DANCE_HALL_MINIGAME
+; ==================================================================================================
 danceLeaderScript_moveIntoPosition:
 	showtext TX_0102
 	orroomflag $80
@@ -694,7 +694,7 @@ danceLeaderScript_moveIntoPosition:
 
 danceLeaderScript_danceTutorial:
 	writememory $cfdf, $00
-	spawninteraction INTERACID_DANCE_HALL_MINIGAME, $03, $00, $00
+	spawninteraction INTERAC_DANCE_HALL_MINIGAME, $03, $00, $00
 	setanimation $05
 	writememory $cfdf, $01
 	delay 2
@@ -731,9 +731,9 @@ danceLeaderScript_danceTutorial:
 	scriptjump mainScripts.danceLeaderScript_promptForTutorial@danceLeaderScript_readyToDance
 
 
-; ==============================================================================
-; INTERACID_S_MISCELLANEOUS_1
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_MISCELLANEOUS_1
+; ==================================================================================================
 simpleScript_unblockingD3Dam:
 	ss_wait $1e
 	ss_playsound $70
@@ -933,9 +933,9 @@ simpleScript_creatingBridgeToNatzu:
 	ss_end
 
 
-; ==============================================================================
-; INTERACID_ROSA_HIDING
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ROSA_HIDING
+; ==================================================================================================
 rosaHidingScript_firstEncounterIntro:
 	setcoords $48, $b0
 	orroomflag $40
@@ -1091,9 +1091,9 @@ rosaHidingScript_caught_body:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_STRANGE_BROTHERS_HIDING
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_STRANGE_BROTHERS_HIDING
+; ==================================================================================================
 strangeBrother2Script_1stScreenPattern1:
 	movedown $40
 	callscript mainScripts.strangeBrotherScript_lookUpDownRightLeft
@@ -1309,9 +1309,9 @@ strangeBrother2Script_finishedScreenPattern2:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_JEWEL_HELPER
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_JEWEL_HELPER
+; ==================================================================================================
 jewelHelperScript_jewelMoldorm_body:
 	stopifroomflag40set
 	checkcfc0bit 0
@@ -1385,9 +1385,9 @@ jewelHelperScript_jewelMoldorm_body:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_KING_MOBLIN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_KING_MOBLIN
+; ==================================================================================================
 kingMoblin_trapLinkInBombedHouse:
 	writeobjectbyte Interaction.var37, $01
 	setspeed $50
@@ -1412,9 +1412,9 @@ kingMoblin_trapLinkInBombedHouse:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_IMPA
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_IMPA
+; ==================================================================================================
 impaScript_askedToSaveZeldaButHavent_body:
 	delay 11
 	setspeed $28
@@ -1441,9 +1441,9 @@ impaScript_askedToSaveZeldaButHavent_body:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_S_DIN
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_DIN
+; ==================================================================================================
 dinScript_subid2Init_body:
 	delay 8
 	setspeed $28
@@ -1490,9 +1490,9 @@ dinScript_discoverLinkCollapsed_body:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_ZELDA_KIDNAPPED_ROOM
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_ZELDA_KIDNAPPED_ROOM
+; ==================================================================================================
 ZeldaBeingKidnappedEvent_body:
 	disableinput
 	writememory $ccab, $01
@@ -1565,9 +1565,9 @@ ZeldaBeingKidnappedEvent_body:
 	scriptend
 
 
-; ==============================================================================
-; INTERACID_GET_ROD_OF_SEASONS
-; ==============================================================================
+; ==================================================================================================
+; INTERAC_GET_ROD_OF_SEASONS
+; ==================================================================================================
 gettingRodOfSeasons_body:
 	setcoords $40, $50
 	setcollisionradii $02, $04
@@ -1589,7 +1589,7 @@ gettingRodOfSeasons_body:
 	checkpalettefadedone
 	delay 5
 
-	spawninteraction INTERACID_GET_ROD_OF_SEASONS, $02, $38, $50
+	spawninteraction INTERAC_GET_ROD_OF_SEASONS, $02, $38, $50
 	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
 	checkflagset $00, $cceb

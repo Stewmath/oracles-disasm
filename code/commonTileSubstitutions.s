@@ -3,12 +3,12 @@
 ;;
 ; Replaces a shutter link is about to walk on to with empty floor.
 replaceShutterForLinkEntering:
-.ifndef AGES_ENGINE
+.ifdef ROM_SEASONS
 	ld a,(wDungeonIndex)
 	inc a
 	ret z
 .endif
-	ldbc >wRoomLayout, (LARGE_ROOM_HEIGHT-1)<<4 + (LARGE_ROOM_WIDTH-1)
+	ldbc >wRoomLayout, ((LARGE_ROOM_HEIGHT-1)<<4) + (LARGE_ROOM_WIDTH-1)
 --
 	ld a,(bc)
 	push bc
@@ -110,7 +110,7 @@ replaceShutterForLinkEntering:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_DOOR_CONTROLLER
+	ld (hl),INTERAC_DOOR_CONTROLLER
 	inc l
 	ld (hl),e
 	ld l,Interaction.yh

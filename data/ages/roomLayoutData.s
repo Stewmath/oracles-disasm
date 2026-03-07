@@ -1539,5 +1539,3 @@ room05ec:
 	m_RoomLayoutData room05f9
 	m_RoomLayoutData room05fa
 	m_RoomLayoutData room05fb
-
-; Data ends at $a3f3b

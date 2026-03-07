@@ -3,7 +3,7 @@
 ;;
 ; CUTSCENE_NAYRU_SINGING
 cutscene06:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld c,$00
 	jpab bank3Cutscenes.miscCutsceneHandler
 
@@ -11,7 +11,7 @@ cutscene06:
 ; CUTSCENE_MAKU_TREE_DISAPPEARING
 cutscene07:
 	ld c,$01
-_func_5d5d:
+func_5d5d:
 	ld a,(wWarpTransition2)
 	or a
 	jp nz,applyWarpTransition2
@@ -21,19 +21,19 @@ _func_5d5d:
 ; CUTSCENE_BLACK_TOWER_EXPLANATION
 cutscene08:
 	ld c,$02
-	jr _func_5d5d
+	jr func_5d5d
 
 ;;
 ; CUTSCENE_NAYRU_WARP_TO_MAKU_TREE
 cutscene0c:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld c,$03
-	jr _func_5d5d
+	jr func_5d5d
 
 ;;
 ; CUTSCENE_BLACK_TOWER_ESCAPE
 cutscene09:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld a,(wCutsceneTrigger)
 	or a
 	jp nz,setCutsceneIndexIfCutsceneTriggerSet
@@ -49,7 +49,7 @@ cutscene09:
 ;;
 ; CUTSCENE_ROOM_OF_RITES_COLLAPSE
 cutscene0f:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld e,$02
 	jp endgameCutsceneHandler
 
@@ -62,21 +62,21 @@ cutscene0a:
 ;;
 ; CUTSCENE_FLAME_OF_DESPAIR
 cutscene20:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld e,$03
 	jr ---
 
 ;;
 ; CUTSCENE_PREGAME_INTRO
 cutscene0d:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld c,$06
 	jpab bank3Cutscenes.miscCutsceneHandler
 
 ;;
 ; CUTSCENE_TWINROVA_REVEAL
 cutscene0e:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld a,(wWarpTransition2)
 	or a
 	jr nz,applyWarpTransition2
@@ -96,13 +96,13 @@ cutscene21:
 	jp nz,setCutsceneIndexIfCutsceneTriggerSet
 
 	ld c,$07
-	jr _func_5d5d
+	jr func_5d5d
 
 ;;
 ; CUTSCENE_TURN_TO_STONE
 cutscene10:
 	ld c,$04
-	jr _func_5d5d
+	jr func_5d5d
 
 ;;
 ; CUTSCENE_FLAME_OF_SORROW

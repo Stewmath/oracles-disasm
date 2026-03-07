@@ -1113,9 +1113,11 @@ loadPaletteHeader:
 	ret
 
 ;;
-; Do a DMA transfer next vblank. Note:
-;  - Only banks $00-$3f work properly
-;  - Destination address must be a multiple of 16
+; Do a DMA transfer next vblank (or immediately if the screen is off). This is a safe method to
+; write to VRAM while the screen is on, so long as the data being written is not too large.
+;
+; Destination address must be a multiple of 16, as the lower 4 bits of the "de" parameter are read
+; as the destination bank. (And DMA only works in multiples of 16 bytes anyway.)
 ;
 ; @param	b	(data size)/16 - 1
 ; @param	c	src bank
@@ -1126,7 +1128,7 @@ loadPaletteHeader:
 queueDmaTransfer:
 	ld a,($ff00+R_LCDC)
 	rlca
-	jr nc,++
+	jr nc,@lcdOff
 
 	push de
 	push hl
@@ -1155,8 +1157,9 @@ queueDmaTransfer:
 	ldh (<hVBlankFunctionQueueTail),a
 	scf
 	ret
-++
-; If LCD is off, copy data immediately?
+
+@lcdOff:
+	; If the LCD is off, copy the data immediately.
 	ldh a,(<hRomBank)
 	push af
 	ld a,($ff00+R_SVBK)
@@ -1243,6 +1246,9 @@ loadUncompressedGfxHeader:
 	ret
 
 ;;
+; Load a GFX header (data/{game}/gfxHeaders.s). Screen should be turned off while doing this,
+; otherwise some vram writes will likely fail, causing graphical corruption.
+;
 ; @param	a	The index of the gfx header to load
 loadGfxHeader:
 	ld e,a
@@ -2011,10 +2017,17 @@ _initialThreadStates:
 
 ; Upper bytes of addresses of flags for each group
 flagLocationGroupTable:
-	.db >wPresentRoomFlags >wPastRoomFlags
-	.db >wGroup2Flags >wPastRoomFlags
-	.db >wGroup4Flags >wGroup5Flags
-	.db >wGroup4Flags >wGroup5Flags
+.ifdef ROM_AGES
+	.db >wPresentRoomFlags, >wPastRoomFlags
+	.db >wPresentRoomFlags, >wPastRoomFlags
+	.db >wGroup4RoomFlags,  >wGroup5RoomFlags
+	.db >wGroup4RoomFlags,  >wGroup5RoomFlags
+.else ;ROM_SEASONS
+	.db >wOverworldRoomFlags, >wSubrosiaRoomFlags
+	.db >wSubrosiaRoomFlags,  >wSubrosiaRoomFlags
+	.db >wGroup4RoomFlags,    >wGroup5RoomFlags
+	.db >wGroup4RoomFlags,    >wGroup5RoomFlags
+.endif
 
 ;;
 ; @param	hActiveFileSlot	File index
@@ -2661,12 +2674,12 @@ setMusicVolume:
 
 ;;
 restartSound:
-	ld bc,b39_stopSound
+	ld bc,audio.b39_stopSound
 	jr _startSound
 
 ;;
 initSound:
-	ld bc,b39_initSound
+	ld bc,audio.b39_initSound
 
 ;;
 ; @param bc Function to call for initialization
@@ -2675,7 +2688,7 @@ _startSound:
 	ldh a,(<hRomBank)
 	push af
 	call disableTimer
-	ld a,:b39_initSound
+	ld a,:audio.b39_initSound
 	ldh (<hSoundDataBaseBank),a
 	ldh (<hSoundDataBaseBank2),a
 	setrombank
@@ -2743,7 +2756,7 @@ timerInterrupt:
 	dec a
 	ld ($ff00+R_TIMA),a
 +
-	ld a,:b39_updateMusicVolume
+	ld a,:audio.b39_updateMusicVolume
 	ld ($2222),a
 	ldh a,(<hMusicVolume)
 	bit 7,a
@@ -2751,7 +2764,7 @@ timerInterrupt:
 
 	and $03
 	ldh (<hMusicVolume),a
-	call b39_updateMusicVolume
+	call audio.b39_updateMusicVolume
 +
 	ldh a,(<hMusicQueueTail)
 	ld b,a
@@ -2765,7 +2778,7 @@ timerInterrupt:
 	ldi a,(hl)
 	push bc
 	push hl
-	call b39_playSound
+	call audio.b39_playSound
 	pop hl
 	pop bc
 	ld a,l
@@ -2775,7 +2788,7 @@ timerInterrupt:
 
 	ldh (<hMusicQueueHead),a
 ++
-	call b39_updateSound
+	call audio.b39_updateSound
 	ld hl,hFFB7
 	res 0,(hl)
 	ldh a,(<hRomBank)
@@ -3733,12 +3746,12 @@ updateLinkLocalRespawnPosition:
 ; @param	a	Tile that was broken
 updateRoomFlagsForBrokenTile:
 	push af
-	ld hl,_unknownTileCollisionTable
+	ld hl,tileIncreaseGashaMaturityOnBreakTable
 	call lookupCollisionTable
 	call c,addToGashaMaturity
 
 	pop af
-	ld hl,_tileUpdateRoomFlagsOnBreakTable
+	ld hl,tileUpdateRoomFlagsOnBreakTable
 	call lookupCollisionTable
 	ret nc
 
@@ -3764,181 +3777,8 @@ updateRoomFlagsForBrokenTile:
 	ret
 
 
-; This is a list of tiles that will cause certain room flag bits to be set when destroyed.
-; (In order for this to work, the corresponding bit in the "_breakableTileModes" table
-; must be set so that it calls the above function.)
-_tileUpdateRoomFlagsOnBreakTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-; Data format:
-; b0: tile index
-; b1: bit 7:    Set if it's a door linked between two rooms in a dungeon (will update the
-;               room flags in both rooms)
-;     bit 6:    Set if it's a door linked between two rooms in the overworld
-;     bits 0-3: If bit 6 or 7 is set, this is the "direction" of the room link (times 4).
-;               If bits 6 and 7 aren't set, this is the bit to set in the room flags (ie.
-;               value of 2 will set bit 2).
-
-.ifdef ROM_AGES
-
-@collisions0:
-@collisions4:
-	.db $c6 $07
-	.db $c7 $07
-	.db $c9 $07
-	.db $c1 $07
-	.db $c2 $07
-	.db $c4 $07
-	.db $cb $07
-	.db $d1 $07
-	.db $cf $07
-	.db $00
-@collisions1:
-	.db $30 $00
-	.db $31 $44
-	.db $32 $02
-	.db $33 $4c
-	.db $00
-@collisions2:
-@collisions5:
-	.db $30 $80
-	.db $31 $84
-	.db $32 $88
-	.db $33 $8c
-	.db $38 $80
-	.db $39 $84
-	.db $3a $88
-	.db $3b $8c
-	.db $68 $84
-	.db $69 $8c
-@collisions3:
-	.db $00
-
-
-.else ; ROM_SEASONS
-
-
-@collisions0:
-	.db $c6 $07
-	.db $c1 $07
-	.db $c2 $07
-	.db $e3 $07
-@collisions1:
-	.db $e2 $07
-	.db $cb $07
-	.db $c5 $07
-@collisions2:
-	.db $00
-
-@collisions3:
-	.db $30 $00
-	.db $31 $44
-	.db $32 $02
-	.db $33 $4c
-	.db $00
-
-@collisions4:
-	.db $30 $80
-	.db $31 $84
-	.db $32 $88
-	.db $33 $8c
-	.db $38 $80
-	.db $39 $84
-	.db $3a $88
-	.db $3b $8c
-@collisions5:
-	.db $00
-
-.endif
-
-
-; Seems to list some breakable tiles similar to the table above?
-_unknownTileCollisionTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-; Data format:
-; b0: tile index
-; b1: amount to add to wGashaMaturity?
-
-.ifdef ROM_AGES
-
-@collisions0:
-@collisions4:
-	.db $c7 50
-	.db $c2 50
-	.db $cb 50
-	.db $d1 50
-	.db $cf 30
-	.db $c6 30
-	.db $c4 30
-	.db $c9 30
-	.db $00
-@collisions1:
-	.db $30 100
-	.db $31 100
-	.db $32 100
-	.db $33 100
-	.db $00
-@collisions2:
-@collisions5:
-	.db $30 50
-	.db $31 50
-	.db $32 50
-	.db $33 50
-	.db $38 100
-	.db $39 100
-	.db $3a 100
-	.db $3b 100
-	.db $68 50
-	.db $69 50
-@collisions3:
-	.db $00
-
-
-.else ; ROM_SEASONS
-
-
-@collisions0:
-	.db $c6 $32
-	.db $c2 $32
-	.db $e3 $32
-@collisions1:
-	.db $e2 $32
-	.db $cb $1e
-	.db $c5 $1e
-@collisions2:
-	.db $00
-
-@collisions3:
-	.db $30 $64
-	.db $31 $64
-	.db $32 $64
-	.db $33 $64
-	.db $00
-
-@collisions4:
-	.db $30 $32
-	.db $31 $32
-	.db $32 $32
-	.db $33 $32
-	.db $38 $64
-	.db $39 $64
-	.db $3a $64
-	.db $3b $64
-@collisions5:
-	.db $00
-
-.endif
+.include {"{GAME_DATA_DIR}/tile_properties/breakableTileRoomFlags.s"}
+.include {"{GAME_DATA_DIR}/tile_properties/breakableTileGashaMaturity.s"}
 
 
 ;;
@@ -4011,7 +3851,13 @@ setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 	rst_addAToHl
 	ld a,(wActiveRoom)
 	ld c,a
-	ld b,>wGroup2Flags
+
+.ifdef ROM_AGES
+	ld b,>wPresentRoomFlags
+.else
+	ld b,>wSubrosiaRoomFlags
+.endif
+
 	ld a,(bc)
 	or (hl)
 	ld (bc),a
@@ -4596,7 +4442,7 @@ checkGivenCollision_allowHoles:
 	ld hl,@specialCollisions
 	jr _complexCollision
 
-; See constants/specialCollisionValues.s for what each of these bytes is for.
+; See constants/common/specialCollisionValues.s for what each of these bytes is for.
 ; ie. The first defined byte is for holes.
 @specialCollisions:
 	.db %00000000 %11000011 %00000011 %11000000 %00000000 %11000011 %11000011 %00000000
@@ -4860,7 +4706,7 @@ interactionInitGraphics:
 	jp interactionSetAnimation
 
 ;;
-func_1613:
+refreshLoadedTreeGfx:
 	ld a,(wLoadedTreeGfxIndex)
 	or a
 	ret z
@@ -4964,7 +4810,7 @@ loadObjectGfx2:
 	ld c,:w4GfxBuf1
 	ld a,$01
 	ld ($ff00+R_SVBK),a
-	ld a,$3f
+	ld a,BANK_3f
 	setrombank
 	ld b,$1f
 	jp queueDmaTransfer
@@ -4982,7 +4828,7 @@ loadObjectGfx2:
 	call decompressGraphics
 	ld a,$01
 	ld ($ff00+R_SVBK),a
-	ld a,$3f
+	ld a,BANK_3f
 	setrombank
 	ret
 .endif
@@ -5002,7 +4848,7 @@ loadTreasureDisplayData:
 
 ;;
 ; @param	a
-; @param[out]	a,c	Subid for PARTID_ITEM_DROP (see constants/itemDrops.s)
+; @param[out]	a,c	Subid for PART_ITEM_DROP (see constants/common/itemDrops.s)
 ; @param[out]	zflag	z if there is no item drop
 decideItemDrop:
 	ld c,a
@@ -5018,7 +4864,7 @@ decideItemDrop:
 ;;
 ; Checks whether an item drop of a given type can spawn.
 ;
-; @param	a	Item drop index (see constants/itemDrops.s)
+; @param	a	Item drop index (see constants/common/itemDrops.s)
 ; @param[out]	zflag	z if item cannot spawn (Link doesn't have it)
 checkItemDropAvailable:
 	ld c,a
@@ -5035,7 +4881,7 @@ checkItemDropAvailable:
 	ret
 
 ;;
-; @param	a	Treasure for Link to obtain (see constants/treasure.s)
+; @param	a	Treasure for Link to obtain (see constants/common/treasure.s)
 ; @param	c	Parameter (ie. item level, ring index, etc...)
 ; @param[out]	a	Sound to play on obtaining the treasure (if nonzero)
 giveTreasure:
@@ -5050,7 +4896,7 @@ giveTreasure:
 	ret
 
 ;;
-; @param	a	Treasure for Link to lose (see constants/treasure.s)
+; @param	a	Treasure for Link to lose (see constants/common/treasure.s)
 loseTreasure:
 	ld b,a
 	ldh a,(<hRomBank)
@@ -5061,7 +4907,7 @@ loseTreasure:
 	ret
 
 ;;
-; @param	a	Item to check for (see constants/treasure.s)
+; @param	a	Item to check for (see constants/common/treasure.s)
 ; @param[out]	cflag	Set if you have that item
 ; @param[out]	a	The value of the treasure's "related variable" (ie. item level)
 checkTreasureObtained:
@@ -5148,7 +4994,7 @@ getRupeeValue:
 	pop hl
 	ret
 
-; Each number here corresponds to a value in constants/rupeeValues.s.
+; Each number here corresponds to a value in constants/common/rupeeValues.s.
 @rupeeValues:
 	.dw $0000 ; $00
 	.dw $0001 ; $01
@@ -5402,7 +5248,8 @@ textThreadStart:
 	jr -
 
 ;;
-; Can only be called from bank $3f.
+; Can only be called from bank $3f. See also "copyTextCharacterGfx" which is similar but is used by
+; file select code instead of textbox code.
 ;
 ; @param	[w7TextGfxSource]	Table to use
 ; @param	a			Character
@@ -5621,7 +5468,7 @@ clearAllItemsAndPutLinkOnGround:
 .ifdef ROM_AGES
 	ld l,Item.id
 	ld a,(hl)
-	cp ITEMID_18
+	cp ITEM_18
 	jr nz,@notSomariaBlock
 
 ; Somaria block creation
@@ -5648,6 +5495,8 @@ clearAllItemsAndPutLinkOnGround:
 	jp putLinkOnGround
 
 ;;
+; See also "retrieveTextCharacter" which is similar.
+;
 ; @param	a			Character index
 ; @param	c			0 to use jp font, 1 to use english font
 ; @param	de			Where to write the character to
@@ -5863,7 +5712,7 @@ copyW4PaletteDataToW2TilesetBgPalettes:
 ;;
 ; @param[in]	b	Room
 ; @param[out]	b	Dungeon property byte for the given room (see
-;			constants/dungeonRoomProperties.s)
+;			constants/common/dungeonRoomProperties.s)
 getRoomDungeonProperties:
 	ldh a,(<hRomBank)
 	push af
@@ -7845,7 +7694,7 @@ checkLinkIsOverHazard:
 
 	ld e,SpecialObject.id
 	ld a,(de)
-	sub SPECIALOBJECTID_DIMITRI
+	sub SPECIALOBJECT_DIMITRI
 	ret z
 
 	push bc
@@ -7896,7 +7745,7 @@ objectReplaceWithAnimationIfOnHazard:
 	rrca
 	jr c,objectReplaceWithFallingDownHoleInteraction
 
-	ld b,INTERACID_LAVASPLASH
+	ld b,INTERAC_LAVASPLASH
 	jr objectReplaceWithSplash@create
 
 ;;
@@ -7906,7 +7755,7 @@ objectReplaceWithFallingDownHoleInteraction:
 
 ;;
 objectReplaceWithSplash:
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 @create:
 	call objectCreateInteractionWithSubid00
 @delete:
@@ -8031,7 +7880,7 @@ breakCrackedFloor:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_FALLDOWNHOLE
+	ld (hl),INTERAC_FALLDOWNHOLE
 
 	; Disable interaction's sound effect
 	inc l
@@ -8463,145 +8312,7 @@ checkInteractionSubstate:
 	ret
 
 
-; Lists the water, hole, and lava tiles for each collision mode.
-;
-hazardCollisionTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-.ifdef ROM_AGES
-
-@collisions0:
-@collisions4:
-	.db $fa $01
-	.db $fc $01
-	.db $fe $01
-	.db $ff $01
-	.db $e0 $01
-	.db $e1 $01
-	.db $e2 $01
-	.db $e3 $01
-	.db $f3 $02
-	.db $e4 $04
-	.db $e5 $04
-	.db $e6 $04
-	.db $e7 $04
-	.db $e8 $04
-	.db $e9 $01
-	.db $00
-
-@collisions1:
-@collisions2:
-@collisions5:
-	.db $fa $01
-	.db $fc $01
-	.db $f3 $02
-	.db $f4 $02
-	.db $f5 $02
-	.db $f6 $02
-	.db $f7 $02
-	.db $61 $04
-	.db $62 $04
-	.db $63 $04
-	.db $64 $04
-	.db $65 $04
-	.db $48 $02
-	.db $49 $02
-	.db $4a $02
-	.db $4b $02
-	.db $00
-
-@collisions3:
-	.db $1a $01
-	.db $1b $01
-	.db $1c $01
-	.db $1d $01
-	.db $1e $01
-	.db $1f $01
-	.db $00
-
-.else ; ROM_SEASONS
-
-@collisions0:
-	.db $f3 $02
-	.db $fd $01
-	.db $fe $01
-	.db $ff $01
-	.db $d1 $01
-	.db $d2 $01
-	.db $d3 $01
-	.db $d4 $01
-	.db $7b $04
-	.db $7c $04
-	.db $7d $04
-	.db $7e $04
-	.db $7f $04
-	.db $00
-
-@collisions1:
-	.db $f3 $02
-	.db $f4 $02
-	.db $7b $04
-	.db $7c $04
-	.db $7d $04
-	.db $7e $04
-	.db $7f $04
-	.db $c0 $04
-	.db $c1 $04
-	.db $c2 $04
-	.db $c3 $04
-	.db $c4 $04
-	.db $c5 $04
-	.db $c6 $04
-	.db $c7 $04
-	.db $c8 $04
-	.db $c9 $04
-	.db $ca $04
-	.db $cb $04
-	.db $cc $04
-	.db $cd $04
-	.db $ce $04
-	.db $cf $04
-@collisions2:
-	.db $00
-
-@collisions3:
-@collisions4:
-	.db $f3 $02
-	.db $f4 $02
-	.db $f5 $02
-	.db $f6 $02
-	.db $f7 $02
-	.db $48 $02
-	.db $49 $02
-	.db $4a $02
-	.db $4b $02
-	.db $d0 $42
-	.db $61 $04
-	.db $62 $04
-	.db $63 $04
-	.db $64 $04
-	.db $65 $04
-	.db $fd $01
-	.db $00
-
-@collisions5:
-	.db $0c $04
-	.db $0d $04
-	.db $0e $04
-	.db $1a $01
-	.db $1b $01
-	.db $1c $01
-	.db $1d $01
-	.db $1e $01
-	.db $1f $01
-	.db $00
-
-.endif
+.include {"{GAME_DATA_DIR}/tile_properties/hazards.s"}
 
 ; Takes an angle as an index.
 ;
@@ -8619,7 +8330,7 @@ slideAngleTable:
 ; Used in bank6._checkTileIsPassableFromDirection for the specific purpose of determining
 ; whether an item can pass through a cliff facing a certain direction. Odd values can pass
 ; through 2 directions, whereas even values can only pass through the direction
-; corresponding to the value divided by 2 (see constants/directions.s).
+; corresponding to the value divided by 2 (see constants/common/directions.s).
 ;
 angleTable:
 	.db $00 $00 $00 $01 $01 $01 $02 $02
@@ -8672,7 +8383,7 @@ setScreenShakeCounter:
 
 ;;
 objectCreatePuff:
-	ld b,INTERACID_PUFF
+	ld b,INTERAC_PUFF
 
 ;;
 ; @param	b	High byte of interaction
@@ -8702,7 +8413,7 @@ objectCreateFallingDownHoleInteraction:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_FALLDOWNHOLE
+	ld (hl),INTERAC_FALLDOWNHOLE
 
 	; Store object type in Interaction.counter1
 	ld l,Interaction.counter1
@@ -8801,7 +8512,7 @@ interactionSetHighTextIndex:
 ; Sets the interaction's script to hl, also resets Interaction.counter variables.
 ;
 ; @param	hl	The address of the script
-; @param[out]	a	0 (this is assumed by INTERACID_MAMAMU_DOG due to an apparent bug...)
+; @param[out]	a	0 (this is assumed by INTERAC_MAMAMU_DOG due to an apparent bug...)
 interactionSetScript:
 	ld e,Interaction.scriptPtr
 	ld a,l
@@ -9157,7 +8868,7 @@ objectPreventLinkFromPassing:
 	; If Dimitri is active, we can't let him pass either while being thrown.
 	ld hl,w1Companion.id
 	ld a,(hl)
-	cp SPECIALOBJECTID_DIMITRI
+	cp SPECIALOBJECT_DIMITRI
 	jr nz,@end
 
 	ld l,<w1Companion.state
@@ -9534,7 +9245,7 @@ giveRingToLink:
 createRingTreasure:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),TREASURE_RING
 	inc l
@@ -9546,14 +9257,14 @@ createRingTreasure:
 	ret
 
 ;;
-; Creates a "treasure" interaction (INTERACID_TREASURE). Doesn't initialize X/Y.
+; Creates a "treasure" interaction (INTERAC_TREASURE). Doesn't initialize X/Y.
 ;
 ; @param	bc	Treasure to create (b = main id, c = subid)
 ; @param[out]	zflag	Set if the treasure was created successfully.
 createTreasure:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_TREASURE
+	ld (hl),INTERAC_TREASURE
 	inc l
 	ld (hl),b
 	inc l
@@ -9801,7 +9512,7 @@ enemyDie:
 	ldi (hl),a
 
 	; Part.id
-	ld (hl),PARTID_ENEMY_DESTROYED
+	ld (hl),PART_ENEMY_DESTROYED
 
 	; [Part.subid] = [Enemy.id]
 	inc l
@@ -9833,7 +9544,7 @@ enemyDie:
 ; The returned value of 'c' from here is moved to 'a' before the enemy-specific code is
 ; called, so that code can check the return value of this function.
 ;
-; @param[out]	c	"Enemy status" (see constants/enemyStates.s).
+; @param[out]	c	"Enemy status" (see constants/common/enemyStates.s).
 ;			$00 normally
 ;			$02 if stunned
 ;			$03 if health is 0
@@ -10278,7 +9989,7 @@ linkApplyDamage:
 ; This will force Link's ID to change next time "updateSpecialObjects" is called. Also
 ; clears subid, var03, state, and substate.
 ;
-; @param	a	Link ID value (see constants/specialObjectTypes.s)
+; @param	a	Link ID value (see constants/common/specialObjects.s)
 setLinkIDOverride:
 	or $80
 	ld (wLinkIDOverride),a
@@ -10330,7 +10041,7 @@ specialObjectAnimate:
 	ret
 
 ;;
-; @param	a	Animation (see constants/linkAnimations.s)
+; @param	a	Animation (see constants/common/linkAnimations.s)
 ; @param	d	Special object index
 specialObjectSetAnimation:
 	ld e,SpecialObject.animMode
@@ -10553,7 +10264,7 @@ checkPegasusSeedCounter:
 ;;
 ; Try to break a tile at the given item's position.
 ;
-; @param	a	The type of collision (see constants/breakableTileSources.s)
+; @param	a	The type of collision (see constants/common/breakableTileSources.s)
 ; @param[out]	cflag	Set if the tile was broken (or can be broken)
 itemTryToBreakTile:
 	ld h,d
@@ -10564,7 +10275,7 @@ itemTryToBreakTile:
 ;;
 ; See bank6.tryToBreakTile for a better description.
 ;
-; @param	a	The type of collision (see constants/breakableTileSources.s)
+; @param	a	The type of collision (see constants/common/breakableTileSources.s)
 ;			If bit 7 is set, it will only check if the tile is breakable; it
 ;			won't actually break it.
 ; @param	bc	The YYXX position
@@ -10581,7 +10292,7 @@ tryToBreakTile:
 	ret
 
 ;;
-; Calls bank6._clearAllParentItems.
+; Calls bank6.clearAllParentItems_body.
 clearAllParentItems:
 	ld c,$00
 	jr ++
@@ -10691,9 +10402,9 @@ clearVar3fForParentItems:
 ;
 ; @param	d	Link object
 linkCreateSplash:
-	ld b,INTERACID_SPLASH
+	ld b,INTERAC_SPLASH
 
-	; Check if in lava; if so, set b to INTERACID_LAVASPLASH.
+	; Check if in lava; if so, set b to INTERAC_LAVASPLASH.
 	ld a,(wLinkSwimmingState)
 	bit 6,a
 	jr z,+
@@ -10878,7 +10589,7 @@ clearFadingPalettes:
 
 ;;
 ; This function causes the screen to flash white. Based on parameter 'b', which acts as
-; the "index" if the data to use, this will read through the predefined data to see on
+; the "index" of the data to use, this will read through the predefined data to see on
 ; what frames it should turn the screen white, and on what frames it should restore the
 ; screen to normal.
 ;
@@ -11321,7 +11032,7 @@ initializeRoom:
 	dec a
 	jr nz,+
 
-	ld b,INTERACID_SCREEN_DISTORTION
+	ld b,INTERAC_SCREEN_DISTORTION
 	jp objectCreateInteractionWithSubid00
 +
 	callab roomInitialization.calculateRoomStateModifier
@@ -11464,7 +11175,7 @@ objectDeleteRelatedObj1AsStaticObject:
 ;;
 ; Saves an object to a "static object" slot, which persists between rooms.
 ;
-; @param	a	Static object type (see constants/staticObjectTypes.s)
+; @param	a	Static object type (see constants/common/staticObjectTypes.s)
 ; @param	d	Object
 ; @param	hl	Address in wStaticObjects
 objectSaveAsStaticObject:
@@ -11508,7 +11219,7 @@ objectSaveAsStaticObject:
 	ret
 
 ;;
-; @param	a	Global flag to check (see constants/globalFlags.s)
+; @param	a	Global flag to check (see constants/common/globalFlags.s)
 checkGlobalFlag:
 	ld hl,wGlobalFlags
 	jp checkFlag
@@ -11782,7 +11493,6 @@ func_32fc:
 	jr _setDarkeningVariables
 
 ;;
-
 ; @param	a	Speed of darkening
 darkenRoomWithSpeed:
 	ld b,$f0
@@ -12141,7 +11851,7 @@ dismountCompanionAndSetRememberedPositionToScreenCenter:
 seasonsFunc_331b:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 seasonsFunc_0f_6f75
+	callfrombank0 bank0f.seasonsFunc_0f_6f75
 	pop af
 	setrombank
 	ret
@@ -12151,8 +11861,8 @@ seasonsFunc_332f:
 	push af
 	ld a,$0f
 	setrombank
-	call seasonsFunc_0f_704d
-	call seasonsFunc_0f_7182
+	call bank0f.seasonsFunc_0f_704d
+	call bank0f.seasonsFunc_0f_7182
 	pop af
 	setrombank
 	ret
@@ -12283,9 +11993,9 @@ seasonsFunc_34a0:
 	callfrombank0 updateEnemies
 	callfrombank0 partCode.updateParts
 	callfrombank0 updateInteractions
-	callfrombank0 seasonsFunc_0f_7159
+	callfrombank0 bank0f.seasonsFunc_0f_7159
 
-	ld a,$06
+	ld a,:bank6.updateGrabbedObjectPosition
 	setrombank
 	ld a,(wLinkGrabState)
 	rlca
@@ -12293,7 +12003,7 @@ seasonsFunc_34a0:
 
 	call loadLinkAndCompanionAnimationFrame
 	callfrombank0 itemCode.updateItemsPost
-	callfrombank0 seasonsFunc_0f_7182
+	callfrombank0 bank0f.seasonsFunc_0f_7182
 	callfrombank0 tilesets.updateChangedTileQueue
 
 	xor a
@@ -12355,7 +12065,7 @@ clearDynamicInteractions:
 	ldde FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Interaction.start
@@ -12373,7 +12083,7 @@ clearItems:
 	ldde FIRST_ITEM_INDEX, Item.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Item.start
@@ -12391,7 +12101,7 @@ clearEnemies:
 	ldde FIRST_ENEMY_INDEX, Enemy.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Enemy.start
@@ -12409,7 +12119,7 @@ clearParts:
 	ldde FIRST_PART_INDEX, Part.start
 --
 	ld h,d
-.ifdef ROM_AGES
+.ifdef AGES_ENGINE
 	ld l,e
 .else
 	ld l,Part.start
@@ -12491,7 +12201,7 @@ checkDungeonUsesToggleBlocks:
 	ld hl,dungeonsUsingToggleBlocks
 	jp checkFlag
 
-	.include "data/dungeonsUsingToggleBlocks.s"
+	.include "data/ages/dungeonsUsingToggleBlocks.s"
 
 .else ; ROM_SEASONS
 seasonsFunc_35cc:
@@ -12649,12 +12359,13 @@ vramBgMapTable:
 	.dw $9b00 $9b40 $9b80 $9bc0
 
 ;;
-; Force-load a room?
+; Force-load a room? This isn't the typical mechanism used to load a room, it's only used in
+; cutscenes.
 ;
 ; @param	a	Value for wRoomStateModifier (only lower 2 bits are used)
 ; @param	b	Value for wActiveGroup
 ; @param	c	Value for wActiveRoom
-func_36f6:
+forceLoadRoom:
 	and $03
 	ld (wRoomStateModifier),a
 	ld a,b
@@ -12672,7 +12383,6 @@ func_36f6:
 ;
 ; End result: w3TileMappingData is loaded with the tile indices and attributes for all
 ; tiles in the tileset.
-;
 loadTilesetLayout:
 	ld a,(wTilesetLayout)
 	call loadTileset
@@ -12758,7 +12468,7 @@ loadTilesetLayout:
 ;;
 ; Loads the address of unique header gfx (a&$7f) into wUniqueGfxHeaderAddress.
 ;
-; @param	a	Unique gfx header (see constants/uniqueGfxHeaders.s).
+; @param	a	Unique gfx header (see constants/common/uniqueGfxHeaders.s).
 ;			Bit 7 is ignored.
 loadUniqueGfxHeader:
 	and $7f
@@ -12974,7 +12684,7 @@ loadTilesetAndRoomLayout:
 	call nz,loadTilesetLayout
 
 .ifdef ROM_SEASONS
-	call seasonsFunc_3870
+	call @adjustLoadingRoomForTempleRemains
 .endif
 	; Load the room layout and apply any dynamic changes necessary
 	call          loadRoomLayout
@@ -12997,7 +12707,9 @@ loadTilesetAndRoomLayout:
 
 .ifdef ROM_SEASONS
 
-seasonsFunc_3870:
+; Layouts for the lava-filled version of Temple Remains, for all 4 seasons, are stored out of bounds
+; on the Subrosia map.
+@adjustLoadingRoomForTempleRemains:
 	ld a,GLOBALFLAG_TEMPLE_REMAINS_FILLED_WITH_LAVA
 	call checkGlobalFlag
 	ret z
@@ -13005,14 +12717,14 @@ seasonsFunc_3870:
 	callfrombank0 tilesets.checkIsTempleRemains
 	ret nc
 	ld a,(wRoomStateModifier)
-	ld hl,@data
+	ld hl,@seasonOffsets
 	rst_addAToHl
 	ld a,(wActiveRoom)
 	add (hl)
 	ld (wLoadingRoom),a
 	ret
 
-@data:
+@seasonOffsets:
 	.db $bc $c0 $c4 $c8
 
 .endif
@@ -13539,7 +13251,7 @@ checkRoomPackAfterWarp:
 ; @param[out]	hl	Address of a free interaction slot (on the id byte)
 ; @param[out]	zflag	Set if a free slot was found
 getFreeInteractionSlot:
-	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 | $40
+	ld hl,(FIRST_DYNAMIC_INTERACTION_INDEX<<8) | $40
 --
 	ld a,(hl)
 	or a
@@ -13984,7 +13696,7 @@ getWildTokayObjectDataIndex:
 objectCreateSparkle:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$00
 	jp objectCopyPositionWithOffset
@@ -13996,7 +13708,7 @@ objectCreateSparkle:
 objectCreateSparkleMovingUp:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$02
 	ld l,Interaction.speedY
@@ -14012,7 +13724,7 @@ objectCreateSparkleMovingUp:
 objectCreateRedBlueOrb:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_SPARKLE
+	ld (hl),INTERAC_SPARKLE
 	inc l
 	ld (hl),$04
 	jp objectCopyPositionWithOffset

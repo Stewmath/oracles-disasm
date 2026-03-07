@@ -1,4 +1,12 @@
-;;
+; Custom code run for specific rooms in order to modify their room layouts (wRoomLayout).
+;
+; When loading a room, the game consults the table "roomTileChangerGroupXData", where X is the group
+; number. From here it uses the room index byte as a key, and gets an index for the jump table
+; immediately below here. If no entry in the table exists then nothing happens.
+;
+; Typically the code for each room will check the room flags for a particular bit being set/unset,
+; and perform tile substitutions for the appropriate condition.
+
 applyRoomSpecificTileChanges:
 	ld a,(wActiveRoom)
 	ld hl,roomTileChangerCodeGroupTable
@@ -71,6 +79,10 @@ roomTileChangerCodeGroupTable:
 	.dw roomTileChangerCodeGroup5Data
 	.dw roomTileChangerCodeGroup6Data
 	.dw roomTileChangerCodeGroup7Data
+
+; Data format for roomTileChangerGroupXData:
+;   b0: Room index byte ($00 to end the list)
+;   b1: Index for jump table above
 
 roomTileChangerCodeGroup0Data:
 	.db $38 $08
@@ -158,17 +170,17 @@ tileReplacement_group1Map58:
 	ret
 
 ;;
-; Twinrova/ganon fight
+; Twinrova/ganon fight - same as seasons
 tileReplacement_group5Mapf5:
 	ld a,(wTwinrovaTileReplacementMode)
 	or a
 	ret z
 	dec a
-	jr z,@val01
+	jr z,@fillWithLava
 	dec a
 	jr z,@fillWithIce
 	dec a
-	jr z,@val03
+	jr z,@normalLayout
 
 	; Fill the room with the seizure tiles?
 	xor a
@@ -179,9 +191,9 @@ tileReplacement_group5Mapf5:
 @seizureTiles:
 	.db $00, LARGE_ROOM_HEIGHT, LARGE_ROOM_WIDTH, $aa
 
-@val03:
+@normalLayout:
 	ld (wTwinrovaTileReplacementMode),a
-	ld a,GFXH_b9
+	ld a,GFXH_TWINROVA_NORMAL_LAYOUT
 	jp loadGfxHeader
 
 @fillWithIce:
@@ -192,9 +204,9 @@ tileReplacement_group5Mapf5:
 @iceTiles:
 	.db $11, LARGE_ROOM_HEIGHT-2, LARGE_ROOM_WIDTH-2, $8a
 
-@val01:
+@fillWithLava:
 	ld (wTwinrovaTileReplacementMode),a
-	ld a,GFXH_b8
+	ld a,GFXH_TWINROVA_LAVA_LAYOUT
 	jp loadGfxHeader
 
 ;;
@@ -213,6 +225,9 @@ tileReplacement_group4Map1b:
 	; The programmers forgot a "ret" here! This causes a bug where chests
 	; are inserted into dungeon 1 after buying everything from the secret
 	; shop.
+.ifdef ENABLE_BUGFIXES
+	ret
+.endif
 
 ;;
 ; Secret shop: replace item area with blank floor and 2 chests, if you've
@@ -426,13 +441,13 @@ tileReplacement_group5Map25:
 	and $40
 	ret nz
 
-	ld hl,_d6RetractingWallRectPresent
+	ld hl,d6RetractingWallRectPresent
 	call fillRectInRoomLayout
 	jr ++
 
-_d6RetractingWallRectPresent:
+d6RetractingWallRectPresent:
 	.db $17 $09 $04 $a6
-_d6RetractingWallRectPast:
+d6RetractingWallRectPast:
 	.db $17 $09 $04 $a7
 
 ;;
@@ -442,7 +457,7 @@ tileReplacement_group5Map43:
 	and $40
 	jr nz,@pastRetracted
 
-	ld hl,_d6RetractingWallRectPast
+	ld hl,d6RetractingWallRectPast
 	call fillRectInRoomLayout
 ++
 	ld hl,@wallEdge1
@@ -1020,7 +1035,7 @@ initializeVinePositions:
 	jp copyMemoryReverse
 
 @defaultVinePositions:
-	.include "build/data/defaultVinePositions.s"
+	.include {"{GAME_DATA_DIR}/defaultVinePositions.s"}
 
 ;;
 ; Present, bridge to nuun highlands
@@ -1247,14 +1262,14 @@ tileReplacement_group0Mape0:
 	ld a,(wEssencesObtained)
 	bit 4,a
 	ld l,$46
-	call nz,_setTileToDoor
+	call nz,setTileToDoor
 	ld c,$1b
 ;;
-_createInteraction90:
+createInteraction90:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_MISC_PUZZLES
+	ld (hl),INTERAC_MISC_PUZZLES
 	inc l
 	ld (hl),c
 	ret
@@ -1263,22 +1278,22 @@ _createInteraction90:
 ; Present, on top of maku tree (middle)
 tileReplacement_group0Mape1:
 	ld c,$1c
-	call _createInteraction90
+	call createInteraction90
 	ld a,(wEssencesObtained)
 	rrca
 	ld l,$26
-	call c,_setTileToDoor
+	call c,setTileToDoor
 	rrca
 	ret nc
 
 	ld l,$53
-	jr _setTileToDoor
+	jr setTileToDoor
 
 ;;
 ; Present, on top of maku tree (right)
 tileReplacement_group0Mape2:
 	ld c,$1d
-	call _createInteraction90
+	call createInteraction90
 	ld a,(wEssencesObtained)
 	bit 2,a
 	ret z
@@ -1286,7 +1301,7 @@ tileReplacement_group0Mape2:
 	ld l,$54
 
 ;;
-_setTileToDoor:
+setTileToDoor:
 	ld h,>wRoomLayout
 	ld (hl),$dd
 	ret

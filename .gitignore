@@ -2,11 +2,8 @@
 /build_v/
 /build_e/
 /build_ages/
-/build_seasons/
-/build_ages_v/
-/build_seasons_v/
-/build_ages_e/
-/build_seasons_e/
+/build_seasons_*/
+/build_ages_*/
 /doc/
 /LynnaLab/Logs/
 /linkfile

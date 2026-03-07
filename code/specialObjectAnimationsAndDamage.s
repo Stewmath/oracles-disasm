@@ -9,11 +9,11 @@ specialObjectSetAnimationWithLinkData:
 	ld c,a
 	ld b,$00
 	ld a,(w1Link.id)
-	jr _label_06_032
+	jr label_06_032
 
 ;;
 ; Same as "specialObjectAnimate" in bank 0, but optimized for this bank?
-_specialObjectAnimate:
+specialObjectAnimate_optimized:
 	ld h,d
 	ld l,SpecialObject.animCounter
 	dec (hl)
@@ -31,7 +31,7 @@ specialObjectSetAnimation_body:
 	ld e,SpecialObject.id
 	ld a,(de)
 
-_label_06_032:
+label_06_032:
 	ld hl,specialObjectAnimationTable
 	rst_addDoubleIndex
 	ldi a,(hl)
@@ -82,7 +82,7 @@ specialObjectNextAnimationFrame:
 	ret
 
 
-	.include "build/data/specialObjectAnimationPointers.s"
+	.include {"{GAME_DATA_DIR}/specialObjectAnimationPointers.s"}
 
 ;;
 loadLinkAndCompanionAnimationFrame_body:
@@ -92,7 +92,7 @@ loadLinkAndCompanionAnimationFrame_body:
 	rlca
 	jr nc,++
 
-	call _func_4553
+	call func_4553
 	ld a,(w1Link.id)
 	ld hl,@data
 	rst_addAToHl
@@ -124,12 +124,12 @@ loadLinkAndCompanionAnimationFrame_body:
 	ret z
 
 	ld (hl),a
-	call _getSpecialObjectGraphicsFrame
+	call getSpecialObjectGraphicsFrame
 	ret z
 
 	ld e,SpecialObject.id
 	ld a,(de)
-	cp SPECIALOBJECTID_MINECART
+	cp SPECIALOBJECT_MINECART
 	ld de,$8701
 	jr c,+
 	ld d,$86
@@ -139,7 +139,7 @@ loadLinkAndCompanionAnimationFrame_body:
 ; These are animation frame indices; frame indices under the given value don't have link's direction
 ; added to them?
 @data:
-	.db $54 ; SPECIALOBJECTID_LINK
+	.db $54 ; SPECIALOBJECT_LINK
 	.db $20
 	.db $00
 	.db $00
@@ -148,11 +148,11 @@ loadLinkAndCompanionAnimationFrame_body:
 	.db $00
 	.db $00
 .ifdef ROM_AGES
-	.db $ff ; SPECIALOBJECTID_LINK_CUTSCENE
+	.db $ff ; SPECIALOBJECT_LINK_CUTSCENE
 .else; ROM_SEASONS
 	.db $40
 .endif
-	.db $ff ; SPECIALOBJECTID_LINK_RIDING_ANIMAL
+	.db $ff ; SPECIALOBJECT_LINK_RIDING_ANIMAL
 
 ;;
 ; Gets size, address of graphics to load.
@@ -163,7 +163,7 @@ loadLinkAndCompanionAnimationFrame_body:
 ; @param[out]	c	Bank of graphics
 ; @param[out]	hl	Address of graphics
 ; @param[out]	zflag	Set if there are no graphics to load.
-_getSpecialObjectGraphicsFrame:
+getSpecialObjectGraphicsFrame:
 	ld c,a
 	ld b,$00
 	ld d,h
@@ -229,7 +229,7 @@ _getSpecialObjectGraphicsFrame:
 ;;
 ; @param[out]	b	Frame index to use (not accounting for direction)
 ;
-_func_4553:
+func_4553:
 	ld a,(w1Link.id)
 	or a
 	jr z,+
@@ -375,11 +375,11 @@ _func_4553:
 	; Standard, just walking or standing animation
 @standingAnimation:
 	ld a,(wInventoryA)
-	cp ITEMID_SHIELD
+	cp ITEM_SHIELD
 	jr z,@shieldEquipped
 
 	ld a,(wInventoryB)
-	cp ITEMID_SHIELD
+	cp ITEM_SHIELD
 	jr nz,@animationFound
 
 	; Walking or standing with shield equipped
@@ -406,8 +406,8 @@ _func_4553:
 
 ;;
 ; Gets the ID to use for the Link object based on what transformation rings he's wearing
-; (see constants/specialObjectTypes.s).
-; Under normal circumstances, this will return 0 (SPECIALOBJECTID_LINK).
+; (see constants/common/specialObjects.s).
+; Under normal circumstances, this will return 0 (SPECIALOBJECT_LINK).
 ; @param[out] b Special object ID to use, based on the ring Link is wearing
 getTransformedLinkID:
 	ld hl,wDisableRingTransformations
@@ -452,11 +452,11 @@ getTransformedLinkID:
 	ret
 
 @ringToID:
-	.db OCTO_RING		SPECIALOBJECTID_LINK_AS_OCTOROK
-	.db MOBLIN_RING		SPECIALOBJECTID_LINK_AS_MOBLIN
-	.db LIKE_LIKE_RING	SPECIALOBJECTID_LINK_AS_LIKELIKE
-	.db SUBROSIAN_RING	SPECIALOBJECTID_LINK_AS_SUBROSIAN
-	.db FIRST_GEN_RING	SPECIALOBJECTID_LINK_AS_RETRO
+	.db OCTO_RING		SPECIALOBJECT_LINK_AS_OCTOROK
+	.db MOBLIN_RING		SPECIALOBJECT_LINK_AS_MOBLIN
+	.db LIKE_LIKE_RING	SPECIALOBJECT_LINK_AS_LIKELIKE
+	.db SUBROSIAN_RING	SPECIALOBJECT_LINK_AS_SUBROSIAN
+	.db FIRST_GEN_RING	SPECIALOBJECT_LINK_AS_RETRO
 	.db $00
 
 ;;

@@ -2,7 +2,10 @@
 # Dumps dungeon layouts. I ended up using a different format than what this outputs though.
 
 import sys
+import os
 import io
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 2:

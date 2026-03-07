@@ -4,7 +4,10 @@
 # This is obsolete now, don't use it.
 
 import sys
+import os
 import io
+
+sys.path.append(os.path.dirname(__file__) + '/..')
 from common import *
 
 if len(sys.argv) < 2:

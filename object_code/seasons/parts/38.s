@@ -1,0 +1,94 @@
+; ==================================================================================================
+; PART_38
+; ==================================================================================================
+partCode38:
+	ld e,$d7
+	ld a,(de)
+	or a
+	jp z,partDelete
+	ld e,$c4
+	ld a,(de)
+	rst_jumpTable
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+@state0:
+	ld h,d
+	ld l,e
+	inc (hl)
+	ld l,$d0
+	ld (hl),$50
+	ld l,$c6
+	ld (hl),$14
+	ld a,$08
+	call objectGetRelatedObject1Var
+	ld a,(hl)
+	or a
+	jp z,objectSetVisible82
+	jp objectSetVisible81
+@state1:
+	call partCommon_decCounter1IfNonzero
+	ret nz
+	ld l,e
+	inc (hl)
+	call objectSetVisible81
+@state2:
+	ld h,d
+	ld l,$f0
+	ld b,(hl)
+	inc l
+	ld c,(hl)
+	call objectGetRelativeAngle
+	ld e,$c9
+	ld (de),a
+	ld h,d
+	ld l,$f0
+	ld e,$cb
+	ld a,(de)
+	sub (hl)
+	add $08
+	cp $11
+	jr nc,@applySpeedAndAnimate
+	ld l,$f1
+	ld e,$cd
+	ld a,(de)
+	sub (hl)
+	add $08
+	cp $11
+	jr nc,@applySpeedAndAnimate
+	ld l,$c4
+	inc (hl)
+@applySpeedAndAnimate:
+	call objectApplySpeed
+	jp partAnimate
+@state3:
+	ld a,$0b
+	call objectGetRelatedObject2Var
+	push hl
+	ld b,(hl)
+	ld l,$8d
+	ld c,(hl)
+	call objectGetRelativeAngle
+	ld e,$c9
+	ld (de),a
+	pop hl
+	ld e,$cb
+	ld a,(de)
+	sub (hl)
+	add $04
+	cp $09
+	jr nc,@applySpeedAndAnimate
+	ld l,$8d
+	ld e,$cd
+	ld a,(de)
+	sub (hl)
+	add $04
+	cp $09
+	jr nc,@applySpeedAndAnimate
+	ld a,$18
+	call objectGetRelatedObject1Var
+	xor a
+	ldi (hl),a
+	ld (hl),a
+	jp partDelete

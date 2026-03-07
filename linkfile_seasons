@@ -1,6 +1,6 @@
 [objects]
-build/seasons.o
-build/audio.o
+BUILD_DIR/seasons.o
+BUILD_DIR/audio.o
 
 [ramsections]
 bank 0 slot $c000 orga $c000 Wram0_c000

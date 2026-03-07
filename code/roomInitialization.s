@@ -1,4 +1,4 @@
- m_section_superfree roomInitialization NAMESPACE roomInitialization
+m_section_superfree roomInitialization NAMESPACE roomInitialization
 
 ; Most functions in this file are called from the "initializeRoom" function in bank
 ; 0 (perhaps indirectly).
@@ -33,7 +33,7 @@ loadRememberedCompanion:
 	ld a,c
 
 .ifdef ROM_AGES
-	cp SPECIALOBJECTID_RAFT
+	cp SPECIALOBJECT_RAFT
 	jr z,@raft
 .endif
 
@@ -67,7 +67,7 @@ loadRememberedCompanion:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_RAFT
+	ld (hl),INTERAC_RAFT
 	inc l
 	ld (hl),$02
 
@@ -115,7 +115,7 @@ checkAndSpawnMaple:
 	or a
 	jr z,+
 .endif
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 +
 	ld hl,maplePresentLocationsTable
 	rst_addDoubleIndex
@@ -152,7 +152,7 @@ checkAndSpawnMaple:
 	ld (hl),$b8
 	ret
 
-.include "build/data/mapleLocations.s"
+.include {"{GAME_DATA_DIR}/mapleLocations.s"}
 
 
 .ifdef ROM_SEASONS
@@ -186,7 +186,7 @@ updateRosaDateStatus:
 	ld hl,w1ReservedInteraction1.id
 @nextInteraction:
 	ld a,(hl)
-	cp INTERACID_ROSA
+	cp INTERAC_ROSA
 	ret z
 
 	inc h
@@ -196,7 +196,7 @@ updateRosaDateStatus:
 
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_ROSA
+	ld (hl),INTERAC_ROSA
 	inc l
 	ld (hl),$01 ; [subid] = 1
 	ret
@@ -211,19 +211,19 @@ functionCaller:
 	ld c,l
 	ld a,h
 	rst_jumpTable
-	.dw _clearEnemiesKilledList
-	.dw _addRoomToEnemiesKilledList
-	.dw _markEnemyAsKilledInRoom
-	.dw _stub_02_77f4
+	.dw clearEnemiesKilledList
+	.dw addRoomToEnemiesKilledList
+	.dw markEnemyAsKilledInRoom
+	.dw stub_02_77f4
 	.dw generateRandomBuffer
-	.dw _getRandomPositionForEnemy
+	.dw getRandomPositionForEnemy
 .ifdef ROM_AGES
-	.dw _checkSpawnTimeportalInteraction
+	.dw checkSpawnTimeportalInteraction
 .endif
 
 ;;
 ; Marks an enemy as killed so it doesn't respawn for a bit.
-_addRoomToEnemiesKilledList:
+addRoomToEnemiesKilledList:
 	ld hl,wEnemiesKilledList
 	ld a,(wActiveRoom)
 	ld b,$08
@@ -260,12 +260,12 @@ _addRoomToEnemiesKilledList:
 	ld (wEnemyPlacement.killedEnemiesBitset),a
 	ret
 
-_stub_02_77f4:
+stub_02_77f4:
 	ret
 
 ;;
 ; @param	d	Enemy index
-_markEnemyAsKilledInRoom:
+markEnemyAsKilledInRoom:
 	ld hl,wEnemiesKilledList
 	ld b,$08
 	ld a,(wActiveRoom)
@@ -293,7 +293,7 @@ _markEnemyAsKilledInRoom:
 	ret
 
 ;;
-_clearEnemiesKilledList:
+clearEnemiesKilledList:
 	xor a
 	ld (wEnemiesKilledListTail),a
 	ld hl,wEnemiesKilledList
@@ -351,7 +351,7 @@ generateRandomBuffer:
 ;;
 ; @param	hFF8B	Flags from object data. (if bit 2 is set, ignore tile solidity.)
 ; @param[out]	cflag	Set on failure
-_getRandomPositionForEnemy:
+getRandomPositionForEnemy:
 	ld a,$40
 	ld (wEnemyPlacement.randomPlacementAttemptCounter),a
 
@@ -360,10 +360,10 @@ _getRandomPositionForEnemy:
 	dec (hl)
 	jr z,@giveUp
 
-	call _getCandidatePositionForEnemy
+	call getCandidatePositionForEnemy
 	ld (wEnemyPlacement.enemyPos),a
 	ld c,a
-	call _checkPositionValidForEnemySpawn
+	call checkPositionValidForEnemySpawn
 	jr c,@tryAgain
 
 	; If the appropriate flag is set, the tile it's placed on doesn't matter.
@@ -371,7 +371,7 @@ _getRandomPositionForEnemy:
 	and $04
 	jr nz,+
 
-	call _checkTileValidForEnemySpawn
+	call checkTileValidForEnemySpawn
 	jr c,@tryAgain
 +
 	xor a
@@ -387,7 +387,7 @@ _getRandomPositionForEnemy:
 ;
 ; @param	c	Candidate position to place enemy
 ; @param[out]	cflag	nc if enemy can be placed here
-_checkTileValidForEnemySpawn:
+checkTileValidForEnemySpawn:
 	ld b,>wRoomCollisions
 	ld a,(bc)
 	or a
@@ -416,7 +416,7 @@ _checkTileValidForEnemySpawn:
 ;
 ; @param	c	Candidate position to place enemy
 ; @param[out]	cflag	nc if enemy can be placed here
-_checkPositionValidForEnemySpawn:
+checkPositionValidForEnemySpawn:
 	; Check if this is a standard transition, or a walk-in-from-outside-screen
 	; transition
 	ld a,(wScrollMode)
@@ -427,7 +427,7 @@ _checkPositionValidForEnemySpawn:
 
 @scrollingTransition:
 	ld a,(wActiveGroup)
-	and $04
+	and $04 ; Less than NUM_SMALL_GROUPS
 	ld hl,@smallRoom
 	jr z,+
 	ld hl,@largeRoom
@@ -537,99 +537,12 @@ _checkPositionValidForEnemySpawn:
 	ret
 
 
-; This lists the tiles that an enemy can't spawn on (despite being non-solid).
-;   b0: tile index
-;   b1: unused?
-
-.ifdef ROM_AGES
-
-enemyUnspawnableTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-@collisions0:
-@collisions4:
-	.db $f3 $01
-	.db $fd $01
-	.db $e9 $01
-	.db $00
-
-@collisions1:
-@collisions2:
-@collisions5:
-	.db $f3 $01
-	.db $f4 $01
-	.db $f5 $01
-	.db $f6 $01
-	.db $f7 $01
-	.db $fd $01
-	.db $59 $01
-	.db $5a $01
-	.db $5b $01
-	.db $5c $01
-	.db $5d $01
-	.db $5e $01
-	.db $5f $01
-	.db $44 $01
-	.db $45 $01
-	.db $3c $01
-	.db $3d $01
-	.db $3e $01
-	.db $3f $01
-
-@collisions3:
-	.db $00
-
-
-.else; ROM_SEASONS
-
-
-enemyUnspawnableTilesTable:
-	.dw @collisions0
-	.dw @collisions1
-	.dw @collisions2
-	.dw @collisions3
-	.dw @collisions4
-	.dw @collisions5
-
-@collisions0:
-@collisions1:
-	.db $f3 $01
-	.db $fd $01
-	.db $00
-@collisions2:
-@collisions3:
-@collisions4:
-	.db $f3 $01
-	.db $f4 $01
-	.db $f5 $01
-	.db $f6 $01
-	.db $f7 $01
-	.db $fd $01
-	.db $d0 $01
-	.db $59 $01
-	.db $5a $01
-	.db $5b $01
-	.db $5c $01
-	.db $5d $01
-	.db $5e $01
-	.db $5f $01
-	.db $44 $01
-	.db $45 $01
-
-@collisions5:
-	.db $00
-
-.endif
+.include {"{GAME_DATA_DIR}/tile_properties/enemyUnspawnableTiles.s"}
 
 
 ;;
 ; @param[out]	a	Next value from w4RandomBuffer
-_getNextValueFromRandomBuffer:
+getNextValueFromRandomBuffer:
 	ld hl,wEnemyPlacement.randomBufferIndex
 	inc (hl)
 
@@ -649,13 +562,13 @@ _getNextValueFromRandomBuffer:
 ; placed on it.
 ;
 ; @param[out]	a	Candidate position for an enemy
-_getCandidatePositionForEnemy:
+getCandidatePositionForEnemy:
 	ld a,(wActiveGroup)
-	and $04
+	and $04 ; Less than NUM_SMALL_GROUPS
 	jr nz,@dungeon
 
 @overworld:
-	call _getNextValueFromRandomBuffer
+	call getNextValueFromRandomBuffer
 	cp SMALL_ROOM_HEIGHT<<4
 	jr nc,@overworld
 
@@ -664,14 +577,14 @@ _getCandidatePositionForEnemy:
 	cp SMALL_ROOM_WIDTH
 	jr nc,@overworld
 
-	call _checkEnemyPlacedAtPosition
+	call checkEnemyPlacedAtPosition
 	jr c,@overworld
 
 	ld a,b
 	ret
 
 @dungeon:
-	call _getNextValueFromRandomBuffer
+	call getNextValueFromRandomBuffer
 	cp LARGE_ROOM_HEIGHT<<4
 	jr nc,@dungeon
 
@@ -690,7 +603,7 @@ _getCandidatePositionForEnemy:
 	jr nc,@dungeon ; Last column (and higher) not allowed
 
 	; Can't place multiple enemies in the same position
-	call _checkEnemyPlacedAtPosition
+	call checkEnemyPlacedAtPosition
 	jr c,@dungeon
 
 	ld a,b
@@ -698,8 +611,8 @@ _getCandidatePositionForEnemy:
 
 ;;
 ; @param	b	Position to check
-; @param[out]	cflag	Set if an enemy has been placed at position 'b'.
-_checkEnemyPlacedAtPosition:
+; @param[out]	cflag	c if an enemy has been placed at position 'b'.
+checkEnemyPlacedAtPosition:
 	ld a,(wEnemyPlacement.numEnemies)
 	or a
 	ret z
@@ -728,7 +641,7 @@ _checkEnemyPlacedAtPosition:
 
 ;;
 ; Checks if the timeportal exists in the current room, and loads the interaction if so.
-_checkSpawnTimeportalInteraction:
+checkSpawnTimeportalInteraction:
 	xor a
 	ld (wcddd),a
 
@@ -747,7 +660,7 @@ _checkSpawnTimeportalInteraction:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_TIMEPORTAL
+	ld (hl),INTERAC_TIMEPORTAL
 	ld a,$01
 	ld (wcddd),a
 	ld l,Interaction.yh
@@ -757,7 +670,6 @@ _checkSpawnTimeportalInteraction:
 ; Determines the value for wRoomStateModifier. (For seasons, it's just the season; for
 ; ages, this indicates whether the room is underwater, or whether the room layout has been
 ; swapped.
-;
 calculateRoomStateModifier:
 	ld a,(wActiveGroup)
 	or a
@@ -789,17 +701,16 @@ calculateRoomStateModifier:
 	or a
 	jr z,@standard
 
-	sub SPECIALOBJECTID_RICKY
+	sub SPECIALOBJECT_RICKY
 	ld (wRoomStateModifier),a
 	ret
 
 ;;
 ; If there are whirlpools or pollution tiles on the screen, this creates a part of type
-; PARTID_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
-;
+; PART_WHIRLPOOL_POLLUTION_EFFECTS, which applies their effects.
 createSeaEffectsPartIfApplicable:
 	ld a,(wActiveCollisions)
-	ld hl,@table
+	ld hl,seaEffectTileTable
 	rst_addAToHl
 	ld a,(hl)
 	rst_addAToHl
@@ -816,31 +727,10 @@ createSeaEffectsPartIfApplicable:
 	call getFreePartSlot
 	ret nz
 
-	ld (hl),PARTID_SEA_EFFECTS
+	ld (hl),PART_SEA_EFFECTS
 	ret
 
-@table:
-	.db @data0-CADDR
-	.db @data1-CADDR
-	.db @data1-CADDR
-	.db @data2-CADDR
-	.db @data0-CADDR
-	.db @data1-CADDR
-
-; Outside, underwater collisions
-@data0:
-	.db $eb ; Pollution tile
-	.db $e9 ; Whirlpool tile
-	.db $00
-
-; Dungeon & Indoor collisions
-@data1:
-	.db $3c $3d $3e $3f ; All whirlpool tiles?
-
-; Sidescrolling collisions
-@data2:
-	.db $00
-
+.include {"{GAME_DATA_DIR}/tile_properties/seaEffectTiles1.s"}
 
 ;;
 func_02_7a3a:
@@ -856,7 +746,7 @@ func_02_7a3a:
 	call getFreeInteractionSlot
 	ret nz
 
-	ld (hl),INTERACID_TIMEPORTAL
+	ld (hl),INTERAC_TIMEPORTAL
 	ld a,(wPortalPos)
 	ld l,Interaction.yh
 	jp setShortPosition

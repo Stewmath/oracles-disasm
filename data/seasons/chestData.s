@@ -1,20 +1,10 @@
- m_section_free chestData NAMESPACE chestData
+m_section_free chestData NAMESPACE chestData
 
 ; m_ChestData macro takes 3 parameters:
 ;   1: Y/X position of chest (byte); an opened chest tile will be placed here when the room is
 ;      loaded, if ROOMFLAG_ITEM has been set in that room.
 ;   2: Low byte of room index
 ;   3: Treasure object to get from the chest (see "data/{game}/treasureObjectData.s")
-.macro m_ChestData
-	.IF \1 == $ff
-		; $ff is the "end of data" marker so we can't have that
-		.PRINTT "ERROR: Chest Y/X position can't be $ff!\n"
-		.FAIL
-	.ENDIF
-	.db \1 \2
-	dwbe \3
-.endm
-
 
 chestDataGroupTable:
 	.dw chestGroup0Data

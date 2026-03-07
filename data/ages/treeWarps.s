@@ -2,7 +2,7 @@
 ; This does not populate the screens themselves with trees or anything.
 ;
 ; Each time period should have exactly 8 entries. To add more, it is necessary to modify
-; the "_galeSeedMenu_addOffsetToWarpIndex" function, and perhaps others.
+; the "galeSeedMenu_addOffsetToWarpIndex" function, and perhaps others.
 ;
 ; Data format:
 ;   b0: room index (or $00 to terminate the list)

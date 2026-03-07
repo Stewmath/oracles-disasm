@@ -21,12 +21,12 @@ seasonsFunc_0f_6f75:
 	call setScreenShakeCounter
 
 	call getFreeEnemySlot_uncounted
-	ld (hl),ENEMYID_GENERAL_ONOX
+	ld (hl),ENEMY_GENERAL_ONOX
 	inc l
 	ld (hl),$02
 
 	call getFreePartSlot
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	inc l
 	ld (hl),$04
 
@@ -113,7 +113,7 @@ seasonsFunc_0f_6f75:
 @state2:
 	call clearEnemies
 	call getFreeEnemySlot
-	ld (hl),ENEMYID_DRAGON_ONOX
+	ld (hl),ENEMY_DRAGON_ONOX
 	ld hl,$cfca
 	call seasons_func_0f_712a
 	ld hl,$cfcb
@@ -182,7 +182,7 @@ seasonsFunc_0f_704d:
 	jr --
 
 seasonsFunc_0f_70b4_swapGraphics:
-	ld a,SEASONS_PALH_8d
+	ld a,PALH_BG_DRAGON_ONOX
 	call loadPaletteHeader
 	xor a
 	ld ($ff00+R_VBK),a
@@ -217,7 +217,7 @@ seasonsFunc_0f_70b4_swapGraphics:
 	ld a,$0d
 	call fillMemoryBc
 
-	ld a,GFXH_96
+	ld a,GFXH_DRAGON_ONOX
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_30
 	jp loadUncompressedGfxHeader
@@ -338,7 +338,7 @@ seasonsFunc_0f_7182:
 	ret z
 	call getRandomNumber_noPreserveVars
 	and $03
-	ld hl,_table_71cb
+	ld hl,table_71cb
 	rst_addAToHl
 	ld a,($c490)
 	add (hl)
@@ -349,7 +349,7 @@ seasonsFunc_0f_7182:
 	sub (hl)
 	ld ($c4a0),a
 	ret
-_table_71cb:
+table_71cb:
 	.db $ff $fe $01 $02
 
 ;;
@@ -428,7 +428,7 @@ seasons_func_0f_722f:
 	ld b,a
 	push bc
 	ld a,($cfcb)
-	ld hl,_table_7291
+	ld hl,table_7291
 	rst_addAToHl
 	ld a,(hl)
 	ldh (<hFF8B),a
@@ -453,7 +453,7 @@ seasons_func_0f_722f:
 	call seasons_func_0f_7325
 	ld a,UNCMP_GFXH_2f
 	jp loadUncompressedGfxHeader
-_table_7291:
+table_7291:
 	.db $07 $05 $04 $05 $07 $08
 	
 ;;

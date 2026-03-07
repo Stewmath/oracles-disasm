@@ -2,20 +2,20 @@
 
 ;;
 ; CUTSCENE_S_DIN_CRYSTAL_DESCENDING
-_endgameCutsceneHandler_09:
+endgameCutsceneHandler_09:
 	ld de,$cbc1
 	ld a,(de)
 	rst_jumpTable
-	.dw _endgameCutsceneHandler_09_stage0
-	.dw _endgameCutsceneHandler_09_stage1
+	.dw endgameCutsceneHandler_09_stage0
+	.dw endgameCutsceneHandler_09_stage1
 
-_endgameCutsceneHandler_09_stage0:
+endgameCutsceneHandler_09_stage0:
 	call updateStatusBar
-	call _endgameCutsceneHandler_09_stage0_body
+	call endgameCutsceneHandler_09_stage0_body
 	call updateAllObjects
 	jp checkEnemyAndPartCollisionsIfTextInactive
 
-_endgameCutsceneHandler_09_stage0_body:
+endgameCutsceneHandler_09_stage0_body:
 	ld de,$cbc2
 	ld a,(de)
 	rst_jumpTable
@@ -79,7 +79,7 @@ _endgameCutsceneHandler_09_stage0_body:
 @state0Func0:
 	call getFreeInteractionSlot
 	jr nz,+
-	ld a,INTERACID_S_DIN
+	ld a,INTERAC_DIN
 	ld (wInteractionIDToLoadExtraGfx),a
 	ldi (hl),a
 	ld (hl),c
@@ -247,18 +247,18 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld a,$ff
 	ld (wTilesetAnimation),a
 	call disableLcd
-	ld a,$2b
+	ld a,GFXH_LINK_WITH_ORACLE_END_SCENE
 	call loadGfxHeader
 	ld a,$9d
 	call loadPaletteHeader
 	call cutscene_clearObjects
-	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0
+	call endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0
 	ld a,$04
 	call loadGfxRegisterStateIndex
 	jp fadeinFromWhite
 
 @stateB:
-	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0
+	call endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0
 	call seasonsFunc_03_6462
 	ret nz
 	call incCbc2
@@ -273,7 +273,7 @@ _endgameCutsceneHandler_09_stage0_body:
 	jp showText
 
 @stateC:
-	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0
+	call endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5ab0
 	call seasonsFunc_03_645a
 	ret nz
 	call seasonsFunc_03_646a
@@ -318,12 +318,12 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld a,$ac
 	call loadPaletteHeader
 	call hideStatusBar
-	call _clearFadingPalettes
+	call clearFadingPalettes2
 	ld b,$06
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TWINROVA_FLAME
+	ld (hl),INTERAC_TWINROVA_FLAME
 	inc l
 	dec b
 	ld (hl),b
@@ -518,7 +518,7 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld c,$40
 	ld a,TREASURE_HEART_REFILL
 	call giveTreasure
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE
+	ld a,SPECIALOBJECT_LINK_CUTSCENE
 	call setLinkIDOverride
 	ld l,<w1Link.subid
 	ld (hl),$07
@@ -568,7 +568,7 @@ _endgameCutsceneHandler_09_stage0_body:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_TWINROVA_FLAME
+	ld (hl),INTERAC_TWINROVA_FLAME
 	inc l
 	ld a,$05
 	add b
@@ -691,11 +691,11 @@ _endgameCutsceneHandler_09_stage0_body:
 	ld (hl),$03
 	ret
 
-_endgameCutsceneHandler_09_stage1:
-	call _endgameCutsceneHandler_09_stage1_body
+endgameCutsceneHandler_09_stage1:
+	call endgameCutsceneHandler_09_stage1_body
 	jp updateAllObjects
 
-_endgameCutsceneHandler_09_stage1_body:
+endgameCutsceneHandler_09_stage1_body:
 	ld de,$cbc2
 	ld a,(de)
 	rst_jumpTable
@@ -720,9 +720,9 @@ _endgameCutsceneHandler_09_stage1_body:
 	ld (hl),$3c
 	call disableLcd
 	call clearOam
-	ld a,GFXH_2c
+	ld a,GFXH_LINK_WITH_ORACLE_AND_TWINROVA_END_SCENE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9e
+	ld a,PALH_SEASONS_9e
 	call loadPaletteHeader
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -735,7 +735,7 @@ _endgameCutsceneHandler_09_stage1_body:
 	ld (wTextboxFlags),a
 	ld a,$3c
 	ld bc,TX_3d03
-	jp _endgameCutsceneHandler_09_stage0_body@stateDFunc0
+	jp endgameCutsceneHandler_09_stage0_body@stateDFunc0
 
 @state2:
 	call seasonsFunc_03_645a
@@ -810,7 +810,7 @@ _endgameCutsceneHandler_09_stage1_body:
 	ld hl,$cbb3
 	ld (hl),$14
 	ld bc,TX_3d04
-	call _endgameCutsceneHandler_09_stage0_body@stateBFunc0
+	call endgameCutsceneHandler_09_stage0_body@stateBFunc0
 	jp incCbc2
 
 @state7:
@@ -851,9 +851,9 @@ _endgameCutsceneHandler_09_stage1_body:
 	ld hl,$9c00
 	ld bc,$0400
 	call clearMemoryBc
-	ld a,GFXH_2d
+	ld a,GFXH_TWINROVA_CLOSEUP
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9c
+	ld a,PALH_SEASONS_9c
 	call loadPaletteHeader
 	ld a,$04
 	call loadGfxRegisterStateIndex
@@ -882,19 +882,19 @@ _endgameCutsceneHandler_09_stage1_body:
 
 ;;
 ; CUTSCENE_S_ROOM_OF_RITES_COLLAPSE
-_endgameCutsceneHandler_0f:
+endgameCutsceneHandler_0f:
 	ld de,$cbc1
 	ld a,(de)
 	rst_jumpTable
-	.dw _endgameCutsceneHandler_0f_stage0
-	.dw _endgameCutsceneHandler_0f_stage1
+	.dw endgameCutsceneHandler_0f_stage0
+	.dw endgameCutsceneHandler_0f_stage1
 
-_endgameCutsceneHandler_0f_stage0:
+endgameCutsceneHandler_0f_stage0:
 	call updateStatusBar
-	call _endgameCutsceneHandler_0f_stage0_body
+	call endgameCutsceneHandler_0f_stage0_body
 	jp updateAllObjects
 
-_endgameCutsceneHandler_0f_stage0_body:
+endgameCutsceneHandler_0f_stage0_body:
 	ld de,$cbc2
 	ld a,(de)
 	rst_jumpTable
@@ -1025,7 +1025,7 @@ _endgameCutsceneHandler_0f_stage0_body:
 
 @stateA:
 	ld e,$1e
-	jp _endgameCutsceneHandler_09_stage0_body@state16Func0
+	jp endgameCutsceneHandler_09_stage0_body@state16Func0
 
 @stateB:
 	call seasonsFunc_03_5cfb
@@ -1073,25 +1073,25 @@ seasonsFunc_03_5d00:
 seasonsFunc_03_5d0b:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_48
+	ld (hl),PART_48
 	ret
 
 seasonsFunc_03_5d12:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_LEAF
+	ld (hl),INTERAC_MAKU_LEAF
 	inc l
 	ld (hl),$00
 	inc l
 	ld (hl),b
 	ret
 
-_endgameCutsceneHandler_0f_stage1:
+endgameCutsceneHandler_0f_stage1:
 	call updateStatusBar
-	call _endgameCutsceneHandler_0f_stage1_body
+	call endgameCutsceneHandler_0f_stage1_body
 	jp updateAllObjects
 
-_endgameCutsceneHandler_0f_stage1_body:
+endgameCutsceneHandler_0f_stage1_body:
 	ld de,$cbc2
 	ld a,(de)
 	rst_jumpTable
@@ -1217,20 +1217,20 @@ _endgameCutsceneHandler_0f_stage1_body:
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
 	call hideStatusBar
-	ld a,GFXH_3c
+	ld a,GFXH_SCENE_CREDITS_MAKUTREE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_ad
+	ld a,PALH_SEASONS_ad
 	call loadPaletteHeader
 	ld hl,$cbb3
 	ld (hl),$f0
 	ld a,$04
 	call loadGfxRegisterStateIndex
-	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2
+	call endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2
 	ld a,$03
 	jp fadeinFromWhiteWithDelay
 
 @state9:
-	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2
+	call endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2
 	call seasonsFunc_03_6462
 	ret nz
 	call incCbc2
@@ -1240,7 +1240,7 @@ _endgameCutsceneHandler_0f_stage1_body:
 	jp fadeoutToBlackWithDelay
 
 @stateA:
-	call _endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2
+	call endgameCutsceneHandler_09_stage1_body@seasonsFunc_03_5aa2
 	call seasonsFunc_03_6462
 	ret nz
 	ld a,CUTSCENE_S_CREDITS
@@ -1262,20 +1262,20 @@ _endgameCutsceneHandler_0f_stage1_body:
 
 ;;
 ; CUTSCENE_S_CREDITS
-_endgameCutsceneHandler_0a:
-	call _endgameCutsceneHandler_0a_body
+endgameCutsceneHandler_0a:
+	call endgameCutsceneHandler_0a_body
 	jp func_3539
 
-_endgameCutsceneHandler_0a_body:
+endgameCutsceneHandler_0a_body:
 	ld de,$cbc1
 	ld a,(de)
 	rst_jumpTable
-	.dw _endgameCutsceneHandler_0a_stage0
-	.dw _endgameCutsceneHandler_0a_stage1
-	.dw _endgameCutsceneHandler_0a_stage2
-	.dw _endgameCutsceneHandler_0a_stage3
+	.dw endgameCutsceneHandler_0a_stage0
+	.dw endgameCutsceneHandler_0a_stage1
+	.dw endgameCutsceneHandler_0a_stage2
+	.dw endgameCutsceneHandler_0a_stage3
 
-_endgameCutsceneHandler_0a_stage0:
+endgameCutsceneHandler_0a_stage0:
 	ld de,$cbc2
 	ld a,(de)
 	rst_jumpTable
@@ -1328,7 +1328,7 @@ _endgameCutsceneHandler_0a_stage0:
 	ld (hl),b
 	jp fadeoutToWhite
 
-_endgameCutsceneHandler_0a_stage1:
+endgameCutsceneHandler_0a_stage1:
 	ld de,$cbc2
 	ld a,(de)
 	rst_jumpTable
@@ -1361,7 +1361,7 @@ _endgameCutsceneHandler_0a_stage1:
 	jr z,++
 	ld c,a
 	ld a,$00
-	call func_36f6
+	call forceLoadRoom
 	ld b,$2d
 	ld a,($cbb4)
 	cp $04
@@ -1374,7 +1374,7 @@ _endgameCutsceneHandler_0a_stage1:
 	ld a,($cbb4)
 	sub $04
 	add a
-	add $85
+	add GFXH_CREDITS_SCENE1
 	call loadGfxHeader
 	ld a,PALH_0f
 	call loadPaletteHeader
@@ -1420,15 +1420,16 @@ _endgameCutsceneHandler_0a_stage1:
 	ld a,$04
 	call loadGfxRegisterStateIndex
 	jp fadeinFromWhite
+
 @state0Table0:
-	.db $00 $c6
-	.db $01 $2b
-	.db $00 $b6
-	.db $00 $d6
-	.db $00 $00
-	.db $01 $2b
-	.db $00 $00
-	.db $00 $00
+	dwbe ROOM_SEASONS_0c6
+	dwbe ROOM_SEASONS_12b
+	dwbe ROOM_SEASONS_0b6
+	dwbe ROOM_SEASONS_0d6
+	dwbe $0000
+	dwbe ROOM_SEASONS_12b
+	dwbe $0000
+	dwbe $0000
 
 @state1:
 	ld a,(wPaletteThread_mode)
@@ -1452,7 +1453,7 @@ _endgameCutsceneHandler_0a_stage1:
 	ld a,($cbb4)
 	sub $04
 	add a
-	add $86
+	add GFXH_CREDITS_IMAGE1
 	call loadGfxHeader
 	ld hl,$cbb3
 	ld (hl),$5a
@@ -1486,7 +1487,7 @@ _endgameCutsceneHandler_0a_stage1:
 	call incCbc2
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CREDITS_TEXT_HORIZONTAL
+	ld (hl),INTERAC_CREDITS_TEXT_HORIZONTAL
 	inc l
 	ld a,($cbb4)
 	sub $04
@@ -1533,7 +1534,7 @@ _endgameCutsceneHandler_0a_stage1:
 ++
 	jp fadeoutToWhite
 
-_endgameCutsceneHandler_0a_stage2:
+endgameCutsceneHandler_0a_stage2:
 	xor a
 	ldh (<hOamTail),a
 	ld de,$cbc2
@@ -1559,16 +1560,16 @@ _endgameCutsceneHandler_0a_stage2:
 	call clearOam
 	xor a
 	ld ($cfde),a
-	ld a,GFXH_95
+	ld a,GFXH_CREDITS_SCROLL
 	call loadGfxHeader
-	ld a,SEASONS_PALH_a0
+	ld a,PALH_SEASONS_a0
 	call loadPaletteHeader
 	ld a,$09
 	call loadGfxRegisterStateIndex
 	call fadeinFromWhite
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CREDITS_TEXT_VERTICAL
+	ld (hl),INTERAC_CREDITS_TEXT_VERTICAL
 	ld l,Interaction.yh
 	ld (hl),$e8
 	inc l
@@ -1610,7 +1611,7 @@ _endgameCutsceneHandler_0a_stage2:
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_INTRO_SPRITES_1
+	ld (hl),INTERAC_INTRO_SPRITES_1
 	inc l
 	ld (hl),$09
 	inc l
@@ -1650,16 +1651,16 @@ _endgameCutsceneHandler_0a_stage2:
 	call flashScreen
 	ret z
 	call disableLcd
-	ld a,GFXH_9a
+	ld a,GFXH_CREDITS_LINKED_WAVING_GOODBYE
 	call loadGfxHeader
-	ld a,SEASONS_PALH_9f
+	ld a,PALH_SEASONS_9f
 	call loadPaletteHeader
 	call clearDynamicInteractions
 	ld b,$03
 -
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_cf
+	ld (hl),INTERAC_cf
 	inc l
 	dec b
 	ld (hl),b
@@ -1748,7 +1749,7 @@ _endgameCutsceneHandler_0a_stage2:
 	ld a,$04
 	jp fadeoutToWhiteWithDelay
 
-_endgameCutsceneHandler_0a_stage3:
+endgameCutsceneHandler_0a_stage3:
 	ld de,$cbc2
 	ld a,(de)
 	rst_jumpTable
@@ -1767,7 +1768,7 @@ _endgameCutsceneHandler_0a_stage3:
 
 @state0:
 	call checkIsLinkedGame
-	call nz,_endgameCutsceneHandler_0a_stage2@seasonsFunc_03_616f
+	call nz,endgameCutsceneHandler_0a_stage2@seasonsFunc_03_616f
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -1778,7 +1779,7 @@ _endgameCutsceneHandler_0a_stage3:
 	call clearOam
 	call checkIsLinkedGame
 	jp z,@state0Func0
-	ld a,$99
+	ld a,GFXH_CREDITS_LINKED_THE_END
 	call loadGfxHeader
 	ld a,$aa
 	call loadPaletteHeader
@@ -1786,9 +1787,9 @@ _endgameCutsceneHandler_0a_stage3:
 	call parseGivenObjectData
 	jr +
 @state0Func0:
-	ld a,GFXH_98
+	ld a,GFXH_CREDITS_THE_END
 	call loadGfxHeader
-	ld a,SEASONS_PALH_a9
+	ld a,PALH_SEASONS_a9
 	call loadPaletteHeader
 +
 	ld a,$04
@@ -1877,14 +1878,14 @@ _endgameCutsceneHandler_0a_stage3:
 	jr nz,-
 	pop af
 	ld ($ff00+R_SVBK),a
-	ld a,GFXH_97
+	ld a,GFXH_SECRET_FOR_LINKED_GAME
 	call loadGfxHeader
 	ld a,UNCMP_GFXH_2b
 	call loadUncompressedGfxHeader
 	ld a,PALH_05
 	call loadPaletteHeader
 	call checkIsLinkedGame
-	ld a,GFXH_84
+	ld a,GFXH_HEROS_SECRET_TEXT
 	call nz,loadGfxHeader
 	call clearDynamicInteractions
 	call clearOam
@@ -1916,7 +1917,7 @@ _endgameCutsceneHandler_0a_stage3:
 	jr nz,+
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_d1
+	ld (hl),INTERAC_GAME_COMPLETE_DIALOG
 	xor a
 	ld ($cfde),a
 +
@@ -1950,9 +1951,9 @@ _endgameCutsceneHandler_0a_stage3:
 	call disableLcd
 	call clearOam
 	call incCbc2
-	ld a,GFXH_82
+	ld a,GFXH_TO_BE_CONTINUED
 	call loadGfxHeader
-	ld a,SEASONS_PALH_8f
+	ld a,PALH_SEASONS_8f
 	call loadPaletteHeader
 	call fadeinFromWhite
 	ld a,$04
@@ -2094,7 +2095,7 @@ seasonsFunc_03_646a:
 	ld b,$10
 	jp clearMemory
 
-.include "build/data/creditsOamData.s"
+.include {"{GAME_DATA_DIR}/creditsOamData.s"}
 
 seasonsFunc_03_66dc:
 	ld hl,wLinkHealth

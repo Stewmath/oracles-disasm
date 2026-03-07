@@ -1,9 +1,9 @@
-blackTowerEscape_nayruAndRalph:
+objectData_blackTowerEscape_nayruAndRalph:
 	obj_Interaction $36 $03 $68 $48
 	obj_Interaction $37 $05 $68 $58
 	obj_End
 
-blackTowerEscape_ambiAndGuards:
+objectData_blackTowerEscape_ambiAndGuards:
 	obj_Interaction $36 $04 $98 $50
 	obj_Interaction $37 $06 $b8 $50
 	obj_Interaction $4d $01 $38 $50

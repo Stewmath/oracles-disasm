@@ -2,15 +2,15 @@
 
 ;;
 ; CUTSCENE_BLACK_TOWER_ESCAPE
-_endgameCutsceneHandler_09:
+endgameCutsceneHandler_09:
 	ld de,wGenericCutscene.cbc1
 	ld a,(de)
 	rst_jumpTable
-	.dw _endgameCutsceneHandler_09_stage0
-	.dw _endgameCutsceneHandler_09_stage1
+	.dw endgameCutsceneHandler_09_stage0
+	.dw endgameCutsceneHandler_09_stage1
 
 
-_endgameCutsceneHandler_09_stage0:
+endgameCutsceneHandler_09_stage0:
 	call updateStatusBar
 	call @runStates
 	jp updateAllObjects
@@ -46,7 +46,7 @@ _endgameCutsceneHandler_09_stage0:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
-	call _cutscene_clearCFC0ToCFDF
+	call cutscene_clearCFC0ToCFDF
 	call incCbc2
 
 	; Outside black tower
@@ -59,13 +59,13 @@ _endgameCutsceneHandler_09_stage0:
 	call clearAllParentItems
 	call dropLinkHeldItem
 
-	ld hl,objectData.blackTowerEscape_nayruAndRalph
+	ld hl,objectData.objectData_blackTowerEscape_nayruAndRalph
 	call parseGivenObjectData
 	ld hl,wGenericCutscene.cbb3
 	ld (hl),60
 
-	ld hl,_blackTowerEscapeCutscene_doorBlockReplacement
-	call _cutscene_replaceListOfTiles
+	ld hl,blackTowerEscapeCutscene_doorBlockReplacement
+	call cutscene_replaceListOfTiles
 
 	call refreshObjectGfx
 	ld a,$02
@@ -73,7 +73,7 @@ _endgameCutsceneHandler_09_stage0:
 	jp fadeinFromWhiteToRoom
 
 @state1:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	ld (hl),120
 	ld l,<wGenericCutscene.cbb6
@@ -107,7 +107,7 @@ _endgameCutsceneHandler_09_stage0:
 	jp incCbc2
 
 @state4:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	ld (hl),120
 	ld l,<wGenericCutscene.cbb6
@@ -134,15 +134,15 @@ _endgameCutsceneHandler_09_stage0:
 	ld a,:cutscenesBank10.blackTowerEscape_simulatedInput1
 	call setSimulatedInputAddress
 
-	ld hl,_blackTowerEscapeCutscene_doorOpenReplacement
-	jp _cutscene_replaceListOfTiles
+	ld hl,blackTowerEscapeCutscene_doorOpenReplacement
+	jp cutscene_replaceListOfTiles
 
 @explosions:
 	call @updateExplosionSoundsAndScreenShake
 	ret nz
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_EXPLOSION_WITH_DEBRIS
+	ld (hl),INTERAC_EXPLOSION_WITH_DEBRIS
 	inc l
 	inc l
 	inc (hl) ; [var03] = $01
@@ -194,7 +194,7 @@ _endgameCutsceneHandler_09_stage0:
 	ld a,$02
 	call loadGfxRegisterStateIndex
 
-	ld hl,objectData.blackTowerEscape_ambiAndGuards
+	ld hl,objectData.objectData_blackTowerEscape_ambiAndGuards
 	call parseGivenObjectData
 
 	ld hl,wTmpcbb3
@@ -202,7 +202,7 @@ _endgameCutsceneHandler_09_stage0:
 	jp fadeinFromWhiteToRoom
 
 @stateA:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 
 	call incCbc2
@@ -251,7 +251,7 @@ _endgameCutsceneHandler_09_stage0:
 	or a
 	ret nz
 	call incCbc2
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_loadRoomObjectSetAndFadein
 	xor a
 	ld (wTmpcfc0.genericCutscene.cfd1),a
 	ld (wTmpcfc0.genericCutscene.cfdf),a
@@ -286,7 +286,7 @@ _endgameCutsceneHandler_09_stage0:
 	ret nz
 
 	call incCbc2
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_loadRoomObjectSetAndFadein
 
 	ld hl,w1Link.enabled
 	ld (hl),$03
@@ -333,20 +333,20 @@ _endgameCutsceneHandler_09_stage0:
 	ld (wTilesetAnimation),a
 	call disableLcd
 
-	ld a,GFXH_2b
+	ld a,GFXH_LINK_WITH_ORACLE_END_SCENE
 	call loadGfxHeader
 	ld a,PALH_9d
 	call loadPaletteHeader
 
 	call cutscene_clearObjects
-	call _cutscene_resetOamWithSomething2
+	call cutscene_resetOamWithSomething2
 	ld a,$04
 	call loadGfxRegisterStateIndex
 	jp fadeinFromWhite
 
 @state12:
-	call _cutscene_resetOamWithSomething2
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_resetOamWithSomething2
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 
 	call incCbc2
@@ -363,8 +363,8 @@ _endgameCutsceneHandler_09_stage0:
 	jp showText
 
 @state13:
-	call _cutscene_resetOamWithSomething2
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_resetOamWithSomething2
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call cutscene_clearTmpCBB3
 	ld a,$01
@@ -394,7 +394,7 @@ _endgameCutsceneHandler_09_stage0:
 
 
 ; Twinrova appears just before credits
-_endgameCutsceneHandler_09_stage1:
+endgameCutsceneHandler_09_stage1:
 	call @runStates
 	jp updateAllObjects
 
@@ -414,7 +414,7 @@ _endgameCutsceneHandler_09_stage1:
 	.dw @state9
 
 @state0:
-	call _cutscene_resetOamWithSomething2
+	call cutscene_resetOamWithSomething2
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
@@ -425,7 +425,7 @@ _endgameCutsceneHandler_09_stage1:
 
 	call disableLcd
 	call clearOam
-	ld a,GFXH_2c
+	ld a,GFXH_LINK_WITH_ORACLE_AND_TWINROVA_END_SCENE
 	call loadGfxHeader
 	ld a,PALH_9e
 	call loadPaletteHeader
@@ -441,7 +441,7 @@ _endgameCutsceneHandler_09_stage1:
 	ld (wTextboxFlags),a
 	ld a,60
 	ld bc,TX_280b
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	call incCbc2
 	ld a,e
@@ -449,7 +449,7 @@ _endgameCutsceneHandler_09_stage1:
 	jp showText
 
 @state2:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc2
 
@@ -467,7 +467,7 @@ _endgameCutsceneHandler_09_stage1:
 	ld a,(de)
 	pop de
 	ld c,a
-	jp _cutscene_resetOamWithData
+	jp cutscene_resetOamWithData
 
 @state3:
 	ld hl,wTmpcbb5
@@ -515,12 +515,12 @@ _endgameCutsceneHandler_09_stage1:
 	ld hl,wTmpcbb3
 	ld (hl),20
 	ld bc,TX_280c
-	call _endgameCutsceneHandler_09_stage0@showTextDuringTwinrovaCutscene
+	call endgameCutsceneHandler_09_stage0@showTextDuringTwinrovaCutscene
 	jp incCbc2
 
 @state7:
 	call @loadCertainOamData2
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	xor a
 	ld (wOpenedMenuType),a
@@ -563,7 +563,7 @@ _endgameCutsceneHandler_09_stage1:
 	ld bc,$0400
 	call clearMemoryBc
 
-	ld a,GFXH_2d
+	ld a,GFXH_TWINROVA_CLOSEUP
 	call loadGfxHeader
 	ld a,PALH_9c
 	call loadPaletteHeader
@@ -594,7 +594,7 @@ _endgameCutsceneHandler_09_stage1:
 
 ;;
 ; CUTSCENE_FLAME_OF_DESPAIR
-_endgameCutsceneHandler_20:
+endgameCutsceneHandler_20:
 	call @runStates
 	jp updateAllObjects
 
@@ -629,13 +629,13 @@ _endgameCutsceneHandler_20:
 @state0:
 	ld a,$0b
 	ld ($cfde),a
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_loadRoomObjectSetAndFadein
 	call hideStatusBar
 	ld a,PALH_ac
 	call loadPaletteHeader
 	xor a
 	ld (wPaletteThread_mode),a
-	call _clearFadingPalettes
+	call clearFadingPalettes2
 	ld hl,wTmpcbb3
 	ld (hl),$1e
 	ld a,$13
@@ -661,7 +661,7 @@ _endgameCutsceneHandler_20:
 	jp showText
 
 @state2:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc1
 	ld a,$20
@@ -672,7 +672,7 @@ _endgameCutsceneHandler_20:
 	ret
 
 @state3:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	ld hl,wTmpcbb3
 	ld (hl),$20
@@ -722,7 +722,7 @@ _endgameCutsceneHandler_20:
 	ld e,$28
 	ld bc,TX_2826
 	call @func_5943
-	jp _cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText
+	jp cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText
 
 @func_5943:
 	ld a,TEXTBOXFLAG_DONTCHECKPOSITION
@@ -735,7 +735,7 @@ _endgameCutsceneHandler_20:
 	ld e,$28
 	ld bc,TX_2827
 @func_5953:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc1
 	ld hl,wTmpcbb3
@@ -751,7 +751,7 @@ _endgameCutsceneHandler_20:
 @state7:
 	ld e,$b4
 @func_596d:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc1
 	ld hl,wTmpcbb3
@@ -760,7 +760,7 @@ _endgameCutsceneHandler_20:
 
 @state8:
 	call @func_5995
-	call _cutscene_rumbleSoundWhenFrameCounterLowerNibbleIs0
+	call cutscene_rumbleSoundWhenFrameCounterLowerNibbleIs0
 	call decCbb3
 	ret nz
 	ld a,SNDCTRL_STOPSFX
@@ -805,7 +805,7 @@ _endgameCutsceneHandler_20:
 	call incCbc1
 	ld a,$0c
 	ld ($cfde),a
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_loadRoomObjectSetAndFadein
 	ld hl,w1Link.enabled
 	ld (hl),$03
 	ld l,<w1Link.yh
@@ -817,7 +817,7 @@ _endgameCutsceneHandler_20:
 	ld a,$81
 	ld (wDisabledObjects),a
 	ld (wMenuDisabled),a
-	call _cutscene_clearCFC0ToCFDF
+	call cutscene_clearCFC0ToCFDF
 	call showStatusBar
 	ld a,SNDCTRL_STOPSFX
 	call playSound
@@ -865,7 +865,7 @@ _endgameCutsceneHandler_20:
 	jp fadeoutToWhite
 
 @stateD:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	call incCbc1
 	call disableLcd
@@ -885,20 +885,20 @@ _endgameCutsceneHandler_20:
 	ldh (<hDirtyBgPalettes),a
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_NAYRU
+	ld (hl),INTERAC_NAYRU
 	inc l
 	ld (hl),$12
 	call getFreeInteractionSlot
 	jr nz,+
-	ld (hl),INTERACID_DIN
+	ld (hl),INTERAC_DIN
 	inc l
 	ld (hl),$02
 +
 	ld a,$02
 	ld (wOpenedMenuType),a
-	call _func_6e9a
+	call func_6e9a
 	ld a,$02
-	call _func_6ed6
+	call func_6ed6
 	ld hl,wTmpcbb3
 	ld (hl),$1e
 	ld a,$04
@@ -913,7 +913,7 @@ _endgameCutsceneHandler_20:
 	jp showText
 
 @stateE:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc1
 	ld b,$04
@@ -932,10 +932,10 @@ _endgameCutsceneHandler_20:
 @stateF:
 	ld e,$1e
 	ld bc,TX_1d1b
-	jp _cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText
+	jp cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText
 
 @state10:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc1
 	ld b,$12
@@ -944,7 +944,7 @@ _endgameCutsceneHandler_20:
 @state11:
 	ld e,$1e
 	ld bc,TX_1d1c
-	jp _cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText
+	jp cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText
 
 @state12:
 	ld e,$3c
@@ -972,7 +972,7 @@ _endgameCutsceneHandler_20:
 	jp incCbc1
 
 @state15:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	call incCbc1
 	call clearDynamicInteractions
@@ -1005,7 +1005,7 @@ _endgameCutsceneHandler_20:
 
 ;;
 ; CUTSCENE_ROOM_OF_RITES_COLLAPSE
-_endgameCutsceneHandler_0f:
+endgameCutsceneHandler_0f:
 	ld de,$cbc1
 	ld a,(de)
 	rst_jumpTable
@@ -1066,7 +1066,7 @@ _endgameCutsceneHandler_0f:
 	call playSound
 	jp incCbc2
 @@substate2:
-	call _cutscene_setScreenShakeCounterTo4RumbleAt0
+	call cutscene_setScreenShakeCounterTo4RumbleAt0
 	call decCbb3
 	ret nz
 	call incCbc2
@@ -1074,7 +1074,7 @@ _endgameCutsceneHandler_0f:
 	ld (hl),$96
 	jp @@func_5cb0
 @@substate3:
-	call _cutscene_setScreenShakeCounterTo4RumbleAt0
+	call cutscene_setScreenShakeCounterTo4RumbleAt0
 	call decCbb3
 	ret nz
 	call incCbc2
@@ -1085,7 +1085,7 @@ _endgameCutsceneHandler_0f:
 	ld bc,TX_3d0e
 	jp showText
 @@substate4:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc2
 	ld a,MUS_DISASTER
@@ -1094,14 +1094,14 @@ _endgameCutsceneHandler_0f:
 	ld (hl),$3c
 	jp @@func_5cb0
 @@substate5:
-	call _cutscene_setScreenShakeCounterTo4RumbleAt0
+	call cutscene_setScreenShakeCounterTo4RumbleAt0
 	call decCbb3
 	ret nz
 	ld hl,wTmpcbb3
 	ld (hl),$5a
 	jp incCbc2
 @@substate6:
-	call _cutscene_setScreenShakeCounterTo4RumbleAt0
+	call cutscene_setScreenShakeCounterTo4RumbleAt0
 	call decCbb3
 	ret nz
 	call incCbc2
@@ -1118,7 +1118,7 @@ _endgameCutsceneHandler_0f:
 	ld bc,TX_3d0f
 	jp showText
 @@substate8:
-	call _cutscene_decCBB3IfTextNotActive
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc2
 	ld hl,wTmpcbb3
@@ -1137,9 +1137,9 @@ _endgameCutsceneHandler_0f:
 	jp showText
 @@substateA:
 	ld e,$1e
-	jp _cutscene_incCBC2setCBB3whenCBB3is0
+	jp cutscene_incCBC2setCBB3whenCBB3is0
 @@substateB:
-	call _cutscene_setScreenShakeCounterTo4RumbleAt0
+	call cutscene_setScreenShakeCounterTo4RumbleAt0
 	call decCbb3
 	ret nz
 	call incCbc2
@@ -1150,7 +1150,7 @@ _endgameCutsceneHandler_0f:
 	ld bc,$4478
 	jp createEnergySwirlGoingOut
 @@substateC:
-	call _cutscene_setScreenShakeCounterTo4RumbleAt0
+	call cutscene_setScreenShakeCounterTo4RumbleAt0
 	call decCbb3
 	ret nz
 	call incCbc2
@@ -1158,7 +1158,7 @@ _endgameCutsceneHandler_0f:
 	ld (hl),$3c
 	jp @@func_5cb0
 @@substateD:
-	call _cutscene_setScreenShakeCounterTo4RumbleAt0
+	call cutscene_setScreenShakeCounterTo4RumbleAt0
 	call decCbb3
 	ret nz
 	call incCbc1
@@ -1170,12 +1170,12 @@ _endgameCutsceneHandler_0f:
 @@func_5cb0:
 	call getFreePartSlot
 	ret nz
-	ld (hl),PARTID_ROOM_OF_RITES_FALLING_BOULDER
+	ld (hl),PART_ROOM_OF_RITES_FALLING_BOULDER
 	ret
 @@func_5cb7:
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_MAKU_CONFETTI
+	ld (hl),INTERAC_MAKU_CONFETTI
 	ret
 
 @state1:
@@ -1199,17 +1199,17 @@ _endgameCutsceneHandler_0f:
 	.dw @@substate9
 	.dw @@substateA
 @@substate0:
-	call _cutscene_setScreenShakeCounterTo4RumbleAt0
+	call cutscene_setScreenShakeCounterTo4RumbleAt0
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	call incCbc2
 	ld a,$11
 	ld ($cfde),a
-	call _cutscene_loadRoomObjectSetAndFadein
+	call cutscene_loadRoomObjectSetAndFadein
 	ld a,$04
 	ld b,$02
-	call _cutscene_loadAObjectGfxBTimes_andReload
+	call cutscene_loadAObjectGfxBTimes_andReload
 	ld a,SNDCTRL_STOPSFX
 	call playSound
 	ld a,SNDCTRL_FAST_FADEOUT
@@ -1219,7 +1219,7 @@ _endgameCutsceneHandler_0f:
 	ld a,$02
 	jp loadGfxRegisterStateIndex
 @@substate1:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	call incCbc2
 	ld a,$3c
@@ -1248,12 +1248,12 @@ _endgameCutsceneHandler_0f:
 	ld a,$03
 	jp fadeinFromWhiteWithDelay
 @@substate4:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	call refreshObjectGfx
 	ld a,$04
 	ld b,$02
-	call _cutscene_loadAObjectGfxBTimes
+	call cutscene_loadAObjectGfxBTimes
 	ld a,MUS_CREDITS_1
 	call playSound
 	ld hl,wTmpcbb3
@@ -1272,7 +1272,7 @@ _endgameCutsceneHandler_0f:
 	call refreshObjectGfx
 	ld a,$04
 	ld b,$02
-	call _cutscene_loadAObjectGfxBTimes
+	call cutscene_loadAObjectGfxBTimes
 	ld hl,wTmpcbb3
 	ld (hl),$3c
 	ld hl,$cfc0
@@ -1293,7 +1293,7 @@ _endgameCutsceneHandler_0f:
 	call disableLcd
 	call clearScreenVariablesAndWramBank1
 	call hideStatusBar
-	ld a,$3c
+	ld a,GFXH_SCENE_CREDITS_MAKUTREE
 	call loadGfxHeader
 	ld a,PALH_c9
 	call loadPaletteHeader
@@ -1301,12 +1301,12 @@ _endgameCutsceneHandler_0f:
 	ld (hl),$f0
 	ld a,$04
 	call loadGfxRegisterStateIndex
-	call _cutscene_resetOamWithSomething1
+	call cutscene_resetOamWithSomething1
 	ld a,$03
 	jp fadeinFromWhiteWithDelay
 @@substate9:
-	call _cutscene_resetOamWithSomething1
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_resetOamWithSomething1
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	call incCbc2
 	ld hl,wTmpcbb3
@@ -1314,8 +1314,8 @@ _endgameCutsceneHandler_0f:
 	ld a,$03
 	jp fadeoutToBlackWithDelay
 @@substateA:
-	call _cutscene_resetOamWithSomething1
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_resetOamWithSomething1
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	ld a,CUTSCENE_CREDITS
 	ld (wCutsceneIndex),a
@@ -1336,7 +1336,7 @@ _endgameCutsceneHandler_0f:
 
 ;;
 ; CUTSCENE_CREDITS
-_endgameCutsceneHandler_0a:
+endgameCutsceneHandler_0a:
 	call @runStates
 	jp func_3539
 
@@ -1356,7 +1356,7 @@ _endgameCutsceneHandler_0a:
 	.dw @@substate1
 	.dw @@substate2
 @@substate0:
-	call _cutscene_decCBB3IfNotFadingOut
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	call func_60e0
 	call incCbc2
@@ -1423,7 +1423,7 @@ _endgameCutsceneHandler_0a:
 	ldh (<hOamTail),a
 	ld a,($cfde)
 	ld c,a
-	call _cutscene_clearCFC0ToCFDF
+	call cutscene_clearCFC0ToCFDF
 	ld a,c
 	ld ($cfde),a
 	cp $04
@@ -1434,7 +1434,7 @@ _endgameCutsceneHandler_0a:
 	inc hl
 	ld c,(hl)
 	ld a,$00
-	call func_36f6
+	call forceLoadRoom
 	ld a,($cfde)
 	ld hl,@@table_5f24
 	rst_addAToHl
@@ -1443,7 +1443,7 @@ _endgameCutsceneHandler_0a:
 +
 	ld a,($cfde)
 	add a
-	add $85
+	add GFXH_CREDITS_SCENE1
 	call loadGfxHeader
 	ld a,PALH_0f
 	call loadPaletteHeader
@@ -1471,16 +1471,16 @@ _endgameCutsceneHandler_0a:
 	ldh (<hCameraX),a
 	ld hl,$cfde
 	ld b,(hl)
-	call _cutscene_parseObjectData_andLoadObjectGfx
+	call cutscene_parseObjectData_andLoadObjectGfx
 	ld a,$04
 	call loadGfxRegisterStateIndex
 	jp fadeinFromWhite
 
 @@table_5f1c:
-	.db $00 $38
-	.db $00 $3a
-	.db $00 $4a
-	.db $01 $16
+	dwbe ROOM_AGES_038
+	dwbe ROOM_AGES_03a
+	dwbe ROOM_AGES_04a
+	dwbe ROOM_AGES_116
 
 @@table_5f24:
 	.db $2d $0f
@@ -1512,7 +1512,7 @@ _endgameCutsceneHandler_0a:
 	call clearWramBank1
 	ld a,($cfde)
 	add a
-	add $86
+	add GFXH_CREDITS_IMAGE1
 	call loadGfxHeader
 	ld hl,wTmpcbb3
 	ld (hl),$5a
@@ -1542,7 +1542,7 @@ _endgameCutsceneHandler_0a:
 	call incCbc2
 	call getFreeInteractionSlot
 	ret nz
-	ld (hl),INTERACID_CREDITS_TEXT_HORIZONTAL
+	ld (hl),INTERAC_CREDITS_TEXT_HORIZONTAL
 	inc l
 	ld a,($cfde)
 	ldi (hl),a
@@ -1572,7 +1572,7 @@ _endgameCutsceneHandler_0a:
 	jr ++
 @@func_5fc7:
 	call cutscene_clearTmpCBB3
-	call _cutscene_clearCFC0ToCFDF
+	call cutscene_clearCFC0ToCFDF
 	ld a,$02
 	ld ($cbc1),a
 ++
@@ -1611,53 +1611,53 @@ disableLcdAndLoadRoom_body:
 	ret
 
 
-_cutscene_parseObjectData_andLoadObjectGfx:
+cutscene_parseObjectData_andLoadObjectGfx:
 	call getEntryFromObjectTable1
 	call parseGivenObjectData
 	call refreshObjectGfx
-	jp _cutsceneFunc_6026
+	jp cutsceneFunc_6026
 
-_cutsceneFunc_6026:
+cutsceneFunc_6026:
 	ld a,($cfde)
 	cp $00
-	jr z,_cutscene_load_04_ObjectGfx2Times_andReload
+	jr z,cutscene_load_04_ObjectGfx2Times_andReload
 	cp $01
-	jr z,_cutscene_load_26_ObjectGfx2Times_andReload
+	jr z,cutscene_load_26_ObjectGfx2Times_andReload
 	cp $02
-	jr z,_cutscene_load_24_ObjectGfx2Times_andReload
+	jr z,cutscene_load_24_ObjectGfx2Times_andReload
 	cp $04
-	jr z,_cutscene_load_26_ObjectGfx2Times_andReload
+	jr z,cutscene_load_26_ObjectGfx2Times_andReload
 	ret
 
-_cutscene_loadAObjectGfxBTimes:
+cutscene_loadAObjectGfxBTimes:
 	ld hl,wLoadedObjectGfx
-_cutscene_loadAintoHL_BTimes:
+cutscene_loadAintoHL_BTimes:
 	ldi (hl),a
 	inc a
 	ld (hl),$01
 	inc l
 	dec b
-	jr nz,_cutscene_loadAintoHL_BTimes
+	jr nz,cutscene_loadAintoHL_BTimes
 	ret
 
-_cutscene_load_24_ObjectGfx2Times_andReload:
+cutscene_load_24_ObjectGfx2Times_andReload:
 	ld a,$24
 	ld b,$02
-	jr _cutscene_loadAObjectGfxBTimes_andReload
-_cutscene_load_26_ObjectGfx2Times_andReload:
+	jr cutscene_loadAObjectGfxBTimes_andReload
+cutscene_load_26_ObjectGfx2Times_andReload:
 	ld a,$26
 	ld b,$02
-	jr _cutscene_loadAObjectGfxBTimes_andReload
-_cutscene_load_04_ObjectGfx2Times_andReload:
+	jr cutscene_loadAObjectGfxBTimes_andReload
+cutscene_load_04_ObjectGfx2Times_andReload:
 	ld a,$04
 	ld b,$02
 
-_cutscene_loadAObjectGfxBTimes_andReload:
-	call _cutscene_loadAObjectGfxBTimes
+cutscene_loadAObjectGfxBTimes_andReload:
+	call cutscene_loadAObjectGfxBTimes
 	jp reloadObjectGfx
 
-_cutscene_incCBC2setCBB3whenCBB3is0:
-	call _cutscene_decCBB3IfTextNotActive
+cutscene_incCBC2setCBB3whenCBB3is0:
+	call cutscene_decCBB3IfTextNotActive
 	ret nz
 	call incCbc2
 	ld hl,wTmpcbb3
@@ -1665,22 +1665,22 @@ _cutscene_incCBC2setCBB3whenCBB3is0:
 	ret
 
 ;;
-_cutscene_decCBB3IfTextNotActive:
+cutscene_decCBB3IfTextNotActive:
 	ld a,(wTextIsActive)
 	or a
 	ret nz
 	jp decCbb3
 
 ;;
-_cutscene_decCBB3IfNotFadingOut:
+cutscene_decCBB3IfNotFadingOut:
 	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	jp decCbb3
 
 
-_cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText:
-	call _cutscene_decCBB3IfNotFadingOut
+cutscene_decCBB3IfNotFadingOut_incState_setCBB3_showText:
+	call cutscene_decCBB3IfNotFadingOut
 	ret nz
 	call incCbc1
 	ld a,e
@@ -1694,15 +1694,15 @@ cutscene_clearTmpCBB3:
 	jp clearMemory
 
 ;;
-_cutscene_clearCFC0ToCFDF:
+cutscene_clearCFC0ToCFDF:
 	ld b,$20
 	ld hl,$cfc0
 	jp clearMemory
 
-_cutscene_setScreenShakeCounterTo4RumbleAt0:
+cutscene_setScreenShakeCounterTo4RumbleAt0:
 	ld a,$04
 	call setScreenShakeCounter
-_cutscene_rumbleSoundWhenFrameCounterLowerNibbleIs0:
+cutscene_rumbleSoundWhenFrameCounterLowerNibbleIs0:
 	ld a,(wFrameCounter)
 	and $0f
 	ld a,SND_RUMBLE2
@@ -1711,14 +1711,14 @@ _cutscene_rumbleSoundWhenFrameCounterLowerNibbleIs0:
 
 
 ;;
-_cutscene_resetOamWithSomething1:
+cutscene_resetOamWithSomething1:
 	ld hl,bank16.oamData_4f73
 	ld e,:bank16.oamData_4f73
 	ld bc,$3038
-	jr _cutscene_resetOamWithData
+	jr cutscene_resetOamWithData
 
 ;;
-_cutscene_resetOamWithSomething2:
+cutscene_resetOamWithSomething2:
 	ld hl,bank16.oamData_4e37
 	ld e,:bank16.oamData_4e37
 	ld bc,$3038
@@ -1726,14 +1726,14 @@ _cutscene_resetOamWithSomething2:
 ;;
 ; @param	bc	Sprite offset
 ; @param	hl	OAM data to load
-_cutscene_resetOamWithData:
+cutscene_resetOamWithData:
 	xor a
 	ldh (<hOamTail),a
 	jp addSpritesFromBankToOam_withOffset
 
 ;;
 ; @param	hl	List of tiles (see below for example of format)
-_cutscene_replaceListOfTiles:
+cutscene_replaceListOfTiles:
 	ld b,(hl)
 	inc hl
 @loop:
@@ -1749,14 +1749,14 @@ _cutscene_replaceListOfTiles:
 	jr nz,@loop
 	ret
 
-_blackTowerEscapeCutscene_doorBlockReplacement:
+blackTowerEscapeCutscene_doorBlockReplacement:
 	.db $04     ; # of entries
 	.db $44 $83 ; Position, New Tile Value
 	.db $45 $83
 	.db $54 $83
 	.db $55 $83
 
-_blackTowerEscapeCutscene_doorOpenReplacement:
+blackTowerEscapeCutscene_doorOpenReplacement:
 	.db $04
 	.db $44 $df
 	.db $45 $ed

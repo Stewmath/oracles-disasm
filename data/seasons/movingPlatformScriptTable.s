@@ -29,12 +29,12 @@
 	.db $0b, \1
 .endm
 
-_movingPlatform_nonDungeonScriptTable:
-	.dw _movingPlatform_nonDungeon00
-	.dw _movingPlatform_nonDungeon01
-	.dw _movingPlatform_nonDungeon02
+movingPlatform_nonDungeonScriptTable:
+	.dw movingPlatform_nonDungeon00
+	.dw movingPlatform_nonDungeon01
+	.dw movingPlatform_nonDungeon02
 
-_movingPlatform_scriptTable:
+movingPlatform_scriptTable:
 	.dw @dungeon00
 	.dw @dungeon01
 	.dw @dungeon02
@@ -338,7 +338,7 @@ _movingPlatform_scriptTable:
 	plat_wait  $10
 	plat_jump @@platform01
 
-_movingPlatform_nonDungeon00:
+movingPlatform_nonDungeon00:
 	plat_setspeed $50
 --
 	plat_wait  $3c
@@ -354,16 +354,16 @@ _movingPlatform_nonDungeon00:
 	plat_wait  $3c
 	plat_jump --
 
-_movingPlatform_nonDungeon01:
+movingPlatform_nonDungeon01:
 	plat_wait  $08
 	plat_right $40
 	plat_wait  $08
 	plat_left  $40
-	plat_jump _movingPlatform_nonDungeon01
+	plat_jump movingPlatform_nonDungeon01
 
-_movingPlatform_nonDungeon02:
+movingPlatform_nonDungeon02:
 	plat_wait  $08
 	plat_left  $40
 	plat_wait  $08
 	plat_right $40
-	plat_jump _movingPlatform_nonDungeon02
+	plat_jump movingPlatform_nonDungeon02

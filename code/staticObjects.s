@@ -1,4 +1,4 @@
- m_section_free staticObjects NAMESPACE staticObjects
+m_section_free staticObjects NAMESPACE staticObjects
 
 ;;
 ; Reads the static object buffer and creates the objects for the room.

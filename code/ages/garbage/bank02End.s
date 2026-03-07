@@ -4,7 +4,7 @@
 ; "readParametersForRectangleDrawing".
 
 ;;
-_fake_readParametersForRectangleDrawing:
+fake_readParametersForRectangleDrawing:
 	ldi a,(hl)
 	ld b,a
 	ldi a,(hl)
@@ -12,15 +12,15 @@ _fake_readParametersForRectangleDrawing:
 	ret
 
 ;;
-_fake_drawRectangleToVramTiles_withParameters:
+fake_drawRectangleToVramTiles_withParameters:
 	ld a,($ff00+R_SVBK)
 	push af
 	ld a,$03
 	ld ($ff00+R_SVBK),a
-	jr _fake_drawRectangleToVramTiles@nextRow
+	jr fake_drawRectangleToVramTiles@nextRow
 
 ;;
-_fake_drawRectangleToVramTiles:
+fake_drawRectangleToVramTiles:
 	ld a,($ff00+R_SVBK)
 	push af
 	ld a,$03
@@ -52,12 +52,12 @@ _fake_drawRectangleToVramTiles:
 	ret
 
 ;;
-_fake_copyRectangleFromVramTilesToAddress_paramBc:
+fake_copyRectangleFromVramTilesToAddress_paramBc:
 	ld l,c
 	ld h,b
 
 ;;
-_fake_copyRectangleFromVramTilesToAddress:
+fake_copyRectangleFromVramTilesToAddress:
 	ld a,($ff00+R_SVBK)
 	push af
 
@@ -102,14 +102,14 @@ _fake_copyRectangleFromVramTilesToAddress:
 	ret
 
 ;;
-_fake_copyRectangleToRoomLayoutAndCollisions:
+fake_copyRectangleToRoomLayoutAndCollisions:
 	ldi a,(hl)
 	ld e,a
 	ldi a,(hl)
 	ld d,a
 
 ;;
-_fake_copyRectangleToRoomLayoutAndCollisions_paramDe:
+fake_copyRectangleToRoomLayoutAndCollisions_paramDe:
 	ldi a,(hl)
 	ld b,a
 	ldi a,(hl)
@@ -136,14 +136,14 @@ _fake_copyRectangleToRoomLayoutAndCollisions_paramDe:
 	ret
 
 ;;
-_fake_roomTileChangesAfterLoad04:
+fake_roomTileChangesAfterLoad04:
 	ld hl,wInShop
 	set 1,(hl)
 	ld a,TREE_GFXH_03
 	jp $1686
 
 ;;
-_fake_checkLoadPastSignAndChestGfx:
+fake_checkLoadPastSignAndChestGfx:
 	ld a,(wDungeonIndex)
 	cp $0f
 	ret z
@@ -164,7 +164,7 @@ _fake_checkLoadPastSignAndChestGfx:
 	ld a,UNCMP_GFXH_AGES_37
 	jp $05df
 
-_fake_rectangleData_02_7de1:
+fake_rectangleData_02_7de1:
 	.db $06 $06
 	.dw w3VramTiles+8 w2TmpGfxBuffer
 

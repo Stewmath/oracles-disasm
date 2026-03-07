@@ -94,7 +94,7 @@ cutscene02:
 	call getFreeInteractionSlot
 	jr nz,+
 
-	ld (hl),INTERACID_ROCKDEBRIS
+	ld (hl),INTERAC_ROCKDEBRIS
 	ld l,Interaction.yh
 	call setShortPosition_paramC
 +
