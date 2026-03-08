@@ -671,14 +671,14 @@ groups:
       Good dancers get a prize.
       We're about to practice.
       Would you like to dance with us?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_0101
     index: 0x01
     text: |-
       We're about to start practice.
       Will you dance with us?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_0102
     index: 0x02
@@ -717,7 +717,7 @@ groups:
     text: |-
       Don't mess up or bump into the people near you.
       Got it?
-        \opt()Yes \opt()Umm...
+        \opt()Yes   \opt()Umm...
 
   - name: TX_0109
     index: 0x09
@@ -785,7 +785,7 @@ groups:
     index: 0x15
     text: |-
       Need instructions?
-        \opt()No \opt()Yes
+        \opt()No   \opt()Yes
 
 - group: 0x02
   data:
@@ -858,7 +858,7 @@ groups:
     index: 0x00
     text: |-
       \call(0xfd)
-       \opt()Warp \opt()Don't
+       \opt()Warp   \opt()Don't
 
   - name: TX_0301
     index: 0x01
@@ -2339,7 +2339,7 @@ groups:
       Say! Is that a \col(1)Cuccodex\col(0)?
       That would be a big help...
       May I have it?
-        \opt()Sure \opt()Sorry
+        \opt()Sure   \opt()Sorry
 
   - name: TX_0b14
     index: 0x14
@@ -2386,7 +2386,7 @@ groups:
       Oh, my! That doll!
       It's so ghastly it gives me chills!
       Let me have it!
-        \opt()OK \opt()No way
+        \opt()OK   \opt()No way
 
   - name: TX_0b1c
     index: 0x1c
@@ -2418,7 +2418,7 @@ groups:
       It's just what I need!
       A \col(0x84)\item(0x04)\col(0) like that would make great soup!\stop
       Leave it to me!
-        \opt()Sure \opt()No way
+        \opt()Sure   \opt()No way
 
   - name: TX_0b21
     index: 0x21
@@ -2459,7 +2459,7 @@ groups:
     text: |-
       \sfx(0xc7)Oh? Dat sbells good!
       Cad I hab dat soup \col(0x80)\item(0x05)\col(0)?
-        \opt()Sure \opt()No way
+        \opt()Sure   \opt()No way
 
   - name: TX_0b28
     index: 0x28
@@ -2495,7 +2495,7 @@ groups:
       That \col(1)vase\col(0)!\stop
       Give me that \col(1)vase\col(0), please!
       I'm begging you!
-        \opt()Sure \opt()No way
+        \opt()Sure   \opt()No way
 
   - name: TX_0b2d
     index: 0x2d
@@ -2535,7 +2535,7 @@ groups:
       You have a \col(1)Fish\col(0)!
       It's Mittens' favorite food!
       Is that for her?
-        \opt()Of course \opt()No
+        \opt()Of course   \opt()No
 
   - name: TX_0b33
     index: 0x33
@@ -2583,7 +2583,7 @@ groups:
     text: |-
       \call(TX_0b39)
       Wake him with the \col(1)Megaphone\col(0) \col(0x84)\item(0x08)\col(0)?
-        \opt()Wake him \opt()No
+        \opt()Wake him   \opt()No
 
   - name: TX_0b3b
     index: 0x3b
@@ -2620,7 +2620,7 @@ groups:
       Ya've got a \col(1)Mushroom\col(0)!
       I'll trade my \col(1)Wooden Bird\col(0)!
       How about it?
-        \opt()OK \opt()No way
+        \opt()OK   \opt()No way
 
   - name: TX_0b40
     index: 0x40
@@ -2650,7 +2650,7 @@ groups:
     text: |-
       \pos(2)You! That's an amazing bird you have!
       May I?
-        \opt()Sure \opt()No way
+        \opt()Sure   \opt()No way
 
   - name: TX_0b45
     index: 0x45
@@ -2679,7 +2679,7 @@ groups:
     text: |-
       \col(1)Engine Grease\col(0) \col(0x84)\item(0x0b)\col(0)?
       Will that make it go quickly?
-      \opt()Sure \opt()Maybe not
+      \opt()Sure   \opt()Maybe not
 
   - name: TX_0b4a
     index: 0x4a
@@ -2714,7 +2714,7 @@ groups:
     index: 0x4f
     text: |-
       \pos(2)It's staring at your \col(1)Phonograph\col(0) \col(0x84)\item(0x0c)\col(0).
-      \opt()Play it \opt()Don't
+      \opt()Play it   \opt()Don't
 
   - name: TX_0b50
     index: 0x50
@@ -2734,7 +2734,7 @@ groups:
       \sfx(0xc7)I want to forge a great sword like those the Gorons of old are known for.
       But I'll never be able to forge it properly without Biggoron's \col(1)secret\col(0).
       Do you know it?
-       \opt()Yes \opt()No
+       \opt()Yes   \opt()No
 
   - name: TX_0b53
     index: 0x53
@@ -2774,7 +2774,7 @@ groups:
       \sfx(0xc7)I'll teach the \col(1)secret\col(0) of Biggoron that will let you use \col(1)Biggoron's Sword\col(0) in \col(3)Labrynna\col(0).\stop
       \secret1\stop
       Hear it again?
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_0b59
     index: 0x59
@@ -2992,7 +2992,7 @@ groups:
     text: |-
       \pos(2)\col(1)Magic Potion\col(0)
       300 Rupees each.
-        \opt()OK \opt()No thanks\cmd8(0x0d)
+        \opt()OK   \opt()No thanks\cmd8(0x0d)
 
   - name: TX_0d02
     index: 0x02
@@ -3017,7 +3017,7 @@ groups:
     text: |-
       \pos(2)\col(1)Gasha Seed\col(0)
       300 Rupees each!
-        \opt()OK \opt()No thanks\cmd8(0x0e)
+        \opt()OK   \opt()No thanks\cmd8(0x0e)
 
   - name: TX_0d06
     index: 0x06
@@ -3048,7 +3048,7 @@ groups:
     text: |-
       \pos(2)\col(1)Bombchu\col(0)
       5 for 100 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x11)
+        \opt()OK   \opt()No thanks\cmd8(0x11)
 
   - name: TX_0d0b
     index: 0x0b
@@ -3082,21 +3082,21 @@ groups:
     text: |-
       \col(1)3 Hearts\col(0)\stop
        10 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e03
     index: 0x03
     text: |-
       \col(1)Wooden Shield\col(0)\stop
        30 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e04
     index: 0x04
     text: |-
       \col(1)10 Bombs\col(0)\stop
        20 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e05
     index: 0x05
@@ -3125,21 +3125,21 @@ groups:
     text: |-
       \col(1)Big Seed Satchel\col(0)\stop
        500 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e0a
     index: 0x0a
     text: |-
       \col(1)1 Gasha Seed\col(0)\stop
        500 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e0b
     index: 0x0b
     text: |-
       \col(1)Treasure Map\col(0)\stop
        200 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e0c
     index: 0x0c
@@ -3169,7 +3169,7 @@ groups:
       One out of two chests will have treasure.
       You'll get a nice gift if you can open the right chest three times in a row!
       Each try costs 10 Rupees.
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_0e10
     index: 0x10
@@ -3187,7 +3187,7 @@ groups:
       Congratulations!
       OK! Double or nothing.
       If you do it again, you'll get a special gift!
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_0e13
     index: 0x13
@@ -3209,7 +3209,7 @@ groups:
       Congratulations!
       This is your final chance!
       If you get this right, you'll get an awesome gift!
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_0e16
     index: 0x16
@@ -3222,7 +3222,7 @@ groups:
     index: 0x17
     text: |-
       Too bad. Will you try again?
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_0e18
     index: 0x18
@@ -3245,21 +3245,21 @@ groups:
     text: |-
       \col(1)Strange Flute\col(0)\stop
        150 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e1c
     index: 0x1c
     text: |-
       This satchel holds lots of \col(1)seeds\col(0).
       It's 300 Rupees.
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_0e1d
     index: 0x1d
     text: |-
       \col(1)Gasha Seed\col(0)\stop
       \num1 Rupees
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_0e1e
     index: 0x1e
@@ -3267,7 +3267,7 @@ groups:
       Treasure Map
       It may be linked to the legendary ruins...
       200 Rupees
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_0e1f
     index: 0x1f
@@ -3296,14 +3296,14 @@ groups:
     text: |-
       \col(1)1 Gasha Seed\col(0)\stop
         100 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e23
     index: 0x23
     text: |-
       \col(1)Advance Ring\col(0)\stop
        100 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e24
     index: 0x24
@@ -3317,7 +3317,7 @@ groups:
       \col(1)Magical Ring\col(0).
       What kind of \col(1)ring\col(0) it is, is a secret.\stop
       100 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e26
     index: 0x26
@@ -3341,14 +3341,14 @@ groups:
     text: |-
       \col(1)Iron Shield\col(0)\stop
        50 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
   - name: TX_0e2a
     index: 0x2a
     text: |-
       \col(1)Mirror Shield\col(0)\stop
        80 Rupees
-        \opt()OK \opt()No thanks\cmd8(0x0f)
+        \opt()OK   \opt()No thanks\cmd8(0x0f)
 
 - group: 0x0f
   data:
@@ -3517,7 +3517,7 @@ groups:
     index: 0x01
     text: |-
       Do you know of this land's mystical \col(1)rings\col(0)?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_1202
     index: 0x02
@@ -3607,7 +3607,7 @@ groups:
     index: 0x02
     text: |-
       Do you know of the Owl Stones?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_1403
     index: 0x03
@@ -3784,7 +3784,7 @@ groups:
       Gathering all eight is the only option.
       The \col(1)essences\col(0) possess the sacred power of nature, with which you can break the shadow barrier and save \col(3)Din\col(0).\stop
       Shall I repeat it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_1702
@@ -4586,7 +4586,7 @@ groups:
       Bwee! Let it go?\stop
       Then you can pay us for it!
       50 Rupees!
-        \opt()OK \opt()No way\cmd8(0x1f)
+        \opt()OK   \opt()No way\cmd8(0x1f)
 
   - name:
     - TX_2105
@@ -4598,7 +4598,7 @@ groups:
       You're smart!
       But 50 Rupees is too cheap!
       Give me 30 more!
-        \opt()OK \opt()No way\cmd8(0x12)
+        \opt()OK   \opt()No way\cmd8(0x12)
 
   - name: TX_2107
     index: 0x07
@@ -4729,7 +4729,7 @@ groups:
     index: 0x1c
     text: |-
       Do you have \col(1)Bombs\col(0)?
-        \opt()Yes \opt()No\cmd8(0x13)
+        \opt()Yes   \opt()No\cmd8(0x13)
 
   - name: TX_211d
     index: 0x1d
@@ -4956,7 +4956,7 @@ groups:
     index: 0x01
     text: |-
       Will you bet \num1 Rupees?
-        \opt()OK \opt()Nah
+        \opt()OK   \opt()Nah
 
   - name: TX_2302
     index: 0x02
@@ -4976,7 +4976,7 @@ groups:
       And no \col(1)rings\col(0)!
       Only fists!
       Got it?
-       \opt()Got it \opt()No
+       \opt()Got it   \opt()No
 
   - name: TX_2304
     index: 0x04
@@ -5038,7 +5038,7 @@ groups:
     index: 0x0c
     text: |-
       Huh? Once more?
-         \opt()Yeah \opt()No way
+         \opt()Yeah   \opt()No way
 
   - name: TX_230d
     index: 0x0d
@@ -5051,7 +5051,7 @@ groups:
       Dat means no rings, neither!
       You cheated, so the bet goes up to 20 Rupees.
       Got it?
-        \opt()Yep \opt()Nope
+        \opt()Yep   \opt()Nope
 
 - group: 0x24
   data:
@@ -5424,7 +5424,7 @@ groups:
     text: |-
       What a cute \col(1)Ribbon\col(0).
       Is it for me?
-        \opt()Yep \opt()Nope
+        \opt()Yep   \opt()Nope
 
   - name: TX_2902
     index: 0x02
@@ -5446,7 +5446,7 @@ groups:
     index: 0x05
     text: |-
       Do you wanna go on a date?
-       \opt()Sure  \opt()No way
+       \opt()Sure   \opt()No way
 
   - name: TX_2906
     index: 0x06
@@ -5573,7 +5573,7 @@ groups:
     text: |-
       You have \col(1)Red Ore\col(0) and \col(1)Blue Ore\col(0)!
       Did you come to mix the two to create \col(1)Hard Ore\col(0)?
-        \opt()Yep  \opt()Nope
+        \opt()Yep   \opt()Nope
 
   - name: TX_2a01
     index: 0x01
@@ -5694,7 +5694,7 @@ groups:
     index: 0x0b
     text: |-
       How about it?
-        \opt()Sure \opt()No
+        \opt()Sure   \opt()No
 
   - name: TX_2b0c
     index: 0x0c
@@ -6190,7 +6190,7 @@ groups:
       Do come in!
       Welcome to \col(3)Vasu\col(0) Jewelers.\stop
       What can I do?\stop
-       \opt()Appraise \opt()List
+       \opt()Appraise   \opt()List
        \opt()Quit
 
   - name: TX_3004
@@ -6202,7 +6202,7 @@ groups:
     index: 0x05
     text: |-
       It's 20 Rupees!
-       \opt()Appraise \opt()Quit
+       \opt()Appraise   \opt()Quit
 
   - name: TX_3006
     index: 0x06
@@ -6224,14 +6224,14 @@ groups:
     text: |-
       I am \col(3)Red Snake\col(0).\stop
       And you want to ask about \col(1)rings\col(0)?
-          \opt()Yes \opt()No
+          \opt()Yes   \opt()No
 
   - name: TX_300a
     index: 0x0a
     text: |-
       Appraisal or Ring Boxes...
       Which one?
-      \opt()Appraisal \opt()Box
+      \opt()Appraisal   \opt()Box
 
   - name: TX_300b
     index: 0x0b
@@ -6259,7 +6259,7 @@ groups:
     index: 0x0d
     text: |-
       Take your pick.
-       \opt()Fortune \opt()Link
+       \opt()Fortune   \opt()Link
 
   - name: TX_300e
     index: 0x0e
@@ -6270,7 +6270,7 @@ groups:
       OK! Now for your \col(3)fortune\col(0)!\stop
       On "Start," I'll go see your friend.
       On "Ready," you both choose.
-      Ready  \opt()Start!
+      Ready   \opt()Start!
 
   - name: TX_300f
     index: 0x0f
@@ -6288,7 +6288,7 @@ groups:
     index: 0x11
     text: |-
       Appraise this?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3012
     index: 0x12
@@ -6320,7 +6320,7 @@ groups:
     index: 0x16
     text: |-
       Do you want to hear more?
-         \opt()Yes \opt()No
+         \opt()Yes   \opt()No
 
   - name: TX_3017
     index: 0x17
@@ -6335,14 +6335,14 @@ groups:
       I am keeper of \col(1)ring secrets\col(0)!
       Say a secret, or ask about a secret.
       Make your choice!\stop
-       \opt()Say \opt()Ask
+       \opt()Say   \opt()Ask
        \opt()Quit
 
   - name: TX_3019
     index: 0x19
     text: |-
       "All About Ring Secrets."
-        \opt()Read \opt()Don't
+        \opt()Read   \opt()Don't
 
   - name: TX_301a
     index: 0x1a
@@ -6374,7 +6374,7 @@ groups:
       \secret1
       \secret2\stop
       Listen again?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_301e
     index: 0x1e
@@ -6388,13 +6388,13 @@ groups:
       I am \col(3)Blue Snake\col(0).\stop
       I give \col(3)ring fortunes\col(0).
       Would you like a \col(3)ring fortune\col(0)?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3020
     index: 0x20
     text: |-
       "Ring Link Basics"
-        \opt()Read \opt()Don't
+        \opt()Read   \opt()Don't
 
   - name: TX_3021
     index: 0x21
@@ -6419,14 +6419,14 @@ groups:
       I am \col(3)Blue Snake\col(0).\stop
       I manage the Game Link cable.
       What shall I do?\stop
-       \opt()Fortune  \opt()Link
+       \opt()Fortune   \opt()Link
        \opt()Nothing
 
   - name: TX_3025
     index: 0x25
     text: |-
       Pick a topic.\stop
-       \opt()Fortune \opt()Link
+       \opt()Fortune   \opt()Link
        \opt()Nothing
 
   - name: TX_3026
@@ -6440,7 +6440,7 @@ groups:
          --NOTE!!!--
       If you haven't finished this quest before or come by \col(1)secret\col(0) to \col(3)Holodrum\col(0), you cannot \col(1)link\col(0).\stop
       Read more?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3027
     index: 0x27
@@ -6571,7 +6571,7 @@ groups:
       But you must keep it in your \col(1)Ring Box\col(0).
       The mystical power will gradually weaken and you won't be able to use it.
       Understood?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_303b
     index: 0x3b
@@ -6596,7 +6596,7 @@ groups:
       You cannot do it alone.\stop
       You must do it with a Game Pak a friend has played.\stop
       Read others?
-        \opt()Read \opt()Don't
+        \opt()Read   \opt()Don't
 
   - name: TX_303e
     index: 0x3e
@@ -7293,7 +7293,7 @@ groups:
     index: 0x02
     text: |-
       Need anything?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3103
     index: 0x03
@@ -7319,7 +7319,7 @@ groups:
       And I'll teach you the \col(1)secret\col(0) to carrying more \col(1)rings\col(0) in \col(3)Labrynna\col(0), too.\stop
       \secret1\stop
       Did you get it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3107
     index: 0x07
@@ -7365,61 +7365,61 @@ groups:
     index: 0x00
     text: |-
       Want to learn a \col(1)hero's skill\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3201
     index: 0x01
     text: |-
       Want to learn \col(1)shield\col(0) tactics?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3202
     index: 0x02
     text: |-
       Want to learn about the \col(1)Mystical Seeds\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3203
     index: 0x03
     text: |-
       Want to learn about \col(1)Bombs\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3204
     index: 0x04
     text: |-
       Want to learn about \col(1)items\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3205
     index: 0x05
     text: |-
       Want to learn about \col(1)maps\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3206
     index: 0x06
     text: |-
       Want to learn about \col(1)saving\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3207
     index: 0x07
     text: |-
       Want to learn about \col(1)seasons\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3208
     index: 0x08
     text: |-
       Want to learn about the \col(1)Subscreens\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_3209
     index: 0x09
     text: |-
       Want to learn about \col(1)essences\col(0)?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_320a
     index: 0x0a
@@ -7512,7 +7512,7 @@ groups:
       You've done well to make it this far, but there is a final trial for the true hero.
       It costs 60 Rupees.
       Will you try?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3304
     index: 0x04
@@ -7582,7 +7582,7 @@ groups:
     index: 0x00
     text: |-
       You can plant a \col(1)Gasha Seed\col(0).
-        \opt()Plant \opt()Don't
+        \opt()Plant   \opt()Don't
 
   - name: TX_3501
     index: 0x01
@@ -7730,7 +7730,7 @@ groups:
     text: |-
       \sfx(0xc7)It's so nice of you to come all the way here just to see me!
       Since you did, shall I make it so you can carry more \col(1)rings\col(0)?
-        \opt()Yes! \opt()No
+        \opt()Yes!   \opt()No
 
   - name: TX_370a
     index: 0x0a
@@ -8207,7 +8207,7 @@ groups:
     text: |-
       If I'd known the \col(1)secret\col(0) to bein' lucky, the boat wouldn't 'ave sunk and I wouldn't 'ave been left behind.
       Do ya know the secret?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3a2d
     index: 0x2d
@@ -8255,7 +8255,7 @@ groups:
       I'll teach ya the \col(1)secret\col(0) for bringin' yer luck with ya to \col(3)Labrynna\col(0).
       \secret1\stop
       Got that?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3a34
     index: 0x34
@@ -8337,7 +8337,7 @@ groups:
       \call(TX_3b15)\stop
       He says you hold a \col(1)bell\col(0) of great value.\stop
       He hasn't offered to polish it, but should he?
-       \opt()Please \opt()Do it!
+       \opt()Please   \opt()Do it!
 
   - name: TX_3b04
     index: 0x04
@@ -8407,7 +8407,7 @@ groups:
     text: |-
       \call(TX_3b15)\stop
       Has anyone told you the \col(1)secret\col(0) for getting your \col(1)shield\col(0) forged?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3b0f
     index: 0x0f
@@ -8457,7 +8457,7 @@ groups:
       I'll teach you the \col(1)secret\col(0) to taking your forged \col(1)shield\col(0) to \col(3)Labrynna\col(0).\stop
       \secret1\stop
       Got it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_3b17
     index: 0x17
@@ -8963,7 +8963,7 @@ groups:
     text: |-
       Oh! You have \col(1)Red Ore\col(0) and \col(1)Blue Ore\col(0) there!
       Shall I make \col(1)Hard Ore\col(0)?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4001
     index: 0x01
@@ -9004,7 +9004,7 @@ groups:
     text: |-
       This is the most chamber in the \col(3)Temple of Seasons\col(0).
       Have you some errand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4102
     index: 0x02
@@ -9048,7 +9048,7 @@ groups:
     index: 0x02
     text: |-
       Are you strong?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4203
     index: 0x03
@@ -9205,7 +9205,7 @@ groups:
     - 0x07
     text: |-
       You would name him \col(3)\Child\col(0)?
-       \opt()Yes \opt()Maybe not
+       \opt()Yes   \opt()Maybe not
 
   - name: TX_4408
     index: 0x08
@@ -9231,15 +9231,15 @@ groups:
       \col(3)\Child\col(0) looks a little\x20 strange.\stop
       I want to take him to a doctor, but we have no Rupees...
       Could you please lend us some?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_440c
     index: 0x0c
     text: |-
       Really?
       How much can you lend us?
-       \opt()150 \opt()50
-       \opt()10  \opt()1
+       \opt()150   \opt()50
+       \opt()10   \opt()1
 
   - name: TX_440d
     index: 0x0d
@@ -9319,7 +9319,7 @@ groups:
     text: |-
       \col(3)\Child\col(0) is so hyperactive!\stop
       Were you a hyperactive child, \Link?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_441a
     index: 0x1a
@@ -9327,7 +9327,7 @@ groups:
       \col(3)\Child\col(0) is very shy.\stop
       What kind of child were you, \Link?\stop
       An energetic one?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_441b
     index: 0x1b
@@ -9335,7 +9335,7 @@ groups:
       \col(3)\Child\col(0) is such a curious child.\stop
       What kind of child were you, \Link?\stop
       An energetic one?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_441c
     index: 0x1c
@@ -9346,7 +9346,7 @@ groups:
     index: 0x1d
     text: |-
       Quiet, perhaps?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_441e
     index: 0x1e
@@ -9357,7 +9357,7 @@ groups:
     index: 0x1f
     text: |-
       Were you weird?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4420
     index: 0x20
@@ -9545,7 +9545,7 @@ groups:
     text: |-
       Buy something!
       A \col(1)Shield\col(0) for \num1 Rupees?
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_450b
     index: 0x0b
@@ -9561,7 +9561,7 @@ groups:
       \sfx(0xc6)Greetings!
       Here's a deal!
       10 Ember Seeds for 20 Rupees!
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_450d
     index: 0x0d
@@ -9569,7 +9569,7 @@ groups:
       \sfx(0xc6)Greetings!
       Here's a deal!
       \col(1)10 Bombs\col(0) for 30 Rupees!
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
 - group: 0x46
   data:
@@ -9583,7 +9583,7 @@ groups:
     text: |-
       My song is almost finished!\stop
       Say, which is more important, love or courage?
-        \opt()Love \opt()Courage
+        \opt()Love   \opt()Courage
 
   - name: TX_4602
     index: 0x02
@@ -9596,7 +9596,7 @@ groups:
     text: |-
       Finally! My song is now finished!\stop
       Will you listen?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4604
     index: 0x04
@@ -9628,7 +9628,7 @@ groups:
     index: 0x02
     text: |-
       Do you have a girlfriend?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4703
     index: 0x03
@@ -9739,7 +9739,7 @@ groups:
     index: 0x02
     text: |-
       Which was first, the chicken or the egg?
-        \opt()Chicken \opt()Egg
+        \opt()Chicken   \opt()Egg
 
   - name: TX_4903
     index: 0x03
@@ -9773,19 +9773,19 @@ groups:
       So can you give me some advice?\stop
       What will make me mightier?
       Training daily?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4a02
     index: 0x02
     text: |-
       Natural talent?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4a03
     index: 0x03
     text: |-
       A caring heart?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4a04
     index: 0x04
@@ -9826,14 +9826,14 @@ groups:
     text: |-
       I'm gonna save my money and go out into the world!\stop
       So can you make a contribution?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4b02
     index: 0x02
     text: |-
       How much can you contribute?
-       \opt()100 \opt()50
-       \opt()10  \opt()1
+       \opt()100   \opt()50
+       \opt()10    \opt()1
 
   - name: TX_4b03
     index: 0x03
@@ -9892,7 +9892,7 @@ groups:
     index: 0x00
     text: |-
       Did you need me?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_4c01
@@ -9910,7 +9910,7 @@ groups:
       In that case, take my test.
       If you pass, I shall give your \col(1)sword\col(0) new power!
       Will you try?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c04
     index: 0x04
@@ -9925,7 +9925,7 @@ groups:
       In a moment, 12 beasts will appear.
       You must slay them all in 30 seconds, without being slain yourself, of course.
       Got it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c06
     index: 0x06
@@ -9947,7 +9947,7 @@ groups:
     index: 0x09
     text: |-
       \pos(1)Try it again?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c0a
     index: 0x0a
@@ -9966,7 +9966,7 @@ groups:
       \pos(2)I'll teach you a \col(1)secret\col(0) that will give this power to your \col(1)sword\col(0) in \col(3)Labrynna\col(0), too.\stop
       \secret1\stop
       I can repeat it!
-      \opt()Sure \opt()No thanks
+      \opt()Sure   \opt()No thanks
 
   - name: TX_4c0d
     index: 0x0d
@@ -9977,7 +9977,7 @@ groups:
     index: 0x0e
     text: |-
       Are you ready to take my test?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c0f
     index: 0x0f
@@ -9985,7 +9985,7 @@ groups:
       Dee-doo-doooo!\stop
       Hey! Why are you in my bedroom?
       Are you on some errand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c10
     index: 0x10
@@ -10017,7 +10017,7 @@ groups:
     index: 0x14
     text: |-
       Will you try it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c15
     index: 0x15
@@ -10029,7 +10029,7 @@ groups:
       Answer correctly to pass.\stop
       However, there are three tests in all, so don't let passing one go to your head.
       You got it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c16
     index: 0x16
@@ -10040,7 +10040,7 @@ groups:
     index: 0x17
     text: |-
       \pos(1)Now then, which were there more of, \col(1)red\col(0) or \col(3)blue\col(0)?
-        \opt()\col(1)Red\col(0) \opt()\col(3)Blue
+        \opt()\col(1)Red\col(0)   \opt()\col(3)Blue
 
   - name: TX_4c18
     index: 0x18
@@ -10048,7 +10048,7 @@ groups:
       \pos(1)Wrong!
       Were your eyes even open?
       Wanna try again?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c19
     index: 0x19
@@ -10070,7 +10070,7 @@ groups:
       \pos(2)I'll teach you a \col(1)secret\col(0) so you can get a \col(1)Heart Container\col(0) in \col(3)Labrynna\col(0), too.\stop
       \secret1\stop
       Got it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c1c
     index: 0x1c
@@ -10086,7 +10086,7 @@ groups:
     - 0x1e
     text: |-
       You wanted to say something?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c1f
     index: 0x1f
@@ -10106,7 +10106,7 @@ groups:
       So he's doing well, huh?
       Thanks for the news!
       Say, could you do me one more favor?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c22
     index: 0x22
@@ -10121,7 +10121,7 @@ groups:
       ...With your \col(1)Boomerang\col(0)?
       ...In only three throws???
       Can you do it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c24
     index: 0x24
@@ -10138,7 +10138,7 @@ groups:
     text: |-
       I'm a nice guy, so I'll give you another chance.
       How about it?
-        \opt()OK \opt()Maybe not
+        \opt()OK   \opt()Maybe not
 
   - name: TX_4c27
     index: 0x27
@@ -10173,7 +10173,7 @@ groups:
       I'll teach you the \col(1)secret\col(0) to using \col(1)Bombchu\col(0) in \col(3)Labrynna\col(0)!\stop
       \secret1\stop
       Got it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c2d
     index: 0x2d
@@ -10185,7 +10185,7 @@ groups:
     text: |-
       Pupil!
       Do you need something?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c2f
     index: 0x2f
@@ -10208,7 +10208,7 @@ groups:
       I'm in a good mood, so I have a gift for you...
       If you can pass my test!
       Will you try?
-        \opt()OK \opt()No
+        \opt()OK   \opt()No
 
   - name: TX_4c32
     index: 0x32
@@ -10227,7 +10227,7 @@ groups:
       First, go down the stairway I'm about to open.\stop
       I put something way in the back.
       If you can get it before time runs out, you'll get a prize!
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_4c35
     index: 0x35
@@ -10247,7 +10247,7 @@ groups:
       \col(4)You took \num1:\num2\col(0)!
       Too bad!!!
       Do you want to try it again?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c38
     index: 0x38
@@ -10274,7 +10274,7 @@ groups:
     - 0x3c
     text: |-
       Will you take my challenge?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_4c3d
@@ -10299,7 +10299,7 @@ groups:
       "\sym(0x1c)Love, love the seed!\sym(0x1c)"
       What's the next part?
       Do you know it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_4c41
     index: 0x41
@@ -10338,7 +10338,7 @@ groups:
       \sfx(0xc6)Now I'll teach you the \col(1)secret\col(0) to carrying more \col(1)seeds\col(0) in \col(3)Labrynna\col(0).\stop
       \secret1\stop
       I can repeat it!
-        \opt()OK \opt()No thanks
+        \opt()OK   \opt()No thanks
 
   - name: TX_4c47
     index: 0x47
@@ -10350,7 +10350,7 @@ groups:
     text: |-
       \call(TX_4c4a)
       Don't you agree?
-         \opt()Yes \opt()No
+         \opt()Yes   \opt()No
 
   - name: TX_4c49
     index: 0x49
@@ -11045,7 +11045,7 @@ groups:
       Hmm... Swing the \col(1)rod\col(0) from atop that stump.
       Its power will be unleashed!
       Do you understand?
-      \opt()Yes \opt()Not really
+      \opt()Yes   \opt()Not really
 
   - name: TX_5207
     index: 0x07
@@ -11080,7 +11080,7 @@ groups:
     text: |-
       I am traveling the lands under \col(3)King Zora's\col(0) orders to find a new domain, but no place exceeds \col(3)Labrynna's\col(0) seas.
       So will you hear my request?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_5301
@@ -11091,7 +11091,7 @@ groups:
     text: |-
       I'd like you to tell this \col(1)secret\col(0) and my report to \col(3)King Zora\col(0) in \col(3)Labrynna's\col(0) seas.
       Understood?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5302
     index: 0x02
@@ -11099,7 +11099,7 @@ groups:
       Here is the \col(1)secret\col(0).\stop
       \secret1\stop
       Understood?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5303
     index: 0x03
@@ -11119,7 +11119,7 @@ groups:
       I saw the statue in \col(3)Lynna\col(0), and I had to meet you.
       In honor of our meeting, I can teach you the happiness \col(1)secret\col(0) that the \col(3)fairies\col(0) in \col(3)Labrynna's\col(0) \col(3)Fairy's Woods\col(0) taught me.
       What do you say?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5307
     index: 0x07
@@ -11134,7 +11134,7 @@ groups:
       Here's the \col(1)secret\col(0)!\stop
       \secret1\stop
       Got it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5309
     index: 0x09
@@ -11152,14 +11152,14 @@ groups:
     text: |-
       If you tell this happiness \col(1)secret\col(0) to the \col(3)fairies\col(0) in \col(3)Labrynna\col(0), you can be even happier!
       Got it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_530c
     index: 0x0c
     text: |-
       I am the senior pupil of \col(3)Troy\col(0), \col(3)Labrynna's\col(0) biologist!
       Listen to my request!
-        \opt()OK \opt()No way
+        \opt()OK   \opt()No way
 
   - name:
     - TX_530d
@@ -11170,7 +11170,7 @@ groups:
     text: |-
       I'm very busy, so I want you to tell this \col(1)secret\col(0) to \col(3)Dr. Troy\col(0) up on \col(3)Rolling Ridge\col(0) in \col(3)Labrynna\col(0)!
       You got that?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_530e
     index: 0x0e
@@ -11178,7 +11178,7 @@ groups:
       This is it!\stop
       \secret1\stop
       Understand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_530f
     index: 0x0f
@@ -11194,7 +11194,7 @@ groups:
     index: 0x12
     text: |-
       Hey! Can I ask you a favor?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_5313
@@ -11206,7 +11206,7 @@ groups:
       \col(3)Mayor Plen\col(0)in \col(3)Labrynna's\col(0) \col(3)Lynna City\col(0) has done so much for me!
       I want to thank him, but I'm too embarrassed to do it myself...
       Can you tell him this \col(1)secret\col(0)?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5314
     index: 0x14
@@ -11214,7 +11214,7 @@ groups:
       The \col(1)secret\col(0) is:\stop
       \secret1\stop
       Can you tell him?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5315
     index: 0x15
@@ -11230,7 +11230,7 @@ groups:
     index: 0x18
     text: |-
       Can you hear my regret?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_5319
@@ -11244,7 +11244,7 @@ groups:
       To set it right, I want you to hear \col(1)secret\col(0).
       Hear my \col(1)secret\col(0)!
       You understand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_531a
     index: 0x1a
@@ -11252,7 +11252,7 @@ groups:
       This was \col(1)secret\col(0)!\stop
       \secret1\stop
       Understand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_531b
     index: 0x1b
@@ -11271,7 +11271,7 @@ groups:
       I'm no enemy!
       I heard a rare \col(1)secret\col(0).
       Do you want to hear it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_531f
@@ -11282,7 +11282,7 @@ groups:
     text: |-
       This \col(1)secret\col(0) is related to the Tokay people in \col(3)Labrynna\col(0)!
       Understand?
-      \opt()Yes \opt()Once more
+      \opt()Yes   \opt()Once more
 
   - name: TX_5320
     index: 0x20
@@ -11290,7 +11290,7 @@ groups:
       This is it!\stop
       \secret1\stop
       Understand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5321
     index: 0x21
@@ -11308,7 +11308,7 @@ groups:
       I'm the mother of \col(3)Mamamu Yan\col(0), \col(3)Labrynna's\col(0) top dog breeder.\stop
       This fellow's from \col(3)Labrynna\col(0), too, but we met here by chance.
       Can you help me?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_5325
@@ -11318,7 +11318,7 @@ groups:
     - 0x29
     text: |-
       Can you tell this \col(1)secret\col(0) to my daughter, \col(3)Mamamu Yan\col(0), in \col(3)Labrynna\col(0)?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5326
     index: 0x26
@@ -11326,7 +11326,7 @@ groups:
       The \col(1)secret\col(0) is:\stop
       \secret1\stop
       OK?
-        \opt()OK \opt()Not OK
+        \opt()OK   \opt()Not OK
 
   - name: TX_5327
     index: 0x27
@@ -11344,7 +11344,7 @@ groups:
       \Link!
       Great timing!
       Can I ask a favor of you?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_532b
@@ -11356,7 +11356,7 @@ groups:
       There's a man named \col(3)Tingle\col(0) on the edge of \col(3)Lynna Village\col(0) who thinks he's a fairy.
       I want you to tell him a \col(1)secret\col(0).
       Understand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_532c
     index: 0x2c
@@ -11364,7 +11364,7 @@ groups:
       This is it:\stop
       \secret1\stop
       Understand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_532d
     index: 0x2d
@@ -11388,7 +11388,7 @@ groups:
       My ancestor's diary says he came to \col(3)Goron Mountain\col(0) from \col(3)Labrynna\col(0) long ago.
       If I could meet him, I'd ask him the meaning of the \col(1)secret\col(0) in the diary.
       Could you research this?
-        \opt()Sure \opt()Sorry
+        \opt()Sure   \opt()Sorry
 
   - name: TX_5333
     index: 0x33
@@ -11396,7 +11396,7 @@ groups:
       The \col(1)secret\col(0) is:\stop
       \secret1\stop
       Did you get it?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5334
     index: 0x34
@@ -11413,7 +11413,7 @@ groups:
     text: |-
       Hi, \Link!
       Can I ask something of you?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name:
     - TX_5337
@@ -11424,7 +11424,7 @@ groups:
     text: |-
       I want you to tell a touching \col(1)secret\col(0) to the authors of my favorite book.\stop
       The authors are twins who lived in \col(3)Labrynna's\col(0) \col(3)Symmetry City\col(0), but the book was written so long ago, they may be gone. OK?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5338
     index: 0x38
@@ -11432,7 +11432,7 @@ groups:
       The \col(1)secret\col(0) is:\stop
       \secret1\stop
       Understand?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5339
     index: 0x39
@@ -11469,7 +11469,7 @@ groups:
     text: |-
       \call(TX_5500)
       Do you know any \col(1)secrets\col(0)?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5503
     index: 0x03
@@ -11491,7 +11491,7 @@ groups:
     text: |-
       I can give shape to powerful \col(1)secrets\col(0) that I remember.\stop
       Do you know the \col(1)secret\col(0) to moving through time?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_5508
     index: 0x08
@@ -11526,14 +11526,14 @@ groups:
     index: 0x0d
     text: |-
       \pos(3)Save and quit?
-        \opt()No \opt()Yes
+        \opt()No   \opt()Yes
 
   - name: TX_550e
     index: 0x0e
     text: |-
       \pos(3)If you don't save, it will be as if you told me no \col(1)secrets\col(0).
       Is this OK?
-        \opt()No \opt()Yes
+        \opt()No   \opt()Yes
 
   - name: TX_550f
     index: 0x0f
@@ -11589,7 +11589,7 @@ groups:
     index: 0x19
     text: |-
       Do you want to know the \col(1)secret to going to Labrynna\col(0)?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_551a
     index: 0x1a
@@ -11602,7 +11602,7 @@ groups:
     text: |-
       Farore's Memory
       Read this book?
-        \opt()Yes \opt()No
+        \opt()Yes   \opt()No
 
   - name: TX_551c
     index: 0x1c
