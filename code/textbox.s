@@ -3028,9 +3028,6 @@ textControlCodeC_2:
 	inc a
 	ld (hl),a
 
-	ld b,a
-	inc b
-	ld (hl),b
 	pop hl
 	pop bc
 
