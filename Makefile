@@ -1,7 +1,3 @@
-# VWF Edition: I leave "BUILD_VANILLA" set to true to minimize the patch size
-# and any possible side-effects. Stuff that must be changed (text) is removed
-# from those checks.
-
 # If BUILD_VANILLA is true, certain precompressed assets will be used from the
 # "precompressed" folder, and sections will be marked with "FORCE" instead of
 # "FREE" or "SUPERFREE". This is all to make sure the rom builds as an exact
@@ -10,7 +6,7 @@
 # The build folder also changes when this variable changes, to ensure the
 # makefile doesn't get confused due to the different assets being loaded. (Also
 # saves tons of time if you switch between branches a lot.)
-BUILD_VANILLA = true
+BUILD_VANILLA = false
 
 # ANSI color codes
 BOLD=\033[1;37m
