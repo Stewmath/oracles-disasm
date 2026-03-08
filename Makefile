@@ -360,8 +360,10 @@ $(BUILD_DIR)/textDefines.s: $(BUILD_DIR)/textData.s
 
 $(BUILD_DIR)/textData.s: fontfile.txt
 
+# Note: bytes 2-3 (decompressed data size) are wrong when gfx_font.cmp is generated.
+# Doesn't matter though - it's not checked anywhere.
 $(BUILD_DIR)/gfx/gfx_font.cmp: $(FONT_FILE) fontfile.txt | ${BUILD_DIR}/gfx
-	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
+	@dd if=/dev/zero bs=1 count=3 of=$@ 2>/dev/null
 	@cat $(FONT_FILE) >> $@
 
 $(BUILD_DIR)/font_spacing.bin: $(FONT_SPACING_FILE) fontfile.txt | $(BUILD_DIR)
