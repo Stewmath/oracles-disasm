@@ -4379,7 +4379,7 @@ groups:
   - name: TX_1e05
     index: 0x05
     text: |-
-      \pos(2)Yaaaaa!
+      \pos(2)\col(0)Yaaaaa!
 
   - name: TX_1e06
     index: 0x06
@@ -6932,8 +6932,7 @@ groups:
   - name: TX_3080
     index: 0x80
     text: |-
-      Symbol of a
-      meeting
+      Symbol of a meeting
 
   - name: TX_3081
     index: 0x81
