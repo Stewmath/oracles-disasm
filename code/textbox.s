@@ -2819,8 +2819,7 @@ handleTextControlCode:
 	or a
 	jr z,+
 
-	call setLineTextBuffers
-	call retrieveTextCharacter
+        call _vwfAddCharToTextBuffer
 	jr --
 +
 	pop hl
