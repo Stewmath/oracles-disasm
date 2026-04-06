@@ -551,16 +551,6 @@ inventoryTextCode:
 	inc e
 	ld a,h
 	ld (de),a
-
-	; VWF: Don't do this(?)
-	;ld e,<w7InvTextSpacesAfterName
-	;ld a,(de)
-	;or a
-	;jr z,++
-
-	;inc a
-	;srl a
-	;ld (de),a
 +
 	ld e,<w7InvTextSpacesAfterName
 	ld a,(de)
@@ -619,6 +609,7 @@ inventoryTextCode:
 
 	ld d,$d0
 	ret nz
+
 	/*
 --
 	call readByteFromW7ActiveBankAndIncHl
@@ -734,15 +725,8 @@ inventoryTextCode:
 	ret
 
 @newline:
-	ld h,$d0
-	ld a,l
-	ld b,h
-	ld hl,w7TextAddress
-	ld l,<w7TextAddress
-	ldi (hl),a
-	ld (hl),b
-
-	ld l,<w7InvTextSpacesAfterName
+	; Use precalculated spacing from doInventoryTextFirstPass
+	ld hl,w7InvTextSpacesAfterName
 	ld a,(hl)
 	ld l,<w7InvTextSpaceCounter
 	ld (hl),a
@@ -751,11 +735,8 @@ inventoryTextCode:
 	ld l,<w7TextDisplayState
 	inc (hl)
 
-	or a
-	ret nz
-
-	; Go to state $06
-	inc (hl)
+	; VWF: Used to have a special case that goes to state 6 here when too much space is taken
+	; up, but it's been removed. States 6-7 are unused.
 	ret
 
 ;;
@@ -2128,10 +2109,8 @@ doInventoryTextFirstPass:
 	sub $11
 	cpl
 
-	; VWF: ?
+	; VWF: Hook for spacing calculation
 	call _inventoryTextSpaceCalculationHook
-	;ld l,<w7InvTextSpacesAfterName
-	;ld (hl),a
 
 	; Calculate where in w7TextGfxBuffer to put the first character
 	and $0e
@@ -3311,6 +3290,9 @@ _inventoryTextSpaceCalculationHook:
 ; This hook's responsibilities are to:
 ;  - Perform the reading and drawing of one tile's worth of text.
 ;  - Set the zero flag on return if the text is done.
+;
+; @param[out] a
+; @param[out] zflag	z if end of text is reached
 _inventoryTextDrawHook:
 	; Clear it
 	push hl
