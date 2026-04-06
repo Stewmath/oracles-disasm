@@ -609,6 +609,7 @@ inventoryTextCode:
 	call decInvTextScrollTimer
 	ret nz
 
+	; This will return the current text address
 	call shiftTextGfxBufferLeft
 
 	; VWF: ?
@@ -770,7 +771,7 @@ inventoryTextCode:
 
 	; hl = w7InvTextScrollTimer
 	dec l
-	ld (hl),$28
+	ld (hl),40
 
 	; hl = w7TextDisplayState (go to state $01)
 	ld l,e
@@ -783,7 +784,7 @@ inventoryTextCode:
 	ret nz
 
 	; hl = w7InvTextScrollTimer
-	ld (hl),$28
+	ld (hl),40
 
 	; hl = w7TextDisplayState (go to state $07)
 	ld l,e
@@ -965,7 +966,11 @@ initTextboxStuff:
 	.dw $0020 $00a0 $0140 $0180 $0160 $00c0 $0060
 
 ;;
-; Gets address of the text index in hl, stores bank number in [w7ActiveBank]
+; Gets the address of a text index.
+;
+; @param wTextIndexH/L		Text index
+; @param[out] hl		Address of text
+; @param[out] w7ActiveBank	Bank of text
 getTextAddress:
 	push de
 	ld a,(w7TextTableAddr)
@@ -1081,9 +1086,16 @@ textTableTable:
 
 ;;
 ; This peeks at the text to check if the next command is something particular.
+;
 ; It deals with the textbox positioning command ("\pos()" in text.txt) and
 ; command 8 (displaying extra text after buying something).
-; Most of the time this does nothing though.
+;
+; Most of the time this does little except update w7TextAddress.
+;
+; @param wTextIndexH/L
+; @param wTextboxFlags
+; @param[out] w7TextAddress
+; @param[out] wTextboxPosition
 checkInitialTextCommands:
 	push de
 	call getTextAddress
@@ -2046,17 +2058,22 @@ func_53eb:
 	jp queueDmaTransfer
 
 ;;
-; This is called when an item is first selected.
+; This is called when an item is first hovered over.
+;
 ; This calculates w7InvTextSpacesAfterName such that the text will be centered.
 ; It also draws the initial line of text, because that should be visible
 ; immediately, not scrolled in.
+;
+; @param w7TextAddress	Start of text. Does not change on return.
+; @param[out] zflag	z if text is empty
+; @param[out] hl	Points to text immediately after what was displayed
 doInventoryTextFirstPass:
 	call clearTextGfxBuffer
 	ld h,d
 	ld l,<w7ActiveBank
 	ldi a,(hl)
 	ldh (<hFF8A),a
-	ldi a,(hl)
+	ldi a,(hl)		; w7TextAddress
 	ld h,(hl)
 	ld l,a
 	push hl
@@ -2096,7 +2113,7 @@ doInventoryTextFirstPass:
 	ld hl,w7ActiveBank
 	ldh a,(<hFF8A)
 	ldi (hl),a
-	ld (hl),c
+	ld (hl),c		; w7TextAddress
 	inc l
 	ld (hl),b
 
@@ -2124,7 +2141,10 @@ doInventoryTextFirstPass:
 
 	call clearLineTextBuffer
 	ld b,>w7TextGfxBuffer
-	pop hl
+	pop hl			; hl = start of text
+
+	; Begin reading the text again, this time actually drawing it now that we've already
+	; calculated the spacing.
 
 @nextCharacter:
 	call readByteFromW7ActiveBankAndIncHl
@@ -2244,6 +2264,7 @@ doInventoryTextFirstPass:
 
 ;;
 ; Shift w7TextGfxBuffer such that each tile is moved one position to the left.
+;
 ; @param[out] hl Text address
 shiftTextGfxBufferLeft:
 	ld hl,w7TextGfxBuffer
