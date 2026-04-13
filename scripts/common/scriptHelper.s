@@ -533,7 +533,7 @@ blueSnake_linkOrFortune:
 	jp showText
 
 ;;
-; Checks for 1000 enemies ring, 1000 rupee ring, victory ring. Writes a value to var3b
+; Checks for 1000 enemies ring, 10000 rupee ring, victory ring. Writes a value to var3b
 ; indicating the action to be taken, and a ring index to var3a if applicable.
 vasu_checkEarnedSpecialRing:
 	ld a,GLOBALFLAG_1000_ENEMIES_KILLED
