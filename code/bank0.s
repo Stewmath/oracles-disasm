@@ -1243,6 +1243,49 @@ loadUncompressedGfxHeader:
 	ret
 
 ;;
+; Loads a single gfx header entry at hl. This should be called multiple times until all
+; entries are read.
+;
+; @param[out]	a	Last byte of the entry (bit 7 set if there's another entry)
+loadUniqueGfxHeaderEntry:
+	ldi a,(hl)
+	ld c,a
+	ldh (<hFF8C),a
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld d,a
+	ldi a,(hl)
+	ld e,a
+	ld a,(hl)
+	and $7f
+	ldh (<hFF8D),a
+	push hl
+	push de
+	ld l,c
+	ld h,b
+	ld b,a
+	ldh a,(<hFF8C)
+	ld c,a
+	ld de, w7d800 | :w7d800
+	call decompressGraphics
+	pop de
+	ld hl,w7d800
+	ld c,:w7d800
+	ldh a,(<hFF8D)
+	ld b,a
+	call queueDmaTransfer
+	pop hl
+	ld a,$00
+	ld ($ff00+R_SVBK),a
+	ld a,:animationAndUniqueGfxData.uniqueGfxHeaderTable
+	setrombank
+	ldi a,(hl)
+	ret
+
+;;
 ; @param	a	The index of the gfx header to load
 loadGfxHeader:
 	ld e,a
@@ -12404,13 +12447,25 @@ updateTilesetUniqueGfx:
 ;;
 ; Load just the first entry of a unique gfx header?
 ;
-; Unused?
-;
-; HACK-BASE: This function has been removed for the expanded tilesets patch.
-;
 ; @param	a	Unique gfx header index
 uniqueGfxFunc_380b:
-	jp panic
+	ld b,a
+	ldh a,(<hRomBank)
+	push af
+
+	ld a,:animationAndUniqueGfxData.uniqueGfxHeadersStart
+	setrombank
+	ld a,b
+	ld hl,animationAndUniqueGfxData.uniqueGfxHeaderTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	call loadUniqueGfxHeaderEntry
+
+	pop af
+	setrombank
+	ret
 
 
 ;;
@@ -12481,6 +12536,22 @@ loadTilesetGfx:
 	ld a,(wTilesetIndex)
 	and $7f
 	ld (wLoadedTilesetIndex),a
+
+.ifdef ROM_SEASONS
+	; For gnarled root dungeon entrance: load "unique graphics" when closed
+	ld a,(wActiveGroup)
+	or a
+	jr nz,+
+	ld a,(wActiveRoom)
+	cp <ROOM_SEASONS_096
+	jr nz,+
+	call getThisRoomFlags
+	bit 7,a
+	jr nz,+
+	ld a,UNIQUE_GFXH_GNARLED_ROOT_ENTRANCE_CLOSED
+	call uniqueGfxFunc_380b
++
+.endif
 
 	pop af
 	setrombank

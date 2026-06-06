@@ -72,20 +72,6 @@ loadTilesetData_body:
 	; HACK-BASE: Set wLayoutGroupOverride (usually $ff for no override)
 	ldh a,(<hFF8B)
 	ld (wLayoutGroupOverride),a
-
-	; For gnarled root dungeon entrance: load "unique graphics" when opened
-	; HACK-BASE: TODO TODO TODO FIXME FIXME FIXME
-	;; ld a,(wActiveGroup)
-	;; or a
-	;; ret nz
-	;; ld a,(wActiveRoom)
-	;; cp <ROOM_SEASONS_096
-	;; ret nz
-	;; call getThisRoomFlags
-	;; and $80
-	;; ret nz
-	;; ld a,$20
-	;; ld (wTilesetUniqueGfx),a
 	ret
 
 getTempleRemainsSeasonsTilesetData:
