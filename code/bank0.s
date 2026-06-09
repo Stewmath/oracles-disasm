@@ -2191,7 +2191,7 @@ vblankFunctionOffset3:
 	.db vblankFunction0ad9 - vblankFunctionsStart
 
 vblankFunctionOffset4:
-	.db vblankFunction0ad9 - vblankFunctionsStart 
+	.db vblankFunction0ad9 - vblankFunctionsStart
 
 ; Unused?
 vblankFunctionOffset5:
@@ -13794,7 +13794,7 @@ getSunkenCityNPCVisibleSubId_caller:
 setUpCharactersAfterMoblinKeepDestroyed:
 	ldh a,(<hRomBank)
 	push af
-	callfrombank0 seasonsInteractionsBank0a.moblinKeepScene_setLinkDirectionAndPositionAfterDestroyed 
+	callfrombank0 seasonsInteractionsBank0a.moblinKeepScene_setLinkDirectionAndPositionAfterDestroyed
 	ld a,$01
 	call seasonsInteractionsBank0a.moblinKeepScene_spawnKingMoblin
 	call seasonsInteractionsBank0a.moblinKeepScene_spawn2MoblinsAfterKeepDestroyed
