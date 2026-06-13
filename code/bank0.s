@@ -1113,9 +1113,11 @@ loadPaletteHeader:
 	ret
 
 ;;
-; Do a DMA transfer next vblank. Note:
-;  - Only banks $00-$3f work properly
-;  - Destination address must be a multiple of 16
+; Do a DMA transfer next vblank (or immediately if the screen is off). This is a safe method to
+; write to VRAM while the screen is on, so long as the data being written is not too large.
+;
+; Destination address must be a multiple of 16, as the lower 4 bits of the "de" parameter are read
+; as the destination bank. (And DMA only works in multiples of 16 bytes anyway.)
 ;
 ; @param	b	(data size)/16 - 1
 ; @param	c	src bank
@@ -1126,7 +1128,7 @@ loadPaletteHeader:
 queueDmaTransfer:
 	ld a,($ff00+R_LCDC)
 	rlca
-	jr nc,++
+	jr nc,@lcdOff
 
 	push de
 	push hl
@@ -1155,8 +1157,9 @@ queueDmaTransfer:
 	ldh (<hVBlankFunctionQueueTail),a
 	scf
 	ret
-++
-; If LCD is off, copy data immediately?
+
+@lcdOff:
+	; If the LCD is off, copy the data immediately.
 	ldh a,(<hRomBank)
 	push af
 	ld a,($ff00+R_SVBK)
@@ -1286,6 +1289,9 @@ loadUniqueGfxHeaderEntry:
 	ret
 
 ;;
+; Load a GFX header (data/{game}/gfxHeaders.s). Screen should be turned off while doing this,
+; otherwise some vram writes will likely fail, causing graphical corruption.
+;
 ; @param	a	The index of the gfx header to load
 loadGfxHeader:
 	ld e,a
@@ -4632,7 +4638,7 @@ interactionInitGraphics:
 	jp interactionSetAnimation
 
 ;;
-func_1613:
+refreshLoadedTreeGfx:
 	ld a,(wLoadedTreeGfxIndex)
 	or a
 	ret z
@@ -10229,7 +10235,7 @@ tryToBreakTile:
 	ret
 
 ;;
-; Calls bank6._clearAllParentItems.
+; Calls bank6.clearAllParentItems_body.
 clearAllParentItems:
 	ld c,$00
 	jr ++

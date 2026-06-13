@@ -1,4 +1,12 @@
-;;
+; Custom code run for specific rooms in order to modify their room layouts (wRoomLayout).
+;
+; When loading a room, the game consults the table "roomTileChangerGroupXData", where X is the group
+; number. From here it uses the room index byte as a key, and gets an index for the jump table
+; immediately below here. If no entry in the table exists then nothing happens.
+;
+; Typically the code for each room will check the room flags for a particular bit being set/unset,
+; and perform tile substitutions for the appropriate condition.
+
 applyRoomSpecificTileChanges:
 	ld a,(wActiveRoom)
 	ld hl,roomTileChangerCodeGroupTable
@@ -71,6 +79,10 @@ roomTileChangerCodeGroupTable:
 	.dw roomTileChangerCodeGroup5Data
 	.dw roomTileChangerCodeGroup6Data
 	.dw roomTileChangerCodeGroup7Data
+
+; Data format for roomTileChangerGroupXData:
+;   b0: Room index byte ($00 to end the list)
+;   b1: Index for jump table above
 
 roomTileChangerCodeGroup0Data:
 	.db $38 $08

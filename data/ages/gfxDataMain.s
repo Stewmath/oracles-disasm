@@ -182,9 +182,9 @@
 	m_GfxData spr_headthwomp_3 ; $0b251e
 	m_GfxData spr_shadowhag_1 ; $0b253a
 	m_GfxData spr_shadowhag_2 ; $0b26ee
-	m_GfxData spr_smog_1 ; $0b2823
-	m_GfxData spr_smog_2 ; $0b2950
-	m_GfxData spr_smog_3 ; $0b2ad5
+	m_GfxData spr_eyesoar ; $0b2823
+	m_GfxData spr_smog_1 ; $0b2950
+	m_GfxData spr_smog_2 ; $0b2ad5
 	m_GfxData spr_smog_projectiles ; $0b2c32
 	m_GfxData spr_octogon_1 ; $0b2cfe
 	m_GfxData spr_octogon_2 ; $0b2ee4

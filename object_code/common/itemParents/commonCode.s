@@ -37,7 +37,7 @@ checkNoOtherParentItemsInUse:
 ; * Disables movement, turning
 ; * Sets Item.state to $01
 ; * Loads an animation for Link by reading from linkItemAnimationTable
-; * Sets Item.relatedObj2 to something
+; * Sets Item.relatedObj2 to point to object slot the child item should use (ie. w1WeaponItem)
 ; * Sets Item.var3f to something
 ;
 parentItemLoadAnimationAndIncState:

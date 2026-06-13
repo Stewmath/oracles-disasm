@@ -150,7 +150,7 @@
 ; set in the editor, this feature should only be used internally by the game's code.
 ;
 ; @postype{none}
-; @Y{Tile index to spawn armos on (ie. $26))
+; @Y{Tile index to spawn armos on (ie. $26)}
 ; @X{Tile index to replace those tiles with once the armos spawn (ie. $a0)}
 ; @subid_00{Red: activates when touched, or when nonzero is written to $cca2.}
 ; @subid_01{Blue: activates when Link is close to it. Faster, extra health, moves toward

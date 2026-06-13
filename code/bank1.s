@@ -2553,7 +2553,7 @@ cutscene19:
 	ld c,$01
 ++
 	callab bank3Cutscenes.twinrovaCutsceneCaller
-	call func_1613
+	call refreshLoadedTreeGfx
 	jp updateAllObjects
 
 .ENDS
@@ -3598,7 +3598,7 @@ standardGameState:
 cutscene00:
 	call updateStatusBar
 	call updateAllObjects
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld a,(wScrollMode)
 	cp $01
 	ret nz
@@ -3634,7 +3634,7 @@ cutscene00:
 ; Cutscene 1 = not in a cutscene; game running normally
 ;
 cutscene01:
-	call func_1613
+	call refreshLoadedTreeGfx
 	call updateLinkBeingShocked
 	call updateMenus
 	ret nz
@@ -4009,7 +4009,7 @@ cutscene13:
 	ld (wCutsceneState),a
 
 @state2:
-	call func_1613
+	call refreshLoadedTreeGfx
 	call updateMenus
 	ret nz
 	ld a,(wWarpTransition2)
@@ -4029,7 +4029,7 @@ cutscene13:
 ;;
 ; Seasons-only
 func_5d31:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld a,(wWarpTransition2)
 	or a
 	jp nz,applyWarpTransition2
@@ -4039,7 +4039,7 @@ func_5d31:
 
 ;;
 func_5d41:
-	call func_1613
+	call refreshLoadedTreeGfx
 	ld a,(wWarpTransition2)
 	or a
 	jp nz,applyWarpTransition2
@@ -5340,14 +5340,14 @@ m_section_free Bank_1_Code_3 NAMESPACE bank1
 ; CUTSCENE_FAIRIES_HIDE
 cutscene13:
 	callab bank3Cutscenes.func_03_6103
-	call func_1613
+	call refreshLoadedTreeGfx
 	jp updateAllObjects
 
 ;;
 ; CUTSCENE_BOOTED_FROM_PALACE
 cutscene14:
 	callab bank3Cutscenes.func_03_6275
-	call func_1613
+	call refreshLoadedTreeGfx
 	call updateAllObjects
 	jp updateStatusBar
 

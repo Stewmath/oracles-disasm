@@ -5602,7 +5602,7 @@ drawEquippedSpriteForActiveRing:
 ;;
 ; Draw all items in wInventoryStorage to their appropriate positions.
 inventorySubscreen0_drawStoredItems:
-	ld a,$10
+	ld a,INVENTORY_CAPACITY
 --
 	ldh (<hFF8D),a
 	ld hl,wInventoryStorage-1
@@ -8861,7 +8861,7 @@ dungeonMap_updateScroll:
 	pop af
 	ld ($ff00+R_SVBK),a
 
-	; Missing a "ret" opcode here.
+	; BUG: Missing a "ret" opcode here.
 	; This normally doesn't seem to cause any problems, though perhaps it's related to
 	; the dungeon map crashes on the VBA emulator?
 

@@ -41,8 +41,8 @@
 .define PART_KING_MOBLINS_CANNONS $2d
 
 ;;
-; created by facade - holes?
-.define PART_2e $2e
+; Created by facade to temporarily make holes.
+.define PART_FACADE_HOLE_MAKER $2e
 
 ;;
 .define PART_2f $2f

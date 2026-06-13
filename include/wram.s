@@ -1959,11 +1959,17 @@ wLinkGrabState2: ; $cc5b/$cc76
 
 
 wLinkInAir: ; $cc5c/$cc77
-; Bit 7: lock link's movement direction, prevent jumping. (Jumping down a cliff, using
-;        gale seed, jumping into bed in Nayru's house, etc...)
-; Bit 5: If set, Link's gravity is reduced
-; Bit 1: set when link is jumping
-; Bit 0: set when jumping down a cliff
+; Upper nibble:
+;   Bit 7: lock link's movement direction, prevent jumping. (Jumping down a cliff, using
+;          gale seed, jumping into bed in Nayru's house, etc...)
+;   Bit 6: If set, Link has a 2nd jump available with the roc's cape
+;   Bit 5: If set, Link's gravity is reduced (2nd half of roc's cape jump)
+; Lower nibble:
+;   0: Not in the air
+;   1: Just started jumping
+;   2: In the air
+;   3+: Invalid
+;
 ; If nonzero, Link's knockback durations are halved.
 	db
 
@@ -2233,7 +2239,8 @@ wLinkOnChest: ; $cc9f
 	db
 
 wActiveTriggers: ; $cca0/$ccba
-; Keeps track of which switches are set (buttons on the floor)
+; Bitset keeping track of which buttons on the floor have been pressed.
+; See also wSwitchState.
 	db
 
 ; $cca1-$cca2: Changes behaviour of chests in shops? (For the chest game probably)
@@ -2713,6 +2720,7 @@ wToggleBlocksState: ; $cdd2/$cc31
 wSwitchState: ; $cdd3/$cc32
 ; Each bit keeps track of whether a certain switch has been hit.
 ; Persists between rooms within a dungeon.
+; See also wActiveTriggers.
 	db
 
 wSpinnerState: ; $cdd4/$cc33

@@ -498,7 +498,7 @@ interactionCodedc_subid8:
 	ld b,a
 	ld e,$47
 	ld a,(de)
-	ld hl,table_6a02
+	ld hl,@dungeonsInOrder
 	rst_addAToHl
 	ld a,(hl)
 	cp b
@@ -512,12 +512,12 @@ interactionCodedc_subid8:
 	ld a,$01
 	ld (de),a
 ++
-	ldbc TREASURE_RUPEES RUPEEVAL_070
+	ldbc TREASURE_RUPEES $09
 	ld e,$70
 	ld a,(de)
 	or a
 	jr nz,@wrongChest
-	ldbc TREASURE_RUPEES RUPEEVAL_200
+	ldbc TREASURE_RUPEES $0d
 	ld e,$47
 	ld a,(de)
 	cp $08
@@ -530,7 +530,7 @@ interactionCodedc_subid8:
 	ld a,$4f
 	call setTile
 	ld a,SND_SOLVEPUZZLE
-	ldbc TREASURE_RUPEES RUPEEVAL_200
+	ldbc TREASURE_RUPEES $0d
 	jr @success
 @wrongChest:
 	ld a,SND_ERROR
@@ -560,7 +560,7 @@ interactionCodedc_subid8:
 	xor a
 	ld ($ccbc),a
 	ret
-table_6a02:
+@dungeonsInOrder:
 	.db $66 $5b $43 $3b
 	.db $59 $23 $73 $35
 

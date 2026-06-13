@@ -2,8 +2,13 @@
 ; they are used exclusively by tilesets. These are loaded after the main gfx header and may
 ; overwrite some data from that.
 ;
-; The only technical difference from regular gfx headers is that the last entry may be a palette
-; header (data/{game}/paletteHeaders.s). This functionality is primarily used in Seasons.
+; Unlike regular GFX headers, these can be loaded while the gameboy screen is on. In order to fit
+; within the vblank period, only one entry is loaded per frame. It seems like the developers adopted
+; a maximum of $200 bytes per entry, beyond which graphical corruption would likely occur.
+;
+; The format of unique GFX headers is identical to that of regular GFX headers, except that the last
+; entry may be a palette header (data/{game}/paletteHeaders.s). This functionality is primarily used
+; in Seasons.
 
 .define NUM_UNIQUE_GFX_HEADERS $15
 
