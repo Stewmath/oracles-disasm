@@ -51,7 +51,7 @@ initSound:
 	ld (wSoundFadeDirection),a
 	ld (wSoundFadeCounter),a
 	ld (wSoundDisabled),a
-	ld (wc023),a
+	ld (wMusicMuted),a
 	ld a,$8f
 	ld ($ff00+R_NR52),a
 	ld a,$77
@@ -87,14 +87,14 @@ initSound:
 
 
 ;;
+; Updates wMusicVolume and wMusicMuted and silences channels 0 and 1
 ; @param	a	Volume (0-3)
-;
 updateMusicVolume:
 	push bc
 	push de
 	push hl
 	push af
-	call @updateSquareChannelVolumes
+	call silenceSquareMusicChannels
 
 	pop af
 	ld (wMusicVolume),a
@@ -106,14 +106,15 @@ updateMusicVolume:
 +
 	ld a,$00
 ++
-	ld (wc023),a
+	ld (wMusicMuted),a
 	pop hl
 	pop de
 	pop bc
 	ret
 
 ;;
-@updateSquareChannelVolumes:
+; Silences channels 0 and 1 if enabled
+silenceSquareMusicChannels:
 	; Update square 1's volume
 	ld a,$00
 	ld (wSoundChannel),a
@@ -125,7 +126,7 @@ updateMusicVolume:
 	ld a,(hl)
 	cp $00
 	jr z,+
-	call updateChannelStuff
+	call silencePlayedSound
 +
 	; Update square 2's volume
 	ld a,$01
@@ -138,7 +139,7 @@ updateMusicVolume:
 	ld a,(hl)
 	cp $00
 	jr z,+
-	call updateChannelStuff
+	call silencePlayedSound
 +
 	ret
 
@@ -155,11 +156,11 @@ stopSound:
 	ret
 
 ;;
-func_39_40b9:
+silenceAllChannels:
 	ld a,$00
 -
 	ld (wSoundChannel),a
-	call updateChannelStuff
+	call silencePlayedSound
 	ld a,(wSoundChannel)
 	inc a
 	cp $08
@@ -299,24 +300,25 @@ updateSound:
 	add hl,de
 	ld a,(hl)
 	cp $00
-	jr nz,+
+	jr nz,@continueSound
 
 	call doNextChannelCommand
 	jr @nextChannel
-+
-	call func_39_41c2
+
+@continueSound:
+	call continuePlayingSound
 @nextChannel:
 	ld a,(wSoundChannel)
 	inc a
 	cp $08
 	jr nz,@channelLoop
 
-	ld a,(wc023)
+	ld a,(wMusicMuted)
 	cp $01
 	jr nz,@ret
 
 	ld a,$02
-	ld (wc023),a
+	ld (wMusicMuted),a
 
 @ret:
 	pop hl
@@ -325,7 +327,9 @@ updateSound:
 	ret
 
 ;;
-func_39_41c2:
+; Keep playing the current sound
+continuePlayingSound:
+	; Decrement wait counter
 	ld hl,wChannelWaitCounters
 	ld a,(wSoundChannel)
 	ld e,a
@@ -334,11 +338,13 @@ func_39_41c2:
 	ld a,(hl)
 	dec a
 	ld (hl),a
+	; Return if noise channel
 	ld a,(wSoundChannel)
 	cp $06
 	jr nc,@ret
 
-	ld hl,wc039
+	; Return if channel uses length timer
+	ld hl,wChannelFrequencyModeAndLengthTimerEnabled
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -346,18 +352,21 @@ func_39_41c2:
 	ld a,(hl)
 	and $40
 	jr nz,@ret
+
 	ld a,(wSoundChannel)
 	cp $05
 	jr nc,+
-	call func_39_464c
+	call handleEnvelopes
 +
-	call func_39_41f3
+	call updateSoundFrequencyAndPlay
 @ret:
 	ret
 
 ;;
-func_39_41f3:
-	ld hl,wc03f
+; Copies the channel's frequency value from hSoundData3 to wSoundFrequencyL,H after applying sweep and vibrato
+updateSoundFrequencyAndPlay:
+	; Handle sweep
+	ld hl,wChannelSweep
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -365,7 +374,7 @@ func_39_41f3:
 	ld a,(hl)
 	ld c,a
 	and $7f
-	jr z,label_39_024
+	jr z,@handleVibrato
 
 	ld a,c
 	and $80
@@ -376,8 +385,9 @@ func_39_41f3:
 +
 	ld d,$ff
 ++
+	; Unnecessary, could just do ld a,c like a few lines above
 	push de
-	ld hl,wc03f
+	ld hl,wChannelSweep
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -407,27 +417,29 @@ func_39_41f3:
 	ld a,h
 	ld ($ff00+c),a
 	inc c
-label_39_024:
-	ld hl,wc045
+@handleVibrato:
+	ld hl,wChannelVibratoActive
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
 	add hl,de
 	ld a,(hl)
 	and $10
-	jr nz,label_39_026
+	jr nz,@useVibrato
 
-	ld hl,wc051
+	; Check vibrato wait counter
+	ld hl,wChannelVibratoCounters
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
 	add hl,de
 	ld a,(hl)
 	cp $00
-	jr z,label_39_025
+	jr z,@endVibratoWait
 
+	; Still waiting, no vibrato applied yet
 	dec a
-	ld hl,wc051
+	ld hl,wChannelVibratoCounters
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -436,11 +448,11 @@ label_39_024:
 	pop af
 	ld (hl),a
 	ld hl,$0000
-	jp func_42d1
+	jp @updateSoundFrequencyWithOffset
 
-label_39_025:
+@endVibratoWait:
 	ld a,$10
-	ld hl,wc045
+	ld hl,wChannelVibratoActive
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -448,8 +460,9 @@ label_39_025:
 	add hl,de
 	pop af
 	ld (hl),a
+	; Unnecessary, this value is already known to be 0
 	ld a,$00
-	ld hl,wc051
+	ld hl,wChannelVibratoCounters
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -457,18 +470,19 @@ label_39_025:
 	add hl,de
 	pop af
 	ld (hl),a
-label_39_026:
-	ld hl,wc051
+@useVibrato:
+	ld hl,wChannelVibratoCounters
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
 	add hl,de
 	ld a,(hl)
 	cp $08
-	jr nz,label_39_027
+	jr nz,@determineFrequencyOffset
 
+	; Went past the end of vibratoOffsetTable, start over
 	ld a,$00
-	ld hl,wc051
+	ld hl,wChannelVibratoCounters
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -477,11 +491,13 @@ label_39_026:
 	pop af
 	ld (hl),a
 	ld a,$00
-label_39_027:
-	ld hl,data_4b40
+@determineFrequencyOffset:
+	; Get next raw offset (-2, -1, 0, 1 or 2)
+	ld hl,vibratoOffsetTable
 	call readWordFromTable
 	push hl
-	ld hl,wc051
+	; Increment index
+	ld hl,wChannelVibratoCounters
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -489,6 +505,7 @@ label_39_027:
 	ld a,(hl)
 	inc a
 	ld (hl),a
+	; Get vibrato intensity (0 if disabled for the channel)
 	ld hl,wChannelVibratos
 	ld a,(wSoundChannel)
 	ld e,a
@@ -497,15 +514,14 @@ label_39_027:
 	ld a,(hl)
 	and $0f
 	pop hl
-	call func_39_4a10
-
-;;
-func_42d1:
+	; Get final offset by multiplying raw offset with intensity
+	call multiplyHlByA
+@updateSoundFrequencyWithOffset:
 	ld a,(wSoundChannel)
 	sla a
 	ld b,a
 	ld a,b
-	add $f2
+	add <hSoundData3
 	ld c,a
 	ld a,($ff00+c)
 	inc c
@@ -520,16 +536,18 @@ func_42d1:
 	ld (wSoundFrequencyH),a
 
 ;;
-func_42ea:
+; When used for wave channel, hl is expected to contain wSoundFrequencyL,H and is written to NR33 and NR34
+updatePlayedFrequency:
 	ld a,(wSoundChannel)
 	scf
 	ccf
 	cp $04
-	jr nc,label_39_029
+	jr nc,@wave
 
 	cp $02
-	jr nc,label_39_028
+	jr nc,@square
 
+	; For music, check if channel is free
 	inc a
 	inc a
 	ld e,a
@@ -538,10 +556,10 @@ func_42ea:
 	add hl,de
 	ld a,(hl)
 	cp $00
-	jr z,label_39_028
+	jr z,@square
 	ret
 
-label_39_028:
+@square:
 	ld a,(wSoundChannel)
 	and $01
 	ld b,a
@@ -568,41 +586,42 @@ label_39_028:
 	add hl,de
 	ld a,(hl)
 	pop bc
-	ld c,$11
+	ld c,R_NR11
 	call writeIndexedHighRamAndIncrement
 	ret
 
-label_39_029:
-	call func_39_434b
+@wave:
+	call isWaveChannelUnavailable
 	cp $00
-	jr nz,label_39_030
+	jr nz,@ret
 	ld a,l
 	ld ($ff00+R_NR33),a
 	ld a,h
 	ld ($ff00+R_NR34),a
 	ld a,$00
 	ld ($ff00+R_NR31),a
-label_39_030:
+@ret:
 	ret
 
 ;;
-; @param[out]	a	0 or 1 (something about whether wSoundChannel can be active?)
-func_39_434b:
+; Sounds can always play, music can only play if wave channel is free and music has not been muted since previous updateSound call
+; @param[out]	a	Whether wave channel registers may be written to (0 or 1)
+isWaveChannelUnavailable:
 	ld a,(wSoundChannel)
 	cp $05
-	jr z,@zero
+	jr z,@available
 
 	ld a,(wChannelsEnabled+5)
 	cp $00
-	jr nz,@one
+	jr nz,@unavailable
 
-	ld a,(wc023)
+	ld a,(wMusicMuted)
 	cp $02
-	jr z,@one
-@zero:
+	jr z,@unavailable
+@available:
 	ld a,$00
 	ret
-@one:
+@unavailable:
 	ld a,$01
 	ret
 
@@ -703,7 +722,7 @@ channelCmdf3:
 
 ;;
 ; Vibrato
-;
+; Sets vibrato to the argument value, does nothing for noise channels
 channelCmdf9:
 	ld a,(wSoundChannel)
 	scf
@@ -723,6 +742,7 @@ channelCmdf9:
 	jp doNextChannelCommand
 
 ;;
+; Sets sweep to the argument value, does nothing for noise channels
 channelCmdf8:
 	ld a,(wSoundChannel)
 	scf
@@ -731,7 +751,7 @@ channelCmdf8:
 	jr nc,++
 
 	call getNextChannelByte
-	ld hl,wc03f
+	ld hl,wChannelSweep
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -742,6 +762,7 @@ channelCmdf8:
 	jp doNextChannelCommand
 
 ;;
+; Sets pitch shift to the argument value, does nothing for noise channels
 channelCmdfd:
 	ld a,(wSoundChannel)
 	scf
@@ -764,6 +785,8 @@ channelCmdfd:
 	jp doNextChannelCommand
 
 ;;
+; Sets the channel envelopes to the lower 3 bits of the command value (note start) and the argument value (note end)
+; Should not be used with wave or noise channels or else wChannelEnvelopes2 and wChannelsEnabled get messed up for square channels
 cmde0Toef:
 	and $07
 	ld hl,wChannelEnvelopes
@@ -787,15 +810,28 @@ cmde0Toef:
 	jp doNextChannelCommand
 
 ;;
+; Command $f0 takes the next byte as argument and can do various things depending on the channel:
+; Channels 0-5: Enables a mode where standard commands are changed, and the note and beat macros stop working for the channel.
+; Commands for playing a sound or rest must instead be of the form ".db $06 $0b $02" where, from left to right, the bytes
+; correspond to the high byte of the frequency value, the low byte, and the sound length. There is no command for
+; disabling this mode. The argument is written straight to wChannelDutyCycles.
+; Channels 0-3: Additionally, if bits 0-5 of the argument are not all cleared, the length timer gets enabled for the channel,
+; and those 6 bits determine the initial value for each played sound. Otherwise, the length timer gets disabled.
+; Sweep and vibrato are ignored with length timer. Envelopes with increasing volume should not be used with length timer
+; as sounds would keep increasing to volume $f if played long enough.
+; Channel 7: Sets volume and envelope (argument gets written straight to NR42).
+; Should not be used with channel 6 or else wChannelSweep and wChannelEnvelopeStates get messed up for channel 0
 channelCmdf0:
 	ld a,(wSoundChannel)
 	cp $07
-	jr z,label_39_038
+	jr z,@channel7
 
 	call getNextChannelByte
 	push af
+	; Initial length timer value of 0 is treated as wanting to disable the length timer
+	; Command $fd can be used afterwards to set the initial length timer value to 0 without disabling it
 	and $3f
-	jr z,label_39_037
+	jr z,@disableLengthTimer
 
 	pop af
 	ld hl,wChannelDutyCycles
@@ -806,8 +842,9 @@ channelCmdf0:
 	add hl,de
 	pop af
 	ld (hl),a
+	; Enable both arbitrary frequency mode and length timer
 	ld a,$41
-	ld hl,wc039
+	ld hl,wChannelFrequencyModeAndLengthTimerEnabled
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -816,8 +853,10 @@ channelCmdf0:
 	pop af
 	ld (hl),a
 	jp doNextChannelCommand
-label_39_037:
+
+@disableLengthTimer:
 	pop af
+	; Unnecessary, this will not change a
 	and $c0
 	ld hl,wChannelDutyCycles
 	push af
@@ -827,8 +866,9 @@ label_39_037:
 	add hl,de
 	pop af
 	ld (hl),a
+	; Enable arbitrary frequency mode and disable length timer
 	ld a,$01
-	ld hl,wc039
+	ld hl,wChannelFrequencyModeAndLengthTimerEnabled
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -837,16 +877,18 @@ label_39_037:
 	pop af
 	ld (hl),a
 	jp doNextChannelCommand
-label_39_038:
+
+@channel7:
 	call getNextChannelByte
 	ld ($ff00+R_NR42),a
 	ld a,$00
 	ld ($ff00+R_NR41),a
 	ld a,$80
-	ld ($c01c),a
+	ld (wChannel7TriggerOnNextSound),a
 	jp doNextChannelCommand
 
 ; Command $d0 to $df
+; Sets volume to the lower 3 bits of the command value, does nothing for channel 4 (and is also useless for channel 5)
 cmdVolume:
 	push af
 	ld a,(wSoundChannel)
@@ -870,6 +912,9 @@ cmdVolume:
 	jp doNextChannelCommand
 
 ;;
+; For square channels, sets wChannelDutyCycles to the argument value shifted 6 bits to the left
+; For wave channels, sets wChannelDutyCycles to the argument value and updates the waveform based on that index
+; Should not be used with noise channels or else wChannelEnvelopeStates gets messed up for channel 0 or 1
 channelCmdf6:
 	ld a,(wSoundChannel)
 	cp $04
@@ -925,7 +970,7 @@ standardSoundCmd:
 	.dw standardCmdChannel7
 
 @channel0To3:
-	ld hl,wc039
+	ld hl,wChannelFrequencyModeAndLengthTimerEnabled
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -938,7 +983,7 @@ standardSoundCmd:
 	ld l,a
 	ld a,(wSoundCmd)
 	ld h,a
-	jp @cmdUnknown
+	jp @arbitraryFrequency
 +
 	ld a,(wSoundCmd)
 	cp $60
@@ -950,6 +995,7 @@ standardSoundCmd:
 	jp @cmdFrequency
 
 @cmd60:
+	; If notes are set to end with an envelope, do nothing even if the last note is still audible
 	ld hl,wChannelEnvelopes2
 	ld a,(wSoundChannel)
 	ld e,a
@@ -959,8 +1005,9 @@ standardSoundCmd:
 	cp $00
 	jr nz,@cmd61
 
+	; Apply envelope to make the volume quickly decrease to 0
 	ld a,$02
-	ld hl,wc05d
+	ld hl,wChannelEnvelopeStates
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -976,8 +1023,8 @@ standardSoundCmd:
 	ld c,$01
 	or c
 	ld (wSoundCmdEnvelope),a
-	call updateChannelVolume
-	call func_39_41f3
+	call updateSquareChannelVolume
+	call updateSoundFrequencyAndPlay
 @cmd61:
 	jp setChannelWaitCounter
 
@@ -986,10 +1033,10 @@ standardSoundCmd:
 	sub $0c
 	ld hl,soundFrequencyTable
 	call readWordFromTable
-@cmdUnknown:
+@arbitraryFrequency:
 	call setSoundFrequency
 	ld a,$00
-	ld hl,wc05d
+	ld hl,wChannelEnvelopeStates
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -997,9 +1044,9 @@ standardSoundCmd:
 	add hl,de
 	pop af
 	ld (hl),a
-	call func_39_464c
+	call handleEnvelopes
 	ld a,$00
-	ld hl,wc045
+	ld hl,wChannelVibratoActive
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1018,7 +1065,7 @@ standardSoundCmd:
 	srl a
 	srl a
 	srl a
-	ld hl,wc051
+	ld hl,wChannelVibratoCounters
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1026,7 +1073,7 @@ standardSoundCmd:
 	add hl,de
 	pop af
 	ld (hl),a
-	call func_42ea
+	call updatePlayedFrequency
 ;;
 ; Read a byte, set the channel wait counter to the value
 setChannelWaitCounter:
@@ -1043,8 +1090,10 @@ setChannelWaitCounter:
 	ret
 
 ;;
-func_39_4609:
-	ld hl,data_4ad0
+; Determines the time to wait until the envelope with sweep pace c is expected to have reached the volume level in b
+; @param[out]	a	Number of ticks to wait for the envelope
+getWaitTimeForEnvelope:
+	ld hl,envelopeWaitTable
 	ld a,b
 	sla a
 	sla a
@@ -1094,28 +1143,30 @@ setSoundFrequency:
 	ret
 
 ;;
-func_39_464c:
+; Handles envelopes for square channels, and redirects channel 4 to updateChannel4Volume
+handleEnvelopes:
 	ld a,(wSoundChannel)
 	cp $04
 	jr nz,+
-	jp func_39_4766
+	jp updateChannel4Volume
 +
-	ld hl,wc05d
+	ld hl,wChannelEnvelopeStates
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
 	add hl,de
 	ld a,(hl)
 	cp $00
-	jr z,label_39_047
+	jr z,@checkEnvelopeRequested
 
 	cp $01
-	jr z,label_39_048
+	jr z,@waitForNoteStartEnvelope
 
 	ld a,$00
 	ld (wSoundCmdEnvelope),a
 	ret
-label_39_047:
+
+@checkEnvelopeRequested:
 	ld hl,wChannelEnvelopes
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1123,17 +1174,19 @@ label_39_047:
 	add hl,de
 	ld a,(hl)
 	cp $00
-	jr z,label_39_049
+	jr z,@checkAndStartNoteEndEnvelope
 
+	; Start envelope for starting the note
 	ld c,a
+	; Initial volume 1 and increase over time
 	or $18
 	ld (wSoundCmdEnvelope),a
 	push bc
 	call getChannelVolume
 	pop bc
 	ld b,a
-	call func_39_4609
-	ld hl,wc061
+	call getWaitTimeForEnvelope
+	ld hl,wChannelEnvelopeWaitCounters
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1142,7 +1195,7 @@ label_39_047:
 	pop af
 	ld (hl),a
 	ld a,$01
-	ld hl,wc05d
+	ld hl,wChannelEnvelopeStates
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1150,19 +1203,20 @@ label_39_047:
 	add hl,de
 	pop af
 	ld (hl),a
-	jp updateChannelVolume
+	jp updateSquareChannelVolume
 
-label_39_048:
-	ld hl,wc061
+@waitForNoteStartEnvelope:
+	ld hl,wChannelEnvelopeWaitCounters
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
 	add hl,de
 	ld a,(hl)
 	cp $00
-	jr z,label_39_049
+	jr z,@checkAndStartNoteEndEnvelope
 
-	ld hl,wc061
+	; Unnecessary, a and hl still contain the desired values
+	ld hl,wChannelEnvelopeWaitCounters
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -1174,7 +1228,7 @@ label_39_048:
 	ld (wSoundCmdEnvelope),a
 	ret
 
-label_39_049:
+@checkAndStartNoteEndEnvelope:
 	ld hl,wChannelEnvelopes2
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1189,7 +1243,7 @@ label_39_049:
 +
 	ld a,$03
 ++
-	ld hl,wc05d
+	ld hl,wChannelEnvelopeStates
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1213,10 +1267,10 @@ label_39_049:
 	ld a,(wSoundCmdEnvelope)
 	or c
 	ld (wSoundCmdEnvelope),a
-	jp updateChannelVolume
+	jp updateSquareChannelVolume
 
 ;;
-updateChannelVolume:
+updateSquareChannelVolume:
 	ld a,(wSoundChannel)
 	cp $02
 	jr nc,++
@@ -1257,53 +1311,59 @@ updateChannelVolume:
 	ld a,(wSoundCmdEnvelope)
 	ld c,R_NR12
 	call writeIndexedHighRamAndIncrement
-	ld hl,wc039
+	ld hl,wChannelFrequencyModeAndLengthTimerEnabled
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
 	add hl,de
 	ld a,(hl)
+	; Length enable
 	and $40
+	; Trigger
 	or $80
 	ld (wSoundCmdEnvelope),a
 	ret
 
 ;;
-func_39_4766:
-	call func_39_489e
+; Updates wWaveChannelVolume+4 and, if changed, writes to R_NR32 if possible
+updateChannel4Volume:
+	call getWaveChannelVolume
 	ld b,a
-	ld a,(wc025+4)
+	ld a,(wWaveChannelVolume+4)
 	cp b
-	jr z,+
+	jr z,@ret
 
-	call func_39_489e
-	ld (wc025+4),a
-	call func_39_434b
+	; Unnecessary repeated function call, why not just ld a,b?
+	call getWaveChannelVolume
+	ld (wWaveChannelVolume+4),a
+	call isWaveChannelUnavailable
 	cp $00
-	jr nz,+
+	jr nz,@ret
 
-	ld a,(wc025+4)
+	ld a,(wWaveChannelVolume+4)
 	ld ($ff00+R_NR32),a
-+
+@ret:
 	ret
 
 ;;
+; Intended for use with square and noise channels, but not used by channel 7
+; Channel 6 uses @affectedByMusicVolume as entry point
+; @param[out]	a	Final volume of channel wSoundChannel after possible modification with wMusicVolume ($0-$f)
 getChannelVolume:
 	ld a,(wSoundChannel)
 	scf
 	ccf
 	cp $02
-	jr nc,label_39_056
-;;
-func_39_478c:
+	jr nc,@fullVolume
+@affectedByMusicVolume:
 	ld a,(wMusicVolume)
 	cp $00
-	jr z,label_39_059
+	jr z,@muted
 	cp $01
-	jr z,label_39_058
+	jr z,@quarterVolume
 	cp $02
-	jr z,label_39_057
-label_39_056:
+	jr z,@halfVolume
+@fullVolume:
 	ld hl,wChannelVolumes
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1311,7 +1371,8 @@ label_39_056:
 	add hl,de
 	ld a,(hl)
 	ret
-label_39_057:
+
+@halfVolume:
 	ld hl,wChannelVolumes
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1320,7 +1381,8 @@ label_39_057:
 	ld a,(hl)
 	srl a
 	ret
-label_39_058:
+
+@quarterVolume:
 	ld hl,wChannelVolumes
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1330,12 +1392,13 @@ label_39_058:
 	srl a
 	srl a
 	ret
-label_39_059:
+
+@muted:
 	ld a,$00
 	ret
 
 standardCmdChannels4To5:
-	ld hl,wc039
+	ld hl,wChannelFrequencyModeAndLengthTimerEnabled
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -1348,7 +1411,7 @@ standardCmdChannels4To5:
 	ld l,a
 	ld a,(wSoundCmd)
 	ld h,a
-	jp @cmdUnknown
+	jp @arbitraryFrequency
 +
 	ld a,(wSoundCmd)
 	scf
@@ -1357,7 +1420,7 @@ standardCmdChannels4To5:
 	jr nz,@freqCommand
 @cmd60:
 	ld a,$01
-	ld hl,wc02d
+	ld hl,wChannelIsPlayingRest
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1365,8 +1428,9 @@ standardCmdChannels4To5:
 	add hl,de
 	pop af
 	ld (hl),a
-	call func_39_489e
-	ld hl,wc025
+	; Unnecessary function call, this will always return 0
+	call getWaveChannelVolume
+	ld hl,wWaveChannelVolume
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1374,11 +1438,12 @@ standardCmdChannels4To5:
 	add hl,de
 	pop af
 	ld (hl),a
-	call func_39_434b
+	call isWaveChannelUnavailable
 	cp $00
 	jr nz,+
 
-	ld hl,wc025
+	; Unnecessary, the volume is known to be 0 (and so is a)
+	ld hl,wWaveChannelVolume
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -1389,7 +1454,7 @@ standardCmdChannels4To5:
 	jp setChannelWaitCounter
 @freqCommand:
 	ld a,$00
-	ld hl,wc02d
+	ld hl,wChannelIsPlayingRest
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1400,10 +1465,10 @@ standardCmdChannels4To5:
 	ld a,(wSoundCmd)
 	ld hl,soundFrequencyTable
 	call readWordFromTable
-@cmdUnknown:
+@arbitraryFrequency:
 	call setSoundFrequency
 	ld a,$00
-	ld hl,wc045
+	ld hl,wChannelVibratoActive
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1422,7 +1487,7 @@ standardCmdChannels4To5:
 	srl a
 	srl a
 	srl a
-	ld hl,wc051
+	ld hl,wChannelVibratoCounters
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1430,8 +1495,8 @@ standardCmdChannels4To5:
 	add hl,de
 	pop af
 	ld (hl),a
-	call func_39_489e
-	ld hl,wc025
+	call getWaveChannelVolume
+	ld hl,wWaveChannelVolume
 	push af
 	ld a,(wSoundChannel)
 	ld e,a
@@ -1439,11 +1504,11 @@ standardCmdChannels4To5:
 	add hl,de
 	pop af
 	ld (hl),a
-	call func_39_434b
+	call isWaveChannelUnavailable
 	cp $00
 	jr nz,+
 
-	ld hl,wc025
+	ld hl,wWaveChannelVolume
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -1458,35 +1523,36 @@ standardCmdChannels4To5:
 	jp setChannelWaitCounter
 
 ;;
-func_39_489e:
-	ld hl,wc02d
+; @param[out]	a	Volume of channel wSoundChannel dependent of wMusicVolume, in a form that can be written to NR32
+getWaveChannelVolume:
+	ld hl,wChannelIsPlayingRest
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
 	add hl,de
 	ld a,(hl)
 	cp $00
-	jr nz,label_39_067
+	jr nz,@mute
 	ld a,(wSoundChannel)
 	cp $05
-	jr nc,label_39_064
+	jr nc,@fullVolume
 	ld a,(wMusicVolume)
 	cp $00
-	jr z,label_39_067
+	jr z,@mute
 	cp $01
-	jr z,label_39_066
+	jr z,@quarterVolume
 	cp $02
-	jr z,label_39_065
-label_39_064:
+	jr z,@halfVolume
+@fullVolume:
 	ld a,$20
 	ret
-label_39_065:
+@halfVolume:
 	ld a,$40
 	ret
-label_39_066:
+@quarterVolume:
 	ld a,$60
 	ret
-label_39_067:
+@mute:
 	ld a,$00
 	ret
 
@@ -1499,7 +1565,7 @@ standardCmdChannel6:
 	ld a,(de)
 	inc de
 	cp $ff
-	jr z,@end
+	jr z,@wait
 
 	cp c
 	jr z,+
@@ -1513,12 +1579,12 @@ standardCmdChannel6:
 	inc de
 	ld a,(de)
 	ld h,a
-	ld a,($c074)
+	ld a,(wChannelsEnabled+7)
 	cp $00
-	jr nz,@end
+	jr nz,@wait
 
 	push hl
-	call func_39_478c
+	call getChannelVolume@affectedByMusicVolume
 	pop hl
 	sla a
 	sla a
@@ -1530,7 +1596,7 @@ standardCmdChannel6:
 	ld ($ff00+R_NR43),a
 	ld a,$80
 	ld ($ff00+R_NR44),a
-@end:
+@wait:
 	jp setChannelWaitCounter
 
 ;;
@@ -1539,15 +1605,17 @@ standardCmdChannel7:
 	ld ($ff00+R_NR43),a
 	ld a,$00
 	ld ($ff00+R_NR41),a
-	ld a,($c01c)
+	ld a,(wChannel7TriggerOnNextSound)
 	cp $00
 	jr z,+
 	ld ($ff00+R_NR44),a
 +
 	ld a,$00
-	ld ($c01c),a
+	ld (wChannel7TriggerOnNextSound),a
 	jp setChannelWaitCounter
 
+;;
+; Disables and silences the current channel
 channelCmdff:
 	ld a,$00
 	ld hl,wChannelsEnabled
@@ -1559,10 +1627,8 @@ channelCmdff:
 	pop af
 	ld (hl),a
 ;;
-; Checks whether to call updateChannelVolume on square channels, does some other things
-; with the other types of channels...
-;
-updateChannelStuff:
+; Ensures no sound is audible on the current channel by setting the volume to $0 or turning off the wave channel DAC
+silencePlayedSound:
 	ld a,(wSoundChannel)
 	ld hl,@table
 	call readWordFromTable
@@ -1606,7 +1672,8 @@ updateChannelStuff:
 	cp $00
 	jr z,+
 +
-	ld hl,wc05d
+	; If an envelope is active that decreases volume over time, allow the sound to keep playing
+	ld hl,wChannelEnvelopeStates
 	ld a,(wSoundChannel)
 	ld e,a
 	ld d,$00
@@ -1615,17 +1682,20 @@ updateChannelStuff:
 	cp $03
 	jr nz,+
 	ret
+
 +
+	; Set volume to $0 and trigger channel
 	ld a,$08
 	ld (wSoundCmdEnvelope),a
-	call updateChannelVolume
-	jp func_42ea
+	call updateSquareChannelVolume
+	jp updatePlayedFrequency
 
 @musicWaveChannel:
-	call func_39_434b
+	call isWaveChannelUnavailable
 	cp $00
 	jr nz,+
 
+	; Disable DAC
 	ld a,$00
 	ld ($ff00+R_NR30),a
 +
@@ -1636,6 +1706,7 @@ updateChannelStuff:
 	cp $00
 	jr z,++
 
+	; Music channel is enabled
 	ld a,$04
 	ld e,a
 	ld hl,wChannelDutyCycles
@@ -1644,15 +1715,17 @@ updateChannelStuff:
 	ld a,(hl)
 	ld (wWaveformIndex),a
 	call setWaveform
-	ld a,(wc025+4)
+	ld a,(wWaveChannelVolume+4)
 	ld ($ff00+R_NR32),a
 	ret
 ++
+	; Disable DAC
 	ld a,$00
 	ld ($ff00+R_NR30),a
 	ret
 
 @noiseChannel:
+	; Set volume to $0 and trigger channel
 	ld a,$08
 	ld ($ff00+R_NR42),a
 	ld a,$80
@@ -1661,7 +1734,7 @@ updateChannelStuff:
 
 ;;
 setWaveform:
-	call func_39_434b
+	call isWaveChannelUnavailable
 	cp $00
 	jr z,@waitLoop
 	ret
@@ -1699,6 +1772,8 @@ setWaveform:
 	ld ($ff00+R_NR34),a
 	ret
 
+;;
+; Jump to word from argument
 channelCmdfe:
 	call getNextChannelByte
 	ld l,a
@@ -1716,7 +1791,7 @@ channelCmdfe:
 	jp doNextChannelCommand
 
 ;;
-func_39_4a10:
+multiplyHlByA:
 	cp $00
 	jr nz,+
 	ld hl,$0000
@@ -1822,7 +1897,16 @@ soundFrequencyTable:
 	.dw $07f1
 	.dw $07f2
 
-data_4ad0:
+; The number of audio ticks (close to the number of frames) until the envelope reaches volume V when it
+; starts from 1 and has sweep pace S can be approximated with the formula (V-1)*S*8192/(137+1/7)/64
+; (8192 is the timer frequency, 137 the number of timer ticks between timer interrupts, the timer is
+; decremented once every 7th timer interrupt, and 64 is the envelope tick frequency). The table does fit
+; this formula with V as the row index and S as the column index (with rounding to the nearest integer),
+; but strangely, in the way it is indexed, it is offset by two rows. For example, the second row is indexed by
+; a target volume of 1 (the same as the starting volume), so you would expect no wait, but the game using the
+; second row of the table causes it to wait until the volume reaches level 3 and then jump back to volume 1.
+; Should not be used with volume $e or $f or the table is indexed out of bounds
+envelopeWaitTable:
 	.db $00 $01 $02 $03 $04 $05 $06 $07
 	.db $00 $02 $04 $06 $07 $09 $0b $0d
 	.db $00 $03 $06 $08 $0b $0e $11 $14
@@ -1837,9 +1921,10 @@ data_4ad0:
 	.db $00 $0b $16 $22 $2d $38 $43 $4e
 	.db $00 $0c $18 $24 $31 $3d $49 $55
 	.db $00 $0d $1a $27 $34 $41 $4e $5b
-data_4b40:
-	.db $00 $00 $01 $00 $02 $00 $01 $00
-	.db $00 $00 $ff $ff $fe $ff $ff $ff
+
+; Frequency offsets that get added to the current played sound when vibrato is active
+vibratoOffsetTable:
+	.dw 0,1,2,1,0,-1,-2,-1
 
 ;;
 ; @param a The sound to play.
@@ -1887,7 +1972,7 @@ playSound:
 
 ; Disable sound
 @sndf5:
-	call func_39_40b9
+	call silenceAllChannels
 	ld a,$01
 	ld (wSoundDisabled),a
 	jp @setVolumeAndEnd
@@ -2065,7 +2150,7 @@ playSound:
 	ld d,$00
 	add hl,de
 	ld (hl),a
-	ld hl,wc03f
+	ld hl,wChannelSweep
 	ld d,$00
 	add hl,de
 	ld (hl),a
@@ -2073,7 +2158,7 @@ playSound:
 	ld d,$00
 	add hl,de
 	ld (hl),a
-	ld hl,wc039
+	ld hl,wChannelFrequencyModeAndLengthTimerEnabled
 	ld d,$00
 	add hl,de
 	ld (hl),a
@@ -2101,7 +2186,7 @@ playSound:
 	ld d,$00
 	add hl,de
 	ld (hl),a
-	ld hl,wc03f
+	ld hl,wChannelSweep
 	ld d,$00
 	add hl,de
 	ld (hl),a
@@ -2109,7 +2194,7 @@ playSound:
 	ld d,$00
 	add hl,de
 	ld (hl),a
-	ld hl,wc039
+	ld hl,wChannelFrequencyModeAndLengthTimerEnabled
 	ld d,$00
 	add hl,de
 	ld (hl),a
