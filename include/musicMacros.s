@@ -222,17 +222,17 @@
 	.endr
 .endm
 
-; 60/61: set wait counters.
-
+; 60: rest, stops playing the previous note and sets wait counter
 .macro rest
 	.db $60 \1
 .endm
 
+; 61: wait without changing the previous note or rest, can be used to extend a note or rest (for channels 0-3)
 .macro rest2 ; Unused?
 	.db $61 \1
 .endm
 
-; d0-df: set volume
+; d0-df: set volume (for channels 0-3, 6 and 7)
 .macro vol
 	.if \1 > $f
 		.fail
@@ -240,7 +240,7 @@
 	.db $d0 | \1
 .endm
 
-; e0-e7: set envelopes
+; e0-e7: set envelopes (for channels 0-3)
 .macro env
 	.if \1 > $7
 		.fail
@@ -251,8 +251,7 @@
 
 ; e8-ef: same as e0-e7
 
-; f0: unknown
-; Sometimes sets wc039
+; f0: does various things for channels 0-5, sets volume and envelope for channel 7, see audio.s for details
 .macro cmdf0
 	.db $f0 \1
 .endm
@@ -268,7 +267,7 @@
 	.db $f3
 .endm
 
-; f4-f5: duplicates of ff?
+; f4-f5: duplicates of ff
 .macro cmdf4
 	.db $f4
 .endm
@@ -276,28 +275,28 @@
 	.db $f5
 .endm
 
-; f6: sets wChannelDutyCycles
+; f6: sets wChannelDutyCycles (for channels 0-5)
 .macro duty
 	.db $f6 \1
 .endm
 
-; f7: duplicate of ff?
+; f7: duplicate of ff
 
-; f8: sets wc03f (for channels 0-5)
+; f8: sets sweep (for channels 0-5)
 .macro cmdf8
 	.db $f8 \1
 .endm
 
-; f9: sets wChannelVibratos.
+; f9: sets wChannelVibratos (for channels 0-5)
 ; Upper nibble is time to wait until vibrato starts.
 ; Lower nibble is intensity of vibrato.
 .macro vibrato
 	.db $f9 \1
 .endm
 
-; fa-fc: duplicates of ff?
+; fa-fc: duplicates of ff
 
-; fd: sets wc033
+; fd: sets wChannelPitchShift (for channels 0-5)
 ; Shifts pitch
 .macro cmdfd
 	.db $fd \1
@@ -309,7 +308,7 @@
 	.dw \1
 .endm
 
-; ff: might mute the channel?
+; ff: disables the channel
 .macro cmdff
 	.db $ff
 .endm

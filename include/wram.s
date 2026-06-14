@@ -44,16 +44,16 @@ wSoundDisabled: ; $c01b
 ; All sound processing is disabled when this is nonzero
 	db
 
-wc01c: ; $c01c
+wChannel7TriggerOnNextSound: ; $c01c
+; Audio command $f0 sets this to $80, which is then written to NR44 on the next standard command
 	db
 
 wSoundCmd: ; $c01d
 	db
 
 wSoundCmdEnvelope: ; $c01e
-; This value goes straight to NR12/NR22
-; In some situations it is also used to mark whether to reset / use the counter
-; for the channel (NRx4)
+; This value goes straight to NR12/NR22 in updateSquareChannelVolume
+; When that function returns, this value is updated with bits 6 and 7 that can go to NR14/NR24
 	db
 
 wSoundFrequencyL: ; $c01f
@@ -67,8 +67,11 @@ wMusicVolume: ; $c022
 ; Basically the same as hMusicVolume, except this is only used in the music routines.
 	db
 
-wc023: ; $c023
-; Relates to muting channel 3 when wMusicVolume is set to 0?
+wMusicMuted: ; $c023
+; When 2, prevents channel 4 from updating related hardware registers
+; 0: Music is not muted (equivalent to wMusicVolume != 0)
+; 1: Music has just been muted (updateSound function has not completed since then)
+; 2: Music has been muted for some time (muted for the entire duration of the most recent updateSound call)
 	db
 
 wSoundVolume: ; $c024
@@ -76,42 +79,62 @@ wSoundVolume: ; $c024
 ; Bits 0-2: left speaker, 4-6: right speaker (unless I mixed them up)
 	db
 
-
-wc025: ; $c025
+wWaveChannelVolume: ; $c025
+; This value goes straight to NR32 if the corresponding channel is active
+; Only used for channels 4 and 5
 	dsb 8
 
-wc02d: ; $c02d
-; This doesn't apply to channels 6 and 7?
+wChannelIsPlayingRest: ; $c02d
+; Only used for channels 4 and 5
 	dsb 6
 
 wChannelPitchShift: ; $c033
 ; An offset for wSoundFrequencyL,H
 	dsb 6
 
-wc039: ; $c039
-; c039 might be related to the "counter" bit (NRx4)
+wChannelFrequencyModeAndLengthTimerEnabled: ; $c039
+; This does two things:
+; If not 0, the standard audio command is not treated as an index into soundFrequencyTable,
+; but as the high byte for a frequency value, and the next byte is treated as the lower byte, followed by the length
+; For square channels, if bit 6 is set, then that bit also gets set on updates to wSoundCmdEnvelope
+; which enables the length timer for the channel (the initial length timer comes from wChannelDutyCycles)
 	dsb 6
 
-wc03f: ; $c03f
-; c03f might be related to sweep
+wChannelSweep: ; $c03f
+; Offset that keeps shifting the frequency value of a sound over time
 	dsb 6
 
-wc045: ; $c045
+wChannelVibratoActive: ; $c045
+; When bit 4 is set, the vibrato wait check is skipped and vibrato applied
 	dsb 6
 wChannelVibratos: ; $c04b
+; Upper nibble is half the number of ticks until vibrato starts
+; Lower nibble is the vibrato intensity
 	dsb 6
-wc051: ; $c051
+wChannelVibratoCounters: ; $c051
+; Serves two purposes depending on wChannelVibratoActive:
+; Initially for every sound, this is the amount of time left until the vibrato becomes active
+; Once the wait is over, this becomes the index into vibratoOffsetTable and is incremented after every use
 	dsb 6
 wChannelDutyCycles: ; $c057
+; Written straight to NR11/NR21 for channels 0/1 and 2/3
+; Contains waveform index for channels 4 and 5
 	dsb 6
 
-wc05d: ; $c05d
+wChannelEnvelopeStates: ; $c05d
+; Keeps track of the current envelope state for the current sound
+; 0: Initializing envelopes
+; 1: Sound playing with start envelope
+; 2: Sound playing without envelope (or other type of wait)
+; 3: Sound playing with end envelope (envelope could already be finished)
 	dsb 4
-wc061: ; $c061
+wChannelEnvelopeWaitCounters: ; $c061
 	dsb 4
 wChannelEnvelopes: ; $c065
+; Envelope for making sounds fade in
 	dsb 4
 wChannelEnvelopes2: ; $c069
+; Envelope for making sounds fade out
 	dsb 4
 
 wChannelsEnabled: ; $c06d
@@ -119,6 +142,7 @@ wChannelsEnabled: ; $c06d
 wChannelWaitCounters: ; $c075
 	dsb 8
 wChannelVolumes: ; $c07d
+; Never read for wave channels
 	dsb 8
 
 ; $c085-$c09f unused?
