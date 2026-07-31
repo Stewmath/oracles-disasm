@@ -44,7 +44,7 @@ verifyTilesAndDropSmallKey:
 	jp spawnSmallKeyFromCeiling
 
 subid01_tileData:
-	.db TILEINDEX_YELLOW_TOGGLE_FLOOR  $67 $77 $ff ; Tiles at $67 and $77 must be red
+	.db TILEINDEX_YELLOW_TOGGLE_FLOOR  $67 $77 $ff ; Tiles at $67 and $77 must be yellow
 	.db TILEINDEX_BLUE_TOGGLE_FLOOR    $68 $78 $00 ; Tiles at $68 and $78 must be blue
 
 
