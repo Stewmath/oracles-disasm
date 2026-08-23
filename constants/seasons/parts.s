@@ -94,8 +94,8 @@
 .define PART_MOTHULA_PROJECTILE_2 $42
 
 ;;
-; created by Gleeok - projectiles?
-.define PART_43 $43
+; projectiles created by Gleeok
+.define PART_GLEEOK_FLAME $43
 
 ;;
 ; created by medusa head

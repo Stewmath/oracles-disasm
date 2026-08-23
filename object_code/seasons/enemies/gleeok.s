@@ -1,68 +1,94 @@
 ; ==================================================================================================
 ; ENEMY_GLEEOK
+;
+; Variables (subid 1, main body):
+;   var30-var37: Contain high bytes of other body parts with subids 2-9
+;   var38: Bitfield of which 3 bits are used:
+;     Bit 0: Set while one of the heads is performing one of the attacks 0-2 to block the other
+;            head from the same attack range
+;     Bit 1: Set whenever the left head is detached and floating through the room
+;     Bit 2: Set whenever the right head is detached and floating through the room
+;
+; Variables (subids 2 and 3, heads):
+;   var03: Attack pattern (0-5)
+;   relatedObj1: Points to the main body
+;   var30: Angle sequence index for movement in attack patterns 4 and 5
+;   var31: Wait timer for next angle update in attack patterns 4 and 5
+;   var39: Projectile target y for attack pattern 1
+;   var3a: Projectile target x for attack pattern 1
+;
+; Variables (subids 4 to 9, neck segments):
+;   relatedObj1: Points to the main body
+;   relatedObj2: Points to the head on the same side
 ; ==================================================================================================
 enemyCode06:
 	jr z,@normalStatus
-	sub $03
+	sub ENEMYSTATUS_NO_HEALTH
 	ret c
 	jr nz,@normalStatus
+	; If main body has no health, consider the boss defeated
 	ld e,Enemy.subid
 	ld a,(de)
 	dec a
 	jp z,enemyBoss_dead
-	ld e,$a4
+	ld e,Enemy.collisionType
 	ld a,(de)
 	or a
 	jp z,enemyDie_uncounted_withoutItemDrop
+	; Otherwise a head has no health, mark it as floating in main body variable
 	ld e,Enemy.subid
 	ld a,(de)
 	cp $02
-	ld b,$02
+	ld b,$02 ; left head
 	jr z,+
-	ld b,$04
+	ld b,$04 ; right head
 +
-	ld a,$38
+	ld a,Object.var38
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	or b
 	ld (hl),a
+	; If this head is currently performing a fire attack and the other head is also attacking,
+	; advance the other head to state $0c so it can pick a fire attack soon
 	ld e,Enemy.state
 	ld a,(de)
 	cp $0b
 	jr nz,+
-	ld e,$83
+	ld e,Enemy.var03
 	ld a,(de)
 	cp $03
 	jr nc,+
-	ld e,$82
+	ld e,Enemy.subid
 	ld a,(de)
 	xor $01
-	add $ae
+	add Enemy.var30-2
 	ld l,a
 	ld h,(hl)
-	ld l,$84
+	ld l,Enemy.state
 	ld a,(hl)
 	cp $0b
 	jr nz,+
 	inc (hl)
 +
+	; Put head in state $0e (floating across the room)
 	ld h,d
-	ld l,$84
+	ld l,Enemy.state
 	ld (hl),$0e
-	ld l,$a4
+	; Reset health and make immune to attacks
+	ld l,Enemy.collisionType
 	set 7,(hl)
 	inc l
-	ld (hl),$04
-	ld l,$a9
+	ld (hl),ENEMYCOLLISION_PODOBOO ; [enemyCollisionMode]
+	ld l,Enemy.health
 	ld (hl),$19
-	ld l,$ac
+	ld l,Enemy.knockbackAngle
 	ld a,(hl)
-	ld l,$89
+	ld l,Enemy.angle
 	ld (hl),a
-	ld l,$90
-	ld (hl),$50
-	ld l,$86
-	ld (hl),$96
+	ld l,Enemy.speed
+	ld (hl),SPEED_200
+	ld l,Enemy.counter1
+	ld (hl),150
 	xor a
 	jp enemySetAnimation
 
@@ -92,45 +118,50 @@ enemyCode06:
 	.dw @subid8
 	.dw @subid9
 
+; Initialize room or body part depending on subid
 @state0:
 	ld a,b
 	or a
-	jp z,+
+	jp z,@initializeRoom
 	call ecom_setSpeedAndState8AndVisible
-	jp func_6c6b
-+
+	jp gleeok_initializeBodyPart
+
+@initializeRoom:
 	inc a
-	ld (de),a
-	ld a,$06
-	ld b,$87
+	ld (de),a ; [state]
+	ld a,ENEMY_GLEEOK
+	ld b,PALH_SEASONS_87
 	call enemyBoss_initializeRoom
 
+; Spawn the 9 body parts with references between main body and other parts, then delete self
 @state1:
-	ld b,$09
+	ld b,9
 	call checkBEnemySlotsAvailable
 	ret nz
 	ld b,ENEMY_GLEEOK
 	call ecom_spawnUncountedEnemyWithSubid01
-	ld l,$80
+	ld l,Enemy.enabled
 	ld e,l
 	ld a,(de)
 	ld (hl),a
-	ld l,$b0
+	ld l,Enemy.var30
 	ld c,h
-	ld e,$08
+	; Spawn 8 enemy objects (2 heads and 6 neck segments)
+	ld e,8
 -
 	push hl
 	call ecom_spawnUncountedEnemyWithSubid01
 	ld a,$0a
 	sub e
-	ld (hl),a
-	ld l,$96
-	ld a,$80
+	ld (hl),a ; [subid]
+	; Make relatedObj1 point to main body
+	ld l,Enemy.relatedObj1
+	ld a,Enemy.start
 	ldi (hl),a
 	ld (hl),c
 	ld a,h
 	pop hl
-	ldi (hl),a
+	ldi (hl),a ; [var30] through [var37]
 	dec e
 	jr nz,-
 	jp enemyDelete
@@ -138,6 +169,7 @@ enemyCode06:
 @stateStub:
 	ret
 
+; Main body
 @subid1:
 	ld a,(de)
 	sub $08
@@ -150,48 +182,53 @@ enemyCode06:
 	.dw @@stateD
 	.dw @@stateE
 	.dw @@stateF
-	.dw @@stateG
-	
+	.dw @@state10
+
+; Start playing music once the shutter door is closed
 @@state8:
 	ld a,(wcc93)
 	or a
 	ret nz
 	ld h,d
 	ld l,e
-	inc (hl)
-	ld a,$2e
+	inc (hl) ; [state]
+	ld a,MUS_BOSS
 	ld (wActiveMusic),a
 	jp playSound
-	
+
+; Wait until both heads are floating
 @@state9:
-	ld e,$b8
+	ld e,Enemy.var38
 	ld a,(de)
 	bit 1,a
 	jr z,@@animate
 	bit 2,a
 	jr z,@@animate
+	; Both heads are floating, prepare second phase
 	ld h,d
-	ld l,$84
+	ld l,Enemy.state
 	inc (hl)
-	ld l,$87
-	ld (hl),$3c
-	ld e,$b0
+	ld l,Enemy.counter2
+	ld (hl),60
+	; Set health of heads to 0 and disable their collision
+	ld e,Enemy.var30
 	ld a,(de)
 	ld h,a
-	ld l,$a9
+	ld l,Enemy.health
 	xor a
-	ld (hl),a
-	ld l,$a4
+	ld (hl),a ; left head
+	ld l,Enemy.collisionType
 	ld (hl),a
 	inc e
-	ld a,(de)
+	ld a,(de) ; [var31]
 	ld h,a
 	xor a
-	ld (hl),a
-	ld l,$a9
-	ld (hl),a
-	ld hl,$ce16
-	xor a
+	ld (hl),a ; [collisionType]
+	ld l,Enemy.health
+	ld (hl),a ; right head
+	; Make floor under main body no longer solid
+	ld hl,wRoomCollisions+$16
+	xor a ; Unnecessary
 	ldi (hl),a
 	ldi (hl),a
 	ld (hl),a
@@ -199,11 +236,12 @@ enemyCode06:
 	ldi (hl),a
 	ldi (hl),a
 	ld (hl),a
-	ld a,$67
+	ld a,SND_BOSS_DEAD
 	call playSound
-	ld a,$f0
+	ld a,SNDCTRL_STOPMUSIC
 	jp playSound
-	
+
+; Flicker and transition to second phase
 @@stateA:
 	call ecom_decCounter2
 	jp nz,ecom_flickerVisibility
@@ -211,111 +249,121 @@ enemyCode06:
 	call enemyBoss_spawnShadow
 	jp nz,ecom_flickerVisibility
 	ld h,d
-	ld l,$84
+	ld l,Enemy.state
 	inc (hl)
-	ld l,$86
-	ld (hl),$1e
+	ld l,Enemy.counter1
+	ld (hl),30
 	ld a,$04
 	call enemySetAnimation
-	
+
+; Start playing music again
 @@stateB:
 	call ecom_decCounter1
 	jp nz,ecom_flickerVisibility
-	inc (hl)
+	inc (hl) ; [counter1] = 1
 	ld l,e
-	inc (hl)
-	ld l,$a4
+	inc (hl) ; [state]
+	ld l,Enemy.collisionType
 	set 7,(hl)
-	ld a,$2e
+	ld a,MUS_BOSS
 	ld (wActiveMusic),a
 	call playSound
-	ld e,$84
-	
+	ld e,Enemy.state
+
+; Start jump
 @@stateC:
 	call ecom_decCounter1
 	jr nz,+
 	ld l,e
-	inc (hl)
+	inc (hl) ; [state]
 	ld bc,$fdc0
 	call objectSetSpeedZ
 	jp objectSetVisible81
 +
-	ld a,(hl)
-	cp $0a
+	ld a,(hl) ; [counter1]
+	cp 10
 	ret c
 
 @@animate:
 	jp enemyAnimate
-	
+
+; Perform jump and shake the ground when landing
 @@stateD:
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	ret nz
-	ld l,$84
+	ld l,Enemy.state
 	inc (hl)
-	ld l,$86
-	ld (hl),$96
-	ld a,$78
+	ld l,Enemy.counter1
+	ld (hl),150
+	ld a,120
 	call setScreenShakeCounter
 	call objectSetVisible82
-	ld a,$81
+	ld a,SND_STRONG_POUND
 	jp playSound
-	
+
+; Stun Link if he touches the ground within 15 frames after landing, then after waiting set the angle to face Link
 @@stateE:
 	call ecom_decCounter1
-	jr z,+
-	ld a,(hl)
-	cp $87
+	jr z,@@@prepareRunTowardsLink
+	ld a,(hl) ; [counter1]
+	cp 135
 	jr c,@@animate
-	ld a,($d00f)
+	ld a,(w1Link.zh)
 	rlca
 	ret c
-	ld hl,$cc6a
+	ld hl,wLinkForceState
 	ld a,$14
 	ldi (hl),a
-	ld (hl),$00
+	ld (hl),$00 ; [wcc50]
 	ret
-+
+
+@@@prepareRunTowardsLink:
 	ld l,e
-	inc (hl)
-	ld l,$90
-	ld (hl),$50
+	inc (hl) ; [state]
+	ld l,Enemy.speed
+	ld (hl),SPEED_200
 	call ecom_updateAngleTowardTarget
 	jr @@animate
-	
+
+; Run until a wall is encountered
 @@stateF:
-	ld a,$01
+	ld a,$01 ; Holes count as walls
 	call ecom_getSideviewAdjacentWallsBitset
-	jr nz,+
+	jr nz,@@@reachedWall
 	call objectApplySpeed
 	jr @@animate
-+
-	ld a,$28
+
+@@@reachedWall:
+	ld a,40
 	call setScreenShakeCounter
 	ld h,d
-	ld l,$84
+	ld l,Enemy.state
 	inc (hl)
-	ld l,$90
-	ld (hl),$14
-	ld l,$89
+	ld l,Enemy.speed
+	ld (hl),SPEED_80
+	; Bounce in opposite direction of running
+	ld l,Enemy.angle
 	ld a,(hl)
 	xor $10
 	ld (hl),a
 	ld bc,$fe80
 	call objectSetSpeedZ
 	jr @@animate
-	
-@@stateG:
+
+; Perform bounce away from wall
+@@state10:
 	call ecom_applyVelocityForSideviewEnemyNoHoles
 	ld c,$20
 	call objectUpdateSpeedZ_paramC
 	jr nz,@@animate
-	ld l,$84
+	ld l,Enemy.state
 	ld (hl),$0c
-	ld l,$86
-	ld (hl),$3c
+	ld l,Enemy.counter1
+	ld (hl),60
 	jr @@animate
 
+; Left head
 @subid2:
 	ld a,(de)
 	sub $08
@@ -329,86 +377,98 @@ enemyCode06:
 	.dw @@stateE
 	.dw @@stateF
 	.dw @@incStateWhenCounter1Is0
-	.dw @@stateH
-	
+	.dw @@state11
+
+; Initialize head-specific properties
 @@state8:
 	ld h,d
 	ld l,Enemy.angle
 	ld (hl),$14
-@@incStateEnableCollisionsSetCounterAndSpeed:
+@@@rightHeadEntry:
 	ld l,e
-	inc (hl)
+	inc (hl) ; [state]
 	ld l,Enemy.collisionType
 	set 7,(hl)
 	ld l,Enemy.counter1
-	ld (hl),$3c
+	ld (hl),60
 	ld l,Enemy.speed
 	ld (hl),SPEED_80
 	ret
-	
+
 @@incStateWhenCounter1Is0:
 	call ecom_decCounter1
 	jp nz,objectApplySpeed
 	ld l,e
-	inc (hl)
+	inc (hl) ; [state]
 	ret
-	
+
+; Pick the next attack pattern
 @@stateA:
 	ld b,$04
-@@func_6905:
-	ld a,$38
+@@@rightHeadEntry:
+	; If other head is currently floating, pick one of the attacks 0-2
+	ld a,Object.var38
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	and b
 	ld c,$03
-	ld l,$b8
-	jr nz,+
+	ld l,Enemy.var38
+	jr nz,@@@lowAttackPattern ; Confusing order, this branch could have been 2 operations earlier
+	; If the other head is doing one of the attacks 0-2, pick an attack 3-5
 	bit 0,(hl)
-	jr nz,++
-	ld e,$82
+	jr nz,@@@highAttackPattern
+	; If right head, pick an attack 0-2
+	ld e,Enemy.subid
 	ld a,(de)
 	cp $03
-	jr z,+
+	jr z,@@@lowAttackPattern
+	; If right head is in state $10 or $11 (just came back to main body after floating), pick an attack 0-2
 	ld b,h
-	ld l,$b1
+	ld l,Enemy.var31
 	ld h,(hl)
-	ld l,$84
+	ld l,Enemy.state
 	ld a,(hl)
 	cp $10
 	ld h,b
-	jr nc,+
+	jr nc,@@@lowAttackPattern
+	; If Link is in the left half of the room, pick an attack 0-2, otherwise 3-5
 	ldh a,(<hEnemyTargetX)
 	cp $78
-	jr nc,++
-+
-	ld l,$b8
+	jr nc,@@@highAttackPattern
+@@@lowAttackPattern:
+	ld l,Enemy.var38
 	set 0,(hl)
 	ld c,$00
-++
+@@@highAttackPattern:
+	; If Link is in the top half of the room, pick attack 0 or 3
 	ldh a,(<hEnemyTargetY)
 	cp $58
 	ld b,$00
-	jr c,+
+	jr c,@@@setAttackPattern
+	; If Link is near the bottom of the room (Y position $70 or greater), pick attack 2 or 5
 	ld b,$02
 	sub $70
 	cp $40
-	jr c,+
+	jr c,@@@setAttackPattern
+	; Otherwise, choose randomly between attack 1/4 or 2/5
 	call getRandomNumber
 	and $01
 	inc a
 	ld b,a
-+
+@@@setAttackPattern:
+	; [var03] = c+b
 	ld h,d
-	ld l,$83
+	ld l,Enemy.var03
 	ld a,c
 	add b
 	ld (hl),a
-	ld l,$84
+	ld l,Enemy.state
 	inc (hl)
 	inc l
-	ld (hl),$00
+	ld (hl),$00 ; [substate]
 	ret
-	
+
+; Handle the current attack pattern
 @@stateB:
 	ld e,Enemy.var03
 	ld a,(de)
@@ -421,27 +481,29 @@ enemyCode06:
 	.dw @@@var03_04
 	.dw @@@var03_05
 
+; Shoot a single flame towards Link that explodes into smaller flames
 @@@var03_00:
 	ld a,(de)
 	rst_jumpTable
 	.dw @@@@substate0
 	.dw @@@@substate1
 	.dw @@@@substate2
-	
+
+; Move to a fixed position below and to the side of the main body
 @@@@substate0:
 	ld bc,$3a60
 	ld h,d
-	ld l,$82
+	ld l,Enemy.subid
 	ld a,(hl)
 	cp $02
 	jr z,+
 	ld c,$90
 +
-	ld l,$8b
+	ld l,Enemy.yh
 	ldi a,(hl)
 	ldh (<hFF8F),a
 	inc l
-	ld a,(hl)
+	ld a,(hl) ; [xh]
 	ldh (<hFF8E),a
 	cp c
 	jr nz,+
@@ -452,146 +514,160 @@ enemyCode06:
 	jp ecom_moveTowardPosition
 ++
 	ld l,e
-	inc (hl)
+	inc (hl) ; [substate]
 	ret
-	
+
+; Indicate visually that the head is about to fire a projectile
 @@@@substate1:
 	ld h,d
 	ld l,e
-	inc (hl)
+	inc (hl) ; [substate]
 	inc l
-	ld (hl),$1e
+	ld (hl),30 ; [counter1]
 	ld a,$01
 	jp enemySetAnimation
-	
+
+; Fire a projectile
 @@@@substate2:
 	call ecom_decCounter1
 	jr z,+
-	ld a,(hl)
-	cp $08
+	ld a,(hl) ; [counter1]
+	cp 8
 	ret nz
-	ld l,$8b
+	ld l,Enemy.yh
 	ld a,(hl)
 	sub $04
 	ld (hl),a
-	ld b,PART_43
+	ld b,PART_GLEEOK_FLAME
 	jp ecom_spawnProjectile
 +
-	ld l,$8b
+	ld l,Enemy.yh
 	ld a,(hl)
 	add $04
 	ld (hl),a
-@@@func_69bc:
-	ld a,$38
+
+; Increment state to $0c, and do the same for the other head if it is currently attacking
+@@@finishProjectileAttack:
+	; If other head is also in state $0b, move it to state $0c
+	ld a,Object.var38
 	call objectGetRelatedObject1Var
 	res 0,(hl)
-	ld e,$82
+	ld e,Enemy.subid
 	ld a,(de)
 	sub $02
 	xor $01
-	add $b0
+	add Enemy.var30
 	ld l,a
 	ld h,(hl)
-	ld l,$84
+	ld l,Enemy.state
 	ld a,(hl)
 	cp $0b
 	jr nz,+
-	inc (hl)
+	inc (hl) ; [state] = $0c
 +
+	; Go to state $0c
 	ld h,d
 	ld e,l
-	inc (hl)
-	ld l,$82
+	inc (hl) ; [state] = $0c
+	ld l,Enemy.subid
 	ld a,(hl)
 	cp $02
 	ret nz
+	; For the left head, run state $0c code instantly
 	jp @@stateC
 
+; Spawn 4 flames surrounding Link
 @@@var03_01:
 	ld a,(de)
 	rst_jumpTable
 	.dw @@@@substate0
 	.dw @@@@substate1
 	.dw @@@@substate2
-	
+
+; Indicate visually that the head is about to fire a projectile and set up wait timer
 @@@@substate0:
 	ld h,d
 	ld l,e
-	inc (hl)
-	ld l,$86
-	ld (hl),$28
+	inc (hl) ; [substate]
+	ld l,Enemy.counter1
+	ld (hl),40
 	ld a,$01
 	jp enemySetAnimation
-	
+
+; Store Link's current position as the projectile target
 @@@@substate1:
 	call ecom_decCounter1
 	ret nz
-	ld (hl),$41
+	ld (hl),$41 ; [counter1]
 	ld l,e
-	inc (hl)
-	ld l,$b9
+	inc (hl) ; [substate]
+	ld l,Enemy.var39
 	ldh a,(<hEnemyTargetY)
 	ldi (hl),a
 	ldh a,(<hEnemyTargetX)
-	ld (hl),a
+	ld (hl),a ; [var3a]
 	ret
-	
+
+; Spawn 4 projectiles surrounding the target position
 @@@@substate2:
 	call ecom_decCounter1
-	jr z,@@@func_69bc
-	ld a,(hl)
+	jr z,@@@finishProjectileAttack
+	ld a,(hl) ; [counter1]
 	and $0f
-	jr z,+
+	jr z,@@@@@spawnProjectile
 	cp $08
 	ret nz
-	ld l,$8b
+	ld l,Enemy.yh
 	ld a,(hl)
 	add $02
 	ld (hl),a
 	ret
-+
-	ld l,$8b
+
+@@@@@spawnProjectile:
+	ld l,Enemy.yh
 	ld a,(hl)
 	sub $02
 	ld (hl),a
 	call getFreePartSlot
 	ret nz
-	ld (hl),PART_43
+	ld (hl),PART_GLEEOK_FLAME ; [Part.id]
 	inc l
-	inc (hl)
-	ld e,$86
+	inc (hl) ; [Part.subid]
+	ld e,Enemy.counter1
 	ld a,(de)
 	and $30
 	swap a
-	ld bc,@@@@table_6a54
+	ld bc,@@@@projectileOffsetsFromTarget
 	call addDoubleIndexToBc
-	ld e,$b9
+	ld e,Enemy.var39
 	ld a,(de)
 	ld e,a
 	ld a,(bc)
 	add e
-	ld l,$cb
+	ld l,Part.yh
 	ldi (hl),a
 	inc l
 	inc bc
-	ld e,$ba
+	ld e,Enemy.var3a
 	ld a,(de)
 	ld e,a
 	ld a,(bc)
 	add e
-	ldi (hl),a
+	ldi (hl),a ; [Part.xh]
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERAC_PUFF
 	ld bc,$0800
 	jp objectCopyPositionWithOffset
 
-@@@@table_6a54:
-	.db $ec $00
-	.db $00 $ec
-	.db $00 $14
-	.db $14 $00
+; Projectile position offsets from target position
+@@@@projectileOffsetsFromTarget:
+	.db $ec $00 ; Top
+	.db $00 $ec ; Left
+	.db $00 $14 ; Right
+	.db $14 $00 ; Bottom
 
+; Fire 2 waves of 3 flames
 @@@var03_02:
 	ld a,(de)
 	rst_jumpTable
@@ -599,38 +675,42 @@ enemyCode06:
 	.dw @@@@substate1
 	.dw @@@@substate2
 
+; Indicate visually that the head is about to fire a projectile and set up counters
 @@@@substate0:
 	ld h,d
 	ld l,e
-	inc (hl)
+	inc (hl) ; [substate]
 	inc l
-	ld (hl),$08
+	ld (hl),8 ; [counter1]
 	inc l
-	ld (hl),$02
+	ld (hl),2 ; [counter2]
 	ld a,$01
 	jp enemySetAnimation
 
+; Wait until counter1 reaches 0
 @@@@substate1:
 	call ecom_decCounter1
 	ret nz
 	ld l,e
-	inc (hl)
+	inc (hl) ; [substate]
 	ret
 
+; Spawn projectile
 @@@@substate2:
-	ld b,PART_43
+	ld b,PART_GLEEOK_FLAME
 	call ecom_spawnProjectile
 	ret nz
-	ld l,$c2
+	ld l,Part.subid
 	ld (hl),$02
 	call ecom_decCounter2
-	jp z,@@@func_69bc
+	jp z,@@@finishProjectileAttack
 	dec l
-	ld (hl),$14
+	ld (hl),20 ; [counter1]
 	dec l
-	dec (hl)
+	dec (hl) ; [substate]
 	ret
 
+; Move to a fixed position, then wait there until the other head finishes a projectile attack
 @@@var03_03:
 	ld a,(de)
 	rst_jumpTable
@@ -639,48 +719,54 @@ enemyCode06:
 @@@@ret:
 	ret
 
+; Move around until the other head finishes a projectile attack
 @@@var03_04:
 @@@var03_05:
-	call @@@func_6a9f
-	call z,func_6cf6
+	call @@@decrementAngleUpdateWait
+	call z,gleeok_updateHeadAngle
 	jp objectApplySpeed
-@@@func_6a9f:
+
+@@@decrementAngleUpdateWait:
 	ld h,d
-	ld l,$b1
+	ld l,Enemy.var31
 	ld a,(hl)
 	or a
 	ret z
 	dec (hl)
 	ret
-	
+
+; Go to state $0d and set up the timer of 2 seconds for it
 @@stateC:
 	ld h,d
 	ld l,e
-	inc (hl)
-	ld l,$87
-	ld (hl),$78
-	ld l,$83
+	inc (hl) ; [state]
+	ld l,Enemy.counter2
+	ld (hl),120
+	; After attack patterns 0 and 3, reset angle variables since the head went to its default position before
+	ld l,Enemy.var03
 	ld a,(hl)
 	or a
 	jr z,+
 	cp $03
 	jr nz,++
 +
-	ld l,$b0
+	ld l,Enemy.var30
 	xor a
 	ldi (hl),a
-	ld (hl),a
+	ld (hl),a ; [var31]
 ++
 	xor a
 	jp enemySetAnimation
-	
+
+; Do not attack for 2 seconds, then go back to state $0a
 @@stateD:
 	call ecom_decCounter2
 	jr nz,@@stateB@var03_04
 	ld l,e
-	ld (hl),$0a
+	ld (hl),$0a ; [state]
 	ret
-	
+
+; Head is detached from main body and floating across the room
 @@stateE:
 	ld a,(wFrameCounter)
 	rrca
@@ -688,27 +774,28 @@ enemyCode06:
 	call ecom_decCounter1
 	jr nz,+
 	ld l,e
-	inc (hl)
-	ld l,$90
-	ld (hl),$28
+	inc (hl) ; [state]
+	ld l,Enemy.speed
+	ld (hl),SPEED_100
 +
 	call objectApplySpeed
 	jp ecom_bounceOffScreenBoundary
-	
+
+; Head is floating back to its default position in a straight line
 @@stateF:
 	ld h,d
-	ld l,$82
+	ld l,Enemy.subid
 	ld a,(hl)
 	cp $02
 	ld bc,$2476
 	jr z,+
 	ld c,$7a
 +
-	ld l,$8b
+	ld l,Enemy.yh
 	ldi a,(hl)
 	ldh (<hFF8F),a
 	inc l
-	ld a,(hl)
+	ld a,(hl) ; [xh]
 	ldh (<hFF8E),a
 	cp c
 	jr nz,+
@@ -718,59 +805,66 @@ enemyCode06:
 +
 	jp ecom_moveTowardPosition
 ++
+	; Attach head to main body again
 	ld l,e
-	inc (hl)
+	inc (hl) ; [state]
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_GLEEOK
-	ld l,$90
-	ld (hl),$14
-	ld l,$86
-	ld (hl),$3c
-	ld l,$b0
+	ld l,Enemy.speed
+	ld (hl),SPEED_80
+	ld l,Enemy.counter1
+	ld (hl),60
+	ld l,Enemy.var30
 	xor a
 	ldi (hl),a
-	ld (hl),a
-	ld l,$82
+	ld (hl),a ; [var31]
+	ld l,Enemy.subid
 	ld a,(hl)
 	cp $02
-	ld a,$14
+	ld a,$14 ; left head moves down left
 	ld b,$02
 	jr z,+
-	ld a,$0c
+	ld a,$0c ; right head moves down right
 	ld b,$04
 +
-	ld l,$89
+	ld l,Enemy.angle
 	ld (hl),a
-	ld a,$38
+	; Mark head as no longer detached for main body
+	ld a,Object.var38
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	xor b
 	ld (hl),a
 	ret
-	
-@@stateH:
-	ld e,$82
+
+; Wait until the other head is not attacking, then go back to state $0a
+@@state11:
+	; If mirror image is in one of the states $0b to $0d (attacking), just move the head around without attacking
+	ld e,Enemy.subid
 	ld a,(de)
 	sub $02
 	xor $01
-	add $30
+	add Object.var30
 	call objectGetRelatedObject1Var
 	ld h,(hl)
-	ld l,$84
+	ld l,Enemy.state
 	ld a,(hl)
 	cp $0e
 	jr nc,+
 	cp $0a
 	jp nz,@@stateB@var03_04
 +
+	; Otherwise, go back to state $0a
 	ld h,d
-	ld (hl),$0a
-	ld l,$82
+	ld (hl),$0a ; [state]
+	; For the left head, run state $0a code instantly
+	ld l,Enemy.subid
 	ld a,(hl)
 	cp $02
 	ret nz
 	jp @@stateA
 
+; Right head
 @subid3:
 	ld a,(de)
 	sub $08
@@ -784,18 +878,19 @@ enemyCode06:
 	.dw @subid2@stateE
 	.dw @subid2@stateF
 	.dw @subid2@incStateWhenCounter1Is0
-	.dw @subid2@stateH
+	.dw @subid2@state11
 
 @@state8:
 	ld h,d
-	ld l,$89
+	ld l,Enemy.angle
 	ld (hl),$0c
-	jp @subid2@incStateEnableCollisionsSetCounterAndSpeed
+	jp @subid2@state8@rightHeadEntry
 
 @@stateA:
 	ld b,$02
-	jp @subid2@func_6905
+	jp @subid2@stateA@rightHeadEntry
 
+; Neck segments next to heads
 @subid4:
 @subid5:
 	ld a,(de)
@@ -805,74 +900,84 @@ enemyCode06:
 	.dw @@state9
 	.dw @@stateA
 
+; Initialize neck-specific properties
 @@state8:
 	ld h,d
 	ld l,e
-	inc (hl)
+	inc (hl) ; [state]
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_PODOBOO
-	ld e,$82
+	; Store reference to head on the same side in relatedObj2
+	ld e,Enemy.subid
 	ld a,(de)
 	sub $04
-	add $30
+	add Object.var30
 	call objectGetRelatedObject1Var
-	ld e,$99
+	ld e,Enemy.relatedObj2+1
 	ld a,(hl)
 	ld (de),a
 	dec e
-	ld a,$80
-	ld (de),a
+	ld a,Enemy.start
+	ld (de),a ; [relatedObj2]
 
+; Update position based on the head on the same side, or turn invisible if head detached
 @@state9:
-	call func_6cb2
-	call func_6cbf
+	call gleeok_deleteSegmentIfHeadUnloaded
+	call gleeok_getHeadVectorDividedBy4
 	ret nz
-	ld e,$8b
+
+	; [yh] = b*3+$24
+	ld e,Enemy.yh
 	ld a,b
 	add a
 	add b
 	add $24
 	ld (de),a
-	ld e,$82
+	ld e,Enemy.subid
 	ld a,(de)
 	cp $04
 	ld b,$76
 	jr z,+
 	ld b,$7a
 +
+	; [xh] = c*3+b
 	ld a,c
 	add a
 	add c
 	add b
-	ld e,$8d
+	ld e,Enemy.xh
 	ld (de),a
 	ret
 
+; Wait for head on same side to connect with main body again
 @@stateA:
-	call func_6cb2
-	ld e,$82
+	call gleeok_deleteSegmentIfHeadUnloaded
+	ld e,Enemy.subid
 	ld a,(de)
 	rrca
 	ld bc,$0276
 	jr nc,+
 	ld bc,$047a
 +
-	ld a,$38
+	; Return if the head on the same side is detached
+	ld a,Object.var38
 	call objectGetRelatedObject1Var
 	ld a,(hl)
 	and b
 	ret nz
+	; Head is attached, become visible and active again
 	ld h,d
-	ld l,$84
+	ld l,Enemy.state
 	dec (hl)
-	ld l,$a4
+	ld l,Enemy.collisionType
 	set 7,(hl)
-	ld l,$8b
+	ld l,Enemy.yh
 	ld (hl),$24
-	ld l,$8d
+	ld l,Enemy.xh
 	ld (hl),c
 	jp objectSetVisible82
 
+; Middle neck segments
 @subid6:
 @subid7:
 	ld a,(de)
@@ -882,47 +987,54 @@ enemyCode06:
 	.dw @@state9
 	.dw @subid5@stateA
 
+; Initialize neck-specific properties
 @@state8:
 	ld h,d
 	ld l,e
-	inc (hl)
+	inc (hl) ; [state]
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_PODOBOO
-	ld e,$82
+	; Store reference to head on the same side in relatedObj2
+	ld e,Enemy.subid
 	ld a,(de)
 	sub $06
-	add $30
+	add Object.var30
 	call objectGetRelatedObject1Var
-	ld e,$99
+	ld e,Enemy.relatedObj2+1
 	ld a,(hl)
 	ld (de),a
 	dec e
-	ld a,$80
-	ld (de),a
+	ld a,Enemy.start
+	ld (de),a ; [relatedObj2]
 
+; Update position based on the head on the same side, or turn invisible if head detached
 @@state9:
-	call func_6cb2
-	call func_6cbf
+	call gleeok_deleteSegmentIfHeadUnloaded
+	call gleeok_getHeadVectorDividedBy4
 	ret nz
-	ld e,$8b
+
+	; [yh] = b*2+$24
+	ld e,Enemy.yh
 	ld a,b
 	add a
 	add $24
 	ld (de),a
-	ld e,$82
+	ld e,Enemy.subid
 	ld a,(de)
 	cp $06
 	ld b,$76
 	jr z,+
 	ld b,$7a
 +
+	; [xh] = c*2+b
 	ld a,c
 	add a
 	add b
-	ld e,$8d
+	ld e,Enemy.xh
 	ld (de),a
 	ret
 
+; Neck segments next to main body
 @subid8:
 @subid9:
 	ld a,(de)
@@ -931,77 +1043,85 @@ enemyCode06:
 	.dw @@state8
 	.dw @@state9
 	.dw @subid5@stateA
-	
+
+; Initialize neck-specific properties
 @@state8:
 	ld h,d
 	ld l,e
-	inc (hl)
+	inc (hl) ; [state]
 	ld l,Enemy.enemyCollisionMode
 	ld (hl),ENEMYCOLLISION_PODOBOO
-	ld e,$82
+	; Store reference to head on the same side in relatedObj2
+	ld e,Enemy.subid
 	ld a,(de)
 	sub $08
-	add $30
+	add Object.var30
 	call objectGetRelatedObject1Var
-	ld e,$99
+	ld e,Enemy.relatedObj2+1
 	ld a,(hl)
 	ld (de),a
 	dec e
-	ld a,$80
-	ld (de),a
-	
+	ld a,Enemy.start
+	ld (de),a ; [relatedObj2]
+
+; Update position based on the head on the same side, or turn invisible if head detached
 @@state9:
-	call func_6cb2
-	call func_6cbf
+	call gleeok_deleteSegmentIfHeadUnloaded
+	call gleeok_getHeadVectorDividedBy4
 	ret nz
-	ld e,$8b
+
+	; [yh] = b+$24
+	ld e,Enemy.yh
 	ld a,b
 	add $24
 	ld (de),a
-	ld e,$82
+	ld e,Enemy.subid
 	ld a,(de)
 	cp $08
 	ld a,$76
 	jr z,+
 	ld a,$7a
 +
+	; [xh] = c+a
 	add c
-	ld e,$8d
+	ld e,Enemy.xh
 	ld (de),a
 	ret
 
-func_6c6b:
+gleeok_initializeBodyPart:
 	dec b
-	jr z,func_6c8a
-	ld c,$76
-	ld l,$82
+	jr z,gleeok_initializeMainBody
+	ld c,$76 ; even subid: left of main body
+	ld l,Enemy.subid
 	bit 0,(hl)
 	jr z,+
-	ld c,$7a
+	ld c,$7a ; odd subid: right of main body
 +
-	ld l,$8b
+	ld l,Enemy.yh
 	ld (hl),$24
-	ld l,$8d
+	ld l,Enemy.xh
 	ld (hl),c
-	ld l,$82
+	ld l,Enemy.subid
 	ld a,(hl)
 	cp $04
 	ret c
+	; Not a head
 	ld a,$02
 	jp enemySetAnimation
-	
-func_6c8a:
-	ld l,$a4
+
+gleeok_initializeMainBody:
+	ld l,Enemy.collisionType
 	res 7,(hl)
-	ld l,$a6
+	ld l,Enemy.collisionRadiusY
 	ld (hl),$0c
 	inc l
-	ld (hl),$0e
-	ld l,$8b
+	ld (hl),$0e ; [Enemy.collisionRadiusX]
+	ld l,Enemy.yh
 	ld (hl),$20
-	ld l,$8d
+	ld l,Enemy.xh
 	ld (hl),$78
-	ld hl,$ce16
+	; Make floor under main body solid
+	ld hl,wRoomCollisions+$16
 	ld a,$0f
 	ldi (hl),a
 	ldi (hl),a
@@ -1014,56 +1134,72 @@ func_6c8a:
 	call enemySetAnimation
 	jp objectSetVisible83
 
-func_6cb2:
-	ld a,$01
+; Called by body segments to delete them when the head on the same side is no longer loaded
+gleeok_deleteSegmentIfHeadUnloaded:
+	ld a,Object.id
 	call objectGetRelatedObject2Var
 	ld a,(hl)
-	cp $06
+	cp ENEMY_GLEEOK
 	ret z
+	; Break out of Gleeok code
 	pop hl
 	jp enemyDelete
 
-func_6cbf:
-	ld l,$84
+; Turns the given neck segment invisible and increments its state if the given head is
+; in state $0e (floating across the room), otherwise computes the vector from the given
+; head's default position to its current position, divided by 4
+;
+; @param	de	Pointer to a Gleeok neck segment (e irrelevant)
+; @param	hl	Pointer to a Gleeok head (l irrelevant)
+; @param[out]	zflag	Set if the head is not in state $0e, cleared otherwise
+; @param[out]	b	If z is set: y component of the vector
+; @param[out]	c	If z is set: x component of the vector
+gleeok_getHeadVectorDividedBy4:
+	ld l,Enemy.state
 	ld a,(hl)
 	cp $0e
-	jr nz,func_6cd8
+	jr nz,@computeVector
+	; Neck segment goes to state $0a and turns invisible
 	ld h,d
-	inc (hl)
-	ld l,$a4
+	inc (hl) ; [state]
+	ld l,Enemy.collisionType
 	res 7,(hl)
-	ld e,$9a
+	ld e,Enemy.visible
 	ld a,(de)
 	rlca
 	ld b,INTERAC_KILLENEMYPUFF
 	call c,objectCreateInteractionWithSubid00
 	jp objectSetInvisible
-	
-func_6cd8:
-	ld l,$8b
+
+@computeVector:
+	; b = ([head.yh]-$24)/4
+	ld l,Enemy.yh
 	ldi a,(hl)
 	sub $24
 	sra a
 	sra a
 	ld b,a
 	inc l
-	ld e,$82
+	ld e,Enemy.subid
 	ld a,(de)
 	rrca
 	ld c,$76
 	jr nc,+
 	ld c,$7a
 +
-	ld a,(hl)
+	; c = ([head.xh]-c)/4
+	ld a,(hl) ; [xh]
 	sub c
 	sra a
 	sra a
 	ld c,a
 	xor a
 	ret
-	
-func_6cf6:
-	ld e,$b0
+
+; Picks a sequence when needed, then gets the next angle from the sequence
+; and sets the dedicated wait timer to 6
+gleeok_updateHeadAngle:
+	ld e,Enemy.var30
 	ld a,(de)
 	and $1f
 	jr nz,+
@@ -1072,7 +1208,7 @@ func_6cf6:
 	ld (de),a
 +
 	ld a,(de)
-	ld hl,table_6d14
+	ld hl,gleeok_headAngleSequences
 	rst_addAToHl
 	ld e,Enemy.angle
 	ld a,(hl)
@@ -1081,10 +1217,11 @@ func_6cf6:
 	ld l,Enemy.var30
 	inc (hl)
 	inc l
-	ld (hl),$06
+	ld (hl),6 ; [var31]
 	ret
 
-table_6d14:
+; 2 blocks of size $20, a random block is picked and the sequence advances every 6 frames
+gleeok_headAngleSequences:
 	.db $15 $16 $17 $17 $19 $19 $1a $1b
 	.db $05 $06 $07 $07 $09 $09 $0a $0b
 	.db $0b $0a $09 $09 $07 $07 $06 $05
