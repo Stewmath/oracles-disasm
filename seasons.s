@@ -690,7 +690,7 @@ m_section_free Part_Code_2 NAMESPACE partCode
 	.include "object_code/seasons/parts/aquamentusProjectile.s"
 	.include "object_code/seasons/parts/dodongoFireball.s"
 	.include "object_code/seasons/parts/mothulaProjectile2.s"
-	.include "object_code/seasons/parts/43.s"
+	.include "object_code/seasons/parts/gleeokFlame.s"
 	.include "object_code/seasons/parts/44.s"
 	.include "object_code/seasons/parts/45.s"
 	.include "object_code/seasons/parts/46.s"
