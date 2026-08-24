@@ -6,14 +6,14 @@ partCode43:
 	ld a,(de)
 	ld e,Part.state
 	rst_jumpTable
-	.dw @subid0
-	.dw @subid1
-	.dw @subid2
-	.dw @subid3
-	.dw @subid4
+	.dw gleeokFlame_exploding
+	.dw gleeokFlame_stationary
+	.dw gleeokFlame_tripleMiddle
+	.dw gleeokFlame_small
+	.dw gleeokFlame_tripleSide
 
 ; Single flame that moves south and then explodes into 6 smaller flames
-@subid0:
+gleeokFlame_exploding:
 	ld a,(de) ; [state]
 	or a
 	jr z,@initializeSouthMovingFlame
@@ -74,17 +74,17 @@ partCode43:
 	ld l,Part.angle
 	ld (hl),$10
 	ld b,SPEED_200
-	jr @subid1@setSpeedYXVisibleAndPlaySound
+	jr gleeokFlame_stationary_state1@setSpeedYXVisibleAndPlaySound
 
 ; Single stationary flame
-@subid1:
+gleeokFlame_stationary:
 	ld a,(de) ; [state]
 	rst_jumpTable
-	.dw @@state0
-	.dw @@state1
-	.dw @@state2
+	.dw gleeokFlame_stationary_state0
+	.dw gleeokFlame_stationary_state1
+	.dw gleeokFlame_stationary_state2
 
-@@state0:
+gleeokFlame_stationary_state0:
 	ld h,d
 	ld l,e
 	inc (hl) ; [state]
@@ -100,7 +100,7 @@ partCode43:
 	ld (hl),a ; [oamFlagsBackup]
 	ret
 
-@@state1:
+gleeokFlame_stationary_state1:
 	call partCommon_decCounter1IfNonzero
 	ret nz
 	ld (hl),180 ; [counter1]
@@ -110,19 +110,19 @@ partCode43:
 	set 7,(hl)
 	ld b,SPEED_180
 
-@@setSpeedYXVisibleAndPlaySound:
+@setSpeedYXVisibleAndPlaySound:
 	call gleeokFlame_setSpeedYX
 	call objectSetVisible81
 	ld a,SND_LIGHTTORCH
 	jp playSound
 
-@@state2:
+gleeokFlame_stationary_state2:
 	call partCommon_decCounter1IfNonzero
 	jp z,partDelete
 	jp partAnimate
 
 ; The middle out of a burst of 3 flames moving generally south
-@subid2:
+gleeokFlame_tripleMiddle:
 	ld a,(de) ; [state]
 	or a
 	jr z,@initializeTripleFlame
@@ -153,7 +153,7 @@ partCode43:
 	add $06
 	ld (hl),a
 	ld b,SPEED_180
-	call @subid1@setSpeedYXVisibleAndPlaySound
+	call gleeokFlame_stationary_state1@setSpeedYXVisibleAndPlaySound
 	ld bc,$0213
 	call @spawnCompanionFlame
 	ld bc,$030d
@@ -174,7 +174,7 @@ partCode43:
 	jp objectCopyPosition
 
 ; Small flame that moves in a straight line for a bit and then disappears
-@subid3:
+gleeokFlame_small:
 	ld a,(de) ; [state]
 	or a
 	jr z,+
@@ -199,10 +199,10 @@ partCode43:
 	jp partSetAnimation
 
 ; The left or right out of a burst of 3 flames moving generally south
-@subid4:
+gleeokFlame_tripleSide:
 	ld a,(de) ; [state]
 	or a
-	jp nz,@keepMovingUntilOutOfBounds
+	jp nz,gleeokFlame_tripleMiddle@keepMovingUntilOutOfBounds
 	; Initialize
 	ld h,d
 	ld l,e
