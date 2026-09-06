@@ -1,8 +1,14 @@
 ; ==================================================================================================
 ; INTERAC_LINKED_GAME_GHINI
+;
+; Variables:
+;   For subid 0 (secret ghini)
+;   var39: Counter before going to the next substate
+;   var3a: Current stage of the secret
+;   var3c: Correct answer
 ; ==================================================================================================
 interactionCodecb:
-	ld e,$44
+	ld e,Interaction.state
 	ld a,(de)
 	rst_jumpTable
 	.dw @state0
@@ -10,7 +16,7 @@ interactionCodecb:
 	.dw @state2
 	.dw @state3
 @state0:
-	ld e,$42
+	ld e,Interaction.subid
 	ld a,(de)
 	rst_jumpTable
 	.dw @@subid0
@@ -23,8 +29,8 @@ interactionCodecb:
 	jp z,interactionDelete
 	call interactionInitGraphics
 	call interactionIncState
-	ld l,$79
-	ld (hl),$78
+	ld l,Interaction.var39
+	ld (hl),120
 	ld a,>TX_4c00
 	call interactionSetHighTextIndex
 	ld a,GLOBALFLAG_DONE_GRAVEYARD_SECRET
@@ -45,39 +51,39 @@ interactionCodecb:
 @@subid2:
 	call interactionInitGraphics
 	ld h,d
-	ld l,$42
+	ld l,Interaction.subid
 	ld a,(hl)
-	ld l,$5c
+	ld l,Interaction.oamFlags
 	ld (hl),a
-	ld l,$44
+	ld l,Interaction.state
 	ld (hl),$02
-	ld l,$46
+	ld l,Interaction.counter1
 	ld (hl),$1e
-	ld l,$4b
+	ld l,Interaction.yh
 	ld a,(hl)
-	ld l,$7b
+	ld l,Interaction.var3b
 	ld (hl),a
-	ld l,$4d
+	ld l,Interaction.xh
 	ld a,(hl)
-	ld l,$7c
+	ld l,Interaction.var3c
 	ld (hl),a
 	call getRandomNumber
 	and $02
 	dec a
-	ld e,$7e
+	ld e,Interaction.var3e
 	ld (de),a
 	call getRandomNumber
 	and $1f
-	ld e,$49
+	ld e,Interaction.angle
 	ld (de),a
 	call getRandomNumber
 	and $03
 	ld hl,@@table_7b4d
 	rst_addAToHl
 	ld a,(hl)
-	ld e,$7d
+	ld e,Interaction.var3d
 	ld (de),a
-	call func_7c3f
+	call @func_7c3f
 	jp objectSetVisible81
 @@table_7b4d:
 	.db $03 $04 $05 $06
@@ -87,18 +93,18 @@ interactionCodecb:
 	jp z,interactionDelete
 	call interactionInitGraphics
 	ld h,d
-	ld l,$5c
+	ld l,Interaction.oamFlags
 	ld (hl),$02
-	ld l,$44
+	ld l,Interaction.state
 	ld (hl),$03
-	ld l,$7e
+	ld l,Interaction.var3e
 	ld (hl),GLOBALFLAG_BEGAN_LIBRARY_SECRET-GLOBALFLAG_FIRST_SEASONS_BEGAN_SECRET
 	ld hl,mainScripts.linkedGameNpcScript
 	call interactionSetScript
 	jp interactionAnimateAsNpc
 
 @state1:
-	ld e,$45
+	ld e,Interaction.substate
 	ld a,(de)
 	rst_jumpTable
 	.dw @@substate0
@@ -111,19 +117,19 @@ interactionCodecb:
 	call interactionRunScript
 	ret nc
 	call interactionIncSubstate
-	jp func_7c0f
+	jp @func_7c0f
 @@substate1:
-	call func_7bf9
+	call @waitVar39
 	ret nz
-	ld l,$45
+	ld l,Interaction.substate
 	inc (hl)
-	ld l,$79
-	ld (hl),$3c
+	ld l,Interaction.var39
+	ld (hl),60
 	ret
 @@substate2:
-	call func_7bf9
+	call @waitVar39
 	ret nz
-	ld l,$45
+	ld l,Interaction.substate
 	inc (hl)
 	ld hl,mainScripts.linkedGhiniScript_startRound
 	call interactionSetScript
@@ -133,35 +139,35 @@ interactionCodecb:
 	call interactionRunScript
 	ret nc
 	ld h,d
-	ld l,$45
+	ld l,Interaction.substate
 	ld (hl),$01
-	ld l,$7f
+	ld l,Interaction.var3f
 	ld a,(hl)
 	cp $00
 	jp z,func_71c5
-	jp func_7c0f
+	jp @func_7c0f
 @state2:
 	call interactionAnimate
 	call @func_7be1
-	call func_7bf9
+	call @waitVar39
 	jp z,interactionDelete
-	ld l,$46
+	ld l,Interaction.counter1
 	ld a,(hl)
 	or a
 	ret nz
-	ld l,$7d
+	ld l,Interaction.var3d
 	ld a,(hl)
-	ld l,$7b
+	ld l,Interaction.var3b
 	ld b,(hl)
-	ld l,$7c
+	ld l,Interaction.var3c
 	ld c,(hl)
-	ld e,$7f
+	ld e,Interaction.var3f
 	call objectSetPositionInCircleArc
-	jp func_7bfe
+	jp @func_7bfe
 
 @func_7be1:
 	ld h,d
-	ld l,$46
+	ld l,Interaction.counter1
 	ld a,(hl)
 	or a
 	jr z,+
@@ -174,31 +180,33 @@ interactionCodecb:
 @state3:
 	call interactionRunScript
 	jp interactionAnimateAsNpc
-func_7bf9:
+
+@waitVar39:
 	ld h,d
-	ld l,$79
+	ld l,Interaction.var39
 	dec (hl)
 	ret
-func_7bfe:
+
+@func_7bfe:
 	ld a,(wFrameCounter)
 	rrca
 	ret nc
 	ld h,d
-	ld l,$7e
+	ld l,Interaction.var3e
 	ld b,(hl)
-	ld l,$7f
+	ld l,Interaction.var3f
 	ld a,(hl)
 	add b
 	and $1f
 	ld (hl),a
 	ret
-func_7c0f:
-	ld e,$7a
+@func_7c0f:
+	ld e,Interaction.var3a
 	xor a
 	ld (de),a
 	jr ++
-func_71c5:
-	ld e,$7a
+@func_71c5:
+	ld e,Interaction.var3a
 	ld a,(de)
 	inc a
 	cp $03
@@ -207,11 +215,14 @@ func_71c5:
 +
 	ld (de),a
 ++
-	call func_7c3f
+	call @func_7c3f
+
+	; Choose the correct answer
 	call getRandomNumber
 	and $01
-	ld e,$7c
+	ld e,Interaction.var3c
 	ld (de),a
+
 	push de
 	call clearEnemies
 	call clearItems
@@ -219,21 +230,22 @@ func_71c5:
 	pop de
 	xor a
 	ld ($cc30),a
-	call func_7c50
-	jp func_7cce
-func_7c3f:
-	ld e,$7a
+	call @func_7c50
+	jp @spawnGhinis
+
+@func_7c3f:
+	ld e,Interaction.var3a
 	ld a,(de)
 	ld bc,table_7c4d
 	call addAToBc
 	ld a,(bc)
-	ld e,$79
+	ld e,Interaction.var3f
 	ld (de),a
 	ret
-table_7c4d:
+@table_7c4d:
 	.db $f0 $b4 $78
 
-func_7c50:
+@func_7c50:
 	ld hl,$cee0
 	xor a
 -
@@ -241,14 +253,14 @@ func_7c50:
 	inc a
 	cp $0d
 	jr nz,-
-	ld e,$7d
+	ld e,Interaction.var3d
 	ld (de),a
 	xor a
-	ld e,$7b
+	ld e,Interaction.var3b
 	ld (de),a
 	ret
-func_7c62:
-	ld e,$7d
+@func_7c62:
+	ld e,Interaction.var3d
 	ld a,(de)
 	ld b,a
 	dec a
@@ -262,7 +274,7 @@ func_7c62:
 	ld hl,$cee0
 	rst_addAToHl
 	ld a,(hl)
-	ld e,$7e
+	ld e,Interaction.var3e
 	ld (de),a
 	push de
 	ld d,c
@@ -282,63 +294,71 @@ func_7c62:
 +
 	pop de
 	ret
-func_7c8a:
+
+;;
+; @param[in]	d	Address of the secret ghini (subid 0)
+; @param[out]	a	Color of the ghini to be spawned (0 for blue, 1 for red)
+@getColor:
 	ld h,d
-	ld l,$7a
+	ld l,Interaction.var3a
 	ld a,(hl)
 	swap a
-	ld l,$7b
+	ld l,Interaction.var3b
 	add (hl)
-	ld bc,table_7c9e
+	ld bc,@colorTable
 	call addAToBc
 	ld a,(bc)
-	ld l,$7c
+	ld l,Interaction.var3c
 	xor (hl)
 	ret
-table_7c9e:
+
+@colorTable:
+	; Stage 1 : 3 not matching
 	.db $01 $01 $01 $00 $00 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
+	; Stage 2 : 5 not matching
 	.db $01 $01 $01 $01 $01 $00 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
+	; Stage 3 : 6 not matching
 	.db $01 $01 $01 $01 $01 $01 $00 $00
 	.db $00 $00 $00 $00 $00 $00 $00 $00
 
-func_7cce:
+@spawnGhinis:
 	call getFreeInteractionSlot
 	ret nz
 	ld (hl),INTERAC_LINKED_GAME_GHINI
 	inc hl
 	push hl
-	call func_7c8a
+	call @getColor
 	pop hl
 	inc a
 	ld (hl),a
-	ld e,$7a
+	ld e,Interaction.var3a
 	ld a,(de)
-	ld l,$7a
+	ld l,Interaction.var3a
 	ld (hl),a
 	push hl
-	call func_7c62
+	call @func_7c62
 	pop hl
-	ld e,$7e
+	ld e,Interaction.var3e
 	ld a,(de)
-	ld bc,table_7d03
+	ld bc,@ghiniPositions
 	call addDoubleIndexToBc
-	ld l,$4b
+	ld l,Interaction.yh
 	ld a,(bc)
 	ld (hl),a
 	inc bc
-	ld l,$4d
+	ld l,Interaction.xh
 	ld a,(bc)
 	ld (hl),a
-	ld e,$7b
+	ld e,Interaction.var3b
 	ld a,(de)
 	inc a
 	ld (de),a
 	cp $0d
-	jr nz,func_7cce
+	jr nz,@spawnGhinis
 	ret
-table_7d03:
+@ghiniPositions:
 	.db $1c $20 $1c $40 $1c $60 $1c $80
 	.db $34 $30 $34 $50 $34 $70 $4c $20
 	.db $4c $40 $4c $60 $4c $80 $64 $30
