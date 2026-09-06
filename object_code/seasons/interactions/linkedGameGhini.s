@@ -236,7 +236,7 @@ interactionCodecb:
 @func_7c3f:
 	ld e,Interaction.var3a
 	ld a,(de)
-	ld bc,table_7c4d
+	ld bc,@table_7c4d
 	call addAToBc
 	ld a,(bc)
 	ld e,Interaction.var3f
