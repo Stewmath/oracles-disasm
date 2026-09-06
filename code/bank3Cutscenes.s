@@ -873,11 +873,13 @@ introCinematic_ridingHorse_state4:
 	ld a,UNCMP_GFXH_AGES_36
 	call loadUncompressedGfxHeader
 
+.ifndef ENABLE_BUGFIXES
 	; After calling "loadUncompressedGfxHeader", hl points to rom. They almost
 	; certainly didn't intend to write there. They probably intended for hl to point
 	; to wTmpcbb3, and set the counter for the next state?
 	; It makes no difference, though, since the next state doesn't use wTmpcbb3.
 	ld (hl),90
+.endif
 
 	ld a,PALH_9b
 	call loadPaletteHeader
