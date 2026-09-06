@@ -144,7 +144,7 @@ interactionCodecb:
 	ld l,Interaction.var3f
 	ld a,(hl)
 	cp $00
-	jp z,func_71c5
+	jp z,@func_71c5
 	jp @func_7c0f
 @state2:
 	call interactionAnimate
