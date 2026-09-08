@@ -83,7 +83,7 @@ interactionCodecb:
 	ld a,(hl)
 	ld e,Interaction.var3d
 	ld (de),a
-	call @func_7c3f
+	call @setRoundTimer
 	jp objectSetVisible81
 @@table_7b4d:
 	.db $03 $04 $05 $06
@@ -215,7 +215,7 @@ interactionCodecb:
 +
 	ld (de),a
 ++
-	call @func_7c3f
+	call @setRoundTimer
 
 	; Choose the correct answer
 	call getRandomNumber
@@ -233,17 +233,17 @@ interactionCodecb:
 	call @func_7c50
 	jp @spawnGhinis
 
-@func_7c3f:
+@setRoundTimer:
 	ld e,Interaction.var3a
 	ld a,(de)
-	ld bc,@table_7c4d
+	ld bc,@roundTimerTable
 	call addAToBc
 	ld a,(bc)
-	ld e,Interaction.var3f
+	ld e,Interaction.var39
 	ld (de),a
 	ret
-@table_7c4d:
-	.db $f0 $b4 $78
+@roundTimerTable:
+	.db 240 180 120
 
 @func_7c50:
 	ld hl,$cee0
