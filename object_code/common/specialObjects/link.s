@@ -3748,7 +3748,7 @@ linkState01_sidescroll:
 
 	; He was in water last frame.
 
-	; Skip the below code if he surfaced from an underwater ladder tile.
+	; Skip the hop if the current tile at Link's y+$08 is an underwater ladder.
 	ld a,(wLastActiveTileType)
 	cp (TILETYPE_SS_LADDER | TILETYPE_SS_WATER)
 	jr z,++
