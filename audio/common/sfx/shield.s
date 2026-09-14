@@ -3,15 +3,15 @@ sndShieldStart:
 sndShieldChannel2:
 	duty $00
 	vol $0
-	cmdf8 $00
+	pitchSlide $00
 	env $0 $00
 	note c7  $01
 	vol $f
-	cmdf8 $00
+	pitchSlide $00
 	env $0 $01
 	note c2  $01
 	vol $e
-	cmdf8 $00
+	pitchSlide $00
 	env $0 $01
 	note c7  $01
 	vol $0

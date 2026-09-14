@@ -259,7 +259,7 @@ musRosaDateChannel0:
 	env $0 $00
 	duty $02
 musicf5b54:
-	cmdfd $ff
+	pitchOffset -$01
 	vol $0
 	note gs3 $bd
 	vol $3
@@ -347,7 +347,7 @@ musicf5b54:
 	vol $1
 	note b5  $07
 	rest $2e
-	cmdfd $00
+	pitchOffset $00
 	vol $6
 	note cs6 $04
 	note ds6 $05

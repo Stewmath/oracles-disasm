@@ -65,17 +65,17 @@ musicf8251:
 	vol $3
 	note as7 $01
 	note as5 $01
-	cmdf8 $81
+	pitchSlide $81
 	note cs5 $03
-	cmdf8 $00
+	pitchSlide $00
 	vol $0
 	rest $05
 	vol $3
 	note as7 $01
 	note as5 $01
-	cmdf8 $81
+	pitchSlide $81
 	note cs5 $03
-	cmdf8 $00
+	pitchSlide $00
 	vol $0
 	rest $05
 	goto musicf8251
