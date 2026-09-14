@@ -6,9 +6,9 @@ sndDoorCloseChannel2:
 	rest $02
 	vol $6
 	note c4  $01
-	cmdf8 $0f
+	pitchSlide $0f
 	note c4  $05
-	cmdf8 $00
+	pitchSlide $00
 	cmdff
 
 sndDoorCloseChannel7:

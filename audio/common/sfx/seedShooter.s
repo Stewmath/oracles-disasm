@@ -3,9 +3,9 @@ sndSeedShooterStart:
 sndSeedShooterChannel2:
 	duty $02
 	vol $c
-	cmdf8 $28
+	pitchSlide $28
 	note ds5 $02
-	cmdf8 $00
+	pitchSlide $00
 	note ds5 $01
 	duty $02
 	vol $6
