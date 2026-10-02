@@ -86,7 +86,7 @@
 
 .ORGA $0068
 
-.SECTION Bank_0_Early_Functions
+.SECTION Bank_0_Early_Functions FORCE
 
 ;;
 ; @param a
@@ -239,7 +239,7 @@ bitTable:
 
 .ORGA $150
 
-.SECTION Bank_0
+.SECTION Bank_0 FORCE
 
 ;;
 ; The game's entrypoint.
