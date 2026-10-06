@@ -1684,21 +1684,21 @@ seasonsFunc_15_5cf0:
 	ld a,($ccec)
 	cp $03
 	jr z,+
-seasonsFunc_15_5cf7:
+reequipItemsAfterMinigame:
 	push de
 	ld a,$ff
 	ld ($cbea),a
-	ld h,>wc600Block
+	ld h,>wInventoryStorage
 	ld de,$cfdf
-	ld c,$80
-	call seasonsFunc_15_5d12
+	ld c,<wInventoryB
+	call reequipItem
 	ld e,$de
-	ld c,$81
-	call seasonsFunc_15_5d12
+	ld c,<wInventoryA
+	call reequipItem
 	pop de
 +
 	jp enableActiveRing
-seasonsFunc_15_5d12:
+reequipItem:
 	ld a,(de)
 	or a
 	ret z

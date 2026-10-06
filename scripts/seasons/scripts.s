@@ -7859,7 +7859,7 @@ script7d56:
 	wait 8
 	wait 8
 	setangleandanimation $10
-	asm15 scriptHelp.seasonsFunc_15_5cf7
+	asm15 scriptHelp.reequipItems
 	asm15 scriptHelp.seasonsFunc_15_652e
 	rungenericnpclowindex <TX_4c22
 script7d6b:
@@ -7885,7 +7885,7 @@ goldenCaveSubrosianScript_7d87:
 	setangleandanimation $10
 	disableinput
 	asm15 scriptHelp.goldenCaveSubrosian_faceLinkUp
-	asm15 scriptHelp.seasonsFunc_15_5cf7
+	asm15 scriptHelp.reequipItems
 	checkpalettefadedone
 	showtextlowindex <TX_4c2b
 	wait 20
