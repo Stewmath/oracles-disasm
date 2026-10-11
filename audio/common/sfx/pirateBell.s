@@ -3,9 +3,9 @@ sndPirateBellStart:
 sndPirateBellChannel2:
 	duty $00
 	vol $c
-	cmdf8 $20
+	pitchSlide $20
 	note a4  $01
-	cmdf8 $00
+	pitchSlide $00
 	vol $7
 	note c5  $01
 	note ds5 $01

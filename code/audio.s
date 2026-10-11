@@ -94,7 +94,7 @@ updateMusicVolume:
 	push de
 	push hl
 	push af
-	call silenceSquareMusicChannels
+	call silencePulseMusicChannels
 
 	pop af
 	ld (wMusicVolume),a
@@ -114,8 +114,8 @@ updateMusicVolume:
 
 ;;
 ; Silences channels 0 and 1 if enabled
-silenceSquareMusicChannels:
-	; Update square 1's volume
+silencePulseMusicChannels:
+	; Update pulse 1's volume
 	ld a,$00
 	ld (wSoundChannel),a
 	ld hl,wChannelsEnabled
@@ -128,7 +128,7 @@ silenceSquareMusicChannels:
 	jr z,+
 	call silencePlayedSound
 +
-	; Update square 2's volume
+	; Update pulse 2's volume
 	ld a,$01
 	ld (wSoundChannel),a
 	ld hl,wChannelsEnabled
@@ -171,7 +171,7 @@ silenceAllChannels:
 ; Disable all sound effect channels
 ;
 stopSfx:
-	; Square 1
+	; Pulse 1
 	ld a,$02
 	ld (wSoundChannel),a
 	ld hl,wChannelsEnabled
@@ -184,7 +184,7 @@ stopSfx:
 	jr z,+
 	call channelCmdff
 +
-	; Square 2
+	; Pulse 2
 	ld a,$03
 	ld (wSoundChannel),a
 	ld hl,wChannelsEnabled
@@ -545,7 +545,7 @@ updatePlayedFrequency:
 	jr nc,@wave
 
 	cp $02
-	jr nc,@square
+	jr nc,@pulse
 
 	; For music, check if channel is free
 	inc a
@@ -556,10 +556,10 @@ updatePlayedFrequency:
 	add hl,de
 	ld a,(hl)
 	cp $00
-	jr z,@square
+	jr z,@pulse
 	ret
 
-@square:
+@pulse:
 	ld a,(wSoundChannel)
 	and $01
 	ld b,a
@@ -742,7 +742,8 @@ channelCmdf9:
 	jp doNextChannelCommand
 
 ;;
-; Sets sweep to the argument value, does nothing for noise channels
+; Continuous pitch slide
+; Signed argument value that gets added to the channel's frequency every frame, does nothing for noise channels
 channelCmdf8:
 	ld a,(wSoundChannel)
 	scf
@@ -786,7 +787,7 @@ channelCmdfd:
 
 ;;
 ; Sets the channel envelopes to the lower 3 bits of the command value (note start) and the argument value (note end)
-; Should not be used with wave or noise channels or else wChannelEnvelopes2 and wChannelsEnabled get messed up for square channels
+; Should not be used with wave or noise channels or else wChannelEnvelopes2 and wChannelsEnabled get messed up for pulse channels
 cmde0Toef:
 	and $07
 	ld hl,wChannelEnvelopes
@@ -912,7 +913,7 @@ cmdVolume:
 	jp doNextChannelCommand
 
 ;;
-; For square channels, sets wChannelDutyCycles to the argument value shifted 6 bits to the left
+; For pulse channels, sets wChannelDutyCycles to the argument value shifted 6 bits to the left
 ; For wave channels, sets wChannelDutyCycles to the argument value and updates the waveform based on that index
 ; Should not be used with noise channels or else wChannelEnvelopeStates gets messed up for channel 0 or 1
 channelCmdf6:
@@ -1023,7 +1024,7 @@ standardSoundCmd:
 	ld c,$01
 	or c
 	ld (wSoundCmdEnvelope),a
-	call updateSquareChannelVolume
+	call updatePulseChannelVolume
 	call updateSoundFrequencyAndPlay
 @cmd61:
 	jp setChannelWaitCounter
@@ -1143,7 +1144,7 @@ setSoundFrequency:
 	ret
 
 ;;
-; Handles envelopes for square channels, and redirects channel 4 to updateChannel4Volume
+; Handles envelopes for pulse channels, and redirects channel 4 to updateChannel4Volume
 handleEnvelopes:
 	ld a,(wSoundChannel)
 	cp $04
@@ -1203,7 +1204,7 @@ handleEnvelopes:
 	add hl,de
 	pop af
 	ld (hl),a
-	jp updateSquareChannelVolume
+	jp updatePulseChannelVolume
 
 @waitForNoteStartEnvelope:
 	ld hl,wChannelEnvelopeWaitCounters
@@ -1267,10 +1268,10 @@ handleEnvelopes:
 	ld a,(wSoundCmdEnvelope)
 	or c
 	ld (wSoundCmdEnvelope),a
-	jp updateSquareChannelVolume
+	jp updatePulseChannelVolume
 
 ;;
-updateSquareChannelVolume:
+updatePulseChannelVolume:
 	ld a,(wSoundChannel)
 	cp $02
 	jr nc,++
@@ -1346,7 +1347,7 @@ updateChannel4Volume:
 	ret
 
 ;;
-; Intended for use with square and noise channels, but not used by channel 7
+; Intended for use with pulse and noise channels, but not used by channel 7
 ; Channel 6 uses @affectedByMusicVolume as entry point
 ; @param[out]	a	Final volume of channel wSoundChannel after possible modification with wMusicVolume ($0-$f)
 getChannelVolume:
@@ -1635,16 +1636,16 @@ silencePlayedSound:
 	jp hl
 
 @table:
-	.dw @musicSquareChannel
-	.dw @musicSquareChannel
-	.dw @sfxSquareChannel
-	.dw @sfxSquareChannel
+	.dw @musicPulseChannel
+	.dw @musicPulseChannel
+	.dw @sfxPulseChannel
+	.dw @sfxPulseChannel
 	.dw @musicWaveChannel
 	.dw @sfxWaveChannel
 	.dw @noiseChannel
 	.dw @noiseChannel
 
-@musicSquareChannel:
+@musicPulseChannel:
 	; Only update if the corresponding sfx channel is not enabled
 	ld a,(wSoundChannel)
 	inc a
@@ -1658,7 +1659,7 @@ silencePlayedSound:
 	jr z,+
 	ret
 
-@sfxSquareChannel:
+@sfxPulseChannel:
 	; Sfx always updates (but it still does this pointless check of the corresponding
 	; music channel)
 	ld a,(wSoundChannel)
@@ -1687,7 +1688,7 @@ silencePlayedSound:
 	; Set volume to $0 and trigger channel
 	ld a,$08
 	ld (wSoundCmdEnvelope),a
-	call updateSquareChannelVolume
+	call updatePulseChannelVolume
 	jp updatePlayedFrequency
 
 @musicWaveChannel:
@@ -2127,13 +2128,13 @@ playSound:
 	ld (hl),a
 	ld a,(wSoundTmp)
 	cp $00
-	jr z,@squareChannel
+	jr z,@pulseChannel
 	cp $01
-	jr z,@squareChannel
+	jr z,@pulseChannel
 	cp $02
-	jr z,@squareChannel
+	jr z,@pulseChannel
 	cp $03
-	jr z,@squareChannel
+	jr z,@pulseChannel
 	cp $04
 	jr z,@waveChannel
 	cp $05
@@ -2164,7 +2165,7 @@ playSound:
 	ld (hl),a
 	jr ++
 
-@squareChannel:
+@pulseChannel:
 	ld a,(wSoundTmp)
 	ld e,a
 

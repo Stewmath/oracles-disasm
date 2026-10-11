@@ -3,14 +3,14 @@ sndUnknownd1Start:
 sndUnknownd1Channel2:
 	duty $00
 	vol $9
-	cmdf8 $7f
+	pitchSlide $7f
 	note d3  $03
-	cmdf8 $00
-	cmdf8 $81
+	pitchSlide $00
+	pitchSlide $81
 	note a3  $03
-	cmdf8 $00
+	pitchSlide $00
 	vol $f
-	cmdf8 $ef
+	pitchSlide $ef
 	note a2  $32
 	cmdff
 sndUnknownd1Channel7:

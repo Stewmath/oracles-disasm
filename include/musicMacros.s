@@ -227,8 +227,11 @@
 	.db $60 \1
 .endm
 
-; 61: wait without changing the previous note or rest, can be used to extend a note or rest (for channels 0-3)
-.macro rest2 ; Unused?
+; 61: extends the currently playing note/rest without retriggering or otherwise
+;     affecting it. this is a tie/sustain, not a rest.
+;	  the existing rest macro (60) is bugged: it behaves like a sustain, so they are both coded to sustain the note.
+;	  this true sustain command is unused in all vanilla songs, utilizing cmd60 (rest) for all of its wait durations between notes.
+.macro sust
 	.db $61 \1
 .endm
 
@@ -240,24 +243,28 @@
 	.db $d0 | \1
 .endm
 
-; e0-e7: set envelopes (for channels 0-3)
+; e0-e7: set envelope (\1 $0-$7: software-simulated attack envelope speed, starting at volume 1 and
+;        snapping to the note's target volume after a fixed delay)
+;        and increasing to volume 15 entirely in hardware at the given speed (\1 & $7)
+; \2 ($0-$7 either way): decay speed -- an exact hardware envelope match in both cases,
+;        decreasing from the note's target volume to 0
 .macro env
-	.if \1 > $7
+	.if \1 > $f
 		.fail
 	.endif
 	.db $e0 | \1
 	.db \2
 .endm
 
-; e8-ef: same as e0-e7
-
-; f0: does various things for channels 0-5, sets volume and envelope for channel 7, see audio.s for details
+; f0: unknown
+; Sometimes sets wc039
 .macro cmdf0
 	.db $f0 \1
 .endm
 
 ; f1-f3: does nothing
 .macro cmdf1
+; f1-f3: Unused as bare no-op bytes by every vanilla song: may be repurposed (patternCall / patternEnd, perhaps?)
 	.db $f1
 .endm
 .macro cmdf2
@@ -282,8 +289,12 @@
 
 ; f7: duplicate of ff
 
-; f8: sets sweep (for channels 0-5)
-.macro cmdf8
+
+; f8: continuous pitch slide (channels 0-5 only). \1 is a signed byte, re-added to the note's frequency every
+; single frame for as long as it stays nonzero, so the pitch keeps sliding
+; indefinitely rather than settling on a target (the latter behavior would be "portamento")
+; Use "pitchSlide $00" to stop an ongoing slide.
+.macro pitchSlide
 	.db $f8 \1
 .endm
 
@@ -296,9 +307,11 @@
 
 ; fa-fc: duplicates of ff
 
-; fd: sets wChannelPitchShift (for channels 0-5)
-; Shifts pitch
-.macro cmdfd
+; fd: flat pitch offset (channels 0-5 only, i.e. pulse/wave, both the music
+; and sfx slots; a no-op on noise, 6-7). \1 is a signed byte, added once to the frequency
+; every time a note triggers on this channel and held constant for that note's whole duration.
+; Use pitchOffset $00 to disable again.
+.macro pitchOffset
 	.db $fd \1
 .endm
 

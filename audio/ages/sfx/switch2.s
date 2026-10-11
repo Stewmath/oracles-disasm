@@ -4,7 +4,7 @@ sndSwitch2Channel2:
 	duty $02
 	vol $d
 	env $1 $00
-	cmdf8 $00
+	pitchSlide $00
 	note c5  $04
 	vol $c
 	note e5  $04

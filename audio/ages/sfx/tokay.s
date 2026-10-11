@@ -2,7 +2,7 @@ sndTokayStart:
 
 sndTokayChannel2:
 	duty $00
-	cmdf8 $ba
+	pitchSlide $ba
 	vol $7
 	note as3 $02
 	vol $8
