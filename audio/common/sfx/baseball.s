@@ -2,7 +2,7 @@ sndBaseballStart:
 
 sndBaseballChannel2:
 	cmdf0 $80
-	cmdf8 $1e
+	pitchSlide $1e
 	vol $d
 	.db $07 $4f $01
 	vol $0

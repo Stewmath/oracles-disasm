@@ -96,7 +96,7 @@ wChannelFrequencyModeAndLengthTimerEnabled: ; $c039
 ; This does two things:
 ; If not 0, the standard audio command is not treated as an index into soundFrequencyTable,
 ; but as the high byte for a frequency value, and the next byte is treated as the lower byte, followed by the length
-; For square channels, if bit 6 is set, then that bit also gets set on updates to wSoundCmdEnvelope
+; For pulse channels, if bit 6 is set, then that bit also gets set on updates to wSoundCmdEnvelope
 ; which enables the length timer for the channel (the initial length timer comes from wChannelDutyCycles)
 	dsb 6
 

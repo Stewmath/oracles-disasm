@@ -346,7 +346,7 @@ sndTimewarpInitiatedChannel2:
 
 sndTimewarpInitiatedChannel3:
 	duty $01
-	cmdfd $ff
+	pitchOffset -$01
 	vol $0
 	note gs3 $0d
 	vol $1
@@ -379,7 +379,7 @@ sndTimewarpInitiatedChannel3:
 	rest $0a
 	duty $00
 	env $2 $00
-	cmdfd $00
+	pitchOffset $00
 	vol $5
 	note c7  $0d
 	vol $2

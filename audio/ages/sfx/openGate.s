@@ -3,7 +3,7 @@ sndOpenGateStart:
 sndOpenGateChannel2:
 	duty $01
 	vol $a
-	cmdf8 $ce
+	pitchSlide $ce
 	note cs3 $05
 	cmdff
 
