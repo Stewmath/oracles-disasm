@@ -31,7 +31,7 @@ enemyCode17:
 	dec a
 	jp z,enemyDie
 
-	; For subid 1 only, kill all other ghinis with subid 1.
+	; For subids 0 and 2, kill all ghinis with subid 1 before dying.
 	ldhl FIRST_ENEMY_INDEX, Enemy.id
 @nextGhini:
 	ld a,(hl)
@@ -133,8 +133,7 @@ ghini_subid00:
 	jp enemyAnimate
 
 
-; This type takes a second to spawn in, and killing one ghini of subid 1 makes all other
-; die too?
+; This type takes a second to spawn in and dies when a ghini with subid 0 or 2 dies.
 ghini_subid01:
 	ld a,(de)
 	sub $08
